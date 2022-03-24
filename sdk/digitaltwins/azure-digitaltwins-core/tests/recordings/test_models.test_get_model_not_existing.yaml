@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ANonExistingModel%3B1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3ANonExistingModel%3B1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -23,9 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:09:57 GMT
+      - Thu, 24 Mar 2022 17:01:56 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-dc2c97e49346ae4aaa4afe13e7579cde-01755b2c37b1f64f-01
     status:
       code: 404
       message: Not Found

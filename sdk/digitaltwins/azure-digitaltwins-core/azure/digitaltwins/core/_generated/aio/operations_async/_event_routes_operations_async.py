@@ -47,8 +47,9 @@ class EventRoutesOperations:
     ) -> AsyncIterable["models.EventRouteCollection"]:
         """Retrieves all event routes.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
+
+
+        * 200 OK.
 
         :param event_routes_list_options: Parameter group.
         :type event_routes_list_options: ~azure.digitaltwins.core.models.EventRoutesListOptions
@@ -61,16 +62,24 @@ class EventRoutesOperations:
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         
-        _max_item_count = None
+        _traceparent = None
+        _tracestate = None
+        _max_items_per_page = None
         if event_routes_list_options is not None:
-            _max_item_count = event_routes_list_options.max_item_count
-        api_version = "2020-05-31-preview"
+            _traceparent = event_routes_list_options.traceparent
+            _tracestate = event_routes_list_options.tracestate
+            _max_items_per_page = event_routes_list_options.max_items_per_page
+        api_version = "2021-06-30-preview"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            if _max_item_count is not None:
-                header_parameters['x-ms-max-item-count'] = self._serialize.header("max_item_count", _max_item_count, 'int')
+            if _traceparent is not None:
+                header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+            if _tracestate is not None:
+                header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+            if _max_items_per_page is not None:
+                header_parameters['max-items-per-page'] = self._serialize.header("max_items_per_page", _max_items_per_page, 'int')
             header_parameters['Accept'] = 'application/json'
 
             if not next_link:
@@ -115,15 +124,22 @@ class EventRoutesOperations:
     async def get_by_id(
         self,
         id: str,
+        event_routes_get_by_id_options: Optional["models.EventRoutesGetByIdOptions"] = None,
         **kwargs
     ) -> "models.DigitalTwinsEventRoute":
         """Retrieves an event route.
         Status codes:
-        200 (OK): Success.
-        404 (Not Found): There is no event route with the provided id.
+
+
+        * 200 OK
+        * 404 Not Found
+
+          * EventRouteNotFound - The event route was not found.
 
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
         :type id: str
+        :param event_routes_get_by_id_options: Parameter group.
+        :type event_routes_get_by_id_options: ~azure.digitaltwins.core.models.EventRoutesGetByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DigitalTwinsEventRoute, or the result of cls(response)
         :rtype: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
@@ -132,7 +148,13 @@ class EventRoutesOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DigitalTwinsEventRoute"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if event_routes_get_by_id_options is not None:
+            _traceparent = event_routes_get_by_id_options.traceparent
+            _tracestate = event_routes_get_by_id_options.tracestate
+        api_version = "2021-06-30-preview"
 
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
@@ -147,6 +169,10 @@ class EventRoutesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
         header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -170,17 +196,27 @@ class EventRoutesOperations:
         self,
         id: str,
         event_route: Optional["models.DigitalTwinsEventRoute"] = None,
+        event_routes_add_options: Optional["models.EventRoutesAddOptions"] = None,
         **kwargs
     ) -> None:
         """Adds or replaces an event route.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * EventRouteEndpointInvalid - The endpoint provided does not exist or is not active.
+          * EventRouteFilterInvalid - The event route filter is invalid.
+          * EventRouteIdInvalid - The event route id is invalid.
+          * LimitExceeded - The maximum number of event routes allowed has been reached.
 
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
         :type id: str
         :param event_route: The event route data.
         :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
+        :param event_routes_add_options: Parameter group.
+        :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -189,7 +225,13 @@ class EventRoutesOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if event_routes_add_options is not None:
+            _traceparent = event_routes_add_options.traceparent
+            _tracestate = event_routes_add_options.tracestate
+        api_version = "2021-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -205,6 +247,10 @@ class EventRoutesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -231,15 +277,22 @@ class EventRoutesOperations:
     async def delete(
         self,
         id: str,
+        event_routes_delete_options: Optional["models.EventRoutesDeleteOptions"] = None,
         **kwargs
     ) -> None:
         """Deletes an event route.
         Status codes:
-        200 (OK): Success.
-        404 (Not Found): There is no event route with the provided id.
+
+
+        * 204 No Content
+        * 404 Not Found
+
+          * EventRouteNotFound - The event route was not found.
 
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
         :type id: str
+        :param event_routes_delete_options: Parameter group.
+        :type event_routes_delete_options: ~azure.digitaltwins.core.models.EventRoutesDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -248,7 +301,13 @@ class EventRoutesOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if event_routes_delete_options is not None:
+            _traceparent = event_routes_delete_options.traceparent
+            _tracestate = event_routes_delete_options.tracestate
+        api_version = "2021-06-30-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -263,6 +322,10 @@ class EventRoutesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/eventroutes?api-version=2021-06-30-preview
   response:
     body:
       string: '{"value":[],"nextLink":null}'
@@ -21,9 +21,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:08:59 GMT
+      - Thu, 24 Mar 2022 17:01:35 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-7708e20fcb442742875124bee2cb8602-d26348a926717d4b-01
     status:
       code: 200
       message: OK

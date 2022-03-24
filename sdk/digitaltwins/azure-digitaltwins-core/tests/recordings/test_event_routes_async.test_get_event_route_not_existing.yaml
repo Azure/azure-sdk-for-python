@@ -5,21 +5,22 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-b2c917d6?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-b2c917d6?api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"EventRouteNotFound","message":"There is no route
         available that matches the provided input. Check for all valid event routes
-        by calling EventRoute_List. See Swagger example (http://aka.ms/RouteSwSmpl)."}}'
+        by calling EventRoute_List. See Swagger example (https://aka.ms/RouteSwSmpl)."}}'
     headers:
-      content-length: '222'
+      content-length: '223'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:09:03 GMT
+      date: Thu, 24 Mar 2022 17:01:36 GMT
       strict-transport-security: max-age=2592000
+      traceresponse: 00-96e6ac6a8c4705409002ab350540e777-ae7ea726efdea94c-01
     status:
       code: 404
       message: Not Found
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-b2c917d6?api-version=2020-10-31
+    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-b2c917d6?api-version=2021-06-30-preview
 version: 1

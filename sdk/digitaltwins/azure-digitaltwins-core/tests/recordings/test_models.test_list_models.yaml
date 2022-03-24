@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModela7840b90%3B1?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModela7840b90%3B1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
@@ -23,9 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:10:02 GMT
+      - Thu, 24 Mar 2022 17:01:57 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-721e4d9632affb4ea6de2893fdc868c5-aa3a50fdbd378846-01
     status:
       code: 404
       message: Not Found
@@ -46,21 +48,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:10:02.8247977+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:58.1907843+00:00"}]'
     headers:
       content-length:
       - '175'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:10:02 GMT
+      - Thu, 24 Mar 2022 17:01:57 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-ea16e977b7d0964cb8c4a342a2af6f03-903637a108d4e041-01
     status:
       code: 201
       message: Created
@@ -74,21 +78,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2020-11-24T21:08:48.9021687+00:00"},{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:08.535384+00:00"},{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:17.1642697+00:00"},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:17.1643037+00:00"},{"id":"dtmi:com:samples:ComponentModel3510e6b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2020-11-24T21:09:31.4775396+00:00"},{"id":"dtmi:com:samples:ComponentModelbf2f17de;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2020-11-24T21:09:34.1174568+00:00"},{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:55.8499349+00:00"},{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:10:00.076774+00:00"},{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:10:02.8247977+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:30.4993416+00:00"},{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:39.4969324+00:00"},{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:43.9331925+00:00"},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:43.9332187+00:00"},{"id":"dtmi:com:samples:ComponentModel3510e6b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-24T17:01:46.0801696+00:00"},{"id":"dtmi:com:samples:ComponentModelbf2f17de;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-24T17:01:47.5699432+00:00"},{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:55.0325715+00:00"},{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:57.0583628+00:00"},{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:58.1907843+00:00"}],"nextLink":null}'
     headers:
       content-length:
-      - '1562'
+      - '1564'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:10:03 GMT
+      - Thu, 24 Mar 2022 17:01:57 GMT
       strict-transport-security:
       - max-age=2592000
+      traceresponse:
+      - 00-a017f2f60aba174888c8408997c2e0b0-e42576581b47574a-01
     status:
       code: 200
       message: OK

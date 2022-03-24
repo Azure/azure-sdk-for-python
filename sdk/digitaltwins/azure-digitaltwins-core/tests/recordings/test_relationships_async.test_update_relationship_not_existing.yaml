@@ -2,57 +2,55 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
-      Accept:
-      - application/json
       Content-Length:
       - '54'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"RelationshipNotFound","message":"Relationship foo
         not found on twin DTRelationshipTestsBuildingTwin. Please verify that the
         relationship id is valid and ensure that the relationship is not deleted.
-        See section on listing relationships in the documentation http://aka.ms/adtv2twins."}}'
+        See section on listing relationships in the documentation https://aka.ms/adtv2twins."}}'
     headers:
-      content-length: '302'
+      content-length: '303'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:16:33 GMT
+      date: Thu, 24 Mar 2022 17:04:15 GMT
       strict-transport-security: max-age=2592000
+      traceresponse: 00-cb4b162fb412344aac7b2a74613ace15-e27800d8cbb3fb44-01
     status:
       code: 404
       message: Not Found
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2020-10-31
+    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2021-06-30-preview
 - request:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
-      Accept:
-      - application/json
       Content-Length:
       - '54'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
         twin instance that exists with the ID foo. Please verify that the twin id
         is valid and ensure that the twin is not deleted. See section on querying
-        the twins http://aka.ms/adtv2query."}}'
+        the twins https://aka.ms/adtv2query."}}'
     headers:
-      content-length: '256'
+      content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:16:33 GMT
+      date: Thu, 24 Mar 2022 17:04:15 GMT
       strict-transport-security: max-age=2592000
+      traceresponse: 00-d047dec780bef44f87dbecb828eb532a-533bef348fb72145-01
     status:
       code: 404
       message: Not Found
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2020-10-31
+    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2021-06-30-preview
 version: 1

@@ -20,7 +20,14 @@ from ._utils import (
     prep_if_none_match
 )
 from ._generated.models import (
-    QuerySpecification
+    QuerySpecification,
+    DigitalTwinsAddOptions,
+    DigitalTwinsDeleteOptions,
+    DigitalTwinsUpdateOptions,
+    DigitalTwinsUpdateComponentOptions,
+    DigitalTwinsDeleteRelationshipOptions,
+    DigitalTwinsUpdateRelationshipOptions,
+    DigitalTwinsAddRelationshipOptions
 )
 from ._generated import AzureDigitalTwinsAPI
 

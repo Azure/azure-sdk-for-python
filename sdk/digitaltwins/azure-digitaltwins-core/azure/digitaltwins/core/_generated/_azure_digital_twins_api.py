@@ -50,7 +50,7 @@ class AzureDigitalTwinsAPI(object):
     ):
         # type: (...) -> None
         if not base_url:
-            base_url = 'https://digitaltwins-name.digitaltwins.azure.net'
+            base_url = 'https://digitaltwins-hostname'
         self._config = AzureDigitalTwinsAPIConfiguration(credential, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 

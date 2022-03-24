@@ -2,29 +2,28 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
-      Accept:
-      - application/json
       Content-Length:
       - '54'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-aff71bd5?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-aff71bd5?api-version=2021-06-30-preview
   response:
     body:
       string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
         twin instance that exists with the ID digitalTwin-aff71bd5. Please verify
         that the twin id is valid and ensure that the twin is not deleted. See section
-        on querying the twins http://aka.ms/adtv2query."}}'
+        on querying the twins https://aka.ms/adtv2query."}}'
     headers:
-      content-length: '273'
+      content-length: '274'
       content-type: application/json; charset=utf-8
-      date: Tue, 24 Nov 2020 21:08:31 GMT
+      date: Thu, 24 Mar 2022 17:01:26 GMT
       strict-transport-security: max-age=2592000
+      traceresponse: 00-fb165d7f68b88f4b8f299d21610fd303-1c628b3126328442-01
     status:
       code: 404
       message: Not Found
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-aff71bd5?api-version=2020-10-31
+    url: https://nalehmandigitaltwins.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-aff71bd5?api-version=2021-06-30-preview
 version: 1

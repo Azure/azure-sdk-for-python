@@ -10,16 +10,95 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class DigitalTwinModelsListOptions(msrest.serialization.Model):
+class DigitalTwinModelsAddOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param max_item_count: The maximum number of items to retrieve per request. The server may
-     choose to return less than the requested max.
-    :type max_item_count: int
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
     """
 
     _attribute_map = {
-        'max_item_count': {'key': 'MaxItemCount', 'type': 'int'},
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinModelsAddOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinModelsDeleteOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinModelsDeleteOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinModelsGetByIdOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinModelsGetByIdOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinModelsListOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param max_items_per_page: The maximum number of items to retrieve per request. The server may
+     choose to return less than the requested number.
+    :type max_items_per_page: int
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'max_items_per_page': {'key': 'MaxItemsPerPage', 'type': 'int'},
     }
 
     def __init__(
@@ -27,7 +106,147 @@ class DigitalTwinModelsListOptions(msrest.serialization.Model):
         **kwargs
     ):
         super(DigitalTwinModelsListOptions, self).__init__(**kwargs)
-        self.max_item_count = kwargs.get('max_item_count', -1)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.max_items_per_page = kwargs.get('max_items_per_page', None)
+
+
+class DigitalTwinModelsUpdateOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinModelsUpdateOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinsAddOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param if_none_match: Only perform the operation if the entity does not already exist.
+    :type if_none_match: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsAddOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.if_none_match = kwargs.get('if_none_match', None)
+
+
+class DigitalTwinsAddRelationshipOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param if_none_match: Only perform the operation if the entity does not already exist.
+    :type if_none_match: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsAddRelationshipOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.if_none_match = kwargs.get('if_none_match', None)
+
+
+class DigitalTwinsDeleteOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+     provided or * is provided.
+    :type if_match: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_match': {'key': 'If-Match', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsDeleteOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.if_match = kwargs.get('if_match', None)
+
+
+class DigitalTwinsDeleteRelationshipOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+     provided or * is provided.
+    :type if_match: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_match': {'key': 'If-Match', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsDeleteRelationshipOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.if_match = kwargs.get('if_match', None)
 
 
 class DigitalTwinsEventRoute(msrest.serialization.Model):
@@ -41,13 +260,15 @@ class DigitalTwinsEventRoute(msrest.serialization.Model):
     :vartype id: str
     :param endpoint_name: Required. The name of the endpoint this event route is bound to.
     :type endpoint_name: str
-    :param filter: An expression which describes the events which are routed to the endpoint.
+    :param filter: Required. An expression which describes the events which are routed to the
+     endpoint.
     :type filter: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'endpoint_name': {'required': True},
+        'filter': {'required': True},
     }
 
     _attribute_map = {
@@ -63,7 +284,310 @@ class DigitalTwinsEventRoute(msrest.serialization.Model):
         super(DigitalTwinsEventRoute, self).__init__(**kwargs)
         self.id = None
         self.endpoint_name = kwargs['endpoint_name']
-        self.filter = kwargs.get('filter', None)
+        self.filter = kwargs['filter']
+
+
+class DigitalTwinsGetByIdOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsGetByIdOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinsGetComponentOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsGetComponentOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinsGetRelationshipByIdOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsGetRelationshipByIdOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinsListIncomingRelationshipsOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsListIncomingRelationshipsOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinsListRelationshipsOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsListRelationshipsOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinsModelData(msrest.serialization.Model):
+    """A model definition and metadata for that model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param display_name: A language map that contains the localized display names as specified in
+     the model definition.
+    :type display_name: dict[str, str]
+    :param description: A language map that contains the localized descriptions as specified in the
+     model definition.
+    :type description: dict[str, str]
+    :param id: Required. The id of the model as specified in the model definition.
+    :type id: str
+    :param upload_time: The time the model was uploaded to the service.
+    :type upload_time: ~datetime.datetime
+    :param decommissioned: Indicates if the model is decommissioned. Decommissioned models cannot
+     be referenced by newly created digital twins.
+    :type decommissioned: bool
+    :param model: The model definition.
+    :type model: object
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': '{str}'},
+        'description': {'key': 'description', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'upload_time': {'key': 'uploadTime', 'type': 'iso-8601'},
+        'decommissioned': {'key': 'decommissioned', 'type': 'bool'},
+        'model': {'key': 'model', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsModelData, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.id = kwargs['id']
+        self.upload_time = kwargs.get('upload_time', None)
+        self.decommissioned = kwargs.get('decommissioned', False)
+        self.model = kwargs.get('model', None)
+
+
+class DigitalTwinsSendComponentTelemetryOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsSendComponentTelemetryOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinsSendTelemetryOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsSendTelemetryOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class DigitalTwinsUpdateComponentOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+     provided or * is provided.
+    :type if_match: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_match': {'key': 'If-Match', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsUpdateComponentOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.if_match = kwargs.get('if_match', None)
+
+
+class DigitalTwinsUpdateOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+     provided or * is provided.
+    :type if_match: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_match': {'key': 'If-Match', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsUpdateOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.if_match = kwargs.get('if_match', None)
+
+
+class DigitalTwinsUpdateRelationshipOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param if_match: Only perform the operation if the entity's etag matches one of the etags
+     provided or * is provided.
+    :type if_match: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_match': {'key': 'If-Match', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DigitalTwinsUpdateRelationshipOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.if_match = kwargs.get('if_match', None)
 
 
 class Error(msrest.serialization.Model):
@@ -148,16 +672,95 @@ class EventRouteCollection(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class EventRoutesListOptions(msrest.serialization.Model):
+class EventRoutesAddOptions(msrest.serialization.Model):
     """Parameter group.
 
-    :param max_item_count: The maximum number of items to retrieve per request. The server may
-     choose to return less than the requested max.
-    :type max_item_count: int
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
     """
 
     _attribute_map = {
-        'max_item_count': {'key': 'MaxItemCount', 'type': 'int'},
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EventRoutesAddOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class EventRoutesDeleteOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EventRoutesDeleteOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class EventRoutesGetByIdOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EventRoutesGetByIdOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+
+
+class EventRoutesListOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param max_items_per_page: The maximum number of items to retrieve per request. The server may
+     choose to return less than the requested number.
+    :type max_items_per_page: int
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'max_items_per_page': {'key': 'MaxItemsPerPage', 'type': 'int'},
     }
 
     def __init__(
@@ -165,7 +768,9 @@ class EventRoutesListOptions(msrest.serialization.Model):
         **kwargs
     ):
         super(EventRoutesListOptions, self).__init__(**kwargs)
-        self.max_item_count = kwargs.get('max_item_count', -1)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.max_items_per_page = kwargs.get('max_items_per_page', None)
 
 
 class IncomingRelationship(msrest.serialization.Model):
@@ -248,65 +853,17 @@ class InnerError(msrest.serialization.Model):
         self.innererror = kwargs.get('innererror', None)
 
 
-class ModelData(msrest.serialization.Model):
-    """A model definition and metadata for that model.
+class PagedDigitalTwinsModelDataCollection(msrest.serialization.Model):
+    """A collection of DigitalTwinsModelData objects.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param display_name: A language map that contains the localized display names as specified in
-     the model definition.
-    :type display_name: dict[str, str]
-    :param description: A language map that contains the localized descriptions as specified in the
-     model definition.
-    :type description: dict[str, str]
-    :param id: Required. The id of the model as specified in the model definition.
-    :type id: str
-    :param upload_time: The time the model was uploaded to the service.
-    :type upload_time: ~datetime.datetime
-    :param decommissioned: Indicates if the model is decommissioned. Decommissioned models cannot
-     be referenced by newly created digital twins.
-    :type decommissioned: bool
-    :param model: The model definition.
-    :type model: object
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': '{str}'},
-        'description': {'key': 'description', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'upload_time': {'key': 'uploadTime', 'type': 'iso-8601'},
-        'decommissioned': {'key': 'decommissioned', 'type': 'bool'},
-        'model': {'key': 'model', 'type': 'object'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ModelData, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.description = kwargs.get('description', None)
-        self.id = kwargs['id']
-        self.upload_time = kwargs.get('upload_time', None)
-        self.decommissioned = kwargs.get('decommissioned', False)
-        self.model = kwargs.get('model', None)
-
-
-class PagedModelDataCollection(msrest.serialization.Model):
-    """A collection of ModelData objects.
-
-    :param value: The ModelData objects.
-    :type value: list[~azure.digitaltwins.core.models.ModelData]
+    :param value: The DigitalTwinsModelData objects.
+    :type value: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
     :param next_link: A URI to retrieve the next page of objects.
     :type next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ModelData]'},
+        'value': {'key': 'value', 'type': '[DigitalTwinsModelData]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -314,7 +871,7 @@ class PagedModelDataCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(PagedModelDataCollection, self).__init__(**kwargs)
+        super(PagedDigitalTwinsModelDataCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
 
@@ -322,15 +879,15 @@ class PagedModelDataCollection(msrest.serialization.Model):
 class QueryResult(msrest.serialization.Model):
     """The results of a query operation and an optional continuation token.
 
-    :param items: The query results.
-    :type items: list[object]
+    :param value: The query results.
+    :type value: list[object]
     :param continuation_token: A token which can be used to construct a new QuerySpecification to
      retrieve the next set of results.
     :type continuation_token: str
     """
 
     _attribute_map = {
-        'items': {'key': 'items', 'type': '[object]'},
+        'value': {'key': 'value', 'type': '[object]'},
         'continuation_token': {'key': 'continuationToken', 'type': 'str'},
     }
 
@@ -339,7 +896,7 @@ class QueryResult(msrest.serialization.Model):
         **kwargs
     ):
         super(QueryResult, self).__init__(**kwargs)
-        self.items = kwargs.get('items', None)
+        self.value = kwargs.get('value', None)
         self.continuation_token = kwargs.get('continuation_token', None)
 
 
@@ -365,6 +922,35 @@ class QuerySpecification(msrest.serialization.Model):
         super(QuerySpecification, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.continuation_token = kwargs.get('continuation_token', None)
+
+
+class QueryTwinsOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param traceparent: Identifies the request in a distributed tracing system.
+    :type traceparent: str
+    :param tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :type tracestate: str
+    :param max_items_per_page: The maximum number of items to retrieve per request. The server may
+     choose to return less than the requested number.
+    :type max_items_per_page: int
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'max_items_per_page': {'key': 'MaxItemsPerPage', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(QueryTwinsOptions, self).__init__(**kwargs)
+        self.traceparent = kwargs.get('traceparent', None)
+        self.tracestate = kwargs.get('tracestate', None)
+        self.max_items_per_page = kwargs.get('max_items_per_page', None)
 
 
 class RelationshipCollection(msrest.serialization.Model):

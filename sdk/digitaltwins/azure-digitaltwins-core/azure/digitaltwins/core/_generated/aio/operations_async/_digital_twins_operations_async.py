@@ -43,15 +43,26 @@ class DigitalTwinsOperations:
     async def get_by_id(
         self,
         id: str,
+        digital_twins_get_by_id_options: Optional["models.DigitalTwinsGetByIdOptions"] = None,
         **kwargs
     ) -> object:
         """Retrieves a digital twin.
         Status codes:
-        200 (OK): Success.
-        404 (Not Found): There is no digital twin with the provided id.
+
+
+        * 200 OK
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
+        :param digital_twins_get_by_id_options: Parameter group.
+        :type digital_twins_get_by_id_options: ~azure.digitaltwins.core.models.DigitalTwinsGetByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: object, or the result of cls(response)
         :rtype: object
@@ -60,7 +71,13 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if digital_twins_get_by_id_options is not None:
+            _traceparent = digital_twins_get_by_id_options.traceparent
+            _tracestate = digital_twins_get_by_id_options.tracestate
+        api_version = "2021-06-30-preview"
 
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
@@ -75,6 +92,10 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
         header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -100,22 +121,31 @@ class DigitalTwinsOperations:
         self,
         id: str,
         twin: object,
-        if_none_match: Optional[str] = None,
+        digital_twins_add_options: Optional["models.DigitalTwinsAddOptions"] = None,
         **kwargs
     ) -> Optional[object]:
         """Adds or replaces a digital twin.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        412 (Precondition Failed): The model is decommissioned or the digital twin already exists (when
-        using If-None-Match: *).
+
+
+        * 200 OK
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id or payload is invalid.
+          * ModelDecommissioned - The model for the digital twin is decommissioned.
+          * TwinLimitReached - The maximum number of digital twins allowed has been reached.
+          * ValidationFailed - The digital twin payload is not valid.
+
+        * 412 Precondition Failed
+
+          * PreconditionFailed - The precondition check (If-Match or If-None-Match) failed.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param twin: The digital twin instance being added. If provided, the $dtId property is ignored.
         :type twin: object
-        :param if_none_match: Only perform the operation if the entity does not already exist.
-        :type if_none_match: str
+        :param digital_twins_add_options: Parameter group.
+        :type digital_twins_add_options: ~azure.digitaltwins.core.models.DigitalTwinsAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: object, or the result of cls(response)
         :rtype: object or None
@@ -124,7 +154,15 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[object]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        _if_none_match = None
+        if digital_twins_add_options is not None:
+            _traceparent = digital_twins_add_options.traceparent
+            _tracestate = digital_twins_add_options.tracestate
+            _if_none_match = digital_twins_add_options.if_none_match
+        api_version = "2021-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -140,8 +178,12 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        if _if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
@@ -173,20 +215,31 @@ class DigitalTwinsOperations:
     async def delete(
         self,
         id: str,
-        if_match: Optional[str] = None,
+        digital_twins_delete_options: Optional["models.DigitalTwinsDeleteOptions"] = None,
         **kwargs
     ) -> None:
         """Deletes a digital twin. All relationships referencing the digital twin must already be deleted.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is no digital twin with the provided id.
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id is invalid.
+          * RelationshipsNotDeleted - The digital twin contains relationships.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+
+        * 412 Precondition Failed
+
+          * PreconditionFailed - The precondition check (If-Match or If-None-Match) failed.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
-        :param if_match: Only perform the operation if the entity's etag matches one of the etags
-         provided or * is provided.
-        :type if_match: str
+        :param digital_twins_delete_options: Parameter group.
+        :type digital_twins_delete_options: ~azure.digitaltwins.core.models.DigitalTwinsDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -195,7 +248,15 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        _if_match = None
+        if digital_twins_delete_options is not None:
+            _traceparent = digital_twins_delete_options.traceparent
+            _tracestate = digital_twins_delete_options.tracestate
+            _if_match = digital_twins_delete_options.if_match
+        api_version = "2021-06-30-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -210,8 +271,12 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        if _if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -231,14 +296,27 @@ class DigitalTwinsOperations:
         self,
         id: str,
         patch_document: List[object],
-        if_match: Optional[str] = None,
+        digital_twins_update_options: Optional["models.DigitalTwinsUpdateOptions"] = None,
         **kwargs
     ) -> None:
         """Updates a digital twin.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is no digital twin with the provided id.
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id or payload is invalid.
+          * JsonPatchInvalid - The JSON Patch provided is invalid.
+          * ValidationFailed - Applying the patch results in an invalid digital twin.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+
+        * 412 Precondition Failed
+
+          * PreconditionFailed - The precondition check (If-Match or If-None-Match) failed.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
@@ -246,9 +324,8 @@ class DigitalTwinsOperations:
          values and $model elements may happen in the same request. Operations are limited to add,
          replace and remove.
         :type patch_document: list[object]
-        :param if_match: Only perform the operation if the entity's etag matches one of the etags
-         provided or * is provided.
-        :type if_match: str
+        :param digital_twins_update_options: Parameter group.
+        :type digital_twins_update_options: ~azure.digitaltwins.core.models.DigitalTwinsUpdateOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -257,7 +334,15 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        _if_match = None
+        if digital_twins_update_options is not None:
+            _traceparent = digital_twins_update_options.traceparent
+            _tracestate = digital_twins_update_options.tracestate
+            _if_match = digital_twins_update_options.if_match
+        api_version = "2021-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json-patch+json")
 
         # Construct URL
@@ -273,8 +358,12 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        if _if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -303,18 +392,30 @@ class DigitalTwinsOperations:
         self,
         id: str,
         relationship_id: str,
+        digital_twins_get_relationship_by_id_options: Optional["models.DigitalTwinsGetRelationshipByIdOptions"] = None,
         **kwargs
     ) -> object:
         """Retrieves a relationship between two digital twins.
         Status codes:
-        200 (OK): Success.
-        404 (Not Found): There is either no digital twin or relationship with the provided id.
+
+
+        * 200 OK
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id or relationship id is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+          * RelationshipNotFound - The relationship was not found.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param relationship_id: The id of the relationship. The id is unique within the digital twin
          and case sensitive.
         :type relationship_id: str
+        :param digital_twins_get_relationship_by_id_options: Parameter group.
+        :type digital_twins_get_relationship_by_id_options: ~azure.digitaltwins.core.models.DigitalTwinsGetRelationshipByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: object, or the result of cls(response)
         :rtype: object
@@ -323,7 +424,13 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if digital_twins_get_relationship_by_id_options is not None:
+            _traceparent = digital_twins_get_relationship_by_id_options.traceparent
+            _tracestate = digital_twins_get_relationship_by_id_options.tracestate
+        api_version = "2021-06-30-preview"
 
         # Construct URL
         url = self.get_relationship_by_id.metadata['url']  # type: ignore
@@ -339,6 +446,10 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
         header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -364,27 +475,40 @@ class DigitalTwinsOperations:
         self,
         id: str,
         relationship_id: str,
-        if_none_match: Optional[str] = None,
-        relationship: Optional[object] = None,
+        relationship: object,
+        digital_twins_add_relationship_options: Optional["models.DigitalTwinsAddRelationshipOptions"] = None,
         **kwargs
     ) -> object:
         """Adds a relationship between two digital twins.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is either no digital twin, target digital twin, or relationship with the
-        provided id.
-        409 (Conflict): A relationship with the provided id already exists.
+
+
+        * 200 OK
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id, relationship id, or payload is invalid.
+          * InvalidRelationship - The relationship is invalid.
+          * OperationNotAllowed - The relationship cannot connect to the same digital twin.
+          * ValidationFailed - The relationship content is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+          * TargetTwinNotFound - The digital twin target of the relationship was not found.
+
+        * 412 Precondition Failed
+
+          * PreconditionFailed - The precondition check (If-Match or If-None-Match) failed.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param relationship_id: The id of the relationship. The id is unique within the digital twin
          and case sensitive.
         :type relationship_id: str
-        :param if_none_match: Only perform the operation if the entity does not already exist.
-        :type if_none_match: str
         :param relationship: The data for the relationship.
         :type relationship: object
+        :param digital_twins_add_relationship_options: Parameter group.
+        :type digital_twins_add_relationship_options: ~azure.digitaltwins.core.models.DigitalTwinsAddRelationshipOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: object, or the result of cls(response)
         :rtype: object
@@ -393,7 +517,15 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        _if_none_match = None
+        if digital_twins_add_relationship_options is not None:
+            _traceparent = digital_twins_add_relationship_options.traceparent
+            _tracestate = digital_twins_add_relationship_options.tracestate
+            _if_none_match = digital_twins_add_relationship_options.if_none_match
+        api_version = "2021-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -410,16 +542,17 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        if _if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if relationship is not None:
-            body_content = self._serialize.body(relationship, 'object')
-        else:
-            body_content = None
+        body_content = self._serialize.body(relationship, 'object')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -445,22 +578,34 @@ class DigitalTwinsOperations:
         self,
         id: str,
         relationship_id: str,
-        if_match: Optional[str] = None,
+        digital_twins_delete_relationship_options: Optional["models.DigitalTwinsDeleteRelationshipOptions"] = None,
         **kwargs
     ) -> None:
         """Deletes a relationship between two digital twins.
         Status codes:
-        200 (OK): Success.
-        404 (Not Found): There is either no digital twin or relationship with the provided id.
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id or relationship id is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+          * RelationshipNotFound - The relationship was not found.
+
+        * 412 Precondition Failed
+
+          * PreconditionFailed - The precondition check (If-Match or If-None-Match) failed.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param relationship_id: The id of the relationship. The id is unique within the digital twin
          and case sensitive.
         :type relationship_id: str
-        :param if_match: Only perform the operation if the entity's etag matches one of the etags
-         provided or * is provided.
-        :type if_match: str
+        :param digital_twins_delete_relationship_options: Parameter group.
+        :type digital_twins_delete_relationship_options: ~azure.digitaltwins.core.models.DigitalTwinsDeleteRelationshipOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -469,7 +614,15 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        _if_match = None
+        if digital_twins_delete_relationship_options is not None:
+            _traceparent = digital_twins_delete_relationship_options.traceparent
+            _tracestate = digital_twins_delete_relationship_options.tracestate
+            _if_match = digital_twins_delete_relationship_options.if_match
+        api_version = "2021-06-30-preview"
 
         # Construct URL
         url = self.delete_relationship.metadata['url']  # type: ignore
@@ -485,8 +638,12 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        if _if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -506,26 +663,44 @@ class DigitalTwinsOperations:
         self,
         id: str,
         relationship_id: str,
-        if_match: Optional[str] = None,
-        patch_document: Optional[List[object]] = None,
+        patch_document: List[object],
+        digital_twins_update_relationship_options: Optional["models.DigitalTwinsUpdateRelationshipOptions"] = None,
         **kwargs
     ) -> None:
         """Updates the properties on a relationship between two digital twins.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is either no digital twin or relationship with the provided id.
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id or relationship id is invalid.
+          * InvalidRelationship - The relationship is invalid.
+          * JsonPatchInvalid - The JSON Patch provided is invalid.
+          * ValidationFailed - The relationship content is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+          * RelationshipNotFound - The relationship was not found.
+
+        * 409 Conflict
+
+          * RelationshipAlreadyExists - The relationship already exists.
+
+        * 412 Precondition Failed
+
+          * PreconditionFailed - The precondition check (If-Match or If-None-Match) failed.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param relationship_id: The id of the relationship. The id is unique within the digital twin
          and case sensitive.
         :type relationship_id: str
-        :param if_match: Only perform the operation if the entity's etag matches one of the etags
-         provided or * is provided.
-        :type if_match: str
         :param patch_document: JSON Patch description of the update to the relationship properties.
         :type patch_document: list[object]
+        :param digital_twins_update_relationship_options: Parameter group.
+        :type digital_twins_update_relationship_options: ~azure.digitaltwins.core.models.DigitalTwinsUpdateRelationshipOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -534,7 +709,15 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        _if_match = None
+        if digital_twins_update_relationship_options is not None:
+            _traceparent = digital_twins_update_relationship_options.traceparent
+            _tracestate = digital_twins_update_relationship_options.tracestate
+            _if_match = digital_twins_update_relationship_options.if_match
+        api_version = "2021-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json-patch+json")
 
         # Construct URL
@@ -551,15 +734,16 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        if _if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if patch_document is not None:
-            body_content = self._serialize.body(patch_document, '[object]')
-        else:
-            body_content = None
+        body_content = self._serialize.body(patch_document, '[object]')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -583,18 +767,28 @@ class DigitalTwinsOperations:
         self,
         id: str,
         relationship_name: Optional[str] = None,
+        digital_twins_list_relationships_options: Optional["models.DigitalTwinsListRelationshipsOptions"] = None,
         **kwargs
     ) -> AsyncIterable["models.RelationshipCollection"]:
         """Retrieves the relationships from a digital twin.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is no digital twin with the provided id.
+
+
+        * 200 OK
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param relationship_name: The name of the relationship.
         :type relationship_name: str
+        :param digital_twins_list_relationships_options: Parameter group.
+        :type digital_twins_list_relationships_options: ~azure.digitaltwins.core.models.DigitalTwinsListRelationshipsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RelationshipCollection or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.RelationshipCollection]
@@ -603,11 +797,21 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.RelationshipCollection"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if digital_twins_list_relationships_options is not None:
+            _traceparent = digital_twins_list_relationships_options.traceparent
+            _tracestate = digital_twins_list_relationships_options.tracestate
+        api_version = "2021-06-30-preview"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
+            if _traceparent is not None:
+                header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+            if _tracestate is not None:
+                header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
             header_parameters['Accept'] = 'application/json'
 
             if not next_link:
@@ -658,16 +862,26 @@ class DigitalTwinsOperations:
     def list_incoming_relationships(
         self,
         id: str,
+        digital_twins_list_incoming_relationships_options: Optional["models.DigitalTwinsListIncomingRelationshipsOptions"] = None,
         **kwargs
     ) -> AsyncIterable["models.IncomingRelationshipCollection"]:
         """Retrieves all incoming relationship for a digital twin.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is no digital twin with the provided id.
+
+
+        * 200 OK
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
+        :param digital_twins_list_incoming_relationships_options: Parameter group.
+        :type digital_twins_list_incoming_relationships_options: ~azure.digitaltwins.core.models.DigitalTwinsListIncomingRelationshipsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IncomingRelationshipCollection or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.IncomingRelationshipCollection]
@@ -676,11 +890,21 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IncomingRelationshipCollection"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if digital_twins_list_incoming_relationships_options is not None:
+            _traceparent = digital_twins_list_incoming_relationships_options.traceparent
+            _tracestate = digital_twins_list_incoming_relationships_options.tracestate
+        api_version = "2021-06-30-preview"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
+            if _traceparent is not None:
+                header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+            if _tracestate is not None:
+                header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
             header_parameters['Accept'] = 'application/json'
 
             if not next_link:
@@ -729,26 +953,38 @@ class DigitalTwinsOperations:
     async def send_telemetry(
         self,
         id: str,
-        dt_id: str,
+        message_id: str,
         telemetry: object,
-        timestamp: Optional[str] = None,
+        telemetry_source_time: Optional[str] = None,
+        digital_twins_send_telemetry_options: Optional["models.DigitalTwinsSendTelemetryOptions"] = None,
         **kwargs
     ) -> None:
         """Sends telemetry on behalf of a digital twin.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is no digital twin with the provided id.
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id or message id is invalid.
+          * ValidationFailed - The telemetry content is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
-        :param dt_id: A unique message identifier (in the scope of the digital twin id) that is
+        :param message_id: A unique message identifier (in the scope of the digital twin id) that is
          commonly used for de-duplicating messages.
-        :type dt_id: str
+        :type message_id: str
         :param telemetry: The telemetry measurements to send from the digital twin.
         :type telemetry: object
-        :param timestamp: An RFC 3339 timestamp that identifies the time the telemetry was measured.
-        :type timestamp: str
+        :param telemetry_source_time: An RFC 3339 timestamp that identifies the time the telemetry was
+         measured.
+        :type telemetry_source_time: str
+        :param digital_twins_send_telemetry_options: Parameter group.
+        :type digital_twins_send_telemetry_options: ~azure.digitaltwins.core.models.DigitalTwinsSendTelemetryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -757,7 +993,13 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if digital_twins_send_telemetry_options is not None:
+            _traceparent = digital_twins_send_telemetry_options.traceparent
+            _tracestate = digital_twins_send_telemetry_options.tracestate
+        api_version = "2021-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -773,9 +1015,13 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['dt-id'] = self._serialize.header("dt_id", dt_id, 'str')
-        if timestamp is not None:
-            header_parameters['dt-timestamp'] = self._serialize.header("timestamp", timestamp, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        header_parameters['Message-Id'] = self._serialize.header("message_id", message_id, 'str')
+        if telemetry_source_time is not None:
+            header_parameters['Telemetry-Source-Time'] = self._serialize.header("telemetry_source_time", telemetry_source_time, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -800,29 +1046,41 @@ class DigitalTwinsOperations:
         self,
         id: str,
         component_path: str,
-        dt_id: str,
+        message_id: str,
         telemetry: object,
-        timestamp: Optional[str] = None,
+        telemetry_source_time: Optional[str] = None,
+        digital_twins_send_component_telemetry_options: Optional["models.DigitalTwinsSendComponentTelemetryOptions"] = None,
         **kwargs
     ) -> None:
         """Sends telemetry on behalf of a component in a digital twin.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is either no digital twin with the provided id or the component path is
-        invalid.
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id, message id, or component path is invalid.
+          * ValidationFailed - The telemetry content is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+          * ComponentNotFound - The component path was not found.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param component_path: The name of the DTDL component.
         :type component_path: str
-        :param dt_id: A unique message identifier (in the scope of the digital twin id) that is
+        :param message_id: A unique message identifier (in the scope of the digital twin id) that is
          commonly used for de-duplicating messages.
-        :type dt_id: str
+        :type message_id: str
         :param telemetry: The telemetry measurements to send from the digital twin's component.
         :type telemetry: object
-        :param timestamp: An RFC 3339 timestamp that identifies the time the telemetry was measured.
-        :type timestamp: str
+        :param telemetry_source_time: An RFC 3339 timestamp that identifies the time the telemetry was
+         measured.
+        :type telemetry_source_time: str
+        :param digital_twins_send_component_telemetry_options: Parameter group.
+        :type digital_twins_send_component_telemetry_options: ~azure.digitaltwins.core.models.DigitalTwinsSendComponentTelemetryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -831,7 +1089,13 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if digital_twins_send_component_telemetry_options is not None:
+            _traceparent = digital_twins_send_component_telemetry_options.traceparent
+            _tracestate = digital_twins_send_component_telemetry_options.tracestate
+        api_version = "2021-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -848,9 +1112,13 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['dt-id'] = self._serialize.header("dt_id", dt_id, 'str')
-        if timestamp is not None:
-            header_parameters['dt-timestamp'] = self._serialize.header("timestamp", timestamp, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        header_parameters['Message-Id'] = self._serialize.header("message_id", message_id, 'str')
+        if telemetry_source_time is not None:
+            header_parameters['Telemetry-Source-Time'] = self._serialize.header("telemetry_source_time", telemetry_source_time, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -875,18 +1143,29 @@ class DigitalTwinsOperations:
         self,
         id: str,
         component_path: str,
+        digital_twins_get_component_options: Optional["models.DigitalTwinsGetComponentOptions"] = None,
         **kwargs
     ) -> object:
         """Retrieves a component from a digital twin.
         Status codes:
-        200 (OK): Success.
-        404 (Not Found): There is either no digital twin with the provided id or the component path is
-        invalid.
+
+
+        * 200 OK
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id or component path is invalid.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+          * ComponentNotFound - The component path was not found.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param component_path: The name of the DTDL component.
         :type component_path: str
+        :param digital_twins_get_component_options: Parameter group.
+        :type digital_twins_get_component_options: ~azure.digitaltwins.core.models.DigitalTwinsGetComponentOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: object, or the result of cls(response)
         :rtype: object
@@ -895,7 +1174,13 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        if digital_twins_get_component_options is not None:
+            _traceparent = digital_twins_get_component_options.traceparent
+            _tracestate = digital_twins_get_component_options.tracestate
+        api_version = "2021-06-30-preview"
 
         # Construct URL
         url = self.get_component.metadata['url']  # type: ignore
@@ -911,6 +1196,10 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
         header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
@@ -936,28 +1225,39 @@ class DigitalTwinsOperations:
         self,
         id: str,
         component_path: str,
-        if_match: Optional[str] = None,
-        patch_document: Optional[List[object]] = None,
+        patch_document: List[object],
+        digital_twins_update_component_options: Optional["models.DigitalTwinsUpdateComponentOptions"] = None,
         **kwargs
     ) -> None:
         """Updates a component on a digital twin.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
-        404 (Not Found): There is either no digital twin with the provided id or the component path is
-        invalid.
+
+
+        * 204 No Content
+        * 400 Bad Request
+
+          * InvalidArgument - The digital twin id, component path, or payload is invalid.
+          * JsonPatchInvalid - The JSON Patch provided is invalid.
+          * ValidationFailed - Applying the patch results in an invalid digital twin.
+
+        * 404 Not Found
+
+          * DigitalTwinNotFound - The digital twin was not found.
+
+        * 412 Precondition Failed
+
+          * PreconditionFailed - The precondition check (If-Match or If-None-Match) failed.
 
         :param id: The id of the digital twin. The id is unique within the service and case sensitive.
         :type id: str
         :param component_path: The name of the DTDL component.
         :type component_path: str
-        :param if_match: Only perform the operation if the entity's etag matches one of the etags
-         provided or * is provided.
-        :type if_match: str
         :param patch_document: An update specification described by JSON Patch. Updates to property
          values and $model elements may happen in the same request. Operations are limited to add,
          replace and remove.
         :type patch_document: list[object]
+        :param digital_twins_update_component_options: Parameter group.
+        :type digital_twins_update_component_options: ~azure.digitaltwins.core.models.DigitalTwinsUpdateComponentOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -966,7 +1266,15 @@ class DigitalTwinsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        _if_match = None
+        if digital_twins_update_component_options is not None:
+            _traceparent = digital_twins_update_component_options.traceparent
+            _tracestate = digital_twins_update_component_options.tracestate
+            _if_match = digital_twins_update_component_options.if_match
+        api_version = "2021-06-30-preview"
         content_type = kwargs.pop("content_type", "application/json-patch+json")
 
         # Construct URL
@@ -983,15 +1291,16 @@ class DigitalTwinsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        if _if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", _if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if patch_document is not None:
-            body_content = self._serialize.body(patch_document, '[object]')
-        else:
-            body_content = None
+        body_content = self._serialize.body(patch_document, '[object]')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
