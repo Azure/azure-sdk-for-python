@@ -1,5 +1,11 @@
 # Release History
 
+## 2.4.0 (2022-03-24)
+
+**Features**
+
+  - Model WebActivity has a new parameter disable_cert_validation
+
 ## 2.3.0 (2022-03-02)
 
 **Features**

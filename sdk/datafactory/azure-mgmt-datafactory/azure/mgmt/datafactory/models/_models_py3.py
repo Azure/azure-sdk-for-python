@@ -21149,7 +21149,7 @@ class DynamicsLinkedService(LinkedService):
     :ivar service_principal_credential_type: The service principal credential type to use in
      Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
      for certificate. Type: string (or Expression with resultType string).
-    :vartype service_principal_credential_type: str
+    :vartype service_principal_credential_type: any
     :ivar service_principal_credential: The credential of the service principal object in Azure
      Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
      servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
@@ -21186,7 +21186,7 @@ class DynamicsLinkedService(LinkedService):
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
-        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'str'},
+        'service_principal_credential_type': {'key': 'typeProperties.servicePrincipalCredentialType', 'type': 'object'},
         'service_principal_credential': {'key': 'typeProperties.servicePrincipalCredential', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
         'credential': {'key': 'typeProperties.credential', 'type': 'CredentialReference'},
@@ -21209,7 +21209,7 @@ class DynamicsLinkedService(LinkedService):
         username: Optional[Any] = None,
         password: Optional["SecretBase"] = None,
         service_principal_id: Optional[Any] = None,
-        service_principal_credential_type: Optional[str] = None,
+        service_principal_credential_type: Optional[Any] = None,
         service_principal_credential: Optional["SecretBase"] = None,
         encrypted_credential: Optional[Any] = None,
         credential: Optional["CredentialReference"] = None,
@@ -21261,7 +21261,7 @@ class DynamicsLinkedService(LinkedService):
         :keyword service_principal_credential_type: The service principal credential type to use in
          Server-To-Server authentication. 'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert'
          for certificate. Type: string (or Expression with resultType string).
-        :paramtype service_principal_credential_type: str
+        :paramtype service_principal_credential_type: any
         :keyword service_principal_credential: The credential of the service principal object in Azure
          Active Directory. If servicePrincipalCredentialType is 'ServicePrincipalKey',
          servicePrincipalCredential can be SecureString or AzureKeyVaultSecretReference. If
@@ -48689,7 +48689,7 @@ class ScriptAction(msrest.serialization.Model):
     :ivar uri: Required. The URI for the script action.
     :vartype uri: str
     :ivar roles: Required. The node types on which the script action should be executed.
-    :vartype roles: str
+    :vartype roles: any
     :ivar parameters: The parameters for the script action.
     :vartype parameters: str
     """
@@ -48703,7 +48703,7 @@ class ScriptAction(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
-        'roles': {'key': 'roles', 'type': 'str'},
+        'roles': {'key': 'roles', 'type': 'object'},
         'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
@@ -48712,7 +48712,7 @@ class ScriptAction(msrest.serialization.Model):
         *,
         name: str,
         uri: str,
-        roles: str,
+        roles: Any,
         parameters: Optional[str] = None,
         **kwargs
     ):
@@ -48722,7 +48722,7 @@ class ScriptAction(msrest.serialization.Model):
         :keyword uri: Required. The URI for the script action.
         :paramtype uri: str
         :keyword roles: Required. The node types on which the script action should be executed.
-        :paramtype roles: str
+        :paramtype roles: any
         :keyword parameters: The parameters for the script action.
         :paramtype parameters: str
         """
@@ -57778,6 +57778,8 @@ class WebActivity(ExecutionActivity):
     :vartype body: any
     :ivar authentication: Authentication method used for calling the endpoint.
     :vartype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
+    :ivar disable_cert_validation: When set to true, Certificate validation will be disabled.
+    :vartype disable_cert_validation: bool
     :ivar datasets: List of datasets passed to web endpoint.
     :vartype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
     :ivar linked_services: List of linked services passed to web endpoint.
@@ -57807,6 +57809,7 @@ class WebActivity(ExecutionActivity):
         'headers': {'key': 'typeProperties.headers', 'type': 'object'},
         'body': {'key': 'typeProperties.body', 'type': 'object'},
         'authentication': {'key': 'typeProperties.authentication', 'type': 'WebActivityAuthentication'},
+        'disable_cert_validation': {'key': 'typeProperties.disableCertValidation', 'type': 'bool'},
         'datasets': {'key': 'typeProperties.datasets', 'type': '[DatasetReference]'},
         'linked_services': {'key': 'typeProperties.linkedServices', 'type': '[LinkedServiceReference]'},
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
@@ -57827,6 +57830,7 @@ class WebActivity(ExecutionActivity):
         headers: Optional[Any] = None,
         body: Optional[Any] = None,
         authentication: Optional["WebActivityAuthentication"] = None,
+        disable_cert_validation: Optional[bool] = None,
         datasets: Optional[List["DatasetReference"]] = None,
         linked_services: Optional[List["LinkedServiceReference"]] = None,
         connect_via: Optional["IntegrationRuntimeReference"] = None,
@@ -57863,6 +57867,8 @@ class WebActivity(ExecutionActivity):
         :paramtype body: any
         :keyword authentication: Authentication method used for calling the endpoint.
         :paramtype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
+        :keyword disable_cert_validation: When set to true, Certificate validation will be disabled.
+        :paramtype disable_cert_validation: bool
         :keyword datasets: List of datasets passed to web endpoint.
         :paramtype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
         :keyword linked_services: List of linked services passed to web endpoint.
@@ -57877,6 +57883,7 @@ class WebActivity(ExecutionActivity):
         self.headers = headers
         self.body = body
         self.authentication = authentication
+        self.disable_cert_validation = disable_cert_validation
         self.datasets = datasets
         self.linked_services = linked_services
         self.connect_via = connect_via
