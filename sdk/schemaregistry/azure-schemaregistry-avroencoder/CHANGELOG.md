@@ -1,8 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
-
-**Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic Avro encoding library for interoperability with the Azure Schema Registry client library.
+## 1.0.0b3 (Unreleased)
 
 ### Features Added
 - TODO:
