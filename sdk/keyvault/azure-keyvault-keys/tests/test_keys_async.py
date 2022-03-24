@@ -30,9 +30,9 @@ from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_pol
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
-only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
-only_vault_7_3_preview = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
-only_7_3_preview = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_hsm_7_3 = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3])
+only_vault_7_3 = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3])
+only_7_3 = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -478,7 +478,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         mock_handler.close()
 
-    @only_hsm_7_3_preview()
+    @only_hsm_7_3()
     @client_setup
     async def test_get_random_bytes(self, client, **kwargs):
         assert client
@@ -493,7 +493,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @only_7_3_preview()
+    @only_7_3()
     @client_setup
     async def test_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -511,7 +511,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         release_result = await client.release_key(rsa_key_name, attestation)
         assert release_result.value
 
-    @only_hsm_7_3_preview()
+    @only_hsm_7_3()
     @client_setup
     async def test_imported_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -529,7 +529,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         release_result = await client.release_key(imported_key_name, attestation)
         assert release_result.value
 
-    @only_7_3_preview()
+    @only_7_3()
     @client_setup
     async def test_update_release_policy(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -569,7 +569,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert claim_condition is False
 
     # Immutable policies aren't currently supported on Managed HSM
-    @only_vault_7_3_preview()
+    @only_vault_7_3()
     @client_setup
     async def test_immutable_release_policy(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -601,7 +601,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         with pytest.raises(HttpResponseError):
             await self._update_key_properties(client, key, new_release_policy)
 
-    @only_vault_7_3_preview()
+    @only_vault_7_3()
     @client_setup
     async def test_key_rotation(self, client, **kwargs):
         if (not is_public_cloud() and self.is_live):
@@ -616,7 +616,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
-    @only_vault_7_3_preview()
+    @only_vault_7_3()
     @client_setup
     async def test_key_rotation_policy(self, client, **kwargs):
         if (not is_public_cloud() and self.is_live):
