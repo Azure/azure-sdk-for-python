@@ -21,9 +21,9 @@ variables:
 jobs:
 - job: LiveTestPython38
   displayName: Live Test Python 3.8
-  timeoutInMinutes: 1500
+  timeoutInMinutes: 5000
   strategy:
-    maxParallel: 5
+    maxParallel: 7
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
