@@ -21,7 +21,7 @@ variables:
 jobs:
 - job: LiveTestPython38
   displayName: Live Test Python 3.8
-  timeoutInMinutes: 1500
+  timeoutInMinutes: 3000
   strategy:
     maxParallel: 5
   pool:
