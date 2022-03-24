@@ -1705,6 +1705,92 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     # this line makes it work for async functions
     visit_asyncfunctiondef = visit_functiondef
 
+
+class CheckEnum(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-enum"
+    priority = -1
+    msgs = {
+        "C4746": (
+            "The enum must use uppercase naming. "
+            "https://azure.github.io/azure-sdk/python_design.html#enumerations",
+            "enum-must-be-uppercase",
+            "Capitalize enum name.",
+        ),
+        "C4747":(
+            "The enum must inherit from CaseInsensitiveEnumMeta. "
+            "https://azure.github.io/azure-sdk/python_implementation.html#extensible-enumerations",
+            "enum-must-inherit-case-insensitive-enum-meta",
+            "Inherit CaseInsensitiveEnumMeta.",
+        ),
+    }
+    options = (
+        (
+            "ignore-enum-must-be-uppercase",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow an enum to not be capitalized.",
+            },
+        ),
+        (
+            "ignore-enum-must-inherit-case-insensitive-enum-meta",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow an enum to not inherit CaseInsensitiveEnumMeta.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(CheckEnum, self).__init__(linter)
+
+    def visit_classdef(self, node):
+        """Visits every enum class.
+
+        :param node: ast.ClassDef
+        :return: None
+        """
+        try:
+            
+            # If it has a metaclass, and is an enum class, check the capitalization
+            if node.declared_metaclass():
+                if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":
+                    self._enum_uppercase(node)   
+            # Else if it does not have a metaclass, but it is an enum class
+            # Check both capitalization and throw pylint error for metaclass
+            elif node.bases[1].name == "Enum":
+                self.add_message(
+                    "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
+                )
+                self._enum_uppercase(node)  
+
+        except Exception:
+            logger.debug("Pylint custom checker failed to check enum.")
+            pass
+    
+    def _enum_uppercase(self, node):
+        """Visits every enum within the class.
+        Checks if the enum is uppercase, if it isn't it
+        adds a pylint error message.
+
+        :param node: ast.ClassDef
+        :return: None
+        """
+
+        # Check capitalization of enums assigned in the class
+        for nod in node.body:
+            if isinstance(nod, astroid.Assign):
+                if not nod.targets[0].name.isupper():
+                    self.add_message(
+                        "enum-must-be-uppercase", node=nod.targets[0], confidence=None
+                    )
+
+
 class CheckAPIVersion(BaseChecker):
     __implements__ = IAstroidChecker
 
@@ -1712,7 +1798,7 @@ class CheckAPIVersion(BaseChecker):
     priority = -1
     msgs = {
         "C4748": (
-            "The client constructor needs to take in an optional keyword-only api_version argument"
+            "The client constructor needs to take in an optional keyword-only api_version argument. "
             "https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version",
             "client-accepts-api-version-keyword",
             "Accept a keyword argument called api_version.",
@@ -1849,6 +1935,7 @@ def register(linter):
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
     linter.register_checker(CheckNamingMismatchGeneratedCode(linter))
     linter.register_checker(CheckAPIVersion(linter))
+    linter.register_checker(CheckEnum(linter))
 
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
@@ -1862,3 +1949,5 @@ def register(linter):
     # linter.register_checker(ClientListMethodsUseCorePaging(linter))
     # linter.register_checker(ClientLROMethodsUseCorePolling(linter))
     # linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
+
+
