@@ -90,7 +90,7 @@ jobs:
           arguments: >-
             -DocRepoLocation $(DocRepoLocation)
             -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
-        displayName: Generate ToC
+        displayName: Generate ToC for Daily Docs
 
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
