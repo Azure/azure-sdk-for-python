@@ -28,7 +28,7 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KEY = "Key"
 
 class Kind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The kind of workbook. Choices are user and shared.
+    """The kind of workbook. Only valid value is shared.
     """
 
     USER = "user"
@@ -45,7 +45,7 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 class SharedTypeKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The kind of workbook. Choices are user and shared.
+    """The kind of workbook. Only valid value is shared.
     """
 
     USER = "user"

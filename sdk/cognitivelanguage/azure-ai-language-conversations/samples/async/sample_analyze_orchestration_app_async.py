@@ -60,11 +60,11 @@ async def sample_analyze_orchestration_app_async():
         print("view top intent:")
         top_intent = result.prediction.top_intent
         print("\ttop intent: {}".format(top_intent))
-        top_intent_object = result.prediction.intents[top_intent]
+        top_intent_object = result.prediction.intents[0]
         print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
 
         print("view Question Answering result:")
-        print("\tresult: {}\n".format(top_intent_object.result))
+        print("\tresult: {}\n".format(top_intent_object))
     # [END analyze_orchestration_app]
 
 async def main():
