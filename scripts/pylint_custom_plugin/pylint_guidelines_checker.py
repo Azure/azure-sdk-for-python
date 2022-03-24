@@ -1755,15 +1755,14 @@ class CheckEnum(BaseChecker):
         :return: None
         """
         try:
-
-            inherits_metaclass, enum_class = self._check_is_enum_class(node)
             
             # If it has a metaclass, and is an enum class, check the capitalization
-            if inherits_metaclass and enum_class:
-                self._enum_uppercase(node)   
+            if node.declared_metaclass():
+                if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":
+                    self._enum_uppercase(node)   
             # Else if it does not have a metaclass, but it is an enum class
             # Check both capitalization and throw pylint error for metaclass
-            elif enum_class:
+            elif node.bases[1].name == "Enum":
                 self.add_message(
                     "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
                 )
@@ -1772,26 +1771,6 @@ class CheckEnum(BaseChecker):
         except Exception:
             logger.debug("Pylint custom checker failed to check enum.")
             pass
-
-    def _check_is_enum_class(self,node):
-        """Checks if a class is an enum class.
-        Returns booleans for the two enum guidelines.
-
-        :param node: ast.ClassDef
-        :return: A tuple of booleans. The first boolean will be True if the class inherits CaseInsensitiveEnumMeta.
-        The second boolean will be True if the node is an enum class.
-        :rtype: tuple[bool,bool]
-            
-        """
-       
-        if node.declared_metaclass():
-            if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":
-                return True, True
-        if node.bases[1].name == "Enum":
-                return False, True
-                    
-                    
-        return False, False
     
     def _enum_uppercase(self, node):
         """Visits every enum within the class.
