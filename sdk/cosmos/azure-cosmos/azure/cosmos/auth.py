@@ -31,6 +31,7 @@ from typing import Any, Dict, Optional, ClassVar
 from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.policies import HTTPPolicy
 from . import http_constants
 
 TokenCredential = ClassVar
@@ -203,7 +204,7 @@ class _CosmosBearerTokenCredentialPolicyBase(object):
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase):
+class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, HTTPPolicy):
     """Adds a Cosmos bearer token Authorization header to requests.
 
     :param credential: The credential.
