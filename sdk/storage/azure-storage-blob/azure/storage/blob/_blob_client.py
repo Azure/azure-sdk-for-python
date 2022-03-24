@@ -17,6 +17,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import quote, unquote  # type: ignore
 import six
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -55,7 +56,7 @@ from ._upload_helpers import (
     upload_append_blob,
     upload_page_blob, _any_conditions)
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
-    DelimitedJsonDialect, DelimitedTextDialect
+    DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient
 
@@ -67,7 +68,8 @@ if TYPE_CHECKING:
         ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
-        SequenceNumberAction
+        SequenceNumberAction,
+        PageRange
     )
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
@@ -2947,6 +2949,161 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
+
+    @distributed_trace
+    def list_page_ranges(
+            self,
+            *,
+            offset: Optional[int] = None,
+            length: Optional[int] = None,
+            **kwargs: Any
+        ):
+        # type: (...) -> ItemPaged[PageRange]
+        """Returns the list of valid page ranges for a Page Blob or snapshot
+        of a page blob.
+
+        :keyword int offset:
+            Start of byte range to use for getting valid page ranges.
+            If no length is given, all bytes after the offset will be searched.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :keyword int length:
+            Number of bytes to use for getting valid page ranges.
+            If length is given, offset must be provided.
+            This range will return valid page ranges from the offset start up to
+            the specified length.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
+        :keyword int results_per_page:
+            The maximum number of page ranges to retrieve per API call.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) of PageRange.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.PageRange]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        options = self._get_page_ranges_options(
+            offset=offset,
+            length=length,
+            previous_snapshot_diff=None,
+            **kwargs)
+
+        command = partial(
+            self._client.page_blob.get_page_ranges,
+            **options)
+        return ItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=PageRangePaged)
+
+    @distributed_trace
+    def list_page_ranges_diff(
+            self,
+            *,
+            offset: Optional[int] = None,
+            length: Optional[int] = None,
+            previous_snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            **kwargs: Any
+        ):
+        # type: (...) -> ItemPaged[PageRange]
+        """Returns the list of valid page ranges for a page blob that
+        were changed between target blob and previous snapshot.
+
+        :keyword int offset:
+            Start of byte range to use for getting valid page ranges.
+            If no length is given, all bytes after the offset will be searched.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :keyword int length:
+            Number of bytes to use for getting valid page ranges.
+            If length is given, offset must be provided.
+            This range will return valid page ranges from the offset start up to
+            the specified length.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :keyword previous_snapshot:
+            A snapshot value that specifies that the response will contain only pages that were changed
+            between target blob and previous snapshot. Changed pages include both updated and cleared
+            pages. The target blob may be a snapshot, as long as the snapshot specified by previous_snapshot
+            is the older of the two.
+        :paramtype previous_snapshot: str or Dict[str, Any]
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
+        :keyword int results_per_page:
+            The maximum number of page ranges to retrieve per API call.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) of PageRange.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.PageRange]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        options = self._get_page_ranges_options(
+            offset=offset,
+            length=length,
+            previous_snapshot_diff=previous_snapshot,
+            **kwargs)
+
+        command = partial(
+            self._client.page_blob.get_page_ranges_diff,
+            **options)
+        return ItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=PageRangePaged)
 
     @distributed_trace
     def get_page_range_diff_for_managed_disk(

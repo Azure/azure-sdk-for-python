@@ -1066,6 +1066,120 @@ class StoragePageBlobTest(StorageTestCase):
                                        if_sequence_number_eq=start_sequence + 1)
 
     @BlobPreparer()
+    def test_list_page_ranges_empty(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClient = self._create_blob(bsc, length=2560)
+
+        # Act
+        ranges = list(blob.list_page_ranges())
+
+        # Assert
+        self.assertIsNotNone(ranges)
+        self.assertIsInstance(ranges, list)
+        self.assertEqual(0, len(ranges))
+
+    @BlobPreparer()
+    def test_list_page_ranges(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClient = self._create_blob(bsc, length=2560)
+        data = self.get_random_bytes(512)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data*2, offset=1024, length=1024)
+
+        # Act
+        ranges = list(blob.list_page_ranges())
+
+        # Assert
+        self.assertIsNotNone(ranges)
+        self.assertEqual(2, len(ranges))
+        self.assertEqual(0, ranges[0].start)
+        self.assertEqual(511, ranges[0].end)
+        self.assertFalse(ranges[0].cleared)
+        self.assertEqual(1024, ranges[1].start)
+        self.assertEqual(2047, ranges[1].end)
+        self.assertFalse(ranges[1].cleared)
+
+    @BlobPreparer()
+    def test_list_page_ranges_pagination(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob: BlobClient = self._create_blob(bsc, length=3072)
+        data = self.get_random_bytes(512)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
+        blob.upload_page(data * 2, offset=2048, length=1024)
+
+        # Act
+        page_list = blob.list_page_ranges(results_per_page=2).by_page()
+        first_page = next(page_list)
+        items_on_page1 = list(first_page)
+        second_page = next(page_list)
+        items_on_page2 = list(second_page)
+
+        # Assert
+        self.assertEqual(2, len(items_on_page1))
+        self.assertEqual(1, len(items_on_page2))
+
+    @BlobPreparer()
+    def test_list_page_ranges_diff(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob = self._create_blob(bsc, length=2048)
+        data = self.get_random_bytes(1536)
+        snapshot1 = blob.create_snapshot()
+        blob.upload_page(data, offset=0, length=1536)
+        snapshot2 = blob.create_snapshot()
+        blob.clear_page(offset=512, length=512)
+
+        # Act
+        ranges1 = list(blob.list_page_ranges_diff(previous_snapshot=snapshot1))
+        ranges2 = list(blob.list_page_ranges_diff(previous_snapshot=snapshot2['snapshot']))
+
+        # Assert
+        self.assertIsNotNone(ranges1)
+        self.assertIsInstance(ranges1, list)
+        self.assertEqual(3, len(ranges1))
+        self.assertEqual(0, ranges1[0].start)
+        self.assertEqual(511, ranges1[0].end)
+        self.assertFalse(ranges1[0].cleared)
+        self.assertEqual(512, ranges1[1].start)
+        self.assertEqual(1023, ranges1[1].end)
+        self.assertTrue(ranges1[1].cleared)
+        self.assertEqual(1024, ranges1[2].start)
+        self.assertEqual(1535, ranges1[2].end)
+        self.assertFalse(ranges1[2].cleared)
+
+        self.assertIsNotNone(ranges2)
+        self.assertIsInstance(ranges2, list)
+        self.assertEqual(1, len(ranges2))
+        self.assertEqual(512, ranges2[0].start)
+        self.assertEqual(1023, ranges2[0].end)
+        self.assertTrue(ranges2[0].cleared)
+
+    @BlobPreparer()
+    def test_list_page_ranges_diff_pagination(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self._setup(bsc)
+        blob = self._create_blob(bsc, length=2048)
+        data = self.get_random_bytes(1536)
+        snapshot = blob.create_snapshot()
+        blob.upload_page(data, offset=0, length=1536)
+        blob.clear_page(offset=512, length=512)
+
+        # Act
+        page_list = blob.list_page_ranges_diff(previous_snapshot=snapshot, results_per_page=2).by_page()
+        first_page = next(page_list)
+        items_on_page1 = list(first_page)
+        second_page = next(page_list)
+        items_on_page2 = list(second_page)
+
+        # Assert
+        self.assertEqual(2, len(items_on_page1))
+        self.assertEqual(1, len(items_on_page2))
+
+    @BlobPreparer()
     def test_get_page_ranges_no_pages(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
