@@ -11,19 +11,109 @@ from typing import Dict, List, Optional
 import msrest.serialization
 
 
+class AssociatedResourcesListResult(msrest.serialization.Model):
+    """Azure resources returned by the resource action to get a list of assigned resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar total_count: Total number of Azure resources assigned to the identity.
+    :vartype total_count: float
+    :ivar value: The collection of Azure resources returned by the resource action to get a list of
+     assigned resources.
+    :vartype value: list[~azure.mgmt.msi.models.AzureResource]
+    :ivar next_link: The url to get the next page of results, if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'total_count': {'readonly': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'total_count': {'key': 'totalCount', 'type': 'float'},
+        'value': {'key': 'value', 'type': '[AzureResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(AssociatedResourcesListResult, self).__init__(**kwargs)
+        self.total_count = None
+        self.value = None
+        self.next_link = None
+
+
+class AzureResource(msrest.serialization.Model):
+    """Describes an Azure resource that is attached to an identity.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ID of this resource.
+    :vartype id: str
+    :ivar name: The name of this resource.
+    :vartype name: str
+    :ivar type: The type of this resource.
+    :vartype type: str
+    :ivar resource_group: The name of the resource group this resource belongs to.
+    :vartype resource_group: str
+    :ivar subscription_id: The ID of the subscription this resource belongs to.
+    :vartype subscription_id: str
+    :ivar subscription_display_name: The name of the subscription this resource belongs to.
+    :vartype subscription_display_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource_group': {'readonly': True},
+        'subscription_id': {'readonly': True},
+        'subscription_display_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'subscription_display_name': {'key': 'subscriptionDisplayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(AzureResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.resource_group = None
+        self.subscription_id = None
+        self.subscription_display_name = None
+
+
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the ManagedServiceIdentity service.
 
-    :param code: An identifier for the error.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :ivar code: An identifier for the error.
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~managed_service_identity_client.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.msi.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -42,6 +132,18 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.msi.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -80,6 +182,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -101,10 +205,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -129,6 +233,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -149,10 +259,10 @@ class Identity(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar tenant_id: The id of the tenant which the identity belongs to.
     :vartype tenant_id: str
     :ivar principal_id: The id of the service principal object associated with the created
@@ -191,6 +301,12 @@ class Identity(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(Identity, self).__init__(tags=tags, location=location, **kwargs)
         self.tenant_id = None
         self.principal_id = None
@@ -210,10 +326,10 @@ class IdentityUpdate(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: The geo-location where the resource lives.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar tenant_id: The id of the tenant which the identity belongs to.
     :vartype tenant_id: str
     :ivar principal_id: The id of the service principal object associated with the created
@@ -251,6 +367,12 @@ class IdentityUpdate(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(IdentityUpdate, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -262,11 +384,11 @@ class IdentityUpdate(Resource):
 class Operation(msrest.serialization.Model):
     """Operation supported by the Microsoft.ManagedIdentity REST API.
 
-    :param name: The name of the REST Operation. This is of the format
+    :ivar name: The name of the REST Operation. This is of the format
      {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that describes the operation.
-    :type display: ~managed_service_identity_client.models.OperationDisplay
+    :vartype name: str
+    :ivar display: The object that describes the operation.
+    :vartype display: ~azure.mgmt.msi.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -281,6 +403,13 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the REST Operation. This is of the format
+         {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that describes the operation.
+        :paramtype display: ~azure.mgmt.msi.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -289,14 +418,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that describes the operation.
 
-    :param provider: Friendly name of the resource provider.
-    :type provider: str
-    :param operation: The type of operation. For example: read, write, delete.
-    :type operation: str
-    :param resource: The resource type on which the operation is performed.
-    :type resource: str
-    :param description: A description of the operation.
-    :type description: str
+    :ivar provider: Friendly name of the resource provider.
+    :vartype provider: str
+    :ivar operation: The type of operation. For example: read, write, delete.
+    :vartype operation: str
+    :ivar resource: The resource type on which the operation is performed.
+    :vartype resource: str
+    :ivar description: A description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -315,6 +444,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Friendly name of the resource provider.
+        :paramtype provider: str
+        :keyword operation: The type of operation. For example: read, write, delete.
+        :paramtype operation: str
+        :keyword resource: The resource type on which the operation is performed.
+        :paramtype resource: str
+        :keyword description: A description of the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.operation = operation
@@ -325,10 +464,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """A list of operations supported by Microsoft.ManagedIdentity Resource Provider.
 
-    :param value: A list of operations supported by Microsoft.ManagedIdentity Resource Provider.
-    :type value: list[~managed_service_identity_client.models.Operation]
-    :param next_link: The url to get the next page of results, if any.
-    :type next_link: str
+    :ivar value: A list of operations supported by Microsoft.ManagedIdentity Resource Provider.
+    :vartype value: list[~azure.mgmt.msi.models.Operation]
+    :ivar next_link: The url to get the next page of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -343,6 +482,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A list of operations supported by Microsoft.ManagedIdentity Resource Provider.
+        :paramtype value: list[~azure.mgmt.msi.models.Operation]
+        :keyword next_link: The url to get the next page of results, if any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -379,6 +524,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -397,10 +544,10 @@ class SystemAssignedIdentity(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar tenant_id: The id of the tenant which the identity belongs to.
     :vartype tenant_id: str
     :ivar principal_id: The id of the service principal object associated with the created
@@ -444,6 +591,12 @@ class SystemAssignedIdentity(ProxyResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(SystemAssignedIdentity, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -456,10 +609,10 @@ class SystemAssignedIdentity(ProxyResource):
 class UserAssignedIdentitiesListResult(msrest.serialization.Model):
     """Values returned by the List operation.
 
-    :param value: The collection of userAssignedIdentities returned by the listing operation.
-    :type value: list[~managed_service_identity_client.models.Identity]
-    :param next_link: The url to get the next page of results, if any.
-    :type next_link: str
+    :ivar value: The collection of userAssignedIdentities returned by the listing operation.
+    :vartype value: list[~azure.mgmt.msi.models.Identity]
+    :ivar next_link: The url to get the next page of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -474,6 +627,12 @@ class UserAssignedIdentitiesListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of userAssignedIdentities returned by the listing operation.
+        :paramtype value: list[~azure.mgmt.msi.models.Identity]
+        :keyword next_link: The url to get the next page of results, if any.
+        :paramtype next_link: str
+        """
         super(UserAssignedIdentitiesListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
