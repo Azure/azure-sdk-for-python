@@ -1,9 +1,14 @@
 # Release History
 
-## 12.10.1 (2022-03-28)
+## 12.11.0 (2022-03-29)
+
+**Warning** This release involves a bug fix that may change the behavior for some users. In previous versions,
+the `tag` parameter on`BlobSasPermissions` defaulted to `True` meaning a Blob SAS URL would include the `t` permission
+by default. This was not the intended behavior. This release adjusts `BlobSasPermission` so the `tag` permission will
+default to `False`, like all other permissions.
 
 ### Bugs Fixed
-- Fixed a bug in `BlobSasPermissions` where the `Tag` permission had a default value of `True` and
+- Fixed a bug in `BlobSasPermissions` where the `tag` permission had a default value of `True` and
 therefore was being added to the SAS token by default.
 
 ## 12.10.0 (2022-03-08)
