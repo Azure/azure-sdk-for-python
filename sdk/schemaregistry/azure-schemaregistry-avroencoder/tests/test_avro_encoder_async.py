@@ -38,20 +38,23 @@ from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
 from azure.schemaregistry.encoder.avroencoder.exceptions import SchemaParseError, SchemaEncodeError, SchemaDecodeError
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils.aio import recorded_by_proxy_async
 
-SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
+SchemaRegistryEnvironmentVariableLoader = functools.partial(EnvironmentVariableLoader, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
 
-class AvroEncoderAsyncTests(AzureTestCase):
+class TestAvroEncoderAsync(AzureRecordedTestCase):
 
-    def create_client(self, fully_qualified_namespace):
+    def create_client(self, **kwargs):
+        fully_qualified_namespace = kwargs.pop("fully_qualified_namespace")
         credential = self.get_credential(SchemaRegistryClient, is_async=True)
         return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace, is_async=True)
 
     @pytest.mark.asyncio
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_basic_sr_avro_encoder_with_auto_register_schemas(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        sr_client = self.create_client(schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         async with sr_client:
@@ -115,9 +118,10 @@ class AvroEncoderAsyncTests(AzureTestCase):
             assert decoded_content_callback["favorite_color"] == u"red"
 
     @pytest.mark.asyncio
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_basic_sr_avro_encoder_without_auto_register_schemas(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        sr_client = self.create_client(schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         async with sr_client:
@@ -142,9 +146,10 @@ class AvroEncoderAsyncTests(AzureTestCase):
             assert decoded_content["favorite_color"] == u"red"
 
     @pytest.mark.asyncio
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_basic_sr_avro_encoder_decode_readers_schema(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        sr_client = self.create_client(schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -177,12 +182,35 @@ class AvroEncoderAsyncTests(AzureTestCase):
             decoded_content = await sr_avro_encoder.decode(encoded_content_dict, readers_schema=readers_schema_change_name)
             print(decoded_content)
     
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
+    async def test_basic_sr_avro_encoder_with_request_options(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+
+        dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        with pytest.raises(TypeError) as e:
+            encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"fake_kwarg": True})
+        assert 'request() got an unexpected keyword' in str(e.value)
+        encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str)
+        content_type = encoded_message_content["content_type"]
+        encoded_content = encoded_message_content["content"]
+
+        encoded_content_dict = {"content": encoded_content, "content_type": content_type}
+        with pytest.raises(TypeError) as e:
+            decoded_content = await sr_avro_encoder.decode(encoded_content_dict, request_options={"fake_kwarg": True})
+        assert 'request() got an unexpected keyword' in str(e.value)
 
     ################################################################# 
     ######################### PARSE SCHEMAS #########################
     ################################################################# 
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_parse_invalid_json_string(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
@@ -198,7 +226,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
 
     ######################### PRIMITIVES #########################
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_parse_primitive_types(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
@@ -209,7 +238,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
 
     ######################### type fixed #########################
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_parse_fixed_types(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
@@ -236,7 +266,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
 
     ######################### type unspecified #########################
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_parse_invalid_type(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
@@ -260,7 +291,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
 
     ######################### RECORD SCHEMA #########################
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_parse_record_name(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
@@ -334,7 +366,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
         with pytest.raises(SchemaParseError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_no_name) 
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_parse_error_schema_as_record(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
@@ -351,7 +384,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
         decoded_registered_schema = json.loads(registered_schema.definition)
         assert decoded_registered_schema["type"] == "error"
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_parse_record_fields(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
@@ -431,7 +465,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
     #################### ENCODE AND DECODE ##########################
     ################################################################# 
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_encode_primitive(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
@@ -440,7 +475,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
         encoded_message_content = await sr_avro_encoder.encode(None, schema=null_type) 
         assert len(encoded_message_content["content"]) == 0 # assert no content encoded
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_encode_record(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)

@@ -52,7 +52,9 @@ class MsalResponse(object):
 
         if ContentDecodePolicy.CONTEXT_NAME in self._response.context:
             content = self._response.context[ContentDecodePolicy.CONTEXT_NAME]
-            if "error" in content or "error_description" in content:
+            if not content:
+                message = "Unexpected response from Azure Active Directory"
+            elif "error" in content or "error_description" in content:
                 message = "Authentication failed: {}".format(content.get("error_description") or content.get("error"))
             else:
                 for secret in ("access_token", "refresh_token"):

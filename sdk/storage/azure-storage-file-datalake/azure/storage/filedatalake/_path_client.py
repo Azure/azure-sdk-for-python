@@ -84,12 +84,13 @@ class PathClient(StorageAccountHostsMixin):
         self._hosts[LocationMode.SECONDARY] = ""
         api_version = get_api_version(kwargs)
 
-        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, path=path_name,
-                                                   pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=file_system_name,
+                                                   path=path_name, pipeline=self._pipeline)
         self._client._config.version = api_version  # pylint: disable=protected-access
 
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
             self._blob_client.url,
+            base_url=self._blob_client.url,
             file_system=file_system_name,
             path=path_name,
             pipeline=self._pipeline)

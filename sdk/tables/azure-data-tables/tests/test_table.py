@@ -466,7 +466,7 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
         with pytest.raises(ValueError) as excinfo:
             tsc.create_table(invalid_table_name)
-            assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
                 excinfo)
     
     @tables_decorator
@@ -478,5 +478,5 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
         with pytest.raises(ValueError) as excinfo:
             tsc.create_table(invalid_table_name)
-            assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
                 excinfo)

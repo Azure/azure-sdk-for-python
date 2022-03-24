@@ -13,14 +13,18 @@ from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class AzureQueueStorageConfiguration(Configuration):
+class AzureQueueStorageConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureQueueStorage.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param url: The URL of the service account, queue or message that is the targe of the desired operation.
+    :param url: The URL of the service account, queue or message that is the target of the desired
+     operation.
     :type url: str
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2018-03-28". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
     def __init__(
@@ -28,12 +32,14 @@ class AzureQueueStorageConfiguration(Configuration):
         url: str,
         **kwargs: Any
     ) -> None:
+        super(AzureQueueStorageConfiguration, self).__init__(**kwargs)
+        version = kwargs.pop('version', "2018-03-28")  # type: str
+
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        super(AzureQueueStorageConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        self.version = "2018-03-28"
+        self.version = version
         kwargs.setdefault('sdk_moniker', 'azurequeuestorage/{}'.format(VERSION))
         self._configure(**kwargs)
 
