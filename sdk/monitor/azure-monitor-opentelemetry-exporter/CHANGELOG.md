@@ -8,6 +8,7 @@
 - Implement sending of exception telemetry via log exporter
     ([#23633](https://github.com/Azure/azure-sdk-for-python/pull/23633))
 
+
 ### Breaking Changes
 
 ### Bugs Fixed
