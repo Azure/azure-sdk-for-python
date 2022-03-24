@@ -6,6 +6,7 @@
 import cProfile
 import os
 import aiohttp
+import asyncio
 import time
 from typing import Optional, Any, Dict, List
 
@@ -160,6 +161,9 @@ class BatchPerfTest(_PerfTestBase):
         """
         Run all async tests, including both warmup and duration.
         """
+        print("await asyncio.sleep(0)")
+        # Avoid blocking the event loop, to ensure all instances execute in parallel
+        await asyncio.sleep(0)
         self._completed_operations = 0
         self._last_completion_time = 0.0
         starttime = time.time()

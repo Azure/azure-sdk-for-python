@@ -193,7 +193,8 @@ class _PerfStressRunner:
                         future.result()
                     
             else:
-                tasks = [test.run_all_async(duration) for test in self._tests]
+                print("asyncio.create_task")
+                tasks = [asyncio.create_task(test.run_all_async(duration)) for test in self._tests]
                 await asyncio.gather(*tasks)
         finally:
             status_thread.stop()
