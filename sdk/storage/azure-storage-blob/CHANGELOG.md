@@ -1,5 +1,11 @@
 # Release History
 
+## 12.10.1 (2022-03-28)
+
+### Bugs Fixed
+- Fixed a bug in `BlobSasPermissions` where the `Tag` permission had a default value of `True` and
+therefore was being added to the SAS token by default.
+
 ## 12.10.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
