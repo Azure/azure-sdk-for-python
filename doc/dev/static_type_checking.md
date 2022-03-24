@@ -49,25 +49,6 @@ There are some key benefits to using and checking type hints in Python code:
 2) type hints are shipped in our packages so that customers can consume them to further type check their own
    applications and get improved IDE and Intellisense experiences
 
-There are two styles of type hints: comment and annotation (preferred).
-
-Type comments are Python 2 compatible and consist of comments in the code which indicate the types of arguments and
-return values. Note that these are truly just comments in the code which the type checker can use.
-
-```python
-from typing import Any, Optional
-
-
-def download_blob_from_url(
-        blob_url,  # type: str
-        output,  # type: str
-        credential=None,  # type: Optional[Any]
-        **kwargs  # type: Any
-):
-    # type: (...) -> None
-    ...
-```
-
 Since Python 3, type annotations were introduced and are the **preferred** method of adding type hints to your code.
 Annotations provide a cleaner syntax and let you keep the type information closer, or inline with the code.
 
@@ -84,6 +65,8 @@ def download_blob_from_url(
     ...
 ```
 
+> Note: Do not use comment style type hints (`# type: Any`). Some of our libraries use type comments due to legacy code supporting Python 2/3, but these will eventually be updated to annotation style.
+
 A fully annotated signature includes type annotations for all parameters and the return type. The type of a parameter
 should follow the `:` syntax and a default argument can be supplied like in the `credential` parameter above. A return
 type follows the function def with an arrow `->`, its type, and then `:`.
@@ -97,8 +80,8 @@ width: int = 8
 area: int = length * width
 ```
 
-When typing your library, note that almost anything can be used as a type - built-ins like `str`, `int`, `bool`, types
-from the `typing` or `typing_extensions` modules, user-defined types, abstract base classes, and more.
+When typing your library, note that almost anything can be used as a type - basic data types like `str`, `int`, `bool`,
+types from the `typing` or `typing_extensions` modules, user-defined types, abstract base classes, and more.
 See [Types usable in annotations]() for more information.
 
 ## Typing a client library
@@ -121,6 +104,9 @@ or impossible given the expressiveness of Python as a language. So, in practice,
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
    for your library so focusing typing on high density/important areas of the code helps in detecting bugs.
+
+> Note: It's important to call out that if a function is not fully annotated, `mypy` will not type check any code
+> contained in the function. You can pass argument `--check-untyped-defs` to `mypy` to check such functions when full annotation is not possible.
 
 ### Types usable in annotations
 
@@ -161,14 +147,21 @@ from typing_extensions import Protocol
 ```
 
 Our azure-core library takes a dependency on `typing-extensions` so for most client libraries the dependency is already
-implicit. See the [typing-extensions](https://github.com/python/typing/tree/master/typing_extensions) docs to check what
-has been backported.
+implicit.
+
+When importing a backported type into code, `typing-extensions` does a try/except on your behalf (either importing
+from `typing` if supported, or `typing-extensions` if the Python version is too old) so there is no need to do this
+check yourself.
+
+See the [typing-extensions](https://github.com/python/typing/tree/master/typing_extensions) docs to check what has been
+backported.
 
 ## Install and run mypy on your client library code
 
-Our Python SDK repo has the version of mypy that we run in CI pinned to a specific version. This is to avoid surprise
-typing errors raised when a new version of `mypy` ships. All client libraries in the Python SDK repo are automatically
-opted in to running mypy (TODO not yet).
+Our Python SDK repo has the version of mypy that we run in CI pinned to a specific version (
+currently [0.931](https://pypi.org/project/mypy/0.931/)). This is to avoid surprise typing errors raised when a new
+version of `mypy` ships. All client libraries in the Python SDK repo are automatically opted in to running mypy (TODO
+not yet).
 
 The easiest way to install and run mypy locally is
 with [tox](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox). This reproduces the exact mypy
@@ -182,7 +175,7 @@ To run mypy on your library, run tox mypy env at the package level:
 
 If you don't want to use `tox` you can also install and run `mypy` on its own:
 
-`pip install mypy`
+`pip install mypy==0.931`
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>mypy azure`
 
 Note that you may see different errors if running a different version of `mypy` than the one in CI.
@@ -300,14 +293,12 @@ def tree(kind: Optional[str] = None):
     ...
 ```
 
-But not necessary here since a default argument of "oak" is provided:
+It can be used without a default to indicate that the parameter must be specified (although can be passed as `None`):
 
 ```python
-def tree(kind: str = "oak"):
+def tree(kind: Optional[str]):
     ...
 ```
-
-`typing.Optional` is preferred to be used over `typing.Union[thing, None]`.
 
 > Note: The `X | None` syntax is only supported in Python 3.10+
 
@@ -517,7 +508,7 @@ main.py:4: note:     kwargs: builtins.dict[builtins.str, Any]]"
 as such in the code. If `*args` accepts more than just `str`, a `Union[]` type or `Any` can be used depending on how
 complex the type is.
 
-### Use AnyStr when your parameter accepts both str and bytes
+### Use AnyStr when your parameter or return type expects both str and bytes
 
 The `typing` module includes a pre-defined `TypeVar` named `AnyStr`. Its definition looks like this:
 
@@ -527,7 +518,13 @@ from typing import TypeVar
 AnyStr = TypeVar('AnyStr', bytes, str)
 ```
 
-`AnyStr` can be used in functions which accept or return both bytes and str.
+`AnyStr` can be indicated in functions which use both `bytes` and `str` and helps keep consistent typing across
+arguments / return type:
+
+```python
+def concat(a: AnyStr, b: AnyStr) -> AnyStr:
+    return a + b
+```
 
 > Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar](https://docs.python.org/3/library/typing.html#typing.TypeVar)
 
@@ -552,7 +549,8 @@ def receive_deferred_messages(
 ```
 
 If you are using cast often, however, it might be an indication that the code should be otherwise written or refactored.
-Note that `typing.cast` is only used by the type checker and does not affect code at runtime.
+Note that `typing.cast` is only used by the type checker and does not affect code or slow down the implementation at
+runtime.
 
 ### Use forward references when the type is not defined yet
 
@@ -660,6 +658,10 @@ def bar() -> None:
 Note that we also had to change Baz to a forward reference since it will not be defined at runtime under
 the `TYPE_CHECKING` conditional.
 
+Another reason to use `TYPE_CHECKING` is to hide importing types which are needed only for type annotations and are
+costly to load at runtime. Types imported from `typing` or `typing_extensions` do not need to be put under
+a `TYPE_CHECKING` conditional.
+
 ### Use TypeVar for generic type hinting
 
 `TypeVar` is a generic type which can be bound to a specific type with each usage. Common usage might be to have the
@@ -740,8 +742,8 @@ ascend(p)  # OK
 b = Butterfly()
 ascend(b)  # OK
 
-p = Penguin()
-ascend(p)  # Mypy complains below
+g = Penguin()
+ascend(g)  # Mypy complains below
 ```
 
 Running mypy shows expected output:
@@ -764,6 +766,29 @@ is [azure.core.credentials.TokenCredential](https://github.com/Azure/azure-sdk-f
 . TokenCredential requires that a type implements the `get_token` method for it to be consistent with the Protocol.
 
 See more on Protocols in the [reference documentation](https://docs.python.org/3/library/typing.html#typing.Protocol).
+
+#### Use runtime_checkable to do simple, runtime structural checks
+
+If a Protocol is marked with @runtime_checkable, it can be used with `isinstance()` and `issubclass()` at runtime.
+
+```python
+# from typing import runtime_checkable  Python >=3.8
+from typing_extensions import runtime_checkable
+
+
+@runtime_checkable
+class SupportsFly(Protocol):
+    def fly(self) -> None: ...
+
+
+assert isinstance(Plane, SupportsFly)  # True
+assert isinstance(Penguin, SupportsFly)  # False
+```
+
+Because this is a runtime check, only the presence of the required methods defined by the Protocol is checked -- not
+their type signatures.
+
+> Note that runtime_checkable is backported to older versions of Python by using typing_extensions
 
 ### Use typing.overload to overload a function
 
