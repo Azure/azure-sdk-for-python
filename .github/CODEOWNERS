@@ -51,8 +51,8 @@
 /sdk/communication/                                                  @acsdevx-msft
 /sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
-/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk
-/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
