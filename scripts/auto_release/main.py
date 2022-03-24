@@ -126,6 +126,11 @@ def start_test_proxy():
 
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
+        c = ' '.join(cmd_line)
+        print(f'{c=}')
+        p = subprocess.getoutput(c)
+        print(p)
+
         process = subprocess.Popen(
             cmd_line,
             # stderr=subprocess.STDOUT,
