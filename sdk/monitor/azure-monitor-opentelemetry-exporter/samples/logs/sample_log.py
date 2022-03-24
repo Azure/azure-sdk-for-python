@@ -32,5 +32,3 @@ logger.addHandler(handler)
 logger.setLevel(logging.NOTSET)
 
 logger.warning("Hello World!")
-
-input(...)
