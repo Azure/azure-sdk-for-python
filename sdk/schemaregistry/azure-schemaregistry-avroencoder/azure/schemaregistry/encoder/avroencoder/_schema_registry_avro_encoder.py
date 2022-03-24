@@ -26,7 +26,8 @@
 import logging
 from functools import lru_cache
 from io import BytesIO
-from typing import Any, Dict, Mapping, Optional, Union, Callable
+from optparse import Option
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, TypedDict, Union, Type, overload, TypeVar
 
 from .exceptions import (  # pylint: disable=import-error
     AvroEncodeError,
@@ -34,14 +35,14 @@ from .exceptions import (  # pylint: disable=import-error
 from ._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder  # pylint: disable=import-error
 from ._message_protocol import MessageContent, MessageType  # pylint: disable=import-error
 from ._constants import (   # pylint: disable=import-error
-    SCHEMA_ID_START_INDEX,
-    SCHEMA_ID_LENGTH,
-    CONTENT_START_INDEX,
     AVRO_MIME_TYPE,
-    RECORD_FORMAT_IDENTIFIER_LENGTH,
 )
+if TYPE_CHECKING:
+    from azure.schemaregistry import SchemaRegistryClient
+    T = TypeVar("T", bound=MessageType)
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class AvroEncoder(object):
     """
@@ -124,15 +125,39 @@ class AvroEncoder(object):
         ).definition
         return schema_str
 
+    @overload
     def encode(
         self,
         content: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Optional[Callable] = None,
-        request_options: Dict[str, Any] = None,
+        message_type: Type[T],
+        request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> Union[MessageType, MessageContent]:
+    ) -> T:
+        ...
+
+    @overload
+    def encode(
+        self,
+        content: Mapping[str, Any],
+        *,
+        schema: str,
+        message_type: None = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> MessageContent:
+        ...
+
+    def encode(
+        self,
+        content,
+        *,
+        schema,
+        message_type = None,
+        request_options = None,
+        **kwargs,
+    ):
         """
         Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
          and the schema ID corresponding to given schema. If provided with a message constructor callback,
@@ -149,12 +174,9 @@ class AvroEncoder(object):
         :type content: Mapping[str, Any]
         :keyword schema: Required. The schema used to encode the content.
         :paramtype schema: str
-        :keyword message_type: The callback function or message class to construct the message. If message class,
-         it must be a subtype of the azure.schemaregistry.encoder.avroencoder.MessageType protocol.
-         If callback function, it must have the following method signature:
-         `(content: bytes, content_type: str, **kwargs) -> MessageType`, where `content` and `content_type`
-         are positional parameters.
-        :paramtype message_type: Callable or None
+        :keyword message_type: The message class to construct the message. Must be a subtype of the
+         azure.schemaregistry.encoder.avroencoder.MessageType protocol.
+        :paramtype message_type: Type[MessageType] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: MessageType or MessageContent
@@ -215,12 +237,34 @@ class AvroEncoder(object):
 
         return {"content": payload, "content_type": content_type}
 
+    @overload
     def decode(
         self,
-        message: Union[MessageType, MessageContent],
+        message: MessageContent,
         *,
         readers_schema: Optional[str] = None,
         request_options: Dict[str, Any] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        ...
+
+    @overload
+    def decode(
+        self,
+        message: MessageType,
+        *,
+        readers_schema: Optional[str] = None,
+        request_options: Dict[str, Any] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        ...
+
+    def decode(
+        self,
+        message,
+        *,
+        readers_schema = None,
+        request_options = None,
         **kwargs,   # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         """
@@ -273,13 +317,13 @@ class AvroEncoder(object):
         try:
             dict_value = self._avro_encoder.decode(
                 content, schema_definition, readers_schema=readers_schema
-            )
+            )   # type: Dict[str, Any]
         except Exception as e:  # pylint:disable=broad-except
             error_message = (
-                f"Cannot decode value '{content}' for the following schema with schema ID {schema_id}:"
+                f"Cannot decode value '{content!r}' for the following schema with schema ID {schema_id}:"
                 f"{schema_definition}\nand readers schema: {readers_schema}"
                 if readers_schema
-                else f"Cannot decode value '{content}' for schema with schema ID {schema_id}: {schema_definition}"
+                else f"Cannot decode value '{content!r}' for schema with schema ID {schema_id}: {schema_definition}"
             )
             AvroEncodeError(
                 error_message,

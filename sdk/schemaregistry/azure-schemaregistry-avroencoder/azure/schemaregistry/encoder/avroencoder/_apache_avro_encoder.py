@@ -4,10 +4,10 @@
 # --------------------------------------------------------------------------------------------
 
 from functools import lru_cache
-from typing import BinaryIO, Union, TypeVar
+from typing import BinaryIO, Union, TypeVar, Optional, cast
 from io import BytesIO
-import avro
-from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
+import avro # type: ignore
+from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder  # type: ignore
 
 from ._abstract_avro_encoder import AbstractAvroObjectEncoder   # pylint: disable=import-error
 
@@ -89,11 +89,12 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         :rtype: ObjectType
         """
         if not hasattr(content, 'read'):
+            content = cast(bytes, content)
             content = BytesIO(content)
 
         reader = self.get_schema_reader(schema, readers_schema)
 
-        with content:
+        with content:   # type: ignore
             bin_decoder = BinaryDecoder(content)
             decoded_content = reader.read(bin_decoder)
 
