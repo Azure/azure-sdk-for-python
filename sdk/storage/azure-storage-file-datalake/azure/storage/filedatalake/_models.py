@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
-from datetime import datetime
 from enum import Enum
 
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
@@ -22,6 +21,7 @@ from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
 from ._shared.models import DictMixin
+from ._shared.parser import _filetime_to_datetime, _rfc_1123_to_datetime
 
 
 class FileSystemProperties(DictMixin):
@@ -190,19 +190,21 @@ class FileProperties(DictMixin):
 class PathProperties(DictMixin):
     """Path properties listed by get_paths api.
 
-    :ivar str name: the full path for a file or directory.
+    :ivar str name: The full path for a file or directory.
     :ivar str owner: The owner of the file or directory.
-    :ivar str group: he owning group of the file or directory.
+    :ivar str group: The owning group of the file or directory.
     :ivar str permissions: Sets POSIX access permissions for the file
          owner, the file owning group, and others. Each class may be granted
          read, write, or execute permission.  The sticky bit is also supported.
          Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
          supported.
     :ivar datetime last_modified:  A datetime object representing the last time the directory/file was modified.
-    :ivar bool is_directory: is the path a directory or not.
+    :ivar bool is_directory: Is the path a directory or not.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
-    :ivar content_length: the size of file if the path is a file.
+    :ivar int content_length: The size of file if the path is a file.
+    :ivar datetime creation_time: The creation time of the file/directory.
+    :ivar datetime expiry_time: The expiry time of the file/directory.
     """
 
     def __init__(self, **kwargs):
@@ -214,6 +216,8 @@ class PathProperties(DictMixin):
         self.is_directory = kwargs.get('is_directory', False)
         self.etag = kwargs.get('etag', None)
         self.content_length = kwargs.get('content_length', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.expiry_time = kwargs.get('expiry_time', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -222,10 +226,12 @@ class PathProperties(DictMixin):
         path_prop.owner = generated.owner
         path_prop.group = generated.group
         path_prop.permissions = generated.permissions
-        path_prop.last_modified = datetime.strptime(generated.last_modified, "%a, %d %b %Y %H:%M:%S %Z")
+        path_prop.last_modified = _rfc_1123_to_datetime(generated.last_modified)
         path_prop.is_directory = bool(generated.is_directory)
         path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length
+        path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
+        path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
         return path_prop
 
 
