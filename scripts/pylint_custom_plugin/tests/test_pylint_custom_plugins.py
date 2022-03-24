@@ -2677,3 +2677,71 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_module(node)
+
+class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckAPIVersion
+
+    def test_api_version_violation(self):
+        class_node = astroid.extract_node(
+            """
+            class SomeClient(object):
+                '''
+                   :param str something: something
+                '''
+                def __init__(self, something, **kwargs):
+                    pass
+            """
+        )
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-accepts-api-version-keyword", node=class_node
+                )
+        ):
+            self.checker.visit_classdef(class_node)
+
+    def test_api_version_acceptable(self):
+        class_node = astroid.extract_node(
+            """
+            class SomeClient(object):
+                '''
+                   :param str something: something 
+                   :keyword str api_version: api_version
+                '''
+                def __init__(self, something, **kwargs):
+                    pass
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+    
+    def test_api_version_file_class_acceptable(self):
+        file = open("./test_files/api_version_checker_acceptable_class.py")
+        node = astroid.parse(file.read())
+        file.close()
+    
+        with self.assertNoMessages():
+            self.checker.visit_classdef(node.body[0])
+
+    def test_api_version_file_init_acceptable(self):
+        file = open("./test_files/api_version_checker_acceptable_init.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        
+        with self.assertNoMessages():
+            self.checker.visit_classdef(node.body[0])
+
+
+    def test_api_version_file_violation(self):
+        file = open("./test_files/api_version_checker_violation.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-accepts-api-version-keyword", node=node.body[0]
+                )
+        ):
+            self.checker.visit_classdef(node.body[0])

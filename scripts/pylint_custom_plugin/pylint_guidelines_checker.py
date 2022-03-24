@@ -1705,6 +1705,68 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     # this line makes it work for async functions
     visit_asyncfunctiondef = visit_functiondef
 
+class CheckAPIVersion(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-api-version-kwarg"
+    priority = -1
+    msgs = {
+        "C4748": (
+            "The client constructor needs to take in an optional keyword-only api_version argument"
+            "https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version",
+            "client-accepts-api-version-keyword",
+            "Accept a keyword argument called api_version.",
+        ),
+    }
+    options = (
+        (
+            "ignore-client-accepts-api-version-keyword",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow for no keyword api version.",
+            },
+        ),
+    )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
+
+    def __init__(self, linter=None):
+        super(CheckAPIVersion, self).__init__(linter)             
+
+    def visit_classdef(self, node):
+        """Visits every class in file and checks if it is a client.
+        If it is a client, it checks that there is an api_version keyword.
+
+        :param node: class node
+        :type node: ast.ClassDef
+        :return: None
+        """
+
+        try:
+            api_version = False
+            
+            if node.name.endswith("Client") and node.name not in self.ignore_clients:
+                if node.doc:
+                    if ":keyword api_version:" in node.doc or ":keyword str api_version:" in node.doc:
+                        api_version = True
+                if not api_version:    
+                    for func in node.body:
+                        if isinstance(func, astroid.FunctionDef):
+                            if func.name == '__init__':
+                                if func.doc: 
+                                    if ":keyword api_version:" in func.doc or ":keyword str api_version:" in func.doc:
+                                        api_version = True
+                                if not api_version:
+                                    self.add_message(
+                                        msgid="client-accepts-api-version-keyword", node=node, confidence=None
+                                    )   
+    
+      
+        except AttributeError:
+            logger.debug("Pylint custom checker failed to check if client takes in an optional keyword-only api_version argument.")
+            pass                                                                                    
+
 
 class CheckNamingMismatchGeneratedCode(BaseChecker):
     __implements__ = IAstroidChecker
@@ -1786,6 +1848,8 @@ def register(linter):
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
     linter.register_checker(CheckNamingMismatchGeneratedCode(linter))
+    linter.register_checker(CheckAPIVersion(linter))
+
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
