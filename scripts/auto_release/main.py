@@ -128,9 +128,8 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
         process = subprocess.Popen(
             cmd_line,
-            bufsize=5,
-            stderr=subprocess.STDOUT,
-            stdout=subprocess.PIPE,
+            # stderr=subprocess.STDOUT,
+            # stdout=subprocess.PIPE,
             universal_newlines=True,
             cwd=cwd,
             shell=shell,
