@@ -227,8 +227,11 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
                 if sdk_name == 'azure-mgmt-resource':
                     test_result = run_playback_test('resources')
                 else:
-                    service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
-                    test_result = run_playback_test(service_name)
+                    try:
+                        service_name = [k for k, v in SERVICE_TEST_PATH.items() if sdk_name in v][0]
+                        test_result = run_playback_test(service_name)
+                    except:
+                        print(f'[Error] fail to play back test recordings: {sdk_name}')
                 text_to_write += test_result
                 all_sdk_status.append(text_to_write)
 
@@ -357,7 +360,7 @@ def find_test_path(line: str, service_name: str) -> bool:
         SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
         return True
     except:
-        FAILED_RESULT.append('[FAILED] ' + line)
+        FAILED_RESULT.append('[Fail to find sdk path] ' + line)
         return False
 
 
