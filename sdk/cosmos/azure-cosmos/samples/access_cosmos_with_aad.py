@@ -1,7 +1,7 @@
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 import config
 
 # ----------------------------------------------------------------------------------------------------------
@@ -66,6 +66,9 @@ def run_sample():
         tenant_id=TENANT_ID,
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET)
+
+    # You can also utilize DefaultAzureCredential rather than directly passing in the id's and secrets.
+    aad_credentials = DefaultAzureCredential()
 
     # Use your credentials to authenticate your client.
     aad_client = cosmos_client.CosmosClient(HOST, aad_credentials)

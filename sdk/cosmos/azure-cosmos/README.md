@@ -78,23 +78,28 @@ client = CosmosClient(URL, credential=KEY)
 
 ### AAD Authentication
 
-You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package:
+You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package. 
+You can directly pass in the credentials information to ClientSecretCrednetial, or use the DefaultAzureCredential:
 ```Python
 from azure.cosmos import CosmosClient
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 import os
-URL = os.environ['ACCOUNT_URI']
-TENANT_ID = os.environ['TENANT_ID']
-CLIENT_ID = os.environ['CLIENT_ID']
-CLIENT_SECRET = os.environ['CLIENT_SECRET']
+url = os.environ['ACCOUNT_URI']
+tenant_id = os.environ['TENANT_ID']
+client_id = os.environ['CLIENT_ID']
+client_secret = os.environ['CLIENT_SECRET']
 
-AAD_CREDENTIALS = ClientSecretCredential(
-    tenant_id=TENANT_ID,
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET)
+# Using ClientSecretCredential
+aad_credentials = ClientSecretCredential(
+    tenant_id=tenant_id,
+    client_id=client_id,
+    client_secret=client_secret)
 
-client = CosmosClient(URL, AAD_CREDENTIALS)
+# Using DefaultAzureCredential
+aad_credentials = DefaultAzureCredential()
+
+client = CosmosClient(url, aad_credentials)
 ```
 More information on allowed operations for AAD authenticated clients: [RBAC Permission Model](https://aka.ms/cosmos-native-rbac)
 
