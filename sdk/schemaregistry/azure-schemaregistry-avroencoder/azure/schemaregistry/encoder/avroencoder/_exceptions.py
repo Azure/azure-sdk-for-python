@@ -23,22 +23,36 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from azure.core.exceptions import AzureError
 
-class AvroEncodeError(AzureError):
-    """Error during parsing schema, encoding data, or decoding data.
+class InvalidSchemaError(ValueError):
+    """Error during encoding data or decoding data.
     :param str message: The message object stringified as 'message' attribute
-    :keyword error: The original exception, if any
+    :keyword error: The original exception, if any.
 
     :ivar str message: A stringified version of the message parameter
     :ivar inner_exception: The exception passed with the 'error' kwarg
     :vartype inner_exception: Exception
-    :ivar exc_type: The exc_type from sys.exc_info()
-    :ivar exc_value: The exc_value from sys.exc_info()
-    :ivar exc_traceback: The exc_traceback from sys.exc_info()
-    :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
-    :ivar details: The error details, which may include information related to the schema.
+    :ivar dict details: The error details related to the schema.
     """
     def __init__(self, message, *args, **kwargs):
+        self.message = str(message)
         self.details = kwargs.pop("details", {})
-        super().__init__(message, *args, **kwargs)
+        self.inner_exception = kwargs.get("error")
+        super(InvalidSchemaError, self).__init__(self.message, *args)
+
+class AvroEncodeError(ValueError):
+    """Error during encoding data or decoding data.
+    :param str message: The message object stringified as 'message' attribute
+    :keyword error: The original exception, if any.
+
+    :ivar str message: A stringified version of the message parameter
+    :ivar inner_exception: The exception passed with the 'error' kwarg
+    :vartype inner_exception: Exception
+    :ivar dict details: The error details. Depending on the error, this may include information like:
+        `schema_id`, `schema_definition`, `message_content`.
+    """
+    def __init__(self, message, *args, **kwargs):
+        self.message = str(message)
+        self.details = kwargs.pop("details", {})
+        self.inner_exception = kwargs.get("error")
+        super(AvroEncodeError, self).__init__(self.message, *args)

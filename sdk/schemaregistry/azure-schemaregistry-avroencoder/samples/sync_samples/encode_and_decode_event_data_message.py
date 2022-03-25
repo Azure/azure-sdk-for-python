@@ -27,8 +27,14 @@ import os
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.avroencoder import AvroEncoder
+from azure.schemaregistry.encoder.avroencoder import AvroEncoder, AvroEncodeError
 from azure.eventhub import EventData
+
+a = {'h': 1}
+try:
+   b = a[1]
+except Exception as e:
+    raise AvroEncodeError('no key fool') from e
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
 CLIENT_ID = os.environ["AZURE_CLIENT_ID"]

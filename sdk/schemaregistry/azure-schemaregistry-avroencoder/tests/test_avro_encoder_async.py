@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import functools
+from typing import Type
 import pytest
 import uuid
 import json
@@ -36,7 +37,7 @@ from avro.errors import AvroTypeException
 
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
-from azure.schemaregistry.encoder.avroencoder import AvroEncodeError
+from azure.schemaregistry.encoder.avroencoder import InvalidSchemaError, AvroEncodeError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -89,12 +90,12 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
                 def __init__(self, not_content):
                     self.not_content = not_content
 
-            with pytest.raises(AvroEncodeError) as e:    # caught avro AvroEncodeError
+            with pytest.raises(AvroEncodeError) as e:
                 await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_str, message_type=BadExample) 
             assert "subtype of the MessageType" in (str(e.value))
 
             bad_ex = BadExample('fake')
-            with pytest.raises(AvroEncodeError) as e:    # caught avro AvroEncodeError
+            with pytest.raises(TypeError) as e:
                 await sr_avro_encoder.decode(message=bad_ex) 
             assert "subtype of the MessageType" in (str(e.value))
 
@@ -225,7 +226,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string"}]
         }
         invalid_schema_string = "{}".format(invalid_schema)
-        with pytest.raises(AvroEncodeError):    # caught avro AvroEncodeError
+        with pytest.raises(InvalidSchemaError):    # caught avro AvroEncodeError
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=invalid_schema_string) 
 
     ######################### PRIMITIVES #########################
@@ -237,7 +238,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register=True)
 
         primitive_string = "string"
-        with pytest.raises(AvroEncodeError) as e:
+        with pytest.raises(InvalidSchemaError) as e:
             await sr_avro_encoder.encode("hello", schema=primitive_string) 
 
     ######################### type fixed #########################
@@ -253,19 +254,19 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
         #await sr_avro_encoder.encode({}, schema=fixed_type_ignore_logical_type_error) 
 
         schema_no_size = """{"type": "fixed", "name":"User"}"""
-        with pytest.raises(AvroEncodeError):    # caught AvroException
+        with pytest.raises(InvalidSchemaError):    # caught AvroException
             await sr_avro_encoder.encode({}, schema=schema_no_size) 
 
         schema_no_name = """{"type": "fixed", "size": 3}"""
-        with pytest.raises(AvroEncodeError):    # caught AvroEncodeError
+        with pytest.raises(InvalidSchemaError):    # caught AvroEncodeError
             await sr_avro_encoder.encode({}, schema=schema_no_name) 
 
         schema_wrong_name = """{"type": "fixed", "name": 1, "size": 3}"""
-        with pytest.raises(AvroEncodeError):    # caught AvroEncodeError
+        with pytest.raises(InvalidSchemaError):    # caught AvroEncodeError
             await sr_avro_encoder.encode({}, schema=schema_wrong_name) 
 
         schema_wrong_namespace = """{"type": "fixed", "name": "User", "size": 3, "namespace": 1}"""
-        with pytest.raises(AvroEncodeError):    # caught AvroEncodeError
+        with pytest.raises(InvalidSchemaError):    # caught AvroEncodeError
             await sr_avro_encoder.encode({}, schema=schema_wrong_namespace) 
 
     ######################### type unspecified #########################
@@ -281,7 +282,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "namespace":"example.avro",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):    # caught avro AvroEncodeError
+        with pytest.raises(InvalidSchemaError):    # caught avro AvroEncodeError
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_no_type) 
 
         schema_wrong_type_type = """{
@@ -290,7 +291,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "namespace":"example.avro",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_wrong_type_type) 
 
     ######################### RECORD SCHEMA #########################
@@ -334,7 +335,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "namespace":"9example.avro",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_fullname) 
 
         schema_invalid_name_in_fullname = """{
@@ -342,7 +343,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_in_fullname) 
 
         schema_invalid_name_reserved_type = """{
@@ -350,7 +351,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_reserved_type) 
 
         schema_wrong_type_name = """{
@@ -359,7 +360,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "namespace":"example.avro",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_wrong_type_name) 
 
         schema_no_name = """{
@@ -367,7 +368,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_no_name) 
 
     @SchemaRegistryEnvironmentVariableLoader()
@@ -399,7 +400,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "namespace":"example.avro",
             "type":"record"
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_no_fields) 
 
         schema_wrong_type_fields = """{
@@ -408,7 +409,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record"
             "fields": "hello"
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_wrong_type_fields) 
 
         schema_wrong_field_item_type = """{
@@ -417,7 +418,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record"
             "fields": ["hello"]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_wrong_field_item_type) 
 
         schema_record_field_no_name= """{
@@ -426,7 +427,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_record_field_no_name) 
 
         schema_record_field_wrong_type_name= """{
@@ -435,7 +436,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name": 1, "type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_record_field_wrong_type_name) 
 
         schema_record_field_with_invalid_order = """{
@@ -444,7 +445,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name":"name","type":"string","order":"fake_order"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_record_field_with_invalid_order) 
 
         schema_record_duplicate_fields = """{
@@ -453,7 +454,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name":"name","type":"string"}, {"name":"name","type":"string"}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_record_duplicate_fields) 
 
         schema_field_type_invalid = """{
@@ -462,7 +463,7 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name":"name","type":1}]
         }"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(InvalidSchemaError):
             await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_field_type_invalid) 
 
     ################################################################# 

@@ -39,6 +39,7 @@ from typing import (
 
 from ._exceptions import (  # pylint: disable=import-error
     AvroEncodeError,
+    InvalidSchemaError
 )
 from ._apache_avro_encoder import (
     ApacheAvroObjectEncoder as AvroObjectEncoder,
@@ -194,8 +195,10 @@ class AvroEncoder(object):
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: MessageType or MessageContent
+        :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
+            Indicates an issue with parsing schema.
         :raises ~azure.schemaregistry.encoder.avroencoder.AvroEncodeError:
-            Indicates an issue with parsing schema or encoding value.
+            Indicates an issue with encoding value.
         """
 
         raw_input_schema = schema
@@ -203,9 +206,9 @@ class AvroEncoder(object):
         try:
             schema_fullname = self._avro_encoder.get_schema_fullname(raw_input_schema)
         except Exception as e:  # pylint:disable=broad-except
-            AvroEncodeError(
+            raise InvalidSchemaError(
                 f"Cannot parse schema: {raw_input_schema}", error=e
-            ).raise_with_traceback()
+            ) from e
 
         cache_misses = (
             self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
@@ -231,12 +234,12 @@ class AvroEncoder(object):
         try:
             content_bytes = self._avro_encoder.encode(content, raw_input_schema)
         except Exception as e:  # pylint:disable=broad-except
-            AvroEncodeError(
+            raise AvroEncodeError(
                 f"Cannot encode value '{content}' for the following schema with schema ID {schema_id}:"
                 f"{raw_input_schema}",
                 error=e,
                 details={"schema_id": f"{schema_id}"},
-            ).raise_with_traceback()
+            ) from e
 
         stream = BytesIO()
 
@@ -251,12 +254,14 @@ class AvroEncoder(object):
                 return message_type.from_message_content(
                     payload, content_type, **kwargs
                 )
-            except AttributeError:
-                AvroEncodeError(
+            except AttributeError as e:
+                raise AvroEncodeError(
                     f"""The content model {str(message_type)} must be a subtype of the MessageType protocol.
                         If using an Azure SDK model class, please check the README.md for the full list
-                        of supported Azure SDK models and their corresponding versions."""
-                ).raise_with_traceback()
+                        of supported Azure SDK models and their corresponding versions. Encoded content and
+                        corresponding content type will be included in the details.""",
+                    details={"message_content": {"content": payload, "content_type": content_type}}
+                ) from e
 
         return {"content": payload, "content_type": content_type}
 
@@ -305,8 +310,10 @@ class AvroEncoder(object):
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: Dict[str, Any]
+        :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
+            Indicates an issue with parsing schema.
         :raises ~azure.schemaregistry.encoder.avroencoder.AvroEncodeError:
-            Indicates an issue with parsing schema or decoding value.
+            Indicates an issue with decoding value or incompatible schemas, when given reader's schema.
         """
 
         try:
@@ -317,12 +324,12 @@ class AvroEncoder(object):
             try:
                 content = message["content"]
                 content_type = message["content_type"]
-            except (KeyError, TypeError):
-                AvroEncodeError(
+            except (KeyError, TypeError) as e:
+                raise TypeError(
                     f"""The content model {str(message)} must be a subtype of the MessageType protocol or type
                         MessageContent. If using an Azure SDK model class, please check the README.md
                         for the full list of supported Azure SDK models and their corresponding versions."""
-                ).raise_with_traceback()
+                ) from e
 
         try:
             schema_id = content_type.split("+")[1]
@@ -349,8 +356,26 @@ class AvroEncoder(object):
             )
 
         try:
+            reader = self._avro_encoder.get_schema_reader(schema_definition, readers_schema)
+        except Exception as e:
+            error_message = (
+                f"Invalid schema for the following writer's schema with schema ID {schema_id}:"
+                f"{schema_definition}\nand readers schema: {readers_schema}"
+                if readers_schema
+                else f"Invalid schema for the following writer's schema with schema ID {schema_id}: {schema_definition}"
+            )
+            raise InvalidSchemaError(
+                error_message,
+                error=e,
+                details={
+                    "schema_id": f"{schema_id}",
+                    "schema_definition": f"{schema_definition}",
+                },
+            ) from e
+
+        try:
             dict_value = self._avro_encoder.decode(
-                content, schema_definition, readers_schema=readers_schema
+                content, reader
             )  # type: Dict[str, Any]
         except Exception as e:  # pylint:disable=broad-except
             error_message = (
@@ -359,12 +384,12 @@ class AvroEncoder(object):
                 if readers_schema
                 else f"Cannot decode value '{content!r}' for schema with schema ID {schema_id}: {schema_definition}"
             )
-            AvroEncodeError(
+            raise AvroEncodeError(
                 error_message,
                 error=e,
                 details={
                     "schema_id": f"{schema_id}",
                     "schema_definition": f"{schema_definition}",
                 },
-            ).raise_with_traceback()
+            ) from e
         return dict_value
