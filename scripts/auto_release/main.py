@@ -136,35 +136,35 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         print(line)
     print('-------------------------')
 
-    try:
-        process = subprocess.Popen(
-            cmd_line,
-            stderr=subprocess.STDOUT,
-            stdout=subprocess.PIPE,
-            universal_newlines=True,
-            cwd=cwd,
-            shell=shell,
-            env=env,
-            encoding="utf-8",
-        )
-        output_buffer = []
-        for line in process.stdout:
-            output_buffer.append(line.rstrip())
-            _LOG.info(f"==[autorest55]" + output_buffer[-1])
-        process.wait()
-        output = "\n".join(output_buffer)
-        if process.returncode:
-            # print necessary error info
-            for i in range(len(output_buffer)):
-                _LOG.error(f"[Autorest66] {output_buffer[i]}")
-                # print(f"[Autorest22] {output_buffer[i]}")
-            raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
-        return output
-    except Exception as err:
-        _LOG.error(err)
-        raise
-    else:
-        _LOGGER.info("Return code: %s", process.returncode)
+    # try:
+    #     process = subprocess.Popen(
+    #         cmd_line,
+    #         stderr=subprocess.STDOUT,
+    #         stdout=subprocess.PIPE,
+    #         universal_newlines=True,
+    #         cwd=cwd,
+    #         shell=shell,
+    #         env=env,
+    #         encoding="utf-8",
+    #     )
+    #     output_buffer = []
+    #     for line in process.stdout:
+    #         output_buffer.append(line.rstrip())
+    #         _LOG.info(f"==[autorest55]" + output_buffer[-1])
+    #     process.wait()
+    #     output = "\n".join(output_buffer)
+    #     if process.returncode:
+    #         # print necessary error info
+    #         for i in range(len(output_buffer)):
+    #             _LOG.error(f"[Autorest66] {output_buffer[i]}")
+    #             # print(f"[Autorest22] {output_buffer[i]}")
+    #         raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
+    #     return output
+    # except Exception as err:
+    #     _LOG.error(err)
+    #     raise
+    # else:
+    #     _LOGGER.info("Return code: %s", process.returncode)
 
 
 class CodegenTestPR:
