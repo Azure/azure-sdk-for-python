@@ -171,7 +171,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             try:
                 sp_run()
             except subprocess.CalledProcessError as ex:
-                    sp_run()
+                sp_run()
     except Exception as err:
         _LOG.error(err)
         raise
