@@ -47,12 +47,20 @@
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
+# PRLabel: %Communication - Phone Numbers
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
+
+# PRLabel: %Communication - SMS
+/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+
+# PRLabel: %Communication - Identity
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+
+# PRLabel: %Communication - Common
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
-/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
-/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
-/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
