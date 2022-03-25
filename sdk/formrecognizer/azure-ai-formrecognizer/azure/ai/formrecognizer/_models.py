@@ -2599,12 +2599,14 @@ class DocumentField(object):
         :rtype: dict
         """
         value = self.value
-        if isinstance(self.value, dict):
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper to_dict() method.
+        if self.value_type == "currency":
+            value = self.value.to_dict()
+        elif isinstance(self.value, dict):
             value = {k: v.to_dict() for k, v in self.value.items()}
         elif isinstance(self.value, list):
             value = [v.to_dict() for v in self.value]
-        elif self.value_type == "currency":
-            value = self.value.to_dict()
         return {
             "value_type": self.value_type,
             "value": value,
@@ -2629,12 +2631,14 @@ class DocumentField(object):
         """
 
         value = data.get("value", None)
-        if isinstance(data.get("value"), dict):
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper from_dict() method.
+        if data.get("value_type", None) == "currency":
+            value = CurrencyValue.from_dict(data.get("value"))
+        elif isinstance(data.get("value"), dict):
             value = {k: DocumentField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
         elif isinstance(data.get("value"), list):
             value = [DocumentField.from_dict(v) for v in data.get("value")]  # type: ignore
-        elif data.get("value_type", None) == "currency":
-            value = CurrencyValue.from_dict(data.get("value"))
 
         return cls(
             value_type=data.get("value_type", None),
