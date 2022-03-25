@@ -11,6 +11,7 @@ from io import BytesIO
 from devtools_testutils.aio import recorded_by_proxy_async
 from datetime import date, time
 from azure.core.exceptions import HttpResponseError
+from azure.core.serialization import AzureJSONEncoder
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
@@ -212,7 +213,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
         d = result.to_dict()
         # this is simply checking that the dict is JSON serializable
-        json.dumps(d)
+        json.dumps(d, cls=AzureJSONEncoder)
         result = AnalyzeResult.from_dict(d)
 
         assert len(result.documents) == 2
@@ -494,7 +495,9 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             poller = await client.begin_analyze_document("prebuilt-invoice", invoice)
 
             result = await poller.result()
-
+        d = result.to_dict()
+        json.dumps(d, cls=AzureJSONEncoder)
+        result = AnalyzeResult.from_dict(d)
         assert len(result.documents) == 1
         invoice = result.documents[0]
 
