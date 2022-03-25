@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import pytest
+import json
 import functools
 from datetime import date, time
 from devtools_testutils import recorded_by_proxy
@@ -419,6 +420,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         result = poller.result()
 
         d = result.to_dict()
+        # this is simply checking that the dict is JSON serializable
+        json.dumps(d)
         result = AnalyzeResult.from_dict(d)
 
         assert len(result.documents) == 2
