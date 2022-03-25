@@ -15,7 +15,7 @@
 
 - This release and future releases will not backward compatibility support for decoding data that was encoded with the AvroSerializer.
 - The `encode` and `decode` methods on `AvroEncoder` support the following message models:
-  - `azure.eventhub.EventData` in `azure-eventhub==5.9.0b2`
+  - `azure.eventhub.EventData` in `azure-eventhub==5.9.0b3`
 
 ## 1.0.0b2 (2022-03-09)
 
