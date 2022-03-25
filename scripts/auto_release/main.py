@@ -153,10 +153,10 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             encoding='utf-8'
         )
         output_buffer = []
-        stdout, stderr = process.communicate()
+        process.wait()
         print("process.stdout")
-        print("stdout: ", stdout)
-        print("stderr: ", stderr)
+        print("stdout: ", process.stdout)
+        print("stderr: ", process.stderr)
         print("***************")
         for line in process.stdout:
             output_buffer.append(line.rstrip())
