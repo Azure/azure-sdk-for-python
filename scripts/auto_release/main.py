@@ -128,12 +128,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
         c = ' '.join(cmd_line)
         print(f'c={c}')
-        data = subprocess.check_output(c, shell=True, text=True, stderr=subprocess.STDOUT)
-        ps = data.split('\n')
-        print('+++++++++++++++++++')
-        for line in ps[len(ps) - 6:len(ps)]:
-            print(line)
-        print('++++++++++++++++++++')
+        data = subprocess.getoutput(c)
     except subprocess.CalledProcessError as ex:
         data = ex.output
     print('-------------------------')
@@ -144,44 +139,32 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
         process = subprocess.Popen(
             cmd_line,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             stdout=subprocess.PIPE,
             universal_newlines=True,
             cwd=cwd,
             shell=shell,
             env=env,
-            encoding='utf-8'
+            encoding="utf-8",
         )
         output_buffer = []
+        for line in process.stdout:
+            output_buffer.append(line.rstrip())
+            _LOG.info(f"==[autorest55]" + output_buffer[-1])
         process.wait()
-        # print("process.stdout")
-        # print("stdout: ", list(process.stdout))
-        # print("stderr: ", list(process.stderr))
-        print("***************")
-        # for line in process.stdout:
-        #     output_buffer.append(line.rstrip())
-        #     _LOG.info(f"==[autorest22]" + output_buffer[-1])
-
-        # output = "\n".join(output_buffer)
+        output = "\n".join(output_buffer)
         if process.returncode:
-            # print(f'++++ {process.returncode}')
-            # # print necessary error info
-            # for i in range(len(output_buffer)):
-            #     _LOG.error(f"[Autorest11] {output_buffer[i]}")
+            # print necessary error info
+            for i in range(len(output_buffer)):
+                _LOG.error(f"[Autorest66] {output_buffer[i]}")
                 # print(f"[Autorest22] {output_buffer[i]}")
-            raise subprocess.CalledProcessError(process.returncode, cmd_line, output=process.stdout)
-    except subprocess.CalledProcessError as ex:
-        data = ex.output
-        # print('-------------------------')
-        # for line in data:
-        #     print(line)
-        # print('-------------------------')
-        raise subprocess.CalledProcessError(process.returncode, cmd_line)
+            raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
+        return output
     except Exception as err:
         _LOG.error(err)
         raise
     else:
-        _LOG.info("Return code: %s", process.returncode)
+        _LOGGER.info("Return code: %s", process.returncode)
 
 
 class CodegenTestPR:
