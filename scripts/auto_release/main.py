@@ -127,11 +127,23 @@ def start_test_proxy():
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
         c = ' '.join(cmd_line)
-        print(f'{c=}')
-        p = subprocess.getoutput(c)
-        print(p)
+        print(f'c={c}')
+        data = subprocess.check_output(c, shell=True, text=True, stderr=subprocess.STDOUT)
+        ps = data.split('\n')
+        print('+++++++++++++++++++')
+        for line in ps[len(ps) - 6:len(ps)]:
+            print(line)
+        print('++++++++++++++++++++')
+    except subprocess.CalledProcessError as ex:
+        data = ex.output
+    if data[-1:] == '\n':
+        data = data[:-1]
+    print('+++++++++++++++++++')
+    print(data.split('\n'))
+    print('++++++++++++++++++++')
 
-        process = subprocess.Popen(
+    try:
+        ss = subprocess.Popen(
             cmd_line,
             # stderr=subprocess.STDOUT,
             # stdout=subprocess.PIPE,
