@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import logging
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union, Optional, overload, Type
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, overload, Type
 from ._async_lru import alru_cache  # pylint: disable=import-error
 from .._constants import (  # pylint: disable=import-error
     AVRO_MIME_TYPE,

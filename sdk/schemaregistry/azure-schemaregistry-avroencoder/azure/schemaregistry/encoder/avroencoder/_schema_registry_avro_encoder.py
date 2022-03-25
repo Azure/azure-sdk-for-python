@@ -26,15 +26,12 @@
 import logging
 from functools import lru_cache
 from io import BytesIO
-from optparse import Option
 from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
     Mapping,
     Optional,
-    TypedDict,
-    Union,
     Type,
     overload,
     TypeVar,
@@ -58,7 +55,7 @@ if TYPE_CHECKING:
     from azure.schemaregistry import SchemaRegistryClient
 
 _LOGGER = logging.getLogger(__name__)
-T = TypeVar("T", bound=MessageType)
+T = TypeVar("T", bound=MessageType) # pylint: disable=invalid-name
 
 
 class AvroEncoder(object):
