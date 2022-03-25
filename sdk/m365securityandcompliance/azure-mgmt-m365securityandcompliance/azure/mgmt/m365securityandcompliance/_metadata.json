@@ -1,0 +1,122 @@
+{
+    "chosen_version": "2021-03-25-preview",
+    "total_api_version_list": ["2021-03-25-preview"],
+    "client": {
+        "name": "M365SecurityAndComplianceClient",
+        "filename": "_m365_security_and_compliance_client",
+        "description": "Security And Compliance Client.",
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"M365SecurityAndComplianceClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"M365SecurityAndComplianceClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The subscription identifier.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The subscription identifier.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "operations": "Operations",
+        "operation_results": "OperationResultsOperations",
+        "private_link_services_for_edm_upload": "PrivateLinkServicesForEDMUploadOperations",
+        "services": "ServicesOperations",
+        "private_endpoint_connections_for_edm": "PrivateEndpointConnectionsForEDMOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "private_link_services_for_m365_compliance_center": "PrivateLinkServicesForM365ComplianceCenterOperations",
+        "private_endpoint_connections_comp": "PrivateEndpointConnectionsCompOperations",
+        "private_link_resources_comp": "PrivateLinkResourcesCompOperations",
+        "private_link_services_for_m365_security_center": "PrivateLinkServicesForM365SecurityCenterOperations",
+        "private_endpoint_connections_sec": "PrivateEndpointConnectionsSecOperations",
+        "private_link_resources_sec": "PrivateLinkResourcesSecOperations",
+        "private_link_services_for_o365_management_activity_api": "PrivateLinkServicesForO365ManagementActivityAPIOperations",
+        "private_endpoint_connections_adt_api": "PrivateEndpointConnectionsAdtAPIOperations",
+        "private_link_resources_adt_api": "PrivateLinkResourcesAdtAPIOperations",
+        "private_link_services_for_scc_powershell": "PrivateLinkServicesForSCCPowershellOperations",
+        "private_endpoint_connections_for_scc_powershell": "PrivateEndpointConnectionsForSCCPowershellOperations",
+        "private_link_resources_for_scc_powershell": "PrivateLinkResourcesForSCCPowershellOperations",
+        "private_link_services_for_mip_policy_sync": "PrivateLinkServicesForMIPPolicySyncOperations",
+        "private_endpoint_connections_for_mip_policy_sync": "PrivateEndpointConnectionsForMIPPolicySyncOperations",
+        "private_link_resources_for_mip_policy_sync": "PrivateLinkResourcesForMIPPolicySyncOperations"
+    }
+}
