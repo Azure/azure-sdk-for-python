@@ -155,23 +155,33 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         output_buffer = []
         process.wait()
         print("process.stdout")
-        print("stdout: ", process.stdout)
-        print("stderr: ", process.stderr)
+        print("stdout: ", list(process.stdout))
+        print("stderr: ", list(process.stderr))
         print("***************")
         for line in process.stdout:
             output_buffer.append(line.rstrip())
             _LOG.info(f"==[autorest22]" + output_buffer[-1])
 
         output = "\n".join(output_buffer)
+        if not process.returncode:
+            return output
+    except subprocess.CalledProcessError as ex:
+        data = ex.output
+        print('-------------------------')
+        for line in data.split('\n'):
+            print(line)
+        print('-------------------------')
+        raise subprocess.CalledProcessError(process.returncode, cmd_line)
 
-        if process.returncode:
-            print(f'++++ {process.returncode}')
-            # print necessary error info
-            for i in range(len(output_buffer)):
-                _LOG.error(f"[Autorest11] {output_buffer[i]}")
-                # print(f"[Autorest22] {output_buffer[i]}")
-            raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
-        return output
+
+        # if process.returncode:
+        #     print(f'++++ {process.returncode}')
+        #     # print necessary error info
+        #     for i in range(len(output_buffer)):
+        #         _LOG.error(f"[Autorest11] {output_buffer[i]}")
+        #         # print(f"[Autorest22] {output_buffer[i]}")
+        #     raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
+
     except Exception as err:
         _LOG.error(err)
         raise
