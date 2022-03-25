@@ -169,7 +169,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             for i in range(len(output_buffer)):
                 _LOG.error(f"[Autorest11] {output_buffer[i]}")
                 # print(f"[Autorest22] {output_buffer[i]}")
-            raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
+            raise subprocess.CalledProcessError(process.returncode, cmd_line, output=process.stdout)
     except subprocess.CalledProcessError as ex:
         data = ex.output
         print('-------------------------')
