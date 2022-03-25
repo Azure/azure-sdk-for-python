@@ -2634,7 +2634,7 @@ class DocumentField(object):
         # CurrencyValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper from_dict() method.
         if data.get("value_type", None) == "currency":
-            value = CurrencyValue.from_dict(data.get("value"))
+            value = CurrencyValue.from_dict(data.get("value"))  #type: ignore
         elif isinstance(data.get("value"), dict):
             value = {k: DocumentField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
         elif isinstance(data.get("value"), list):
