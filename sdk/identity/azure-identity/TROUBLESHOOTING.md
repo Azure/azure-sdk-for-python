@@ -1,4 +1,4 @@
-# Troubleshooting Azure Identity Authentication Issues
+# Troubleshoot Azure Identity Authentication Issues
 
 This troubleshooting guide covers failure investigation techniques, common errors for the credential types in the Azure Identity Python client library, and mitigation steps to resolve these errors.
 
@@ -10,18 +10,18 @@ This troubleshooting guide covers failure investigation techniques, common error
   - [Permission Issues](#permission-issues)
 - [Finding Relevant Information in Error Messages](#finding-relevant-information-in-error-messages)
 - [Logging](#logging)
-- [Troubleshooting DefaultAzureCredential Authentication Issues](#troubleshooting-defaultazurecredential-authentication-issues)
-- [Troubleshooting EnvironmentCredential Authentication Issues](#troubleshooting-environmentcredential-authentication-issues)
-- [Troubleshooting ClientSecretCredential Authentication Issues](#troubleshooting-clientsecretcredential-authentication-issues)
-- [Troubleshooting ClientCertificateCredential Authentication Issues](#troubleshooting-clientcertificatecredential-authentication-issues)
-- [Troubleshooting UsernamePasswordCredential Authentication Issues](#troubleshooting-usernamepasswordcredential-authentication-issues)
-- [Troubleshooting ManagedIdentityCredential Authentication Issues](#troubleshooting-managedidentitycredential-authentication-issues)
+- [Troubleshoot DefaultAzureCredential Authentication Issues](#troubleshoot-defaultazurecredential-authentication-issues)
+- [Troubleshoot EnvironmentCredential Authentication Issues](#troubleshoot-environmentcredential-authentication-issues)
+- [Troubleshoot ClientSecretCredential Authentication Issues](#troubleshoot-clientsecretcredential-authentication-issues)
+- [Troubleshoot ClientCertificateCredential Authentication Issues](#troubleshooting-clientcertificatecredential-authentication-issues)
+- [Troubleshoot UsernamePasswordCredential Authentication Issues](#troubleshoot-usernamepasswordcredential-authentication-issues)
+- [Troubleshoot ManagedIdentityCredential Authentication Issues](#troubleshoot-managedidentitycredential-authentication-issues)
   - [Azure Virtual Machine Managed Identity](#azure-virtual-machine-managed-identity)
   - [Azure App Service and Azure Functions Managed Identity](#azure-app-service-and-azure-functions-managed-identity)
-- [Troubleshooting VisualStudioCodeCredential Authentication Issues](#troubleshooting-visualstudiocodecredential-authentication-issues)
-- [Troubleshooting VisualStudioCredential Authentication Issues](#troubleshooting-visualstudiocredential-authenticaton-issues)
-- [Troubleshooting AzureCliCredential Authentication Issues](#troubleshooting-azureclicredential-authentication-issues)
-- [Troubleshooting AzurePowerShellCredential Authentication Issues](#troubleshooting-azurepowershellcredential-authentication-issues)
+- [Troubleshoot VisualStudioCodeCredential Authentication Issues](#troubleshoot-visualstudiocodecredential-authentication-issues)
+- [Troubleshoot VisualStudioCredential Authentication Issues](#troubleshoot-visualstudiocredential-authentication-issues)
+- [Troubleshoot AzureCliCredential Authentication Issues](#troubleshoot-azureclicredential-authentication-issues)
+- [Troubleshoot AzurePowerShellCredential Authentication Issues](#troubleshoot-azurepowershellcredential-authentication-issues)
 
 ## Handling Azure Identity Errors
 
@@ -75,14 +75,14 @@ headers, can be enabled on the client or per-operation with the `logging_enable`
 
 See full SDK logging documentation with examples [here][sdk_logging_docs].
 
-## Troubleshooting `DefaultAzureCredential` Authentication Issues
+## Troubleshoot `DefaultAzureCredential` Authentication Issues
 
 | Error |Description| Mitigation |
 |---|---|---|
-|`CredentialUnavailableError` raised with message. "DefaultAzureCredential failed to retrieve a token from the included credentials."|All credentials in the `DefaultAzureCredential` chain failed to retrieve a token, each raising a `CredentialUnavailableError` themselves|<ul><li>[Enable logging](#logging) to verify the credentials being tried, and get further diagnostic information.</li><li>Consult the troubleshooting guide for underlying credential types for more information.</li><ul><li>[EnvironmentCredential](#troubleshooting-environment-credential-authentication-issues)</li><li>[ManagedIdentityCredential](#troubleshooting-managedidentitycredential-authentication-issues)</li><li>[VisualStudioCodeCredential](#troubleshooting-visualstudiocodecredential-authentication-issues)</li><li>[VisualStudioCredential](#troubleshooting-visualstudiocredential-authentication-issues)</li><li>[AzureCLICredential](#troubleshooting-azureclicredential-authentication-issues)</li><li>[AzurePowershellCredential](#troubleshooting-azurepowershellcredential-authentication-issues)</li></ul>|
+|`CredentialUnavailableError` raised with message. "DefaultAzureCredential failed to retrieve a token from the included credentials."|All credentials in the `DefaultAzureCredential` chain failed to retrieve a token, each raising a `CredentialUnavailableError` themselves|<ul><li>[Enable logging](#logging) to verify the credentials being tried, and get further diagnostic information.</li><li>Consult the troubleshooting guide for underlying credential types for more information.</li><ul><li>[EnvironmentCredential](#troubleshoot-environment-credential-authentication-issues)</li><li>[ManagedIdentityCredential](#troubleshoot-managedidentitycredential-authentication-issues)</li><li>[VisualStudioCodeCredential](#troubleshoot-visualstudiocodecredential-authentication-issues)</li><li>[VisualStudioCredential](#troubleshoot-visualstudiocredential-authentication-issues)</li><li>[AzureCLICredential](#troubleshoot-azureclicredential-authentication-issues)</li><li>[AzurePowershellCredential](#troubleshoot-azurepowershellcredential-authentication-issues)</li></ul>|
 |`ClientAuthenticationError` raised from the client with a status code of 401 or 403|Authentication succeeded but the authorizing Azure service responded with a 401 (Authenticate), or 403 (Forbidden) status code. This can often be caused by the `DefaultAzureCredential` authenticating an account other than the intended.|<ul><li>[Enable logging](#logging) to determine which credential in the chain returned the authenticating token.</li><li>In the case a credential other than the expected is returning a token, bypass this by either signing out of the corresponding development tool, or excluding the credential with the exclude-xxx-credential when creating `DefaultAzureCredential`</li></ul>|
 
-## Troubleshooting `EnvironmentCredential` Authentication Issues
+## Troubleshoot `EnvironmentCredential` Authentication Issues
 
 `CredentialUnavailableError`
 
@@ -90,7 +90,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 |---|---|---|
 |Environment variables aren't fully configured.|A valid combination of environment variables wasn't set.|Ensure the appropriate environment variables are set **prior to application startup** for the intended authentication method.<p/>  <ul><li>To authenticate a service principal using a client secret, ensure the variables `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_CLIENT_SECRET` are properly set.</li><li>To authenticate a service principal using a certificate, ensure the variables `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_CLIENT_CERTIFICATE_PATH` are properly set.</li><li>To authenticate a user using a password, ensure the variables `AZURE_USERNAME` and `AZURE_PASSWORD` are properly set.</li><ul>|
 
-## Troubleshooting `ClientSecretCredential` Authentication Issues
+## Troubleshoot `ClientSecretCredential` Authentication Issues
 
 `ClientAuthenticationError`
 
@@ -98,7 +98,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 |---|---|---|
 |AADSTS7000215|An invalid client secret was provided.|Ensure the `client_secret` provided when constructing the credential is valid. If unsure, create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
 
-## Troubleshooting `ClientCertificateCredential` Authentication Issues
+## Troubleshoot `ClientCertificateCredential` Authentication Issues
 
 `ClientAuthenticationError`
 | Error Code | Description | Mitigation |
@@ -106,7 +106,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 |AADSTS700027|Client assertion contains an invalid signature.|Ensure the specified certificate has been uploaded to the AAD application registration. Instructions for uploading certificates to the application registration can be found [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-1-upload-a-certificate).|
 |AADSTS700016|The specified application wasn’t found in the specified tenant.| Ensure the specified `client_id` and `tenant_id` are correct for your application registration. For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](ttps://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal).
 
-## Troubleshooting `UsernamePasswordCredential` Authentication Issues
+## Troubleshoot `UsernamePasswordCredential` Authentication Issues
 
 `ClientAuthenticationError`
 | Error Code | Issue | Mitigation |
@@ -114,7 +114,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 |AADSTS50126|The provided username or password is invalid|Ensure the `username` and `password` provided when constructing the credential are valid.|
 ||||
 
-## Troubleshooting `ManagedIdentityCredential` Authentication Issues
+## Troubleshoot `ManagedIdentityCredential` Authentication Issues
 
 The `ManagedIdentityCredential` is designed to work on a variety of Azure hosts that provide managed identity. Configuring the managed identity and troubleshooting failures varies from hosts. The below table lists the Azure hosts that can be assigned a managed identity, and are supported by the `ManagedIdentityCredential`.
 
@@ -124,7 +124,11 @@ The `ManagedIdentityCredential` is designed to work on a variety of Azure hosts 
 |Azure App Service and Azure Functions|[Configuration](https://docs.microsoft.com/azure/app-service/overview-managed-identity)|[Troubleshooting](#azure-app-service-and-azure-functions-managed-identity)|
 |Azure Kubernetes Service|[Configuration](https://azure.github.io/aad-pod-identity/docs/)|[Troubleshooting](#azure-kubernetes-service-managed-identity)|
 |Azure Arc|[Configuration](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)||
-|Azure Service Fabric|[Configuration](https://docs.microsoft.com/azure/service-fabric/concepts-managed-identity)||`CredentialUnavailableError`
+|Azure Service Fabric|[Configuration](https://docs.microsoft.com/azure/service-fabric/concepts-managed-identity)||
+
+### Azure Virtual Machine Managed Identity
+
+`CredentialUnavailableError`
 
 | Error Message |Description| Mitigation |
 |---|---|---|
