@@ -1,8 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """
-An example to show an application using Opentelemetry logging sdk. Logging calls to the standard Python
-logging library are tracked and telemetry is exported to application insights with the AzureMonitorLogExporter.
+An example showing how to export exception telemetry using the AzureMonitorLogExporter.
 """
 import os
 import logging
@@ -31,4 +30,8 @@ logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 logger.setLevel(logging.NOTSET)
 
-logger.warning("Hello World!")
+try:
+    val = 1 / 0
+    print(val)
+except ZeroDivisionError:
+    logger.exception("Error: Division by zero")
