@@ -96,7 +96,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 | Error Code | Issue | Mitigation |
 |---|---|---|
-|AADSTS7000215|An invalid client secret was provided.|Ensure the `client_secret` provided when constructing the credential is valid. If unsure, create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
+|AADSTS7000215|An invalid client secret was provided.|Ensure the `client_secret` provided when constructing the credential is valid. If unsure, create a new client secret using the Azure portal. Details on creating a new client secret can be found [here](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-2-create-a-new-application-secret).|
 
 ## Troubleshoot `ClientCertificateCredential` Authentication Issues
 
