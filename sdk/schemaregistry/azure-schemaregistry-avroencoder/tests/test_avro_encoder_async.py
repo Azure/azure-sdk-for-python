@@ -36,7 +36,7 @@ from avro.errors import AvroTypeException
 
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
-from azure.schemaregistry.encoder.avroencoder.exceptions import AvroEncodeError
+from azure.schemaregistry.encoder.avroencoder import AvroEncodeError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async

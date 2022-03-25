@@ -29,7 +29,7 @@ import json
 
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder import AvroEncoder
-from azure.schemaregistry.encoder.avroencoder.exceptions import AvroEncodeError
+from azure.schemaregistry.encoder.avroencoder import AvroEncodeError
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy, AzureTestCase
 
 import avro

@@ -38,7 +38,7 @@ from .._apache_avro_encoder import (
     ApacheAvroObjectEncoder as AvroObjectEncoder,
 )  # pylint: disable=import-error
 from .._schema_registry_avro_encoder import T  # pylint: disable=import-error
-from ..exceptions import (  # pylint: disable=import-error
+from .._exceptions import (  # pylint: disable=import-error
     AvroEncodeError,
 )
 
@@ -182,7 +182,7 @@ class AvroEncoder(object):
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: MessageType or MessageContent
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.AvroEncodeError:
+        :raises ~azure.schemaregistry.encoder.avroencoder.AvroEncodeError:
             Indicates an issue with parsing schema or encoding value.
         """
 
@@ -291,7 +291,7 @@ class AvroEncoder(object):
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: Dict[str, Any]
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.AvroEncodeError:
+        :raises ~azure.schemaregistry.encoder.avroencoder.AvroEncodeError:
             Indicates an issue with parsing schema or decoding value.
         """
 
