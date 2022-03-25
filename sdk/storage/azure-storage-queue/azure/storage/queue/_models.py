@@ -264,10 +264,10 @@ class MessagesPaged(PageIterator):
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
         call.
-    :param int messages_to_retrieve: The maximum number of messages to retrieve from
+    :param int max_messages: The maximum number of messages to retrieve from
         the queue.
     """
-    def __init__(self, command, results_per_page=None, continuation_token=None, messages_to_retrieve=None):
+    def __init__(self, command, results_per_page=None, continuation_token=None, max_messages=None):
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
 
@@ -277,20 +277,20 @@ class MessagesPaged(PageIterator):
         )
         self._command = command
         self.results_per_page = results_per_page
-        self.messages_to_retrieve = messages_to_retrieve
+        self.max_messages = max_messages
 
     def _get_next_cb(self, continuation_token):
         try:
-            if self.messages_to_retrieve is not None:
+            if self.max_messages is not None:
                 if self.results_per_page is None:
                     self.results_per_page = 1
-                if self.messages_to_retrieve == 0: 
+                if self.max_messages == 0: 
                     raise StopIteration("End of paging")
-                if self.results_per_page > self.messages_to_retrieve: 
-                    self.results_per_page = self.messages_to_retrieve
-                    self.messages_to_retrieve = 0
+                if self.results_per_page > self.max_messages: 
+                    self.results_per_page = self.max_messages
+                    self.max_messages = 0
                 else:
-                    self.messages_to_retrieve = self.messages_to_retrieve - self.results_per_page
+                    self.max_messages = self.max_messages - self.results_per_page
             return self._command(number_of_messages=self.results_per_page)
         except HttpResponseError as error:
             process_storage_error(error)

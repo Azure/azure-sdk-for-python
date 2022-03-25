@@ -3,6 +3,7 @@
 ## 12.2.1 (Unreleased)
 
 ### Features Added
+- Added support for `create_if_not_exists()` for `QueueClient`
 - Added support for `max_messages` in `receive_messages()` to specify the maximum number of messages to receive from the queue.
 
 ### Other Changes
