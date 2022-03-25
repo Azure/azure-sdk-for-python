@@ -9,7 +9,7 @@ init-hook='import sys; sys.path.insert(0, os.path.abspath(os.getcwd().rsplit("az
 load-plugins=pylint_guidelines_checker
 
 [MESSAGES CONTROL]
-# For all codes, run 'pylint --list-msgs' or go to 'https://pylint.readthedocs.io/en/latest/reference_guide/features.html'
+# For all codes, run 'pylint --list-msgs' or go to 'https://pylint.pycqa.org/en/latest/technical_reference/features.html'
 # locally-disabled: Warning locally suppressed using disable-msg
 # cyclic-import: because of https://github.com/PyCQA/pylint/issues/850
 # too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
