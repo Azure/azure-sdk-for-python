@@ -1,5 +1,11 @@
 # Release History
 
+## 9.2.0 (2022-03-25)
+
+**Features**
+
+  - Model IpAddress has a new parameter dns_name_label_reuse_policy
+
 ## 9.1.0 (2021-10-13)
 
 **Features**
