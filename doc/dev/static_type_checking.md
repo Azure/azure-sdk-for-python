@@ -82,7 +82,7 @@ area: int = length * width
 
 When typing your library, note that almost anything can be used as a type - basic data types like `str`, `int`, `bool`,
 types from the `typing` or `typing_extensions` modules, user-defined types, abstract base classes, and more.
-See [Types usable in annotations]() for more information.
+See [Types usable in annotations](#types-usable-in-annotations) for more information.
 
 ## Typing a client library
 
@@ -105,7 +105,7 @@ or impossible given the expressiveness of Python as a language. So, in practice,
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
    for your library so focusing typing on high density/important areas of the code helps in detecting bugs.
 
-> Note: It's important to call out that if a function is not fully annotated, `mypy` will not type check any code
+> Note: It's important to call out that if a function is not fully annotated (all arguments and return type), `mypy` will not type check any code
 > contained in the function. You can pass argument `--check-untyped-defs` to `mypy` to check such functions when full annotation is not possible.
 
 ### Types usable in annotations
@@ -276,7 +276,7 @@ example, usage of `Union[int, float]` is not necessary since `int` is consistent
 also recommended trying to avoid having functions return `Union` types as it causes the user to need to understand/parse
 through the return value before acting on it. Sometimes this can be resolved by using an [overload](TODO).
 
-### Use typing.Optional when a parameter default is None
+### Use typing.Optional when a parameter can be None
 
 Python's typing docs for [Optional](https://docs.python.org/3/library/typing.html#typing.Optional) explain that
 
@@ -293,7 +293,7 @@ def tree(kind: Optional[str] = None):
     ...
 ```
 
-It can be used without a default to indicate that the parameter must be specified (although can be passed as `None`):
+It can also be used without a default to indicate that the parameter must be specified (although can be passed as `None`):
 
 ```python
 def tree(kind: Optional[str]):
@@ -340,6 +340,46 @@ By accepting `typing.Mapping` here, we give more flexibility to the user and all
 with a `typing.Mapping` - dict, defaultdict, a user-defined dict-like class, or a subtype of `typing.Mapping`. Had we
 specified a generic `typing.Dict` here, the `entity` passed must be a `dict` or one of its subtypes, narrowing the types
 accepted.
+
+With [PEP 589](https://peps.python.org/pep-0589/), a `TypedDict` was introduced in Python 3.8 which allows you to add type hints for
+dictionaries with a fixed set of keys. The syntax for this looks similar to building a dataclass:
+
+```python
+# from typing import TypedDict  # Python >= 3.8
+from typing_extensions import TypedDict
+
+class Employee(TypedDict):
+    name: str
+    title: str
+    ident: int
+    current: bool
+```
+
+It's important to note that `Employee` has no runtime effect - the interpreter will not validate that the keys or values passed are the correct types.
+However, during static type checking, when the `Employee` TypeDict is constructed, `mypy` will expect a dict with the keys and typed values specified.
+
+```python
+employee = Employee(name="krista", title="swe", ident="nah", current=True)
+```
+
+`mypy` identifies that the `ident` key is the wrong type:
+
+`main.py:9: error: Incompatible types (expression has type "str", TypedDict item "ident" has type "int")`
+
+At runtime, `employee` is perfectly valid even though it does not conform to a true `Employee`:
+
+```cmd
+>>>employee = Employee(name="krista", title="swe", ident="nah", current=True)
+>>>print(employee)
+{'name': 'krista', 'title': 'swe', 'ident': 'nah', 'current': True}
+>>>type(employee)
+<class 'dict'>
+```
+
+Note that this also just creates a plain `dict` at runtime. Usage of `TypedDict` is a great way to document how a specific dict should be constructed,
+but remember that this will not be enforced by the interpreter.
+
+> Note that TypedDict is backported to older versions of Python by using typing_extensions
 
 #### List
 
@@ -828,7 +868,7 @@ def analyze_text(text: str, analysis_kind: SentimentAnalysis) -> SentimentResult
     ...
 
 
-def analyze_text(text, analysis_kind):  # the actual implementation doesn't need to be annotated
+def analyze_text(text, analysis_kind):  # the actual implementation shouldn't be annotated
     return _analyze(text, analysis_kind)
 ```
 
@@ -868,7 +908,7 @@ def analyze_text(text: str) -> str:
     ...
 
 
-def analyze_text(*args, **kwargs):  # the actual implementation doesn't need to be annotated
+def analyze_text(*args, **kwargs):  # the actual implementation shouldn't be annotated
     # logic parsing args / kwargs
     ...
 ```
