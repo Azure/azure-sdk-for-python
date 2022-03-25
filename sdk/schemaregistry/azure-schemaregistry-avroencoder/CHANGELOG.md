@@ -3,11 +3,17 @@
 ## 1.0.0b3 (Unreleased)
 
 ### Features Added
-- TODO:
 
 ### Breaking Changes
 
 - `SchemaParseError`, `SchemaEncodeError`, and `SchemaDecodeError` have been replaced with a single `AvroEncodeError` type.
+- The `encode` method on the sync and async `AvroEncoder` only allows subtypes of the `MessageType` protocol as values to the `message_type` optional parameter, rather than any callable that has the method signature `(content: bytes, content_type: str, **kwargs: Any)`.
+
+### Other Changes
+
+- This release and future releases will not backward compatibility support for decoding data that was encoded with the AvroSerializer.
+- The `encode` and `decode` methods on `AvroEncoder` support the following message models:
+  - `azure.eventhub.EventData` in `azure-eventhub==5.9.0b2`
 
 ## 1.0.0b2 (2022-03-09)
 

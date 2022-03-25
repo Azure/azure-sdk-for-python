@@ -70,7 +70,7 @@ content type with schema ID. Uses [SchemaRegistryClient][schemaregistry_client] 
 
 Support has been added to certain Azure Messaging SDK model classes for interoperability with the `AvroEncoder`. These models are subtypes of the `MessageType` protocol defined under the `azure.schemaregistry.encoder.avroencoder` namespace. Currently, the supported model classes are:
 
-- `azure.eventhub.EventData` for `azure-eventhub==5.9.0b2`
+- `azure.eventhub.EventData` for `azure-eventhub==5.9.0b3`
 
 ### Message format
 
@@ -86,7 +86,7 @@ If a message type that follows the MessageType protocol is provided to the encod
   - `avro/binary` is the format indicator
   - `<schema ID>` is the hexadecimal representation of GUID, same format and byte order as the string from the Schema Registry service.
 
-If message type or callback function is not provided, and by default, the encoder will create the following dict:
+If message type is not provided, and by default, the encoder will create the following dict:
 `{"content": <Avro encoded payload>, "content_type": 'avro/binary+<schema ID>' }`
 
 ## Examples

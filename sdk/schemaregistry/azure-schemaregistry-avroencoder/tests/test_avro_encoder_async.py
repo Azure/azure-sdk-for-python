@@ -100,28 +100,26 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
 
             # check that AvroEncoder will work with message types that follow protocols
             class GoodExample:
-                def __init__(self, content: bytes, content_type: str, **kwargs):
+                def __init__(self, content, **kwargs):
                     self.content = content
-                    self.content_type = content_type
+                    self.content_type = None
                     self.extra = kwargs.pop('extra', None)
+                
+                @classmethod
+                def from_message_content(cls, content: bytes, content_type: str, **kwargs):
+                    ge = cls(content)
+                    ge.content_type = content_type
+                    return ge
 
                 def __message_content__(self):
                     return {"content": self.content, "content_type": self.content_type}
 
-            def good_callback(content: bytes, content_type: str, **kwargs):
-                return GoodExample(content, content_type, **kwargs)
-                
             good_ex_obj = await sr_avro_encoder.encode(dict_content, schema=schema_str, message_type=GoodExample, extra='val')
-            good_ex_callback = await sr_avro_encoder.encode(dict_content, schema=schema_str, message_type=good_callback, extra='val')
             decoded_content_obj = await sr_avro_encoder.decode(message=good_ex_obj)
-            decoded_content_callback = await sr_avro_encoder.decode(message=good_ex_callback)
 
             assert decoded_content_obj["name"] == u"Ben"
             assert decoded_content_obj["favorite_number"] == 7
             assert decoded_content_obj["favorite_color"] == u"red"
-            assert decoded_content_callback["name"] == u"Ben"
-            assert decoded_content_callback["favorite_number"] == 7
-            assert decoded_content_callback["favorite_color"] == u"red"
 
     @pytest.mark.asyncio
     @SchemaRegistryEnvironmentVariableLoader()

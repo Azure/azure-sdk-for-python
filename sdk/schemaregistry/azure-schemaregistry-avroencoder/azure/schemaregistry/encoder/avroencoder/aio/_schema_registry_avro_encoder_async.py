@@ -162,8 +162,8 @@ class AvroEncoder(object):
 
         """
         Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
-         and the schema ID corresponding to given schema. If provided with a message constructor callback,
-         pass encoded content and content type to create message object. If not provided, return the following dict:
+         and the schema ID corresponding to given schema. If provided with a MessageType subtype, encoded content
+         and content type will be passed to create message object. If not provided, the following dict will be returned:
          {"content": Avro encoded value, "content_type": Avro mime type string + schema ID}.
 
         If `message_type` is set, then additional keyword arguments will be passed to the message callback
@@ -176,11 +176,8 @@ class AvroEncoder(object):
         :type content: Mapping[str, Any]
         :keyword schema: Required. The schema used to encode the content.
         :paramtype schema: str
-        :keyword message_type: The callback function or message class to construct the message. If message class,
-         it must be a subtype of the azure.schemaregistry.encoder.avroencoder.MessageType protocol.
-         If callback function, it must have the following method signature:
-         `(content: bytes, content_type: str, **kwargs) -> MessageType`, where `content` and `content_type`
-         are positional parameters.
+        :keyword message_type: The message class to construct the message. Must be a subtype of the
+         azure.schemaregistry.encoder.avroencoder.MessageType protocol.
         :paramtype message_type: Type[MessageType] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
@@ -199,19 +196,19 @@ class AvroEncoder(object):
             ).raise_with_traceback()
 
         cache_misses = (
-            self._get_schema_id.cache_info().misses
-        )  # pylint: disable=no-value-for-parameter disable=no-member
+            self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
+        )
         request_options = request_options or {}
         schema_id = await self._get_schema_id(
             schema_fullname, raw_input_schema, **request_options
         )
         new_cache_misses = (
-            self._get_schema_id.cache_info().misses
-        )  # pylint: disable=no-value-for-parameter disable=no-member
+            self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
+        )
         if new_cache_misses > cache_misses:
             cache_info = (
-                self._get_schema_id.cache_info()
-            )  # pylint: disable=no-value-for-parameter disable=no-member
+                self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member
+            )
             _LOGGER.info(
                 "New entry has been added to schema ID cache. Cache info: %s",
                 str(cache_info),
@@ -241,15 +238,11 @@ class AvroEncoder(object):
                     payload, content_type, **kwargs
                 )
             except AttributeError:
-                try:
-                    return message_type(payload, content_type, **kwargs)
-                except TypeError as e:
-                    AvroEncodeError(
-                        f"""The content model {str(message_type)} is not a Callable that takes `content`
-                            and `content_type` or a subtype of the MessageType protocol.
-                            If using an Azure SDK model class, please check the README.md for the full list
-                            of supported Azure SDK models and their corresponding versions."""
-                    ).raise_with_traceback()
+                AvroEncodeError(
+                    f"""The content model {str(message_type)} must be a subtype of the MessageType protocol.
+                        If using an Azure SDK model class, please check the README.md for the full list
+                        of supported Azure SDK models and their corresponding versions."""
+                ).raise_with_traceback()
 
         return {"content": payload, "content_type": content_type}
 
@@ -312,8 +305,8 @@ class AvroEncoder(object):
                 content_type = message["content_type"]
             except (KeyError, TypeError):
                 AvroEncodeError(
-                    f"""The content model {str(message)} is not a subtype of the MessageType protocol or type
-                        MessageContent.  If using an Azure SDK model class, please check the README.md
+                    f"""The content model {str(message)} must be a subtype of the MessageType protocol or type
+                        MessageContent. If using an Azure SDK model class, please check the README.md
                         for the full list of supported Azure SDK models and their corresponding versions."""
                 ).raise_with_traceback()
 
@@ -325,17 +318,17 @@ class AvroEncoder(object):
             )
 
         cache_misses = (
-            self._get_schema.cache_info().misses
-        )  # pylint: disable=no-value-for-parameter disable=no-member
+            self._get_schema.cache_info().misses    # pylint: disable=no-value-for-parameter disable=no-member
+        )
         request_options = request_options or {}
         schema_definition = await self._get_schema(schema_id, **request_options)
         new_cache_misses = (
-            self._get_schema.cache_info().misses
-        )  # pylint: disable=no-value-for-parameter disable=no-member
+            self._get_schema.cache_info().misses    # pylint: disable=no-value-for-parameter disable=no-member
+        )  
         if new_cache_misses > cache_misses:
             cache_info = (
-                self._get_schema.cache_info()
-            )  # pylint: disable=no-value-for-parameter disable=no-member
+                self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member
+            )
             _LOGGER.info(
                 "New entry has been added to schema cache. Cache info: %s",
                 str(cache_info),

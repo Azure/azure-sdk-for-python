@@ -27,21 +27,38 @@ import logging
 from functools import lru_cache
 from io import BytesIO
 from optparse import Option
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, TypedDict, Union, Type, overload, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Mapping,
+    Optional,
+    TypedDict,
+    Union,
+    Type,
+    overload,
+    TypeVar,
+)
 
 from .exceptions import (  # pylint: disable=import-error
     AvroEncodeError,
 )
-from ._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder  # pylint: disable=import-error
-from ._message_protocol import MessageContent, MessageType  # pylint: disable=import-error
-from ._constants import (   # pylint: disable=import-error
+from ._apache_avro_encoder import (
+    ApacheAvroObjectEncoder as AvroObjectEncoder,
+)  # pylint: disable=import-error
+from ._message_protocol import (
+    MessageContent,
+    MessageType,
+)  # pylint: disable=import-error
+from ._constants import (  # pylint: disable=import-error
     AVRO_MIME_TYPE,
 )
+
 if TYPE_CHECKING:
     from azure.schemaregistry import SchemaRegistryClient
-    T = TypeVar("T", bound=MessageType)
 
 _LOGGER = logging.getLogger(__name__)
+T = TypeVar("T", bound=MessageType)
 
 
 class AvroEncoder(object):
@@ -154,14 +171,14 @@ class AvroEncoder(object):
         content,
         *,
         schema,
-        message_type = None,
-        request_options = None,
+        message_type=None,
+        request_options=None,
         **kwargs,
     ):
         """
         Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
-         and the schema ID corresponding to given schema. If provided with a message constructor callback,
-         pass encoded content and content type to create message object. If not provided, return the following dict:
+         and the schema ID corresponding to given schema. If provided with a MessageType subtype, encoded content
+         and content type will be passed to create message object. If not provided, the following dict will be returned:
          {"content": Avro encoded value, "content_type": Avro mime type string + schema ID}.
 
         If `message_type` is set, then additional keyword arguments will be passed to the message callback
@@ -193,13 +210,24 @@ class AvroEncoder(object):
                 f"Cannot parse schema: {raw_input_schema}", error=e
             ).raise_with_traceback()
 
-        cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+        cache_misses = (
+            self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+        )
         request_options = request_options or {}
-        schema_id = self._get_schema_id(schema_fullname, raw_input_schema, **request_options)
-        new_cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+        schema_id = self._get_schema_id(
+            schema_fullname, raw_input_schema, **request_options
+        )
+        new_cache_misses = (
+            self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+        )
         if new_cache_misses > cache_misses:
-            cache_info = self._get_schema_id.cache_info()   # pylint: disable=no-value-for-parameter
-            _LOGGER.info("New entry has been added to schema ID cache. Cache info: %s", str(cache_info))
+            cache_info = (
+                self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter
+            )
+            _LOGGER.info(
+                "New entry has been added to schema ID cache. Cache info: %s",
+                str(cache_info),
+            )
 
         content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
@@ -223,17 +251,15 @@ class AvroEncoder(object):
 
         if message_type:
             try:
-                return message_type.from_message_content(payload, content_type, **kwargs)
+                return message_type.from_message_content(
+                    payload, content_type, **kwargs
+                )
             except AttributeError:
-                try:
-                    return message_type(payload, content_type, **kwargs)
-                except TypeError as e:
-                    AvroEncodeError(
-                        f"""The content model {str(message_type)} is not a Callable that takes `content`
-                            and `content_type` or a subtype of the MessageType protocol.
-                            If using an Azure SDK model class, please check the README.md for the full list
-                            of supported Azure SDK models and their corresponding versions."""
-                    ).raise_with_traceback()
+                AvroEncodeError(
+                    f"""The content model {str(message_type)} must be a subtype of the MessageType protocol.
+                        If using an Azure SDK model class, please check the README.md for the full list
+                        of supported Azure SDK models and their corresponding versions."""
+                ).raise_with_traceback()
 
         return {"content": payload, "content_type": content_type}
 
@@ -263,9 +289,9 @@ class AvroEncoder(object):
         self,
         message,
         *,
-        readers_schema = None,
-        request_options = None,
-        **kwargs,   # pylint: disable=unused-argument
+        readers_schema=None,
+        request_options=None,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         """
         Decode bytes content using schema ID in the content type field. `message` must be one of the following:
@@ -296,28 +322,39 @@ class AvroEncoder(object):
                 content_type = message["content_type"]
             except (KeyError, TypeError):
                 AvroEncodeError(
-                    f"""The content model {str(message)} is not a subtype of the MessageType protocol or type
-                        MessageContent.  If using an Azure SDK model class, please check the README.md
+                    f"""The content model {str(message)} must be a subtype of the MessageType protocol or type
+                        MessageContent. If using an Azure SDK model class, please check the README.md
                         for the full list of supported Azure SDK models and their corresponding versions."""
                 ).raise_with_traceback()
 
         try:
             schema_id = content_type.split("+")[1]
         except AttributeError:
-            raise AvroEncodeError("Content type was not in the expected format of MIME type + schema ID.")
+            raise AvroEncodeError(
+                "Content type was not in the expected format of MIME type + schema ID."
+            )
 
-        cache_misses = self._get_schema.cache_info().misses # pylint: disable=no-value-for-parameter
+        cache_misses = (
+            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+        )
         request_options = request_options or {}
         schema_definition = self._get_schema(schema_id, **request_options)
-        new_cache_misses = self._get_schema.cache_info().misses # pylint: disable=no-value-for-parameter
+        new_cache_misses = (
+            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+        )
         if new_cache_misses > cache_misses:
-            cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
-            _LOGGER.info("New entry has been added to schema cache. Cache info: %s", str(cache_info))
+            cache_info = (
+                self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
+            )
+            _LOGGER.info(
+                "New entry has been added to schema cache. Cache info: %s",
+                str(cache_info),
+            )
 
         try:
             dict_value = self._avro_encoder.decode(
                 content, schema_definition, readers_schema=readers_schema
-            )   # type: Dict[str, Any]
+            )  # type: Dict[str, Any]
         except Exception as e:  # pylint:disable=broad-except
             error_message = (
                 f"Cannot decode value '{content!r}' for the following schema with schema ID {schema_id}:"
@@ -328,6 +365,9 @@ class AvroEncoder(object):
             AvroEncodeError(
                 error_message,
                 error=e,
-                details={"schema_id": f"{schema_id}", "schema_definition": f"{schema_definition}"},
+                details={
+                    "schema_id": f"{schema_id}",
+                    "schema_definition": f"{schema_definition}",
+                },
             ).raise_with_traceback()
         return dict_value
