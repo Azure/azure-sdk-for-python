@@ -183,6 +183,10 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-invoice", invoice)
 
         result = poller.result()
+
+        d = result.to_dict()
+        json.dumps(d)
+        result = AnalyzeResult.from_dict(d)
         assert len(result.documents) == 1
         invoice = result.documents[0]
 
