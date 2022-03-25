@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING,
     TypeVar, Type)
+import warnings
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -2881,7 +2882,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
-        """Returns the list of valid page ranges for a Page Blob or snapshot
+        """DEPRECATED: Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
         :param int offset:
@@ -2936,6 +2937,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
+        warnings.warn(
+            "get_page_ranges is deprecated, use list_page_ranges or list_page_ranges_diff instead",
+            DeprecationWarning
+        )
+
         options = self._get_page_ranges_options(
             offset=offset,
             length=length,

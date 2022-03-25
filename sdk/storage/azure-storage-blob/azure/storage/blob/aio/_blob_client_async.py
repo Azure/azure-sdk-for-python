@@ -9,6 +9,7 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
+import warnings
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -1832,7 +1833,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs
         ):
         # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
-        """Returns the list of valid page ranges for a Page Blob or snapshot
+        """DEPRECATED: Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
         :param int offset:
@@ -1887,6 +1888,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
+        warnings.warn(
+            "get_page_ranges is deprecated, use list_page_ranges or list_page_ranges_diff instead",
+            DeprecationWarning
+        )
+
         options = self._get_page_ranges_options(
             offset=offset,
             length=length,
