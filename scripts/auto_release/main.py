@@ -156,22 +156,15 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         output = "\n".join(output_buffer)
         if process.returncode:
             # print necessary error info
-            for i in range(len(output_buffer)):
-                _LOG.error(f"[Autorest66] {output_buffer[i]}")
-                # print(f"[Autorest22] {output_buffer[i]}")
+            for i in range(-min(len(output_buffer), 5), 0):
+                print(f"[Autorest22] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
 
     try:
         sp_run()
     except subprocess.CalledProcessError as ex:
-        try:
-            sp_run()
-        except subprocess.CalledProcessError as ex:
-            try:
-                sp_run()
-            except subprocess.CalledProcessError as ex:
-                sp_run()
+        sp_run()
     except Exception as err:
         _LOG.error(err)
         raise
