@@ -7,6 +7,7 @@
 Pylint custom checkers for SDK guidelines: C4717 - C4744
 """
 
+from lib2to3.pytree import Base
 import logging
 import astroid
 from pylint.checkers import BaseChecker
@@ -1706,6 +1707,38 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     visit_asyncfunctiondef = visit_functiondef
 
 
+class CheckListFunctionReturnType(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-list-function-return-type"
+    priority = -1
+    msgs = {
+        "C4749": (
+            "TODO. ",
+            "incorrect-list-function-return-type",
+            "TODO.",
+        ),
+    }
+    options = (
+        (
+            "ignore-incorrect-list-function-return-type",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "TODO.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(CheckListFunctionReturnType, self).__init__(linter)
+    
+    def visit_classdef(self,node):
+        pass
+
+
+
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
@@ -1723,6 +1756,7 @@ def register(linter):
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
+    linter.register_checker(CheckListFunctionReturnType(linter))
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
