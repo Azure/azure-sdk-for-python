@@ -19,6 +19,7 @@ from util import add_certificate
 SERVICE_TEST_PATH = {}
 MAIN_REPO_SWAGGER = 'https://github.com/Azure/azure-rest-api-specs/tree/main'
 PR_URL = 'https://github.com/Azure/azure-rest-api-specs/pull/'
+FAILED_RESULT = []
 
 def my_print(cmd):
     print('== ' + cmd + ' ==\n')
@@ -351,6 +352,15 @@ def read_file(file_name):
     return content
 
 
+def find_test_path(line: str, service_name: str) -> bool:
+    try:
+        SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
+        return True
+    except:
+        FAILED_RESULT.append('[FAILED] ' + line)
+        return False
+
+
 def sdk_info_from_swagger():
     sdk_name_re = re.compile(r'azure-mgmt-[a-z]+-*([a-z])+')
     sdk_folder_re = re.compile('output-folder: \$\(python-sdks-folder\)/')
@@ -360,7 +370,7 @@ def sdk_info_from_swagger():
     readme_folders = glob.glob(target_file_pattern)
     my_print(f'total readme folders: {len(readme_folders)}')
     for folder in readme_folders:
-        sdk_folder_path = False
+        found_sdk_folder = False
         multi_api = ''
         linux_folder = Path(folder).as_posix()
         service_name = re.findall(r'specification/(.*?)/resource-manager/', linux_folder)[0]
@@ -376,21 +386,19 @@ def sdk_info_from_swagger():
                 track_config += 1
             if readme_python == 'NA' and sdk_name_re.search(line) is not None and package_name == '':
                 package_name = sdk_name_re.search(line).group()
-            if sdk_folder_re.search(line) and sdk_folder_path == False:
-                SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
-                sdk_folder_path = True
+            if sdk_folder_re.search(line) and not found_sdk_folder:
+                found_sdk_folder = find_test_path(line, service_name)
 
         if readme_python != 'NA':
             readme_python_text = read_file(readme_python)
             for text in readme_python_text:
                 if sdk_name_re.search(text) is not None:
                     package_name = sdk_name_re.search(text).group()
-                if sdk_folder_re.search(text) and sdk_folder_path == False:
-                    SERVICE_TEST_PATH[service_name] = re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', text)[0]
-                    sdk_folder_path = True
+                if sdk_folder_re.search(text) and not found_sdk_folder:
+                    found_sdk_folder = find_test_path(text, service_name)
                 if 'batch:' in text and multi_api == '':
                     multi_api = 'fake'
-                    print(f'*********{service_name} is fake 1111')
+                    print(f'*********{service_name} is fake ')
                 if 'multiapiscript: true' in text:
                     multi_api = 'True'
 
@@ -417,24 +425,6 @@ def commit_to_github():
     print_check('git push -f origin HEAD')
 
 
-def count_sdk_status():
-    cli_dependency = get_cli_dependency()
-    sdk_info = sdk_info_from_swagger()
-    all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
-
-    out_file = 'release_sdk_status.csv'
-    write_to_csv(all_sdk_status, out_file)
-    commit_to_github()
-
-
-def get_all_readme_html() -> List[str]:
-    swagger_folder = os.getenv('SWAGGER_REPO')
-    readme_folders = glob.glob(f'{swagger_folder}/specification/*/resource-manager')
-    my_print(f'total readme folders: {len(readme_folders)}')
-    service_name = [Path(item).parts[-2] for item in readme_folders]
-    return [f'{MAIN_REPO_SWAGGER}/specification/{item}/resource-manager' for item in service_name]
-
-
 def get_latest_pr_from_readme(rest_repo: Repository, service_html: str):
     commit_url = service_html.split('main/')[-1]
     commits = rest_repo.get_commits(path=commit_url)
@@ -453,35 +443,20 @@ def get_latest_pr_from_readme(rest_repo: Repository, service_html: str):
     return latest_pr_number_int[-1]
 
 
-def trigger_pipeline(readme_html: List[str]) -> None:
-    g = Github(os.getenv('TOKEN'))  # please fill user_token
-    rest_repo = g.get_repo('Azure/azure-rest-api-specs')
-    record = set()
-    for item in readme_html:
-        num = get_latest_pr_from_readme(rest_repo, item)
-        pr = rest_repo.get_pull(num)
-        # TODO: skip too old PR
-
-        # avoid duplicated trigger
-        if num not in record:
-            pr.create_issue_comment(body='/azp run')
-            record.add(num)
-            time.sleep(300)
-            my_print(f'get latest PR "{PR_URL}{num}" from {item} and comment "/azp run" successfully')
-        else:
-            my_print(f'get latest PR "{PR_URL}{num}" from {item} and but it is already triggered')
-
-
-def trigger_swagger_pipeline() -> None:
-    readme_html_all = get_all_readme_html()
-    trigger_pipeline(readme_html_all)
+def log_failed():
+    print('\n'.join(FAILED_RESULT))
 
 
 def main():
-    if os.environ.get('AZP_RUN') in ('yes', 'true'):
-        trigger_swagger_pipeline()
-    else:
-        count_sdk_status()
+    cli_dependency = get_cli_dependency()
+    sdk_info = sdk_info_from_swagger()
+    all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
+
+    out_file = 'release_sdk_status.csv'
+    write_to_csv(all_sdk_status, out_file)
+    commit_to_github()
+
+    log_failed()
 
 
 if __name__ == '__main__':
