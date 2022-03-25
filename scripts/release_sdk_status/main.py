@@ -33,6 +33,11 @@ def print_check(cmd, path=''):
         sp.check_call(cmd, shell=True)
 
 
+def print_call(cmd):
+    my_print(cmd)
+    sp.call(cmd, shell=True)
+
+
 def version_sort(versions: List[str]) -> List[str]:
     versions_package = [parse(version) for version in versions]
     versions_package.sort()
@@ -424,9 +429,9 @@ def sdk_info_from_swagger():
 
 
 def commit_to_github():
-    print_check('git add .')
-    print_check('git commit -m \"update excel\"')
-    print_check('git push -f origin HEAD')
+    print_call('git add .')
+    print_call('git commit -m \"update excel\"')
+    print_call('git push -f origin HEAD')
 
 
 def get_latest_pr_from_readme(rest_repo: Repository, service_html: str):
