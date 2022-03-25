@@ -136,14 +136,13 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         print('++++++++++++++++++++')
     except subprocess.CalledProcessError as ex:
         data = ex.output
-    if data[-1:] == '\n':
-        data = data[:-1]
-    print('+++++++++++++++++++')
-    print(data.split('\n'))
-    print('++++++++++++++++++++')
+    print('-------------------------')
+    for line in data.split():
+        print(line)
+    print('-------------------------')
 
     try:
-        ss = subprocess.Popen(
+        process = subprocess.Popen(
             cmd_line,
             # stderr=subprocess.STDOUT,
             # stdout=subprocess.PIPE,
