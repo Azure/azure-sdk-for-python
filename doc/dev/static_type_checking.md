@@ -376,7 +376,7 @@ At runtime, `employee` is perfectly valid even though it does not conform to a t
 <class 'dict'>
 ```
 
-Note that this also just creates a plain `dict` at runtime. Usage of `TypedDict` is a great way to document how a specific dict should be constructed,
+Note that this also just creates a plain `dict` at runtime. Usage of `TypedDict` is a great way to inform `mypy` and Intellisense how a specific dict should be constructed,
 but remember that this will not be enforced by the interpreter.
 
 > Note that TypedDict is backported to older versions of Python by using typing_extensions
