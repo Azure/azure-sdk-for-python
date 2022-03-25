@@ -3,16 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import functools
-from aiohttp import client
 
-from azure.keyvault.secrets import ApiVersion
-from azure.keyvault.secrets._shared import HttpChallengeCache
-from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, is_live
 import pytest
-from typing import ContextManager, Iterator, Optional
-
+from azure.keyvault.secrets import ApiVersion
+from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 def get_decorator(**kwargs):

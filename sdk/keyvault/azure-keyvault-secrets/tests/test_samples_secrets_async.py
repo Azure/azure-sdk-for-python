@@ -3,19 +3,17 @@
 # Licensed under the MIT License.
 # -------------------------------------
 import asyncio
-from azure.keyvault.secrets._shared import HttpChallengeCache
 import functools
-from devtools_testutils import AzureRecordedTestCase
 
 import pytest
+from azure.keyvault.secrets._shared import HttpChallengeCache
+from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.sanitizers import set_custom_default_matcher
 
+from _async_test_case import AsyncSecretsTestCaseClientPrepaper
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import get_decorator
-from _async_test_case import AsyncSecretsTestCaseClientPrepaper
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import is_live
-from devtools_testutils.sanitizers import set_custom_default_matcher
 
 all_api_versions = get_decorator()
 SecretsPreparer = functools.partial(AsyncSecretsTestCaseClientPrepaper, is_async=True)

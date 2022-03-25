@@ -3,24 +3,23 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-from sys import api_version
-from dateutil import parser as date_parse
-import time
-import logging
 import json
+import logging
+import time
 
+
+import pytest
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets import SecretClient
 from azure.keyvault.secrets._shared import HttpChallengeCache
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
+from dateutil import parser as date_parse
+from devtools_testutils import is_live, recorded_by_proxy
+from devtools_testutils.sanitizers import set_custom_default_matcher
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_decorator, SecretsTestCaseClientPrepaper
-
-from devtools_testutils import recorded_by_proxy, is_live
-from devtools_testutils.sanitizers import set_custom_default_matcher
-import pytest
+from _test_case import SecretsTestCaseClientPrepaper, get_decorator
 
 all_api_versions = get_decorator()
 logging_enabled = get_decorator(logging_enable=True)

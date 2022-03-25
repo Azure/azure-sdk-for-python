@@ -9,16 +9,8 @@ from devtools_testutils import AzureRecordedTestCase
 
 
 class KeyVaultTestCase(AzureRecordedTestCase):
-    # def __init__(self, *args, **kwargs):
-    #     if "match_body" not in kwargs:
-    #         kwargs["match_body"] = True
-
-    #     super(KeyVaultTestCase, self).__init__(*args, **kwargs)
-    #     self.replay_patches.append(patch_time_sleep_api)
-
     def setUp(self):
         self.list_test_size = 7
-        #super(KeyVaultTestCase, self).setUp()
 
     def get_resource_name(self, name):
         """helper to create resources with a consistent, test-indicative prefix"""

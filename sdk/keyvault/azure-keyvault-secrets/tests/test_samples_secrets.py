@@ -3,15 +3,16 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from __future__ import print_function
+
 import functools
 import time
-from azure.keyvault.secrets._shared import HttpChallengeCache
+
 import pytest
+from azure.keyvault.secrets._shared import HttpChallengeCache
+from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_decorator, SecretsTestCaseClientPrepaper
-
-from devtools_testutils import recorded_by_proxy
+from _test_case import SecretsTestCaseClientPrepaper, get_decorator
 
 all_api_versions = get_decorator()
 SecretsPreparer = functools.partial(SecretsTestCaseClientPrepaper, is_async=False)

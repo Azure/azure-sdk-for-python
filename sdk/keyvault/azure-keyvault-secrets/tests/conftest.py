@@ -30,7 +30,6 @@ import sys
 from unittest import mock
 from devtools_testutils import (
     is_live, 
-    test_proxy, 
     add_oauth_response_sanitizer, 
     add_general_regex_sanitizer
 )

@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # -------------------------------------
 import functools
-from sys import api_version
+
+import pytest
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
-from devtools_testutils import recorded_by_proxy
 from azure.keyvault.secrets._shared import HttpChallengeCache
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
-import pytest
+from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import SecretsTestCaseClientPrepaper

@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.keyvault.secrets._shared._polling_async import AsyncDeleteRecoverPollingMethod
 import pytest
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.keyvault.secrets._shared._polling_async import \
+    AsyncDeleteRecoverPollingMethod
 
 from _shared.helpers import mock, mock_response
 from _shared.helpers_async import get_completed_future

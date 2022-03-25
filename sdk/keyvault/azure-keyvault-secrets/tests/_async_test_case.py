@@ -2,18 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
-import os
+
 import functools
-from types import coroutine
-from aiohttp import client
+import os
 
-from azure.keyvault.secrets import ApiVersion
-from azure.keyvault.secrets._shared import HttpChallengeCache
-from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live
 import pytest
-
+from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
+from devtools_testutils import (AzureRecordedTestCase,
+                                EnvironmentVariableLoader, is_live)
 
 KeyVaultSecretsPreparer = functools.partial(EnvironmentVariableLoader, "keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
 
