@@ -125,19 +125,19 @@ def start_test_proxy():
     print_check('pwsh eng/common/testproxy/docker-start-proxy.ps1 \"start\"')
 
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
-    try:
-        # c = ' '.join(cmd_line)
-        # print(f'c={c}')
-        c = 'npm install @autorest/modelerfour@4.19.3 --save'
-        data = subprocess.getoutput(c)
-    except subprocess.CalledProcessError as ex:
-        data = ex.output
-    print('-------------------------')
-    for line in data.split('\n'):
-        print(line)
-    print('-------------------------')
+    # try:
+    #     # c = ' '.join(cmd_line)
+    #     # print(f'c={c}')
+    #     c = 'npm install @autorest/modelerfour@4.19.3 --save'
+    #     data = subprocess.getoutput(c)
+    # except subprocess.CalledProcessError as ex:
+    #     data = ex.output
+    # print('-------------------------')
+    # for line in data.split('\n'):
+    #     print(line)
+    # print('-------------------------')
 
-    try:
+    def sp_run():
         process = subprocess.Popen(
             cmd_line,
             stderr=subprocess.STDOUT,
@@ -161,11 +161,16 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
                 # print(f"[Autorest22] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
+
+    try:
+        sp_run()
+    except subprocess.CalledProcessError as ex:
+        sp_run()
     except Exception as err:
         _LOG.error(err)
         raise
     else:
-        _LOGGER.info("Return code: %s", process.returncode)
+        _LOG.info("Return code: %s", 1)
 
 
 class CodegenTestPR:
