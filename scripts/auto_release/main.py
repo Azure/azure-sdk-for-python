@@ -125,21 +125,21 @@ def start_test_proxy():
     print_check('pwsh eng/common/testproxy/docker-start-proxy.ps1 \"start\"')
 
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
-    # try:
-    #     c = ' '.join(cmd_line)
-    #     print(f'c={c}')
-    #     data = subprocess.check_output(c, shell=True, text=True, stderr=subprocess.STDOUT)
-    #     ps = data.split('\n')
-    #     print('+++++++++++++++++++')
-    #     for line in ps[len(ps) - 6:len(ps)]:
-    #         print(line)
-    #     print('++++++++++++++++++++')
-    # except subprocess.CalledProcessError as ex:
-    #     data = ex.output
-    # print('-------------------------')
-    # for line in data.split('\n'):
-    #     print(line)
-    # print('-------------------------')
+    try:
+        c = ' '.join(cmd_line)
+        print(f'c={c}')
+        data = subprocess.check_output(c, shell=True, text=True, stderr=subprocess.STDOUT)
+        ps = data.split('\n')
+        print('+++++++++++++++++++')
+        for line in ps[len(ps) - 6:len(ps)]:
+            print(line)
+        print('++++++++++++++++++++')
+    except subprocess.CalledProcessError as ex:
+        data = ex.output
+    print('-------------------------')
+    for line in data.split('\n'):
+        print(line)
+    print('-------------------------')
 
     try:
         process = subprocess.Popen(
@@ -172,10 +172,10 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output=process.stdout)
     except subprocess.CalledProcessError as ex:
         data = ex.output
-        print('-------------------------')
-        for line in data:
-            print(line)
-        print('-------------------------')
+        # print('-------------------------')
+        # for line in data:
+        #     print(line)
+        # print('-------------------------')
         raise subprocess.CalledProcessError(process.returncode, cmd_line)
     except Exception as err:
         _LOG.error(err)
