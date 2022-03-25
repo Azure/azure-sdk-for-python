@@ -57,7 +57,7 @@ class AvroEncoder(object):
      which is used to register schema and retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.aio.SchemaRegistryClient
     :keyword str group_name: Required. Schema group under which schema should be registered.
-    :keyword bool auto_register_schemas: When true, register new schemas passed to encode.
+    :keyword bool auto_register: When true, register new schemas passed to encode.
      Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
 
     """
@@ -72,10 +72,10 @@ class AvroEncoder(object):
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
-        self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
+        self._auto_register = kwargs.get("auto_register", False)
         self._auto_register_schema_func = (
             self._schema_registry_client.register_schema
-            if self._auto_register_schemas
+            if self._auto_register
             else self._schema_registry_client.get_schema_properties
         )
 

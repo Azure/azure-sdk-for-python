@@ -6,6 +6,7 @@
 
 ### Breaking Changes
 
+- `auto_register_schemas` keyword in the sync and async `AvroEncoder` constructors has been renamed `auto_register`.
 - `SchemaParseError`, `SchemaEncodeError`, and `SchemaDecodeError` have been replaced with a single `AvroEncodeError` type.
 - The `encode` method on the sync and async `AvroEncoder` only allows subtypes of the `MessageType` protocol as values to the `message_type` optional parameter, rather than any callable that has the method signature `(content: bytes, content_type: str, **kwargs: Any)`.
 
