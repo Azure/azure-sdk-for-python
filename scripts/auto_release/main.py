@@ -137,7 +137,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     except subprocess.CalledProcessError as ex:
         data = ex.output
     print('-------------------------')
-    for line in data.split():
+    for line in data.split('\n'):
         print(line)
     print('-------------------------')
 
