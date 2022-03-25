@@ -128,7 +128,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
         # c = ' '.join(cmd_line)
         # print(f'c={c}')
-        c = 'autorest --version'
+        c = 'npm install @autorest/modelerfour@4.19.3 --save'
         data = subprocess.getoutput(c)
     except subprocess.CalledProcessError as ex:
         data = ex.output
