@@ -1866,34 +1866,47 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if 'source_lease' in kwargs:
             source_lease = kwargs.pop('source_lease')
             try:
-                headers['x-ms-source-lease-id'] = source_lease.id # type: str
+                headers['x-ms-source-lease-id'] = source_lease.id
             except AttributeError:
                 headers['x-ms-source-lease-id'] = source_lease
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
+
+        # Options only available for sync copy
         requires_sync = kwargs.pop('requires_sync', None)
         encryption_scope_str = kwargs.pop('encryption_scope', None)
         source_authorization = kwargs.pop('source_authorization', None)
+        copy_source_tags = kwargs.pop('copy_source_tags', None)
 
-        if not requires_sync and encryption_scope_str:
-            raise ValueError("Encryption_scope is only supported for sync copy, please specify requires_sync=True")
-        if source_authorization and incremental_copy:
-            raise ValueError("Source authorization tokens are not applicable for incremental copying.")
-        #
+        if incremental_copy:
+            if source_authorization:
+                raise ValueError("Source authorization tokens are not applicable for incremental copying.")
+            if copy_source_tags:
+                raise ValueError("The copy_source_tags options is not applicable for incremental copying.")
+
         # TODO: refactor start_copy_from_url api in _blob_client.py. Call _generated/_blob_operations.py copy_from_url
         #  when requires_sync=True is set.
         #  Currently both sync copy and async copy are calling _generated/_blob_operations.py start_copy_from_url.
         #  As sync copy diverges more from async copy, more problem will surface.
-        if encryption_scope_str:
-            headers.update({'x-ms-encryption-scope': encryption_scope_str})
-
         if requires_sync is True:
             headers['x-ms-requires-sync'] = str(requires_sync)
+            if encryption_scope_str:
+                headers['x-ms-encryption-scope'] = encryption_scope_str
             if source_authorization:
                 headers['x-ms-copy-source-authorization'] = source_authorization
+            if copy_source_tags:
+                headers['x-ms-copy-source-tag-option'] = copy_source_tags
         else:
+            if encryption_scope_str:
+                raise ValueError(
+                    "Encryption_scope is only supported for sync copy, please specify requires_sync=True")
             if source_authorization:
-                raise ValueError("Source authorization tokens are only applicable for synchronous copy operations.")
+                raise ValueError(
+                    "Source authorization tokens are only supported for sync copy, please specify requires_sync=True")
+            if copy_source_tags:
+                raise ValueError(
+                    "The copy_source_tags option is only supported for sync copy, please specify requires_sync=True")
+
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
@@ -2081,6 +2094,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
 
             .. versionadded:: 12.10.0
+        :keyword str copy_source_tags:
+            Indicates if source tags should be copied or replaced with the tags specified by the `tags` parameter.
+            Possible string values are "REPLACE" or "COPY". If not specified the, default behavior is to replace.
+            This option is only available when `incremental_copy` is set to False and `requires_sync` is set to True.
+
+            .. versionadded:: 12.12.0
 
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, Union[str, ~datetime.datetime]]
