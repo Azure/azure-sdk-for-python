@@ -21,8 +21,8 @@ from azure.storage.blob import (
     generate_account_sas,
     generate_blob_sas)
 
-from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase, is_version_before, ServiceVersion
+from settings.testcase import BlobPreparer
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
