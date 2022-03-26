@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Mar 2022 00:32:06 GMT
+      - Sat, 26 Mar 2022 01:54:15 GMT
       expires:
       - '-1'
       pragma:
@@ -43,7 +43,7 @@ interactions:
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - westus
       x-ms-keyvault-service-version:
       - 1.9.331.5
       x-powered-by:
@@ -70,16 +70,16 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/create?api-version=7.3
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/bd49e2d5569d4d80aeeacdcb0a15ae86","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5QZMg4maf_3zCvz5Nq5kj4uDHu4wtRr1CycAUrd9OyXbw9u-L23hhRjuuHRUnw8uzeQMcn_qr9TiqxZ4CNDspmsZVlAM7FNI5vz2mZfgwVvyx_REgLNCYU3xraZHDinU910o5hIVW1M7ehP6L84a03Dp93pQk9Y-bTgCrtsomAt1MNE1-z0XI8VyTULBMY287vJnY_pHNx_jnODE7Z6R14bMesiS1RgUaA6O58X6o7QT4d3rN4iWRJlCo1tWYW-3xCKCfM0JYobzA7Uws9QL5KuZjGBN-h1xA-cwmLDVIqOmugqEFRcvuhr23ZQSvYCEopYlw38TW8JZVr7YsKE9DQ","e":"AQAB"},"attributes":{"enabled":true,"created":1647995527,"updated":1647995527,"recoveryLevel":"CustomizedRecoverable+Purgeable","recoverableDays":7}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/f06c49db76704338b79c6ec17e94bbc6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"qw67sE2XxpRYPky3-D0XIgNyG_Po27492HgYigs6eypoar9NVYuo0QnRlpwi1dAEt4oUAlMASukwGo1qUKVvBs6L5UvyQZL2imXtNat_LHK-28u7FqUkpaNTFzyy32Fj0EFtLY7QE1fmYFaHDwdFXDqGXexhUzsFrEghgYst5jHBwvt4ANNSvCAbmsxFLgHevOI3T2-clsXA-zH7uhzRg7h3MXxUgsJr0VSas-0N4cJEhjzS-nofR4V3KzYvwdoZUYaSeH93F3qhA5fneDsseTPU7DElKuMyZO5UdiEjbBJlG7w3KnM8fzyHkWqZLwWshLn0NiMNv9KF2CBlYx-2nQ","e":"AQAB"},"attributes":{"enabled":true,"exp":1656035656,"created":1648259656,"updated":1648259656,"recoveryLevel":"CustomizedRecoverable+Purgeable","recoverableDays":7}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '703'
+      - '722'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Mar 2022 00:32:07 GMT
+      - Sat, 26 Mar 2022 01:54:16 GMT
       expires:
       - '-1'
       pragma:
@@ -90,12 +90,56 @@ interactions:
       - nosniff
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id:
-      - 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache:
-      - ra_age=129;da_age=4355;rd_age=4355;brd_age=22912;ra_notif_age=573;dec_lev=2;
       x-ms-keyvault-region:
-      - westus2
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.9.331.5
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"lifetimeActions": [], "attributes": {}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '41'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy?api-version=7.3
+  response:
+    body:
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1648258801,"updated":1648259656}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '238'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 26 Mar 2022 01:54:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
       x-ms-keyvault-service-version:
       - 1.9.331.5
       x-powered-by:
@@ -123,16 +167,16 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1647995527,"updated":1647995527}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1648258801,"updated":1648259657}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '301'
+      - '303'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Mar 2022 00:32:07 GMT
+      - Sat, 26 Mar 2022 01:54:16 GMT
       expires:
       - '-1'
       pragma:
@@ -143,12 +187,8 @@ interactions:
       - nosniff
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id:
-      - 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache:
-      - ra_age=129;da_age=4355;rd_age=4355;brd_age=22912;ra_notif_age=573;dec_lev=1;
       x-ms-keyvault-region:
-      - westus2
+      - westus
       x-ms-keyvault-service-version:
       - 1.9.331.5
       x-powered-by:
@@ -171,16 +211,16 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1647995527,"updated":1647995527}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1648258801,"updated":1648259657}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '301'
+      - '303'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Mar 2022 00:32:07 GMT
+      - Sat, 26 Mar 2022 01:54:16 GMT
       expires:
       - '-1'
       pragma:
@@ -191,12 +231,8 @@ interactions:
       - nosniff
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id:
-      - 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache:
-      - ra_age=129;da_age=4355;rd_age=4355;brd_age=22912;ra_notif_age=573;dec_lev=1;
       x-ms-keyvault-region:
-      - westus2
+      - westus
       x-ms-keyvault-service-version:
       - 1.9.331.5
       x-powered-by:
@@ -225,16 +261,16 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1647995527,"updated":1647995527}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1648258801,"updated":1648259657}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '321'
+      - '323'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Mar 2022 00:32:07 GMT
+      - Sat, 26 Mar 2022 01:54:16 GMT
       expires:
       - '-1'
       pragma:
@@ -245,12 +281,8 @@ interactions:
       - nosniff
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id:
-      - 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache:
-      - ra_age=129;da_age=4355;rd_age=4355;brd_age=22912;ra_notif_age=573;dec_lev=0;
       x-ms-keyvault-region:
-      - westus2
+      - westus
       x-ms-keyvault-service-version:
       - 1.9.331.5
       x-powered-by:
@@ -259,7 +291,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"lifetimeActions": [{"trigger": {"timeBeforeExpiry": "P30D"}, "action":
+    body: '{"lifetimeActions": [{"trigger": {"timeBeforeExpiry": "P60D"}, "action":
       {"type": "Notify"}}], "attributes": {"expiryTime": "P90D"}}'
     headers:
       Accept:
@@ -278,16 +310,16 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1647995527,"updated":1647995527}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P60D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1648258801,"updated":1648259657}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '256'
+      - '258'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Mar 2022 00:32:07 GMT
+      - Sat, 26 Mar 2022 01:54:16 GMT
       expires:
       - '-1'
       pragma:
@@ -298,12 +330,8 @@ interactions:
       - nosniff
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id:
-      - 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache:
-      - ra_age=130;da_age=4355;rd_age=4355;brd_age=22912;ra_notif_age=573;dec_lev=0;
       x-ms-keyvault-region:
-      - westus2
+      - westus
       x-ms-keyvault-service-version:
       - 1.9.331.5
       x-powered-by:
@@ -326,16 +354,16 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1647995527,"updated":1647995527}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keybb0144e/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P60D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1648258801,"updated":1648259657}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '256'
+      - '258'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Mar 2022 00:32:07 GMT
+      - Sat, 26 Mar 2022 01:54:16 GMT
       expires:
       - '-1'
       pragma:
@@ -346,12 +374,8 @@ interactions:
       - nosniff
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id:
-      - 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache:
-      - ra_age=130;da_age=4355;rd_age=4355;brd_age=22912;ra_notif_age=573;dec_lev=0;
       x-ms-keyvault-region:
-      - westus2
+      - westus
       x-ms-keyvault-service-version:
       - 1.9.331.5
       x-powered-by:
