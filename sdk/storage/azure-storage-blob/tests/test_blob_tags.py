@@ -253,6 +253,7 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), len(tags))
 
+    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_start_copy_from_url_with_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
