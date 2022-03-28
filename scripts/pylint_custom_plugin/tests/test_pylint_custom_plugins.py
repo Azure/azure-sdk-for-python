@@ -2847,7 +2847,6 @@ class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
         node = astroid.parse(file.read())
         file.close()
 
-        
         with self.assertNoMessages():
             self.checker.visit_classdef(node.body[0])
 
@@ -2863,3 +2862,11 @@ class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
                 )
         ):
             self.checker.visit_classdef(node.body[0])
+
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
