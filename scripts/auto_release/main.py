@@ -173,10 +173,23 @@ class CodegenTestPR:
 
         # prepare input data
         input_data = {
-            'headSha': '90985ff9930614361e97034b3f149ea73efec6cb',
-            'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
-            'specFolder': 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification/hdinsight/resource-manager/readme.md',
-            'relatedReadmeMdFiles': ['specification/hdinsight/resource-manager/readme.md']
+            "dryRun": False,
+            "specFolder": "../azure-rest-api-specs",
+            "headSha": "9ac082c33a7d0d8fa6768bd64e53394ada9baaf9",
+            "headRef": "master",
+            "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
+            "trigger": "continuousIntegration",
+            "changedFiles": [
+                "specification/hdinsight/resource-manager/readme.python.md"
+            ], "relatedReadmeMdFiles": [
+                "specification/hdinsight/resource-manager/readme.md"
+            ],
+            "installInstructionInput": {
+                "isPublic": False,
+                "downloadUrlPrefix": "https://portal.azure-devex-tools.com/api/sdk-dl-pub?p=Azure/13991/azure-sdk-for-python-track2/",
+                "downloadCommandTemplate": "curl -L \"{URL}\" -o {FILENAME}",
+                "trigger": "continuousIntegration"
+            }
         }
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
