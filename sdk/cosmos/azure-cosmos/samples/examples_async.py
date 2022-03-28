@@ -1,3 +1,4 @@
+import asyncio
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.cosmos.aio import CosmosClient
 
@@ -76,7 +77,7 @@ async def examples_async():
 
         # [START list_containers]
         database = client.get_database_client(database_name)
-        for container in database.list_containers():
+        async for container in database.list_containers():
             print("Container ID: {}".format(container['id']))
         # [END list_containers]
 
@@ -160,3 +161,7 @@ async def examples_async():
         except exceptions.CosmosHttpResponseError as failure:
             print("Failed to create user. Status code:{}".format(failure.status_code))
         # [END create_user]
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(examples_async())

@@ -30,6 +30,7 @@ import binascii
 from typing import Dict, Any
 
 from urllib.parse import quote as urllib_quote
+from urllib.parse import urlsplit
 
 from azure.core import MatchConditions
 
@@ -664,8 +665,8 @@ def ParsePaths(paths):
 
 
 def create_scope_from_url(url):
-    # Need a better way to do this, regex?
-    return url.replace(":443", "") + ".default"
+    parsed_url = urlsplit(url)
+    return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
 
 
 def validate_cache_staleness_value(max_integrated_cache_staleness):

@@ -58,7 +58,7 @@ from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
-from .auth import CosmosBearerTokenCredentialPolicy
+from ._auth_policies import AsyncCosmosBearerTokenCredentialPolicy
 
 ClassType = TypeVar("ClassType")
 
@@ -179,21 +179,23 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self._user_agent = _utils.get_user_agent()
 
+        credentials_policy = None
+        if self.aad_credentials:
+            scopes = base.create_scope_from_url(self.url_connection)
+            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes)
+
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
+            credentials_policy,
             retry_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-
-        if self.aad_credentials:
-            scopes = base.create_scope_from_url(self.url_connection)
-            policies.append(CosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes))
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client = PipelineClient(base_url=url_connection, transport=transport, policies=policies)
