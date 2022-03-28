@@ -3,6 +3,9 @@
 ## 12.11.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2021-06-08.
+- Added support for `copy_source_tags` to `start_copy_from_url()` which allows callers to specify whether blob tags
+  should be replaced or copied during a synchronous copy operation.
 - Added support for `create_if_not_exists()` for `BlobContainerClient`
 
 ## 12.10.0 (2022-03-08)
