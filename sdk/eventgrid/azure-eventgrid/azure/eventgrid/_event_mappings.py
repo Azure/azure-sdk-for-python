@@ -27,11 +27,11 @@ class SystemEventNames(str, Enum):
 
     ResourceDeleteCancelEventName = 'Microsoft.Resources.ResourceDeleteCancel'
 
-    AcsChatThreadParticipantAddedEventName = 'Microsoft.Communication.ChatThreadParticipantAdded'       
+    AcsChatThreadParticipantAddedEventName = 'Microsoft.Communication.ChatThreadParticipantAdded'
 
     ResourceDeleteSuccessEventName = 'Microsoft.Resources.ResourceDeleteSuccess'
 
-    EventGridSubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'        
+    EventGridSubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
 
     ResourceWriteSuccessEventName = 'Microsoft.Resources.ResourceWriteSuccess'
 
@@ -47,7 +47,7 @@ class SystemEventNames(str, Enum):
 
     EventGridSubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
 
-    AcsChatThreadParticipantRemovedEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'   
+    AcsChatThreadParticipantRemovedEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'
 
     ResourceActionCancelEventName = 'Microsoft.Resources.ResourceActionCancel'
 
@@ -68,7 +68,7 @@ class SystemEventNames(str, Enum):
     # backward compat names end here.
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
-    AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'       
+    AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
 
     AcsChatMessageEditedEventName = 'Microsoft.Communication.ChatMessageEdited'
 
@@ -76,9 +76,9 @@ class SystemEventNames(str, Enum):
 
     AcsChatMessageReceivedEventName = 'Microsoft.Communication.ChatMessageReceived'
 
-    AcsChatMessageReceivedInThreadEventName = 'Microsoft.Communication.ChatMessageReceivedInThread'     
+    AcsChatMessageReceivedInThreadEventName = 'Microsoft.Communication.ChatMessageReceivedInThread'
 
-    AcsChatParticipantAddedToThreadEventName = 'Microsoft.Communication.ChatThreadParticipantAdded'     
+    AcsChatParticipantAddedToThreadEventName = 'Microsoft.Communication.ChatThreadParticipantAdded'
 
     AcsChatParticipantAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatParticipantAddedToThreadWithUser'
 
@@ -92,13 +92,13 @@ class SystemEventNames(str, Enum):
 
     AcsChatThreadDeletedEventName = 'Microsoft.Communication.ChatThreadDeleted'
 
-    AcsChatThreadPropertiesUpdatedEventName = 'Microsoft.Communication.ChatThreadPropertiesUpdated'     
+    AcsChatThreadPropertiesUpdatedEventName = 'Microsoft.Communication.ChatThreadPropertiesUpdated'
 
     AcsChatThreadPropertiesUpdatedPerUserEventName = 'Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser'
 
     AcsChatThreadWithUserDeletedEventName = 'Microsoft.Communication.ChatThreadWithUserDeleted'
 
-    AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'       
+    AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
 
@@ -172,7 +172,7 @@ class SystemEventNames(str, Enum):
 
     KeyVaultCertificateNearExpiryEventName = 'Microsoft.KeyVault.CertificateNearExpiry'
 
-    KeyVaultCertificateNewVersionCreatedEventName = 'Microsoft.KeyVault.CertificateNewVersionCreated'   
+    KeyVaultCertificateNewVersionCreatedEventName = 'Microsoft.KeyVault.CertificateNewVersionCreated'
 
     KeyVaultKeyExpiredEventName = 'Microsoft.KeyVault.KeyExpired'
 
@@ -190,11 +190,11 @@ class SystemEventNames(str, Enum):
 
     MachineLearningServicesDatasetDriftDetectedEventName = 'Microsoft.MachineLearningServices.DatasetDriftDetected'
 
-    MachineLearningServicesModelDeployedEventName = 'Microsoft.MachineLearningServices.ModelDeployed'   
+    MachineLearningServicesModelDeployedEventName = 'Microsoft.MachineLearningServices.ModelDeployed'
 
     MachineLearningServicesModelRegisteredEventName = 'Microsoft.MachineLearningServices.ModelRegistered'
 
-    MachineLearningServicesRunCompletedEventName = 'Microsoft.MachineLearningServices.RunCompleted'     
+    MachineLearningServicesRunCompletedEventName = 'Microsoft.MachineLearningServices.RunCompleted'
 
     MachineLearningServicesRunStatusChangedEventName = 'Microsoft.MachineLearningServices.RunStatusChanged'
 
@@ -234,7 +234,7 @@ class SystemEventNames(str, Enum):
 
     MediaJobStateChangeEventName = 'Microsoft.Media.JobStateChange'
 
-    MediaLiveEventChannelArchiveHeartbeatEventName = 'Microsoft.Media.LiveEventChannelArchiveHeartbeat' 
+    MediaLiveEventChannelArchiveHeartbeatEventName = 'Microsoft.Media.LiveEventChannelArchiveHeartbeat'
 
     MediaLiveEventConnectionRejectedEventName = 'Microsoft.Media.LiveEventConnectionRejected'
 
@@ -244,7 +244,7 @@ class SystemEventNames(str, Enum):
 
     MediaLiveEventIncomingDataChunkDroppedEventName = 'Microsoft.Media.LiveEventIncomingDataChunkDropped'
 
-    MediaLiveEventIncomingStreamReceivedEventName = 'Microsoft.Media.LiveEventIncomingStreamReceived'   
+    MediaLiveEventIncomingStreamReceivedEventName = 'Microsoft.Media.LiveEventIncomingStreamReceived'
 
     MediaLiveEventIncomingStreamsOutOfSyncEventName = 'Microsoft.Media.LiveEventIncomingStreamsOutOfSync'
 
@@ -304,7 +304,7 @@ class SystemEventNames(str, Enum):
 
     StorageBlobDeletedEventName = 'Microsoft.Storage.BlobDeleted'
 
-    StorageBlobInventoryPolicyCompletedEventName = 'Microsoft.Storage.BlobInventoryPolicyCompleted'     
+    StorageBlobInventoryPolicyCompletedEventName = 'Microsoft.Storage.BlobInventoryPolicyCompleted'
 
     StorageBlobRenamedEventName = 'Microsoft.Storage.BlobRenamed'
 
