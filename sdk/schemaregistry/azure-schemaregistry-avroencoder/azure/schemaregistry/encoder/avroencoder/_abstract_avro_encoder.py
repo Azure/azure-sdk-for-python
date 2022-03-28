@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import BinaryIO, TypeVar, Union, Optional, Any
+from typing import BinaryIO, TypeVar, Union, Any
 from abc import abstractmethod
 
 ObjectType = TypeVar("ObjectType")

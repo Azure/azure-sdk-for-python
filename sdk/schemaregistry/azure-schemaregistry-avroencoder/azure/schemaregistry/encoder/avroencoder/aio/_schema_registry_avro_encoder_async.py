@@ -331,7 +331,7 @@ class AvroEncoder(object):
         schema_definition = await self._get_schema(schema_id, **request_options)
         new_cache_misses = (
             self._get_schema.cache_info().misses    # pylint: disable=no-value-for-parameter disable=no-member
-        )  
+        )
         if new_cache_misses > cache_misses:
             cache_info = (
                 self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member

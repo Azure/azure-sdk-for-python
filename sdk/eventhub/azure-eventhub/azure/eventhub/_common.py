@@ -8,7 +8,6 @@ import json
 import logging
 import uuid
 from typing import (
-    TypedDict,
     Union,
     Dict,
     Any,
@@ -19,6 +18,7 @@ from typing import (
     TYPE_CHECKING,
     cast,
 )
+from typing_extensions import TypedDict
 
 import six
 
@@ -190,7 +190,8 @@ class EventData(object):
         content = bytearray()
         for c in self.body: # type: ignore
             content += c   # type: ignore
-        return {"content": bytes(content), "content_type": self.content_type}
+        content_type = cast(str, self.content_type)
+        return {"content": bytes(content), "content_type": content_type}
 
     @classmethod
     def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> "EventData": # pylint: disable=unused-argument

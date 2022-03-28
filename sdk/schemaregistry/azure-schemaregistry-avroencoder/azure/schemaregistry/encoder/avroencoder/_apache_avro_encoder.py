@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from functools import lru_cache
-from typing import BinaryIO, Union, TypeVar, Optional, cast
+from typing import BinaryIO, Union, TypeVar, cast
 from io import BytesIO
 import avro # type: ignore
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder  # type: ignore

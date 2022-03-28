@@ -41,13 +41,13 @@ from ._exceptions import (  # pylint: disable=import-error
     AvroEncodeError,
     InvalidSchemaError
 )
-from ._apache_avro_encoder import (
+from ._apache_avro_encoder import (  # pylint: disable=import-error
     ApacheAvroObjectEncoder as AvroObjectEncoder,
-)  # pylint: disable=import-error
-from ._message_protocol import (
+)
+from ._message_protocol import (  # pylint: disable=import-error
     MessageContent,
     MessageType,
-)  # pylint: disable=import-error
+)
 from ._constants import (  # pylint: disable=import-error
     AVRO_MIME_TYPE,
 )
@@ -56,8 +56,8 @@ if TYPE_CHECKING:
     from azure.schemaregistry import SchemaRegistryClient
 
 _LOGGER = logging.getLogger(__name__)
-T = TypeVar("T", bound=MessageType) # pylint: disable=invalid-name
 
+T = TypeVar("T", bound=MessageType) # pylint: disable=invalid-name
 
 class AvroEncoder(object):
     """
