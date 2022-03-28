@@ -27,7 +27,7 @@ import os
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.avroencoder import AvroEncoder
+from azure.schemaregistry.encoder.avroencoder import AvroEncoder, MessageContent
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
@@ -71,7 +71,7 @@ def decode_with_content_and_content_type(encoder, event_data):
     for c in event_data.body:
         content += c
     content_bytes = bytes(content)
-    message_content = {"content": content_bytes, "content_type": event_data.content_type}
+    message_content = MessageContent({"content": content_bytes, "content_type": event_data.content_type})
     decoded_content = encoder.decode(message_content)
 
     print("Decoded content is: ", decoded_content)

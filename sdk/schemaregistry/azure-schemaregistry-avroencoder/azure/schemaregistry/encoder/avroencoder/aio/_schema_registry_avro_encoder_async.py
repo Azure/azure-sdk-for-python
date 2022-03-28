@@ -249,7 +249,7 @@ class AvroEncoder(object):
                     details={"message_content": {"content": payload, "content_type": content_type}}
                 ) from e
 
-        return {"content": payload, "content_type": content_type}
+        return MessageContent({"content": payload, "content_type": content_type})
 
     @overload
     async def decode(
