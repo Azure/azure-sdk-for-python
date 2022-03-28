@@ -2207,6 +2207,14 @@ class TestPackageNameDoesNotUseUnderscoreOrPeriod(pylint.testutils.CheckerTestCa
                 )
         ):
             self.checker.visit_module(module_node)
+    
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#packaging"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
 
 
 class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.CheckerTestCase):
