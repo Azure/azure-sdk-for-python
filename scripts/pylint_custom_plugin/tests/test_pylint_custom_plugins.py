@@ -2175,6 +2175,39 @@ class TestClientConstructorDoesNotHaveConnectionStringParam(pylint.testutils.Che
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
 
+class TestPackageNameDoesNotUseUnderscoreOrPeriod(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.PackageNameDoesNotUseUnderscoreOrPeriod
+
+    def test_package_name_acceptable(self):
+
+        package_name =  astroid.extract_node(
+        """
+        PACKAGE_NAME = "correct-package-name"        
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="setup.py", doc = """ """)
+        module_node.body = [package_name]
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+
+    def test_package_name_violation(self):
+
+        package_name =  astroid.extract_node(
+        """
+        PACKAGE_NAME = "incorrect.package-name"        
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="setup.py", doc = """ """)
+        module_node.body = [package_name]
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="package-name-incorrect", node=module_node
+                )
+        ):
+            self.checker.visit_module(module_node)
+
 
 class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodNamesDoNotUseDoubleUnderscorePrefix
@@ -2358,7 +2391,6 @@ class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.Check
         request = client.get(url)
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
-
 
 class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckDocstringAdmonitionNewline
