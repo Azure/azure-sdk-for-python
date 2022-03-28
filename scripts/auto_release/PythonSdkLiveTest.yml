@@ -46,8 +46,10 @@ jobs:
         if [ "$(SPEC_README)" ]; then
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
+          cd azure-rest-api-specs
           git fetch origin test-hdinsight-03-17
           git checkout test-hdinsight-03-17
+          cd ..
 
           # install autorest
           sudo npm install -g n
