@@ -17,7 +17,8 @@ from opentelemetry.trace.status import Status, StatusCode
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
-    AzureMonitorTraceExporter
+    AzureMonitorTraceExporter,
+    _get_trace_export_result,
 )
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
@@ -114,7 +115,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             self.assertEqual(result, SpanExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter.logger")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter._logger")
     def test_export_exception(self, logger_mock):
         test_span = trace._Span(
             name="test",
@@ -211,6 +212,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(test_span)
         self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), platform.node())
+        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), envelope.tags.get("ai.cloud.roleInstance"))
 
     def test_span_to_envelope_client_http(self):
         exporter = self._exporter
@@ -772,3 +774,20 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.data.base_data.properties["_MS.links"]
         )[0]
         self.assertEqual(json_dict["id"], "a6f5d48acb4d31da")
+
+
+class TestAzureTraceExporterUtils(unittest.TestCase):
+    def test_get_trace_export_result(self):
+        self.assertEqual(
+            _get_trace_export_result(ExportResult.SUCCESS),
+            SpanExportResult.SUCCESS,
+        )
+        self.assertEqual(
+            _get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE),
+            SpanExportResult.FAILURE,
+        )
+        self.assertEqual(
+            _get_trace_export_result(ExportResult.FAILED_RETRYABLE),
+            SpanExportResult.FAILURE,
+        )
+        self.assertEqual(_get_trace_export_result(None), None)

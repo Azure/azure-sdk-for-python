@@ -1,5 +1,10 @@
 # Release History
 
+## 12.10.1 (Unreleased)
+
+### Features Added
+- Added support for `create_if_not_exists()` for `BlobContainerClient`
+
 ## 12.10.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.

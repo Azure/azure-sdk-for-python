@@ -295,7 +295,7 @@ class WorkbookResource(TrackedResource):
     :vartype location: str
     :ivar identity: Identity used for BYOS.
     :vartype identity: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
     :ivar etag: Resource etag.
@@ -338,7 +338,7 @@ class WorkbookResource(TrackedResource):
         :keyword identity: Identity used for BYOS.
         :paramtype identity:
          ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
+        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
          "user", "shared".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
         :keyword etag: Resource etag.
@@ -371,7 +371,7 @@ class Workbook(WorkbookResource):
     :vartype location: str
     :ivar identity: Identity used for BYOS.
     :vartype identity: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
     :ivar etag: Resource etag.
@@ -465,7 +465,7 @@ class Workbook(WorkbookResource):
         :keyword identity: Identity used for BYOS.
         :paramtype identity:
          ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
+        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
          "user", "shared".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
         :keyword etag: Resource etag.
@@ -694,7 +694,7 @@ class WorkbooksListResult(msrest.serialization.Model):
 class WorkbookUpdateParameters(msrest.serialization.Model):
     """The parameters that can be provided when updating workbook properties properties.
 
-    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.SharedTypeKind
     :ivar tags: A set of tags. Resource tags.
@@ -740,7 +740,7 @@ class WorkbookUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
+        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
          "user", "shared".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.SharedTypeKind
         :keyword tags: A set of tags. Resource tags.

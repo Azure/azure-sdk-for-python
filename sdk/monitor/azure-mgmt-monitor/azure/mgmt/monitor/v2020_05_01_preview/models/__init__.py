@@ -6,34 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Action
-    from ._models_py3 import Condition
-    from ._models_py3 import ConditionFailingPeriods
-    from ._models_py3 import Dimension
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorContract
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Resource
-    from ._models_py3 import ScheduledQueryRuleCriteria
-    from ._models_py3 import ScheduledQueryRuleResource
-    from ._models_py3 import ScheduledQueryRuleResourceCollection
-    from ._models_py3 import ScheduledQueryRuleResourcePatch
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import Action  # type: ignore
-    from ._models import Condition  # type: ignore
-    from ._models import ConditionFailingPeriods  # type: ignore
-    from ._models import Dimension  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorContract  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ScheduledQueryRuleCriteria  # type: ignore
-    from ._models import ScheduledQueryRuleResource  # type: ignore
-    from ._models import ScheduledQueryRuleResourceCollection  # type: ignore
-    from ._models import ScheduledQueryRuleResourcePatch  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import Action
+from ._models_py3 import Condition
+from ._models_py3 import ConditionFailingPeriods
+from ._models_py3 import Dimension
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorContract
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Resource
+from ._models_py3 import ScheduledQueryRuleCriteria
+from ._models_py3 import ScheduledQueryRuleResource
+from ._models_py3 import ScheduledQueryRuleResourceCollection
+from ._models_py3 import ScheduledQueryRuleResourcePatch
+from ._models_py3 import TrackedResource
+
 
 from ._monitor_management_client_enums import (
     AlertSeverity,
