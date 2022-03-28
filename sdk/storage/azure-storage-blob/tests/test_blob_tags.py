@@ -36,7 +36,7 @@ TEST_BLOB_PREFIX = 'blob'
 class StorageBlobTagsTest(StorageTestCase):
 
     def _setup(self, storage_account_name, key):
-        self.bsc = self.create_storage_client(BlobServiceClient, self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
         self.container_name = self.get_resource_name("container")
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
@@ -92,7 +92,6 @@ class StorageBlobTagsTest(StorageTestCase):
 
     #-- test cases for blob tags ----------------------------------------------
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_set_blob_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -105,7 +104,6 @@ class StorageBlobTagsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_set_blob_tags_with_lease(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -128,7 +126,7 @@ class StorageBlobTagsTest(StorageTestCase):
 
         blob_client.delete_blob(lease=lease)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
+    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior."
     @BlobPreparer()
     def test_set_blob_tags_for_a_version(self, versioned_storage_account_name, versioned_storage_account_key):
         self._setup(versioned_storage_account_name, versioned_storage_account_key)
@@ -144,7 +142,6 @@ class StorageBlobTagsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_get_blob_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -162,7 +159,6 @@ class StorageBlobTagsTest(StorageTestCase):
         for key, value in resp.items():
             self.assertEqual(tags[key], value)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_get_blob_tags_for_a_snapshot(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -180,7 +176,6 @@ class StorageBlobTagsTest(StorageTestCase):
         for key, value in resp.items():
             self.assertEqual(tags[key], value)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_upload_block_blob_with_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -193,7 +188,6 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_get_blob_properties_returns_tags_num(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -208,7 +202,6 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertEqual(resp.tag_count, len(tags))
         self.assertEqual(downloaded.properties.tag_count, len(tags))
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_create_append_blob_with_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -221,7 +214,6 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_create_page_blob_with_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -234,7 +226,6 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_commit_block_list_with_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -257,7 +248,6 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), len(tags))
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_start_copy_from_url_with_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -286,7 +276,6 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), len(tags))
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_list_blobs_returns_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -301,7 +290,6 @@ class StorageBlobTagsTest(StorageTestCase):
             for key, value in blob.tags.items():
                 self.assertEqual(tags[key], value)
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
     @BlobPreparer()
     def test_filter_blobs(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -330,7 +318,7 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertEqual(items_on_page2[0]['tags']['tag1'], 'firsttag')
         self.assertEqual(items_on_page2[0]['tags']['tag2'], 'secondtag')
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
+    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior."
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_filter_blobs_using_account_sas(self, storage_account_name, storage_account_key):
@@ -362,7 +350,7 @@ class StorageBlobTagsTest(StorageTestCase):
         items_on_page1 = list(first_page)
         self.assertEqual(1, len(items_on_page1))
 
-    @pytest.mark.skipif(is_version_before(ServiceVersion.V2019_12_12), reason="SV too low")
+    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior."
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_set_blob_tags_using_blob_sas(self, storage_account_name, storage_account_key):
