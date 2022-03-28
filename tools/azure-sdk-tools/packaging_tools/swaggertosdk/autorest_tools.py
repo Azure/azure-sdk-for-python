@@ -1,7 +1,6 @@
 import json
 import logging
 import os.path
-import traceback
 from pathlib import Path
 import shutil
 import subprocess
@@ -123,7 +122,7 @@ def generate_code(input_file, global_conf, local_conf, output_dir=None, autorest
 
 
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
-    try:
+    def run_command():
         process = subprocess.Popen(
             cmd_line,
             stderr=subprocess.STDOUT,
@@ -137,7 +136,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         output_buffer = []
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOGGER.error(f"==[autorest22]" + output_buffer[-1])
+            _LOGGER.info(f"==[autorest22]" + output_buffer[-1])
         process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
@@ -147,8 +146,11 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
                 # print(f"[Autorest22] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
+    try:
+        return run_command
+    # Exclude avoidable CalledProcessError
+    except subprocess.CalledProcessError as ex:
+        return run_command
     except Exception as err:
         _LOGGER.error(err)
         raise
-    else:
-        _LOGGER.info("Return code: %s", process.returncode)
