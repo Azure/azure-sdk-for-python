@@ -25,34 +25,29 @@
 # --------------------------------------------------------------------------
 
 class InvalidSchemaError(ValueError):
-    """Error during encoding data or decoding data.
+    """Error during schema validation.
     :param str message: The message object stringified as 'message' attribute
     :keyword error: The original exception, if any.
 
     :ivar str message: A stringified version of the message parameter
-    :ivar inner_exception: The exception passed with the 'error' kwarg
-    :vartype inner_exception: Exception
-    :ivar dict details: The error details related to the schema.
+    :ivar dict details: The error details related to the schema. Depending on the error,
+     this may include information like: `schema_id`, `schema_definition`, `message_content`.
     """
     def __init__(self, message, *args, **kwargs):
         self.message = str(message)
         self.details = kwargs.pop("details", {})
-        self.inner_exception = kwargs.get("error")
         super(InvalidSchemaError, self).__init__(self.message, *args)
 
-class AvroEncodeError(ValueError):
-    """Error during encoding data or decoding data.
+class InvalidContentError(ValueError):
+    """Error during encoding or decoding content with a schema.
     :param str message: The message object stringified as 'message' attribute
     :keyword error: The original exception, if any.
 
     :ivar str message: A stringified version of the message parameter
-    :ivar inner_exception: The exception passed with the 'error' kwarg
-    :vartype inner_exception: Exception
     :ivar dict details: The error details. Depending on the error, this may include information like:
         `schema_id`, `schema_definition`, `message_content`.
     """
     def __init__(self, message, *args, **kwargs):
         self.message = str(message)
         self.details = kwargs.pop("details", {})
-        self.inner_exception = kwargs.get("error")
-        super(AvroEncodeError, self).__init__(self.message, *args)
+        super(InvalidContentError, self).__init__(self.message, *args)
