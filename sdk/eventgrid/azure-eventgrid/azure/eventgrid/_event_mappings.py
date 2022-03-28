@@ -63,8 +63,6 @@ class SystemEventNames(str, Enum):
 
     SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
 
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
-
     # backward compat names end here.
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
@@ -343,3 +341,6 @@ class SystemEventNames(str, Enum):
     WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
+
+    # servicebus alias
+    ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
