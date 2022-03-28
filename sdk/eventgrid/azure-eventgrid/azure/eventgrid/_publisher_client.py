@@ -54,14 +54,14 @@ if TYPE_CHECKING:
         TokenCredential,
     )
 
-    SendType = Union[
-        CloudEvent,
-        EventGridEvent,
-        Dict,
-        List[CloudEvent],
-        List[EventGridEvent],
-        List[Dict],
-    ]
+SendType = Union[
+    CloudEvent,
+    EventGridEvent,
+    Dict,
+    List[CloudEvent],
+    List[EventGridEvent],
+    List[Dict],
+]
 
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
