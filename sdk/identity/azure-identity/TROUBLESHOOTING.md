@@ -4,11 +4,11 @@ This troubleshooting guide covers failure investigation techniques, common error
 
 ## Table of contents
 
-- [Handling Azure Identity Errors](#handling-azure-identity-errors)
+- [Handle Azure Identity Errors](#handle-azure-identity-errors)
   - [ClientAuthenticationError](#clientauthenticationerror)
   - [CredentialUnavailableError](#credentialunavailableerror)
   - [Permission Issues](#permission-issues)
-- [Finding Relevant Information in Error Messages](#finding-relevant-information-in-error-messages)
+- [Find Relevant Information in Error Messages](#find-relevant-information-in-error-messages)
 - [Logging](#logging)
 - [Troubleshoot DefaultAzureCredential Authentication Issues](#troubleshoot-defaultazurecredential-authentication-issues)
 - [Troubleshoot EnvironmentCredential Authentication Issues](#troubleshoot-environmentcredential-authentication-issues)
