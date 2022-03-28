@@ -63,7 +63,7 @@ This error contains several pieces of information:
 - __Failing Credential Type__: The type of credential that failed to authenticate. This can be helpful when diagnosing issues with chained credential types such as `DefaultAzureCredential` or `ChainedTokenCredential`.
 - __STS Error Code and Message__: The error code and message returned from the Azure AD STS. This can give insight into the specific reason the request failed. For instance in this specific case because the provided client secret is incorrect. More information on STS error codes can be found [here](https://docs.microsoft.com//azure/active-directory/develop/reference-aadsts-error-codes#aadsts-error-codes).
 
-### Logging
+## Logging
 
 This library uses the standard
 [logging](https://docs.python.org/3/library/logging.html) library for logging.
