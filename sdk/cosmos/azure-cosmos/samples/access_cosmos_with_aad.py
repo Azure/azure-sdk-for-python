@@ -68,6 +68,7 @@ def run_sample():
         client_secret=CLIENT_SECRET)
 
     # You can also utilize DefaultAzureCredential rather than directly passing in the id's and secrets.
+    # This is the recommended method of authentication, and uses environment variables rather than in-code strings.
     aad_credentials = DefaultAzureCredential()
 
     # Use your credentials to authenticate your client.

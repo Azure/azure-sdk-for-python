@@ -96,7 +96,7 @@ aad_credentials = ClientSecretCredential(
     client_id=client_id,
     client_secret=client_secret)
 
-# Using DefaultAzureCredential
+# Using DefaultAzureCredential (recommended)
 aad_credentials = DefaultAzureCredential()
 
 client = CosmosClient(url, aad_credentials)
