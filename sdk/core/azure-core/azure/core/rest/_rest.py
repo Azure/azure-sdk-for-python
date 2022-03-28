@@ -26,7 +26,7 @@
 import abc
 import copy
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, MutableMapping
 
 from ..utils._utils import case_insensitive_dict
 from ._helpers import (
@@ -45,7 +45,6 @@ if TYPE_CHECKING:
         Iterator,
         Union,
         Dict,
-        MutableMapping,
     )
     ByteStream = Iterable[bytes]
     ContentType = Union[str, bytes, ByteStream]
@@ -129,7 +128,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         data = kwargs.pop("data", None)
         files = kwargs.pop("files", None)
         json = kwargs.pop("json", None)
-        default_headers = {}
+        default_headers: MutableMapping[str, str] = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
             content = data
