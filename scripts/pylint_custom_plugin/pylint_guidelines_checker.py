@@ -1766,6 +1766,6 @@ def register(linter):
     # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     # linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     # linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
-    # linter.register_checker(ClientListMethodsUseCorePaging(linter))
+    linter.register_checker(ClientListMethodsUseCorePaging(linter))
     # linter.register_checker(ClientLROMethodsUseCorePolling(linter))
     # linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
