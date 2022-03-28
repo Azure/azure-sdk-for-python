@@ -1,12 +1,13 @@
 # Release History
 
-## 1.2.0b1 (Unreleased)
+## 1.2.0b1 (2022-03-31)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
 
 ### Other Changes
 
