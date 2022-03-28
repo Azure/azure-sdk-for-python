@@ -1,6 +1,6 @@
 # Release History
 
-## 1.9.0b2 (Unreleased)
+## 1.9.0 (2022-04-05)
 
 ### Features Added
 
