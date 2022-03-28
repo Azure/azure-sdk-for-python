@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '97'
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Mar 2022 00:25:09 GMT
+      date: Sat, 26 Mar 2022 01:54:29 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -28,13 +28,13 @@ interactions:
         resource="https://vault.azure.net"
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus2
+      x-ms-keyvault-region: westus
       x-ms-keyvault-service-version: 1.9.331.5
       x-powered-by: ASP.NET
     status:
       code: 401
       message: Unauthorized
-    url: https://malegerec.vault.azure.net/keys/livekvtestrotation-keyeb61460/create?api-version=7.3
+    url: https://mcpatino-kv.vault.azure.net/keys/livekvtestrotation-keyeb61460/create?api-version=7.3
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -50,26 +50,57 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/create?api-version=7.3
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/a2abe1710b5942f898b98ca06649a554","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oYfjc-wszliZnG6FXtCJoW0mNteUtgc4I2ZFVhDg8TxuyiomjtP-W_8P7Q2YYO6j0V3-acpmPjO-_TzX5FKDq8Zqqe9Lkk4BLG3IhmC7pGqvLjxf3fmwcKpGRitc8Bu9SCp6OLRItUydXR8aKTXn7-rFs_cwnlGtct6MDjnZnuZ_WHlQ41sCsSfnA7FjhYshmT9OEpkrhdqzGUZG9tHldIeiQPgoqIp2DJDo0aZd1hpng8NIG3CgXj8ot14bxODwjfPtXipDXrU-PCXlGR7FbROzM8EjUX1zGtnhiMibIEz8SDvP2CWslXTEwJ_oPQ6iAvr5tULAIknZFCYBwZtsfQ","e":"AQAB"},"attributes":{"enabled":true,"created":1647995111,"updated":1647995111,"recoveryLevel":"CustomizedRecoverable+Purgeable","recoverableDays":7}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/6999e52198844f728895884af4336253","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"6lXiTUBodwwHNKGdhtHcLB4Jj3SxH6whqf3OfL6aaBjamGpsXJdE7nHL6ziTAcsguXWYJ51jSrUyLPjNrYz9oT-1G3GVljmXLRgyc9DFEEF8i20UQHhfCCX7fCiWXJa8CU4Ca8t2AY61rExQDAuovGXLbGO11NK-kYLKURkYJK_Hz6tjkIlZIrBNJnEtGMmX9eeqHB5vqM8pTWtumxV8tNkLcBrf-TsQMNGBIKD_hTK4AN1fS6Ppy_wnQr9Xw73NGt9Sv7gPEg9IgLqDplaCN-u2R4MGngIdsY_vvoIcN2HM6-bGxm7VxFpkHrSzsI41voumxCi_J_bj0pRHAQHCVQ","e":"AQAB"},"attributes":{"enabled":true,"created":1648259670,"updated":1648259670,"recoveryLevel":"CustomizedRecoverable+Purgeable","recoverableDays":7}}'
     headers:
       cache-control: no-cache
-      content-length: '703'
+      content-length: '705'
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Mar 2022 00:25:10 GMT
+      date: Sat, 26 Mar 2022 01:54:30 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id: 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache: ra_age=0;da_age=3939;rd_age=3939;brd_age=22496;ra_notif_age=157;dec_lev=3;
-      x-ms-keyvault-region: westus2
+      x-ms-keyvault-region: westus
       x-ms-keyvault-service-version: 1.9.331.5
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://malegerec.vault.azure.net/keys/livekvtestrotation-keyeb61460/create?api-version=7.3
+    url: https://mcpatino-kv.vault.azure.net/keys/livekvtestrotation-keyeb61460/create?api-version=7.3
+- request:
+    body: '{"lifetimeActions": [], "attributes": {}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '41'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
+  response:
+    body:
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1648259671,"updated":1648259671}}'
+    headers:
+      cache-control: no-cache
+      content-length: '238'
+      content-type: application/json; charset=utf-8
+      date: Sat, 26 Mar 2022 01:54:30 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.9.331.5
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatino-kv.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
 - request:
     body: '{"lifetimeActions": [{"trigger": {"timeAfterCreate": "P2M"}, "action":
       {"type": "Rotate"}}], "attributes": {}}'
@@ -86,26 +117,24 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1647995111,"updated":1647995111}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1648259671,"updated":1648259671}}'
     headers:
       cache-control: no-cache
-      content-length: '301'
+      content-length: '303'
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Mar 2022 00:25:10 GMT
+      date: Sat, 26 Mar 2022 01:54:30 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id: 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache: ra_age=0;da_age=3939;rd_age=3939;brd_age=22496;ra_notif_age=157;dec_lev=1;
-      x-ms-keyvault-region: westus2
+      x-ms-keyvault-region: westus
       x-ms-keyvault-service-version: 1.9.331.5
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://malegerec.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
+    url: https://mcpatino-kv.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
 - request:
     body: null
     headers:
@@ -117,26 +146,24 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1647995111,"updated":1647995111}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"created":1648259671,"updated":1648259671}}'
     headers:
       cache-control: no-cache
-      content-length: '301'
+      content-length: '303'
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Mar 2022 00:25:10 GMT
+      date: Sat, 26 Mar 2022 01:54:30 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id: 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache: ra_age=0;da_age=3939;rd_age=3939;brd_age=22496;ra_notif_age=157;dec_lev=1;
-      x-ms-keyvault-region: westus2
+      x-ms-keyvault-region: westus
       x-ms-keyvault-service-version: 1.9.331.5
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://malegerec.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
+    url: https://mcpatino-kv.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
 - request:
     body: '{"lifetimeActions": [{"trigger": {"timeAfterCreate": "P2M"}, "action":
       {"type": "Rotate"}}, {"trigger": {"timeBeforeExpiry": "P30D"}, "action": {"type":
@@ -154,28 +181,26 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1647995111,"updated":1647995111}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeAfterCreate":"P2M"},"action":{"type":"Rotate"}},{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1648259671,"updated":1648259671}}'
     headers:
       cache-control: no-cache
-      content-length: '321'
+      content-length: '323'
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Mar 2022 00:25:11 GMT
+      date: Sat, 26 Mar 2022 01:54:30 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id: 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache: ra_age=0;da_age=3939;rd_age=3939;brd_age=22496;ra_notif_age=157;dec_lev=0;
-      x-ms-keyvault-region: westus2
+      x-ms-keyvault-region: westus
       x-ms-keyvault-service-version: 1.9.331.5
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://malegerec.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
+    url: https://mcpatino-kv.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
 - request:
-    body: '{"lifetimeActions": [{"trigger": {"timeBeforeExpiry": "P30D"}, "action":
+    body: '{"lifetimeActions": [{"trigger": {"timeBeforeExpiry": "P60D"}, "action":
       {"type": "Notify"}}], "attributes": {"expiryTime": "P90D"}}'
     headers:
       Accept:
@@ -190,26 +215,24 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1647995111,"updated":1647995111}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P60D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1648259671,"updated":1648259671}}'
     headers:
       cache-control: no-cache
-      content-length: '256'
+      content-length: '258'
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Mar 2022 00:25:11 GMT
+      date: Sat, 26 Mar 2022 01:54:30 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id: 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache: ra_age=0;da_age=3939;rd_age=3939;brd_age=22496;ra_notif_age=157;dec_lev=0;
-      x-ms-keyvault-region: westus2
+      x-ms-keyvault-region: westus
       x-ms-keyvault-service-version: 1.9.331.5
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://malegerec.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
+    url: https://mcpatino-kv.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
 - request:
     body: null
     headers:
@@ -221,24 +244,22 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
   response:
     body:
-      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P30D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1647995111,"updated":1647995111}}'
+      string: '{"id":"https://vaultname.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy","lifetimeActions":[{"trigger":{"timeBeforeExpiry":"P60D"},"action":{"type":"Notify"}}],"attributes":{"expiryTime":"P90D","created":1648259671,"updated":1648259671}}'
     headers:
       cache-control: no-cache
-      content-length: '256'
+      content-length: '258'
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Mar 2022 00:25:11 GMT
+      date: Sat, 26 Mar 2022 01:54:30 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
-      x-ms-keyvault-rbac-assignment-id: 95a02d0c-52aa-59c1-8ea1-3849ee7c4bb5
-      x-ms-keyvault-rbac-cache: ra_age=0;da_age=3939;rd_age=3939;brd_age=22496;ra_notif_age=157;dec_lev=0;
-      x-ms-keyvault-region: westus2
+      x-ms-keyvault-region: westus
       x-ms-keyvault-service-version: 1.9.331.5
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://malegerec.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
+    url: https://mcpatino-kv.vault.azure.net/keys/livekvtestrotation-keyeb61460/rotationpolicy?api-version=7.3
 version: 1
