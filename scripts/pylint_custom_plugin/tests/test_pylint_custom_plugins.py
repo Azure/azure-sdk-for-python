@@ -2573,17 +2573,7 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
 class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckNamingMismatchGeneratedCode
 
-    def test_ignores_correct_alias_code(self):
-        module_node = astroid.extract_node(
-            """
-            import something as somethingElse
-            """
-        )
-
-        with self.assertNoMessages():
-            self.checker.visit_module(module_node)
-
-    def test_catches_incorrect_import_alias_code(self):
+    def test_import_naming_mismatch_violation(self):
         import_one = astroid.extract_node(
             'import Something'
            
@@ -2614,7 +2604,7 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_module(module_node)
 
-    def test_catches_incorrect_from_import_alias_code(self):
+    def test_import_from_naming_mismatch_violation(self):
         import_one = astroid.extract_node(
             'import Something'
            
@@ -2645,7 +2635,7 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_module(module_node)
 
-    def test_ignores_unaliased_import_init(self):
+    def test_naming_mismatch_acceptable(self):
         import_one = astroid.extract_node(
             'import Something'
            
@@ -2669,7 +2659,7 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_module(module_node)
     
-    def test_disable_pylint_alias(self):
+    def test_naming_mismatch_pylint_disable(self):
 
         file = open("./test_files/__init__.py")
         node = astroid.parse(file.read())
@@ -2677,6 +2667,14 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_module(node)
+
+    def test_guidelines_link_active(self):
+        url = "https://github.com/Azure/autorest/blob/main/docs/generate/built-in-directives.md"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
 
 class TestCheckEnum(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckEnum
