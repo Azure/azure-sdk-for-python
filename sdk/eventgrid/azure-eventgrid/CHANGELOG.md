@@ -1,6 +1,6 @@
 # Release History
 
-## 4.8.0b1 (Unreleased)
+## 4.9.0b1 (Unreleased)
 
 - This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
