@@ -173,10 +173,10 @@ class CodegenTestPR:
 
         # prepare input data
         input_data = {
-            'headSha': self.get_latest_commit_in_swagger_repo(),
+            'headSha': '90985ff9930614361e97034b3f149ea73efec6cb',
             'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
-            'specFolder': self.spec_repo,
-            'relatedReadmeMdFiles': [str(self.readme_local_folder())]
+            'specFolder': 'https://github.com/Azure/azure-rest-api-specs/blob/main/specification/hdinsight/resource-manager/readme.md',
+            'relatedReadmeMdFiles': ['specification/hdinsight/resource-manager/readme.md']
         }
 
         self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
