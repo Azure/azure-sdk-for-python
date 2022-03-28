@@ -19,7 +19,7 @@ import certifi
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
-from .constants import TLS_HEADER_FRAME
+from .constants import TLS_HEADER_FRAME, WEBSOCKET_PORT
 
 
 try:
@@ -52,7 +52,6 @@ _UNAVAIL = {errno.EAGAIN, errno.EINTR, errno.ENOENT, errno.EWOULDBLOCK}
 
 AMQP_PORT = 5672
 AMQPS_PORT = 5671
-WEBSOCKET_PORT = 443
 AMQP_FRAME = memoryview(b'AMQP')
 EMPTY_BUFFER = bytes()
 SIGNED_INT_MAX = 0x7FFFFFFF
@@ -635,10 +634,12 @@ class WebSocketTransport(_AbstractTransport):
         self.ws = None
         try:
             from websocket import create_connection
+            # TODO: transform ssl to sslopt
             self.ws = create_connection(
                 host,
                 timeout=connect_timeout,
-                skip_utf8_validation=True
+                skip_utf8_validation=True,
+                sslopt=kwargs.pop('ssl', None)
             )
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")

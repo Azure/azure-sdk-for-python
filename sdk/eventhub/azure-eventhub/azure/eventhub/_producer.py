@@ -126,7 +126,8 @@ class EventHubProducer(
             self._target,
             auth=auth,
             idle_timeout=10,
-            network_trace=self._client._config.network_tracing
+            network_trace=self._client._config.network_tracing,
+            transport_type=self._client._config.transport_type # pylint:disable=protected-access
         )
 
     def _open_with_retry(self):

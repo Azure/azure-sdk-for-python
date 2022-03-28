@@ -311,7 +311,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             token_type=token_type,
             timeout=self._config.auth_timeout,
             http_proxy=self._config.http_proxy,
-            transport_type=self._config.transport_type,
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
             verify=self._config.connection_verify

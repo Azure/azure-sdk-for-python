@@ -6,11 +6,13 @@
 
 # pylint: disable=too-many-lines
 
+from asyncio import transports
 from collections import namedtuple
 import logging
 import threading
 import time
 import uuid
+from xmlrpc.client import Transport
 import certifi
 import queue
 from functools import partial
@@ -33,6 +35,7 @@ from .constants import (
     ReceiverSettleMode,
     LinkDeliverySettleReason,
     ManagementOpenResult,
+    TransportType,
     SEND_DISPOSITION_ACCEPT,
     SEND_DISPOSITION_REJECT,
     AUTH_TYPE_CBS,
@@ -150,6 +153,9 @@ class AMQPClient(object):
         self._receive_settle_mode = kwargs.pop('receive_settle_mode', None) or ReceiverSettleMode.Second
         self._desired_capabilities = kwargs.pop('desired_capabilities', None)
 
+        # transport
+        self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
+
     def __enter__(self):
         """Run Client in a context manager."""
         self.open()
@@ -196,7 +202,8 @@ class AMQPClient(object):
             channel_max=self._channel_max,
             idle_timeout=self._idle_timeout,
             properties=self._properties,
-            network_trace=self._network_trace
+            network_trace=self._network_trace,
+            transport=self._transport_type
         )
         self._connection.open()
         self._session = self._connection.create_session(

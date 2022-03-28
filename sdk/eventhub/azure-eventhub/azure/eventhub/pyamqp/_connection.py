@@ -58,6 +58,7 @@ class Connection(object):
      Default value is `0.1`.
     :keyword bool network_trace: Whether to log the network traffic. Default value is `False`. If enabled, frames
      will be logged at the logging.INFO level.
+    :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket.
     """
 
     def __init__(self, endpoint, **kwargs):
