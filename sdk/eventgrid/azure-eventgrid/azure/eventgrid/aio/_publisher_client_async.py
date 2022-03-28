@@ -187,8 +187,8 @@ class EventGridPublisherClient:
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
-        :keyword str channel_name: Optional. Required only when publishing to partner namespaces with partner topic
-         routing mode. The name of the event channel. For more details, visit
+        :keyword str channel_name: Optional. Required only when publishing to partner namespaces with partner topic.
+         The name of the event channel. For more details, visit
          https://docs.microsoft.com/azure/event-grid/partner-events-overview
         :rtype: None
         """
