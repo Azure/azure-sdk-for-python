@@ -102,11 +102,46 @@ from ._metrics_advisor_client_enums import (
     PeriodType,
     SnoozeScope,
 )
-from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+
+from ._patch import MetricAnomalyAlertConfigurationsOperator
+from ._patch import DataFeedGranularity
+from ._patch import DataFeedIngestionSettings
+from ._patch import DataFeedMissingDataPointFillSettings
+from ._patch import DataFeedRollupSettings
+from ._patch import DataFeedSchema
+from ._patch import MetricAnomalyAlertScope
+from ._patch import SqlServerDataFeedSource
+from ._patch import MySqlDataFeedSource
+from ._patch import PostgreSqlDataFeedSource
+from ._patch import DetectionConditionOperator
+from ._patch import MetricAnomalyAlertConditions
+from ._patch import MetricAnomalyAlertScopeType
+from ._patch import DataFeedRollupType
+from ._patch import DataFeedSource
+from ._patch import AlertQueryTimeMode
+from ._patch import FeedbackQueryTimeMode
+from ._patch import AlertQueryTimeMode
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "MetricAnomalyAlertConfigurationsOperator",
+    "DataFeedGranularity",
+    "DataFeedIngestionSettings",
+    "DataFeedMissingDataPointFillSettings",
+    "DataFeedRollupSettings",
+    "DataFeedSchema",
+    "MetricAnomalyAlertScope",
+    "SqlServerDataFeedSource",
+    "MySqlDataFeedSource",
+    "PostgreSqlDataFeedSource",
+    "DetectionConditionOperator",
+    "MetricAnomalyAlertConditions",
+    "MetricAnomalyAlertScopeType",
+    "DataFeedRollupType",
+    "DataFeedSource",
+    "AlertQueryTimeMode",
+    "FeedbackQueryTimeMode",
+    "AlertQueryTimeMode",
     "AlertResultList",
     "AnomalyAlert",
     "AnomalyAlertConfiguration",
@@ -200,5 +235,5 @@ __all__ = [
     "PeriodType",
     "SnoozeScope",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+
 _patch_sdk()
