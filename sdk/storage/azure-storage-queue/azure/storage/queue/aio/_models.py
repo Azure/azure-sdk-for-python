@@ -41,9 +41,9 @@ class MessagesPaged(AsyncPageIterator):
             if self.max_messages is not None:
                 if self.results_per_page is None:
                     self.results_per_page = 1
-                if self.max_messages == 0: 
+                if self.max_messages == 0:
                     raise StopAsyncIteration("End of paging")
-                if self.results_per_page > self.max_messages: 
+                if self.results_per_page > self.max_messages:
                     self.results_per_page = self.max_messages
                     self.max_messages = 0
                 else:

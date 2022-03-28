@@ -598,7 +598,7 @@ class QueueClient(StorageAccountHostsMixin):
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
             The server timeout, expressed in seconds.
-        :keyword int max_messages: 
+        :keyword int max_messages:
             An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
@@ -629,7 +629,8 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return ItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged, max_messages=max_messages)
+            return ItemPaged(command, results_per_page=messages_per_page, 
+                             page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
             process_storage_error(error)
 
