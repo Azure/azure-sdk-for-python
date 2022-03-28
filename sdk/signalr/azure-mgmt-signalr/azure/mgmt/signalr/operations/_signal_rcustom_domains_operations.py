@@ -38,7 +38,7 @@ def build_list_request(
     api_version = "2022-02-01"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
@@ -65,21 +65,21 @@ def build_list_request(
 
 
 def build_get_request(
-    private_endpoint_connection_name: str,
     subscription_id: str,
     resource_group_name: str,
     resource_name: str,
+    name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2022-02-01"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains/{name}')
     path_format_arguments = {
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
+        "name": _SERIALIZER.url("name", name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -101,11 +101,11 @@ def build_get_request(
     )
 
 
-def build_update_request(
-    private_endpoint_connection_name: str,
+def build_create_or_update_request_initial(
     subscription_id: str,
     resource_group_name: str,
     resource_name: str,
+    name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -116,12 +116,12 @@ def build_update_request(
     api_version = "2022-02-01"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains/{name}')
     path_format_arguments = {
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
+        "name": _SERIALIZER.url("name", name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -148,21 +148,21 @@ def build_update_request(
 
 
 def build_delete_request_initial(
-    private_endpoint_connection_name: str,
     subscription_id: str,
     resource_group_name: str,
     resource_name: str,
+    name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2022-02-01"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains/{name}')
     path_format_arguments = {
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
+        "name": _SERIALIZER.url("name", name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -183,8 +183,8 @@ def build_delete_request_initial(
         **kwargs
     )
 
-class SignalRPrivateEndpointConnectionsOperations(object):
-    """SignalRPrivateEndpointConnectionsOperations operations.
+class SignalRCustomDomainsOperations(object):
+    """SignalRCustomDomainsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -211,8 +211,8 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         resource_group_name: str,
         resource_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.PrivateEndpointConnectionList"]:
-        """List private endpoint connections.
+    ) -> Iterable["_models.CustomDomainList"]:
+        """List all custom domains.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
@@ -220,12 +220,11 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         :param resource_name: The name of the resource.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateEndpointConnectionList or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.signalr.models.PrivateEndpointConnectionList]
+        :return: An iterator like instance of either CustomDomainList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.signalr.models.CustomDomainList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomainList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -256,7 +255,7 @@ class SignalRPrivateEndpointConnectionsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PrivateEndpointConnectionList", pipeline_response)
+            deserialized = self._deserialize("CustomDomainList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -279,31 +278,31 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains'}  # type: ignore
 
     @distributed_trace
     def get(
         self,
-        private_endpoint_connection_name: str,
         resource_group_name: str,
         resource_name: str,
+        name: str,
         **kwargs: Any
-    ) -> "_models.PrivateEndpointConnection":
-        """Get the specified private endpoint connection.
+    ) -> "_models.CustomDomain":
+        """Get a custom domain.
 
-        :param private_endpoint_connection_name: The name of the private endpoint connection.
-        :type private_endpoint_connection_name: str
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param resource_name: The name of the resource.
         :type resource_name: str
+        :param name: Custom domain name.
+        :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.signalr.models.PrivateEndpointConnection
+        :return: CustomDomain, or the result of cls(response)
+        :rtype: ~azure.mgmt.signalr.models.CustomDomain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -311,10 +310,10 @@ class SignalRPrivateEndpointConnectionsOperations(object):
 
         
         request = build_get_request(
-            private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             resource_name=resource_name,
+            name=name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -328,42 +327,25 @@ class SignalRPrivateEndpointConnectionsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('CustomDomain', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains/{name}'}  # type: ignore
 
 
-    @distributed_trace
-    def update(
+    def _create_or_update_initial(
         self,
-        private_endpoint_connection_name: str,
         resource_group_name: str,
         resource_name: str,
-        parameters: "_models.PrivateEndpointConnection",
+        name: str,
+        parameters: "_models.CustomDomain",
         **kwargs: Any
-    ) -> "_models.PrivateEndpointConnection":
-        """Update the state of specified private endpoint connection.
-
-        :param private_endpoint_connection_name: The name of the private endpoint connection.
-        :type private_endpoint_connection_name: str
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param resource_name: The name of the resource.
-        :type resource_name: str
-        :param parameters: The resource of private endpoint and its properties.
-        :type parameters: ~azure.mgmt.signalr.models.PrivateEndpointConnection
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.signalr.models.PrivateEndpointConnection
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+    ) -> "_models.CustomDomain":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -371,16 +353,16 @@ class SignalRPrivateEndpointConnectionsOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'PrivateEndpointConnection')
+        _json = self._serialize.body(parameters, 'CustomDomain')
 
-        request = build_update_request(
-            private_endpoint_connection_name=private_endpoint_connection_name,
+        request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             resource_name=resource_name,
+            name=name,
             content_type=content_type,
             json=_json,
-            template_url=self.update.metadata['url'],
+            template_url=self._create_or_update_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -388,26 +370,101 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('CustomDomain', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains/{name}'}  # type: ignore
 
+
+    @distributed_trace
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        name: str,
+        parameters: "_models.CustomDomain",
+        **kwargs: Any
+    ) -> LROPoller["_models.CustomDomain"]:
+        """Create or update a custom domain.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param resource_name: The name of the resource.
+        :type resource_name: str
+        :param name: Custom domain name.
+        :type name: str
+        :param parameters:
+        :type parameters: ~azure.mgmt.signalr.models.CustomDomain
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either CustomDomain or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.signalr.models.CustomDomain]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomDomain"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                name=name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('CustomDomain', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains/{name}'}  # type: ignore
 
     def _delete_initial(
         self,
-        private_endpoint_connection_name: str,
         resource_group_name: str,
         resource_name: str,
+        name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -418,10 +475,10 @@ class SignalRPrivateEndpointConnectionsOperations(object):
 
         
         request = build_delete_request_initial(
-            private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             resource_name=resource_name,
+            name=name,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -437,26 +494,26 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains/{name}'}  # type: ignore
 
 
     @distributed_trace
     def begin_delete(
         self,
-        private_endpoint_connection_name: str,
         resource_group_name: str,
         resource_name: str,
+        name: str,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Delete the specified private endpoint connection.
+        """Delete a custom domain.
 
-        :param private_endpoint_connection_name: The name of the private endpoint connection.
-        :type private_endpoint_connection_name: str
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param resource_name: The name of the resource.
         :type resource_name: str
+        :param name: Custom domain name.
+        :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -478,9 +535,9 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._delete_initial(
-                private_endpoint_connection_name=private_endpoint_connection_name,
                 resource_group_name=resource_group_name,
                 resource_name=resource_name,
+                name=name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -504,4 +561,4 @@ class SignalRPrivateEndpointConnectionsOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/customDomains/{name}'}  # type: ignore
