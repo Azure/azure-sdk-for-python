@@ -148,7 +148,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
    
-    '''@pytest.mark.live_test_only
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_none_participant_async(self):
         # room attributes
@@ -159,14 +159,12 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.users["chris"].properties["id"] : None
         }
         
-        async with self.rooms_client:
+        with pytest.raises(HttpResponseError) as ex:
             async with self.rooms_client:
                 await self.rooms_client.create_room(participants=participants)
                 
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
-            
-    '''
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_incorretMri_async(self):

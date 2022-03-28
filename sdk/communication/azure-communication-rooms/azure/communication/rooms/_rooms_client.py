@@ -17,7 +17,7 @@ from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Dict
 
 class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
@@ -116,7 +116,7 @@ class RoomsClient(object):
         room_id, # type: str
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> None
         """Delete room.
 
         :param room_id: Required. Id of room to be deleted

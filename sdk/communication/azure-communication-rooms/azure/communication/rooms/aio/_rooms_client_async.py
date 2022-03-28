@@ -17,7 +17,7 @@ from .._generated.models import (
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Dict
 
 class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
@@ -116,7 +116,7 @@ class RoomsClient(object):
         room_id, # type: str
         **kwargs
     ):
-        # type: (...) -> CommunicationRoom
+        # type: (...) -> None
         """Delete room.
 
         :param room_id: Required. Id of room to be deleted
@@ -183,7 +183,7 @@ class RoomsClient(object):
     async def add_participants(
         self,
         room_id, # type: str
-        participants, # type: Dict[str, Any]
+        participants, # type: dict[str, Any]
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
@@ -207,7 +207,7 @@ class RoomsClient(object):
     async def remove_participants(
         self,
         room_id, # type: str
-        participants, # type: Dict[str, Any]
+        participants, # type: dict[str, Any]
         **kwargs
     ):
         # type: (...) -> CommunicationRoom

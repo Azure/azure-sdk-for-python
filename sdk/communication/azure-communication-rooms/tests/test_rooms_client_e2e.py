@@ -141,7 +141,7 @@ class RoomsClientTest(CommunicationTestCase):
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
 
-    '''@pytest.mark.live_test_only
+    @pytest.mark.live_test_only
     def test_create_room_none_participant(self):
         participants = {}
         # add john and chris to room
@@ -155,7 +155,6 @@ class RoomsClientTest(CommunicationTestCase):
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
-    '''
     
     def test_create_room_incorretMri(self):
         # room attributes
