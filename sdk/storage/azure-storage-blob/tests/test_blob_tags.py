@@ -126,7 +126,6 @@ class StorageBlobTagsTest(StorageTestCase):
 
         blob_client.delete_blob(lease=lease)
 
-    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior."
     @BlobPreparer()
     def test_set_blob_tags_for_a_version(self, versioned_storage_account_name, versioned_storage_account_key):
         self._setup(versioned_storage_account_name, versioned_storage_account_key)
@@ -318,7 +317,7 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertEqual(items_on_page2[0]['tags']['tag1'], 'firsttag')
         self.assertEqual(items_on_page2[0]['tags']['tag2'], 'secondtag')
 
-    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior."
+    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior.")
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_filter_blobs_using_account_sas(self, storage_account_name, storage_account_key):
@@ -350,7 +349,7 @@ class StorageBlobTagsTest(StorageTestCase):
         items_on_page1 = list(first_page)
         self.assertEqual(1, len(items_on_page1))
 
-    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior."
+    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior.")
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_set_blob_tags_using_blob_sas(self, storage_account_name, storage_account_key):

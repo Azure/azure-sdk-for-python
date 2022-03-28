@@ -5,9 +5,6 @@
 ### Features Added
 - Added support for `create_if_not_exists()` for `BlobContainerClient`
 
-### Bugs Fixed
-- Fixed tests in `test_blob_tags.py` that were being skipped due to incorrect service versions being pulled by creation of `BlobServiceClient` (#23693)
-
 ## 12.10.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
