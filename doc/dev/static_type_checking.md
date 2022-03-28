@@ -18,16 +18,16 @@ contains some general typing tips and guidance as it relates to common types/pat
         - [Mapping types](TODO)
         - [List](TODO)
         - [Tuple](TODO)
-    - [Passing a function or a class as a parameter or return type](TODO)
     - [Typing variadic arguments - *args and **kwargs](TODO)
+    - [Use TYPE_CHECKING to avoid circular imports](TODO)
+    - [Passing a function or a class as a parameter or return type](TODO)
     - [Use forward references when the type is not defined yet](TODO)
+    - [Use typing.TypeAlias when creating a type alias](TODO)
     - [Use typing.overload to overload a function](TODO)
     - [Use typing.cast to help mypy understand a type](TODO)
     - [Use typing.Protocol for structural subtyping](TODO)
     - [Use TypeVar for generic type hinting](TODO)
     - [Use AnyStr when your parameter accepts both str and bytes](TODO)
-    - [Use typing.TypeAlias when creating a type alias](TODO)
-    - [Use TYPE_CHECKING to avoid circular imports](TODO)
 - [How to ignore a mypy typing error](TODO)
 - [How to opt out of mypy type checking](TODO)
 
@@ -35,19 +35,19 @@ contains some general typing tips and guidance as it relates to common types/pat
 
 Python is a dynamically typed (or sometimes called "duck typed") language. This means that the interpreter only checks
 types as code runs and types are allowed to change. This is different from more statically typed languages, like Java,
-where you will have you declare types in code and check them at compile time. However,
+where you will have to declare types in code and check them at compile time. However,
 with [PEP 484](https://peps.python.org/pep-0484/), type hints were introduced to Python which makes it possible to do
-the static type checking of Python code. Type hints can be written into Python code to indicate the type of a variable,
+static type checking of Python code. Type hints can be written into Python code to indicate the type of a variable,
 argument, return type, etc. There are tools available to perform static type checking using type hints,
 like [mypy](https://mypy.readthedocs.io/en/stable/). Note that type hints have no effect on the code at runtime and are
 not enforced by the interpreter.
 
 There are some key benefits to using and checking type hints in Python code:
 
-1) type hints checked by a static type checker can help developers find bugs in Python code (type hints can be thought
+1) Type hints checked by a static type checker can help developers find bugs in Python code (type hints can be thought
    of as "free" unit tests, although they do not replace a thorough test suite).
-2) type hints are shipped in our packages so that customers can consume them to further type check their own
-   applications and get improved IDE and Intellisense experiences
+2) Type hints are shipped in our packages so that customers can consume them to further type check their own
+   applications and get improved IDE and Intellisense experiences.
 
 Since Python 3, type annotations were introduced and are the **preferred** method of adding type hints to your code.
 Annotations provide a cleaner syntax and let you keep the type information closer, or inline with the code.
@@ -128,7 +128,7 @@ Here are a few considerations and notes on Python version support:
   favor for using the types in `collections.abc` or generic type hints (like `list`) from the standard library. At the
   time of writing, the Python SDK supports 3.6+ and so we must still import these types from `typing` or check the
   Python version at runtime before importing (Note that the `collections.abc` types did not have [] notation added until
-  3.9)
+  3.9).
 
 ```python
 import sys
@@ -176,6 +176,7 @@ To run mypy on your library, run tox mypy env at the package level:
 If you don't want to use `tox` you can also install and run `mypy` on its own:
 
 `pip install mypy==0.931`
+
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>mypy azure`
 
 Note that you may see different errors if running a different version of `mypy` than the one in CI.
@@ -209,25 +210,27 @@ placed in code and will tell you the inferred static type of an expression.
 `reveal_locals()` can also be placed on any line and will tell you the inferred types of all local variables.
 
 ```python
-from typing import Union, List
+a = [1]   # mypy infers type
+reveal_type(a)
 
+c = [1, 'a']    # `int` and `str` are not duck type compatible
+reveal_type(c)
 
-def print_things(thing: Union[int, List[int]]) -> None:
-    if isinstance(thing, int):
-        reveal_type(thing)
-        print(thing)
-
-    reveal_type(thing)
-    print(st for st in thing)
+def hello_world(message: str) -> None:
+    print(f'Hello world! {message}')
+    reveal_locals()
+    
+reveal_type(hello_world)
 ```
 
 Running `mypy` on the above reveals the types that `mypy` sees:
 
 ```cmd
-main.py:5: note: Revealed type is "builtins.int"
-main.py:8: note: Revealed type is "Union[builtins.int, builtins.list[builtins.int]]"
-main.py:9: error: Item "int" of "Union[int, List[int]]" has no attribute "__iter__" (not iterable)
-Found 1 error in 1 file (checked 1 source file)
+main.py:2: note: Revealed type is "builtins.list[builtins.int*]"
+main.py:5: note: Revealed type is "builtins.list[builtins.object*]"
+main.py:9: note: Revealed local types are:
+main.py:9: note:     message: builtins.str
+main.py:11: note: Revealed type is "def (message: builtins.str)"
 ```
 
 These debugging functions don't need to be imported from anywhere and are only recognized by `mypy` - therefore you will
@@ -288,19 +291,19 @@ something _or_ `None`. For example, `Optional` usage is appropriate here:
 ```python
 from typing import Optional
 
-
-def tree(kind: Optional[str] = None):
-    ...
+def plant_trees(
+    yard_kind: Optional[str], # Required, but can be None
+    park_kind: Optional[str] = None, # None default, but can be str
+    treehouse_kind: Optional[str] = 'oak' # 'oak' default, but can be None
+) -> None:
+    if yard_kind:
+        print(f'Planting {yard_kind} in front yard.')
+    if park_kind:
+        print(f'Planting {park_kind} in park.')
+    print(f'Planting {treehouse_kind} in backyard.')
 ```
 
-It can also be used without a default to indicate that the parameter must be specified (although can be passed as `None`):
-
-```python
-def tree(kind: Optional[str]):
-    ...
-```
-
-> Note: The `X | None` syntax is only supported in Python 3.10+
+> Note: The `X | None` syntax is only supported in Python 3.10+.
 
 ### Typing for collections
 
@@ -315,7 +318,7 @@ There are a few things to consider when typing collections in Python.
    abstract types.
 
 2) It can be more useful to consider the set of supported operations as the defining characteristic of a type. We should
-   prefer structural subtyping over nominal typing as this is what supports duck typing in Python.
+   prefer [structural subtyping](https://en.wikipedia.org/wiki/Structural_type_system) over [nominal typing](https://en.wikipedia.org/wiki/Nominal_type_system) as this is what supports duck typing in Python.
 
 #### Mapping Types
 
@@ -341,8 +344,8 @@ with a `typing.Mapping` - dict, defaultdict, a user-defined dict-like class, or 
 specified a generic `typing.Dict` here, the `entity` passed must be a `dict` or one of its subtypes, narrowing the types
 accepted.
 
-With [PEP 589](https://peps.python.org/pep-0589/), a `TypedDict` was introduced in Python 3.8 which allows you to add type hints for
-dictionaries with a fixed set of keys. The syntax for this looks similar to building a dataclass:
+With [PEP 589](https://peps.python.org/pep-0589/), a `TypedDict` was introduced in Python 3.8 which allows you to add
+type hints for dictionaries with a fixed set of keys. The syntax for this looks similar to building a dataclass:
 
 ```python
 # from typing import TypedDict  # Python >= 3.8
@@ -355,8 +358,9 @@ class Employee(TypedDict):
     current: bool
 ```
 
-It's important to note that `Employee` has no runtime effect - the interpreter will not validate that the keys or values passed are the correct types.
-However, during static type checking, when the `Employee` TypeDict is constructed, `mypy` will expect a dict with the keys and typed values specified.
+It's important to note that `Employee` has no runtime effect - the interpreter will not validate that the keys or values
+passed are the correct types. However, during static type checking, when the `Employee` TypedDict is constructed, `mypy`
+will expect a dict with the keys and typed values specified.
 
 ```python
 employee = Employee(name="krista", title="swe", ident="nah", current=True)
@@ -376,10 +380,10 @@ At runtime, `employee` is perfectly valid even though it does not conform to a t
 <class 'dict'>
 ```
 
-Note that this also just creates a plain `dict` at runtime. Usage of `TypedDict` is a great way to inform `mypy` and Intellisense how a specific dict should be constructed,
-but remember that this will not be enforced by the interpreter.
+Note that this also just creates a plain `dict` at runtime. Usage of `TypedDict` is a great way to inform `mypy` and
+Intellisense how a specific dict should be constructed, but remember that this will not be enforced by the interpreter.
 
-> Note that TypedDict is backported to older versions of Python by using typing_extensions
+> Note that TypedDict is backported to older versions of Python by using typing_extensions.
 
 #### List
 
@@ -412,7 +416,7 @@ If the tuple has an arbitrary amount of same type arguments, you can use `...` s
 `typing.NamedTuple` can also be used as a factory for tuple subclasses:
 
 ```python
-from typing import NamedTuple
+from typing import NamedTuple, List
 
 
 class Point(NamedTuple):
@@ -426,83 +430,6 @@ def bounding_box(points: List[Point]) -> None: ...
 Note that `Point` is consistent with `Tuple[float, float]`, but not vice versa. In other words, you can't pass a
 vanilla `Tuple[float, float]` into the `bounding_box` function above, but if it were annotated
 as `points: Tuple[float, float]`, a `Point` would be permissible.
-
-### Passing a function or a class as a parameter or return type
-
-`typing.Callable` can be used to annotate callback parameters or functions returned by higher-order functions. Syntax as
-follows: `Callable[[ParamType1, ParamType2, ...], ReturnType]`
-
-The argument list must be a list of types (or `...`) and have a single type for the return type:
-
-```python
-from typing import Callable
-
-
-def add(x: int, y: int) -> int:
-    return x + y
-
-
-def multiply(x: int, y: int) -> int:
-    return x * y
-
-
-def do_math(op: Callable[[int, int], int], x: int, y: int) -> int:
-    return op(x, y)
-```
-
-To type annotate a class, it depends on if the class has already been initialized or not.
-
-In the below example, `make_quack` accepts an initialized `Duck` while `create_duck` accepts a class object of `Duck`.
-The former can be written as `Duck` while the latter should be written as `typing.Type[Duck]` to indicate this
-difference.
-
-```python
-from typing import Type
-
-
-class Duck:
-    def quack(self): ...
-
-
-def make_quack(d: Duck) -> None:
-    d.quack()
-
-
-def create_duck(d: Type[Duck]) -> Duck:
-    return d()
-
-
-d = Duck()
-make_quack(d)  # OK
-create_duck(d)  # mypy complains
-
-make_quack(Duck)  # mypy complains
-create_duck(Duck)  # OK
-```
-
-Running mypy shows the expected (and unexpected) output:
-
-```cmd
-main.py:15: error: Argument 1 to "create_duck" has incompatible type "Duck"; expected "Type[Duck]"
-main.py:17: error: Argument 1 to "make_quack" has incompatible type "Type[Duck]"; expected "Duck"
-Found 2 errors in 1 file (checked 1 source file)
-```
-
-### Use typing.TypeAlias when creating a type alias
-
-With [PEP 613](https://peps.python.org/pep-0613/), `typing.TypeAlias` was introduced to make type aliases more obvious
-to the type checker.
-
-```python
-# from typing import TypeAlias Python >=3.10
-from typing_extensions import TypeAlias
-
-CredentialTypes: TypeAlias = Union[AzureKeyCredential, TokenCredential]
-```
-
-This removes ambiguity for the type checker and indicates this isn't a normal variable assignment.
-
-> Note that TypeAlias is backported to older versions of Python by using typing_extensions
 
 ### Typing variadic arguments - *args and **kwargs
 
@@ -548,97 +475,6 @@ main.py:4: note:     kwargs: builtins.dict[builtins.str, Any]]"
 as such in the code. If `*args` accepts more than just `str`, a `Union[]` type or `Any` can be used depending on how
 complex the type is.
 
-### Use AnyStr when your parameter or return type expects both str and bytes
-
-The `typing` module includes a pre-defined `TypeVar` named `AnyStr`. Its definition looks like this:
-
-```python
-from typing import TypeVar
-
-AnyStr = TypeVar('AnyStr', bytes, str)
-```
-
-`AnyStr` can be indicated in functions which use both `bytes` and `str` and helps keep consistent typing across
-arguments / return type:
-
-```python
-def concat(a: AnyStr, b: AnyStr) -> AnyStr:
-    return a + b
-```
-
-> Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar](https://docs.python.org/3/library/typing.html#typing.TypeVar)
-
-### Use typing.cast to help mypy understand a type
-
-Sometimes `mypy` will be unable to infer a type and may raise a false positive error. Using `typing.cast` is a way to
-tell `mypy` what the type of something is and is generally favored over using a `# type: ignore`.
-
-The below snippet shows an example of how `mypy` might need a little help to understand the parameter type specified in
-a union:
-
-```python
-from typing import Union, List, Optional, Any, cast
-
-
-def receive_deferred_messages(
-        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
-) -> List[ServiceBusReceivedMessage]:
-    if isinstance(sequence_numbers, int):
-        sequence_numbers = [sequence_numbers]
-    sequence_numbers = cast(List[int], sequence_numbers)  # mypy clarity
-```
-
-If you are using cast often, however, it might be an indication that the code should be otherwise written or refactored.
-Note that `typing.cast` is only used by the type checker and does not affect code or slow down the implementation at
-runtime.
-
-### Use forward references when the type is not defined yet
-
-This is commonly encountered when using `@classmethod`. Because the type does not exist yet, when trying to use it in a
-type hint, python complains at runtime.
-
-```python
-class TreeHouse:
-    def __init__(self): ...
-
-    @classmethod
-    def build(cls) -> TreeHouse:
-        return cls()
-```
-
-```cmd
-    class TreeHouse:
-  File "testing_mypy.py", line 12, in TreeHouse
-    def build(cls) -> TreeHouse:
-NameError: name 'TreeHouse' is not defined
-```
-
-A forward reference can be used to fix the runtime issue. Simply place the type in quotations like "TreeHouse":
-
-```python
-class TreeHouse:
-    def __init__(self) -> None: ...
-
-    @classmethod
-    def build(cls) -> "TreeHouse":
-        return cls()
-```
-
-`mypy` recognizes this syntax and will understand the type as `TreeHouse`.
-
-Another situation where forward references can be useful is when a type hint is used before a type is defined in a file.
-Here, `TreeHouse` gets defiend after `Yurt`, but `Yurt` uses it in a type hint so it must be a forward reference:
-
-```python
-class Yurt:
-    def add(house: "TreeHouse") -> None: ...
-
-
-class TreeHouse:
-    def __init__(self) -> None: ...
-```
-
-> Note: While this issue is easily resolved by adding `from __future__ import annotations`, this is currently only supported in Python 3.7+.
 
 ### Use TYPE_CHECKING to avoid circular imports
 
@@ -702,40 +538,254 @@ Another reason to use `TYPE_CHECKING` is to hide importing types which are neede
 costly to load at runtime. Types imported from `typing` or `typing_extensions` do not need to be put under
 a `TYPE_CHECKING` conditional.
 
-### Use TypeVar for generic type hinting
+### Passing a function or a class as a parameter or return type
 
-`TypeVar` is a generic type which can be bound to a specific type with each usage. Common usage might be to have the
-parameter type reflected on the result type:
+`typing.Callable` can be used to annotate callback parameters or functions returned by higher-order functions. Syntax as
+follows: `Callable[[ParamType1, ParamType2, ...], ReturnType]`
 
-```python
-from typing import Sequence, TypeVar
-
-T = TypeVar("T")
-
-
-def pick(p: Sequence[T]) -> T:
-    return random_pick(p)
-```
-
-This leaves the type open for the caller to pass a `Sequence[int]`, `Sequence[float]`, `Sequence[str]`, etc. and
-promises to return the same `T` type passed in.
-
-You can restrict a `TypeVar` to several specific types by adding the types as positional arguments:
+The argument list must be a list of types (or `...`) and have a single type for the return type:
 
 ```python
-from typing import Sequence, TypeVar
-
-T = TypeVar("T", int, str)
+from typing import Callable
 
 
-def pick(p: Sequence[T]) -> T:
-    return random_pick(p)
+def add(x: int, y: int) -> int:
+    return x + y
+
+
+def multiply(x: int, y: int) -> int:
+    return x * y
+
+
+def do_math(op: Callable[[int, int], int], x: int, y: int) -> int:
+    return op(x, y)
+
+product = do_math(multiply, 2, 2)
+sum = do_math(add, 2, 2)
 ```
 
-Here the type checker will only expect types of `int` or `str` for `T`.
+Type annotations for class objects differ from type annotations for class instances.
 
-There are also arguments available to set the upper boundary or variance in a `TypeVar` -- please see
-the [reference docs](https://docs.python.org/3/library/typing.html#typing.TypeVar) for more information.
+In the below example, `make_quack` accepts an initialized `Duck` while `create_duck` accepts a class object of `Duck`.
+The former can be written as `Duck` while the latter should be written as `typing.Type[Duck]` to indicate this
+difference.
+
+```python
+from typing import Type
+
+
+class Duck:
+    def quack(self): ...
+
+
+def make_quack(d: Duck) -> None:
+    d.quack()
+
+
+def create_duck(d: Type[Duck]) -> Duck:
+    return d()
+
+
+d = Duck()
+make_quack(d)  # OK
+create_duck(d)  # mypy complains
+
+make_quack(Duck)  # mypy complains
+create_duck(Duck)  # OK
+```
+
+Running mypy shows the expected (and unexpected) output:
+
+```cmd
+main.py:15: error: Argument 1 to "create_duck" has incompatible type "Duck"; expected "Type[Duck]"
+main.py:17: error: Argument 1 to "make_quack" has incompatible type "Type[Duck]"; expected "Duck"
+Found 2 errors in 1 file (checked 1 source file)
+```
+
+### Use forward references when the type is not defined yet
+
+This is commonly encountered when using `@classmethod`. Because the type does not exist yet, when trying to use it in a
+type hint, Python complains at runtime.
+
+```python
+class TreeHouse:
+    def __init__(self): ...
+
+    @classmethod
+    def build(cls) -> TreeHouse:
+        return cls()
+```
+
+```cmd
+    class TreeHouse:
+  File "testing_mypy.py", line 12, in TreeHouse
+    def build(cls) -> TreeHouse:
+NameError: name 'TreeHouse' is not defined
+```
+
+A forward reference can be used to fix the runtime issue. Simply place the type in quotations like "TreeHouse":
+
+```python
+class TreeHouse:
+    def __init__(self) -> None: ...
+
+    @classmethod
+    def build(cls) -> "TreeHouse":
+        return cls()
+```
+
+`mypy` recognizes this syntax and will understand the type as `TreeHouse`.
+
+Forward references can also be useful when a type hint is used before a type is defined in a file.
+Here, `TreeHouse` is defined after `Yurt`. However, `Yurt` uses `Treehouse` in a type hint, so it must be a forward reference:
+
+```python
+class Yurt:
+    def add(self, house: "TreeHouse") -> None: ...
+
+
+class TreeHouse:
+    def __init__(self) -> None: ...
+```
+
+> Note: While this issue is easily resolved by adding `from __future__ import annotations`, this is currently only supported in Python 3.7+.
+
+### Use typing.TypeAlias when creating a type alias
+
+With [PEP 613](https://peps.python.org/pep-0613/), `typing.TypeAlias` was introduced to make type aliases more obvious
+to the type checker.
+
+```python
+# from typing import TypeAlias Python >=3.10
+from typing_extensions import TypeAlias
+
+CredentialTypes: TypeAlias = Union[AzureKeyCredential, TokenCredential]
+```
+
+This removes ambiguity for the type checker and indicates this isn't a normal variable assignment.
+
+> Note that TypeAlias is backported to older versions of Python by using typing_extensions.
+
+### Use typing.overload to overload a function
+
+`typing.overload` allows for annotating different combinations of arguments for a function. This is useful when the
+return type might depend on the type or types of parameters.
+
+Consider a function which takes in different input types which then inform the output type:
+
+```python
+from typing import Union
+
+def analyze_text(text: str, analysis_kind: Union[SentimentAnalysis, EntityRecognition, LanguageDetection]) -> Union[
+    SentimentResult, EntityRecognitionResult, LanguageDetectionResult]:
+    return _analyze(text, analysis_kind)
+```
+
+We can annotate this function with overloads to help inform the type checker (and intellisense) which input maps to
+which output type.
+
+```python
+from typing import overload
+
+
+@overload
+def analyze_text(text: str, analysis_kind: LanguageDetection) -> LanguageDetectionResult:
+    ...
+
+
+@overload
+def analyze_text(text: str, analysis_kind: EntityRecognition) -> EntityRecognitionResult:
+    ...
+
+
+@overload
+def analyze_text(text: str, analysis_kind: SentimentAnalysis) -> SentimentResult:
+    ...
+
+
+def analyze_text(text, analysis_kind):  # the actual implementation shouldn't be annotated
+    return _analyze(text, analysis_kind)
+```
+
+Running mypy shows that the correct return type is inferred from the input type:
+
+```python
+result = analyze_text("my text", LanguageDetection())
+reveal_type(result)
+```
+
+`main.py:28: note: Revealed type is "__main__.LanguageDetectionResult"`
+
+Another use of typing.overload is when there are a different number of arguments. We can take the above example and
+imagine that `analyze_text` has an additional overload which does not take an `analysis_kind`:
+
+```python
+from typing import overload
+
+
+@overload
+def analyze_text(text: str, analysis_kind: LanguageDetection) -> LanguageDetectionResult:
+    ...
+
+
+@overload
+def analyze_text(text: str, analysis_kind: EntityRecognition) -> EntityRecognitionResult:
+    ...
+
+
+@overload
+def analyze_text(text: str, analysis_kind: SentimentAnalysis) -> SentimentResult:
+    ...
+
+
+@overload
+def analyze_text(text: str) -> str:
+    ...
+
+
+def analyze_text(*args, **kwargs):  # the actual implementation shouldn't be annotated
+    # logic parsing args / kwargs
+    ...
+```
+
+Running mypy again shows that it understands the return types based on the different number of arguments:
+
+```python
+language_result = analyze_text("my text", LanguageDetection())
+reveal_type(language_result)
+
+text_result = analyze_text("my text")
+reveal_type(text_result)
+```
+
+```cmd
+main.py:36: note: Revealed type is "__main__.LanguageDetectionResult"
+main.py:39: note: Revealed type is "builtins.str"
+```
+
+### Use typing.cast to help mypy understand a type
+
+Sometimes `mypy` will be unable to infer a type and may raise a false positive error. Using `typing.cast` is a way to
+tell `mypy` what the type of something is and is generally favored over using a `# type: ignore`.
+
+The below snippet shows an example of how `mypy` might need a little help to understand the parameter type specified in
+a union:
+
+```python
+from typing import Union, List, Optional, Any, cast
+
+
+def receive_deferred_messages(
+        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
+) -> List[ServiceBusReceivedMessage]:
+    if isinstance(sequence_numbers, int):
+        sequence_numbers = [sequence_numbers]
+    sequence_numbers = cast(List[int], sequence_numbers)  # mypy clarity
+```
+
+If you are using cast often, however, it might be an indication that the code should be otherwise written or refactored.
+Note that `typing.cast` is only used by the type checker and does not affect code or slow down the implementation at
+runtime.
 
 ### Use typing.Protocol for structural subtyping
 
@@ -828,105 +878,81 @@ assert isinstance(Penguin, SupportsFly)  # False
 Because this is a runtime check, only the presence of the required methods defined by the Protocol is checked -- not
 their type signatures.
 
-> Note that runtime_checkable is backported to older versions of Python by using typing_extensions
+> Note that runtime_checkable is backported to older versions of Python by using typing_extensions.
 
-### Use typing.overload to overload a function
+### Use TypeVar for generic type hinting
 
-`typing.overload` allows for annotating different combinations of arguments for a function. This is useful when the
-return type might depend on the type or types of parameters.
-
-Consider a function which takes in different input types which then inform the output type:
+`TypeVar` is a generic type which can be bound to a specific type with each usage. Common usage might be to have the
+parameter type reflected on the result type:
 
 ```python
-from typing import Union
+from typing import Sequence, TypeVar
+
+T = TypeVar("T")
 
 
-def analyze_text(text: str, analysis_kind: Union[SentimentAnalysis, EntityRecognition, LanguageDetection]) -> Union[
-    SentimentResult, EntityRecognitionResult, LanguageDetectionResult]:
-    return _analyze(text, analysis_kind)
+def pick(p: Sequence[T]) -> T:
+    return random_pick(p)
 ```
 
-We can annotate this function with overloads to help inform the type checker (and intellisense) which input maps to
-which output type.
+This leaves the type open for the caller to pass a `Sequence[int]`, `Sequence[float]`, `Sequence[str]`, etc. and
+promises to return the same `T` type passed in.
+
+**Restrict TypeVars to certain types**
+
+You can restrict a `TypeVar` to several specific types by adding the types as positional arguments:
 
 ```python
-from typing import overload
+from typing import Sequence, TypeVar
+
+T = TypeVar("T", int, str)
 
 
-@overload
-def analyze_text(text: str, analysis_kind: LanguageDetection) -> LanguageDetectionResult:
-    ...
-
-
-@overload
-def analyze_text(text: str, analysis_kind: EntityRecognition) -> EntityRecognitionResult:
-    ...
-
-
-@overload
-def analyze_text(text: str, analysis_kind: SentimentAnalysis) -> SentimentResult:
-    ...
-
-
-def analyze_text(text, analysis_kind):  # the actual implementation shouldn't be annotated
-    return _analyze(text, analysis_kind)
+def pick(p: Sequence[T]) -> T:
+    return random_pick(p)
 ```
 
-Running mypy shows that the correct return type is inferred from the input type:
+Here the type checker will only expect types of `int` or `str` for `T`.
+
+**Set the upper bound on a TypeVar**
+
+Another way to narrow the type of a `TypeVar` is to provide the `bound` keyword argument with a type which should be
+considered the upper boundary of `T`. Here we pass `typing.SupportsFloat` which says that anything passed as `T` should
+be consistent with `SupportsFloat` and must implement `__float__`.
 
 ```python
-result = analyze_text("my text", LanguageDetection())
-reveal_type(result)
+from typing import Sequence, TypeVar, SupportsFloat
+
+T = TypeVar("T", bound=SupportsFloat)
+
+
+def pick(p: Sequence[T]) -> T:
+    return random_pick(p)
 ```
 
-`main.py:28: note: Revealed type is "__main__.LanguageDetectionResult"`
+There are also arguments available to set the variance in a `TypeVar` for the generic class to be more flexible --
+please see the [PEP 484](https://peps.python.org/pep-0484/#covariance-and-contravariance) for more information.
 
-Another use of typing.overload is when there are a different number of arguments. We can take the above example and
-imagine that `analyze_text` has an additional overload which does not take an `analysis_kind`:
+### Use AnyStr when your parameter or return type expects both str and bytes
+
+The `typing` module includes a pre-defined `TypeVar` named `AnyStr`. Its definition looks like this:
 
 ```python
-from typing import overload
+from typing import TypeVar
 
-
-@overload
-def analyze_text(text: str, analysis_kind: LanguageDetection) -> LanguageDetectionResult:
-    ...
-
-
-@overload
-def analyze_text(text: str, analysis_kind: EntityRecognition) -> EntityRecognitionResult:
-    ...
-
-
-@overload
-def analyze_text(text: str, analysis_kind: SentimentAnalysis) -> SentimentResult:
-    ...
-
-
-@overload
-def analyze_text(text: str) -> str:
-    ...
-
-
-def analyze_text(*args, **kwargs):  # the actual implementation shouldn't be annotated
-    # logic parsing args / kwargs
-    ...
+AnyStr = TypeVar('AnyStr', bytes, str)
 ```
 
-Running mypy again shows that it understands the return types based on the different number of arguments:
+`AnyStr` can be indicated in functions which use both `bytes` and `str` and helps keep consistent typing across
+arguments / return type:
 
 ```python
-language_result = analyze_text("my text", LanguageDetection())
-reveal_type(language_result)
-
-text_result = analyze_text("my text")
-reveal_type(text_result)
+def concat(a: AnyStr, b: AnyStr) -> AnyStr:
+    return a + b
 ```
 
-```cmd
-main.py:36: note: Revealed type is "__main__.LanguageDetectionResult"
-main.py:39: note: Revealed type is "builtins.str"
-```
+> Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar](https://docs.python.org/3/library/typing.html#typing.TypeVar).
+
 
 ## How to ignore mypy errors
 
