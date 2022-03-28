@@ -81,9 +81,13 @@ async def sample_analyze_conversation_app_async():
             if entity.resolutions:
                 print("resolutions")
                 for resolution in entity.resolutions:
-                    if isinstance(resolution, DateTimeResolution):
-                        print(resolution)
-                    print(resolution)
+                    print("kind: {}".format(resolution.resolution_kind))
+                    print("value: {}".format(resolution.additional_properties["value"]))
+            if entity.extra_information:
+                print("extra info")
+                for data in entity.extra_information:
+                    print("kind: {}".format(data.extra_information_kind))
+                    print("value: {}".format(data.value))
 
     # [END analyze_conversation_app_async]
 
