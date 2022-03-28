@@ -136,14 +136,13 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         output_buffer = []
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOGGER.info(f"==[autorest22]" + output_buffer[-1])
+            _LOGGER.info(f"==[autorest]" + output_buffer[-1])
         process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
             # print necessary error info
             for i in range(-min(len(output_buffer), 10), 0):
-                _LOGGER.error(f"[Autorest1111] {output_buffer[i]}")
-                # print(f"[Autorest22] {output_buffer[i]}")
+                _LOGGER.error(f"[Autorest] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
     try:
