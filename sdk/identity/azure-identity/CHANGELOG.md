@@ -8,6 +8,8 @@
 
 ### Breaking Changes
 
+- `validate_authority` support is not available in 1.9.0.
+
 ### Bugs Fixed
 
 - Added check on `content` from msal response.    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
