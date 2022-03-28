@@ -2782,6 +2782,19 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
 
             self.checker.visit_classdef(node.body[1])
 
+    def test_guidelines_link_active(self):
+        response_one = self._create_url_pipeline("https://azure.github.io/azure-sdk/python_design.html#enumerations")
+        assert response_one.http_response.status_code == 200
+        response_two = self._create_url_pipeline("https://azure.github.io/azure-sdk/python_implementation.html#extensible-enumerations")
+        assert response_two.http_response.status_code == 200
+    
+    def _create_url_pipeline(self,url):
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        return response
+        
             
 class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckAPIVersion
