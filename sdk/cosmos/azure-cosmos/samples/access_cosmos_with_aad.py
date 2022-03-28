@@ -79,7 +79,7 @@ def run_sample():
     container = db.get_container_client(CONTAINER_ID)
 
     print("Container info: " + str(container.read()))
-    container.create_item(get_test_item(879))
+    container.create_item(get_test_item(0))
     print("Point read result: " + str(container.read_item(item='Item_0', partition_key='Item_0')))
     query_results = list(container.query_items(query='select * from c', partition_key='Item_0'))
     assert len(query_results) == 1
