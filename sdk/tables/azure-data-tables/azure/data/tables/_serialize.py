@@ -34,9 +34,10 @@ def _get_match_headers(etag, match_condition):
 
 def _prepare_key(keyvalue):
     """Duplicate the single quote char to escape."""
-    if not isinstance(keyvalue, str):
+    try:
+        return keyvalue.replace("'", "''")
+    except AttributeError:
         raise TypeError(f'PartitionKey or RowKey must be of type string.')
-    return keyvalue.replace("'", "''")
 
 
 def _parameter_filter_substitution(parameters, query_filter):
