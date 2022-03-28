@@ -2,16 +2,18 @@ interactions:
 - request:
     body: '{"ComponentTelemetry1": 5}'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '26'
       Content-Type:
       - application/json
       Message-Id:
-      - 5cd8a6f0-02aa-4c2c-a74c-db0e677fd93a
+      - d731c342-01ed-4c04-ba67-fac702e1ee76
       Telemetry-Source-Time:
-      - '2022-03-24T17:00:06.769322Z'
+      - '2022-03-25T21:09:59.629717Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2021-06-30-preview
   response:
@@ -23,9 +25,9 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:00:07 GMT
+      date: Fri, 25 Mar 2022 21:10:00 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-065b5cc80569ea478392da73e15ca9de-5e51cd5aad46a943-01
+      traceresponse: 00-fd75d2e40a4c6f438cdce0b8f00c79a1-80ad139e57f1e24a-01
     status:
       code: 404
       message: Not Found
@@ -33,16 +35,18 @@ interactions:
 - request:
     body: '{"ComponentTelemetry1": 5}'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '26'
       Content-Type:
       - application/json
       Message-Id:
-      - c15661aa-7cce-46ed-af06-4023e7b981c5
+      - d0c02933-2cd2-40a6-a0ad-8e454f08edc9
       Telemetry-Source-Time:
-      - '2022-03-24T17:00:07.375934Z'
+      - '2022-03-25T21:10:00.367747Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2021-06-30-preview
   response:
@@ -54,9 +58,9 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:00:07 GMT
+      date: Fri, 25 Mar 2022 21:10:00 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a78d7aa4775d8245a31133348dda9203-a19805bf0447304a-01
+      traceresponse: 00-2d452a27b2ab324fafc08b8514fe6f8e-098b6896407aa947-01
     status:
       code: 404
       message: Not Found

@@ -4,8 +4,6 @@
 
 ### Settings
 ``` yaml
-use-extension:
-    "@autorest/python": "5.1.0-preview.4"
 input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/preview/2021-06-30-preview/digitaltwins.json
 output-folder: ../azure/digitaltwins/core/_generated
 namespace: azure.digitaltwins.core
@@ -48,15 +46,5 @@ directive:
     where: $.definitions.EventRoute
     transform: >
       $["x-ms-client-name"] = "DigitalTwinsEventRoute"
-```
-
-### Rename models parameter to dtdl_models
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $.paths["/models"]..parameters[?(@.name === "models")] 
-    transform: >
-        $["x-ms-client-name"] = "dtdl_models"
 ```
 

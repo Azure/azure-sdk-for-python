@@ -6,14 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._digital_twin_models_operations_async import DigitalTwinModelsOperations
-from ._query_operations_async import QueryOperations
-from ._digital_twins_operations_async import DigitalTwinsOperations
-from ._event_routes_operations_async import EventRoutesOperations
-
-__all__ = [
-    'DigitalTwinModelsOperations',
-    'QueryOperations',
-    'DigitalTwinsOperations',
-    'EventRoutesOperations',
-]
+VERSION = "1.2.0b1"

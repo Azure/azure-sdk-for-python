@@ -3,7 +3,7 @@ interactions:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-7d3116db?api-version=2021-06-30-preview
   response:
@@ -28,11 +28,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:00:53 GMT
+      - Fri, 25 Mar 2022 21:10:45 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-4de278289aa82f45be2271873415656c-5acf340379f31b44-01
+      - 00-26c38c307fb48042b56397c31a7f0c96-36fff15439c3894a-01
     status:
       code: 404
       message: Not Found

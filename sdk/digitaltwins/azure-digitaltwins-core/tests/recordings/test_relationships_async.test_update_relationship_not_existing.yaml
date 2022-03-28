@@ -2,12 +2,14 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '54'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2021-06-30-preview
   response:
@@ -19,9 +21,9 @@ interactions:
     headers:
       content-length: '303'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:04:15 GMT
+      date: Fri, 25 Mar 2022 21:13:44 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-cb4b162fb412344aac7b2a74613ace15-e27800d8cbb3fb44-01
+      traceresponse: 00-a90c6d6802eda74486f019e30a483993-ec0709c625a74a4e-01
     status:
       code: 404
       message: Not Found
@@ -29,12 +31,14 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '54'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2021-06-30-preview
   response:
@@ -46,9 +50,9 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:04:15 GMT
+      date: Fri, 25 Mar 2022 21:13:44 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-d047dec780bef44f87dbecb828eb532a-533bef348fb72145-01
+      traceresponse: 00-d0fe42cb44c9854f8b2bdd9a2cf725cd-c9adc275fa988c43-01
     status:
       code: 404
       message: Not Found

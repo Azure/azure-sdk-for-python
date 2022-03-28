@@ -3,7 +3,7 @@ interactions:
     body: '{"ComponentTelemetry1": 5}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,11 +13,11 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 929c2338-4b73-406a-b621-c77fb2533b62
+      - e2fcdd36-14f7-43eb-95ce-5f26535e5f90
       Telemetry-Source-Time:
-      - '2022-03-24T16:59:43.64714Z'
+      - '2022-03-25T21:09:37.220743Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2021-06-30-preview
   response:
@@ -32,11 +32,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 16:59:45 GMT
+      - Fri, 25 Mar 2022 21:09:38 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-a3f15f880c63d149a6c3e83137c10951-af039a288866894a-01
+      - 00-08a348044ab5394fb76690e26ceeba8d-3df3ff3d820d234c-01
     status:
       code: 404
       message: Not Found
@@ -44,7 +44,7 @@ interactions:
     body: '{"ComponentTelemetry1": 5}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -54,11 +54,11 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 5551308a-37b0-4125-9b7d-2f5792a42f8f
+      - 0a1cb595-77f1-4936-8cdc-ce57b3e60b7f
       Telemetry-Source-Time:
-      - '2022-03-24T16:59:44.685135Z'
+      - '2022-03-25T21:09:38.319078Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2021-06-30-preview
   response:
@@ -73,11 +73,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 16:59:45 GMT
+      - Fri, 25 Mar 2022 21:09:38 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-235b4fe1d1521245b0340cdd85612ff1-e00b330f9fc1b64e-01
+      - 00-875dfe8a6cf94f4eb4f086fe03fc8d62-ece8fa81562bac48-01
     status:
       code: 404
       message: Not Found

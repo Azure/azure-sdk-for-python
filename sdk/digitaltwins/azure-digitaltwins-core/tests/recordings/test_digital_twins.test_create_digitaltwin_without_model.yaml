@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-93051735?api-version=2021-06-30-preview
   response:
@@ -27,11 +27,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:00:26 GMT
+      - Fri, 25 Mar 2022 21:10:18 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-4b77b1925610f2498bae0a3577d031a2-d4182fbaabff8d4a-01
+      - 00-99954d8a4af33c40944e2ee7946b63dd-37dcecb2efc47347-01
     status:
       code: 400
       message: Bad Request

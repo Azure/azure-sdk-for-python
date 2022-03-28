@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel82fa118b%3B1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
@@ -23,11 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:40 GMT
+      - Fri, 25 Mar 2022 21:11:28 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-c1c5495c8682a0458a7acbeb7fda2682-cce44bdb14e99648-01
+      - 00-65bd453b97404c4090fcad23c2cf03f8-75848851e42c5640-01
     status:
       code: 404
       message: Not Found
@@ -48,7 +48,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
@@ -64,11 +64,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:40 GMT
+      - Fri, 25 Mar 2022 21:11:28 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-3a6a3361b8ef4745bfc9d4a816c79a86-ad4059ae791c2941-01
+      - 00-76475e82d55a0745a0c392ef65f184e2-bf6c06b6b3d4c244-01
     status:
       code: 400
       message: Bad Request

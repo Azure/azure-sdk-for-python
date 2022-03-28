@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,7 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/BuildingHasRoof?api-version=2021-06-30-preview
   response:
@@ -26,11 +26,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:02:42 GMT
+      - Fri, 25 Mar 2022 21:12:23 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-0d052d4314bd1640829e3c7ea98513f2-2de7992ef6757140-01
+      - 00-85253b168e27b944b8bbfafcd65ac8e3-26f5565d37beb54e-01
     status:
       code: 404
       message: Not Found
@@ -38,7 +38,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -46,7 +46,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/NotABuilding/relationships/BuildingHasFloor?api-version=2021-06-30-preview
   response:
@@ -61,11 +61,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:02:42 GMT
+      - Fri, 25 Mar 2022 21:12:23 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-bcc70ab652a15241a0aa4f38d4c1f947-5c4a27e824c1e646-01
+      - 00-304354abd165bd429825ae11d721d4b9-52d84cec7c4df64b-01
     status:
       code: 404
       message: Not Found

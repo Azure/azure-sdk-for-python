@@ -3,7 +3,7 @@ interactions:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2021-06-30-preview
   response:
@@ -28,11 +28,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:03:12 GMT
+      - Fri, 25 Mar 2022 21:12:52 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-8a9c2db9c3ad08428a23386394b19238-bc0642929943e047-01
+      - 00-d56959471347b7459647c8467b12f44e-b9d0223b15251c48-01
     status:
       code: 404
       message: Not Found
@@ -40,7 +40,7 @@ interactions:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -50,7 +50,7 @@ interactions:
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2021-06-30-preview
   response:
@@ -65,11 +65,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:03:12 GMT
+      - Fri, 25 Mar 2022 21:12:52 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-ef403dc0041ff945ac7232bcce476455-42a1c41271729747-01
+      - 00-df8f9710478cff44a20a6b1a2cd2283a-f84861f50aa2414b-01
     status:
       code: 404
       message: Not Found

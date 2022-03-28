@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModela4af1745;1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
@@ -16,9 +16,9 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:02:08 GMT
+      date: Fri, 25 Mar 2022 21:11:53 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-c4db4ec54007724ab15e2c7deb846436-711728432bfeb44f-01
+      traceresponse: 00-e983913bc010304bb308b89339dcc720-69bb89663c3b9549-01
     status:
       code: 404
       message: Not Found
@@ -36,18 +36,18 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModela4af1745;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-24T17:02:08.8726324+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModela4af1745;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:54.2818414+00:00"}]'
     headers:
       content-length: '175'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:02:08 GMT
+      date: Fri, 25 Mar 2022 21:11:53 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-c8ce548cbbe9ef40a16aaccff73c7045-30c9210287ad764b-01
+      traceresponse: 00-44e4df51bfd3cf49addb1680bbc87d3c-1a24ecee9bfe824b-01
     status:
       code: 201
       message: Created
@@ -55,8 +55,10 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModela4af1745;1?api-version=2021-06-30-preview
   response:
@@ -64,9 +66,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 24 Mar 2022 17:02:08 GMT
+      date: Fri, 25 Mar 2022 21:11:54 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a978d1141a7eb14d9ed32016c42df756-afc35c6d097ee341-01
+      traceresponse: 00-29e30786e1c24b479984824580cadabc-29b45ffffeaefc45-01
     status:
       code: 204
       message: No Content
@@ -74,8 +76,10 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModela4af1745;1?api-version=2021-06-30-preview
   response:
@@ -86,9 +90,9 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:02:08 GMT
+      date: Fri, 25 Mar 2022 21:11:54 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-b56f69b154e7ae4cb21602b075a94811-fcd294b6ec035743-01
+      traceresponse: 00-3aa4d2a21f5ea342972dbd2f846e7505-3bec7796e0f1c34b-01
     status:
       code: 404
       message: Not Found

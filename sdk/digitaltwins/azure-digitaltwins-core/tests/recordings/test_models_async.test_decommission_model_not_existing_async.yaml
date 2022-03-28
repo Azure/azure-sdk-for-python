@@ -2,12 +2,14 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/decommissioned", "value": true}]'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '61'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:NonExistingModel;1?api-version=2021-06-30-preview
   response:
@@ -18,9 +20,9 @@ interactions:
     headers:
       content-length: '220'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:02:07 GMT
+      date: Fri, 25 Mar 2022 21:11:52 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-f3da898706866842bca0f29a2040a09c-d0adc85b99e0c048-01
+      traceresponse: 00-56a312f7fb0c504aaf32263e3d7ae15e-d3ce06a0f051224d-01
     status:
       code: 404
       message: Not Found

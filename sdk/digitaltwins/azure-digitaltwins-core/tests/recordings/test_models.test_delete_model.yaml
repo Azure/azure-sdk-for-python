@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModelb2580bd4%3B1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
@@ -23,11 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:48 GMT
+      - Fri, 25 Mar 2022 21:11:35 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-1f8d32a303e33b4fbeb1be8073a0c7c3-6c5fa054067ec141-01
+      - 00-fc41f9a1bedf1c45bc840b5b88990606-a4ffee1f8f07dc43-01
     status:
       code: 404
       message: Not Found
@@ -48,23 +48,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModelb2580bd4;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-24T17:01:49.7621289+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModelb2580bd4;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:36.2807329+00:00"}]'
     headers:
       content-length:
       - '175'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:48 GMT
+      - Fri, 25 Mar 2022 21:11:35 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-afa7052212eff1448d0218a4e835c2d6-0159137d34017c40-01
+      - 00-86d26237309bcb4da5c134cd7a1ab7a3-2e517aeb9bb47c42-01
     status:
       code: 201
       message: Created
@@ -72,7 +72,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -80,7 +80,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModelb2580bd4%3B1?api-version=2021-06-30-preview
   response:
@@ -90,11 +90,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 24 Mar 2022 17:01:48 GMT
+      - Fri, 25 Mar 2022 21:11:35 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-963581f84c18eb46bfd1c6b6c3804e23-2e3937a5804a264c-01
+      - 00-887be3f9dd88fa44a3c9cf1ca13d1f78-46623b76412f3d44-01
     status:
       code: 204
       message: No Content
@@ -108,7 +108,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModelb2580bd4%3B1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
@@ -122,11 +122,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:49 GMT
+      - Fri, 25 Mar 2022 21:11:35 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-7f5e0059eaa90d4d8d6c4631b16e74dd-8481b3b0777c954f-01
+      - 00-653d1879bdbc07409425b02d4e1a8c9a-c7088ec9bc447e4a-01
     status:
       code: 404
       message: Not Found

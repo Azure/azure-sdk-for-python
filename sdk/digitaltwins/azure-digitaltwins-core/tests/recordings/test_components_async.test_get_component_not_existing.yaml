@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component3?api-version=2021-06-30-preview
   response:
@@ -16,9 +16,9 @@ interactions:
     headers:
       content-length: '246'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:00:03 GMT
+      date: Fri, 25 Mar 2022 21:09:56 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a8bbafbbfcf12042b4873a6b1d9094c4-63c9b470ee24914f-01
+      traceresponse: 00-9d9b4f054760394a9051531b96edcdd8-f1ce474c920abf44-01
     status:
       code: 404
       message: Not Found
@@ -29,7 +29,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component1?api-version=2021-06-30-preview
   response:
@@ -41,9 +41,9 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:00:03 GMT
+      date: Fri, 25 Mar 2022 21:09:56 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-9b180350fffafa40b838aa35cbecaa43-3ca407928b46414b-01
+      traceresponse: 00-4a435d2aa1549e479fe516154900627e-6f071d1c768fd743-01
     status:
       code: 404
       message: Not Found

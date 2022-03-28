@@ -2,12 +2,14 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/ComponentProp1", "value": "value2"}]'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '65'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2021-06-30-preview
   response:
@@ -18,9 +20,9 @@ interactions:
     headers:
       content-length: '214'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:00:19 GMT
+      date: Fri, 25 Mar 2022 21:10:12 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-9f6ca4784ced1943bb834a2959ca55b1-ea399fefe0313047-01
+      traceresponse: 00-16b6dbb25557b240a2781cfc908ad34e-42c95c34108cab47-01
     status:
       code: 400
       message: Bad Request
@@ -28,12 +30,14 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/ComponentProp1", "value": "value2"}]'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '65'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2021-06-30-preview
   response:
@@ -45,9 +49,9 @@ interactions:
     headers:
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:00:19 GMT
+      date: Fri, 25 Mar 2022 21:10:12 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-d0e7e691765f7440ba5aec3312b95472-74243a6b896d234b-01
+      traceresponse: 00-d081c66d4389ee44a584da0ca260e0cc-924099a3dcc3134e-01
     status:
       code: 404
       message: Not Found

@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-2a081559?api-version=2021-06-30-preview
   response:
@@ -23,11 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:34 GMT
+      - Fri, 25 Mar 2022 21:11:21 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-e38633acb4b0644f8914a63d8a55e6bb-7e7df3fcd2373447-01
+      - 00-c227f895ee7c7e439a1814aef840b7e0-9c3e3958ee7b9b4a-01
     status:
       code: 404
       message: Not Found

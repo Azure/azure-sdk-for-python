@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
@@ -28,11 +28,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:43 GMT
+      - Fri, 25 Mar 2022 21:11:30 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-bef2c9f62d0e164ebe521c0d6fa23d93-922f1f9a6b93f643-01
+      - 00-6066b26a5c024545ad2ede2c400b14e3-07ded56528d15843-01
     status:
       code: 400
       message: Bad Request
@@ -50,7 +50,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
@@ -66,11 +66,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:44 GMT
+      - Fri, 25 Mar 2022 21:11:30 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-cf9ecb72b0113141be332ff37b764b34-4467b15ab3eb5846-01
+      - 00-ca5c471360fd0341965777d043fc44e2-20a51696488ac344-01
     status:
       code: 400
       message: Bad Request
@@ -88,7 +88,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
@@ -101,11 +101,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 24 Mar 2022 17:01:44 GMT
+      - Fri, 25 Mar 2022 21:11:30 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-bf8261b094912541bcea8cbbb397059d-b96ab90c02d89444-01
+      - 00-385275cefeae64449e5eed66d2035967-351449f0d5cb364f-01
     status:
       code: 400
       message: Bad Request

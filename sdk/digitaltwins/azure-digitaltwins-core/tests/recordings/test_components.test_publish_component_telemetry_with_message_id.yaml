@@ -3,7 +3,7 @@ interactions:
     body: '{"ComponentTelemetry1": 5}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -15,9 +15,9 @@ interactions:
       Message-Id:
       - message-64161aa1
       Telemetry-Source-Time:
-      - '2022-03-24T16:59:44.827132Z'
+      - '2022-03-25T21:09:38.446055Z'
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component1/telemetry?api-version=2021-06-30-preview
   response:
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 24 Mar 2022 16:59:45 GMT
+      - Fri, 25 Mar 2022 21:09:38 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-2bf2d30ba3a0954aa53732253b55b7f1-6cea4eb5a6aacd42-01
+      - 00-549eb8b2ca58554984db1f5a71277b12-1c821c91a0b81c47-01
     status:
       code: 204
       message: No Content

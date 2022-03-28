@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel621910ce;1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
@@ -16,9 +16,9 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:02:09 GMT
+      date: Fri, 25 Mar 2022 21:11:54 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-4da082773504b74d87bee82255fda24f-60c1578d79e28043-01
+      traceresponse: 00-2ffaa561e957314a9cf528df00bae37e-24bc28ca6063ad42-01
     status:
       code: 404
       message: Not Found
@@ -36,18 +36,18 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel621910ce;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-24T17:02:10.0191185+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel621910ce;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:55.3502708+00:00"}]'
     headers:
       content-length: '175'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:02:09 GMT
+      date: Fri, 25 Mar 2022 21:11:54 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-cf2f6b0797ff784193b129222546a327-62d50d591e933045-01
+      traceresponse: 00-85ed7a3deb48ed4cbfdfa2dfc6251a07-0c0ea952d2e3be49-01
     status:
       code: 201
       message: Created
@@ -55,8 +55,10 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel621910ce;1?api-version=2021-06-30-preview
   response:
@@ -64,9 +66,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 24 Mar 2022 17:02:09 GMT
+      date: Fri, 25 Mar 2022 21:11:54 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-761655b261ac0d479cc3ee967a1b77cd-87bdcc85a330444c-01
+      traceresponse: 00-0c602bfa973c294f9eb00a0fd68ace72-832fb76aa0bb084a-01
     status:
       code: 204
       message: No Content
@@ -77,7 +79,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel621910ce;1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
@@ -88,9 +90,9 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:02:09 GMT
+      date: Fri, 25 Mar 2022 21:11:54 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-0e05bed194ca104985588fe644c096db-f44b90b8f06a154c-01
+      traceresponse: 00-2024b24ed58d4d4b9f3354eda91be603-e52ecf09e72f9249-01
     status:
       code: 404
       message: Not Found

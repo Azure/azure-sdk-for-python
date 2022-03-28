@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/eventroutes?api-version=2021-06-30-preview
   response:
@@ -14,9 +14,9 @@ interactions:
     headers:
       content-length: '28'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:01:38 GMT
+      date: Fri, 25 Mar 2022 21:11:26 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a2972bd3a948f348b6e87811be01e7f5-5964417035e5e640-01
+      traceresponse: 00-1e1b854537b8ff4b8dff8fd774afa8a1-d25ee5538c20aa40-01
     status:
       code: 200
       message: OK

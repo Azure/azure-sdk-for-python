@@ -2,8 +2,10 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-ad961bc5?api-version=2021-06-30-preview
   response:
@@ -15,9 +17,9 @@ interactions:
     headers:
       content-length: '274'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:01:09 GMT
+      date: Fri, 25 Mar 2022 21:11:00 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-a1c087434f27e443b901d3d734dc132f-55058ee9f924b949-01
+      traceresponse: 00-59353e26726f2543aceda464db1adb31-3bd331d635102747-01
     status:
       code: 404
       message: Not Found

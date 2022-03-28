@@ -3,12 +3,14 @@ interactions:
     body: '{"endpointName": "endpoint-e153188c", "filter": "$eventType = ''DigitalTwinTelemetryMessages''
       or $eventType = ''DigitalTwinLifecycleNotification''"}'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '145'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/eventroutes/eventRoute-e153188c?api-version=2021-06-30-preview
   response:
@@ -19,9 +21,9 @@ interactions:
     headers:
       content-length: '224'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:01:35 GMT
+      date: Fri, 25 Mar 2022 21:11:23 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-047ebecd5438824684d785afff29f182-9180dbad61e03a40-01
+      traceresponse: 00-34383f64c995124f8c8aa0adde70bbdb-d550c217d9f4ed42-01
     status:
       code: 400
       message: Bad Request

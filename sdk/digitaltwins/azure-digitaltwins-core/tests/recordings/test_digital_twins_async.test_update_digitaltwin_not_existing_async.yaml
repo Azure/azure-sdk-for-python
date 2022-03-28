@@ -2,12 +2,14 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '54'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-aff71bd5?api-version=2021-06-30-preview
   response:
@@ -19,9 +21,9 @@ interactions:
     headers:
       content-length: '274'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:01:26 GMT
+      date: Fri, 25 Mar 2022 21:11:15 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-fb165d7f68b88f4b8f299d21610fd303-1c628b3126328442-01
+      traceresponse: 00-00aac9d160ba374189a5a823660a905e-3426c0af340dc541-01
     status:
       code: 404
       message: Not Found

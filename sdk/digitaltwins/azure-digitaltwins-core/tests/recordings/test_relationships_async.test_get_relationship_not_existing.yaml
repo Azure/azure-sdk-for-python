@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/BuildingHasRoof?api-version=2021-06-30-preview
   response:
@@ -17,9 +17,9 @@ interactions:
     headers:
       content-length: '315'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:03:41 GMT
+      date: Fri, 25 Mar 2022 21:13:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-3cdf2710ce17444ea92d6535f20a0c08-103133569b58994e-01
+      traceresponse: 00-a3b7e93d878aaa45b966e33bec691781-a297d1472d60ce4d-01
     status:
       code: 404
       message: Not Found
@@ -30,7 +30,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/NotABuilding/relationships/BuildingHasFloor?api-version=2021-06-30-preview
   response:
@@ -42,9 +42,9 @@ interactions:
     headers:
       content-length: '266'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:03:42 GMT
+      date: Fri, 25 Mar 2022 21:13:21 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-96d2a410963c3f45bd0cbb1a22032322-3fc75c7c7d6ed94b-01
+      traceresponse: 00-a4598f75cdd59443a30cfcbd1663b19a-4012fc6e74370f4b-01
     status:
       code: 404
       message: Not Found

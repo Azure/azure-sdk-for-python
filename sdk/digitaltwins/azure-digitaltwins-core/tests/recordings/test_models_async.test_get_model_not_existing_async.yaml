@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-digitaltwins-core/1.2.0 Python/3.9.1 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:NonExistingModel;1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
@@ -16,9 +16,9 @@ interactions:
     headers:
       content-length: '220'
       content-type: application/json; charset=utf-8
-      date: Thu, 24 Mar 2022 17:02:13 GMT
+      date: Fri, 25 Mar 2022 21:11:58 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-9d0bc9c9144cb745bd9e3282697b118b-2e17efc604aee64a-01
+      traceresponse: 00-09b9efbb3ffe4d4b8ef1a34cd4fdda5b-c9a751e26013754e-01
     status:
       code: 404
       message: Not Found
