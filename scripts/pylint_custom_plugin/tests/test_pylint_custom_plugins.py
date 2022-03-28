@@ -1732,7 +1732,25 @@ class TestAsyncClientCorrectNaming(pylint.testutils.CheckerTestCase):
 class TestFileHasCopyrightHeader(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.FileHasCopyrightHeader
 
-    # Unable to use the astroid for this testcase.
+    def test_copyright_header_acceptable(self):
+        file = open("./test_files/copyright_header_acceptable.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_module(node)
+
+    def test_copyright_header_violation(self):
+        file = open("./test_files/copyright_header_violation.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="file-needs-copyright-header", node=node
+                )
+        ):
+            self.checker.visit_module(node)
 
     def test_guidelines_link_active(self):
         url = "https://azure.github.io/azure-sdk/policies_opensource.html"
