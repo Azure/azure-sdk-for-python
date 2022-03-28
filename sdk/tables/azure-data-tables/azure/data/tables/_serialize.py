@@ -37,7 +37,7 @@ def _prepare_key(keyvalue):
     try:
         return keyvalue.replace("'", "''")
     except AttributeError:
-        raise TypeError(f'PartitionKey or RowKey must be of type string.')
+        raise TypeError('PartitionKey or RowKey must be of type string.')
 
 
 def _parameter_filter_substitution(parameters, query_filter):
