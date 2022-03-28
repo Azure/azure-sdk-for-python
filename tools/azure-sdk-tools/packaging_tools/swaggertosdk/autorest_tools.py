@@ -147,10 +147,10 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
     try:
-        return run_command
+        return run_command()
     # Exclude avoidable CalledProcessError
     except subprocess.CalledProcessError as ex:
-        return run_command
+        return run_command()
     except Exception as err:
         _LOGGER.error(err)
         raise
