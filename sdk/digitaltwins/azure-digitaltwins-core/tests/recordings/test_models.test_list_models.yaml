@@ -23,11 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:44 GMT
+      - Mon, 28 Mar 2022 15:05:18 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-57b2028c440a414fa4a0c426537d4d1d-1eedcc93dbb1294a-01
+      - 00-c843630cd8d60645ad5614ae010d62ba-e8d76a079ac14f4d-01
     status:
       code: 404
       message: Not Found
@@ -53,18 +53,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:44.4965213+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:18.7555071+00:00"}]'
     headers:
       content-length:
       - '175'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:44 GMT
+      - Mon, 28 Mar 2022 15:05:18 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-c4825fe19143834db86769f314c47984-11f636b1455b8f4e-01
+      - 00-fa46af86033b2b47a49c2dfb738a6b4b-7048a3f1e489c046-01
     status:
       code: 201
       message: Created
@@ -83,18 +83,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:19.313297+00:00"},{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:27.2250028+00:00"},{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:30.6445691+00:00"},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:30.6446217+00:00"},{"id":"dtmi:com:samples:ComponentModel3510e6b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-25T21:11:32.6134124+00:00"},{"id":"dtmi:com:samples:ComponentModelbf2f17de;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-25T21:11:33.9917643+00:00"},{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:41.3879048+00:00"},{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:43.3231361+00:00"},{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:44.4965213+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:51.4089828+00:00"},{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:59.6848013+00:00"},{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:03.1450839+00:00"},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:03.145114+00:00"},{"id":"dtmi:com:samples:ComponentModel3510e6b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-28T15:05:05.9693739+00:00"},{"id":"dtmi:com:samples:ComponentModelbf2f17de;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-28T15:05:07.3571109+00:00"},{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:15.4948954+00:00"},{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:17.5132348+00:00"},{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:18.7555071+00:00"}],"nextLink":null}'
     headers:
       content-length:
       - '1563'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:44 GMT
+      - Mon, 28 Mar 2022 15:05:18 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-abc648b14f220c439b0f43c58dd6214d-750afa7669b4104a-01
+      - 00-fd7aa855a54c134daf61cd92ad8eff75-efd19294cc50af4c-01
     status:
       code: 200
       message: OK

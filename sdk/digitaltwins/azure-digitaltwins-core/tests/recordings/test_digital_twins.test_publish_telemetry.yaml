@@ -19,20 +19,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-64b71110?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$dtId":"digitalTwin-64b71110","$etag":"W/\"301dce9f-854f-41aa-a63c-708755f18901\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-25T21:10:31.5895109Z"}}}'
+      string: '{"$dtId":"digitalTwin-64b71110","$etag":"W/\"3cf293bd-173b-4a6f-8379-61debbd64942\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:04:02.9105558Z"}}}'
     headers:
       content-length:
       - '235'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:10:30 GMT
+      - Mon, 28 Mar 2022 15:04:02 GMT
       etag:
-      - W/"301dce9f-854f-41aa-a63c-708755f18901"
+      - W/"3cf293bd-173b-4a6f-8379-61debbd64942"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-d891b4338ebc2d4f942f13e72222cb10-6d3378785973da46-01
+      - 00-e54c84e01ac15b4384b4b201ebfc67e6-eec6f8b48fd3aa44-01
     status:
       code: 200
       message: OK
@@ -50,9 +50,9 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 91a45efb-7821-4b98-9c0c-fc38d6d0b4b8
+      - 21546223-3145-41a9-91c6-71521c075f7a
       Telemetry-Source-Time:
-      - '2022-03-25T21:10:30.970565Z'
+      - '2022-03-28T15:04:02.59271Z'
       User-Agent:
       - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
@@ -64,11 +64,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:10:30 GMT
+      - Mon, 28 Mar 2022 15:04:02 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-6cf7e43b5637df4e9e6bef386cb15652-1ceb09509d9cd142-01
+      - 00-5e4fe3f2cd96b54da9d01b9c4ae7a35e-0707a0b9452f714d-01
     status:
       code: 204
       message: No Content

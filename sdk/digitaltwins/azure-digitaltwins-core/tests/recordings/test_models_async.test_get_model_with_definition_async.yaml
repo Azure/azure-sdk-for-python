@@ -16,9 +16,9 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:59 GMT
+      date: Mon, 28 Mar 2022 15:05:34 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-7c9dbc15f8f82d4ca563ce4cec9af5a0-be590119e22d004b-01
+      traceresponse: 00-4c40cb4c9f915f449e1b77112391040c-74a026a3195d704a-01
     status:
       code: 404
       message: Not Found
@@ -41,13 +41,13 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel631e163e;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:12:00.134728+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel631e163e;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:34.3279756+00:00"}]'
     headers:
-      content-length: '174'
+      content-length: '175'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:59 GMT
+      date: Mon, 28 Mar 2022 15:05:34 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-5f40c88dd50ae9459a13df1f23854497-fdd99f7072309f4f-01
+      traceresponse: 00-f84d9b73a637a641a536e474b6d9e670-7eb128b8f68cae4b-01
     status:
       code: 201
       message: Created
@@ -63,13 +63,13 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel631e163e;1?includeModelDefinition=true&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"id":"dtmi:com:samples:ComponentModel631e163e;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:12:00.134728+00:00","model":{"@id":"dtmi:com:samples:ComponentModel631e163e;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}}'
+      string: '{"id":"dtmi:com:samples:ComponentModel631e163e;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:34.3279756+00:00","model":{"@id":"dtmi:com:samples:ComponentModel631e163e;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}}'
     headers:
-      content-length: '460'
+      content-length: '461'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:12:00 GMT
+      date: Mon, 28 Mar 2022 15:05:34 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-cca3b6d1b8ed57419193d27b4326c58d-0304aecd9852dd4f-01
+      traceresponse: 00-b9c6edc7e677464ca0ef2e7bfa12d62a-b65e0afffb402948-01
     status:
       code: 200
       message: OK

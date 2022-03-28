@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - e2fcdd36-14f7-43eb-95ce-5f26535e5f90
+      - a1312435-558d-47e8-84e0-1062591cc23d
       Telemetry-Source-Time:
-      - '2022-03-25T21:09:37.220743Z'
+      - '2022-03-28T15:03:08.628234Z'
       User-Agent:
       - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
@@ -32,11 +32,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:38 GMT
+      - Mon, 28 Mar 2022 15:03:09 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-08a348044ab5394fb76690e26ceeba8d-3df3ff3d820d234c-01
+      - 00-d1f2ada7f4d73e4aa582954296cea07d-14a616bd43c3c348-01
     status:
       code: 404
       message: Not Found
@@ -54,9 +54,9 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 0a1cb595-77f1-4936-8cdc-ce57b3e60b7f
+      - b14e119b-72f3-4bf7-bd00-5121b040b7ca
       Telemetry-Source-Time:
-      - '2022-03-25T21:09:38.319078Z'
+      - '2022-03-28T15:03:09.463963Z'
       User-Agent:
       - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
@@ -73,11 +73,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:38 GMT
+      - Mon, 28 Mar 2022 15:03:09 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-875dfe8a6cf94f4eb4f086fe03fc8d62-ece8fa81562bac48-01
+      - 00-9b234b3e94daaf46914c8f01719b93a6-3a84c370460e3042-01
     status:
       code: 404
       message: Not Found

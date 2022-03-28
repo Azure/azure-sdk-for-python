@@ -14,18 +14,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"value":[{"id":"dtmi:com:samples:DTComponentTestsComponent;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:09:41.3947743+00:00"},{"id":"dtmi:com:samples:DTComponentTestsModel;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-25T21:09:41.3948042+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:com:samples:DTComponentTestsComponent;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:03:12.3690597+00:00"},{"id":"dtmi:com:samples:DTComponentTestsModel;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:03:12.3690864+00:00"}],"nextLink":null}'
     headers:
       content-length:
       - '376'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-db7756ed6f00b743996b2e92d27034c6-1701046cb75e944a-01
+      - 00-42381569b74ed544aa73a062b478d47f-d38287c56cfdcc42-01
     status:
       code: 200
       message: OK
@@ -56,11 +56,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-40b904f952c7284dbc6ed5d85ce366f6-f7d10a79269af848-01
+      - 00-66368f6b2085e74e8b0ecb283c8b519a-08d9866239447f46-01
     status:
       code: 409
       message: Conflict
@@ -86,11 +86,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-ef6e1a00b2d27d42867f7a86038c5c5d-9b16b1014088ac4b-01
+      - 00-6717768e9635ba4c86f34dd098566711-ec77e4c6c420ac42-01
     status:
       code: 204
       message: No Content
@@ -109,18 +109,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"value":[{"id":"dtmi:com:samples:DTComponentTestsComponent;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:09:41.3947743+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:com:samples:DTComponentTestsComponent;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:03:12.3690597+00:00"}],"nextLink":null}'
     headers:
       content-length:
       - '204'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-4575e8f33678db45857984ecc132dc74-43fed7366f7ac745-01
+      - 00-6a4b7ca8836574488fedcb31aed678b7-4bb2fafa212b2649-01
     status:
       code: 200
       message: OK
@@ -146,11 +146,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-6ebae3c8d2d44e4cbcbf8c23b1522220-2218d1cb9f4bca4f-01
+      - 00-68d6d5a5d3a4094e8ee999f17f59be7c-2f0ee61affe8fd46-01
     status:
       code: 204
       message: No Content
@@ -176,11 +176,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-f201f443baa9524b90662bef4e61f704-6c9bc6ab1b00b643-01
+      - 00-acb3a92b65f09b4297dc5776be3a7c63-2953a8979400f347-01
     status:
       code: 200
       message: OK
@@ -211,18 +211,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:DTComponentTestsComponent;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:09:43.6503137+00:00"},{"id":"dtmi:com:samples:DTComponentTestsModel;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-25T21:09:43.6503601+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:DTComponentTestsComponent;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:03:14.4450387+00:00"},{"id":"dtmi:com:samples:DTComponentTestsModel;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:03:14.4450693+00:00"}]'
     headers:
       content-length:
       - '350'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-51f0efb85686b54da3e5070f4b266113-968025f78b72604e-01
+      - 00-fcedf85807fa2e4d8bd07c3cea006019-e082c6cefcf00f43-01
     status:
       code: 201
       message: Created
@@ -246,20 +246,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$dtId":"DTComponentTestsTempTwin","$etag":"W/\"b93120cf-825b-4038-a1a2-cb68ae1a6033\"","Prop1":"value","Component1":{"ComponentProp1":"value1","$metadata":{"ComponentProp1":{"lastUpdateTime":"2022-03-25T21:09:43.7844935Z"}}},"$metadata":{"$model":"dtmi:com:samples:DTComponentTestsModel;1","Prop1":{"lastUpdateTime":"2022-03-25T21:09:43.7844935Z"}}}'
+      string: '{"$dtId":"DTComponentTestsTempTwin","$etag":"W/\"04db0901-e552-4c78-9916-d87195b9045d\"","Prop1":"value","Component1":{"ComponentProp1":"value1","$metadata":{"ComponentProp1":{"lastUpdateTime":"2022-03-28T15:03:14.5776068Z"}}},"$metadata":{"$model":"dtmi:com:samples:DTComponentTestsModel;1","Prop1":{"lastUpdateTime":"2022-03-28T15:03:14.5776068Z"}}}'
     headers:
       content-length:
       - '351'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       etag:
-      - W/"b93120cf-825b-4038-a1a2-cb68ae1a6033"
+      - W/"04db0901-e552-4c78-9916-d87195b9045d"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-13560ef266ab9c42bceef028c6f476ad-693a3c0b9c2bd64b-01
+      - 00-b1a3302a1cc903419ca4ed4dc15c2a2e-79bde8657a572a4f-01
     status:
       code: 200
       message: OK
@@ -278,20 +278,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$dtId":"DTComponentTestsTempTwin","$etag":"W/\"b93120cf-825b-4038-a1a2-cb68ae1a6033\"","Prop1":"value","Component1":{"ComponentProp1":"value1","$metadata":{"ComponentProp1":{"lastUpdateTime":"2022-03-25T21:09:43.7844935Z"}}},"$metadata":{"$model":"dtmi:com:samples:DTComponentTestsModel;1","Prop1":{"lastUpdateTime":"2022-03-25T21:09:43.7844935Z"}}}'
+      string: '{"$dtId":"DTComponentTestsTempTwin","$etag":"W/\"04db0901-e552-4c78-9916-d87195b9045d\"","Prop1":"value","Component1":{"ComponentProp1":"value1","$metadata":{"ComponentProp1":{"lastUpdateTime":"2022-03-28T15:03:14.5776068Z"}}},"$metadata":{"$model":"dtmi:com:samples:DTComponentTestsModel;1","Prop1":{"lastUpdateTime":"2022-03-28T15:03:14.5776068Z"}}}'
     headers:
       content-length:
       - '351'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:42 GMT
+      - Mon, 28 Mar 2022 15:03:13 GMT
       etag:
-      - W/"b93120cf-825b-4038-a1a2-cb68ae1a6033"
+      - W/"04db0901-e552-4c78-9916-d87195b9045d"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-bcd25f9f32180d4480acdef1a8c5a7f9-ab6c48acc205b647-01
+      - 00-02e74dbfcbdc064db764314bda2f0ae4-20f4fc0b0d8c1941-01
     status:
       code: 200
       message: OK
@@ -326,11 +326,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:44 GMT
+      - Mon, 28 Mar 2022 15:03:14 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-52fe6b93ab615d48958b8a04f505b0f1-589f814bd1c9644d-01
+      - 00-d869b5785605c04ba60510e7c96a10ba-5635908eb436f044-01
     status:
       code: 412
       message: Precondition Failed
@@ -348,7 +348,7 @@ interactions:
       Content-Type:
       - application/json-patch+json
       If-Match:
-      - W/"b93120cf-825b-4038-a1a2-cb68ae1a6033"
+      - W/"04db0901-e552-4c78-9916-d87195b9045d"
       User-Agent:
       - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: PATCH
@@ -360,13 +360,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:09:44 GMT
+      - Mon, 28 Mar 2022 15:03:14 GMT
       etag:
-      - W/"0f32af5b-2271-4d7a-b42c-6680696e4509"
+      - W/"7d9624a5-e2d3-414b-918c-f2713a41f8e4"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-77f670d4b560b64c9d2b85fa002d36ef-0927efd276024f45-01
+      - 00-9498cc9824a8384c928b3b9f53f44bf8-b642033f59919046-01
     status:
       code: 204
       message: No Content
@@ -385,20 +385,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component1?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"ComponentProp1":"value2","$metadata":{"ComponentProp1":{"lastUpdateTime":"2022-03-25T21:09:44.1294680Z"}}}'
+      string: '{"ComponentProp1":"value2","$metadata":{"ComponentProp1":{"lastUpdateTime":"2022-03-28T15:03:14.9343009Z"}}}'
     headers:
       content-length:
       - '108'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:09:44 GMT
+      - Mon, 28 Mar 2022 15:03:14 GMT
       etag:
-      - W/"0f32af5b-2271-4d7a-b42c-6680696e4509"
+      - W/"7d9624a5-e2d3-414b-918c-f2713a41f8e4"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-652a8869f635ab4a8fe0f58fb1f27e68-a369a04de2419041-01
+      - 00-675f4cf654d48c468ecfcfdd5ff4ae3e-60f8e92c531d994a-01
     status:
       code: 200
       message: OK

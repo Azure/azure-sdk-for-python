@@ -16,9 +16,9 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:52 GMT
+      date: Mon, 28 Mar 2022 15:05:26 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-dd6e9ead90c69549b3df925198981711-94c477303e3d4a42-01
+      traceresponse: 00-1bd3dd0b1ad53b4486124fe9bd77dbc1-1753e262c3dd4e41-01
     status:
       code: 404
       message: Not Found
@@ -41,13 +41,13 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModeld17b1365;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:52.416617+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModeld17b1365;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:26.7749618+00:00"}]'
     headers:
-      content-length: '174'
+      content-length: '175'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:52 GMT
+      date: Mon, 28 Mar 2022 15:05:26 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-4ece9dd80efe4a42879f31d13365c703-6dd5ff2b103da04a-01
+      traceresponse: 00-e0628c61ea587743907e70d2aa429725-48191b8bd2c22d40-01
     status:
       code: 201
       message: Created
@@ -63,13 +63,13 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"id":"dtmi:com:samples:ComponentModeld17b1365;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:52.416617+00:00"}'
+      string: '{"id":"dtmi:com:samples:ComponentModeld17b1365;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:26.7749618+00:00"}'
     headers:
-      content-length: '172'
+      content-length: '173'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:52 GMT
+      date: Mon, 28 Mar 2022 15:05:26 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-d7ac8dbfa2fcd643a476dec32f5e2a85-f2df1e4446807b45-01
+      traceresponse: 00-c2c6dcae782da849969e94ef948437b6-1c7c0d82a4a3c648-01
     status:
       code: 200
       message: OK
@@ -92,9 +92,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Mar 2022 21:11:52 GMT
+      date: Mon, 28 Mar 2022 15:05:26 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-053d4e56de2a084082b13d878e8b2c45-18949da143b4144e-01
+      traceresponse: 00-d08b1f8f7af00e44af90f1a771f56072-ba0fa6b08865734c-01
     status:
       code: 204
       message: No Content
@@ -110,13 +110,13 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"id":"dtmi:com:samples:ComponentModeld17b1365;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-25T21:11:52.416617+00:00"}'
+      string: '{"id":"dtmi:com:samples:ComponentModeld17b1365;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-28T15:05:26.7749618+00:00"}'
     headers:
-      content-length: '171'
+      content-length: '172'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:52 GMT
+      date: Mon, 28 Mar 2022 15:05:26 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-f0e40b60432770449ac6f915a9073c61-74a79cbf6d0e4a43-01
+      traceresponse: 00-19c2bb25e82f8b4cb50f951e3c275f22-3246939de7f84e43-01
     status:
       code: 200
       message: OK

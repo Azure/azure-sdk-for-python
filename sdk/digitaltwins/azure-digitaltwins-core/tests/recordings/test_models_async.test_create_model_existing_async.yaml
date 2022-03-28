@@ -16,9 +16,9 @@ interactions:
     headers:
       content-length: '220'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:45 GMT
+      date: Mon, 28 Mar 2022 15:05:20 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-d13c1051a02e3941a1240f295b403e73-c7e55adf3df3cb4f-01
+      traceresponse: 00-e5a7a5a5b498c046af71ec38db1303aa-dd976f4ca90df546-01
     status:
       code: 404
       message: Not Found
@@ -40,9 +40,9 @@ interactions:
     headers:
       content-length: '225'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:46 GMT
+      date: Mon, 28 Mar 2022 15:05:20 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-715e99e11618304a8ac28a2962af7287-182d073b5b745c48-01
+      traceresponse: 00-31368eb11687124bb0bde17b9780e19e-3103d0d7a2ee7f44-01
     status:
       code: 404
       message: Not Found
@@ -65,13 +65,13 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:TempModelcaf1499;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:46.5519178+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:TempModelcaf1499;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:20.9279349+00:00"}]'
     headers:
       content-length: '168'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:46 GMT
+      date: Mon, 28 Mar 2022 15:05:20 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-22fc2f0670ab2e4584335ade35b0ea3b-b88d2b52d9b23a4f-01
+      traceresponse: 00-f7ce1c10a70a084f8813d2ad02caa780-4c7b71e620f47947-01
     status:
       code: 201
       message: Created
@@ -104,9 +104,9 @@ interactions:
     headers:
       content-length: '239'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:46 GMT
+      date: Mon, 28 Mar 2022 15:05:20 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-54c4d9ecc9210744acbc3b0a44fd3d2a-398c15efa097464f-01
+      traceresponse: 00-3b3791d37880874e8259682718e94b55-ce31f3b056384440-01
     status:
       code: 409
       message: Conflict
@@ -128,9 +128,9 @@ interactions:
     headers:
       content-length: '225'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:46 GMT
+      date: Mon, 28 Mar 2022 15:05:20 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-82280b7cb0581f4dbf0c32196e3e4525-2d46c230700fc845-01
+      traceresponse: 00-6adf9ecad646c648a63678dee7a1e988-25e93fc5e609784a-01
     status:
       code: 404
       message: Not Found

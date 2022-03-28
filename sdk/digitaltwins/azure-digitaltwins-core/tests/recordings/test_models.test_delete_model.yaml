@@ -23,11 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:35 GMT
+      - Mon, 28 Mar 2022 15:05:09 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-fc41f9a1bedf1c45bc840b5b88990606-a4ffee1f8f07dc43-01
+      - 00-80393f151f190f46a7f4efb901e0e5a0-07b4aa0750df3245-01
     status:
       code: 404
       message: Not Found
@@ -53,18 +53,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModelb2580bd4;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:36.2807329+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModelb2580bd4;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:09.9032449+00:00"}]'
     headers:
       content-length:
       - '175'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:35 GMT
+      - Mon, 28 Mar 2022 15:05:09 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-86d26237309bcb4da5c134cd7a1ab7a3-2e517aeb9bb47c42-01
+      - 00-59f81f0c70133745bc477553524eb342-e3d420b4e53b6a49-01
     status:
       code: 201
       message: Created
@@ -90,11 +90,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:11:35 GMT
+      - Mon, 28 Mar 2022 15:05:09 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-887be3f9dd88fa44a3c9cf1ca13d1f78-46623b76412f3d44-01
+      - 00-a97bae55fd5f8e4787fefeb67d396467-a8c6ccd731cf0640-01
     status:
       code: 204
       message: No Content
@@ -122,11 +122,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:35 GMT
+      - Mon, 28 Mar 2022 15:05:09 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-653d1879bdbc07409425b02d4e1a8c9a-c7088ec9bc447e4a-01
+      - 00-70c5133dd8d55746a79fe8543c252cea-f5757e070229154c-01
     status:
       code: 404
       message: Not Found

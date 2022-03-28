@@ -14,18 +14,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:RelationshipTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-25T21:12:19.6279267+00:00"},{"id":"dtmi:samples:RelationshipTestFloor;1","description":{},"displayName":{"en":"Floor"},"decommissioned":false,"uploadTime":"2022-03-25T21:12:19.6279523+00:00"},{"id":"dtmi:samples:RelationshipTestRoom;1","description":{},"displayName":{"en":"Room"},"decommissioned":false,"uploadTime":"2022-03-25T21:12:19.6279677+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:RelationshipTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:53.7278502+00:00"},{"id":"dtmi:samples:RelationshipTestFloor;1","description":{},"displayName":{"en":"Floor"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:53.7278748+00:00"},{"id":"dtmi:samples:RelationshipTestRoom;1","description":{},"displayName":{"en":"Room"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:53.7278892+00:00"}],"nextLink":null}'
     headers:
       content-length:
       - '523'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:20 GMT
+      - Mon, 28 Mar 2022 15:05:54 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-30a2b5eea3298245a5ea66c5417f42fb-f97f69091d7a9344-01
+      - 00-a190e486ae04a14b8a989c6917954b43-4baa56f014a11a4f-01
     status:
       code: 200
       message: OK
@@ -51,11 +51,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:12:20 GMT
+      - Mon, 28 Mar 2022 15:05:54 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-e220c3c8c349ae46ad413c5f9f529e3b-60b95833ef085c46-01
+      - 00-d157b5f602f0c54286363c2e480d786d-d96535b9d06fad4f-01
     status:
       code: 204
       message: No Content
@@ -81,11 +81,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:12:20 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-6787156037540e4b9e21a7dadfd100c7-20adead74efa064d-01
+      - 00-64b27882012038499acddbab3bc53faa-84263ec3902bdc46-01
     status:
       code: 204
       message: No Content
@@ -111,11 +111,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:12:20 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-7c780dd60fa7eb4fabea367cef262619-d596ad03a25b9c4c-01
+      - 00-6983ee28e5c38e4988eae8fb4b12f6ec-e0b6e572987ea24b-01
     status:
       code: 204
       message: No Content
@@ -141,11 +141,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-60adccb265396f429e845d2b976c4365-1ee178a6e2ab8c4d-01
+      - 00-10d376b8c807d043a0707de8aa438d40-a0b3f8798146d845-01
     status:
       code: 200
       message: OK
@@ -171,11 +171,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-e32b83428169524cb1ec6bbe332e0bce-817bcec24cd3784e-01
+      - 00-62138f4837307a44aad33526a8cc422d-9896242dc134cd40-01
     status:
       code: 200
       message: OK
@@ -201,11 +201,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-ef9a2ab5cf689e4fb42e01413c8d0747-2c407d662ed76140-01
+      - 00-0d424ba220761f4d860360d368a24c4c-5df42251fe654346-01
     status:
       code: 200
       message: OK
@@ -231,11 +231,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-6f0221a5581fe6439171119f73841b24-dea452d6d53cb24b-01
+      - 00-25d642b3888f164f85449b40ce75493f-66b3b2650d9a7d44-01
     status:
       code: 200
       message: OK
@@ -261,11 +261,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-8f29b2e281ce0141b75d6809a7be8314-9c48695a74004c4f-01
+      - 00-875600bad3808147992fd5aa9dd25bf2-7c041ac11147f44e-01
     status:
       code: 204
       message: No Content
@@ -291,11 +291,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-2b3ce79a8df280439f7c257a0291cf54-43a986700583cf45-01
+      - 00-9f8c95194e34c14dbd37789c3108ded9-7d380f700484da47-01
     status:
       code: 204
       message: No Content
@@ -321,11 +321,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:55 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-e2f3cf2bd0e9064dbf2dfefa68a94063-fa6fa15a5700814c-01
+      - 00-4b713286d6f7154487697927b4892fe9-320166ed82f6a44a-01
     status:
       code: 204
       message: No Content
@@ -359,18 +359,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:samples:RelationshipTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-25T21:12:22.4663041+00:00"},{"id":"dtmi:samples:RelationshipTestFloor;1","description":{},"displayName":{"en":"Floor"},"decommissioned":false,"uploadTime":"2022-03-25T21:12:22.4663484+00:00"},{"id":"dtmi:samples:RelationshipTestRoom;1","description":{},"displayName":{"en":"Room"},"decommissioned":false,"uploadTime":"2022-03-25T21:12:22.4663643+00:00"}]'
+      string: '[{"id":"dtmi:samples:RelationshipTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:56.7616532+00:00"},{"id":"dtmi:samples:RelationshipTestFloor;1","description":{},"displayName":{"en":"Floor"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:56.7616798+00:00"},{"id":"dtmi:samples:RelationshipTestRoom;1","description":{},"displayName":{"en":"Room"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:56.7616992+00:00"}]'
     headers:
       content-length:
       - '497'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:56 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-b2662e5d66718b488ffb2997bcb6acbe-a55e6b5667e99b4d-01
+      - 00-a1205773d8973f4f93cfd89edbfc60ae-0825316b24233f42-01
     status:
       code: 201
       message: Created
@@ -394,20 +394,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$dtId":"DTRelationshipTestsBuildingTwin","$etag":"W/\"3405bc72-4809-4969-85d1-2e663e83a1e1\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:RelationshipTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-25T21:12:22.5846297Z"}}}'
+      string: '{"$dtId":"DTRelationshipTestsBuildingTwin","$etag":"W/\"26f5dce3-fd2d-406e-a174-53daab3a6892\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:RelationshipTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:05:56.9243912Z"}}}'
     headers:
       content-length:
       - '256'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:56 GMT
       etag:
-      - W/"3405bc72-4809-4969-85d1-2e663e83a1e1"
+      - W/"26f5dce3-fd2d-406e-a174-53daab3a6892"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-b88fa99c9ee0004682818e7e10bd1bc7-9bc7f2fb5f976e48-01
+      - 00-a59395fe3a17bf4bbabb5ce4d2a87ed9-afccd19fba149d42-01
     status:
       code: 200
       message: OK
@@ -431,20 +431,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$dtId":"DTRelationshipTestsFloorTwin","$etag":"W/\"a128a46d-73c8-4b44-b1c3-4505fc8d89a5\"","AverageTemperature":75,"$metadata":{"$model":"dtmi:samples:RelationshipTestFloor;1","AverageTemperature":{"lastUpdateTime":"2022-03-25T21:12:22.6956621Z"}}}'
+      string: '{"$dtId":"DTRelationshipTestsFloorTwin","$etag":"W/\"2bf726bf-4c5b-46a0-9377-f6e0208a12b0\"","AverageTemperature":75,"$metadata":{"$model":"dtmi:samples:RelationshipTestFloor;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:05:57.0492477Z"}}}'
     headers:
       content-length:
       - '250'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:21 GMT
+      - Mon, 28 Mar 2022 15:05:56 GMT
       etag:
-      - W/"a128a46d-73c8-4b44-b1c3-4505fc8d89a5"
+      - W/"2bf726bf-4c5b-46a0-9377-f6e0208a12b0"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-8b5db46fff2c564fb161d1d69c39840a-e7b327ae7ffdb34d-01
+      - 00-8d365c19154f9d4595f5d64975ca0c72-703ef7365deab34d-01
     status:
       code: 200
       message: OK
@@ -468,20 +468,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$dtId":"DTRelationshipTestsRoomTwin","$etag":"W/\"5356a8a9-63e9-4e82-8d95-a62fb19459eb\"","Temperature":80,"IsOccupied":true,"$metadata":{"$model":"dtmi:samples:RelationshipTestRoom;1","Temperature":{"lastUpdateTime":"2022-03-25T21:12:22.8081417Z"},"IsOccupied":{"lastUpdateTime":"2022-03-25T21:12:22.8081417Z"}}}'
+      string: '{"$dtId":"DTRelationshipTestsRoomTwin","$etag":"W/\"915ca2f0-1f48-4bae-9764-456fc221e975\"","Temperature":80,"IsOccupied":true,"$metadata":{"$model":"dtmi:samples:RelationshipTestRoom;1","Temperature":{"lastUpdateTime":"2022-03-28T15:05:57.1756507Z"},"IsOccupied":{"lastUpdateTime":"2022-03-28T15:05:57.1756507Z"}}}'
     headers:
       content-length:
       - '315'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:22 GMT
+      - Mon, 28 Mar 2022 15:05:56 GMT
       etag:
-      - W/"5356a8a9-63e9-4e82-8d95-a62fb19459eb"
+      - W/"915ca2f0-1f48-4bae-9764-456fc221e975"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-5563d7cb5cdb154cab4ee11474ce559f-8c34bc6183607a48-01
+      - 00-6ebe55f07889bf429cb801a49322c6a9-a204df3fa8c22243-01
     status:
       code: 200
       message: OK
@@ -506,20 +506,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/BuildingHasFloor?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$relationshipId":"BuildingHasFloor","$etag":"W/\"8d5f234f-4cd6-42a3-ad99-9012142d2dea\"","$sourceId":"DTRelationshipTestsBuildingTwin","$relationshipName":"has","$targetId":"DTRelationshipTestsFloorTwin","isAccessRestricted":false}'
+      string: '{"$relationshipId":"BuildingHasFloor","$etag":"W/\"d0ced455-51a7-420c-8821-695870e5c8cc\"","$sourceId":"DTRelationshipTestsBuildingTwin","$relationshipName":"has","$targetId":"DTRelationshipTestsFloorTwin","isAccessRestricted":false}'
     headers:
       content-length:
       - '233'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:22 GMT
+      - Mon, 28 Mar 2022 15:05:56 GMT
       etag:
-      - W/"8d5f234f-4cd6-42a3-ad99-9012142d2dea"
+      - W/"d0ced455-51a7-420c-8821-695870e5c8cc"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-a4d555c2a3d1e14cbc06770ea12ac561-bc4d9c2fd29d644b-01
+      - 00-f12eb58939334146937580ee4914bdd3-d9046f5f1eddd548-01
     status:
       code: 200
       message: OK
@@ -547,11 +547,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:12:22 GMT
+      - Mon, 28 Mar 2022 15:05:56 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-f60236625e4de246b5f010c04d5785ad-af86320fda6b4d47-01
+      - 00-55ceb7ca3df57c4791e7153359ae5c9f-015453822486994e-01
     status:
       code: 204
       message: No Content
@@ -580,11 +580,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:12:22 GMT
+      - Mon, 28 Mar 2022 15:05:56 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-1fa3a07031402946bb31643a1db6c487-9daebecb6f72054e-01
+      - 00-513dc2eeaafbd743a25ab70c67c9e6e9-28af518c89512943-01
     status:
       code: 404
       message: Not Found

@@ -16,9 +16,9 @@ interactions:
     headers:
       content-length: '226'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:57 GMT
+      date: Mon, 28 Mar 2022 15:05:31 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-c2ea36aff5b5ce45a1caae494bdb0137-3438b2aa83e1a947-01
+      traceresponse: 00-e4bfeee8d0ad15468ffd42fd5e60b01f-6a1f22fc06269444-01
     status:
       code: 404
       message: Not Found
@@ -41,13 +41,13 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel31610f9b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:58.472517+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel31610f9b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:32.8028192+00:00"}]'
     headers:
-      content-length: '174'
+      content-length: '175'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:58 GMT
+      date: Mon, 28 Mar 2022 15:05:31 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-ace32d6bb6656848983ba8f18633cf99-44c43e4f68bb5246-01
+      traceresponse: 00-e5f6ed2ff309134bbe52bf7bc1076fee-530a1d7f34139c40-01
     status:
       code: 201
       message: Created
@@ -63,13 +63,13 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel31610f9b;1?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"id":"dtmi:com:samples:ComponentModel31610f9b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:58.472517+00:00"}'
+      string: '{"id":"dtmi:com:samples:ComponentModel31610f9b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:32.8028192+00:00"}'
     headers:
-      content-length: '172'
+      content-length: '173'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Mar 2022 21:11:58 GMT
+      date: Mon, 28 Mar 2022 15:05:32 GMT
       strict-transport-security: max-age=2592000
-      traceresponse: 00-8a2a9849ae93a1479e6824c290821524-200efa85efaed945-01
+      traceresponse: 00-1313adf0d602fb4a94c730f2ef9a9c26-4b83e4c59a79af4c-01
     status:
       code: 200
       message: OK

@@ -23,11 +23,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:45 GMT
+      - Mon, 28 Mar 2022 15:05:19 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-194963edb511f6438ff607e4332eba45-c5d80901f3bcf644-01
+      - 00-007e3dcf00b53646b92bab583afc5607-0d117030d9129448-01
     status:
       code: 404
       message: Not Found
@@ -53,18 +53,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel988f1233;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:45.5434446+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel988f1233;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:19.9686021+00:00"}]'
     headers:
       content-length:
       - '175'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:45 GMT
+      - Mon, 28 Mar 2022 15:05:19 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-de8ff1062e9d5e4580ffffc80fa632f9-d12062c97973e549-01
+      - 00-ad11fbf6bfb3f04aa48c5a465633376c-23a2a57d3c87ae46-01
     status:
       code: 201
       message: Created
@@ -83,18 +83,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=true&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:19.313297+00:00","model":{"@id":"dtmi:samples:DTTestBuilding;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Building","contents":[{"@type":"Property","name":"AverageTemperature","schema":"double"},{"@type":"Property","name":"TemperatureUnit","schema":"string"}]}},{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:27.2250028+00:00","model":{"@id":"dtmi:com:samples:TempModel2fc70f9f;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"TempModel","contents":[{"@type":"Property","name":"Prop1","schema":"string"},{"@type":"Telemetry","name":"Telemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:30.6445691+00:00","model":{"@id":"dtmi:com:samples:ComponentModelbeb90c48;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:30.6446217+00:00","model":{"@id":"dtmi:com:samples:TempModelbeb90c48;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"TempModel","contents":[{"@type":"Property","name":"Prop1","schema":"string"},{"@type":"Component","name":"Component1","schema":"dtmi:com:samples:ComponentModelbeb90c48;1"},{"@type":"Telemetry","name":"Telemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel3510e6b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-25T21:11:32.6134124+00:00","model":{"@id":"dtmi:com:samples:ComponentModel3510e6b;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModelbf2f17de;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-25T21:11:33.9917643+00:00","model":{"@id":"dtmi:com:samples:ComponentModelbf2f17de;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:41.3879048+00:00","model":{"@id":"dtmi:com:samples:ComponentModel90490aa1;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:43.3231361+00:00","model":{"@id":"dtmi:com:samples:ComponentModel72641144;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:44.4965213+00:00","model":{"@id":"dtmi:com:samples:ComponentModela7840b90;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel988f1233;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-25T21:11:45.5434446+00:00","model":{"@id":"dtmi:com:samples:ComponentModel988f1233;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:51.4089828+00:00","model":{"@id":"dtmi:samples:DTTestBuilding;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Building","contents":[{"@type":"Property","name":"AverageTemperature","schema":"double"},{"@type":"Property","name":"TemperatureUnit","schema":"string"}]}},{"id":"dtmi:com:samples:TempModel2fc70f9f;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:59.6848013+00:00","model":{"@id":"dtmi:com:samples:TempModel2fc70f9f;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"TempModel","contents":[{"@type":"Property","name":"Prop1","schema":"string"},{"@type":"Telemetry","name":"Telemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModelbeb90c48;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:03.1450839+00:00","model":{"@id":"dtmi:com:samples:ComponentModelbeb90c48;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:TempModelbeb90c48;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:03.145114+00:00","model":{"@id":"dtmi:com:samples:TempModelbeb90c48;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"TempModel","contents":[{"@type":"Property","name":"Prop1","schema":"string"},{"@type":"Component","name":"Component1","schema":"dtmi:com:samples:ComponentModelbeb90c48;1"},{"@type":"Telemetry","name":"Telemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel3510e6b;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-28T15:05:05.9693739+00:00","model":{"@id":"dtmi:com:samples:ComponentModel3510e6b;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModelbf2f17de;1","description":{},"displayName":{"en":"Component1"},"decommissioned":true,"uploadTime":"2022-03-28T15:05:07.3571109+00:00","model":{"@id":"dtmi:com:samples:ComponentModelbf2f17de;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:15.4948954+00:00","model":{"@id":"dtmi:com:samples:ComponentModel90490aa1;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel72641144;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:17.5132348+00:00","model":{"@id":"dtmi:com:samples:ComponentModel72641144;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModela7840b90;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:18.7555071+00:00","model":{"@id":"dtmi:com:samples:ComponentModela7840b90;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}},{"id":"dtmi:com:samples:ComponentModel988f1233;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2022-03-28T15:05:19.9686021+00:00","model":{"@id":"dtmi:com:samples:ComponentModel988f1233;1","@type":"Interface","@context":["dtmi:dtdl:context;2"],"displayName":"Component1","contents":[{"@type":"Property","name":"ComponentProp1","schema":"string"},{"@type":"Telemetry","name":"ComponentTelemetry1","schema":"integer"}]}}],"nextLink":null}'
     headers:
       content-length:
       - '4647'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:11:45 GMT
+      - Mon, 28 Mar 2022 15:05:19 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-1e01dee87f35594682f081e3c741c065-a41052547c8b7a4b-01
+      - 00-04c2181e551c9441a6caccd32d9e97e2-60ec889360f0e548-01
     status:
       code: 200
       message: OK

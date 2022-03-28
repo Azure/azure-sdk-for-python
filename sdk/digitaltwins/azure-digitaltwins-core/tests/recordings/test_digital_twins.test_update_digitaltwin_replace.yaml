@@ -14,18 +14,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2021-06-30-preview
   response:
     body:
-      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-25T21:10:47.2175254+00:00"}],"nextLink":null}'
+      string: '{"value":[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:18.8209441+00:00"}],"nextLink":null}'
     headers:
       content-length:
       - '187'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:10:48 GMT
+      - Mon, 28 Mar 2022 15:04:20 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-8c87c3f42bff8241830ece5d029a6a0d-caded41ffa139d47-01
+      - 00-c53ddc4d65792e4b96d5d70027467103-cbf5bef775f88940-01
     status:
       code: 200
       message: OK
@@ -51,11 +51,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:10:48 GMT
+      - Mon, 28 Mar 2022 15:04:20 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-cc6be96c7fcc484da912a31f1435c289-92d7a380da402440-01
+      - 00-f1e6efbd74c80f4898e4511b8a1e8ec3-2dbdb14272af3849-01
     status:
       code: 204
       message: No Content
@@ -81,11 +81,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:10:48 GMT
+      - Mon, 28 Mar 2022 15:04:20 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-9500a876440373419d7e3ec13c5b5e63-b895b4bce630114a-01
+      - 00-f9de51b01d4a474bb3b738516b1c19fe-48f5950ef866454e-01
     status:
       code: 200
       message: OK
@@ -111,18 +111,18 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/models?api-version=2021-06-30-preview
   response:
     body:
-      string: '[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-25T21:10:48.8432029+00:00"}]'
+      string: '[{"id":"dtmi:samples:DTTestBuilding;1","description":{},"displayName":{"en":"Building"},"decommissioned":false,"uploadTime":"2022-03-28T15:04:20.5853302+00:00"}]'
     headers:
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:10:48 GMT
+      - Mon, 28 Mar 2022 15:04:20 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-66147df8bdb0ed4ab885bbc5e5573d5c-b34cabfb4a73ba41-01
+      - 00-4fd59acc016df148b4fb13d77b381a59-75b5047bdc419046-01
     status:
       code: 201
       message: Created
@@ -148,11 +148,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:10:48 GMT
+      - Mon, 28 Mar 2022 15:04:20 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-8e3745e886a9df438fe3d459439dc0e9-259538379f1ed94a-01
+      - 00-4ad9868e9faf2848bb9f73e167809f37-8694540743158b4a-01
     status:
       code: 204
       message: No Content
@@ -176,20 +176,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-edc149c?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$dtId":"digitalTwin-edc149c","$etag":"W/\"e650fb8c-e3f3-4310-a60c-30f3da05e3b0\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-25T21:10:49.0804815Z"},"TemperatureUnit":{"lastUpdateTime":"2022-03-25T21:10:49.0804815Z"}}}'
+      string: '{"$dtId":"digitalTwin-edc149c","$etag":"W/\"f11e9ced-7fb0-46d1-9f17-4d00dd9266f8\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:04:20.8288089Z"},"TemperatureUnit":{"lastUpdateTime":"2022-03-28T15:04:20.8288089Z"}}}'
     headers:
       content-length:
       - '330'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:10:49 GMT
+      - Mon, 28 Mar 2022 15:04:20 GMT
       etag:
-      - W/"e650fb8c-e3f3-4310-a60c-30f3da05e3b0"
+      - W/"f11e9ced-7fb0-46d1-9f17-4d00dd9266f8"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-e61832244caac84586ccd6db78f2d9a7-897605d0e089c847-01
+      - 00-240e493c057f4e43b9e817121896420c-d816a3936e43eb41-01
     status:
       code: 200
       message: OK
@@ -217,13 +217,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:10:49 GMT
+      - Mon, 28 Mar 2022 15:04:20 GMT
       etag:
-      - W/"34a543fe-2648-4823-88d7-99a4840c3c2d"
+      - W/"0cd8bd25-def5-455f-a613-033c02e1d186"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-f7c87a911f05ef438d694a4f66c8e53f-0049c5fe186a4049-01
+      - 00-dc509c6f42de7a42abcae5de5802bd2c-8137b16a62f20048-01
     status:
       code: 204
       message: No Content
@@ -242,20 +242,20 @@ interactions:
     uri: https://dttestdigitaltwinsname.api.wus2.digitaltwins.azure.net/digitaltwins/digitalTwin-edc149c?api-version=2021-06-30-preview
   response:
     body:
-      string: '{"$dtId":"digitalTwin-edc149c","$etag":"W/\"34a543fe-2648-4823-88d7-99a4840c3c2d\"","AverageTemperature":42,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-25T21:10:49.1964367Z"},"TemperatureUnit":{"lastUpdateTime":"2022-03-25T21:10:49.0804815Z"}}}'
+      string: '{"$dtId":"digitalTwin-edc149c","$etag":"W/\"0cd8bd25-def5-455f-a613-033c02e1d186\"","AverageTemperature":42,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2022-03-28T15:04:20.9618298Z"},"TemperatureUnit":{"lastUpdateTime":"2022-03-28T15:04:20.8288089Z"}}}'
     headers:
       content-length:
       - '330'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Mar 2022 21:10:49 GMT
+      - Mon, 28 Mar 2022 15:04:20 GMT
       etag:
-      - W/"34a543fe-2648-4823-88d7-99a4840c3c2d"
+      - W/"0cd8bd25-def5-455f-a613-033c02e1d186"
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-8bc3a4f5ffd76c4b9d2d891af49d4c11-2361f4f25f193a49-01
+      - 00-59162dff1f169d4d9fcebcedd5cbf48a-f0301e4d9e2bb54f-01
     status:
       code: 200
       message: OK

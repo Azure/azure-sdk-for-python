@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - c03ab1e3-8dd7-4a91-b6ce-0cdf0b8521cb
+      - 76704e4e-70d1-4ce5-be14-bd6b440e0f09
       Telemetry-Source-Time:
-      - '2022-03-25T21:09:36.437043Z'
+      - '2022-03-28T15:03:07.848832Z'
       User-Agent:
       - azsdk-python-digitaltwins-core/1.2.0b1 Python/3.9.1 (Windows-10-10.0.22000-SP0)
     method: POST
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Mar 2022 21:09:36 GMT
+      - Mon, 28 Mar 2022 15:03:08 GMT
       strict-transport-security:
       - max-age=2592000
       traceresponse:
-      - 00-e0cc05c917a1dd4b824372c2f9952438-cbc94b3c6e5f7643-01
+      - 00-937e906b5ddb4647bb8e6f03996db3fc-ffce9efd50e2e749-01
     status:
       code: 204
       message: No Content
