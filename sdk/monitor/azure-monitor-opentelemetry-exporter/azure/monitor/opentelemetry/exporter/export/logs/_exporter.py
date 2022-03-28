@@ -118,6 +118,8 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     if exc_type is not None or exc_message is not None:
         envelope.name = "Microsoft.ApplicationInsights.Exception"
         has_full_stack = stack_trace is not None
+        if not exc_message:
+            exc_message = "Exception"
         exc_details = TelemetryExceptionDetails(
             type_name=exc_type,
             message=exc_message,
@@ -130,7 +132,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             exceptions=[exc_details],
         )
         # pylint: disable=line-too-long
-        envelope.data = MonitorBase(base_data=data, base_type="TelemetryExceptionData")
+        envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
     else:  # Message telemetry
         envelope.name = "Microsoft.ApplicationInsights.Message"
         # pylint: disable=line-too-long

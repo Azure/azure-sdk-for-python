@@ -12,9 +12,12 @@ from opentelemetry.trace import Span, SpanKind
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
+    MessageData,
     MonitorBase,
     RemoteDependencyData,
     RequestData,
+    TelemetryExceptionData,
+    TelemetryExceptionDetails,
     TelemetryItem
 )
 from azure.monitor.opentelemetry.exporter.export._base import (
@@ -36,7 +39,10 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         :type spans: Sequence[~opentelemetry.trace.Span]
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
-        envelopes = [self._span_to_envelope(span) for span in spans]
+        envelopes = []
+        for span in spans:
+            envelopes.append(self._span_to_envelope(span))
+            envelopes.extend(self._span_events_to_envelopes(span))
         try:
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
@@ -63,6 +69,14 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelope = _convert_span_to_envelope(span)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
+
+    def _span_events_to_envelopes(self, span: Span) -> Sequence[TelemetryItem]:
+        if not span or len(span.events) == 0:
+            return []
+        envelopes = _convert_span_events_to_envelopes(span)
+        for envelope in envelopes:
+            envelope.instrumentation_key = self._instrumentation_key
+        return envelopes
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
@@ -382,6 +396,58 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         data.properties["_MS.links"] = json.dumps(links)
     return envelope
 
+def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
+    envelopes = []
+    for event in span.events:
+        envelope = TelemetryItem(
+            name="",
+            instrumentation_key="",
+            tags=dict(_utils.azure_monitor_context),
+            time=ns_to_iso_str(event.timestamp),
+        )
+        # pylint: disable=protected-access
+        envelope.tags.update(_utils._populate_part_a_fields(span.resource))
+
+        envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
+        if span.parent and span.parent.span_id:
+            envelope.tags["ai.operation.parentId"] = "{:016x}".format(
+                span.parent.span_id
+            )
+        properties = {}
+        if event.name == "exception":
+            envelope.name = 'Microsoft.ApplicationInsights.Exception'
+            exc_type = event.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+            exc_message = event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+            if exc_message is None or not exc_message:
+                exc_message = "Exception"
+            stack_trace = event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
+            escaped = event.attributes.get(SpanAttributes.EXCEPTION_ESCAPED)
+            properties[SpanAttributes.EXCEPTION_ESCAPED] = escaped
+            has_full_stack = stack_trace is not None
+            exc_details = TelemetryExceptionDetails(
+                type_name=exc_type,
+                message=exc_message,
+                has_full_stack=has_full_stack,
+                stack=stack_trace,
+            )
+            data = TelemetryExceptionData(
+                properties=properties,
+                exceptions=[exc_details],
+            )
+            # pylint: disable=line-too-long
+            envelope.data = MonitorBase(base_data=data, base_type='ExceptionData')
+        else:
+            envelope.name = 'Microsoft.ApplicationInsights.Message'
+            properties.update(event.attributes)
+            data = MessageData(
+                message=event.name,
+                properties=properties,
+            )
+            envelope.data = MonitorBase(base_data=data, base_type='MessageData')
+
+        envelopes.append(envelope)
+
+    return envelopes
 
 # pylint:disable=too-many-return-statements
 def _get_default_port_db(dbsystem):
