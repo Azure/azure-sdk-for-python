@@ -2216,6 +2216,48 @@ class TestPackageNameDoesNotUseUnderscoreOrPeriod(pylint.testutils.CheckerTestCa
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
 
+class TestServiceClientUsesNameWithClientSuffix(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ServiceClientUsesNameWithClientSuffix
+
+    def test_client_suffix_acceptable(self):
+        client_node =  astroid.extract_node(
+        """
+        class MyClient():
+            def __init__(self):
+                pass       
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="_my_client.py", doc = """ """)
+        module_node.body = [client_node]
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+    
+    def test_client_suffix_violation(self):
+        client_node =  astroid.extract_node(
+        """
+        class Violation():
+            def __init__(self):
+                pass       
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="_my_client.py", doc = """ """)
+        module_node.body = [client_node]
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-suffix-needed", node=module_node
+                )
+        ):
+            self.checker.visit_module(module_node)
+    
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#service-client"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
 
 class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodNamesDoNotUseDoubleUnderscorePrefix
