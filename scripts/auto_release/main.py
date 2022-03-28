@@ -262,7 +262,7 @@ class CodegenTestPR:
     def check_file_with_packaging_tool(self):
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
         print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
-        log(' packaging_tools --build-conf successfully ')
+        log('packaging_tools --build-conf successfully ')
 
     def check_pprint_name(self):
         pprint_name = self.package_name.capitalize()
