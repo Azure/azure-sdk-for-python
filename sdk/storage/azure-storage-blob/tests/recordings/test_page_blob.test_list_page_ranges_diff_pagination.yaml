@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       etag:
-      - '"0x8DA0D363A8527CB"'
+      - '"0x8DA110E1064E31F"'
       last-modified:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,9 +49,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -63,11 +63,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       etag:
-      - '"0x8DA0D363A9022AB"'
+      - '"0x8DA110E10700510"'
       last-modified:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -87,13 +87,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-blob-content-length:
       - '2048'
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -105,11 +105,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       etag:
-      - '"0x8DA0D363A9A08FD"'
+      - '"0x8DA110E107BFF63"'
       last-modified:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -131,9 +131,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -145,17 +145,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       etag:
-      - '"0x8DA0D363A9A08FD"'
+      - '"0x8DA110E107BFF63"'
       last-modified:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'false'
       x-ms-snapshot:
-      - '2022-03-24T01:32:58.9554580Z'
+      - '2022-03-28T22:55:33.0822196Z'
       x-ms-version:
       - '2021-06-08'
     status:
@@ -175,9 +175,9 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       x-ms-page-write:
       - update
       x-ms-range:
@@ -193,11 +193,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 24 Mar 2022 01:32:58 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       etag:
-      - '"0x8DA0D363AAE9F6B"'
+      - '"0x8DA110E1092B865"'
       last-modified:
-      - Thu, 24 Mar 2022 01:32:59 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:
@@ -223,9 +223,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 24 Mar 2022 01:32:59 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       x-ms-page-write:
       - clear
       x-ms-range:
@@ -241,11 +241,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 24 Mar 2022 01:32:59 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       etag:
-      - '"0x8DA0D363AB7ECDE"'
+      - '"0x8DA110E109E286B"'
       last-modified:
-      - Thu, 24 Mar 2022 01:32:59 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:
@@ -265,13 +265,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 24 Mar 2022 01:32:59 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       x-ms-version:
       - '2021-06-08'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer2eaa1520/blob2eaa1520?comp=pagelist&prevsnapshot=2022-03-24T01%3A32%3A58.9554580Z&maxresults=2
+    uri: https://storagename.blob.core.windows.net/utcontainer2eaa1520/blob2eaa1520?comp=pagelist&prevsnapshot=2022-03-28T22%3A55%3A33.0822196Z&maxresults=2
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<PageList><PageRange><Start>0</Start><End>511</End></PageRange><ClearRange><Start>512</Start><End>1023</End></ClearRange><NextMarker>2!16!MDAwMDA0ITEwMjQh</NextMarker></PageList>"
@@ -279,11 +279,11 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 24 Mar 2022 01:33:00 GMT
+      - Mon, 28 Mar 2022 22:55:32 GMT
       etag:
-      - '"0x8DA0D363AB7ECDE"'
+      - '"0x8DA110E109E286B"'
       last-modified:
-      - Thu, 24 Mar 2022 01:32:59 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -307,13 +307,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 24 Mar 2022 01:33:00 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       x-ms-version:
       - '2021-06-08'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer2eaa1520/blob2eaa1520?comp=pagelist&prevsnapshot=2022-03-24T01%3A32%3A58.9554580Z&marker=2%2116%21MDAwMDA0ITEwMjQh&maxresults=2
+    uri: https://storagename.blob.core.windows.net/utcontainer2eaa1520/blob2eaa1520?comp=pagelist&prevsnapshot=2022-03-28T22%3A55%3A33.0822196Z&marker=2%2116%21MDAwMDA0ITEwMjQh&maxresults=2
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<PageList><PageRange><Start>1024</Start><End>1535</End></PageRange><NextMarker/></PageList>"
@@ -321,11 +321,11 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 24 Mar 2022 01:33:00 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       etag:
-      - '"0x8DA0D363AB7ECDE"'
+      - '"0x8DA110E109E286B"'
       last-modified:
-      - Thu, 24 Mar 2022 01:32:59 GMT
+      - Mon, 28 Mar 2022 22:55:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

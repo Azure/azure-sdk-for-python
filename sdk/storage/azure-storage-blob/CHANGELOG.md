@@ -4,8 +4,7 @@
 
 ### Features Added
 - Added support for service version 2021-06-08.
-- Added new paginated methods for listing page ranges, `list_page_ranges()` and `list_page_ranges_diff()`. These replace `get_page_ranges()` which has been deprecated.
-  - NOTE: The ability to list a page range diff based on a snapshot is now a separate method.
+- Added a new paginated method for listing page ranges, `list_page_ranges()`. This replaces `get_page_ranges()` which has been deprecated.
 - Added support for `create_if_not_exists()` for `BlobContainerClient`.
 
 ## 12.10.0 (2022-03-08)

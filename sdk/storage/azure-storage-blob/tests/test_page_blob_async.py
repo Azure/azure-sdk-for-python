@@ -1159,10 +1159,10 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
 
         # Act
         ranges1 = []
-        async for r in blob.list_page_ranges_diff(previous_snapshot=snapshot1):
+        async for r in blob.list_page_ranges(previous_snapshot=snapshot1):
             ranges1.append(r)
         ranges2 = []
-        async for r in blob.list_page_ranges_diff(previous_snapshot=snapshot2['snapshot']):
+        async for r in blob.list_page_ranges(previous_snapshot=snapshot2['snapshot']):
             ranges2.append(r)
 
         # Assert
@@ -1198,7 +1198,7 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         await blob.clear_page(offset=512, length=512)
 
         # Act
-        page_list = blob.list_page_ranges_diff(previous_snapshot=snapshot, results_per_page=2).by_page()
+        page_list = blob.list_page_ranges(previous_snapshot=snapshot, results_per_page=2).by_page()
         first_page = await page_list.__anext__()
         items_on_page1 = list()
         async for item in first_page:

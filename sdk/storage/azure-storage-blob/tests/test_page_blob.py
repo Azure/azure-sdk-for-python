@@ -1152,8 +1152,8 @@ class StoragePageBlobTest(StorageTestCase):
         blob.clear_page(offset=512, length=512)
 
         # Act
-        ranges1 = list(blob.list_page_ranges_diff(previous_snapshot=snapshot1))
-        ranges2 = list(blob.list_page_ranges_diff(previous_snapshot=snapshot2['snapshot']))
+        ranges1 = list(blob.list_page_ranges(previous_snapshot=snapshot1))
+        ranges2 = list(blob.list_page_ranges(previous_snapshot=snapshot2['snapshot']))
 
         # Assert
         self.assertIsNotNone(ranges1)
@@ -1187,7 +1187,7 @@ class StoragePageBlobTest(StorageTestCase):
         blob.clear_page(offset=512, length=512)
 
         # Act
-        page_list = blob.list_page_ranges_diff(previous_snapshot=snapshot, results_per_page=2).by_page()
+        page_list = blob.list_page_ranges(previous_snapshot=snapshot, results_per_page=2).by_page()
         first_page = next(page_list)
         items_on_page1 = list(first_page)
         second_page = next(page_list)
