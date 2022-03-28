@@ -125,7 +125,7 @@ class EventGridPublisherClient:
         return policies
 
     @distributed_trace_async
-    async def send(self, events: SendType, **kwargs: Any) -> None:
+    async def send(self, events: SendType, *, channel_name: str = None, **kwargs: Any) -> None:
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
@@ -188,13 +188,13 @@ class EventGridPublisherClient:
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
         :keyword str channel_name: Optional. Required only when publishing to partner namespaces with partner topic
-         routing mode. The name of the channel header.
+         routing mode. The name of the event channel. For more details, visit
+         https://docs.microsoft.com/azure/event-grid/partner-events-overview
         :rtype: None
         """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
-        channel_name = kwargs.pop('channel_name', None)
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
