@@ -117,8 +117,7 @@ class ContainerProxy(object):
             populate_partition_key_range_statistics=None,  # type: Optional[bool]
             populate_quota_info=None,  # type: Optional[bool]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Read the container properties.
 
         :param populate_partition_key_range_statistics: Enable returning partition key
@@ -154,8 +153,7 @@ class ContainerProxy(object):
             self,
             body,  # type: Dict[str, Any]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Create an item in the container.
 
         To update or replace an existing item, use the
@@ -203,8 +201,7 @@ class ContainerProxy(object):
             item,  # type: Union[str, Dict[str, Any]]
             partition_key,  # type: Any
             **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
@@ -251,8 +248,7 @@ class ContainerProxy(object):
             self,
             max_item_count=None,  # type: Optional[int]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -296,8 +292,7 @@ class ContainerProxy(object):
             enable_scan_in_query=None,  # type: Optional[bool]
             populate_query_metrics=None,  # type: Optional[bool]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -384,8 +379,7 @@ class ContainerProxy(object):
             continuation=None,  # type: Optional[str]
             max_item_count=None,  # type: Optional[int]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
@@ -430,8 +424,7 @@ class ContainerProxy(object):
             pre_trigger_include=None,  # type: Optional[str]
             post_trigger_include=None,  # type: Optional[str]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Insert or update the specified item.
 
         If the item already exists in the container, it is replaced. If the item
@@ -476,8 +469,7 @@ class ContainerProxy(object):
             pre_trigger_include=None,  # type: Optional[str]
             post_trigger_include=None,  # type: Optional[str]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Replaces the specified item if it exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -521,8 +513,7 @@ class ContainerProxy(object):
             pre_trigger_include=None,  # type: Optional[str]
             post_trigger_include=None,  # type: Optional[str]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    ) -> None:
         """Delete the specified item from the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -651,8 +642,7 @@ class ContainerProxy(object):
             partition_key=None,  # type: Optional[Any]
             max_item_count=None,  # type: Optional[int]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -689,8 +679,7 @@ class ContainerProxy(object):
             conflict,  # type: Union[str, Dict[str, Any]]
             partition_key,  # type: Any
             **kwargs  # type: Any
-    ):
-        # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
@@ -718,8 +707,7 @@ class ContainerProxy(object):
             conflict,  # type: Union[str, Dict[str, Any]]
             partition_key,  # type: Any
             **kwargs  # type: Any
-    ):
-        # type: (Union[str, Dict[str, Any]], Any, Any) -> None
+    ) -> None:
         """Delete a specified conflict from the container.
 
         If the conflict does not already exist in the container, an exception is raised.
