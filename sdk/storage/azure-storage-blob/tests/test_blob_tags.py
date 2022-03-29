@@ -141,9 +141,6 @@ class StorageBlobTagsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
-        # Clean-up
-        blob_client.delete_blob()
-
     @BlobPreparer()
     def test_get_blob_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -392,4 +389,3 @@ class StorageBlobTagsTest(StorageTestCase):
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         self.assertEqual(1, len(items_on_page1))
-#------------------------------------------------------------------------------
