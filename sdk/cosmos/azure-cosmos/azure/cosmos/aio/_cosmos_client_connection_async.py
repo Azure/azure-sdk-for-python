@@ -58,7 +58,7 @@ from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
 from ..partition_key import _Undefined, _Empty
-from .._auth_policies import AsyncCosmosBearerTokenCredentialPolicy
+from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 
 ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
@@ -190,8 +190,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
-            credentials_policy,
             retry_policy,
+            credentials_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),

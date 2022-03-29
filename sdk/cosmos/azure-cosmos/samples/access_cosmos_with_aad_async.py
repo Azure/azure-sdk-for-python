@@ -1,7 +1,7 @@
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
-from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential, EnvironmentCredential
+from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential
 import config
 import asyncio
 
@@ -46,14 +46,14 @@ def get_test_item(num):
 
 async def create_sample_resources():
     print("creating sample resources")
-    async with cosmos_client.CosmosClient(HOST, MASTER_KEY) as client:
+    async with CosmosClient(HOST, MASTER_KEY) as client:
         db = await client.create_database(DATABASE_ID)
         await db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
 
 
 async def delete_sample_resources():
     print("deleting sample resources")
-    async with cosmos_client.CosmosClient(HOST, MASTER_KEY) as client:
+    async with CosmosClient(HOST, MASTER_KEY) as client:
         await client.delete_database(DATABASE_ID)
 
 
@@ -71,7 +71,7 @@ async def run_sample():
             client_secret=CLIENT_SECRET) as aad_credentials:
 
         # Use your credentials to authenticate your client.
-        async with cosmos_client.CosmosClient(HOST, aad_credentials) as aad_client:
+        async with CosmosClient(HOST, aad_credentials) as aad_client:
             print("Showed ClientSecretCredential, now showing DefaultAzureCredential")
 
     # You can also utilize DefaultAzureCredential rather than directly passing in the id's and secrets.
@@ -79,7 +79,7 @@ async def run_sample():
     async with DefaultAzureCredential() as aad_credentials:
 
         # Use your credentials to authenticate your client.
-        async with cosmos_client.CosmosClient(HOST, aad_credentials) as aad_client:
+        async with CosmosClient(HOST, aad_credentials) as aad_client:
 
             # Do any R/W data operations with your authorized AAD client.
             db = aad_client.get_database_client(DATABASE_ID)
