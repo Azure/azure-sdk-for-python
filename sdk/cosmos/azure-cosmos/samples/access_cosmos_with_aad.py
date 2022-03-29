@@ -1,4 +1,4 @@
-import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
@@ -45,14 +45,14 @@ def get_test_item(num):
 
 def create_sample_resources():
     print("creating sample resources")
-    client = cosmos_client.CosmosClient(HOST, MASTER_KEY)
+    client = CosmosClient(HOST, MASTER_KEY)
     db = client.create_database(DATABASE_ID)
     db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
 
 
 def delete_sample_resources():
     print("deleting sample resources")
-    client = cosmos_client.CosmosClient(HOST, MASTER_KEY)
+    client = CosmosClient(HOST, MASTER_KEY)
     client.delete_database(DATABASE_ID)
 
 
@@ -72,7 +72,7 @@ def run_sample():
     aad_credentials = DefaultAzureCredential()
 
     # Use your credentials to authenticate your client.
-    aad_client = cosmos_client.CosmosClient(HOST, aad_credentials)
+    aad_client = CosmosClient(HOST, aad_credentials)
 
     # Do any R/W data operations with your authorized AAD client.
     db = aad_client.get_database_client(DATABASE_ID)
