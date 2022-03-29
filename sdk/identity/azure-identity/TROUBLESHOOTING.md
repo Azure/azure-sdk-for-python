@@ -112,7 +112,6 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 | Error Code | Issue | Mitigation |
 |---|---|---|
 |AADSTS50126|The provided username or password is invalid|Ensure the `username` and `password` provided when constructing the credential are valid.|
-||||
 
 ## Troubleshoot `ManagedIdentityCredential` Authentication Issues
 
