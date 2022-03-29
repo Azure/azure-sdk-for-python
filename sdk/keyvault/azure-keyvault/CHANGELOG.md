@@ -1,6 +1,6 @@
 # Release History
 
-## 4.2.0 (Unreleased)
+## 4.2.0 (2022-03-29)
 **Disclaimer**
 
 This package and the `azure.keyvault` namespace does not contain code anymore. This package now installs three sub-packages instead:
