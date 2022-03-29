@@ -141,6 +141,9 @@ class StorageBlobTagsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
+        # Clean-up
+        blob_client.delete_blob()
+
     @BlobPreparer()
     def test_get_blob_tags(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)

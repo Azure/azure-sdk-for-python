@@ -11,30 +11,30 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:59 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-04-10'
     method: PUT
     uri: https://storagename.blob.core.windows.net/containercbfb133d?restype=container&timeout=5
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:160190ea-701e-00e6-7344-bbe3d2000000\nTime:2021-10-07T06:28:51.7038150Z</Message></Error>"
+        specified container already exists.\nRequestId:b8b70968-101e-003c-74b6-430abe000000\nTime:2022-03-29T21:47:59.1233022Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:58 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ContainerAlreadyExists
       x-ms-version:
-      - '2020-08-04'
+      - '2021-04-10'
     status:
       code: 409
       message: The specified container already exists.
@@ -52,13 +52,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:59 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-04-10'
     method: PUT
     uri: https://storagename.blob.core.windows.net/containercbfb133d/blobcbfb133d
   response:
@@ -70,11 +70,11 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:58 GMT
       etag:
-      - '"0x8D9895BBAC6B4A2"'
+      - '"0x8DA11CDCAA0530E"'
       last-modified:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:59 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -82,7 +82,9 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-08-04'
+      - '2021-04-10'
+      x-ms-version-id:
+      - '2022-03-29T21:47:59.1819022Z'
     status:
       code: 201
       message: Created
@@ -100,13 +102,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:59 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-04-10'
     method: PUT
     uri: https://storagename.blob.core.windows.net/containercbfb133d/blobcbfb133d
   response:
@@ -118,11 +120,11 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:58 GMT
       etag:
-      - '"0x8D9895BBAD0534E"'
+      - '"0x8DA11CDCAA9C780"'
       last-modified:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:59 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -130,7 +132,9 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-08-04'
+      - '2021-04-10'
+      x-ms-version-id:
+      - '2022-03-29T21:47:59.2448656Z'
     status:
       code: 201
       message: Created
@@ -150,24 +154,60 @@ interactions:
       Content-Type:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:59 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-04-10'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containercbfb133d/blobcbfb133d?comp=tags
+    uri: https://storagename.blob.core.windows.net/containercbfb133d/blobcbfb133d?comp=tags&versionid=2022-03-29T21%3A47%3A59.1819022Z
   response:
     body:
       string: ''
     headers:
       date:
-      - Thu, 07 Oct 2021 06:28:51 GMT
+      - Tue, 29 Mar 2022 21:47:58 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2020-08-04'
+      - '2021-04-10'
     status:
       code: 204
       message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:47:59 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/containercbfb133d/blobcbfb133d
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 29 Mar 2022 21:47:58 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent:
+      - 'false'
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 202
+      message: Accepted
 version: 1
