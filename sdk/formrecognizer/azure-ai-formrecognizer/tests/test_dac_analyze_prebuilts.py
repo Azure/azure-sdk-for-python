@@ -5,12 +5,14 @@
 # ------------------------------------
 
 import pytest
+import json
 import functools
 from datetime import date, time
 from devtools_testutils import recorded_by_proxy
 from io import BytesIO
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
+from azure.core.serialization import AzureJSONEncoder
 from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult, FormContentType
 from testcase import FormRecognizerTest
@@ -182,6 +184,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-invoice", invoice)
 
         result = poller.result()
+        d = result.to_dict()
+        json.dumps(d, cls=AzureJSONEncoder)
+        result = AnalyzeResult.from_dict(d)
         assert len(result.documents) == 1
         invoice = result.documents[0]
 
@@ -419,6 +424,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         result = poller.result()
 
         d = result.to_dict()
+        # this is simply checking that the dict is JSON serializable
+        json.dumps(d, cls=AzureJSONEncoder)
         result = AnalyzeResult.from_dict(d)
 
         assert len(result.documents) == 2

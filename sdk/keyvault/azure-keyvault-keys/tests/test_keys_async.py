@@ -30,9 +30,9 @@ from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_pol
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
-only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
-only_vault_7_3_preview = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
-only_7_3_preview = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_hsm_7_3 = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3])
+only_vault_7_3 = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3])
+only_7_3 = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -478,7 +478,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         mock_handler.close()
 
-    @only_hsm_7_3_preview()
+    @only_hsm_7_3()
     @client_setup
     async def test_get_random_bytes(self, client, **kwargs):
         assert client
@@ -493,7 +493,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @only_7_3_preview()
+    @only_7_3()
     @client_setup
     async def test_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -511,7 +511,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         release_result = await client.release_key(rsa_key_name, attestation)
         assert release_result.value
 
-    @only_hsm_7_3_preview()
+    @only_hsm_7_3()
     @client_setup
     async def test_imported_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -529,7 +529,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         release_result = await client.release_key(imported_key_name, attestation)
         assert release_result.value
 
-    @only_7_3_preview()
+    @only_7_3()
     @client_setup
     async def test_update_release_policy(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -569,7 +569,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert claim_condition is False
 
     # Immutable policies aren't currently supported on Managed HSM
-    @only_vault_7_3_preview()
+    @only_vault_7_3()
     @client_setup
     async def test_immutable_release_policy(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -601,7 +601,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         with pytest.raises(HttpResponseError):
             await self._update_key_properties(client, key, new_release_policy)
 
-    @only_vault_7_3_preview()
+    @only_vault_7_3()
     @client_setup
     async def test_key_rotation(self, client, **kwargs):
         if (not is_public_cloud() and self.is_live):
@@ -616,7 +616,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
-    @only_vault_7_3_preview()
+    @only_vault_7_3()
     @client_setup
     async def test_key_rotation_policy(self, client, **kwargs):
         if (not is_public_cloud() and self.is_live):
@@ -624,6 +624,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
+
+        # ensure passing an empty policy with no kwargs doesn't raise an error
+        await client.update_key_rotation_policy(key_name, KeyRotationPolicy())
 
         # updating a rotation policy with an empty policy and override
         actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
@@ -634,20 +637,34 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert updated_policy.expires_in is None
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
-        updated_policy_actions = updated_policy.lifetime_actions[0]
-        fetched_policy_actions = fetched_policy.lifetime_actions[0]
+        updated_policy_actions = None
+        for i in range(len(updated_policy.lifetime_actions)):
+            if updated_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                updated_policy_actions = updated_policy.lifetime_actions[i]
+        assert updated_policy_actions, "Specified rotation policy action not found in updated policy"
         assert updated_policy_actions.action == KeyRotationPolicyAction.rotate
         assert updated_policy_actions.time_after_create == "P2M"
         assert updated_policy_actions.time_before_expiry is None
+
+        fetched_policy_actions = None
+        for i in range(len(fetched_policy.lifetime_actions)):
+            if fetched_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                fetched_policy_actions = fetched_policy.lifetime_actions[i]
+        assert fetched_policy_actions, "Specified rotation policy action not found in fetched policy"
         _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
 
         # updating with a round-tripped policy and overriding expires_in
         new_policy = await client.update_key_rotation_policy(key_name, policy=updated_policy, expires_in="P90D")
         assert new_policy.expires_in == "P90D"
-        _assert_lifetime_actions_equal(updated_policy_actions, new_policy.lifetime_actions[0])
+
+        new_policy_actions = None
+        for i in range(len(new_policy.lifetime_actions)):
+            if new_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                new_policy_actions = new_policy.lifetime_actions[i]
+        _assert_lifetime_actions_equal(updated_policy_actions, new_policy_actions)
 
         # updating with a round-tripped policy and overriding lifetime_actions
-        newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P30D")]
+        newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P60D")]
         newest_policy = await client.update_key_rotation_policy(
             key_name, policy=new_policy, lifetime_actions=newest_actions
         )
@@ -655,11 +672,18 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert newest_policy.expires_in == "P90D"
         _assert_rotation_policies_equal(newest_policy, newest_fetched_policy)
 
-        newest_policy_actions = newest_policy.lifetime_actions[0]
-        newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[0]
+        newest_policy_actions = None
+        for i in range(len(newest_policy.lifetime_actions)):
+            if newest_policy.lifetime_actions[i].action == KeyRotationPolicyAction.notify:
+                newest_policy_actions = newest_policy.lifetime_actions[i]
         assert newest_policy_actions.action == KeyRotationPolicyAction.notify
         assert newest_policy_actions.time_after_create is None
-        assert newest_policy_actions.time_before_expiry == "P30D"
+        assert newest_policy_actions.time_before_expiry == "P60D"
+
+        newest_fetched_policy_actions = None
+        for i in range(len(newest_fetched_policy.lifetime_actions)):
+            if newest_fetched_policy.lifetime_actions[i].action == KeyRotationPolicyAction.notify:
+                newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[i]
         _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
 
     @all_api_versions()
