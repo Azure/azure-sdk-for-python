@@ -23,7 +23,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot AzureCliCredential Authentication Issues](#troubleshoot-azureclicredential-authentication-issues)
 - [Troubleshoot AzurePowerShellCredential Authentication Issues](#troubleshoot-azurepowershellcredential-authentication-issues)
 
-## Handling Azure Identity Errors
+## Handle Azure Identity Errors
 
 ### ClientAuthenticationError
 
