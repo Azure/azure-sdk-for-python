@@ -34,7 +34,7 @@ def build_list_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/accountBackups')
@@ -70,7 +70,7 @@ def build_get_request(
     backup_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/accountBackups/{backupName}')
@@ -107,7 +107,7 @@ def build_delete_request_initial(
     backup_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/accountBackups/{backupName}')
     path_format_arguments = {

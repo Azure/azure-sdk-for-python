@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 import functools
 from typing import Optional, Any, Union, TypeVar
 
@@ -14,7 +15,7 @@ except ImportError:
 import six
 
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
@@ -106,10 +107,12 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url,
+                                                   file_system=file_system_name, pipeline=self._pipeline)
         api_version = get_api_version(kwargs)
         self._client._config.version = api_version  # pylint: disable=protected-access
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
+                                                                               base_url=self._container_client.url,
                                                                                file_system=file_system_name,
                                                                                pipeline=self._pipeline)
         self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
@@ -247,7 +250,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -261,6 +264,28 @@ class FileSystemClient(StorageAccountHostsMixin):
         return self._container_client.create_container(metadata=metadata,
                                                        public_access=public_access,
                                                        **kwargs)
+
+    def create_if_not_exists(self, **kwargs):
+        # type: (Any) -> None
+        """Creates a new file system under the specified account.
+
+        If the file system with the same name already exists, it is not changed.
+
+        :keyword Dict(str,str) metadata:
+            A dict with name-value pairs to associate with the
+            file system as metadata. Example: `{'Category':'test'}`
+        :keyword public_access:
+            To specify whether data in the file system may be accessed publicly and the level of access.
+        :type public_access: ~azure.storage.filedatalake.PublicAccess
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        try:
+            return self.create_file_system(**kwargs)
+        except ResourceExistsError:
+            return None
+
 
     def exists(self, **kwargs):
         # type: (**Any) -> bool

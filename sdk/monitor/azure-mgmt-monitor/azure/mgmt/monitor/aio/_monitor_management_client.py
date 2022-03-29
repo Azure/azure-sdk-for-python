@@ -11,7 +11,6 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
@@ -21,6 +20,7 @@ from ._configuration import MonitorManagementClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -103,12 +103,10 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         credential: "AsyncTokenCredential",
         subscription_id: str,
         api_version: Optional[str] = None,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = MonitorManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(MonitorManagementClient, self).__init__(
@@ -149,6 +147,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-04-01: :mod:`v2021_04_01.models<azure.mgmt.monitor.v2021_04_01.models>`
            * 2021-05-01-preview: :mod:`v2021_05_01_preview.models<azure.mgmt.monitor.v2021_05_01_preview.models>`
            * 2021-09-01: :mod:`v2021_09_01.models<azure.mgmt.monitor.v2021_09_01.models>`
+           * 2021-09-01-preview: :mod:`v2022_02_01_preview.models<azure.mgmt.monitor.v2022_02_01_preview.models>`
         """
         if api_version == '2015-04-01':
             from ..v2015_04_01 import models
@@ -224,6 +223,9 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2021-09-01':
             from ..v2021_09_01 import models
+            return models
+        elif api_version == '2021-09-01-preview':
+            from ..v2022_02_01_preview import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -366,10 +368,13 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2021-04-01: :class:`DataCollectionEndpointsOperations<azure.mgmt.monitor.v2021_04_01.aio.operations.DataCollectionEndpointsOperations>`
+           * 2021-09-01-preview: :class:`DataCollectionEndpointsOperations<azure.mgmt.monitor.v2022_02_01_preview.aio.operations.DataCollectionEndpointsOperations>`
         """
         api_version = self._get_api_version('data_collection_endpoints')
         if api_version == '2021-04-01':
             from ..v2021_04_01.aio.operations import DataCollectionEndpointsOperations as OperationClass
+        elif api_version == '2021-09-01-preview':
+            from ..v2022_02_01_preview.aio.operations import DataCollectionEndpointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_collection_endpoints'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -380,12 +385,15 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-11-01-preview: :class:`DataCollectionRuleAssociationsOperations<azure.mgmt.monitor.v2019_11_01_preview.aio.operations.DataCollectionRuleAssociationsOperations>`
            * 2021-04-01: :class:`DataCollectionRuleAssociationsOperations<azure.mgmt.monitor.v2021_04_01.aio.operations.DataCollectionRuleAssociationsOperations>`
+           * 2021-09-01-preview: :class:`DataCollectionRuleAssociationsOperations<azure.mgmt.monitor.v2022_02_01_preview.aio.operations.DataCollectionRuleAssociationsOperations>`
         """
         api_version = self._get_api_version('data_collection_rule_associations')
         if api_version == '2019-11-01-preview':
             from ..v2019_11_01_preview.aio.operations import DataCollectionRuleAssociationsOperations as OperationClass
         elif api_version == '2021-04-01':
             from ..v2021_04_01.aio.operations import DataCollectionRuleAssociationsOperations as OperationClass
+        elif api_version == '2021-09-01-preview':
+            from ..v2022_02_01_preview.aio.operations import DataCollectionRuleAssociationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_collection_rule_associations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -396,12 +404,15 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-11-01-preview: :class:`DataCollectionRulesOperations<azure.mgmt.monitor.v2019_11_01_preview.aio.operations.DataCollectionRulesOperations>`
            * 2021-04-01: :class:`DataCollectionRulesOperations<azure.mgmt.monitor.v2021_04_01.aio.operations.DataCollectionRulesOperations>`
+           * 2021-09-01-preview: :class:`DataCollectionRulesOperations<azure.mgmt.monitor.v2022_02_01_preview.aio.operations.DataCollectionRulesOperations>`
         """
         api_version = self._get_api_version('data_collection_rules')
         if api_version == '2019-11-01-preview':
             from ..v2019_11_01_preview.aio.operations import DataCollectionRulesOperations as OperationClass
         elif api_version == '2021-04-01':
             from ..v2021_04_01.aio.operations import DataCollectionRulesOperations as OperationClass
+        elif api_version == '2021-09-01-preview':
+            from ..v2022_02_01_preview.aio.operations import DataCollectionRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_collection_rules'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

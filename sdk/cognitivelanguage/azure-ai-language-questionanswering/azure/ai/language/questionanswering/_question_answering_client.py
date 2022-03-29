@@ -7,57 +7,47 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any
+
+from msrest import Deserializer, Serializer
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.credentials import AzureKeyCredential
+from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models
 from ._configuration import QuestionAnsweringClientConfiguration
 from ._operations import QuestionAnsweringClientOperationsMixin
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.rest import HttpRequest, HttpResponse
-
 
 class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
-    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
+    """The language service API is a suite of natural language processing (NLP) skills built with
+    best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
+    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
+    detection and question answering. Further documentation can be found in :code:`<a
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://<resource-name>.api.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword str default_language: Sets the default language to use for all operations.
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint,  # type: str
-        credential,  # type: AzureKeyCredential
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = QuestionAnsweringClientConfiguration(endpoint, credential, **kwargs)
+        self._config = QuestionAnsweringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self._default_language = kwargs.pop("default_language", None)
 
-    def send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

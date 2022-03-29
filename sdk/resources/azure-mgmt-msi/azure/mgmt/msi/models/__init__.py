@@ -6,32 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import Identity
-    from ._models_py3 import IdentityUpdate
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemAssignedIdentity
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import UserAssignedIdentitiesListResult
-except (SyntaxError, ImportError):
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import Identity  # type: ignore
-    from ._models import IdentityUpdate  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemAssignedIdentity  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import UserAssignedIdentitiesListResult  # type: ignore
+from ._models_py3 import AssociatedResourcesListResult
+from ._models_py3 import AzureResource
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import Identity
+from ._models_py3 import IdentityUpdate
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import SystemAssignedIdentity
+from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentitiesListResult
+
 
 __all__ = [
+    'AssociatedResourcesListResult',
+    'AzureResource',
     'CloudErrorBody',
     'Identity',
     'IdentityUpdate',
