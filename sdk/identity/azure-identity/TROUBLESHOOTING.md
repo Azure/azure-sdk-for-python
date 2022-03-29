@@ -189,7 +189,7 @@ curl 'http://169.254.169.254/metadata/identity/oauth2/token?resource=https://man
 | Error Message |Description| Mitigation |
 |---|---|---|
 |Failed To Read Credentials</p></p>OR</p>Authenticate via Azure Service Authentication|The `VisualStudioCredential` failed retrieve a token from the Visual Studio authentication utility `Microsoft.Asal.TokenService.exe`.|<ul><li>In Visual Studio select the `Tools > Options` menu to launch the Options dialog.</li><li>Navigate to the `Azure Service Authentication` options to sign in with your Azure Active Directory account.</li><li>If you already had logged in to your account, try logging out and logging in again as that will repopulate the cache and potentially mitigate the error you're getting.</li></ul>|
-|ADFS tenant not supported|ADFS tenants are not currently supported by Visual Stuido `Azure Service Authentication`.|Use credentials from a supported cloud when authenticating with Visual Studio. The supported clouds are:</p><ul><li>AZURE PUBLIC CLOUD - https://login.microsoftonline.com/</li><li>AZURE CHINA - https://login.chinacloudapi.cn/</li><li>AZURE GOVERNMENT - https://login.microsoftonline.us/</li></ul>|
+|ADFS tenant not supported|ADFS tenants are not currently supported by Visual Studio `Azure Service Authentication`.|Use credentials from a supported cloud when authenticating with Visual Studio. The supported clouds are:</p><ul><li>AZURE PUBLIC CLOUD - https://login.microsoftonline.com/</li><li>AZURE CHINA - https://login.chinacloudapi.cn/</li><li>AZURE GOVERNMENT - https://login.microsoftonline.us/</li></ul>|
 
 ## Troubleshoot `AzureCliCredential` Authentication Issues
 
