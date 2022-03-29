@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://managedhsmname.managedhsm.azure.net/backup?api-version=7.3
   response:
@@ -29,7 +29,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/backup?api-version=7.3
+    url: https://mcpatinokvhsm.managedhsm.azure.net/backup?api-version=7.3
 - request:
     body: '{"storageResourceUri": "https://storagename.blob.core.windows.net/backup",
       "token": "fake-sas"}'
@@ -41,263 +41,235 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://managedhsmname.managedhsm.azure.net/backup?api-version=7.3
   response:
     body:
-      string: '{"status":"InProgress","statusDetails":null,"error":null,"startTime":1631924615,"endTime":null,"jobId":"fe2ae54d5d3e4f1887568a0a6544428e","azureStorageBlobContainerUri":null}'
+      string: '{"status":"InProgress","statusDetails":null,"error":null,"startTime":1648168091,"endTime":null,"jobId":"5263848bfdb74ddc9fc19d1dddc63161","azureStorageBlobContainerUri":null}'
     headers:
-      azure-asyncoperation: https://managedhsmname.managedhsm.azure.net/backup/fe2ae54d5d3e4f1887568a0a6544428e/pending
+      azure-asyncoperation: https://managedhsmname.managedhsm.azure.net/backup/5263848bfdb74ddc9fc19d1dddc63161/pending
       cache-control: no-cache
       content-length: '174'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:23:35 GMT
+      date: Fri, 25 Mar 2022 00:28:11 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2587'
+      x-ms-keyvault-region: northus
+      x-ms-server-latency: '1569'
     status:
       code: 202
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/backup?api-version=7.3
+    url: https://mcpatinokvhsm.managedhsm.azure.net/backup?api-version=7.3
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/backup/fe2ae54d5d3e4f1887568a0a6544428e/pending?api-version=7.3
+    uri: https://managedhsmname.managedhsm.azure.net/backup/5263848bfdb74ddc9fc19d1dddc63161/pending?api-version=7.3
   response:
     body:
-      string: '{"azureStorageBlobContainerUri":null,"endTime":null,"error":null,"jobId":"fe2ae54d5d3e4f1887568a0a6544428e","startTime":1631924615,"status":"InProgress","statusDetails":null}'
+      string: '{"azureStorageBlobContainerUri":null,"endTime":null,"error":null,"jobId":"5263848bfdb74ddc9fc19d1dddc63161","startTime":1648168091,"status":"InProgress","statusDetails":null}'
     headers:
       cache-control: no-cache
       content-length: '174'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:23:38 GMT
+      date: Fri, 25 Mar 2022 00:28:12 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210809-1-5b391b3f-develop
+      x-ms-build-version: 1.0.20220314-1-3dc5f232-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2255'
+      x-ms-keyvault-region: northus
+      x-ms-server-latency: '1208'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/backup/fe2ae54d5d3e4f1887568a0a6544428e/pending?api-version=7.3
+    url: https://mcpatinokvhsm.managedhsm.azure.net/backup/5263848bfdb74ddc9fc19d1dddc63161/pending?api-version=7.3
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/backup/fe2ae54d5d3e4f1887568a0a6544428e/pending
+    uri: https://managedhsmname.managedhsm.azure.net/backup/5263848bfdb74ddc9fc19d1dddc63161/pending
   response:
     body:
-      string: '{"azureStorageBlobContainerUri":"https://storagename.blob.core.windows.net/backup/mhsm-mcpatinotesthsm-2021091800233598","endTime":1631924623,"error":null,"jobId":"fe2ae54d5d3e4f1887568a0a6544428e","startTime":1631924615,"status":"Succeeded","statusDetails":null}'
+      string: '{"azureStorageBlobContainerUri":"https://storagename.blob.core.windows.net/backup/mhsm-mcpatinokvhsm-2022032500281181","endTime":1648168098,"error":null,"jobId":"5263848bfdb74ddc9fc19d1dddc63161","startTime":1648168091,"status":"Succeeded","statusDetails":null}'
     headers:
       cache-control: no-cache
-      content-length: '268'
+      content-length: '264'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:23:44 GMT
+      date: Fri, 25 Mar 2022 00:28:18 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210809-1-5b391b3f-develop
+      x-ms-build-version: 1.0.20220314-1-3dc5f232-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2402'
+      x-ms-keyvault-region: northus
+      x-ms-server-latency: '1326'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/backup/fe2ae54d5d3e4f1887568a0a6544428e/pending
+    url: https://mcpatinokvhsm.managedhsm.azure.net/backup/5263848bfdb74ddc9fc19d1dddc63161/pending
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/backup/fe2ae54d5d3e4f1887568a0a6544428e/pending
+    uri: https://managedhsmname.managedhsm.azure.net/backup/5263848bfdb74ddc9fc19d1dddc63161/pending
   response:
     body:
-      string: '{"azureStorageBlobContainerUri":"https://storagename.blob.core.windows.net/backup/mhsm-mcpatinotesthsm-2021091800233598","endTime":1631924623,"error":null,"jobId":"fe2ae54d5d3e4f1887568a0a6544428e","startTime":1631924615,"status":"Succeeded","statusDetails":null}'
+      string: '{"azureStorageBlobContainerUri":"https://storagename.blob.core.windows.net/backup/mhsm-mcpatinokvhsm-2022032500281181","endTime":1648168098,"error":null,"jobId":"5263848bfdb74ddc9fc19d1dddc63161","startTime":1648168091,"status":"Succeeded","statusDetails":null}'
     headers:
       cache-control: no-cache
-      content-length: '268'
+      content-length: '264'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:23:57 GMT
+      date: Fri, 25 Mar 2022 00:28:30 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210809-1-5b391b3f-develop
+      x-ms-build-version: 1.0.20220314-1-3dc5f232-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2388'
+      x-ms-keyvault-region: northus
+      x-ms-server-latency: '1187'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/backup/fe2ae54d5d3e4f1887568a0a6544428e/pending
+    url: https://mcpatinokvhsm.managedhsm.azure.net/backup/5263848bfdb74ddc9fc19d1dddc63161/pending
 - request:
     body: '{"sasTokenParameters": {"storageResourceUri": "https://storagename.blob.core.windows.net/backup",
-      "token": "fake-sas"}, "folderToRestore": "mhsm-mcpatinotesthsm-2021091800233598"}'
+      "token": "fake-sas"}, "folderToRestore": "mhsm-mcpatinokvhsm-2022032500281181"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '293'
+      - '291'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://managedhsmname.managedhsm.azure.net/restore?api-version=7.3
   response:
     body:
-      string: '{"endTime":null,"error":null,"jobId":"25476ccf81314198a656b3f0e88f4cf0","startTime":1631924640,"status":"InProgress","statusDetails":null}'
+      string: '{"endTime":null,"error":null,"jobId":"bb0084067f474c93b38e6ef2ea1a4ecb","startTime":1648168112,"status":"InProgress","statusDetails":null}'
     headers:
-      azure-asyncoperation: https://managedhsmname.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending
+      azure-asyncoperation: https://managedhsmname.managedhsm.azure.net/restore/bb0084067f474c93b38e6ef2ea1a4ecb/pending
       cache-control: no-cache
       content-length: '138'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:24:00 GMT
+      date: Fri, 25 Mar 2022 00:28:32 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2655'
+      x-ms-keyvault-region: northus
+      x-ms-server-latency: '1375'
     status:
       code: 202
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/restore?api-version=7.3
+    url: https://mcpatinokvhsm.managedhsm.azure.net/restore?api-version=7.3
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending?api-version=7.3
+    uri: https://managedhsmname.managedhsm.azure.net/restore/bb0084067f474c93b38e6ef2ea1a4ecb/pending?api-version=7.3
   response:
     body:
-      string: '{"endTime":null,"error":null,"jobId":"25476ccf81314198a656b3f0e88f4cf0","startTime":1631924640,"status":"InProgress","statusDetails":null}'
+      string: '{"endTime":null,"error":null,"jobId":"bb0084067f474c93b38e6ef2ea1a4ecb","startTime":1648168112,"status":"InProgress","statusDetails":null}'
     headers:
       cache-control: no-cache
       content-length: '138'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:24:03 GMT
+      date: Fri, 25 Mar 2022 00:28:33 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210809-1-5b391b3f-develop
+      x-ms-build-version: 1.0.20220314-1-3dc5f232-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2470'
+      x-ms-keyvault-region: northus
+      x-ms-server-latency: '1235'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending?api-version=7.3
+    url: https://mcpatinokvhsm.managedhsm.azure.net/restore/bb0084067f474c93b38e6ef2ea1a4ecb/pending?api-version=7.3
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending
+    uri: https://managedhsmname.managedhsm.azure.net/restore/bb0084067f474c93b38e6ef2ea1a4ecb/pending
   response:
     body:
-      string: '{"endTime":null,"error":null,"jobId":"25476ccf81314198a656b3f0e88f4cf0","startTime":1631924640,"status":"InProgress","statusDetails":null}'
-    headers:
-      cache-control: no-cache
-      content-length: '138'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:24:10 GMT
-      server: Kestrel
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210809-1-5b391b3f-develop
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2595'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending
-  response:
-    body:
-      string: '{"endTime":1631924656,"error":null,"jobId":"25476ccf81314198a656b3f0e88f4cf0","startTime":1631924640,"status":"Succeeded","statusDetails":null}'
+      string: '{"endTime":1648168118,"error":null,"jobId":"bb0084067f474c93b38e6ef2ea1a4ecb","startTime":1648168112,"status":"Succeeded","statusDetails":null}'
     headers:
       cache-control: no-cache
       content-length: '143'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:24:18 GMT
+      date: Fri, 25 Mar 2022 00:28:41 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210809-1-5b391b3f-develop
+      x-ms-build-version: 1.0.20220314-1-3dc5f232-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2947'
+      x-ms-keyvault-region: northus
+      x-ms-server-latency: '3269'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending
+    url: https://mcpatinokvhsm.managedhsm.azure.net/restore/bb0084067f474c93b38e6ef2ea1a4ecb/pending
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.1.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending
+    uri: https://managedhsmname.managedhsm.azure.net/restore/bb0084067f474c93b38e6ef2ea1a4ecb/pending
   response:
     body:
-      string: '{"endTime":1631924656,"error":null,"jobId":"25476ccf81314198a656b3f0e88f4cf0","startTime":1631924640,"status":"Succeeded","statusDetails":null}'
+      string: '{"endTime":1648168118,"error":null,"jobId":"bb0084067f474c93b38e6ef2ea1a4ecb","startTime":1648168112,"status":"Succeeded","statusDetails":null}'
     headers:
       cache-control: no-cache
       content-length: '143'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
-      date: Sat, 18 Sep 2021 00:24:30 GMT
+      date: Fri, 25 Mar 2022 00:28:52 GMT
       server: Kestrel
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210809-1-5b391b3f-develop
+      x-ms-build-version: 1.0.20220314-1-3dc5f232-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: westus
-      x-ms-server-latency: '2328'
+      x-ms-keyvault-region: northus
+      x-ms-server-latency: '1376'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/restore/25476ccf81314198a656b3f0e88f4cf0/pending
+    url: https://mcpatinokvhsm.managedhsm.azure.net/restore/bb0084067f474c93b38e6ef2ea1a4ecb/pending
 version: 1
