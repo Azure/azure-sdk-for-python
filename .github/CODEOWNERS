@@ -77,7 +77,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @moderakh
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @simorenoh @gahl-levy
@@ -394,7 +394,7 @@
 #/<NotInRepo>/          @jfggdl
 
 # ServiceLabel: %Event Hubs %Service Attention
-#/<NotInRepo>/          @kasun04 @saglodha
+#/<NotInRepo>/          @kasun04
 
 # ServiceLabel: %Functions %Service Attention
 #/<NotInRepo>/          @ahmedelnably @fabiocav
@@ -580,7 +580,7 @@
 #/<NotInRepo>/          @chlahav
 
 # ServiceLabel: %Service Attention %Service Bus
-#/<NotInRepo>/          @saglodha @EldertGrootenboer
+#/<NotInRepo>/          @jfggdl @EldertGrootenboer
 
 # ServiceLabel: %Service Attention %Service Fabric
 #/<NotInRepo>/          @QingChenmsft @vaishnavk @juhacket
