@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -170,6 +170,39 @@ def build_list_request(
         **kwargs
     )
 
+
+def build_list_by_resource_group_request(
+    subscription_id: str,
+    resource_group_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2020-05-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/resourceManagementPrivateLinks')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
 class ResourceManagementPrivateLinkOperations(object):
     """ResourceManagementPrivateLinkOperations operations.
 
@@ -202,8 +235,7 @@ class ResourceManagementPrivateLinkOperations(object):
     ) -> "_models.ResourceManagementPrivateLink":
         """Create a resource management group private link.
 
-        :param resource_group_name: The name of the resource group the template will be deployed to.
-         The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param rmpl_name: The name of the resource management private link.
         :type rmpl_name: str
@@ -239,11 +271,15 @@ class ResourceManagementPrivateLinkOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ResourceManagementPrivateLink', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('ResourceManagementPrivateLink', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('ResourceManagementPrivateLink', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -262,8 +298,7 @@ class ResourceManagementPrivateLinkOperations(object):
     ) -> "_models.ResourceManagementPrivateLink":
         """Get a resource management private link(resource-level).
 
-        :param resource_group_name: The name of the resource group the template will be deployed to.
-         The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param rmpl_name: The name of the resource management private link.
         :type rmpl_name: str
@@ -314,8 +349,7 @@ class ResourceManagementPrivateLinkOperations(object):
     ) -> None:
         """Delete a resource management private link.
 
-        :param resource_group_name: The name of the resource group the template will be deployed to.
-         The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param rmpl_name: The name of the resource management private link.
         :type rmpl_name: str
@@ -395,4 +429,52 @@ class ResourceManagementPrivateLinkOperations(object):
         return deserialized
 
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/resourceManagementPrivateLinks'}  # type: ignore
+
+
+    @distributed_trace
+    def list_by_resource_group(
+        self,
+        resource_group_name: str,
+        **kwargs: Any
+    ) -> "_models.ResourceManagementPrivateLinkListResult":
+        """Get all the resource management private links in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ResourceManagementPrivateLinkListResult, or the result of cls(response)
+        :rtype:
+         ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLinkListResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceManagementPrivateLinkListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_list_by_resource_group_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            template_url=self.list_by_resource_group.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ResourceManagementPrivateLinkListResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/resourceManagementPrivateLinks'}  # type: ignore
 

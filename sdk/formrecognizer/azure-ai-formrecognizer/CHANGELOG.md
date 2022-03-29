@@ -10,6 +10,7 @@
 - Renamed `model_count` and `model_limit` on `AccountInfo` to `document_model_count` and `document_model_limit`.
 
 ### Bugs Fixed
+- Fixed `to_dict()` and `from_dict()` methods on `DocumentField` to support converting lists, dictionaries, and CurrenyValue field types to and from a dictionary.
 
 ### Other Changes
 - Renamed `sample_copy_model.py` and `sample_copy_model_async.py` to `sample_copy_model_to.py` and `sample_copy_model_to_async.py` under the `3.2-beta` samples folder. Updated the samples to use renamed copy model method.

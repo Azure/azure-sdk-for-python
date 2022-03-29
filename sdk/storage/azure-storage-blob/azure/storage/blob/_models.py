@@ -1033,7 +1033,7 @@ class BlobSasPermissions(object):
         To get immutability policy, you just need read permission.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, delete_previous_version=False, tag=True, **kwargs):
+                 delete=False, delete_previous_version=False, tag=False, **kwargs):
         self.read = read
         self.add = add
         self.create = create

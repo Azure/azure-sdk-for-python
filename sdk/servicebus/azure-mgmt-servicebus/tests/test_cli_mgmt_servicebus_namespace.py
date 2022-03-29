@@ -35,12 +35,12 @@ class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
             api_version="2017-04-01"
         )
     
-
-        if self.is_live:
-            from azure.mgmt.network import NetworkManagementClient
-            self.network_client = self.create_mgmt_client(
-                NetworkManagementClient
-            )
+        # # No testcases to test
+        # if self.is_live:
+        #     from azure.mgmt.network import NetworkManagementClient
+        #     self.network_client = self.create_mgmt_client(
+        #         NetworkManagementClient
+        #     )
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
 
