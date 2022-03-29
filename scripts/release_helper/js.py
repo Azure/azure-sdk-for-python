@@ -1,13 +1,25 @@
+import datetime
 from common import IssueProcess, Common
-from typing import Any, List
+from typing import Any, List, Dict
 import os
 
 # assignee dict which will be assigned to handle issues
 _JS_OWNER = {'qiaozha', 'lirenhe'}
 
 # 'github assignee': 'token'
-_ASSIGNEE_TOKEN_JS = {'qiaozha': os.getenv('AZURESDK_BOT_TOKEN')}
+_ASSIGNEE_TOKEN_JS = {'qiaozha': os.getenv('AZURESDK_BOT_TOKEN'), 'dw511214992': os.getenv('AZURESDK_BOT_TOKEN')}
 
+# Set the start time to 2022-02-28
+SATRAT_DAY = '2022-02-28'
+
+def choose_this_week_assignee(assignee_token: Dict):
+    assignees = list(assignee_token.keys())
+    today = datetime.datetime.today().date()
+    apart_days = (today - SATRAT_DAY).days
+    index = (apart_days//7)%len(assignees)
+    return {assignees[index]: _ASSIGNEE_TOKEN_JS[assignees[index]]}
+
+this_week_assign = choose_this_week_assignee(_ASSIGNEE_TOKEN_JS)
 
 class IssueProcessJs(IssueProcess):
     pass
@@ -20,5 +32,5 @@ class Js(Common):
 
 
 def js_process(issues: List[Any]):
-    instance = Js(issues, _ASSIGNEE_TOKEN_JS, _JS_OWNER)
+    instance = Js(issues, this_week_assign, _JS_OWNER)
     instance.run()
