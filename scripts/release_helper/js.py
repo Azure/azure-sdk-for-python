@@ -12,25 +12,24 @@ _ASSIGNEE_TOKEN_JS = {'qiaozha': os.getenv('AZURESDK_BOT_TOKEN'), 'dw511214992':
 # Set the start time to 2022-02-28
 SATRAT_DAY = '2022-02-28'
 
-def choose_this_week_assignee(assignee_token: Dict):
-    assignees = list(assignee_token.keys())
-    today = datetime.datetime.today().date()
-    apart_days = (today - SATRAT_DAY).days
-    index = (apart_days//7)%len(assignees)
-    return {assignees[index]: _ASSIGNEE_TOKEN_JS[assignees[index]]}
-
-this_week_assign = choose_this_week_assignee(_ASSIGNEE_TOKEN_JS)
-
 class IssueProcessJs(IssueProcess):
     pass
 
 
 class Js(Common):
     def __init__(self, issues, assignee_token, language_owner):
-        super(Js, self).__init__(issues, assignee_token, language_owner)
+        super(Js, self).__init__(issues, self.assign_policy(assignee_token), language_owner)
         self.file_out_name = 'release_js_status.md'
+
+    @staticmethod
+    def assign_policy(assignee_token):
+        assignees = list(assignee_token.keys())
+        today = datetime.datetime.today().date()
+        apart_days = (today - SATRAT_DAY).days
+        index = (apart_days // 7) % len(assignees)
+        return {assignees[index]: _ASSIGNEE_TOKEN_JS[assignees[index]]}
 
 
 def js_process(issues: List[Any]):
-    instance = Js(issues, this_week_assign, _JS_OWNER)
+    instance = Js(issues, _ASSIGNEE_TOKEN_JS, _JS_OWNER)
     instance.run()
