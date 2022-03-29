@@ -10,7 +10,7 @@ _JS_OWNER = {'qiaozha', 'lirenhe'}
 _ASSIGNEE_TOKEN_JS = {'qiaozha': os.getenv('AZURESDK_BOT_TOKEN'), 'dw511214992': os.getenv('AZURESDK_BOT_TOKEN')}
 
 # Set the start time to 2022-02-28
-SATRAT_DAY = '2022-02-28'
+SATRAT_DAY = datetime.datetime(2022, 2, 28).date()
 
 class IssueProcessJs(IssueProcess):
     pass
