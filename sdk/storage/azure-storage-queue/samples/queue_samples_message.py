@@ -309,7 +309,6 @@ class QueueMessageSamples(object):
         queue.create_queue()
 
         try:
-            # [START send_messages]
             queue.send_message(u"message1")
             queue.send_message(u"message2")
             queue.send_message(u"message3")
@@ -320,15 +319,12 @@ class QueueMessageSamples(object):
             queue.send_message(u"message8")
             queue.send_message(u"message9")
             queue.send_message(u"message10")
-            # [END send_messages]
 
-            # [START receive_messages]
             # Receive messages one-by-one
             messages = queue.receive_messages(max_messages=5)
             for msg in messages:
                 print(msg.content)
                 queue.delete_message(msg)
-            # [END receive_messages]
 
             # Only prints 5 messages because 'max_messages'=5
             # >>message1

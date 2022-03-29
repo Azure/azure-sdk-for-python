@@ -290,7 +290,6 @@ class QueueMessageSamplesAsync(object):
             await queue.create_queue()
 
             try:
-            # [START send_messages]
                 await queue.send_message(u"message1")
                 await queue.send_message(u"message2")
                 await queue.send_message(u"message3")
@@ -302,15 +301,11 @@ class QueueMessageSamplesAsync(object):
                 await queue.send_message(u"message9")
                 await queue.send_message(u"message10")
             
-            # [END send_messages]
-
-                # [START receive_messages]
                 # Receive messages one-by-one
                 messages = queue.receive_messages(max_messages=5)
                 async for msg in messages:
                     print(msg.content)
                     await queue.delete_message(msg)
-                # [END receive_messages]
 
                 # Only prints 5 messages because 'max_messages'=5
                 # >>message1

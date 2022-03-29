@@ -1,0 +1,673 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:13 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message1</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:13 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0ea39f96-510c-4870-b5be-6d4ba0131a19</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAADCtwJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:13 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message2</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:13 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>8d121286-cd1d-41a1-a953-25ea30e36829</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA2td6J7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:13 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message3</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:13 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>00ca1b8d-eb07-466c-8a4b-06d32138ae94</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAe8GEJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:13 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message4</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9497ab57-13c7-40bf-aeb6-aa59b287a12b</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA7A6OJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:13 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message5</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>c3deab35-268b-45bd-993f-913a1187c32f</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAqpSYJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:13 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message6</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>dae72d25-5319-4d3f-b7a9-f3f9839659f6</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAALwmiJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:14 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message7</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>6d3ca948-7288-4f1b-8285-952d726868e0</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA8Y6sJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:14 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message8</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>7ec09367-6fb6-4967-9ae9-b3bd573ee661</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAsO22J7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:14 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message9</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>3eca38ef-1940-4be5-adf2-76b9bc40a78c</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAARtfAJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:14 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message10</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>60f44077-d951-4076-90e0-3cd62867c4b9</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAy3LKJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:14 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message11</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>70c975bf-075b-4624-992c-68dc2238fc94</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAd6rUJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:14 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:13 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message12</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>5bae8230-478f-4006-a359-884ec6f91aa7</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAVX7fJ7VD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:14 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:14 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages?numofmessages=3
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>0ea39f96-510c-4870-b5be-6d4ba0131a19</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA7grLObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage><QueueMessage><MessageId>8d121286-cd1d-41a1-a953-25ea30e36829</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA7grLObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message2</MessageText></QueueMessage><QueueMessage><MessageId>00ca1b8d-eb07-466c-8a4b-06d32138ae94</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA7grLObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message3</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:14 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages?numofmessages=3
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages?numofmessages=3
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9497ab57-13c7-40bf-aeb6-aa59b287a12b</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAlhvVObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message4</MessageText></QueueMessage><QueueMessage><MessageId>c3deab35-268b-45bd-993f-913a1187c32f</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:13 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:13
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAlhvVObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message5</MessageText></QueueMessage><QueueMessage><MessageId>dae72d25-5319-4d3f-b7a9-f3f9839659f6</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAlhvVObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message6</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:14 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages?numofmessages=3
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages?numofmessages=3
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>6d3ca948-7288-4f1b-8285-952d726868e0</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAbu/fObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message7</MessageText></QueueMessage><QueueMessage><MessageId>7ec09367-6fb6-4967-9ae9-b3bd573ee661</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAbu/fObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message8</MessageText></QueueMessage><QueueMessage><MessageId>3eca38ef-1940-4be5-adf2-76b9bc40a78c</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAbu/fObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message9</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:14 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages?numofmessages=3
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages?numofmessages=1
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>60f44077-d951-4076-90e0-3cd62867c4b9</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAJk7qObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message10</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:14 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages?numofmessages=1
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>70c975bf-075b-4624-992c-68dc2238fc94</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA4az0ObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message11</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:14 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:14 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>5bae8230-478f-4006-a359-884ec6f91aa7</MessageId><InsertionTime>Tue,
+        29 Mar 2022 21:37:14 GMT</InsertionTime><ExpirationTime>Tue, 05 Apr 2022 21:37:14
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAApzL/ObVD2AE=</PopReceipt><TimeNextVisible>Tue,
+        29 Mar 2022 21:37:44 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message12</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:14 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Tue, 29 Mar 2022 21:37:15 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncfac61437/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList
+        />"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Tue, 29 Mar 2022 21:37:14 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2021-02-12'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasyncfac61437/messages
+version: 1

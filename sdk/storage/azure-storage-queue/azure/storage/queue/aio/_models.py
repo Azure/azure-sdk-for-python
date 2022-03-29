@@ -34,20 +34,16 @@ class MessagesPaged(AsyncPageIterator):
         )
         self._command = command
         self.results_per_page = results_per_page
-        self.max_messages = max_messages
+        self._max_messages = max_messages
 
     async def _get_next_cb(self, continuation_token):
         try:
-            if self.max_messages is not None:
+            if self._max_messages is not None:
                 if self.results_per_page is None:
                     self.results_per_page = 1
-                if self.max_messages == 0:
+                if self._max_messages < 1:
                     raise StopAsyncIteration("End of paging")
-                if self.results_per_page > self.max_messages:
-                    self.results_per_page = self.max_messages
-                    self.max_messages = 0
-                else:
-                    self.max_messages = self.max_messages - self.results_per_page
+                self.results_per_page = min(self.results_per_page, self._max_messages)
             return await self._command(number_of_messages=self.results_per_page)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -56,6 +52,8 @@ class MessagesPaged(AsyncPageIterator):
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopAsyncIteration("End of paging")
+        if self._max_messages is not None:
+            self._max_messages = self._max_messages - self.results_per_page
         return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
 
 
