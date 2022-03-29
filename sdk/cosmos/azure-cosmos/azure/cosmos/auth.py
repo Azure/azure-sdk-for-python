@@ -26,11 +26,7 @@ import base64
 from hashlib import sha256
 import hmac
 import urllib.parse
-from typing import Dict, ClassVar
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from . import http_constants
-
-TokenCredential = ClassVar
 
 
 def GetAuthorizationHeader(
@@ -147,17 +143,3 @@ def __get_authorization_token_using_resource_token(resource_tokens, path, resour
                 return resource_tokens[sub_path]
 
     return None
-
-
-class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
-    """Wrapper class to azure.core's BearerTokenCredentialPolicy to sign authorization header with Cosmos prefix"""
-
-    @staticmethod
-    def _update_headers(headers, token):
-        # type: (Dict[str, str], str) -> None
-        """Updates the Authorization header with the cosmos signature and bearer token.
-
-        :param dict headers: The HTTP Request headers
-        :param str token: The OAuth token.
-        """
-        headers[http_constants.HttpHeaders.Authorization] = "type=aad&ver=1.0&sig={}".format(token)
