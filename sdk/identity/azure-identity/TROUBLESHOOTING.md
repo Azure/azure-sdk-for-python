@@ -52,7 +52,7 @@ The `CredentialUnavailableError` is a special error type derived from `ClientAut
 
 Calls to service clients resulting in `HttpResponseError` with a `StatusCode` of 401 or 403 often indicate the caller doesn't have sufficient permissions for the specified API. Check the service documentation to determine which RBAC roles are needed for the specific request, and ensure the authenticated user or service principal have been granted the appropriate roles on the resource.
 
-## Finding Relevant Information in Error Messages
+## Find Relevant Information in Error Messages
 
 `ClientAuthenticationError` is raised when unexpected errors occurred while a credential is authenticating. This can include errors received from requests to the AAD STS and often contains information helpful to diagnosis. Consider the following `ClientAuthenticationError` message.
 
