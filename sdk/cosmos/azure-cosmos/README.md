@@ -76,28 +76,6 @@ KEY = os.environ['ACCOUNT_KEY']
 client = CosmosClient(URL, credential=KEY)
 ```
 
-### AAD Authentication
-
-You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package:
-```Python
-from azure.cosmos import CosmosClient
-from azure.identity import ClientSecretCredential
-
-import os
-URL = os.environ['ACCOUNT_URI']
-TENANT_ID = os.environ['TENANT_ID']
-CLIENT_ID = os.environ['CLIENT_ID']
-CLIENT_SECRET = os.environ['CLIENT_SECRET']
-
-AAD_CREDENTIALS = ClientSecretCredential(
-    tenant_id=TENANT_ID,
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET)
-
-client = CosmosClient(URL, AAD_CREDENTIALS)
-```
-More information on allowed operations for AAD authenticated clients: [RBAC Permission Model](https://aka.ms/cosmos-native-rbac)
-
 ## Key concepts
 
 Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact with the primary resource types in Cosmos DB:
