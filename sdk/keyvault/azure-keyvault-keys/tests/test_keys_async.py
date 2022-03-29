@@ -625,6 +625,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
 
+        # ensure passing an empty policy with no kwargs doesn't raise an error
+        await client.update_key_rotation_policy(key_name, KeyRotationPolicy())
+
         # updating a rotation policy with an empty policy and override
         actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
         updated_policy = await client.update_key_rotation_policy(
@@ -634,20 +637,34 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert updated_policy.expires_in is None
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
-        updated_policy_actions = updated_policy.lifetime_actions[0]
-        fetched_policy_actions = fetched_policy.lifetime_actions[0]
+        updated_policy_actions = None
+        for i in range(len(updated_policy.lifetime_actions)):
+            if updated_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                updated_policy_actions = updated_policy.lifetime_actions[i]
+        assert updated_policy_actions, "Specified rotation policy action not found in updated policy"
         assert updated_policy_actions.action == KeyRotationPolicyAction.rotate
         assert updated_policy_actions.time_after_create == "P2M"
         assert updated_policy_actions.time_before_expiry is None
+
+        fetched_policy_actions = None
+        for i in range(len(fetched_policy.lifetime_actions)):
+            if fetched_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                fetched_policy_actions = fetched_policy.lifetime_actions[i]
+        assert fetched_policy_actions, "Specified rotation policy action not found in fetched policy"
         _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
 
         # updating with a round-tripped policy and overriding expires_in
         new_policy = await client.update_key_rotation_policy(key_name, policy=updated_policy, expires_in="P90D")
         assert new_policy.expires_in == "P90D"
-        _assert_lifetime_actions_equal(updated_policy_actions, new_policy.lifetime_actions[0])
+
+        new_policy_actions = None
+        for i in range(len(new_policy.lifetime_actions)):
+            if new_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                new_policy_actions = new_policy.lifetime_actions[i]
+        _assert_lifetime_actions_equal(updated_policy_actions, new_policy_actions)
 
         # updating with a round-tripped policy and overriding lifetime_actions
-        newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P30D")]
+        newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P60D")]
         newest_policy = await client.update_key_rotation_policy(
             key_name, policy=new_policy, lifetime_actions=newest_actions
         )
@@ -655,11 +672,18 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert newest_policy.expires_in == "P90D"
         _assert_rotation_policies_equal(newest_policy, newest_fetched_policy)
 
-        newest_policy_actions = newest_policy.lifetime_actions[0]
-        newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[0]
+        newest_policy_actions = None
+        for i in range(len(newest_policy.lifetime_actions)):
+            if newest_policy.lifetime_actions[i].action == KeyRotationPolicyAction.notify:
+                newest_policy_actions = newest_policy.lifetime_actions[i]
         assert newest_policy_actions.action == KeyRotationPolicyAction.notify
         assert newest_policy_actions.time_after_create is None
-        assert newest_policy_actions.time_before_expiry == "P30D"
+        assert newest_policy_actions.time_before_expiry == "P60D"
+
+        newest_fetched_policy_actions = None
+        for i in range(len(newest_fetched_policy.lifetime_actions)):
+            if newest_fetched_policy.lifetime_actions[i].action == KeyRotationPolicyAction.notify:
+                newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[i]
         _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
 
     @all_api_versions()
