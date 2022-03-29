@@ -3,7 +3,6 @@
 ## 12.8.0b1 (Unreleased)
 
 ### Features Added
-- Added support for service version 2021-06-08.
 - Added support for `create_if_not_exists()` for `FileShareClient`
 
 ### Bugs Fixed
