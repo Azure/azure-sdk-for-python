@@ -23,6 +23,37 @@ from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
 
 
+def parse_page_list(page_list):
+    """Parse a generated PageList into a single list of PageRange sorted by start.
+    """
+    page_ranges = page_list.page_range
+    clear_ranges = page_list.clear_range
+
+    ranges = []
+    p_i, c_i = 0, 0
+
+    # Combine page ranges and clear ranges into single list, sorted by start
+    while p_i < len(page_ranges) and c_i < len(clear_ranges):
+        p, c = page_ranges[p_i], clear_ranges[c_i]
+
+        if p.start < c.start:
+            ranges.append(
+                PageRange(p.start, p.end, cleared=False)
+            )
+            p_i += 1
+        else:
+            ranges.append(
+                PageRange(c.start, c.end, cleared=True)
+            )
+            c_i += 1
+
+    # Grab remaining elements in either list
+    ranges += [PageRange(r.start, r.end, cleared=False) for r in page_ranges[p_i:]]
+    ranges += [PageRange(r.start, r.end, cleared=True) for r in clear_ranges[c_i:]]
+
+    return ranges
+
+
 class BlobType(str, Enum):
 
     BlockBlob = "BlockBlob"
@@ -845,37 +876,6 @@ class PageRange(DictMixin):
         self.end = end
         self.cleared = cleared
 
-    @staticmethod
-    def _parse_page_list(page_list):
-        """Parse a generated PageList into a single list of PageRange sorted by start.
-        """
-        page_ranges = page_list.page_range
-        clear_ranges = page_list.clear_range
-
-        ranges = []
-        p_i, c_i = 0, 0
-
-        # Combine page ranges and clear ranges into single list, sorted by start
-        while p_i < len(page_ranges) and c_i < len(clear_ranges):
-            p, c = page_ranges[p_i], clear_ranges[c_i]
-
-            if p.start < c.start:
-                ranges.append(
-                    PageRange(p.start, p.end, cleared=False)
-                )
-                p_i += 1
-            else:
-                ranges.append(
-                    PageRange(c.start, c.end, cleared=True)
-                )
-                c_i += 1
-
-        # Grab remaining elements in either list
-        ranges += [PageRange(r.start, r.end, cleared=False) for r in page_ranges[p_i:]]
-        ranges += [PageRange(r.start, r.end, cleared=True) for r in clear_ranges[c_i:]]
-
-        return ranges
-
 
 class PageRangePaged(PageIterator):
     def __init__(self, command, results_per_page=None, continuation_token=None):
@@ -910,7 +910,7 @@ class PageRangePaged(PageIterator):
         if not response:
             raise StopIteration
 
-        return PageRange._parse_page_list(response)  # pylint: disable=protected-access
+        return parse_page_list(response)
 
 
 class AccessPolicy(GenAccessPolicy):

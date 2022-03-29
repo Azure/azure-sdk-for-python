@@ -10,7 +10,7 @@ from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 from .._deserialize import parse_tags
 
-from .._models import ContainerProperties, FilteredBlob, PageRange
+from .._models import ContainerProperties, FilteredBlob, parse_page_list
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
 from .._generated.models import FilterBlobItem
@@ -176,4 +176,4 @@ class PageRangePaged(AsyncPageIterator):
         if not response:
             raise StopIteration
 
-        return PageRange._parse_page_list(response)  # pylint: disable=protected-access
+        return parse_page_list(response)
