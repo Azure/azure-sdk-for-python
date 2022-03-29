@@ -71,10 +71,6 @@ class AsyncCosmosBearerTokenCredentialPolicy(_AsyncCosmosBearerTokenCredentialPo
     :param str scopes: Lets you specify the type of access needed.
     :raises ValueError: If https_enforce does not match with endpoint being used.
     """
-    # def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any") -> None:
-    #     # pylint:disable=unused-argument
-    #     super(_CosmosBearerTokenCredentialPolicyBase).__init__()
-    #     self._lock = asyncio.Lock()
 
     async def on_request(self, request: "PipelineRequest") -> None:  # pylint:disable=invalid-overridden-method
         """Adds a bearer token Authorization header to request and sends request to next policy.
