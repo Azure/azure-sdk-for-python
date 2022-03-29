@@ -4,11 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any
-try:
-    from typing import Protocol, TypedDict
-except ImportError:
-    from typing_extensions import Protocol, TypedDict
-
+from typing_extensions import Protocol, TypedDict   # type: ignore
 
 class MessageContent(TypedDict):
     """A dict with required keys:

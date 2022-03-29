@@ -18,6 +18,7 @@ from typing import (
     TYPE_CHECKING,
     cast,
 )
+from typing_extensions import TypedDict
 
 import six
 
@@ -60,6 +61,7 @@ from .amqp import (
 if TYPE_CHECKING:
     import datetime
 
+MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
 PrimitiveTypes = Optional[Union[
     int,
     float,
@@ -182,16 +184,17 @@ class EventData(object):
         event_str += " }"
         return event_str
 
-    def __message_content__(self) -> Dict:
+    def __message_content__(self) -> MessageContent:
         if self.body_type != AmqpMessageBodyType.DATA:
             raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
         content = bytearray()
         for c in self.body: # type: ignore
             content += c   # type: ignore
-        return {"content": bytes(content), "content_type": self.content_type}
+        content_type = cast(str, self.content_type)
+        return {"content": bytes(content), "content_type": content_type}
 
     @classmethod
-    def from_message_content(cls, content: bytes, content_type: str) -> "EventData":
+    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> "EventData": # pylint: disable=unused-argument
         """
         Creates an EventData object given content type and a content value to be set as body.
 
