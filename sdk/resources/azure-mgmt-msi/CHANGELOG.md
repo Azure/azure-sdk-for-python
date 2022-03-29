@@ -4,7 +4,7 @@
 
 **Breaking changes**
 
-  - Update from single API to multiple API
+  - Change from single-api package to multiple-api package which permits users to pass in different api version in client.
 
 
 ## 6.0.0b2 (2022-03-24)
