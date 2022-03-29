@@ -1,12 +1,23 @@
 # Release History
 
-## 12.11.0b1 (Unreleased)
+## 12.12.0b1 (Unreleased)
 
 ### Features Added
 - Added support for service version 2021-06-08.
 - Added support for `copy_source_tags` to `start_copy_from_url()` which allows callers to specify whether blob tags
   should be replaced or copied during a synchronous copy operation.
 - Added support for `create_if_not_exists()` for `BlobContainerClient`
+
+## 12.11.0 (2022-03-29)
+
+**Warning** This release involves a bug fix that may change the behavior for some users. In previous versions,
+the `tag` parameter on`BlobSasPermissions` defaulted to `True` meaning a Blob SAS URL would include the `t` permission
+by default. This was not the intended behavior. This release adjusts `BlobSasPermission` so the `tag` permission will
+default to `False`, like all other permissions.
+
+### Bugs Fixed
+- Fixed a bug in `BlobSasPermissions` where the `tag` permission had a default value of `True` and
+therefore was being added to the SAS token by default.
 
 ## 12.10.0 (2022-03-08)
 
