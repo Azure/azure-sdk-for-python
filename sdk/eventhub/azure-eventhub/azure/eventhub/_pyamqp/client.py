@@ -158,6 +158,7 @@ class AMQPClient(object):
 
         # transport
         self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
+        self._http_proxy = kwargs.pop('http_proxy', None)
 
     def __enter__(self):
         """Run Client in a context manager."""
@@ -245,7 +246,8 @@ class AMQPClient(object):
                 idle_timeout=self._idle_timeout,
                 properties=self._properties,
                 network_trace=self._network_trace,
-                transport=self._transport_type
+                transport=self._transport_type,
+                http_proxy=self._http_proxy
             )
             self._connection.open()
         if not self._session:

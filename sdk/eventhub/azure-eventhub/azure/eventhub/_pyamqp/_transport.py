@@ -664,6 +664,15 @@ class WebSocketTransport(_AbstractTransport):
             host, port, connect_timeout, read_timeout, write_timeout, socket_settings, raise_on_initial_eintr, **kwargs
             )
         self.ws = None
+        http_proxy = kwargs.get('http_proxy', None)
+        http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
+        if http_proxy:
+            http_proxy_host = http_proxy['proxy_hostname']
+            http_proxy_port = http_proxy['proxy_hostname']
+            username = http_proxy.get('username', None)
+            password = http_proxy.get('password', None)
+            if username or password:
+                http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
             # TODO: transform ssl to sslopt
@@ -671,7 +680,10 @@ class WebSocketTransport(_AbstractTransport):
                 host,
                 timeout=connect_timeout,
                 skip_utf8_validation=True,
-                sslopt=kwargs.pop('ssl', None)
+                sslopt=kwargs.pop('ssl', None),
+                http_proxy_host=http_proxy_host,
+                http_proxy_port=http_proxy_port,
+                http_proxy_auth=http_proxy_auth
             )
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")

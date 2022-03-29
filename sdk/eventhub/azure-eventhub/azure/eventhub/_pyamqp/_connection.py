@@ -78,6 +78,9 @@ class Connection(object):
     :keyword bool network_trace: Whether to log the network traffic. Default value is `False`. If enabled, frames
      will be logged at the logging.INFO level.
     :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket.
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
     """
 
     def __init__(self, endpoint, **kwargs):

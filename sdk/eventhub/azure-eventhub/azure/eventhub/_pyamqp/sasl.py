@@ -74,10 +74,18 @@ class SASLTransport():
     def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
+        http_proxy = kwargs.pop('http_proxy', None)
         self._transport = SSLTransport(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
         amqp_over_websocket = kwargs.pop('transport_type')
         if amqp_over_websocket is TransportType.AmqpOverWebSocket:
-            self._transport = WebSocketTransport(host, port=WEBSOCKET_PORT, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+            self._transport = WebSocketTransport(
+                host,
+                port=WEBSOCKET_PORT,
+                connect_timeout=connect_timeout,
+                ssl=ssl,
+                http_proxy=http_proxy,
+                **kwargs
+            )
         self.read = self._transport.read
         self.write = self._transport.write
         super(SASLTransport, self).__init__( **kwargs)
