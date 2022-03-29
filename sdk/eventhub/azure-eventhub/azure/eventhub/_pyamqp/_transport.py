@@ -51,7 +51,7 @@ import certifi
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
-from .constants import TLS_HEADER_FRAME
+from .constants import TLS_HEADER_FRAME, WEBSOCKET_PORT
 
 
 try:
@@ -655,3 +655,37 @@ def Transport(host, connect_timeout=None, ssl=False, **kwargs):
     """
     transport = SSLTransport if ssl else TCPTransport
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+
+class WebSocketTransport(_AbstractTransport):
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, read_timeout=None, write_timeout=None,
+        socket_settings=None, raise_on_initial_eintr=True, **kwargs
+        ):
+        super().__init__(
+            host, port, connect_timeout, read_timeout, write_timeout, socket_settings, raise_on_initial_eintr, **kwargs
+            )
+        self.ws = None
+        try:
+            from websocket import create_connection
+            # TODO: transform ssl to sslopt
+            self.ws = create_connection(
+                host,
+                timeout=connect_timeout,
+                skip_utf8_validation=True,
+                sslopt=kwargs.pop('ssl', None)
+            )
+        except ImportError:
+            raise ValueError("Please install websocket-client library to use websocket transport.")
+
+
+    def _read(self, n, initial=False): # pylint: disable=unused-arguments
+        """Read exactly n bytes from the peer."""
+        result =  self.ws.recv()
+        return result
+
+    def _shutdown_transport(self):
+        """Do any preliminary work in shutting down the connection."""
+        self.ws.close()
+
+    def _write(self, s):
+        """Completely write a string to the peer."""
+        self.ws.send(s)

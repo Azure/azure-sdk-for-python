@@ -7,9 +7,9 @@
 import struct
 from enum import Enum
 
-from ._transport import SSLTransport, AMQPS_PORT
+from ._transport import SSLTransport, WebSocketTransport, AMQPS_PORT
 from .types import AMQPTypes, TYPE, VALUE
-from .constants import FIELD, SASLCode, SASL_HEADER_FRAME
+from .constants import FIELD, SASLCode, SASL_HEADER_FRAME, TransportType, WEBSOCKET_PORT
 from .performatives import (
     SASLOutcome,
     SASLResponse,
@@ -69,12 +69,18 @@ class SASLExternalCredential(object):
         return b''
 
 
-class SASLTransport(SSLTransport):
+class SASLTransport():
 
     def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
-        super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        self._transport = SSLTransport(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        amqp_over_websocket = kwargs.pop('transport_type')
+        if amqp_over_websocket is TransportType.AmqpOverWebSocket:
+            self._transport = WebSocketTransport(host, port=WEBSOCKET_PORT, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        self.read = self._transport.read
+        self.write = self._transport.write
+        super(SASLTransport, self).__init__( **kwargs)
 
     def negotiate(self):
         with self.block():

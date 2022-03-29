@@ -14,6 +14,8 @@ _AS_BYTES = struct.Struct('>B')
 #: The port number is reserved for future transport mappings to these protocols.
 PORT = 5672
 
+# default port for AMQP over Websocket
+WEBSOCKET_PORT = 443
 
 #: The IANA assigned port number for secure AMQP (amqps).The standard AMQP port number that has been assigned
 #: by IANA for secure TCP using TLS. Implementations listening on this port should NOT expect a protocol
@@ -302,3 +304,13 @@ MESSAGE_DELIVERY_DONE_STATES = (
     MessageDeliveryState.Timeout,
     MessageDeliveryState.Cancelled
 )
+
+class TransportType(Enum):
+    """Transport type
+    The underlying transport protocol type:
+     Amqp: AMQP over the default TCP transport protocol, it uses port 5671.
+     AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
+     port 443.
+    """
+    Amqp = 1
+    AmqpOverWebsocket = 2
