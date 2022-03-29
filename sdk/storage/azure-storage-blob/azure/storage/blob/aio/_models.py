@@ -173,29 +173,7 @@ class PageRangePaged(AsyncPageIterator):
 
     @staticmethod
     def _build_page(response):
-        page_ranges = response.page_range
-        clear_ranges = response.clear_range
+        if not response:
+            raise StopIteration
 
-        ranges = []
-        p_i, c_i = 0, 0
-
-        # Combine page ranges and clear ranges into single list, sorted by start
-        while p_i < len(page_ranges) and c_i < len(clear_ranges):
-            p, c = page_ranges[p_i], clear_ranges[c_i]
-
-            if p.start < c.start:
-                ranges.append(
-                    PageRange(p.start, p.end, cleared=False)
-                )
-                p_i += 1
-            else:
-                ranges.append(
-                    PageRange(c.start, c.end, cleared=True)
-                )
-                c_i += 1
-
-        # Grab remaining elements in either list
-        ranges += [PageRange(r.start, r.end, cleared=False) for r in page_ranges[p_i:]]
-        ranges += [PageRange(r.start, r.end, cleared=True) for r in clear_ranges[c_i:]]
-
-        return ranges
+        return PageRange._parse_page_list(response)
