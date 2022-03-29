@@ -61,9 +61,15 @@ of Azure Monitor Query library. You can also refer to
 the [Azure Identity documentation](https://docs.microsoft.com/python/api/overview/azure/identity-readme)
 for more details on the various types of credential supported in `azure-identity`.
 
+For more help on troubleshooting authentication errors please see the Azure Identity client library [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md).
+
 ### Errors with running async APIs
 
-The async transport is designed to be opt-in. [AioHttp](https://pypi.org/project/aiohttp/) is one of the supported implementations of async transport. It is not installed by default. You need to install it separately.
+The async transport is designed to be opt-in. [AioHttp](https://pypi.org/project/aiohttp/) is one of the supported implementations of async transport. It is not installed by default. You need to install it separately as follows:
+
+```
+pip install aiohttp
+```
 
 ## Troubleshooting Logs Query
 
@@ -82,6 +88,8 @@ sufficient permissions to query the workspace.
    [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential)
    then check the logs to verify that the credential used is the one you expected. To enable logging, see [enable
    client logging](#enable-client-logging) section above.
+
+For more help on troubleshooting authentication errors please see the Azure Identity client library [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md).
 
 ### Troubleshooting invalid Kusto query
 
@@ -122,6 +130,17 @@ If your Kusto query returns empty no logs, please validate the following:
 Some complex Kusto queries can take a long time to complete and such queries are aborted by the
 service if they run for more than 3 minutes. For such scenarios, the query APIs on `LogsQueryClient`, provide options to
 configure the timeout on the server. The server timeout can be extended up to 10 minutes.
+
+You may see an error as follows:
+
+```text
+Code: GatewayTimeout
+Message: Gateway timeout
+Inner error: {
+    "code": "GatewayTimeout",
+    "message": "Unable to unzip response"
+}
+```
 
 The following code shows a sample on how to set the server timeout to 10 minutes. Note that by setting this server
 timeout, the Azure Monitor Query library will automatically also extend the client timeout to wait for 10 minutes for
@@ -174,6 +193,8 @@ sufficient permissions to query the workspace.
    then check the logs to verify that the credential used is the one you expected. To enable logging, see [enable
    client logging](#enable-client-logging) section above.
 
+For more help on troubleshooting authentication errors please see the Azure Identity client library [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md).
+
 ### Troubleshooting unsupported granularity for metrics query
 
 If you notice the following exception, this is due to an invalid time granularity in the metrics query request. Your
@@ -190,4 +211,4 @@ As documented in the error message, the supported granularity for metrics querie
 ## Additional azure-core configurations
 
 When calling the methods, some properties including `retry_mode`, `timeout`, `connection_verify` can be configured by passing in as keyword arguments. See
-[configurations](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#configurations) for list of all such properties
+[configurations](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#configurations) for list of all such properties.
