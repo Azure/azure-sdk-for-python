@@ -114,11 +114,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self.master_key = None
         self.resource_tokens = None
-        self.aad_credentials = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
             self.resource_tokens = auth.get("resourceTokens")
-            self.aad_credentials = auth.get("clientSecretCredential")
 
             if auth.get("permissionFeed"):
                 self.resource_tokens = {}
@@ -175,7 +173,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             proxies.update({url.scheme: proxy})
 
         self._user_agent = _utils.get_user_agent()
-
 
         policies = [
             HeadersPolicy(**kwargs),
