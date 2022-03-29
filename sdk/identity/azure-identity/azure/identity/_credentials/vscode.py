@@ -150,7 +150,11 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
           Studio Code
         """
         if self._unavailable_reason:
-            raise CredentialUnavailableError(message=self._unavailable_reason)
+            error_message = self._unavailable_reason \
+                            + '\n' \
+                              "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot" \
+                              " to troubleshoot this issue."
+            raise CredentialUnavailableError(message=error_message)
         return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
 
     def _acquire_token_silently(self, *scopes, **kwargs):
