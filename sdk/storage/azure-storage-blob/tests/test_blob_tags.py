@@ -389,3 +389,4 @@ class StorageBlobTagsTest(StorageTestCase):
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         self.assertEqual(1, len(items_on_page1))
+#------------------------------------------------------------------------------
