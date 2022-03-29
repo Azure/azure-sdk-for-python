@@ -246,4 +246,4 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 
 ## Get Additional Help
 
-Additional information on ways to reach out for support can be found in the [SUPPORT.md](https://github.com/Azure/azure-sdk-for-net/blob/main/SUPPORT.md) at the root of the repo.
+Additional information on ways to reach out for support can be found in the [SUPPORT.md](https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md) at the root of the repo.
