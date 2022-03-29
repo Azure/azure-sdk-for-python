@@ -74,12 +74,13 @@ def sample_analyze_orchestration_app_qna_response():
     print("confidence score: {}".format(top_intent_object.confidence))
     print("project kind: {}".format(top_intent_object.target_kind))
 
-    top_intent_object = result.prediction.intents[0]
-    print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
+    if top_intent_object.target_kind == "question_answering":
+        print("\nview qna result:")
+        qna_result = top_intent_object.result
+        for answer in qna_result.answers:
+            print("\nanswer: {}".format(answer.answer))
+            print("answer: {}".format(answer.confidence_score))
 
-    print("view qna result:")
-    qna_result = result.prediction.intents[0]
-    print("\tanswer: {}\n".format(qna_result))
     # [END analyze_orchestration_app_qna_response]
 
 if __name__ == '__main__':

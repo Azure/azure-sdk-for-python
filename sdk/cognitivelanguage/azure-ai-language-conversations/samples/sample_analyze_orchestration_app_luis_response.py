@@ -74,12 +74,14 @@ def sample_analyze_orchestration_app_luis_response():
     print("confidence score: {}".format(top_intent_object.confidence))
     print("project kind: {}".format(top_intent_object.target_kind))
 
-    top_intent_object = result.prediction.intents[0]
-    print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
+    if top_intent_object.target_kind == "luis":
+        print("\nluis response:")
+        luis_response = top_intent_object.result["prediction"]
+        print("top intent: {}".format(luis_response["topIntent"]))
+        print("\nentities:")
+        for entity in luis_response["entities"]:
+            print("\n{}".format(entity))
 
-    print("view luis response:")
-    luis_response = result.prediction.intents[0]
-    print("\tluis response: {}\n".format(luis_response))
     # [END analyze_orchestration_app_luis_response]
 
 if __name__ == '__main__':

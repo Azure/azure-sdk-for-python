@@ -85,14 +85,6 @@ async def sample_analyze_orchestration_app_qna_response_async():
 
     # [END analyze_orchestration_app_qna_response_async]
 
-        top_intent_object = result.prediction.intents[0]
-        print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
-
-        print("view qna result:")
-        qna_result = result.prediction.intents[0]
-        print("\tanswer: {}\n".format(qna_result))
-    # [END analyze_orchestration_app_qna_response_async]
-
 
 async def main():
     await sample_analyze_orchestration_app_qna_response_async()

@@ -84,13 +84,8 @@ async def sample_analyze_orchestration_app_luis_response_async():
             for entity in luis_response["entities"]:
                 print("\n{}".format(entity))
 
-        top_intent_object = result.prediction.intents[0]
-        print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
-
-        print("view luis response:")
-        luis_response = result.prediction.intents[0]
-        print("\tluis response: {}\n".format(luis_response))
     # [END analyze_orchestration_app_luis_response_async]
+
 
 async def main():
     await sample_analyze_orchestration_app_luis_response_async()
