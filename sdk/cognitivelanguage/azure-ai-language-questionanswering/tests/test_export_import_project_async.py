@@ -25,12 +25,13 @@ class ExportAndImportTests(AsyncQuestionAnsweringTest):
 
         # create project
         project_name = "IssacNewton"
-        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name)
+        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # export project
         export_poller = await client.begin_export(
             project_name=project_name,
-            format="json"
+            format="json",
+            **self.kwargs_for_polling
         )
         result = await export_poller.result()
         assert result["status"] == "succeeded"
@@ -43,7 +44,13 @@ class ExportAndImportTests(AsyncQuestionAnsweringTest):
 
         # create project
         project_name = "IssacNewton"
-        export_url = await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name, get_export_url=True, delete_old_project=True)
+        export_url = await QnaAuthoringAsyncHelper.create_test_project(
+            client,
+            project_name=project_name,
+            get_export_url=True,
+            delete_old_project=True,
+            **self.kwargs_for_polling
+        )
 
         # import project
         project = {
@@ -59,7 +66,8 @@ class ExportAndImportTests(AsyncQuestionAnsweringTest):
         }
         import_poller = await client.begin_import_assets(
             project_name=project_name,
-            options=project
+            options=project,
+            **self.kwargs_for_polling
         )
         await import_poller.result()
 

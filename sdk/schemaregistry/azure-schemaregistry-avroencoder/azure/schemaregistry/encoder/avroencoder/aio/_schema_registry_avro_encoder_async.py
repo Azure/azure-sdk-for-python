@@ -26,17 +26,17 @@
 import logging
 from io import BytesIO
 from typing import Any, Callable, Dict, Mapping, Union, Optional
-from ._async_lru import alru_cache
-from .._constants import (
+from ._async_lru import alru_cache  # pylint: disable=import-error
+from .._constants import (  # pylint: disable=import-error
     SCHEMA_ID_START_INDEX,
     SCHEMA_ID_LENGTH,
     CONTENT_START_INDEX,
     AVRO_MIME_TYPE,
     RECORD_FORMAT_IDENTIFIER_LENGTH,
 )
-from .._message_protocol import MessageType, MessageContent
-from .._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
-from ..exceptions import (
+from .._message_protocol import MessageType, MessageContent  # pylint: disable=import-error
+from .._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder  # pylint: disable=import-error
+from ..exceptions import (  # pylint: disable=import-error
     SchemaParseError,
     SchemaEncodeError,
     SchemaDecodeError,

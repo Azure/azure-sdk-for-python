@@ -1,5 +1,13 @@
 # Release History
 
+## 1.2.0 (2022-03-22)
+
+**Features**
+
+  - Added operation StorageTargetOperations.begin_invalidate
+  - Added operation group AscUsagesOperations
+  - Model Cache has a new parameter zones
+
 ## 1.1.0 (2021-09-30)
 
 **Features**

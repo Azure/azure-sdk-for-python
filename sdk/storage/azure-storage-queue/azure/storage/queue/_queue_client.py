@@ -16,7 +16,7 @@ except ImportError:
 
 import six
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._serialize import get_api_version
@@ -105,7 +105,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
@@ -241,6 +241,28 @@ class QueueClient(StorageAccountHostsMixin):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def create_if_not_exists(self, **kwargs):
+        # type: (Any) -> None
+        """Creates a new queue in the storage account.
+
+        If a queue with the same name already exists, it is not changed.
+
+        :keyword Dict(str,str) metadata:
+            A dict containing name-value pairs to associate with the queue as
+            metadata. Note that metadata names preserve the case with which they
+            were created, but are case-insensitive when set or read.
+        :keyword int timeout:
+            The server timeout, expressed in seconds.
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises: StorageErrorException
+        """
+        try:
+            return self.create_queue(**kwargs)
+        except ResourceExistsError:
+            return None
 
     @distributed_trace
     def delete_queue(self, **kwargs):

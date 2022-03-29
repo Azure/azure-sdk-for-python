@@ -122,7 +122,7 @@ def generate_code(input_file, global_conf, local_conf, output_dir=None, autorest
 
 
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
-    try:
+    def run_command():
         process = subprocess.Popen(
             cmd_line,
             stderr=subprocess.STDOUT,
@@ -140,14 +140,16 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
-            # print necessary error info
-            for i in range(-min(len(output_buffer), 5), 0):
+            # print necessary error info which will be displayed in swagger pr
+            for i in range(-min(len(output_buffer), 7), 0):
                 print(f"[Autorest] {output_buffer[i]}")
-
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
+    try:
+        return run_command()
+    except subprocess.CalledProcessError as ex:
+        # rerun to ensure the log contains error info
+        return run_command()
     except Exception as err:
         _LOGGER.error(err)
         raise
-    else:
-        _LOGGER.info("Return code: %s", process.returncode)
