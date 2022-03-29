@@ -32,7 +32,7 @@ if TYPE_CHECKING:
         ApacheAvroObjectEncoder as AvroObjectEncoder,
     )
 
-def validate_schema(avro_encoder:"AvroObjectEncoder", raw_input_schema: str):
+def validate_schema(avro_encoder: "AvroObjectEncoder", raw_input_schema: str):
     try:
         return avro_encoder.get_schema_fullname(raw_input_schema)
     except Exception as exc:  # pylint:disable=broad-except
@@ -41,7 +41,7 @@ def validate_schema(avro_encoder:"AvroObjectEncoder", raw_input_schema: str):
         ) from exc
 
 def create_message_content(
-    avro_encoder:"AvroObjectEncoder",
+    avro_encoder: "AvroObjectEncoder",
     content: Mapping[str, Any],
     raw_input_schema: str,
     schema_id: str,
@@ -116,7 +116,7 @@ def validate_message(message: Union[MessageType, MessageContent]):
     return schema_id, content
 
 def decode_content(
-    avro_encoder:"AvroObjectEncoder",
+    avro_encoder: "AvroObjectEncoder",
     content: bytes,
     schema_id: str,
     schema_definition: str,

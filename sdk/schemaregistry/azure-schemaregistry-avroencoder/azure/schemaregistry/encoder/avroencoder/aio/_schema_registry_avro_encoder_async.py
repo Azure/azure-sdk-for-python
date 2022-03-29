@@ -24,8 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, overload, Type, cast, Union
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, overload, Type, Union
 from .._utils import (  # pylint: disable=import-error
     validate_schema,
     create_message_content,
