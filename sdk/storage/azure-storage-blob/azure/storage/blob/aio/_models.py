@@ -176,4 +176,4 @@ class PageRangePaged(AsyncPageIterator):
         if not response:
             raise StopIteration
 
-        return PageRange._parse_page_list(response)
+        return PageRange._parse_page_list(response)  # pylint: disable=protected-access
