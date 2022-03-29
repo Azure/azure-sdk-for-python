@@ -25,9 +25,9 @@ contains some general typing tips and guidance as it relates to common types/pat
     - [Use typing.TypeAlias when creating a type alias](TODO)
     - [Use typing.overload to overload a function](TODO)
     - [Use typing.cast to help mypy understand a type](TODO)
-    - [Use typing.Protocol for structural subtyping](TODO)
     - [Use TypeVar for generic type hinting](TODO)
     - [Use AnyStr when your parameter accepts both str and bytes](TODO)
+    - [Use typing.Protocol for structural subtyping](TODO)
 - [How to ignore a mypy typing error](TODO)
 - [How to opt out of mypy type checking](TODO)
 
@@ -105,8 +105,8 @@ or impossible given the expressiveness of Python as a language. So, in practice,
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
    for your library so focusing typing on high density/important areas of the code helps in detecting bugs.
 
-> Note: It's important to call out that if a function is not fully annotated (all arguments and return type), `mypy` will not type check any code
-> contained in the function. You can pass argument `--check-untyped-defs` to `mypy` to check such functions when full annotation is not possible.
+> Note: It's important to call out that if a function is not annotated, `mypy` will not type check any code
+> contained in the function. You can pass argument `--check-untyped-defs` to `mypy` to check such functions.
 
 ### Types usable in annotations
 
@@ -787,6 +787,79 @@ If you are using cast often, however, it might be an indication that the code sh
 Note that `typing.cast` is only used by the type checker and does not affect code or slow down the implementation at
 runtime.
 
+### Use TypeVar for generic type hinting
+
+`TypeVar` is a generic type which can be bound to a specific type with each usage. Common usage might be to have the
+parameter type reflected on the result type:
+
+```python
+from typing import Sequence, TypeVar
+
+T = TypeVar("T")
+
+
+def pick(p: Sequence[T]) -> T:
+    return random_pick(p)
+```
+
+This leaves the type open for the caller to pass a `Sequence[int]`, `Sequence[float]`, `Sequence[str]`, etc. and
+promises to return the same `T` type passed in.
+
+**Restrict TypeVars to certain types**
+
+You can restrict a `TypeVar` to several specific types by adding the types as positional arguments:
+
+```python
+from typing import Sequence, TypeVar
+
+T = TypeVar("T", int, str)
+
+
+def pick(p: Sequence[T]) -> T:
+    return random_pick(p)
+```
+
+Here the type checker will only expect types of `int` or `str` for `T`.
+
+**Set the upper bound on a TypeVar**
+
+Another way to narrow the type of a `TypeVar` is to provide the `bound` keyword argument with a type which should be
+considered the upper boundary of `T`. Here we pass `typing.SupportsFloat` which says that anything passed as `T` should
+be consistent with `SupportsFloat` and must implement `__float__`.
+
+```python
+from typing import Sequence, TypeVar, SupportsFloat
+
+T = TypeVar("T", bound=SupportsFloat)
+
+
+def pick(p: Sequence[T]) -> T:
+    return random_pick(p)
+```
+
+There are also arguments available to set the variance in a `TypeVar` for the generic class to be more flexible --
+please see the [PEP 484](https://peps.python.org/pep-0484/#covariance-and-contravariance) for more information.
+
+### Use AnyStr when your parameter or return type expects both str and bytes
+
+The `typing` module includes a pre-defined `TypeVar` named `AnyStr`. Its definition looks like this:
+
+```python
+from typing import TypeVar
+
+AnyStr = TypeVar('AnyStr', bytes, str)
+```
+
+`AnyStr` can be indicated in functions which use both `bytes` and `str` and helps keep consistent typing across
+arguments / return type:
+
+```python
+def concat(a: AnyStr, b: AnyStr) -> AnyStr:
+    return a + b
+```
+
+> Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar](https://docs.python.org/3/library/typing.html#typing.TypeVar).
+
 ### Use typing.Protocol for structural subtyping
 
 [PEP 544](https://peps.python.org/pep-0544/) introduced the `Protocol` type. The `Protocol` type helps Python support _
@@ -879,80 +952,6 @@ Because this is a runtime check, only the presence of the required methods defin
 their type signatures.
 
 > Note that runtime_checkable is backported to older versions of Python by using typing_extensions.
-
-### Use TypeVar for generic type hinting
-
-`TypeVar` is a generic type which can be bound to a specific type with each usage. Common usage might be to have the
-parameter type reflected on the result type:
-
-```python
-from typing import Sequence, TypeVar
-
-T = TypeVar("T")
-
-
-def pick(p: Sequence[T]) -> T:
-    return random_pick(p)
-```
-
-This leaves the type open for the caller to pass a `Sequence[int]`, `Sequence[float]`, `Sequence[str]`, etc. and
-promises to return the same `T` type passed in.
-
-**Restrict TypeVars to certain types**
-
-You can restrict a `TypeVar` to several specific types by adding the types as positional arguments:
-
-```python
-from typing import Sequence, TypeVar
-
-T = TypeVar("T", int, str)
-
-
-def pick(p: Sequence[T]) -> T:
-    return random_pick(p)
-```
-
-Here the type checker will only expect types of `int` or `str` for `T`.
-
-**Set the upper bound on a TypeVar**
-
-Another way to narrow the type of a `TypeVar` is to provide the `bound` keyword argument with a type which should be
-considered the upper boundary of `T`. Here we pass `typing.SupportsFloat` which says that anything passed as `T` should
-be consistent with `SupportsFloat` and must implement `__float__`.
-
-```python
-from typing import Sequence, TypeVar, SupportsFloat
-
-T = TypeVar("T", bound=SupportsFloat)
-
-
-def pick(p: Sequence[T]) -> T:
-    return random_pick(p)
-```
-
-There are also arguments available to set the variance in a `TypeVar` for the generic class to be more flexible --
-please see the [PEP 484](https://peps.python.org/pep-0484/#covariance-and-contravariance) for more information.
-
-### Use AnyStr when your parameter or return type expects both str and bytes
-
-The `typing` module includes a pre-defined `TypeVar` named `AnyStr`. Its definition looks like this:
-
-```python
-from typing import TypeVar
-
-AnyStr = TypeVar('AnyStr', bytes, str)
-```
-
-`AnyStr` can be indicated in functions which use both `bytes` and `str` and helps keep consistent typing across
-arguments / return type:
-
-```python
-def concat(a: AnyStr, b: AnyStr) -> AnyStr:
-    return a + b
-```
-
-> Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar](https://docs.python.org/3/library/typing.html#typing.TypeVar).
-
 
 ## How to ignore mypy errors
 
