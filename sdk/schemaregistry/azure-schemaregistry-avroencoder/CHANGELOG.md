@@ -2,8 +2,6 @@
 
 ## 1.0.0b3 (Unreleased)
 
-### Features Added
-
 ### Breaking Changes
 
 - `auto_register_schemas` keyword in the sync and async `AvroEncoder` constructors has been renamed `auto_register`.

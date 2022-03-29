@@ -85,6 +85,11 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             assert decoded_content["favorite_number"] == 7
             assert decoded_content["favorite_color"] == u"red"
 
+            # bad content type
+            encoded_content_dict["content_type"] = 'a+b+c'
+            with pytest.raises(InvalidContentError) as e:
+                decoded_content = await sr_avro_encoder.decode(encoded_content_dict)
+
             # check that AvroEncoder won't work with message types that don't follow protocols
             class BadExample:
                 def __init__(self, not_content):
