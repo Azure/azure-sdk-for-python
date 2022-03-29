@@ -8,6 +8,7 @@ from ..._exceptions import CredentialUnavailableError
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
+from .._internal.decorators import log_get_token_async
 from ..._credentials.vscode import _VSCodeCredentialBase
 
 if TYPE_CHECKING:
@@ -39,6 +40,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         if self._client:
             await self._client.__aexit__()
 
+    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
