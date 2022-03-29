@@ -8,7 +8,7 @@
 - Implement sending of exception telemetry via log exporter
     ([#23633](https://github.com/Azure/azure-sdk-for-python/pull/23633))
 - Implement exporting span events as message/exception telemetry
-    ([#23633](https://github.com/Azure/azure-sdk-for-python/pull/23633))
+    ([#23708](https://github.com/Azure/azure-sdk-for-python/pull/23708))
 
 ### Breaking Changes
 
