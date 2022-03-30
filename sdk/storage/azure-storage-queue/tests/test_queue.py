@@ -476,22 +476,10 @@ class StorageQueueTest(StorageTestCase):
         queue_client.send_message(u'message3')
         queue_client.send_message(u'message4')
         queue_client.send_message(u'message5')
-        pager = queue_client.receive_messages(messages_per_page=5, max_messages=2)
-        result = list(pager)
 
         # Asserts
-        self.assertIsNotNone(result)
-        self.assertEqual(2, len(result))
-
-        for message in result:
-            self.assertIsNotNone(message)
-            self.assertNotEqual('', message.id)
-            self.assertNotEqual('', message.content)
-            self.assertNotEqual('', message.pop_receipt)
-            self.assertEqual(1, message.dequeue_count)
-            self.assertNotEqual('', message.inserted_on)
-            self.assertNotEqual('', message.expires_on)
-            self.assertNotEqual('', message.next_visible_on)
+        with self.assertRaises(ValueError):
+            queue_client.receive_messages(messages_per_page=5, max_messages=2)
 
     @QueuePreparer()
     def test_get_messages_with_remainder(self, storage_account_name, storage_account_key):

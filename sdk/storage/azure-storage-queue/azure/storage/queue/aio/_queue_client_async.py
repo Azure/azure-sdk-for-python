@@ -545,6 +545,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
+            if max_messages is not None and messages_per_page is not None:
+                if max_messages < messages_per_page:
+                    raise ValueError("max_messages must be greater or equal to messages_per_page")
             return AsyncItemPaged(command, results_per_page=messages_per_page,
                                   page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
