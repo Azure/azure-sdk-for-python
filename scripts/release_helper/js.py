@@ -14,7 +14,7 @@ class IssueProcessJs(IssueProcess):
     def auto_assign_policy(self) -> str:
         weeks = datetime.datetime.now().isocalendar()[1]
         assignees = list(self.assignee_candidates)
-        assignees.sort(key=list(_ASSIGNEE_TOKEN_JS.keys()).index)
+        assignees.sort()
         random_idx = weeks % len(assignees)
         return assignees[random_idx]
 
