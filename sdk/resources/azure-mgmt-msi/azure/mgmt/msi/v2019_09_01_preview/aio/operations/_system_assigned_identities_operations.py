@@ -11,58 +11,25 @@ import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from msrest import Serializer
 
-from .. import models as _models
-from .._vendor import _convert_request, _format_url_section
+from ... import models as _models
+from ..._vendor import _convert_request
+from ...operations._system_assigned_identities_operations import build_get_by_scope_request
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-def build_get_by_scope_request(
-    scope: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-09-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/{scope}/providers/Microsoft.ManagedIdentity/identities/default')
-    path_format_arguments = {
-        "scope": _SERIALIZER.url("scope", scope, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-class SystemAssignedIdentitiesOperations(object):
-    """SystemAssignedIdentitiesOperations operations.
+class SystemAssignedIdentitiesOperations:
+    """SystemAssignedIdentitiesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.msi.models
+    :type models: ~azure.mgmt.msi.v2019_09_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -71,14 +38,14 @@ class SystemAssignedIdentitiesOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    @distributed_trace
-    def get_by_scope(
+    @distributed_trace_async
+    async def get_by_scope(
         self,
         scope: str,
         **kwargs: Any
@@ -90,7 +57,7 @@ class SystemAssignedIdentitiesOperations(object):
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SystemAssignedIdentity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.models.SystemAssignedIdentity
+        :rtype: ~azure.mgmt.msi.v2019_09_01_preview.models.SystemAssignedIdentity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemAssignedIdentity"]
@@ -107,7 +74,7 @@ class SystemAssignedIdentitiesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

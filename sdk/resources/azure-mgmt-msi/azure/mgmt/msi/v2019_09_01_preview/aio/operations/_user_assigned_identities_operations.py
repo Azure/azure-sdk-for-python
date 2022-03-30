@@ -6,307 +6,32 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from msrest import Serializer
 
-from .. import models as _models
-from .._vendor import _convert_request, _format_url_section
+from ... import models as _models
+from ..._vendor import _convert_request
+from ...operations._user_assigned_identities_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_associated_resources_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_update_request
 T = TypeVar('T')
-JSONType = Any
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-def build_list_by_subscription_request(
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-09-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.ManagedIdentity/userAssignedIdentities')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_list_by_resource_group_request(
-    subscription_id: str,
-    resource_group_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-09-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_list_associated_resources_request(
-    subscription_id: str,
-    resource_group_name: str,
-    resource_name: str,
-    *,
-    filter: Optional[str] = None,
-    orderby: Optional[str] = None,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    skiptoken: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-09-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}/listAssociatedResources')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if filter is not None:
-        query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
-    if orderby is not None:
-        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
-    if top is not None:
-        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
-    if skip is not None:
-        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=1)
-    if skiptoken is not None:
-        query_parameters['$skiptoken'] = _SERIALIZER.query("skiptoken", skiptoken, 'str')
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_create_or_update_request(
-    subscription_id: str,
-    resource_group_name: str,
-    resource_name: str,
-    *,
-    json: JSONType = None,
-    content: Any = None,
-    **kwargs: Any
-) -> HttpRequest:
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    api_version = "2021-09-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
-
-
-def build_update_request(
-    subscription_id: str,
-    resource_group_name: str,
-    resource_name: str,
-    *,
-    json: JSONType = None,
-    content: Any = None,
-    **kwargs: Any
-) -> HttpRequest:
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    api_version = "2021-09-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PATCH",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
-
-
-def build_get_request(
-    subscription_id: str,
-    resource_group_name: str,
-    resource_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-09-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_delete_request(
-    subscription_id: str,
-    resource_group_name: str,
-    resource_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-09-30-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-class UserAssignedIdentitiesOperations(object):
-    """UserAssignedIdentitiesOperations operations.
+class UserAssignedIdentitiesOperations:
+    """UserAssignedIdentitiesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.msi.models
+    :type models: ~azure.mgmt.msi.v2019_09_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -315,7 +40,7 @@ class UserAssignedIdentitiesOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -325,13 +50,14 @@ class UserAssignedIdentitiesOperations(object):
     def list_by_subscription(
         self,
         **kwargs: Any
-    ) -> Iterable["_models.UserAssignedIdentitiesListResult"]:
+    ) -> AsyncIterable["_models.UserAssignedIdentitiesListResult"]:
         """Lists all the userAssignedIdentities available under the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either UserAssignedIdentitiesListResult or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.msi.models.UserAssignedIdentitiesListResult]
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.v2019_09_01_preview.models.UserAssignedIdentitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserAssignedIdentitiesListResult"]
@@ -360,17 +86,17 @@ class UserAssignedIdentitiesOperations(object):
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize("UserAssignedIdentitiesListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -380,7 +106,7 @@ class UserAssignedIdentitiesOperations(object):
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ManagedIdentity/userAssignedIdentities'}  # type: ignore
@@ -390,7 +116,7 @@ class UserAssignedIdentitiesOperations(object):
         self,
         resource_group_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.UserAssignedIdentitiesListResult"]:
+    ) -> AsyncIterable["_models.UserAssignedIdentitiesListResult"]:
         """Lists all the userAssignedIdentities available under the specified ResourceGroup.
 
         :param resource_group_name: The name of the Resource Group to which the identity belongs.
@@ -398,7 +124,8 @@ class UserAssignedIdentitiesOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either UserAssignedIdentitiesListResult or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.msi.models.UserAssignedIdentitiesListResult]
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.v2019_09_01_preview.models.UserAssignedIdentitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserAssignedIdentitiesListResult"]
@@ -429,17 +156,17 @@ class UserAssignedIdentitiesOperations(object):
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize("UserAssignedIdentitiesListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -449,7 +176,7 @@ class UserAssignedIdentitiesOperations(object):
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities'}  # type: ignore
@@ -465,7 +192,7 @@ class UserAssignedIdentitiesOperations(object):
         skip: Optional[int] = None,
         skiptoken: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.AssociatedResourcesListResult"]:
+    ) -> AsyncIterable["_models.AssociatedResourcesListResult"]:
         """Lists the associated resources for this identity.
 
         :param resource_group_name: The name of the Resource Group to which the identity belongs.
@@ -488,7 +215,8 @@ class UserAssignedIdentitiesOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AssociatedResourcesListResult or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.msi.models.AssociatedResourcesListResult]
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.v2019_09_01_preview.models.AssociatedResourcesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AssociatedResourcesListResult"]
@@ -531,17 +259,17 @@ class UserAssignedIdentitiesOperations(object):
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize("AssociatedResourcesListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -551,13 +279,13 @@ class UserAssignedIdentitiesOperations(object):
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_associated_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}/listAssociatedResources'}  # type: ignore
 
-    @distributed_trace
-    def create_or_update(
+    @distributed_trace_async
+    async def create_or_update(
         self,
         resource_group_name: str,
         resource_name: str,
@@ -571,10 +299,10 @@ class UserAssignedIdentitiesOperations(object):
         :param resource_name: The name of the identity resource.
         :type resource_name: str
         :param parameters: Parameters to create or update the identity.
-        :type parameters: ~azure.mgmt.msi.models.Identity
+        :type parameters: ~azure.mgmt.msi.v2019_09_01_preview.models.Identity
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.models.Identity
+        :rtype: ~azure.mgmt.msi.v2019_09_01_preview.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
@@ -598,7 +326,7 @@ class UserAssignedIdentitiesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -619,8 +347,8 @@ class UserAssignedIdentitiesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}'}  # type: ignore
 
 
-    @distributed_trace
-    def update(
+    @distributed_trace_async
+    async def update(
         self,
         resource_group_name: str,
         resource_name: str,
@@ -634,10 +362,10 @@ class UserAssignedIdentitiesOperations(object):
         :param resource_name: The name of the identity resource.
         :type resource_name: str
         :param parameters: Parameters to update the identity.
-        :type parameters: ~azure.mgmt.msi.models.IdentityUpdate
+        :type parameters: ~azure.mgmt.msi.v2019_09_01_preview.models.IdentityUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.models.Identity
+        :rtype: ~azure.mgmt.msi.v2019_09_01_preview.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
@@ -661,7 +389,7 @@ class UserAssignedIdentitiesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -678,8 +406,8 @@ class UserAssignedIdentitiesOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}'}  # type: ignore
 
 
-    @distributed_trace
-    def get(
+    @distributed_trace_async
+    async def get(
         self,
         resource_group_name: str,
         resource_name: str,
@@ -693,7 +421,7 @@ class UserAssignedIdentitiesOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.models.Identity
+        :rtype: ~azure.mgmt.msi.v2019_09_01_preview.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
@@ -712,7 +440,7 @@ class UserAssignedIdentitiesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -729,8 +457,8 @@ class UserAssignedIdentitiesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}'}  # type: ignore
 
 
-    @distributed_trace
-    def delete(
+    @distributed_trace_async
+    async def delete(
         self,
         resource_group_name: str,
         resource_name: str,
@@ -763,7 +491,7 @@ class UserAssignedIdentitiesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
