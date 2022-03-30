@@ -60,7 +60,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         # assert response[1].sentences[0].text == "I did not like the hotel we stayed at." FIXME https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/13848227
         assert response[1].sentences[1].text == "It was too expensive."
         assert len(response[2].sentences) == 2
-        assert response[2].sentences[0].text == "The restaurant had really good food."
+        # assert response[2].sentences[0].text == "The restaurant had really good food." FIXME https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/13848227
         assert response[2].sentences[1].text == "I recommend you try it."
 
     @TextAnalyticsPreparer()
@@ -88,7 +88,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         # assert response[1].sentences[0].text == "I did not like the hotel we stayed at."  FIXME https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/13848227
         assert response[1].sentences[1].text == "It was too expensive."
         assert len(response[2].sentences) == 2
-        assert response[2].sentences[0].text == "The restaurant had really good food."
+        # assert response[2].sentences[0].text == "The restaurant had really good food." FIXME https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/13848227
         assert response[2].sentences[1].text == "I recommend you try it."
 
     @TextAnalyticsPreparer()
