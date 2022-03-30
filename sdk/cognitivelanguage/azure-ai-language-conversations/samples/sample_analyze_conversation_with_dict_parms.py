@@ -85,7 +85,10 @@ def sample_analyze_conversation_with_dict_parms():
             print("extra info")
             for data in entity.extra_information:
                 print("kind: {}".format(data.extra_information_kind))
-                print("value: {}".format(data.value))
+                if data.extra_information_kind == "ListKey":
+                    print("key: {}".format(data.key))
+                if data.extra_information_kind == "EntitySubtype":
+                    print("value: {}".format(data.value))
 
     # [END analyze_conversation_app]
 
