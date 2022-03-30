@@ -62,7 +62,7 @@ def string():
 
 @streams_api.route('/compressed_no_header', methods=['GET'])
 def compressed_no_header():
-    return Response(stream_compressed_no_header(), status=300, headers={"Content-Encoding": "gzip"})
+    return Response(stream_compressed_no_header(), status=300)
 
 @streams_api.route('/compressed', methods=['GET'])
 def compressed():
