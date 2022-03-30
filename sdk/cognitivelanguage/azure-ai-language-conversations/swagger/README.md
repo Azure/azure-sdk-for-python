@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/ChongTang/azure-rest-api-specs/chot/03-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-03-01-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/dev-cognitiveservices-Language-2022-03-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-03-01-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 namespace: azure.ai.language.conversations
 package-name: azure-ai-language-conversations
@@ -38,7 +38,7 @@ credential-key-header-name: Ocp-Apim-Subscription-Key
 black: true
 ```
 
-### Remove intermediary from analyze operation
+### Remove intermediary object from analyze operation call
 
 ```yaml
 directive:
