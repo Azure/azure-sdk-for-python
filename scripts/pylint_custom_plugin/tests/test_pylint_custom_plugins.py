@@ -5,6 +5,7 @@
 
 import astroid
 import pylint.testutils
+import requests
 
 from azure.core import PipelineClient
 from azure.core.configuration import Configuration
@@ -1732,7 +1733,25 @@ class TestAsyncClientCorrectNaming(pylint.testutils.CheckerTestCase):
 class TestFileHasCopyrightHeader(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.FileHasCopyrightHeader
 
-    # Unable to use the astroid for this testcase.
+    def test_copyright_header_acceptable(self):
+        file = open("./test_files/copyright_header_acceptable.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_module(node)
+
+    def test_copyright_header_violation(self):
+        file = open("./test_files/copyright_header_violation.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="file-needs-copyright-header", node=node
+                )
+        ):
+            self.checker.visit_module(node)
 
     def test_guidelines_link_active(self):
         url = "https://azure.github.io/azure-sdk/policies_opensource.html"
@@ -2157,6 +2176,89 @@ class TestClientConstructorDoesNotHaveConnectionStringParam(pylint.testutils.Che
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
 
+class TestPackageNameDoesNotUseUnderscoreOrPeriod(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.PackageNameDoesNotUseUnderscoreOrPeriod
+
+    def test_package_name_acceptable(self):
+
+        package_name =  astroid.extract_node(
+        """
+        PACKAGE_NAME = "correct-package-name"        
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="setup.py", doc = """ """)
+        module_node.body = [package_name]
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+
+    def test_package_name_violation(self):
+
+        package_name =  astroid.extract_node(
+        """
+        PACKAGE_NAME = "incorrect.package-name"        
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="setup.py", doc = """ """)
+        module_node.body = [package_name]
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="package-name-incorrect", node=module_node
+                )
+        ):
+            self.checker.visit_module(module_node)
+    
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#packaging"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+class TestServiceClientUsesNameWithClientSuffix(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ServiceClientUsesNameWithClientSuffix
+
+    def test_client_suffix_acceptable(self):
+        client_node =  astroid.extract_node(
+        """
+        class MyClient():
+            def __init__(self):
+                pass       
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="_my_client.py", doc = """ """)
+        module_node.body = [client_node]
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+    
+    def test_client_suffix_violation(self):
+        client_node =  astroid.extract_node(
+        """
+        class Violation():
+            def __init__(self):
+                pass       
+        """ 
+        )
+        module_node = astroid.Module(name = "node", file="_my_client.py", doc = """ """)
+        module_node.body = [client_node]
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-suffix-needed", node=module_node
+                )
+        ):
+            self.checker.visit_module(module_node)
+    
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#service-client"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
 
 class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodNamesDoNotUseDoubleUnderscorePrefix
@@ -2340,7 +2442,6 @@ class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.Check
         request = client.get(url)
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
-
 
 class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckDocstringAdmonitionNewline
@@ -2573,17 +2674,7 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
 class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckNamingMismatchGeneratedCode
 
-    def test_ignores_correct_alias_code(self):
-        module_node = astroid.extract_node(
-            """
-            import something as somethingElse
-            """
-        )
-
-        with self.assertNoMessages():
-            self.checker.visit_module(module_node)
-
-    def test_catches_incorrect_import_alias_code(self):
+    def test_import_naming_mismatch_violation(self):
         import_one = astroid.extract_node(
             'import Something'
            
@@ -2614,7 +2705,7 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_module(module_node)
 
-    def test_catches_incorrect_from_import_alias_code(self):
+    def test_import_from_naming_mismatch_violation(self):
         import_one = astroid.extract_node(
             'import Something'
            
@@ -2645,7 +2736,7 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_module(module_node)
 
-    def test_ignores_unaliased_import_init(self):
+    def test_naming_mismatch_acceptable(self):
         import_one = astroid.extract_node(
             'import Something'
            
@@ -2669,7 +2760,7 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_module(module_node)
     
-    def test_disable_pylint_alias(self):
+    def test_naming_mismatch_pylint_disable(self):
 
         file = open("./test_files/__init__.py")
         node = astroid.parse(file.read())
@@ -2677,6 +2768,14 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_module(node)
+
+    def test_guidelines_link_active(self):
+        url = "https://github.com/Azure/autorest/blob/main/docs/generate/built-in-directives.md"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
 
 class TestCheckEnum(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckEnum
@@ -2784,6 +2883,16 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
 
             self.checker.visit_classdef(node.body[1])
 
+    def test_guidelines_link_active(self):
+        self._create_url_pipeline("https://azure.github.io/azure-sdk/python_design.html#enumerations")
+        self._create_url_pipeline("https://azure.github.io/azure-sdk/python_implementation.html#extensible-enumerations")
+        
+    
+    def _create_url_pipeline(self,url):
+        resp = requests.get(url)
+        assert resp.status_code == 200
+        
+        
             
 class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckAPIVersion
@@ -2836,7 +2945,6 @@ class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
         node = astroid.parse(file.read())
         file.close()
 
-        
         with self.assertNoMessages():
             self.checker.visit_classdef(node.body[0])
 
@@ -2852,3 +2960,11 @@ class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
                 )
         ):
             self.checker.visit_classdef(node.body[0])
+
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
