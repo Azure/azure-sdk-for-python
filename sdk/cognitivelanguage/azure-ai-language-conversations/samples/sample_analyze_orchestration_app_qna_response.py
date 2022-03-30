@@ -79,7 +79,7 @@ def sample_analyze_orchestration_app_qna_response():
         qna_result = top_intent_object.result
         for answer in qna_result.answers:
             print("\nanswer: {}".format(answer.answer))
-            print("answer: {}".format(answer.confidence_score))
+            print("answer: {}".format(answer.confidence))
 
     # [END analyze_orchestration_app_qna_response]
 
