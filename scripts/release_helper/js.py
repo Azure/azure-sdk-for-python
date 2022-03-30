@@ -4,7 +4,7 @@ from typing import Any, List
 import os
 
 # assignee dict which will be assigned to handle issues
-_JS_OWNER = {'qiaozha', 'lirenhe'}
+_JS_OWNER = {'qiaozha', 'lirenhe', 'MaryGao'}
 
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN_JS = {'qiaozha': os.getenv('AZURESDK_BOT_TOKEN'), 'MaryGao': os.getenv('AZURESDK_BOT_TOKEN')}
