@@ -6,11 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._managed_service_identity_client import ManagedServiceIdentityClient
-__all__ = ['ManagedServiceIdentityClient']
+from ._system_assigned_identities_operations import SystemAssignedIdentitiesOperations
+from ._operations import Operations
+from ._user_assigned_identities_operations import UserAssignedIdentitiesOperations
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'SystemAssignedIdentitiesOperations',
+    'Operations',
+    'UserAssignedIdentitiesOperations',
+]

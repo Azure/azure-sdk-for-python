@@ -29,7 +29,7 @@ class SystemAssignedIdentitiesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.msi.models
+    :type models: ~azure.mgmt.msi.v2018_11_30.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -57,7 +57,7 @@ class SystemAssignedIdentitiesOperations:
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SystemAssignedIdentity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.models.SystemAssignedIdentity
+        :rtype: ~azure.mgmt.msi.v2018_11_30.models.SystemAssignedIdentity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemAssignedIdentity"]
