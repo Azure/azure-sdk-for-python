@@ -67,7 +67,8 @@ class ChangeLog:
             return
 
         # Is this a new operation, inside a known operation group?
-        function_name, *remaining_path = remaining_path
+        function_name, change_parameter_name, *remaining_path = remaining_path
+        print(remaining_path)
         if not remaining_path:
             if is_deletion:
                 self.breaking_changes.append(_REMOVE_OPERATION.format(operation_name, function_name))
@@ -80,7 +81,7 @@ class ChangeLog:
             return
 
         # So method signaure changed. Be vague for now
-        self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name))
+        self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name, change_parameter_name))
 
     def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
@@ -144,7 +145,7 @@ _MODEL_ADD = "Added model {}"
 ## Breaking Changes
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
-_SIGNATURE_CHANGE = "Operation {}.{} has a new signature"
+_SIGNATURE_CHANGE = "Operation {}.{} has a new signature {}"
 _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
