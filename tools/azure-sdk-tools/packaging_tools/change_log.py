@@ -68,7 +68,6 @@ class ChangeLog:
 
         # Is this a new operation, inside a known operation group?
         function_name, change_parameter_name, *remaining_path = remaining_path
-        print(remaining_path)
         if not remaining_path:
             if is_deletion:
                 self.breaking_changes.append(_REMOVE_OPERATION.format(operation_name, function_name))
