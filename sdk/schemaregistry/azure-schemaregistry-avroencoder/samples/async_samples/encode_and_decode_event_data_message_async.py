@@ -94,7 +94,7 @@ async def main():
         credential=token_credential,
     )
     encoder = AvroEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True
+        client=schema_registry, group_name=GROUP_NAME, auto_register=True
     )
     event_data_ben, event_data_alice = await encode_to_event_data_message(encoder)
     decoded_content_ben = await decode_event_data_message(encoder, event_data_ben)
