@@ -80,7 +80,7 @@ class ChangeLog:
             return
 
         # So method signaure changed. Be vague for now
-        self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name, change_parameter_name))
+        self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name, parameter_name))
 
     def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
