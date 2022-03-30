@@ -1861,9 +1861,10 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
     priority = -1
     msgs = {
         "C4745": (
-            "Do not alias generated code."
+            "Do not alias generated code. "
             "This messes up sphinx, intellisense, and apiview, so please modify the name of the generated code through"
-            " the swagger / directives, or code customizations",
+            " the swagger / directives, or code customizations. See Details: "
+            "https://github.com/Azure/autorest/blob/main/docs/generate/built-in-directives.md",
             "naming-mismatch",
             "Do not alias models imported from the generated code.",
         ),
