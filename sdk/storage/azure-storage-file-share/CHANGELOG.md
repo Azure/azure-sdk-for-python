@@ -1,6 +1,6 @@
 # Release History
 
-## 12.7.1 (Unreleased)
+## 12.8.0b1 (Unreleased)
 
 ### Features Added
 - Added support for `create_if_not_exists()` for `FileShareClient`

@@ -51,7 +51,7 @@ avro_encoder = AvroEncoder(
         credential=DefaultAzureCredential()
     ),
     group_name=GROUP_NAME,
-    auto_register_schemas=True
+    auto_register=True
 )
 
 

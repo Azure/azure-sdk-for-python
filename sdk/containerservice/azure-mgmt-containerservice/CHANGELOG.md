@@ -1,5 +1,20 @@
 # Release History
 
+## 18.0.0 (2022-03-23)
+
+**Features**
+
+  - Added operation group ManagedClusterSnapshotsOperations
+  - Model ManagedCluster has a new parameter system_data
+  - Model ManagedClusterAccessProfile has a new parameter system_data
+  - Model ManagedClusterSecurityProfile has a new parameter azure_key_vault_kms
+  - Model Resource has a new parameter system_data
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_user_credentials has a new signature
+
 ## 17.0.0 (2022-02-21)
 
 **Features**
