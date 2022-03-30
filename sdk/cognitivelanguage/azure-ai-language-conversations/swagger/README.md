@@ -57,3 +57,21 @@ directive:
       transform: >
         $["parameters"][1]["x-ms-client-name"] = "task";
 ```
+
+### Rename 'confidenceScore' in Qna intent result
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["KnowledgeBaseAnswer"]["properties"]["confidenceScore"]
+      transform: >
+        $["x-ms-client-name"] = "confidence";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnswerSpan"]["properties"]["confidenceScore"]
+      transform: >
+        $["x-ms-client-name"] = "confidence";
+```

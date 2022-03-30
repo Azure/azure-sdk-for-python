@@ -298,8 +298,8 @@ class AnswerSpan(msrest.serialization.Model):
 
     :ivar text: Predicted text of answer span.
     :vartype text: str
-    :ivar confidence_score: Predicted score of answer span, value ranges from 0 to 1.
-    :vartype confidence_score: float
+    :ivar confidence: Predicted score of answer span, value ranges from 0 to 1.
+    :vartype confidence: float
     :ivar offset: The answer span offset from the start of answer.
     :vartype offset: int
     :ivar length: The length of the answer span.
@@ -307,12 +307,12 @@ class AnswerSpan(msrest.serialization.Model):
     """
 
     _validation = {
-        'confidence_score': {'maximum': 1, 'minimum': 0},
+        'confidence': {'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'text': {'key': 'text', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
     }
@@ -321,7 +321,7 @@ class AnswerSpan(msrest.serialization.Model):
         self,
         *,
         text: Optional[str] = None,
-        confidence_score: Optional[float] = None,
+        confidence: Optional[float] = None,
         offset: Optional[int] = None,
         length: Optional[int] = None,
         **kwargs
@@ -329,8 +329,8 @@ class AnswerSpan(msrest.serialization.Model):
         """
         :keyword text: Predicted text of answer span.
         :paramtype text: str
-        :keyword confidence_score: Predicted score of answer span, value ranges from 0 to 1.
-        :paramtype confidence_score: float
+        :keyword confidence: Predicted score of answer span, value ranges from 0 to 1.
+        :paramtype confidence: float
         :keyword offset: The answer span offset from the start of answer.
         :paramtype offset: int
         :keyword length: The length of the answer span.
@@ -338,7 +338,7 @@ class AnswerSpan(msrest.serialization.Model):
         """
         super(AnswerSpan, self).__init__(**kwargs)
         self.text = text
-        self.confidence_score = confidence_score
+        self.confidence = confidence
         self.offset = offset
         self.length = length
 
@@ -522,13 +522,6 @@ class ConversationAnalysisOptions(msrest.serialization.Model):
     :ivar conversation_item: Required. The abstract base for a user input formatted conversation
      (e.g., Text, Transcript).
     :vartype conversation_item: ~azure.ai.language.conversations.models.ConversationItemBase
-    :ivar direct_target: The name of the target project this request is sending to directly.
-    :vartype direct_target: str
-    :ivar is_logging_enabled: If true, the query will be kept by the service for customers to
-     further review.
-    :vartype is_logging_enabled: bool
-    :ivar parameters: A dictionary representing the input for each target project.
-    :vartype parameters: dict[str, ~azure.ai.language.conversations.models.AnalysisParameters]
     """
 
     _validation = {
@@ -537,37 +530,21 @@ class ConversationAnalysisOptions(msrest.serialization.Model):
 
     _attribute_map = {
         'conversation_item': {'key': 'conversationItem', 'type': 'ConversationItemBase'},
-        'direct_target': {'key': 'directTarget', 'type': 'str'},
-        'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
-        'parameters': {'key': 'parameters', 'type': '{AnalysisParameters}'},
     }
 
     def __init__(
         self,
         *,
         conversation_item: "ConversationItemBase",
-        direct_target: Optional[str] = None,
-        is_logging_enabled: Optional[bool] = None,
-        parameters: Optional[Dict[str, "AnalysisParameters"]] = None,
         **kwargs
     ):
         """
         :keyword conversation_item: Required. The abstract base for a user input formatted conversation
          (e.g., Text, Transcript).
         :paramtype conversation_item: ~azure.ai.language.conversations.models.ConversationItemBase
-        :keyword direct_target: The name of the target project this request is sending to directly.
-        :paramtype direct_target: str
-        :keyword is_logging_enabled: If true, the query will be kept by the service for customers to
-         further review.
-        :paramtype is_logging_enabled: bool
-        :keyword parameters: A dictionary representing the input for each target project.
-        :paramtype parameters: dict[str, ~azure.ai.language.conversations.models.AnalysisParameters]
         """
         super(ConversationAnalysisOptions, self).__init__(**kwargs)
         self.conversation_item = conversation_item
-        self.direct_target = direct_target
-        self.is_logging_enabled = is_logging_enabled
-        self.parameters = parameters
 
 
 class ConversationCallingOptions(msrest.serialization.Model):
@@ -1184,6 +1161,14 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
     :vartype deployment_name: str
     :ivar verbose: If true, the service will return more detailed information in the response.
     :vartype verbose: bool
+    :ivar is_logging_enabled: If true, the service will keep the query for further review.
+    :vartype is_logging_enabled: bool
+    :ivar direct_target: The name of a target project to forward the request to.
+    :vartype direct_target: str
+    :ivar target_project_parameters: A dictionary representing the parameters for each target
+     project.
+    :vartype target_project_parameters: dict[str,
+     ~azure.ai.language.conversations.models.AnalysisParameters]
     """
 
     _validation = {
@@ -1195,6 +1180,9 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         'project_name': {'key': 'projectName', 'type': 'str'},
         'deployment_name': {'key': 'deploymentName', 'type': 'str'},
         'verbose': {'key': 'verbose', 'type': 'bool'},
+        'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
+        'direct_target': {'key': 'directTarget', 'type': 'str'},
+        'target_project_parameters': {'key': 'targetProjectParameters', 'type': '{AnalysisParameters}'},
     }
 
     def __init__(
@@ -1203,6 +1191,9 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         project_name: str,
         deployment_name: str,
         verbose: Optional[bool] = None,
+        is_logging_enabled: Optional[bool] = None,
+        direct_target: Optional[str] = None,
+        target_project_parameters: Optional[Dict[str, "AnalysisParameters"]] = None,
         **kwargs
     ):
         """
@@ -1212,11 +1203,22 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         :paramtype deployment_name: str
         :keyword verbose: If true, the service will return more detailed information in the response.
         :paramtype verbose: bool
+        :keyword is_logging_enabled: If true, the service will keep the query for further review.
+        :paramtype is_logging_enabled: bool
+        :keyword direct_target: The name of a target project to forward the request to.
+        :paramtype direct_target: str
+        :keyword target_project_parameters: A dictionary representing the parameters for each target
+         project.
+        :paramtype target_project_parameters: dict[str,
+         ~azure.ai.language.conversations.models.AnalysisParameters]
         """
         super(CustomConversationTaskParameters, self).__init__(**kwargs)
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.verbose = verbose
+        self.is_logging_enabled = is_logging_enabled
+        self.direct_target = direct_target
+        self.target_project_parameters = target_project_parameters
 
 
 class DateTimeResolution(BaseResolution):
@@ -1568,8 +1570,8 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
     :vartype questions: list[str]
     :ivar answer: Answer text.
     :vartype answer: str
-    :ivar confidence_score: Answer confidence score, value ranges from 0 to 1.
-    :vartype confidence_score: float
+    :ivar confidence: Answer confidence score, value ranges from 0 to 1.
+    :vartype confidence: float
     :ivar id: ID of the QnA result.
     :vartype id: int
     :ivar source: Source of QnA result.
@@ -1584,13 +1586,13 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
     """
 
     _validation = {
-        'confidence_score': {'maximum': 1, 'minimum': 0},
+        'confidence': {'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
         'questions': {'key': 'questions', 'type': '[str]'},
         'answer': {'key': 'answer', 'type': 'str'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'confidence': {'key': 'confidenceScore', 'type': 'float'},
         'id': {'key': 'id', 'type': 'int'},
         'source': {'key': 'source', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
@@ -1603,7 +1605,7 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         *,
         questions: Optional[List[str]] = None,
         answer: Optional[str] = None,
-        confidence_score: Optional[float] = None,
+        confidence: Optional[float] = None,
         id: Optional[int] = None,
         source: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -1616,8 +1618,8 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         :paramtype questions: list[str]
         :keyword answer: Answer text.
         :paramtype answer: str
-        :keyword confidence_score: Answer confidence score, value ranges from 0 to 1.
-        :paramtype confidence_score: float
+        :keyword confidence: Answer confidence score, value ranges from 0 to 1.
+        :paramtype confidence: float
         :keyword id: ID of the QnA result.
         :paramtype id: int
         :keyword source: Source of QnA result.
@@ -1633,7 +1635,7 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         super(KnowledgeBaseAnswer, self).__init__(**kwargs)
         self.questions = questions
         self.answer = answer
-        self.confidence_score = confidence_score
+        self.confidence = confidence
         self.id = id
         self.source = source
         self.metadata = metadata
