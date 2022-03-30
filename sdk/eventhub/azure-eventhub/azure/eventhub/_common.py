@@ -531,6 +531,7 @@ class EventDataBatch(object):
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
+        self._internal_events = []
 
     def __repr__(self):
         # type: () -> str
@@ -618,7 +619,7 @@ class EventDataBatch(object):
                     self.max_size_in_bytes
                 )
             )
-
+        self._internal_events.append(event_data)
         self.message._body_gen.append(outgoing_event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1

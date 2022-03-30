@@ -199,6 +199,8 @@ class EventHubProducer(
             if isinstance(
                 event_data, EventDataBatch
             ):  # The partition_key in the param will be omitted.
+                if not event_data:
+                    return event_data
                 if (
                     partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
                 ):
@@ -251,6 +253,10 @@ class EventHubProducer(
             with send_context_manager() as child:
                 self._check_closed()
                 wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+
+                if not wrapper_event_data:
+                    return
+
                 self._unsent_events = [wrapper_event_data.message]
 
                 if child:

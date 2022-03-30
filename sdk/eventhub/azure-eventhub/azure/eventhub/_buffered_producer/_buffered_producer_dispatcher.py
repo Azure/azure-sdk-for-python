@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import logging
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Optional, List
@@ -9,6 +10,8 @@ from typing import Dict, Optional, List
 from ._partition_resolver import PartitionResolver
 from ._buffered_producer import BufferedProducer
 from ..exceptions import EventDataSendError, ConnectError
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class BufferedProducerDispatcher:
@@ -19,19 +22,28 @@ class BufferedProducerDispatcher:
             on_error,
             create_producer,
             eventhub_name,
+            max_message_size_on_link,
             *,
+            max_buffer_length: int = 1500,
+            max_wait_time: int = 1,
+            max_concurrent_sends: int = 1,
             executor: Optional[ThreadPoolExecutor] = None,
             max_worker: Optional[int] = None,
             **kwargs
     ):
-        self._buffered_producers: Dict[dict, BufferedProducer] = {}
+        self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
         self._lock = Lock()
         self._on_success = on_success
         self._on_error = on_error
         self._create_producer = create_producer
         self._eventhub_name = eventhub_name
+        self._max_message_size_on_link = max_message_size_on_link
         self._partition_resolver = PartitionResolver(self._partition_ids)
+        self._max_wait_time = max_wait_time
+        self._max_buffer_length = max_buffer_length
+        self._max_concurrent_sends = max_concurrent_sends
+        self._existing_executor = bool(executor)
         self._executor = executor or ThreadPoolExecutor(max_worker)
 
     def _get_partition_id(self, partition_id, partition_key):
@@ -43,7 +55,7 @@ class BufferedProducerDispatcher:
                     )
                 )
             return partition_id
-        if partition_key is None:
+        if isinstance(partition_key, str):
             return self._partition_resolver.get_partition_id_by_partition_key(partition_key)
         return self._partition_resolver.next_partition_id
 
@@ -58,41 +70,78 @@ class BufferedProducerDispatcher:
                     pid,
                     self._on_success,
                     self._on_error,
-                    executor=self._executor
+                    self._max_message_size_on_link,
+                    executor=self._executor,
+                    max_wait_time=self._max_wait_time,
+                    max_concurrent_sends=self._max_concurrent_sends,
+                    max_buffer_length=self._max_buffer_length
                 )
                 buffered_producer.start()
                 self._buffered_producers[pid] = buffered_producer
                 buffered_producer.put_events(events, timeout)
 
     def flush(self, timeout=None):
+        # flush all the buffered producer, the method will block until finishes or times out
         with self._lock:
             futures = []
-            for producer in self._buffered_producers.values():
-                futures.append(self._executor.submit(producer.flush(timeout=timeout)))
+            for pid, producer in self._buffered_producers.items():
+                # call each producer's flush method
+                futures.append((pid, self._executor.submit(producer.flush, timeout=timeout)))
 
-            success_results = {}
+            # gather results
             exc_results = {}
-            for future in futures:
+            for pid, future in futures:
                 try:
                     future.result()
-                    success_results[producer.partition_id] = 0
                 except Exception as exc:
-                    exc_results[producer.partition_id] = exc
+                    exc_results[pid] = exc
 
             if not exc_results:
+                _LOGGER.info("Flushing all partitions succeeded")
                 return
 
-            # TODO: better error
+            _LOGGER.info('Flushing all partitions partially succeeded with result {!r}.'.format(exc_results))
+            # TODO: better error?
             raise EventDataSendError(
-                message="Flush partially failed",
+                message="Flushing all partitions partially succeeded, failed partitions are {!r}.".format(
+                    exc_results.keys()
+                ),
                 details=exc_results
             )
 
-    def close(self, flush=True, timeout=None):
-        pass
+    def close(self, flush=True, timeout=None, raise_error=False):
+
+        futures = []
+        # stop all buffered producers
+        for pid, producer in self._buffered_producers.items():
+            futures.append((pid, self._executor.submit(producer.stop, flush=flush, timeout=timeout)))
+
+        exc_results = {}
+        # gather results
+        for pid, future in futures:
+            try:
+                future.result()
+            except Exception as exc:
+                exc_results[pid] = exc
+
+        if exc_results:
+            # TODO: better error?
+            _LOGGER.info('Stopping all partitions succeeded with result {!r}.'.format(exc_results))
+            if raise_error:
+                raise EventDataSendError(
+                    message="Stopping partially succeeded, failed partitions are {!r}.".format(exc_results.keys()),
+                    details=exc_results
+                )
+
+        if not self._existing_executor:
+            self._executor.shutdown()
 
     def get_buffered_event_count(self, pid):
         try:
             return self._buffered_producers[pid].buffered_event_count
         except KeyError:
             return 0
+
+    @property
+    def total_buffered_event_count(self):
+        return sum([self.get_buffered_event_count(pid) for pid in self._buffered_producers])
