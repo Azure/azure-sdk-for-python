@@ -17,6 +17,10 @@ from azure.ai.language.conversations.models import (
     CustomConversationalTaskResult,
     ConversationTargetIntentResult,
     OrchestratorPrediction,
+    CustomConversationalTask,
+    ConversationAnalysisOptions,
+    CustomConversationTaskParameters,
+    TextConversationItem
 )
 
 class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
@@ -29,24 +33,19 @@ class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
         async with client:
             query = "Send an email to Carol about the tomorrow's demo"
             result = await client.analyze_conversation(
-                task={
-                    "kind": "CustomConversation",
-                    "analysisInput": {
-                        "conversationItem": {
-                            "participantId": "1",
-                            "id": "1",
-                            "modality": "text",
-                            "language": "en",
-                            "text": query
-                        },
-                        "isLoggingEnabled": False
-                    },
-                    "parameters": {
-                        "projectName": orch_project_name,
-                        "deploymentName": orch_deployment_name,
-                        "verbose": True
-                    }
-                }
+                task=CustomConversationalTask(
+                    analysis_input=ConversationAnalysisOptions(
+                        conversation_item=TextConversationItem(
+                            id=1,
+                            participant_id=1,
+                            text=query
+                        )
+                    ),
+                    parameters=CustomConversationTaskParameters(
+                        project_name=orch_project_name,
+                        deployment_name=orch_deployment_name
+                    )
+                )
             )
         
             # assert - main object

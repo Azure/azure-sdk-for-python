@@ -19,6 +19,10 @@ from azure.ai.language.conversations.models import (
     CustomConversationalTaskResult,
     QuestionAnsweringTargetIntentResult,
     OrchestratorPrediction,
+    CustomConversationalTask,
+    ConversationAnalysisOptions,
+    CustomConversationTaskParameters,
+    TextConversationItem
 )
 
 class OrchestrationAppQnaResponseTests(ConversationTest):
@@ -31,26 +35,21 @@ class OrchestrationAppQnaResponseTests(ConversationTest):
         with client:
             query = "How are you?"
             result = client.analyze_conversation(
-                task={
-                    "kind": "CustomConversation",
-                    "analysisInput": {
-                        "conversationItem": {
-                            "participantId": "1",
-                            "id": "1",
-                            "modality": "text",
-                            "language": "en",
-                            "text": query
-                        },
-                        "isLoggingEnabled": False
-                    },
-                    "parameters": {
-                        "projectName": orch_project_name,
-                        "deploymentName": orch_deployment_name,
-                        "verbose": True
-                    }
-                }
+                task=CustomConversationalTask(
+                    analysis_input=ConversationAnalysisOptions(
+                        conversation_item=TextConversationItem(
+                            id=1,
+                            participant_id=1,
+                            text=query
+                        )
+                    ),
+                    parameters=CustomConversationTaskParameters(
+                        project_name=orch_project_name,
+                        deployment_name=orch_deployment_name
+                    )
+                )
             )
-        
+
             # assert - main object
             top_project = 'ChitChat-QnA'
             assert not result is None
