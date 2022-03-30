@@ -5,6 +5,7 @@
 
 import astroid
 import pylint.testutils
+import requests
 
 from azure.core import PipelineClient
 from azure.core.configuration import Configuration
@@ -2883,17 +2884,14 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(node.body[1])
 
     def test_guidelines_link_active(self):
-        response_one = self._create_url_pipeline("https://azure.github.io/azure-sdk/python_design.html#enumerations")
-        assert response_one.http_response.status_code == 200
-        response_two = self._create_url_pipeline("https://azure.github.io/azure-sdk/python_implementation.html#extensible-enumerations")
-        assert response_two.http_response.status_code == 200
+        self._create_url_pipeline("https://azure.github.io/azure-sdk/python_design.html#enumerations")
+        self._create_url_pipeline("https://azure.github.io/azure-sdk/python_implementation.html#extensible-enumerations")
+        
     
     def _create_url_pipeline(self,url):
-        config = Configuration()
-        client = PipelineClient(url, config=config)
-        request = client.get(url)
-        response = client._pipeline.run(request)
-        return response
+        resp = requests.get(url)
+        assert resp.status_code == 200
+        
         
             
 class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
