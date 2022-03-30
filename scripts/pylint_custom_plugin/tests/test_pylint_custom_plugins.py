@@ -2852,3 +2852,57 @@ class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
                 )
         ):
             self.checker.visit_classdef(node.body[0])
+
+
+class TestListReturnType(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ListReturnType
+
+    def test_list_return_type_acceptable(self):
+        class_node, function_node = astroid.extract_node("""
+        from azure.core.paging import ItemPaged
+
+        class SomeClient(): #@
+            def _list_thing(self): #@
+                '''
+                :rtype: ItemPaged()
+                '''
+                ItemPaged()
+        """)
+
+        print(function_node.doc.split("rtype")[-1])
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+        # with self.assertAddsMessages(
+        #         pylint.testutils.Message(
+        #             msg_id="list-return-type", node=function_node
+        #         )
+        # ):
+        #     self.checker.visit_functiondef(function_node)
+
+    def test_list_return_type_file_custom_class_acceptable(self):
+        file = open("./test_files/list_return_type_custom_class_acceptable.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        function_node = node.body[2].body[0]
+       
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+
+    def test_list_return_type_file_custom_class_violation(self):
+        file = open("./test_files/list_return_type_custom_class_violation.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        function_node = node.body[2].body[0]
+        returns = next(function_node.infer_call_result()).as_string()
+        print(function_node.doc.split("rtype:")[-1] not in returns)
+        print(returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1)
+       
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="list-return-type", node=function_node
+            )
+        ):
+            self.checker.visit_functiondef(function_node)

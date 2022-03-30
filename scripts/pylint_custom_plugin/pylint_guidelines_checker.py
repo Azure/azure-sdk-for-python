@@ -8,6 +8,7 @@ Pylint custom checkers for SDK guidelines: C4717 - C4744
 """
 
 import logging
+from typing import List
 import astroid
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
@@ -1915,6 +1916,63 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
                 logger.debug("Pylint custom checker failed to check if model is aliased.")
                 pass
 
+class ListReturnType(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "list-return-type"
+    priority = -1
+    msgs = {
+        "C4749": (
+            "Blah",
+            "list-return-type",
+            "Blah.",
+        ),
+    }
+    options = (
+        (
+            "ignore-list-return-type",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Bah.",
+            },
+        ),
+    )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
+
+    def __init__(self, linter=None):
+        super(ListReturnType, self).__init__(linter)
+
+    def visit_functiondef(self, node):
+        """Visits every method in the client and checks that any list_ methods return
+        an ItemPaged or AsyncItemPaged value.
+
+        :param node: function node
+        :type node: ast.FunctionDef
+        :return: None
+        """
+        try:
+            if node.parent.name.endswith("Client") and node.parent.name not in self.ignore_clients and node.is_method():
+                if node.name.startswith("list"):
+                    try:
+                        # infer_call_result gives the method return value as a string
+                        returns = next(node.infer_call_result()).as_string()
+  
+                        # Also check the docstring return type and make sure rtype is there
+                        if node.doc.split("rtype:")[-1] not in returns:
+                            #Make sure that if returns is a custom class,that the class has a by_page
+                            if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
+                                self.add_message(
+                                    msgid="list-return-type", node=node, confidence=None
+                                )
+                    except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
+                        logger.debug("Pylint custom checker failed to check if client list method uses core paging.")
+                        pass
+        except AttributeError:
+            logger.debug("Pylint custom checker failed to check if client list method uses core paging.")
+            pass
+
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
@@ -1936,6 +1994,7 @@ def register(linter):
     linter.register_checker(CheckNamingMismatchGeneratedCode(linter))
     linter.register_checker(CheckAPIVersion(linter))
     linter.register_checker(CheckEnum(linter))
+    linter.register_checker(ListReturnType(linter))
 
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
