@@ -18,12 +18,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._locations_operations import build_check_name_availability_request
+from ...operations._operation_results_operations import build_get_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class LocationsOperations:
-    """LocationsOperations async operations.
+class OperationResultsOperations:
+    """OperationResultsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,41 +45,49 @@ class LocationsOperations:
         self._config = config
 
     @distributed_trace_async
-    async def check_name_availability(
+    async def get(
         self,
-        location_name: str,
-        parameters: "_models.CheckNameAvailabilityInput",
+        resource_group_name: str,
+        account_name: str,
+        asset_name: str,
+        track_name: str,
+        operation_id: str,
         **kwargs: Any
-    ) -> "_models.EntityNameAvailabilityCheckOutput":
-        """Check Name Availability.
+    ) -> Optional["_models.AssetTrack"]:
+        """Get operation result.
 
-        Checks whether the Media Service resource name is available.
+        Get asset track operation result.
 
-        :param location_name: The name of the location.
-        :type location_name: str
-        :param parameters: The request parameters.
-        :type parameters: ~azure.mgmt.media.models.CheckNameAvailabilityInput
+        :param resource_group_name: The name of the resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name.
+        :type account_name: str
+        :param asset_name: The Asset name.
+        :type asset_name: str
+        :param track_name: The Asset Track name.
+        :type track_name: str
+        :param operation_id: Operation Id.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EntityNameAvailabilityCheckOutput, or the result of cls(response)
-        :rtype: ~azure.mgmt.media.models.EntityNameAvailabilityCheckOutput
+        :return: AssetTrack, or the result of cls(response)
+        :rtype: ~azure.mgmt.media.models.AssetTrack or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntityNameAvailabilityCheckOutput"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AssetTrack"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(parameters, 'CheckNameAvailabilityInput')
-
-        request = build_check_name_availability_request(
+        
+        request = build_get_request(
             subscription_id=self._config.subscription_id,
-            location_name=location_name,
-            content_type=content_type,
-            json=_json,
-            template_url=self.check_name_availability.metadata['url'],
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            asset_name=asset_name,
+            track_name=track_name,
+            operation_id=operation_id,
+            template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -87,17 +95,26 @@ class LocationsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('EntityNameAvailabilityCheckOutput', pipeline_response)
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize('AssetTrack', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
+            
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/locations/{locationName}/checkNameAvailability'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/assets/{assetName}/tracks/{trackName}/operationResults/{operationId}'}  # type: ignore
 
