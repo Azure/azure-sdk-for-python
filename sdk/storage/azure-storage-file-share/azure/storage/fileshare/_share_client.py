@@ -372,7 +372,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def create_if_not_exists(self, **kwargs):
+    def create_share_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new Share under the account. If a share with the
         same name already exists, it is not changed.
@@ -384,7 +384,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :keyword access_tier:
             Specifies the access tier of the share.
             Possible values: 'TransactionOptimized', 'Hot', 'Cool'
-        :keyword access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
 
             .. versionadded:: 12.4.0
 

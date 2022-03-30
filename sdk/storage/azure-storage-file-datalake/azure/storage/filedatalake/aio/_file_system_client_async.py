@@ -210,7 +210,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                              **kwargs)
 
     @distributed_trace_async
-    async def create_if_not_exists(self, **kwargs):
+    async def create_file_system_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new file system under the specified account.
 
