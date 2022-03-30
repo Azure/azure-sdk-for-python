@@ -53,7 +53,7 @@ class MessagesPaged(AsyncPageIterator):
         if not messages:
             raise StopAsyncIteration("End of paging")
         if self._max_messages is not None:
-            self._max_messages = self._max_messages - self.results_per_page
+            self._max_messages = self._max_messages - len(messages)
         return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
 
 
