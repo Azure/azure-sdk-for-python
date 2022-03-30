@@ -1,14 +1,10 @@
 # Release History
 
-## 1.23.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.23.1 (2022-03-31)
 
 ### Bugs Fixed
 
-### Other Changes
+- Allow stream inputs to the `content` kwarg of `azure.core.rest.HttpRequest` from objects with a `read` method  #23578
 
 ## 1.23.0 (2022-03-03)
 

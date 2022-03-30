@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, List, Optional, TypeVar, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -18,21 +24,33 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ..._operations._operations import build_add_feedback_request, build_create_project_request, build_delete_project_request_initial, build_deploy_project_request_initial, build_export_request_initial, build_get_project_details_request, build_import_assets_request_initial, build_list_deployments_request, build_list_projects_request, build_list_qnas_request, build_list_sources_request, build_list_synonyms_request, build_update_qnas_request_initial, build_update_sources_request_initial, build_update_synonyms_request
-T = TypeVar('T')
+from ..._operations._operations import (
+    build_add_feedback_request,
+    build_create_project_request,
+    build_delete_project_request_initial,
+    build_deploy_project_request_initial,
+    build_export_request_initial,
+    build_get_project_details_request,
+    build_import_assets_request_initial,
+    build_list_deployments_request,
+    build_list_projects_request,
+    build_list_qnas_request,
+    build_list_sources_request,
+    build_list_synonyms_request,
+    build_update_qnas_request_initial,
+    build_update_sources_request_initial,
+    build_update_synonyms_request,
+)
+
+T = TypeVar("T")
 JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-many-public-methods
 
+class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_projects(
-        self,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable[JSONType]:
         """Gets all projects for a user.
 
@@ -79,16 +97,15 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     ]
                 }
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSONType]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_projects_request(
                     api_version=api_version,
                     top=top,
@@ -96,12 +113,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_projects_request(
                     api_version=api_version,
                     top=top,
@@ -109,12 +128,16 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -130,9 +153,7 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -142,18 +163,10 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_project_details(
-        self,
-        project_name: str,
-        **kwargs: Any
-    ) -> JSONType:
+    async def get_project_details(self, project_name: str, **kwargs: Any) -> JSONType:
         """Get the requested project metadata.
 
         Get the requested project metadata.
@@ -188,28 +201,23 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSONType]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        
         request = build_get_project_details_request(
             project_name=project_name,
             api_version=api_version,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -227,15 +235,8 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
         return deserialized
 
-
-
     @distributed_trace_async
-    async def create_project(
-        self,
-        project_name: str,
-        options: JSONType,
-        **kwargs: Any
-    ) -> JSONType:
+    async def create_project(self, project_name: str, options: JSONType, **kwargs: Any) -> JSONType:
         """Create or update a project.
 
         Create or update a project.
@@ -286,14 +287,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSONType]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         _json = options
 
@@ -304,14 +303,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             json=_json,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -336,35 +333,26 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
         return deserialized
 
-
-
     async def _delete_project_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        **kwargs: Any
+        self, project_name: str, **kwargs: Any
     ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        
         request = build_delete_project_request_initial(
             project_name=project_name,
             api_version=api_version,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -373,19 +361,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-
-
     @distributed_trace_async
     async def begin_delete_project(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        **kwargs: Any
+        self, project_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete the project.
 
@@ -404,63 +387,49 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_project_initial(
-                project_name=project_name,
-                api_version=api_version,
-                cls=lambda x,y,z: x,
-                **kwargs
+                project_name=project_name, api_version=api_version, cls=lambda x, y, z: x, **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     async def _export_initial(
-        self,
-        project_name: str,
-        *,
-        format: Optional[str] = "json",
-        asset_kind: Optional[str] = None,
-        **kwargs: Any
+        self, project_name: str, *, format: Optional[str] = "json", asset_kind: Optional[str] = None, **kwargs: Any
     ) -> Optional[JSONType]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[JSONType]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSONType]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        
         request = build_export_request_initial(
             project_name=project_name,
             api_version=api_version,
@@ -468,14 +437,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             asset_kind=asset_kind,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -492,24 +459,18 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                 deserialized = None
 
         if response.status_code == 202:
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-
-
     @distributed_trace_async
     async def begin_export(
-        self,
-        project_name: str,
-        *,
-        format: Optional[str] = "json",
-        asset_kind: Optional[str] = None,
-        **kwargs: Any
+        self, project_name: str, *, format: Optional[str] = "json", asset_kind: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSONType]:
         """Export project metadata and assets.
 
@@ -581,24 +542,21 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                       "partiallyCompleted".
                 }
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSONType]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._export_initial(
                 project_name=project_name,
                 format=format,
                 asset_kind=asset_kind,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
@@ -610,24 +568,24 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-
 
     async def _import_assets_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -638,14 +596,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if options is not None:
             _json = options
@@ -661,14 +617,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             asset_kind=asset_kind,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -677,13 +631,10 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
-
-
 
     @distributed_trace_async
     async def begin_import_assets(  # pylint: disable=inconsistent-return-statements
@@ -855,15 +806,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     }
                 }
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._import_assets_initial(
                 project_name=project_name,
@@ -872,63 +820,55 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                 asset_kind=asset_kind,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     async def _deploy_project_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        deployment_name: str,
-        **kwargs: Any
+        self, project_name: str, deployment_name: str, **kwargs: Any
     ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        
         request = build_deploy_project_request_initial(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=api_version,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -937,20 +877,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-
-
     @distributed_trace_async
     async def begin_deploy_project(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        deployment_name: str,
-        **kwargs: Any
+        self, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deploy project to production.
 
@@ -971,46 +905,43 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._deploy_project_initial(
                 project_name=project_name,
                 deployment_name=deployment_name,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-
 
     @distributed_trace
     def list_deployments(
@@ -1053,16 +984,15 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     ]
                 }
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSONType]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_deployments_request(
                     project_name=project_name,
                     api_version=api_version,
@@ -1071,12 +1001,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_deployments_request(
                     project_name=project_name,
                     api_version=api_version,
@@ -1085,12 +1017,16 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -1106,9 +1042,7 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1118,11 +1052,7 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_synonyms(
@@ -1165,16 +1095,15 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     ]
                 }
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSONType]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_synonyms_request(
                     project_name=project_name,
                     api_version=api_version,
@@ -1183,12 +1112,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_synonyms_request(
                     project_name=project_name,
                     api_version=api_version,
@@ -1197,12 +1128,16 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -1218,9 +1153,7 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1230,18 +1163,11 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def update_synonyms(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        synonyms: JSONType,
-        **kwargs: Any
+        self, project_name: str, synonyms: JSONType, **kwargs: Any
     ) -> None:
         """Updates all the synonyms of a project.
 
@@ -1270,14 +1196,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         _json = synonyms
 
@@ -1288,14 +1212,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             json=_json,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1305,8 +1227,6 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace
     def list_sources(
@@ -1360,16 +1280,15 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     ]
                 }
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSONType]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_sources_request(
                     project_name=project_name,
                     api_version=api_version,
@@ -1378,12 +1297,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_sources_request(
                     project_name=project_name,
                     api_version=api_version,
@@ -1392,12 +1313,16 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -1413,9 +1338,7 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1425,26 +1348,17 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     async def _update_sources_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        sources: List[JSONType],
-        **kwargs: Any
+        self, project_name: str, sources: List[JSONType], **kwargs: Any
     ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         _json = sources
 
@@ -1455,14 +1369,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             json=_json,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1471,20 +1383,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-
-
     @distributed_trace_async
     async def begin_update_sources(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        sources: List[JSONType],
-        **kwargs: Any
+        self, project_name: str, sources: List[JSONType], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Updates the sources of a project.
 
@@ -1532,48 +1438,45 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     }
                 ]
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._update_sources_initial(
                 project_name=project_name,
                 sources=sources,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-
 
     @distributed_trace
     def list_qnas(
@@ -1708,16 +1611,15 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     ]
                 }
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSONType]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSONType]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_qnas_request(
                     project_name=project_name,
                     api_version=api_version,
@@ -1727,12 +1629,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_qnas_request(
                     project_name=project_name,
                     api_version=api_version,
@@ -1742,12 +1646,16 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(next_link, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -1763,9 +1671,7 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1775,26 +1681,17 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     async def _update_qnas_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        qnas: List[JSONType],
-        **kwargs: Any
+        self, project_name: str, qnas: List[JSONType], **kwargs: Any
     ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         _json = qnas
 
@@ -1805,14 +1702,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             json=_json,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1821,20 +1716,14 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-
-
     @distributed_trace_async
     async def begin_update_qnas(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        qnas: List[JSONType],
-        **kwargs: Any
+        self, project_name: str, qnas: List[JSONType], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Updates the QnAs of a project.
 
@@ -1918,55 +1807,49 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     }
                 ]
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._update_qnas_initial(
                 project_name=project_name,
                 qnas=qnas,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-
-
     @distributed_trace_async
     async def add_feedback(  # pylint: disable=inconsistent-return-statements
-        self,
-        project_name: str,
-        feedback: JSONType,
-        **kwargs: Any
+        self, project_name: str, feedback: JSONType, **kwargs: Any
     ) -> None:
         """Update Active Learning feedback.
 
@@ -1995,14 +1878,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         _json = feedback
 
@@ -2013,14 +1894,12 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
             json=_json,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2030,5 +1909,3 @@ class QuestionAnsweringProjectsClientOperationsMixin:  # pylint: disable=too-man
 
         if cls:
             return cls(pipeline_response, None, {})
-
-

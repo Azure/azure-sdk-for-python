@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._policy_client import PolicyClient
-__all__ = ['PolicyClient']
+from ._resource_private_link_client import ResourcePrivateLinkClient
+__all__ = ['ResourcePrivateLinkClient']
 
 # `._patch.py` is used for handwritten extensions to the generated code
 # Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
