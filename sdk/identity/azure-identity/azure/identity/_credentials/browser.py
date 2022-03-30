@@ -6,6 +6,7 @@ import platform
 import socket
 import subprocess
 import webbrowser
+import logging
 
 from six.moves.urllib_parse import urlparse
 
@@ -24,6 +25,16 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any
 
+_LOGGER = logging.getLogger(__name__)
+
+def _validate_kwargs(valid_args, **kwargs):
+    if not _LOGGER.isEnabledFor(logging.DEBUG):
+        return
+    if not kwargs:
+        return
+    for key in kwargs:
+        if key.lower() not in valid_args:
+            _LOGGER.debug("Unsupported argument: '{}'".format(key))
 
 class InteractiveBrowserCredential(InteractiveCredential):
     """Opens a browser to interactively authenticate a user.
@@ -56,6 +67,18 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
+        allowed_kwargs = set([
+            "authority",
+            "tenant_id",
+            "client_id",
+            "login_hint",
+            "redirect_uri",
+            "authentication_record",
+            "cache_persistence_options",
+            "timeout",
+        ])
+        _validate_kwargs(allowed_kwargs, **kwargs)
+
         redirect_uri = kwargs.pop("redirect_uri", None)
         if redirect_uri:
             self._parsed_url = urlparse(redirect_uri)
