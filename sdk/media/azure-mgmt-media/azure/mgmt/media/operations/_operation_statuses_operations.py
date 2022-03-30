@@ -18,20 +18,36 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
+def build_get_request(
+    subscription_id: str,
+    resource_group_name: str,
+    account_name: str,
+    asset_name: str,
+    track_name: str,
+    operation_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-06-01"
+    api_version = "2021-11-01"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.Media/operations')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/assets/{assetName}/tracks/{trackName}/operationStatuses/{operationId}')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "accountName": _SERIALIZER.url("account_name", account_name, 'str'),
+        "assetName": _SERIALIZER.url("asset_name", asset_name, 'str'),
+        "trackName": _SERIALIZER.url("track_name", track_name, 'str'),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -49,8 +65,8 @@ def build_list_request(
         **kwargs
     )
 
-class Operations(object):
-    """Operations operations.
+class OperationStatusesOperations(object):
+    """OperationStatusesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -72,28 +88,49 @@ class Operations(object):
         self._config = config
 
     @distributed_trace
-    def list(
+    def get(
         self,
+        resource_group_name: str,
+        account_name: str,
+        asset_name: str,
+        track_name: str,
+        operation_id: str,
         **kwargs: Any
-    ) -> "_models.OperationCollection":
-        """List Operations.
+    ) -> "_models.AssetTrackOperationStatus":
+        """Get operation status.
 
-        Lists all the Media Services operations.
+        Get asset track operation status.
 
+        :param resource_group_name: The name of the resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name.
+        :type account_name: str
+        :param asset_name: The Asset name.
+        :type asset_name: str
+        :param track_name: The Asset Track name.
+        :type track_name: str
+        :param operation_id: Operation Id.
+        :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OperationCollection, or the result of cls(response)
-        :rtype: ~azure.mgmt.media.models.OperationCollection
+        :return: AssetTrackOperationStatus, or the result of cls(response)
+        :rtype: ~azure.mgmt.media.models.AssetTrackOperationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AssetTrackOperationStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_list_request(
-            template_url=self.list.metadata['url'],
+        request = build_get_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            asset_name=asset_name,
+            track_name=track_name,
+            operation_id=operation_id,
+            template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -106,12 +143,12 @@ class Operations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('OperationCollection', pipeline_response)
+        deserialized = self._deserialize('AssetTrackOperationStatus', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list.metadata = {'url': '/providers/Microsoft.Media/operations'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/assets/{assetName}/tracks/{trackName}/operationStatuses/{operationId}'}  # type: ignore
 
