@@ -20,7 +20,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._user_assigned_identities_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_associated_resources_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_update_request
+from ...operations._user_assigned_identities_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_update_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -31,7 +31,7 @@ class UserAssignedIdentitiesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.msi.models
+    :type models: ~azure.mgmt.msi.v2018_11_30.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -57,7 +57,7 @@ class UserAssignedIdentitiesOperations:
         :return: An iterator like instance of either UserAssignedIdentitiesListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.models.UserAssignedIdentitiesListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.v2018_11_30.models.UserAssignedIdentitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserAssignedIdentitiesListResult"]
@@ -125,7 +125,7 @@ class UserAssignedIdentitiesOperations:
         :return: An iterator like instance of either UserAssignedIdentitiesListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.models.UserAssignedIdentitiesListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.v2018_11_30.models.UserAssignedIdentitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserAssignedIdentitiesListResult"]
@@ -181,109 +181,6 @@ class UserAssignedIdentitiesOperations:
         )
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities'}  # type: ignore
 
-    @distributed_trace
-    def list_associated_resources(
-        self,
-        resource_group_name: str,
-        resource_name: str,
-        filter: Optional[str] = None,
-        orderby: Optional[str] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        skiptoken: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.AssociatedResourcesListResult"]:
-        """Lists the associated resources for this identity.
-
-        :param resource_group_name: The name of the Resource Group to which the identity belongs.
-        :type resource_group_name: str
-        :param resource_name: The name of the identity resource.
-        :type resource_name: str
-        :param filter: OData filter expression to apply to the query.
-        :type filter: str
-        :param orderby: OData orderBy expression to apply to the query.
-        :type orderby: str
-        :param top: Number of records to return.
-        :type top: int
-        :param skip: Number of records to skip.
-        :type skip: int
-        :param skiptoken: A skip token is used to continue retrieving items after an operation returns
-         a partial result. If a previous response contains a nextLink element, the value of the nextLink
-         element will include a skipToken parameter that specifies a starting point to use for
-         subsequent calls.
-        :type skiptoken: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AssociatedResourcesListResult or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.msi.models.AssociatedResourcesListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AssociatedResourcesListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_associated_resources_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    resource_name=resource_name,
-                    filter=filter,
-                    orderby=orderby,
-                    top=top,
-                    skip=skip,
-                    skiptoken=skiptoken,
-                    template_url=self.list_associated_resources.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_associated_resources_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    resource_name=resource_name,
-                    filter=filter,
-                    orderby=orderby,
-                    top=top,
-                    skip=skip,
-                    skiptoken=skiptoken,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AssociatedResourcesListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_associated_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}/listAssociatedResources'}  # type: ignore
-
     @distributed_trace_async
     async def create_or_update(
         self,
@@ -299,10 +196,10 @@ class UserAssignedIdentitiesOperations:
         :param resource_name: The name of the identity resource.
         :type resource_name: str
         :param parameters: Parameters to create or update the identity.
-        :type parameters: ~azure.mgmt.msi.models.Identity
+        :type parameters: ~azure.mgmt.msi.v2018_11_30.models.Identity
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.models.Identity
+        :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
@@ -362,10 +259,10 @@ class UserAssignedIdentitiesOperations:
         :param resource_name: The name of the identity resource.
         :type resource_name: str
         :param parameters: Parameters to update the identity.
-        :type parameters: ~azure.mgmt.msi.models.IdentityUpdate
+        :type parameters: ~azure.mgmt.msi.v2018_11_30.models.IdentityUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.models.Identity
+        :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
@@ -421,7 +318,7 @@ class UserAssignedIdentitiesOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.models.Identity
+        :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]

@@ -11,96 +11,6 @@ from typing import Dict, List, Optional
 import msrest.serialization
 
 
-class AssociatedResourcesListResult(msrest.serialization.Model):
-    """Azure resources returned by the resource action to get a list of assigned resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar total_count: Total number of Azure resources assigned to the identity.
-    :vartype total_count: float
-    :ivar value: The collection of Azure resources returned by the resource action to get a list of
-     assigned resources.
-    :vartype value: list[~azure.mgmt.msi.models.AzureResource]
-    :ivar next_link: The url to get the next page of results, if any.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'total_count': {'readonly': True},
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'total_count': {'key': 'totalCount', 'type': 'float'},
-        'value': {'key': 'value', 'type': '[AzureResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AssociatedResourcesListResult, self).__init__(**kwargs)
-        self.total_count = None
-        self.value = None
-        self.next_link = None
-
-
-class AzureResource(msrest.serialization.Model):
-    """Describes an Azure resource that is attached to an identity.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The ID of this resource.
-    :vartype id: str
-    :ivar name: The name of this resource.
-    :vartype name: str
-    :ivar type: The type of this resource.
-    :vartype type: str
-    :ivar resource_group: The name of the resource group this resource belongs to.
-    :vartype resource_group: str
-    :ivar subscription_id: The ID of the subscription this resource belongs to.
-    :vartype subscription_id: str
-    :ivar subscription_display_name: The name of the subscription this resource belongs to.
-    :vartype subscription_display_name: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'subscription_display_name': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'subscription_display_name': {'key': 'subscriptionDisplayName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AzureResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.resource_group = None
-        self.subscription_id = None
-        self.subscription_display_name = None
-
-
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the ManagedServiceIdentity service.
 
@@ -113,7 +23,7 @@ class CloudErrorBody(msrest.serialization.Model):
      error.
     :vartype target: str
     :ivar details: A list of additional details about the error.
-    :vartype details: list[~azure.mgmt.msi.models.CloudErrorBody]
+    :vartype details: list[~azure.mgmt.msi.v2018_11_30.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -142,7 +52,7 @@ class CloudErrorBody(msrest.serialization.Model):
          error.
         :paramtype target: str
         :keyword details: A list of additional details about the error.
-        :paramtype details: list[~azure.mgmt.msi.models.CloudErrorBody]
+        :paramtype details: list[~azure.mgmt.msi.v2018_11_30.models.CloudErrorBody]
         """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
@@ -388,7 +298,7 @@ class Operation(msrest.serialization.Model):
      {provider}/{resource}/{operation}.
     :vartype name: str
     :ivar display: The object that describes the operation.
-    :vartype display: ~azure.mgmt.msi.models.OperationDisplay
+    :vartype display: ~azure.mgmt.msi.v2018_11_30.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -408,7 +318,7 @@ class Operation(msrest.serialization.Model):
          {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword display: The object that describes the operation.
-        :paramtype display: ~azure.mgmt.msi.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.msi.v2018_11_30.models.OperationDisplay
         """
         super(Operation, self).__init__(**kwargs)
         self.name = name
@@ -465,7 +375,7 @@ class OperationListResult(msrest.serialization.Model):
     """A list of operations supported by Microsoft.ManagedIdentity Resource Provider.
 
     :ivar value: A list of operations supported by Microsoft.ManagedIdentity Resource Provider.
-    :vartype value: list[~azure.mgmt.msi.models.Operation]
+    :vartype value: list[~azure.mgmt.msi.v2018_11_30.models.Operation]
     :ivar next_link: The url to get the next page of results, if any.
     :vartype next_link: str
     """
@@ -484,7 +394,7 @@ class OperationListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of operations supported by Microsoft.ManagedIdentity Resource Provider.
-        :paramtype value: list[~azure.mgmt.msi.models.Operation]
+        :paramtype value: list[~azure.mgmt.msi.v2018_11_30.models.Operation]
         :keyword next_link: The url to get the next page of results, if any.
         :paramtype next_link: str
         """
@@ -610,7 +520,7 @@ class UserAssignedIdentitiesListResult(msrest.serialization.Model):
     """Values returned by the List operation.
 
     :ivar value: The collection of userAssignedIdentities returned by the listing operation.
-    :vartype value: list[~azure.mgmt.msi.models.Identity]
+    :vartype value: list[~azure.mgmt.msi.v2018_11_30.models.Identity]
     :ivar next_link: The url to get the next page of results, if any.
     :vartype next_link: str
     """
@@ -629,7 +539,7 @@ class UserAssignedIdentitiesListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: The collection of userAssignedIdentities returned by the listing operation.
-        :paramtype value: list[~azure.mgmt.msi.models.Identity]
+        :paramtype value: list[~azure.mgmt.msi.v2018_11_30.models.Identity]
         :keyword next_link: The url to get the next page of results, if any.
         :paramtype next_link: str
         """
