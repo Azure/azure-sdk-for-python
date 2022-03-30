@@ -6,6 +6,7 @@
 import asyncio
 from azure_devtools.perfstress_tests import PerfStressTest
 
+
 class NoOpTest(PerfStressTest):
     def run_sync(self):
         pass
