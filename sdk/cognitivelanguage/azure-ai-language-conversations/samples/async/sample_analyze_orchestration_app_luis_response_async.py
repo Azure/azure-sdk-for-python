@@ -32,7 +32,12 @@ async def sample_analyze_orchestration_app_luis_response_async():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations.aio import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import LUISTargetIntentResult
+    from azure.ai.language.conversations.models import (
+        CustomConversationalTask,
+        ConversationAnalysisOptions,
+        CustomConversationTaskParameters,
+        TextConversationItem
+    )
 
     # get secrets
     clu_endpoint = os.environ["AZURE_CLU_ENDPOINT"]
@@ -45,25 +50,20 @@ async def sample_analyze_orchestration_app_luis_response_async():
     async with client:
         query = "Reserve a table for 2 at the Italian restaurant"
         result = await client.analyze_conversation(
-            task={
-                "kind": "CustomConversation",
-                "analysisInput": {
-                    "conversationItem": {
-                        "participantId": "1",
-                        "id": "1",
-                        "modality": "text",
-                        "language": "en",
-                        "text": query
-                    },
-                    "isLoggingEnabled": False
-                },
-                "parameters": {
-                    "projectName": project_name,
-                    "deploymentName": deployment_name,
-                    "verbose": True
-                }
-            }
-        )
+                task=CustomConversationalTask(
+                    analysis_input=ConversationAnalysisOptions(
+                        conversation_item=TextConversationItem(
+                            id=1,
+                            participant_id=1,
+                            text=query
+                        )
+                    ),
+                    parameters=CustomConversationTaskParameters(
+                        project_name=project_name,
+                        deployment_name=deployment_name
+                    )
+                )
+            )
 
         # view result
         print("query: {}".format(result.results.query))
@@ -76,7 +76,7 @@ async def sample_analyze_orchestration_app_luis_response_async():
         print("confidence score: {}".format(top_intent_object.confidence))
         print("project kind: {}".format(top_intent_object.target_kind))
 
-        if isinstance(top_intent_object, LUISTargetIntentResult):
+        if top_intent_object.target_kind == "luis":
             print("\nluis response:")
             luis_response = top_intent_object.result["prediction"]
             print("top intent: {}".format(luis_response["topIntent"]))

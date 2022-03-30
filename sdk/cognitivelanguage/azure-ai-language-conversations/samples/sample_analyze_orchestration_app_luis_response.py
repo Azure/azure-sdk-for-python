@@ -30,7 +30,12 @@ def sample_analyze_orchestration_app_luis_response():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import LUISTargetIntentResult
+    from azure.ai.language.conversations.models import (
+        CustomConversationalTask,
+        ConversationAnalysisOptions,
+        CustomConversationTaskParameters,
+        TextConversationItem
+    )
 
     # get secrets
     clu_endpoint = os.environ["AZURE_CLU_ENDPOINT"]
@@ -43,25 +48,20 @@ def sample_analyze_orchestration_app_luis_response():
     with client:
         query = "Reserve a table for 2 at the Italian restaurant"
         result = client.analyze_conversation(
-            task={
-                "kind": "CustomConversation",
-                "analysisInput": {
-                    "conversationItem": {
-                        "participantId": "1",
-                        "id": "1",
-                        "modality": "text",
-                        "language": "en",
-                        "text": query
-                    },
-                    "isLoggingEnabled": False
-                },
-                "parameters": {
-                    "projectName": project_name,
-                    "deploymentName": deployment_name,
-                    "verbose": True
-                }
-            }
-        )
+                task=CustomConversationalTask(
+                    analysis_input=ConversationAnalysisOptions(
+                        conversation_item=TextConversationItem(
+                            id=1,
+                            participant_id=1,
+                            text=query
+                        )
+                    ),
+                    parameters=CustomConversationTaskParameters(
+                        project_name=project_name,
+                        deployment_name=deployment_name
+                    )
+                )
+            )
 
     # view result
     print("query: {}".format(result.results.query))
