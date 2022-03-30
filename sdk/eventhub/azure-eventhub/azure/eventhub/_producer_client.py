@@ -24,6 +24,7 @@ from ._common import EventDataBatch, EventData
 from ._constants import ALL_PARTITIONS
 from ._producer import EventHubProducer
 from ._buffered_producer import BufferedProducerDispatcher
+from ._utils import set_message_partition_key
 from .amqp import AmqpAnnotatedMessage
 from .exceptions import ConnectError, EventHubError
 
@@ -186,7 +187,8 @@ class EventHubProducerClient(ClientBase):
         self._buffered_producer_dispatcher = None
 
         if self._buffered_mode:
-            self.send_batch = self.send_event = self._buffered_send_event
+            self.send_batch = self._buffered_send_batch
+            self.send_event = self._buffered_send_event
 
     def __enter__(self):
         return self
@@ -194,10 +196,23 @@ class EventHubProducerClient(ClientBase):
     def __exit__(self, *args):
         self.close()
 
-    def _buffered_send_batch(self, event_data_batch, **kwargs):
+    def _buffered_send(self, events, **kwargs):
+        try:
+            self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
+        except AttributeError:
+            self._get_partitions()
+            self._buffered_producer_dispatcher = BufferedProducerDispatcher(
+                self._partition_ids,
+                self._on_success,
+                self._on_error,
+                self._create_producer,
+                self.eventhub_name
+            )
+            self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
-        partition_id = kwargs.get("partition_id")
-        partition_key = kwargs.get("partition_key")
+    def _batch_preparer(self, event_data_batch, **kwargs):
+        partition_id = kwargs.pop("partition_id", None)
+        partition_key = kwargs.pop("partition_key", None)
 
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
@@ -213,31 +228,31 @@ class EventHubProducerClient(ClientBase):
             to_send_batch._load_events(  # pylint:disable=protected-access
                 event_data_batch
             )
-        partition_id = (
-            to_send_batch._partition_id  # pylint:disable=protected-access
-            or ALL_PARTITIONS
-        )
 
-        if len(to_send_batch) == 0:
+        return to_send_batch, to_send_batch._partition_id, partition_key  # pylint:disable=protected-access
+
+    def _buffered_send_batch(self, event_data_batch, **kwargs):
+        batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
+
+        if len(batch) == 0:
             return
 
-        send_timeout = kwargs.pop("timeout", None)
-
-        try:
-            self._buffered_producer_dispatcher.enqueue_events(event_data_batch, **kwargs)
-        except AttributeError:
-            self._get_partitions()
-            self._buffered_producer_dispatcher = BufferedProducerDispatcher(
-                self._partition_ids,
-                self._on_success,
-                self._on_error,
-                self._create_producer
-            )
-            self._buffered_producer_dispatcher.enqueue_events(event_data_batch, **kwargs)
+        self._buffered_send(
+            event_data_batch,
+            partition_id=pid,  # pylint:disable=protected-access
+            partition_key=pkey,
+            timeout=kwargs.get("timeout")
+        )
 
     def _buffered_send_event(self, event, **kwargs):
-        partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
+        set_message_partition_key(event.message, partition_key)
+        self._buffered_send(
+            event,
+            partition_id=kwargs.get("partition_id"),
+            partition_key=partition_key,
+            timeout=kwargs.get("timeout")
+        )
 
     def _get_partitions(self):
         # type: () -> None
@@ -419,7 +434,7 @@ class EventHubProducerClient(ClientBase):
                 :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
         constructor_args = cls._from_connection_string(conn_str, eventhub_name=eventhub_name, **kwargs)
-        return cls(**constructor_args)
+        return cls(buffered_mode=buffered_mode, **constructor_args)
 
     def send_event(self, event_data, **kwargs):
         # type: (Union[EventData, AmqpAnnotatedMessage], Any) -> None
@@ -499,41 +514,23 @@ class EventHubProducerClient(ClientBase):
                 :caption: Sends event data
 
         """
-        partition_id = kwargs.get("partition_id")
-        partition_key = kwargs.get("partition_key")
+        batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
 
-        if isinstance(event_data_batch, EventDataBatch):
-            if partition_id or partition_key:
-                raise TypeError(
-                    "partition_id and partition_key should be None when sending an EventDataBatch "
-                    "because type EventDataBatch itself may have partition_id or partition_key"
-                )
-            to_send_batch = event_data_batch
-        else:
-            to_send_batch = self.create_batch(
-                partition_id=partition_id, partition_key=partition_key
-            )
-            to_send_batch._load_events(  # pylint:disable=protected-access
-                event_data_batch
-            )
-        partition_id = (
-            to_send_batch._partition_id  # pylint:disable=protected-access
-            or ALL_PARTITIONS
-        )
-
-        if len(to_send_batch) == 0:
+        if len(batch) == 0:
             return
+
+        partition_id = pid or ALL_PARTITIONS
 
         send_timeout = kwargs.pop("timeout", None)
 
         try:
             cast(EventHubProducer, self._producers[partition_id]).send(
-                to_send_batch, timeout=send_timeout
+                batch, timeout=send_timeout
             )
         except (KeyError, AttributeError, EventHubError):
             self._start_producer(partition_id, send_timeout)
             cast(EventHubProducer, self._producers[partition_id]).send(
-                to_send_batch, timeout=send_timeout
+                batch, timeout=send_timeout
             )
 
     def create_batch(self, **kwargs):
@@ -667,6 +664,11 @@ class EventHubProducerClient(ClientBase):
 
         """
         with self._lock:
+            if self._buffered_mode:
+                self._buffered_producer_dispatcher.close(flush=flush, timeout=timeout)
+                self._buffered_producer_dispatcher = None
+                return
+
             for pid in self._producers:
                 if self._producers[pid]:
                     self._producers[pid].close()  # type: ignore

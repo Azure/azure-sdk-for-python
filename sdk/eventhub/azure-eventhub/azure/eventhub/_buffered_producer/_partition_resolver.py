@@ -168,18 +168,19 @@ def generate_hash_code(partition_key):
 
 
 class PartitionResolver:
-    def __init__(self, partition_cnt):
+    def __init__(self, partitions):
         self._idx = -1
-        self._partition_cnt = partition_cnt
+        self._partitions = partitions
+        self._partitions_cnt = len(self._partitions)
         self._lock = Lock()
 
     @property
     def next_partition_id(self):
         with self._lock:
             self._idx += 1
-            self._idx %= self._partition_cnt
-            return str(self._idx)
+            self._idx %= self._partitions_cnt
+            return self._partitions[self._idx]
 
     def get_partition_id_by_partition_key(self, partition_key):
         hash_code = generate_hash_code(partition_key)
-        return abs(hash_code % self._partition_cnt)
+        return self._partitions[abs(hash_code % self._partitions_cnt)]
