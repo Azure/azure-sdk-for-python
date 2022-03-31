@@ -15,18 +15,17 @@ from azure.keyvault.secrets import SecretClient
 from azure.keyvault.secrets._shared import HttpChallengeCache
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
-from devtools_testutils import is_live, recorded_by_proxy
-from devtools_testutils.sanitizers import set_custom_default_matcher
+from devtools_testutils import recorded_by_proxy
+
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import SecretsTestCaseClientPrepaper, get_decorator
+from _test_case import SecretsClientPrepaper, get_decorator
 
 all_api_versions = get_decorator()
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
 list_test_size = 7
 
-SecretsPreparer = functools.partial(SecretsTestCaseClientPrepaper, is_async=False)
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -55,10 +54,13 @@ class TestSecretClient(KeyVaultTestCase):
         prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
         id = secret_attributes.id
         assert id.index(prefix) == 0, f"Id should start with '{prefix}', but value is '{id}'"
-        assert secret_attributes.value == secret_value, f"value should be '{secret_value}', but is '{secret_attributes.value}'"
-        
-        assert secret_attributes.properties.created_on and secret_attributes.properties.updated_on,"Missing required date attributes."
-        
+        assert (
+            secret_attributes.value == secret_value
+        ), f"value should be '{secret_value}', but is '{secret_attributes.value}'"
+
+        assert (
+            secret_attributes.properties.created_on and secret_attributes.properties.updated_on
+        ), "Missing required date attributes."
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
@@ -68,9 +70,8 @@ class TestSecretClient(KeyVaultTestCase):
                 del expected[secret.name]
         assert len(expected) == 0
 
- 
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper()
     @recorded_by_proxy
     def test_secret_crud_operations(self, client, **kwargs):
         secret_name = self.get_resource_name("crud-secret")
@@ -140,9 +141,8 @@ class TestSecretClient(KeyVaultTestCase):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
 
-    
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper()
     @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
         max_secrets = list_test_size
@@ -163,11 +163,11 @@ class TestSecretClient(KeyVaultTestCase):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
 
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper()
     @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
-        
+
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 
@@ -193,12 +193,12 @@ class TestSecretClient(KeyVaultTestCase):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
 
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper()
     @recorded_by_proxy
     def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
-        
+
         # create secrets
         for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
@@ -217,15 +217,15 @@ class TestSecretClient(KeyVaultTestCase):
             if deleted_secret.name in expected:
                 expected_secret = expected[deleted_secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
-        
+
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
 
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper()
     @recorded_by_proxy
     def test_backup_restore(self, client, **kwargs):
-        
+
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
 
@@ -250,11 +250,11 @@ class TestSecretClient(KeyVaultTestCase):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
 
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper()
     @recorded_by_proxy
     def test_recover(self, client, **kwargs):
-        
+
         secrets = {}
 
         # create secrets to recover
@@ -279,15 +279,15 @@ class TestSecretClient(KeyVaultTestCase):
         for secret_name in secrets.keys():
             secret = client.get_secret(name=secret_name)
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
-        
+
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
 
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper()
     @recorded_by_proxy
     def test_purge(self, client, **kwargs):
-        
+
         secrets = {}
 
         # create secrets to purge
@@ -315,8 +315,8 @@ class TestSecretClient(KeyVaultTestCase):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
 
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer(logging_enable = True)
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper(logging_enable=True)
     @recorded_by_proxy
     def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
@@ -350,10 +350,9 @@ class TestSecretClient(KeyVaultTestCase):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
         assert False, "Expected request body wasn't logged"
-        
 
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer(logging_enable = False)
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @SecretsClientPrepaper(logging_enable=False)
     @recorded_by_proxy
     def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()

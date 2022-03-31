@@ -11,12 +11,12 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.sanitizers import set_custom_default_matcher
 
-from _async_test_case import AsyncSecretsTestCaseClientPrepaper
+from _async_test_case import AsyncSecretsClientPrepaper
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import get_decorator
 
 all_api_versions = get_decorator()
-SecretsPreparer = functools.partial(AsyncSecretsTestCaseClientPrepaper, is_async=True)
+
 
 def print(*args):
     assert all(arg is not None for arg in args)
@@ -43,8 +43,8 @@ async def test_create_secret_client():
 
 class TestExamplesKeyVault(KeyVaultTestCase):
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_example_secret_crud_operations(self, client, **kwargs):
         secret_client = client
@@ -109,8 +109,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_example_secret_list_operations(self, client, **kwargs):
         if not is_live():
@@ -160,8 +160,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_example_secrets_backup_restore(self, client, **kwargs):
         secret_client = client
@@ -193,8 +193,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_example_secrets_recover(self, client, **kwargs):
         secret_client = client

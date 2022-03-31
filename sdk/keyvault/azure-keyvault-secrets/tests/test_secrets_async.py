@@ -15,11 +15,10 @@ from dateutil import parser as date_parse
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import AsyncSecretsTestCaseClientPrepaper
+from _async_test_case import AsyncSecretsClientPrepaper
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import get_decorator
 
-SecretsPreparer = functools.partial(AsyncSecretsTestCaseClientPrepaper, is_async=True)
 all_api_versions = get_decorator()
 list_test_size = 7
 
@@ -51,10 +50,13 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
         id = secret_attributes.id
         assert id.index(prefix) == 0, f"Id should start with '{prefix}', but value is '{id}'"
-        assert secret_attributes.value == secret_value,f"value should be '{secret_value}', but is '{secret_attributes.value}'"
-        
-        assert secret_attributes.properties.created_on and secret_attributes.properties.updated_on,"Missing required date attributes."
-        
+        assert (
+            secret_attributes.value == secret_value
+        ), f"value should be '{secret_value}', but is '{secret_attributes.value}'"
+
+        assert (
+            secret_attributes.properties.created_on and secret_attributes.properties.updated_on
+        ), "Missing required date attributes."
 
     async def _validate_secret_list(self, secrets, expected):
         async for secret in secrets:
@@ -66,7 +68,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_secret_crud_operations(self, client, **kwargs):
         secret_name = self.get_resource_name("crud-secret")
@@ -81,7 +83,9 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             not_before = date_parse.parse("2015-02-02T08:00:00.000Z")
             enabled = True
             tags = {"foo": "created tag"}
-            created = await client.set_secret(secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags)
+            created = await client.set_secret(
+                secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags
+            )
             self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
             assert enabled == created.properties.enabled
             assert not_before == created.properties.not_before
@@ -131,11 +135,11 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_secret_list(self, client, **kwargs):
-        
+
         max_secrets = list_test_size
         expected = {}
 
@@ -154,8 +158,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
@@ -179,13 +183,12 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                 if deleted_secret.name in expected:
                     expected_secret = expected[deleted_secret.name]
                     self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
-        
+
         return dict()
-                
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_list_versions(self, client, **kwargs):
         secret_name = self.get_resource_name("sec")
@@ -216,8 +219,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
@@ -239,14 +242,16 @@ class TestKeyVaultSecret(KeyVaultTestCase):
 
             # restore secret
             restore_function = functools.partial(client.restore_secret_backup, secret_backup)
-            restored_secret = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
+            restored_secret = await self._poll_until_no_exception(
+                restore_function, expected_exception=ResourceExistsError
+            )
             self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_recover(self, client, **kwargs):
         secrets = {}
@@ -280,8 +285,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper()
     @recorded_by_proxy_async
     async def test_purge(self, client, **kwargs):
         secrets = {}
@@ -308,10 +313,9 @@ class TestKeyVaultSecret(KeyVaultTestCase):
 
         return dict()
 
-    
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer(logging_enable = True)
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper(logging_enable=True)
     @recorded_by_proxy_async
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
@@ -331,7 +335,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                         request_sections = message.message.split("/n")
                     else:
                         request_sections = message.message.split("\n")
-                    
+
                     for section in request_sections:
                         try:
                             # the body of the request should be JSON
@@ -348,15 +352,14 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             return dict()
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer(logging_enable=False)
+    @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
+    @AsyncSecretsClientPrepaper(logging_enable=False)
     @recorded_by_proxy_async
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
-
 
         secret_name = self.get_resource_name("secret-name")
         async with client:

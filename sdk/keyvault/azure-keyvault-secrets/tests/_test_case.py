@@ -15,28 +15,35 @@ def get_decorator(**kwargs):
     return [(api_version) for api_version in ApiVersion]
 
 
-class SecretsTestCaseClientPrepaper(AzureRecordedTestCase):
+class SecretsClientPrepaper(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
-        self.azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net") if is_live() else "https://vaultname.vault.azure.net"
-        self.is_async = kwargs.pop("is_async", False)
+        self.azure_keyvault_url = (
+            os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net")
+            if is_live()
+            else "https://vaultname.vault.azure.net"
+        )
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
+        if is_live():
+            os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
+            os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
+            os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
 
     def __call__(self, fn):
         def _preparer(test_class, api_version, **kwargs):
             self._skip_if_not_configured(api_version)
             if not self.is_logging_enabled:
-                kwargs.update({'logging_enable':False})
+                kwargs.update({"logging_enable": False})
             client = self.create_client(self.azure_keyvault_url, **kwargs, api_version=api_version)
             with client:
                 fn(test_class, client)
+
         return _preparer
 
     def create_client(self, vault_uri, **kwargs):
         from azure.keyvault.secrets import SecretClient
+
         credential = self.get_credential(SecretClient)
-        return self.create_client_from_credential(
-            SecretClient, credential=credential, vault_url=vault_uri, **kwargs
-        )
+        return self.create_client_from_credential(SecretClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     def _skip_if_not_configured(self, api_version, **kwargs):
         if is_live() and api_version != DEFAULT_VERSION:
