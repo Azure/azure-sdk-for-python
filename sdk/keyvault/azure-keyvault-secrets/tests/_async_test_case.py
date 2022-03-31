@@ -12,14 +12,10 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 class AsyncSecretsClientPreparer(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
-        self.azure_keyvault_url = (
-            os.getenv("AZURE_KEYVAULT_URL", None) if is_live() else "https://vaultname.vault.azure.net"
-        )
+        self.azure_keyvault_url = "https://vaultname.vault.azure.net"
 
-        if not self.azure_keyvault_url:
-            raise AzureTestError(
-                "Live tests require a keyvault url to run. Please set a keyvault url for AZURE_KEYVAULT_URL in the configuration "
-            )
+        if is_live():
+            self.azure_keyvault_url = os.environ["AZURE_KEYVAULT_URL"]
 
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
         if is_live():
