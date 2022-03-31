@@ -372,7 +372,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def create_if_not_exists(self, **kwargs):
+    def create_share_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new Share under the account. If a share with the
         same name already exists, it is not changed.
@@ -384,7 +384,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :keyword access_tier:
             Specifies the access tier of the share.
             Possible values: 'TransactionOptimized', 'Hot', 'Cool'
-        :keyword access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
 
             .. versionadded:: 12.4.0
 
@@ -392,11 +392,11 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :keyword protocols:
             Protocols to enable on the share. Only one protocol can be enabled on the share.
-        :keyword protocols: str or ~azure.storage.fileshare.ShareProtocols
+        :paramtype protocols: str or ~azure.storage.fileshare.ShareProtocols
         :keyword root_squash:
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
-        :keyword root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :rtype: None
         """
         try:
