@@ -3,7 +3,7 @@
 ## 12.3.0b1 (Unreleased)
 
 ### Features Added
-- Added support for `create_if_not_exists()` for `QueueClient`
+- Added support for `create_queue_if_not_exists()` for `QueueClient`
 
 ## 12.2.0 (2022-03-08)
 

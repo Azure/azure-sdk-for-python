@@ -81,7 +81,7 @@ class FileSystemTest(StorageTestCase):
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        created = file_system_client.create_if_not_exists()
+        created = file_system_client.create_file_system_if_not_exists()
 
         # Assert
         self.assertTrue(created)
@@ -96,7 +96,7 @@ class FileSystemTest(StorageTestCase):
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         file_system_client.create_file_system()
-        created = file_system_client.create_if_not_exists()
+        created = file_system_client.create_file_system_if_not_exists()
 
         # Assert
         self.assertIsNone(created)

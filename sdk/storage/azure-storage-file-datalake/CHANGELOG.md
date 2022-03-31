@@ -5,8 +5,8 @@
 ### Features Added
 - Added support for service version 2021-06-08 as well as previous versions.
 - Added support for Customer-Provided Keys (cpk) to all required APIs.
-- Added support for `create_if_not_exists()` for `FileSystemClient`
 - The `get_paths()` API now returns `creation_time` and `expiry_time` for each path. 
+- Added support for `create_file_system_if_not_exists()` for `FileSystemClient`
 
 ### Bugs Fixed
 - Updated `create_file_system()` docstring to have the correct return-type of `None`

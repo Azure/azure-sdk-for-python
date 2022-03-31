@@ -159,7 +159,7 @@
 /sdk/containerregistry/                                              @YalinLi0312
 
 # PRLabel: %Digital Twins
-/sdk/digitaltwins/                                                   @johngallardo @Aashish93-stack
+/sdk/digitaltwins/                                                   @johngallardo @Aashish93-stack @sjiherzig @Satya-Kolluri
 
 # PRLabel: %VideoAnalyzer
 /sdk/videoanalyzer/                                                  @hivyas
