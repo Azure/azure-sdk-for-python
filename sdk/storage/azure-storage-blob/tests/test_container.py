@@ -87,7 +87,7 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         container = bsc.get_container_client(container_name)
-        created = container.create_if_not_exists()
+        created = container.create_container_if_not_exists()
 
         # Assert
         self.assertTrue(created)
@@ -100,7 +100,7 @@ class StorageContainerTest(StorageTestCase):
         # Act
         container = bsc.get_container_client(container_name)
         container.create_container()
-        created = container.create_if_not_exists()
+        created = container.create_container_if_not_exists()
 
         # Assert
         self.assertIsNone(created)
