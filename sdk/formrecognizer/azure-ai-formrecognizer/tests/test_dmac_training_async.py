@@ -252,13 +252,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_azure_blob_path_filter(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
         with pytest.raises(HttpResponseError) as e:
             async with client:
-                poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="subfolder")
+                poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="testfolder")
                 model = await poller.result()
 
     @pytest.mark.live_test_only
