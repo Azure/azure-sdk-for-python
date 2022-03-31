@@ -7,27 +7,35 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional
+from typing import Any, Awaitable
+
+from msrest import Deserializer, Serializer
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import ConversationAnalysisClientConfiguration
-from .operations import ConversationAnalysisClientOperationsMixin
+from ._operations import ConversationAnalysisClientOperationsMixin
 
 class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
-    """This API accepts a request and mediates among multiple language projects, such as LUIS Generally Available, Question Answering, Conversation, and then calls the best candidate service to handle the request. At last, it returns a response with the candidate service's response as a payload.
+    """This API accepts a request and mediates among multiple language projects, such as LUIS
+    Generally Available, Question Answering, Conversational Language Understanding, and then calls
+    the best candidate service to handle the request. At last, it returns a response with the
+    candidate service's response as a payload.
 
- In some cases, this API needs to forward requests and responses between the caller and an upstream service.
+     In some cases, this API needs to forward requests and responses between the caller and an
+    upstream service.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -37,7 +45,7 @@ class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
         **kwargs: Any
     ) -> None:
         _endpoint = '{Endpoint}/language'
-        self._config = ConversationAnalysisClientConfiguration(endpoint, credential, **kwargs)
+        self._config = ConversationAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
