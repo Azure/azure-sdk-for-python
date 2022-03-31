@@ -4,14 +4,11 @@
 # ------------------------------------
 import time
 
-from azure_devtools.scenario_tests.patches import patch_time_sleep_api
+
 from devtools_testutils import AzureRecordedTestCase
 
 
 class KeyVaultTestCase(AzureRecordedTestCase):
-    def setUp(self):
-        self.list_test_size = 7
-
     def get_resource_name(self, name):
         """helper to create resources with a consistent, test-indicative prefix"""
         return super(KeyVaultTestCase, self).get_resource_name("livekvtest{}".format(name))

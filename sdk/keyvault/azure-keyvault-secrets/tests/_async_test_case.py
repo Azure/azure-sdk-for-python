@@ -2,22 +2,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-import functools
 import os
 
 import pytest
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import AzureRecordedTestCase, is_live
+from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 
-class AsyncSecretsClientPrepaper(AzureRecordedTestCase):
+class AsyncSecretsClientPreparer(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
         self.azure_keyvault_url = (
-            os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net")
-            if is_live()
-            else "https://vaultname.vault.azure.net"
+            os.getenv("AZURE_KEYVAULT_URL", None) if is_live() else "https://vaultname.vault.azure.net"
         )
+
+        if not self.azure_keyvault_url:
+            raise AzureTestError(
+                "Live tests require a keyvault url to run. Please set a keyvault url for AZURE_KEYVAULT_URL in the configuration "
+            )
+
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
         if is_live():
             os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]

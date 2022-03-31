@@ -11,7 +11,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.sanitizers import set_custom_default_matcher
 
-from _async_test_case import AsyncSecretsClientPrepaper
+from _async_test_case import AsyncSecretsClientPreparer
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import get_decorator
 
@@ -44,7 +44,7 @@ async def test_create_secret_client():
 class TestExamplesKeyVault(KeyVaultTestCase):
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @AsyncSecretsClientPrepaper()
+    @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
     async def test_example_secret_crud_operations(self, client, **kwargs):
         secret_client = client
@@ -109,7 +109,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @AsyncSecretsClientPrepaper()
+    @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
     async def test_example_secret_list_operations(self, client, **kwargs):
         if not is_live():
@@ -159,7 +159,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @AsyncSecretsClientPrepaper()
+    @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
     async def test_example_secrets_backup_restore(self, client, **kwargs):
         secret_client = client
@@ -188,11 +188,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [END restore_secret_backup]
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
-        
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @AsyncSecretsClientPrepaper()
+    @AsyncSecretsClientPreparer()
     @recorded_by_proxy_async
     async def test_example_secrets_recover(self, client, **kwargs):
         secret_client = client
