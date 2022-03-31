@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_conversation_app_async.py
+FILE: sample_analyze_conversation_with_dict_parms_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query for intents and entities using
@@ -14,7 +14,7 @@ DESCRIPTION:
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_analyze_conversation_app_async.py
+    python sample_analyze_conversation_with_dict_parms_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CLU_ENDPOINT                       - endpoint for your CLU resource.
@@ -25,19 +25,14 @@ USAGE:
 
 import asyncio
 
-async def sample_analyze_conversation_app_async():
+async def sample_analyze_conversation_with_dict_parms_async():
     # [START analyze_conversation_app_async]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations.aio import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import (
-        CustomConversationalTask,
-        ConversationAnalysisOptions,
-        CustomConversationTaskParameters,
-        TextConversationItem
-    )
+    from azure.ai.language.conversations.models import DateTimeResolution
 
     # get secrets
     clu_endpoint = os.environ["AZURE_CLU_ENDPOINT"]
@@ -50,20 +45,25 @@ async def sample_analyze_conversation_app_async():
     async with client:
         query = "Send an email to Carol about the tomorrow's demo"
         result = await client.analyze_conversation(
-                task=CustomConversationalTask(
-                    analysis_input=ConversationAnalysisOptions(
-                        conversation_item=TextConversationItem(
-                            id=1,
-                            participant_id=1,
-                            text=query
-                        )
-                    ),
-                    parameters=CustomConversationTaskParameters(
-                        project_name=project_name,
-                        deployment_name=deployment_name
-                    )
-                )
-            )
+            task={
+                "kind": "CustomConversation",
+                "analysisInput": {
+                    "conversationItem": {
+                        "participantId": "1",
+                        "id": "1",
+                        "modality": "text",
+                        "language": "en",
+                        "text": query
+                    },
+                    "isLoggingEnabled": False
+                },
+                "parameters": {
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
+                    "verbose": True
+                }
+            }
+        )
 
         # view result
         print("query: {}".format(result.results.query))
@@ -96,7 +96,7 @@ async def sample_analyze_conversation_app_async():
 
 
 async def main():
-    await sample_analyze_conversation_app_async()
+    await sample_analyze_conversation_with_dict_parms_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
