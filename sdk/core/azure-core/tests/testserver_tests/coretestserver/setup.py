@@ -30,7 +30,7 @@ setup(
     ],
     packages=find_packages(),
     install_requires=[
-        "flask==2.0.3",
+        "flask==1.1.4",
         "six>=1.11.0",
     ]
 )
