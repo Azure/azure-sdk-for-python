@@ -6,36 +6,89 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 from typing import Dict, List, Optional, Union
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 from ._iot_central_client_enums import *
 
 
 class Resource(msrest.serialization.Model):
-    """The common properties of an ARM resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.iotcentral.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The ARM resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The ARM resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.iotcentral.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,99}[a-zA-Z0-9]$'},
+        'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -43,8 +96,9 @@ class Resource(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(
@@ -54,73 +108,101 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
+        super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
+        self.location = location
 
 
-class App(Resource):
+class App(TrackedResource):
     """The IoT Central application.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The ARM resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The ARM resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Required. The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param sku: Required. A valid instance SKU.
-    :type sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
-    :param identity: The managed identities for the IoT Central application.
-    :type identity: ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentity
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.iotcentral.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar sku: Required. A valid instance SKU.
+    :vartype sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
+    :ivar identity: The managed identities for the IoT Central application.
+    :vartype identity: ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentity
+    :ivar provisioning_state: The provisioning state of the application. Possible values include:
+     "Creating", "Deleting", "Updating", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.iotcentral.models.ProvisioningState
     :ivar application_id: The ID of the application.
     :vartype application_id: str
-    :param display_name: The display name of the application.
-    :type display_name: str
-    :param subdomain: The subdomain of the application.
-    :type subdomain: str
-    :param template: The ID of the application template, which is a blueprint that defines the
+    :ivar display_name: The display name of the application.
+    :vartype display_name: str
+    :ivar subdomain: The subdomain of the application.
+    :vartype subdomain: str
+    :ivar template: The ID of the application template, which is a blueprint that defines the
      characteristics and behaviors of an application. Optional; if not specified, defaults to a
      blank blueprint and allows the application to be defined from scratch.
-    :type template: str
+    :vartype template: str
     :ivar state: The current state of the application. Possible values include: "created",
      "suspended".
     :vartype state: str or ~azure.mgmt.iotcentral.models.AppState
+    :ivar public_network_access: Whether requests from the public network are allowed. Possible
+     values include: "Enabled", "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.iotcentral.models.PublicNetworkAccess
+    :ivar network_rule_sets: Network Rule Set Properties of this IoT Central application.
+    :vartype network_rule_sets: ~azure.mgmt.iotcentral.models.NetworkRuleSets
+    :ivar private_endpoint_connections: Private endpoint connections created on this IoT Central
+     application.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.iotcentral.models.PrivateEndpointConnection]
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,99}[a-zA-Z0-9]$'},
+        'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
+        'provisioning_state': {'readonly': True},
         'application_id': {'readonly': True},
         'state': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'AppSkuInfo'},
         'identity': {'key': 'identity', 'type': 'SystemAssignedServiceIdentity'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'application_id': {'key': 'properties.applicationId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'subdomain': {'key': 'properties.subdomain', 'type': 'str'},
         'template': {'key': 'properties.template', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'network_rule_sets': {'key': 'properties.networkRuleSets', 'type': 'NetworkRuleSets'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -133,16 +215,45 @@ class App(Resource):
         display_name: Optional[str] = None,
         subdomain: Optional[str] = None,
         template: Optional[str] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        network_rule_sets: Optional["NetworkRuleSets"] = None,
         **kwargs
     ):
-        super(App, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword sku: Required. A valid instance SKU.
+        :paramtype sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
+        :keyword identity: The managed identities for the IoT Central application.
+        :paramtype identity: ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentity
+        :keyword display_name: The display name of the application.
+        :paramtype display_name: str
+        :keyword subdomain: The subdomain of the application.
+        :paramtype subdomain: str
+        :keyword template: The ID of the application template, which is a blueprint that defines the
+         characteristics and behaviors of an application. Optional; if not specified, defaults to a
+         blank blueprint and allows the application to be defined from scratch.
+        :paramtype template: str
+        :keyword public_network_access: Whether requests from the public network are allowed. Possible
+         values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.iotcentral.models.PublicNetworkAccess
+        :keyword network_rule_sets: Network Rule Set Properties of this IoT Central application.
+        :paramtype network_rule_sets: ~azure.mgmt.iotcentral.models.NetworkRuleSets
+        """
+        super(App, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.identity = identity
+        self.provisioning_state = None
         self.application_id = None
         self.display_name = display_name
         self.subdomain = subdomain
         self.template = template
         self.state = None
+        self.public_network_access = public_network_access
+        self.network_rule_sets = network_rule_sets
+        self.private_endpoint_connections = None
 
 
 class AppAvailabilityInfo(msrest.serialization.Model):
@@ -174,6 +285,8 @@ class AppAvailabilityInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AppAvailabilityInfo, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
@@ -183,10 +296,10 @@ class AppAvailabilityInfo(msrest.serialization.Model):
 class AppListResult(msrest.serialization.Model):
     """A list of IoT Central Applications with a next link.
 
-    :param next_link: The link used to get the next page of IoT Central Applications.
-    :type next_link: str
-    :param value: A list of IoT Central Applications.
-    :type value: list[~azure.mgmt.iotcentral.models.App]
+    :ivar next_link: The link used to get the next page of IoT Central Applications.
+    :vartype next_link: str
+    :ivar value: A list of IoT Central Applications.
+    :vartype value: list[~azure.mgmt.iotcentral.models.App]
     """
 
     _attribute_map = {
@@ -201,6 +314,12 @@ class AppListResult(msrest.serialization.Model):
         value: Optional[List["App"]] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of IoT Central Applications.
+        :paramtype next_link: str
+        :keyword value: A list of IoT Central Applications.
+        :paramtype value: list[~azure.mgmt.iotcentral.models.App]
+        """
         super(AppListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
@@ -211,41 +330,59 @@ class AppPatch(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Instance tags.
-    :type tags: dict[str, str]
-    :param sku: A valid instance SKU.
-    :type sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
-    :param identity: The managed identities for the IoT Central application.
-    :type identity: ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentity
+    :ivar tags: A set of tags. Instance tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: A valid instance SKU.
+    :vartype sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
+    :ivar identity: The managed identities for the IoT Central application.
+    :vartype identity: ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentity
+    :ivar provisioning_state: The provisioning state of the application. Possible values include:
+     "Creating", "Deleting", "Updating", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.iotcentral.models.ProvisioningState
     :ivar application_id: The ID of the application.
     :vartype application_id: str
-    :param display_name: The display name of the application.
-    :type display_name: str
-    :param subdomain: The subdomain of the application.
-    :type subdomain: str
-    :param template: The ID of the application template, which is a blueprint that defines the
+    :ivar display_name: The display name of the application.
+    :vartype display_name: str
+    :ivar subdomain: The subdomain of the application.
+    :vartype subdomain: str
+    :ivar template: The ID of the application template, which is a blueprint that defines the
      characteristics and behaviors of an application. Optional; if not specified, defaults to a
      blank blueprint and allows the application to be defined from scratch.
-    :type template: str
+    :vartype template: str
     :ivar state: The current state of the application. Possible values include: "created",
      "suspended".
     :vartype state: str or ~azure.mgmt.iotcentral.models.AppState
+    :ivar public_network_access: Whether requests from the public network are allowed. Possible
+     values include: "Enabled", "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.iotcentral.models.PublicNetworkAccess
+    :ivar network_rule_sets: Network Rule Set Properties of this IoT Central application.
+    :vartype network_rule_sets: ~azure.mgmt.iotcentral.models.NetworkRuleSets
+    :ivar private_endpoint_connections: Private endpoint connections created on this IoT Central
+     application.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.iotcentral.models.PrivateEndpointConnection]
     """
 
     _validation = {
+        'provisioning_state': {'readonly': True},
         'application_id': {'readonly': True},
         'state': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'AppSkuInfo'},
         'identity': {'key': 'identity', 'type': 'SystemAssignedServiceIdentity'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'application_id': {'key': 'properties.applicationId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'subdomain': {'key': 'properties.subdomain', 'type': 'str'},
         'template': {'key': 'properties.template', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'network_rule_sets': {'key': 'properties.networkRuleSets', 'type': 'NetworkRuleSets'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -257,17 +394,44 @@ class AppPatch(msrest.serialization.Model):
         display_name: Optional[str] = None,
         subdomain: Optional[str] = None,
         template: Optional[str] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        network_rule_sets: Optional["NetworkRuleSets"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Instance tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: A valid instance SKU.
+        :paramtype sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
+        :keyword identity: The managed identities for the IoT Central application.
+        :paramtype identity: ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentity
+        :keyword display_name: The display name of the application.
+        :paramtype display_name: str
+        :keyword subdomain: The subdomain of the application.
+        :paramtype subdomain: str
+        :keyword template: The ID of the application template, which is a blueprint that defines the
+         characteristics and behaviors of an application. Optional; if not specified, defaults to a
+         blank blueprint and allows the application to be defined from scratch.
+        :paramtype template: str
+        :keyword public_network_access: Whether requests from the public network are allowed. Possible
+         values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.iotcentral.models.PublicNetworkAccess
+        :keyword network_rule_sets: Network Rule Set Properties of this IoT Central application.
+        :paramtype network_rule_sets: ~azure.mgmt.iotcentral.models.NetworkRuleSets
+        """
         super(AppPatch, self).__init__(**kwargs)
         self.tags = tags
         self.sku = sku
         self.identity = identity
+        self.provisioning_state = None
         self.application_id = None
         self.display_name = display_name
         self.subdomain = subdomain
         self.template = template
         self.state = None
+        self.public_network_access = public_network_access
+        self.network_rule_sets = network_rule_sets
+        self.private_endpoint_connections = None
 
 
 class AppSkuInfo(msrest.serialization.Model):
@@ -275,8 +439,8 @@ class AppSkuInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Possible values include: "ST0", "ST1", "ST2".
-    :type name: str or ~azure.mgmt.iotcentral.models.AppSku
+    :ivar name: Required. The name of the SKU. Possible values include: "ST0", "ST1", "ST2".
+    :vartype name: str or ~azure.mgmt.iotcentral.models.AppSku
     """
 
     _validation = {
@@ -293,6 +457,10 @@ class AppSkuInfo(msrest.serialization.Model):
         name: Union[str, "AppSku"],
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the SKU. Possible values include: "ST0", "ST1", "ST2".
+        :paramtype name: str or ~azure.mgmt.iotcentral.models.AppSku
+        """
         super(AppSkuInfo, self).__init__(**kwargs)
         self.name = name
 
@@ -346,6 +514,8 @@ class AppTemplate(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AppTemplate, self).__init__(**kwargs)
         self.manifest_id = None
         self.manifest_version = None
@@ -382,6 +552,8 @@ class AppTemplateLocations(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AppTemplateLocations, self).__init__(**kwargs)
         self.id = None
         self.display_name = None
@@ -392,8 +564,8 @@ class AppTemplatesResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param next_link: The link used to get the next page of IoT Central application templates.
-    :type next_link: str
+    :ivar next_link: The link used to get the next page of IoT Central application templates.
+    :vartype next_link: str
     :ivar value: A list of IoT Central Application Templates.
     :vartype value: list[~azure.mgmt.iotcentral.models.AppTemplate]
     """
@@ -413,13 +585,49 @@ class AppTemplatesResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of IoT Central application templates.
+        :paramtype next_link: str
+        """
         super(AppTemplatesResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = None
 
 
-class CloudErrorBody(msrest.serialization.Model):
-    """Details of error response.
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -427,36 +635,151 @@ class CloudErrorBody(msrest.serialization.Model):
     :vartype code: str
     :ivar message: The error message.
     :vartype message: str
-    :ivar target: The target of the particular error.
+    :ivar target: The error target.
     :vartype target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.iotcentral.models.CloudErrorBody]
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.iotcentral.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.iotcentral.models.ErrorAdditionalInfo]
     """
 
     _validation = {
         'code': {'readonly': True},
         'message': {'readonly': True},
         'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.iotcentral.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
     }
 
     def __init__(
         self,
         *,
-        details: Optional[List["CloudErrorBody"]] = None,
+        error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
-        super(CloudErrorBody, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = details
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.iotcentral.models.ErrorDetail
+        """
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class NetworkRuleSetIpRule(msrest.serialization.Model):
+    """An object for an IP range that will be allowed access.
+
+    :ivar filter_name: The readable name of the IP rule.
+    :vartype filter_name: str
+    :ivar ip_mask: The CIDR block defining the IP range.
+    :vartype ip_mask: str
+    """
+
+    _attribute_map = {
+        'filter_name': {'key': 'filterName', 'type': 'str'},
+        'ip_mask': {'key': 'ipMask', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        filter_name: Optional[str] = None,
+        ip_mask: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword filter_name: The readable name of the IP rule.
+        :paramtype filter_name: str
+        :keyword ip_mask: The CIDR block defining the IP range.
+        :paramtype ip_mask: str
+        """
+        super(NetworkRuleSetIpRule, self).__init__(**kwargs)
+        self.filter_name = filter_name
+        self.ip_mask = ip_mask
+
+
+class NetworkRuleSets(msrest.serialization.Model):
+    """Network Rule Set Properties of this IoT Central application.
+
+    :ivar apply_to_devices: Whether these rules apply for device connectivity to IoT Hub and Device
+     Provisioning service associated with this application.
+    :vartype apply_to_devices: bool
+    :ivar apply_to_io_t_central: Whether these rules apply for connectivity via IoT Central web
+     portal and APIs.
+    :vartype apply_to_io_t_central: bool
+    :ivar default_action: The default network action to apply. Possible values include: "Allow",
+     "Deny".
+    :vartype default_action: str or ~azure.mgmt.iotcentral.models.NetworkAction
+    :ivar ip_rules: List of IP rules.
+    :vartype ip_rules: list[~azure.mgmt.iotcentral.models.NetworkRuleSetIpRule]
+    """
+
+    _attribute_map = {
+        'apply_to_devices': {'key': 'applyToDevices', 'type': 'bool'},
+        'apply_to_io_t_central': {'key': 'applyToIoTCentral', 'type': 'bool'},
+        'default_action': {'key': 'defaultAction', 'type': 'str'},
+        'ip_rules': {'key': 'ipRules', 'type': '[NetworkRuleSetIpRule]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        apply_to_devices: Optional[bool] = None,
+        apply_to_io_t_central: Optional[bool] = None,
+        default_action: Optional[Union[str, "NetworkAction"]] = None,
+        ip_rules: Optional[List["NetworkRuleSetIpRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword apply_to_devices: Whether these rules apply for device connectivity to IoT Hub and
+         Device Provisioning service associated with this application.
+        :paramtype apply_to_devices: bool
+        :keyword apply_to_io_t_central: Whether these rules apply for connectivity via IoT Central web
+         portal and APIs.
+        :paramtype apply_to_io_t_central: bool
+        :keyword default_action: The default network action to apply. Possible values include: "Allow",
+         "Deny".
+        :paramtype default_action: str or ~azure.mgmt.iotcentral.models.NetworkAction
+        :keyword ip_rules: List of IP rules.
+        :paramtype ip_rules: list[~azure.mgmt.iotcentral.models.NetworkRuleSetIpRule]
+        """
+        super(NetworkRuleSets, self).__init__(**kwargs)
+        self.apply_to_devices = apply_to_devices
+        self.apply_to_io_t_central = apply_to_io_t_central
+        self.default_action = default_action
+        self.ip_rules = ip_rules
 
 
 class Operation(msrest.serialization.Model):
@@ -466,8 +789,8 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: Operation name: {provider}/{resource}/{read | write | action | delete}.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.iotcentral.models.OperationDisplay
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.iotcentral.models.OperationDisplay
     :ivar origin: The intended executor of the operation.
     :vartype origin: str
     :ivar properties: Additional descriptions for the operation.
@@ -493,6 +816,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.iotcentral.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
@@ -533,6 +860,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -545,10 +874,10 @@ class OperationInputs(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the IoT Central application instance to check.
-    :type name: str
-    :param type: The type of the IoT Central resource to query.
-    :type type: str
+    :ivar name: Required. The name of the IoT Central application instance to check.
+    :vartype name: str
+    :ivar type: The type of the IoT Central resource to query.
+    :vartype type: str
     """
 
     _validation = {
@@ -567,6 +896,12 @@ class OperationInputs(msrest.serialization.Model):
         type: Optional[str] = "IoTApps",
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the IoT Central application instance to check.
+        :paramtype name: str
+        :keyword type: The type of the IoT Central resource to query.
+        :paramtype type: str
+        """
         super(OperationInputs, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -577,8 +912,8 @@ class OperationListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param next_link: The link used to get the next page of IoT Central description objects.
-    :type next_link: str
+    :ivar next_link: The link used to get the next page of IoT Central description objects.
+    :vartype next_link: str
     :ivar value: A list of operations supported by the Microsoft.IoTCentral resource provider.
     :vartype value: list[~azure.mgmt.iotcentral.models.Operation]
     """
@@ -598,9 +933,264 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: The link used to get the next page of IoT Central description objects.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = None
+
+
+class PrivateEndpoint(msrest.serialization.Model):
+    """The private endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ARM identifier for private endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The private endpoint connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.iotcentral.models.SystemData
+    :ivar group_ids: The group ids for the private endpoint resource.
+    :vartype group_ids: list[str]
+    :ivar private_endpoint: The private endpoint resource.
+    :vartype private_endpoint: ~azure.mgmt.iotcentral.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.iotcentral.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.iotcentral.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'group_ids': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        **kwargs
+    ):
+        """
+        :keyword private_endpoint: The private endpoint resource.
+        :paramtype private_endpoint: ~azure.mgmt.iotcentral.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.iotcentral.models.PrivateLinkServiceConnectionState
+        """
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.group_ids = None
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """List of private endpoint connections associated with the specified resource.
+
+    :ivar value: Array of private endpoint connections.
+    :vartype value: list[~azure.mgmt.iotcentral.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Array of private endpoint connections.
+        :paramtype value: list[~azure.mgmt.iotcentral.models.PrivateEndpointConnection]
+        """
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.iotcentral.models.SystemData
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource private link DNS zone name.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        required_zone_names: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword required_zone_names: The private link resource private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(msrest.serialization.Model):
+    """A list of private link resources.
+
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.iotcentral.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateLinkResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.iotcentral.models.PrivateLinkResource]
+        """
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+    """A collection of information about the state of the connection between service consumer and provider.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Possible values include: "Pending", "Approved", "Rejected".
+    :vartype status: str or ~azure.mgmt.iotcentral.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Possible values include: "Pending", "Approved", "Rejected".
+        :paramtype status: str or ~azure.mgmt.iotcentral.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
 
 
 class SystemAssignedServiceIdentity(msrest.serialization.Model):
@@ -616,9 +1206,9 @@ class SystemAssignedServiceIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
     :vartype tenant_id: str
-    :param type: Required. Type of managed service identity (either system assigned, or none).
+    :ivar type: Required. Type of managed service identity (either system assigned, or none).
      Possible values include: "None", "SystemAssigned".
-    :type type: str or ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentityType
+    :vartype type: str or ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentityType
     """
 
     _validation = {
@@ -639,7 +1229,76 @@ class SystemAssignedServiceIdentity(msrest.serialization.Model):
         type: Union[str, "SystemAssignedServiceIdentityType"],
         **kwargs
     ):
+        """
+        :keyword type: Required. Type of managed service identity (either system assigned, or none).
+         Possible values include: "None", "SystemAssigned".
+        :paramtype type: str or ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentityType
+        """
         super(SystemAssignedServiceIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.iotcentral.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.iotcentral.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.iotcentral.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.iotcentral.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
