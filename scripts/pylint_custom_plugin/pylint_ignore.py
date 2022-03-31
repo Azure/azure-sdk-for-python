@@ -10,7 +10,7 @@ class PylintIgnorePaths:
     
     def filter_expand_modules(self, *args, **kwargs):
         result, errors = self.store_expand_modules(*args, **kwargs)
-        result = list(filter(self.keep_item,result))
+        result = list(filter(self.keep_item, result))
         return result, errors
     
     def keep_item(self,item):
