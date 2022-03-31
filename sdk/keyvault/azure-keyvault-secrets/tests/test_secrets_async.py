@@ -132,7 +132,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             # delete secret
             deleted = await client.delete_secret(updated.name)
             assert deleted is not None
-            return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -155,7 +154,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         # list secrets
         result = client.list_properties_of_secrets(max_page_size=max_secrets - 1)
         await self._validate_secret_list(result, expected)
-        return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -183,8 +181,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                 if deleted_secret.name in expected:
                     expected_secret = expected[deleted_secret.name]
                     self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
-
-        return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -216,7 +212,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                     self._assert_secret_attributes_equal(expected_secret.properties, secret)
             assert len(expected) == 0
 
-        return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -247,7 +242,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             )
             self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
-        return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -282,7 +276,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                 get_function = functools.partial(client.get_secret, secret)
                 await self._poll_until_no_exception(get_function, expected_exception=ResourceNotFoundError)
 
-        return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -310,8 +303,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             # purge secrets
             for secret_name in secrets.keys():
                 await client.purge_deleted_secret(secret_name)
-
-        return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -349,7 +340,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
 
             mock_handler.close()
             assert False, "Expected request body wasn't logged"
-            return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -384,7 +374,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                             pass
 
         mock_handler.close()
-        return dict()
 
 
 def test_service_headers_allowed_in_logs():

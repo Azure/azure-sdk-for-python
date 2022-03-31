@@ -106,7 +106,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [END delete_secret]
             HttpChallengeCache.clear()
             assert len(HttpChallengeCache._cache) == 0
-        return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -157,7 +156,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [END list_deleted_secrets]
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
-        return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -190,7 +188,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [END restore_secret_backup]
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
-        return dict()
+        
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -217,4 +215,3 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [END recover_deleted_secret]
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
-        return dict()
