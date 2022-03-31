@@ -81,6 +81,7 @@ jobs:
           arguments: >-
             -DocRepoLocation $(DocRepoLocation)
             -PackageSourceOverride "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+            -ImageId '$(DocValidationImageId)'
         displayName: Update Docs Onboarding for Daily branch
 
       - task: Powershell@2
