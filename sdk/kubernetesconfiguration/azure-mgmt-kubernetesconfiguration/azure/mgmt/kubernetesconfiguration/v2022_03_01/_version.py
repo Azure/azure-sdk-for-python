@@ -6,10 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._source_control_configurations_operations import SourceControlConfigurationsOperations
-from ._operations import Operations
-
-__all__ = [
-    'SourceControlConfigurationsOperations',
-    'Operations',
-]
+VERSION = "2.0.0"
