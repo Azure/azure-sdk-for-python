@@ -20,12 +20,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._fhir_destinations_operations import build_list_by_iot_connector_request
+from ...operations._workspace_private_link_resources_operations import build_get_request, build_list_by_workspace_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class FhirDestinationsOperations:
-    """FhirDestinationsOperations async operations.
+class WorkspacePrivateLinkResourcesOperations:
+    """WorkspacePrivateLinkResourcesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,29 +47,26 @@ class FhirDestinationsOperations:
         self._config = config
 
     @distributed_trace
-    def list_by_iot_connector(
+    def list_by_workspace(
         self,
         resource_group_name: str,
         workspace_name: str,
-        iot_connector_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.IotFhirDestinationCollection"]:
-        """Lists all FHIR destinations for the given IoT Connector.
+    ) -> AsyncIterable["_models.PrivateLinkResourceListResultDescription"]:
+        """Gets the private link resources that need to be created for a workspace.
 
         :param resource_group_name: The name of the resource group that contains the service instance.
         :type resource_group_name: str
         :param workspace_name: The name of workspace resource.
         :type workspace_name: str
-        :param iot_connector_name: The name of IoT Connector resource.
-        :type iot_connector_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either IotFhirDestinationCollection or the result of
-         cls(response)
+        :return: An iterator like instance of either PrivateLinkResourceListResultDescription or the
+         result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthcareapis.models.IotFhirDestinationCollection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthcareapis.models.PrivateLinkResourceListResultDescription]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotFhirDestinationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResultDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -77,23 +74,21 @@ class FhirDestinationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_iot_connector_request(
-                    resource_group_name=resource_group_name,
+                request = build_list_by_workspace_request(
                     subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
-                    iot_connector_name=iot_connector_name,
-                    template_url=self.list_by_iot_connector.metadata['url'],
+                    template_url=self.list_by_workspace.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_iot_connector_request(
-                    resource_group_name=resource_group_name,
+                request = build_list_by_workspace_request(
                     subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
-                    iot_connector_name=iot_connector_name,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -102,11 +97,11 @@ class FhirDestinationsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IotFhirDestinationCollection", pipeline_response)
+            deserialized = self._deserialize("PrivateLinkResourceListResultDescription", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -125,4 +120,60 @@ class FhirDestinationsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_iot_connector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/iotconnectors/{iotConnectorName}/fhirdestinations'}  # type: ignore
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/privateLinkResources'}  # type: ignore
+
+    @distributed_trace_async
+    async def get(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        group_name: str,
+        **kwargs: Any
+    ) -> "_models.PrivateLinkResourceDescription":
+        """Gets a private link resource that need to be created for a workspace.
+
+        :param resource_group_name: The name of the resource group that contains the service instance.
+        :type resource_group_name: str
+        :param workspace_name: The name of workspace resource.
+        :type workspace_name: str
+        :param group_name: The name of the private link resource group.
+        :type group_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PrivateLinkResourceDescription, or the result of cls(response)
+        :rtype: ~azure.mgmt.healthcareapis.models.PrivateLinkResourceDescription
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceDescription"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_get_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            group_name=group_name,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PrivateLinkResourceDescription', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/privateLinkResources/{groupName}'}  # type: ignore
+
