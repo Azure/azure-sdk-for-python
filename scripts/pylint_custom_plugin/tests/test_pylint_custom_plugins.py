@@ -1841,6 +1841,50 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
 class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientListMethodsUseCorePaging
 
+    def test_list_return_type_acceptable(self):
+        class_node, function_node = astroid.extract_node("""
+        from azure.core.paging import ItemPaged
+
+        class SomeClient(): #@
+            def _list_thing(self): #@
+                '''
+                :rtype: ItemPaged()
+                '''
+                ItemPaged()
+        """)
+
+        print(function_node.doc.split("rtype")[-1])
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+
+    def test_list_return_type_file_custom_class_acceptable(self):
+        file = open("./test_files/list_return_type_custom_class_acceptable.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        function_node = node.body[2].body[0]
+       
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+
+    def test_list_return_type_file_custom_class_violation(self):
+        file = open("./test_files/list_return_type_custom_class_violation.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        function_node = node.body[2].body[0]
+        returns = next(function_node.infer_call_result()).as_string()
+        print(function_node.doc.split("rtype:")[-1] not in returns)
+        print(returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1)
+       
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-list-methods-use-paging", node=function_node
+            )
+        ):
+            self.checker.visit_functiondef(function_node)
+
     def test_ignores_private_methods(self):
         class_node, function_node = astroid.extract_node("""
         class SomeClient(): #@
@@ -1867,9 +1911,15 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         
         class SomeClient(): #@
             def list_thing(self): #@
+                '''
+                :rtype: ItemPaged()
+                '''
                 return ItemPaged()
             @distributed_trace
             def list_thing2(self): #@
+                '''
+                :rtype: ItemPaged()
+                '''
                 return ItemPaged(
                     command, prefix=name_starts_with, results_per_page=results_per_page,
                     page_iterator_class=BlobPropertiesPaged)
@@ -1885,9 +1935,15 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         
         class SomeClient(): #@
             async def list_thing(self): #@
+                '''
+                :rtype: AsyncItemPaged()
+                '''
                 return AsyncItemPaged()
             @distributed_trace
             def list_thing2(self): #@
+                '''
+                :rtype: AsyncItemPaged()
+                '''
                 return AsyncItemPaged(
                     command, prefix=name_starts_with, results_per_page=results_per_page,
                     page_iterator_class=BlobPropertiesPaged)
@@ -1903,10 +1959,19 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         
         class SomeClient(): #@
             def list_thing(self): #@
+                '''
+                :rtype: list()
+                '''
                 return list()
             def list_thing2(self): #@
+                '''
+                :rtype: LROPoller()
+                '''
                 return LROPoller()
         """)
+
+        print(next(function_node_a.infer_call_result()).as_string())
+        print(next(function_node_b.infer_call_result()).as_string())
 
         with self.assertAddsMessages(
             pylint.testutils.Message(
@@ -1925,9 +1990,14 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         
         class SomeClient(): #@
             async def list_thing(self, **kwargs): #@
+                '''
+                :rtype: list()
+                '''
                 return list()
             async def list_thing2(self, **kwargs): #@
-                from azure.core.polling import LROPoller
+                '''
+                :rtype: LROPoller()
+                '''
                 return LROPoller()
         """)
 
@@ -2854,55 +2924,3 @@ class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(node.body[0])
 
 
-class TestListReturnType(pylint.testutils.CheckerTestCase):
-    CHECKER_CLASS = checker.ListReturnType
-
-    def test_list_return_type_acceptable(self):
-        class_node, function_node = astroid.extract_node("""
-        from azure.core.paging import ItemPaged
-
-        class SomeClient(): #@
-            def _list_thing(self): #@
-                '''
-                :rtype: ItemPaged()
-                '''
-                ItemPaged()
-        """)
-
-        print(function_node.doc.split("rtype")[-1])
-
-        with self.assertNoMessages():
-            self.checker.visit_functiondef(function_node)
-        # with self.assertAddsMessages(
-        #         pylint.testutils.Message(
-        #             msg_id="list-return-type", node=function_node
-        #         )
-        # ):
-        #     self.checker.visit_functiondef(function_node)
-
-    def test_list_return_type_file_custom_class_acceptable(self):
-        file = open("./test_files/list_return_type_custom_class_acceptable.py")
-        node = astroid.parse(file.read())
-        file.close()
-
-        function_node = node.body[2].body[0]
-       
-        with self.assertNoMessages():
-            self.checker.visit_functiondef(function_node)
-
-    def test_list_return_type_file_custom_class_violation(self):
-        file = open("./test_files/list_return_type_custom_class_violation.py")
-        node = astroid.parse(file.read())
-        file.close()
-
-        function_node = node.body[2].body[0]
-        returns = next(function_node.infer_call_result()).as_string()
-        print(function_node.doc.split("rtype:")[-1] not in returns)
-        print(returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1)
-       
-        with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="list-return-type", node=function_node
-            )
-        ):
-            self.checker.visit_functiondef(function_node)
