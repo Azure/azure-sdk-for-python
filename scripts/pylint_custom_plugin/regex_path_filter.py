@@ -1,4 +1,3 @@
-from imp import new_module
 import re
 from pylint.utils import utils
 
