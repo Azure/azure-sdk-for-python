@@ -327,4 +327,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
-[quickstart_guide]: https://docs.microsoft.com/en-us/azure/event-hubs/create-schema-registry
+[quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry
