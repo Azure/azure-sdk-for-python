@@ -6,22 +6,70 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
 from ._alert_rules_operations import AlertRulesOperations
 from ._actions_operations import ActionsOperations
 from ._alert_rule_templates_operations import AlertRuleTemplatesOperations
-from ._bookmarks_operations import BookmarksOperations
-from ._data_connectors_operations import DataConnectorsOperations
+from ._automation_rules_operations import AutomationRulesOperations
 from ._incidents_operations import IncidentsOperations
+from ._bookmarks_operations import BookmarksOperations
+from ._bookmark_relations_operations import BookmarkRelationsOperations
+from ._bookmark_operations import BookmarkOperations
+from ._ip_geodata_operations import IPGeodataOperations
+from ._domain_whois_operations import DomainWhoisOperations
+from ._entities_operations import EntitiesOperations
+from ._entities_get_timeline_operations import EntitiesGetTimelineOperations
+from ._entities_relations_operations import EntitiesRelationsOperations
+from ._entity_relations_operations import EntityRelationsOperations
+from ._entity_queries_operations import EntityQueriesOperations
+from ._entity_query_templates_operations import EntityQueryTemplatesOperations
 from ._incident_comments_operations import IncidentCommentsOperations
+from ._incident_relations_operations import IncidentRelationsOperations
+from ._metadata_operations import MetadataOperations
+from ._office_consents_operations import OfficeConsentsOperations
+from ._sentinel_onboarding_states_operations import SentinelOnboardingStatesOperations
+from ._product_settings_operations import ProductSettingsOperations
+from ._source_control_operations import SourceControlOperations
+from ._source_controls_operations import SourceControlsOperations
+from ._threat_intelligence_indicator_operations import ThreatIntelligenceIndicatorOperations
+from ._threat_intelligence_indicators_operations import ThreatIntelligenceIndicatorsOperations
+from ._threat_intelligence_indicator_metrics_operations import ThreatIntelligenceIndicatorMetricsOperations
+from ._watchlists_operations import WatchlistsOperations
+from ._watchlist_items_operations import WatchlistItemsOperations
+from ._data_connectors_operations import DataConnectorsOperations
+from ._data_connectors_check_requirements_operations import DataConnectorsCheckRequirementsOperations
+from ._operations import Operations
 
 __all__ = [
-    'Operations',
     'AlertRulesOperations',
     'ActionsOperations',
     'AlertRuleTemplatesOperations',
-    'BookmarksOperations',
-    'DataConnectorsOperations',
+    'AutomationRulesOperations',
     'IncidentsOperations',
+    'BookmarksOperations',
+    'BookmarkRelationsOperations',
+    'BookmarkOperations',
+    'IPGeodataOperations',
+    'DomainWhoisOperations',
+    'EntitiesOperations',
+    'EntitiesGetTimelineOperations',
+    'EntitiesRelationsOperations',
+    'EntityRelationsOperations',
+    'EntityQueriesOperations',
+    'EntityQueryTemplatesOperations',
     'IncidentCommentsOperations',
+    'IncidentRelationsOperations',
+    'MetadataOperations',
+    'OfficeConsentsOperations',
+    'SentinelOnboardingStatesOperations',
+    'ProductSettingsOperations',
+    'SourceControlOperations',
+    'SourceControlsOperations',
+    'ThreatIntelligenceIndicatorOperations',
+    'ThreatIntelligenceIndicatorsOperations',
+    'ThreatIntelligenceIndicatorMetricsOperations',
+    'WatchlistsOperations',
+    'WatchlistItemsOperations',
+    'DataConnectorsOperations',
+    'DataConnectorsCheckRequirementsOperations',
+    'Operations',
 ]
