@@ -194,14 +194,17 @@ class IssueProcess:
     def update_issue_instance(self) -> None:
         self.issue_package.issue = self.request_repo().get_issue(self.issue_package.issue.number)
 
+    def auto_assign_policy(self) -> str:
+        assignees = list(self.assignee_candidates)
+        random_idx = randint(0, len(assignees) - 1) if len(assignees) > 1 else 0
+        return assignees[random_idx]
+
     def auto_assign(self) -> None:
         if AUTO_ASSIGN_LABEL in self.issue_package.labels_name:
             self.update_issue_instance()
             return
         # assign averagely
-        assignees = list(self.assignee_candidates)
-        random_idx = randint(0, len(assignees) - 1) if len(assignees) > 1 else 0
-        assignee = assignees[random_idx]
+        assignee = self.auto_assign_policy()
 
         # update assignee
         if self.assignee != assignee:
@@ -292,6 +295,7 @@ class Common:
         self.package_name = ''
         self.result = []
         self.request_repo_dict = {}
+        self.issue_process_function = IssueProcess
 
         for assignee in assignee_token:
             self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
@@ -330,7 +334,7 @@ class Common:
     def run(self):
         items = []
         for item in self.issues_package:
-            issue = IssueProcess(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
+            issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
             try:
                 issue.run()
                 self.result.append(issue)

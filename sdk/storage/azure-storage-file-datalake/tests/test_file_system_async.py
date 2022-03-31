@@ -97,24 +97,24 @@ class FileSystemTest(StorageTestCase):
         self.assertTrue(created)
 
     @DataLakePreparer()
-    async def test_create_file_system_async_if_not_exists_without_existing_container(self,
-                                                                                     datalake_storage_account_name,
-                                                                                     datalake_storage_account_key):
+    async def test_create_file_system_async_if_not_exists_without_existing_file_system(self,
+                                                                                       datalake_storage_account_name,
+                                                                                       datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = self._get_file_system_reference()
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
-        created = await file_system_client.create_if_not_exists()
+        created = await file_system_client.create_file_system_if_not_exists()
 
         # Assert
         self.assertTrue(created)
 
     @DataLakePreparer()
-    async def test_create_file_system_async_if_not_exists_with_existing_container(self,
-                                                                                  datalake_storage_account_name,
-                                                                                  datalake_storage_account_key):
+    async def test_create_file_system_async_if_not_exists_with_existing_file_system(self,
+                                                                                    datalake_storage_account_name,
+                                                                                    datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = self._get_file_system_reference()
@@ -122,7 +122,7 @@ class FileSystemTest(StorageTestCase):
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         await file_system_client.create_file_system()
-        created = await file_system_client.create_if_not_exists()
+        created = await file_system_client.create_file_system_if_not_exists()
 
         # Assert
         self.assertIsNone(created)

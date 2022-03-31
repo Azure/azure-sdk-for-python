@@ -1,11 +1,11 @@
 {
-  "autorest": "3.4.5",
+  "autorest": "3.7.2",
   "use": [
-    "@autorest/python@5.8.3",
-    "@autorest/modelerfour@4.19.2"
+    "@autorest/python@5.12.0",
+    "@autorest/modelerfour@4.19.3"
   ],
-  "commit": "9d35bc9e89687145294705eb72e378bd83c1520c",
+  "commit": "caa10088c63b9cd7a5110f920735179c187becde",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest_command": "autorest specification/mediaservices/resource-manager/readme.md --multiapi --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --track2 --use=@autorest/python@5.8.3 --use=@autorest/modelerfour@4.19.2 --version=3.4.5",
+  "autorest_command": "autorest specification/mediaservices/resource-manager/readme.md --multiapi --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --python3-only --track2 --use=@autorest/python@5.12.0 --use=@autorest/modelerfour@4.19.3 --version=3.7.2",
   "readme": "specification/mediaservices/resource-manager/readme.md"
 }
