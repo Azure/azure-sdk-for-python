@@ -4,11 +4,9 @@
 # -------------------------------------
 from __future__ import print_function
 
-import functools
 import time
 
 import pytest
-from azure.keyvault.secrets._shared import HttpChallengeCache
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
@@ -99,8 +97,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # if you want to block until secret is deleted server-side, call wait() on the poller
         deleted_secret_poller.wait()
         # [END delete_secret]
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPrepaper()
@@ -149,9 +145,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_deleted_secrets]
 
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPrepaper()
     @recorded_by_proxy
@@ -179,8 +172,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_secret.id)
         print(restored_secret.version)
         # [END restore_secret_backup]
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsClientPrepaper()
@@ -207,5 +198,3 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # if you want to block until secret is recovered server-side, call wait() on the poller
         recover_secret_poller.wait()
         # [END recover_deleted_secret]
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0

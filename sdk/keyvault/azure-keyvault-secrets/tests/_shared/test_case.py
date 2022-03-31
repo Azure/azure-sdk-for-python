@@ -4,7 +4,7 @@
 # ------------------------------------
 import time
 
-
+from azure.keyvault.secrets._shared import HttpChallengeCache
 from devtools_testutils import AzureRecordedTestCase
 
 
@@ -37,3 +37,7 @@ class KeyVaultTestCase(AzureRecordedTestCase):
                 return
 
         self.fail("expected exception {expected_exception} was not raised")
+
+    def teardown_method(self, method):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0

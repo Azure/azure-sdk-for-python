@@ -2,11 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-import functools
 
 import pytest
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
-from azure.keyvault.secrets._shared import HttpChallengeCache
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import recorded_by_proxy
 
@@ -37,8 +35,6 @@ class TestParseId(KeyVaultTestCase):
         assert parsed_secret_id.vault_url == client.vault_url
         assert parsed_secret_id.version == secret.properties.version
         assert parsed_secret_id.source_id == secret.id
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
 
 
 def test_parse_secret_id_with_pending_version():

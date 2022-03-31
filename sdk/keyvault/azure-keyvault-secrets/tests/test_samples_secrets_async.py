@@ -3,10 +3,9 @@
 # Licensed under the MIT License.
 # -------------------------------------
 import asyncio
-import functools
+
 
 import pytest
-from azure.keyvault.secrets._shared import HttpChallengeCache
 from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.sanitizers import set_custom_default_matcher
@@ -104,8 +103,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(deleted_secret.scheduled_purge_date)
             print(deleted_secret.recovery_id)
             # [END delete_secret]
-            HttpChallengeCache.clear()
-            assert len(HttpChallengeCache._cache) == 0
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -154,8 +151,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                 print(secret.recovery_id)
                 print(secret.deleted_date)
             # [END list_deleted_secrets]
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -186,8 +181,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(restored_secret.id)
             print(restored_secret.version)
             # [END restore_secret_backup]
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
@@ -212,5 +205,3 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(recovered_secret.id)
             print(recovered_secret.name)
             # [END recover_deleted_secret]
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
