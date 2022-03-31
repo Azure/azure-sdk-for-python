@@ -32,13 +32,6 @@ with open('README.md', encoding='utf-8') as f:
 with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
-exclude_packages = [
-        'tests',
-        'samples',
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
-        'azure.schemaregistry',
-    ]
 install_packages = [
     'azure-schemaregistry>=1.0.0,<2.0.0',
     'avro>=1.11.0',
@@ -69,7 +62,7 @@ setup(
     python_requires=">=3.6",
     zip_safe=False,
     packages=find_namespace_packages(
-        include=['azure.schemaregistry.*']
+        include=['azure.schemaregistry.*']  # Exclude packages that will be covered by PEP420 or nspkg
     ),
     install_requires=install_packages
 )
