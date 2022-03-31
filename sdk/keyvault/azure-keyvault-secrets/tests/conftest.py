@@ -31,14 +31,6 @@ from unittest import mock
 from devtools_testutils import is_live, test_proxy, add_oauth_response_sanitizer, add_general_regex_sanitizer
 
 
-# from devtools_testutils import test_proxy, add_general_regex_sanitizer
-
-# Ignore async tests for Python < 3.5
-collect_ignore_glob = []
-if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
-    collect_ignore_glob.append("*_async.py")
-
-
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     azure_keyvault_url = os.getenv("azure_keyvault_url", "https://vaultname.vault.azure.net")
