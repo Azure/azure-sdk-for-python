@@ -21,6 +21,4 @@ class RegexPathFilter:
                 new_modules.append(m)
         return new_modules
 
-
-    
             
