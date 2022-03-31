@@ -120,6 +120,11 @@ class TestAvroEncoder(AzureRecordedTestCase):
         assert decoded_content["favorite_color"] == u"red"
 
         # bad content type
+        mime_type, schema_id = encoded_content_dict["content_type"].split("+")
+        encoded_content_dict["content_type"] = "binary/fakeavro+" + schema_id
+        with pytest.raises(InvalidContentError) as e:
+            decoded_content = sr_avro_encoder.decode(encoded_content_dict)
+
         encoded_content_dict["content_type"] = 'a+b+c'
         with pytest.raises(InvalidContentError) as e:
             decoded_content = sr_avro_encoder.decode(encoded_content_dict)

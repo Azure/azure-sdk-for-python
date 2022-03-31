@@ -103,14 +103,14 @@ def validate_message(message: Union[MessageType, MessageContent]):
 
     try:
         content_type_parts = content_type.split("+")
-        if len(content_type_parts) != 2:
+        if len(content_type_parts) != 2 or content_type_parts[0] != AVRO_MIME_TYPE:
             raise InvalidContentError(
-                "Content type was not in the expected format of MIME type + schema ID."
+                f"Content type {content_type} was not in the expected format of Avro MIME type + schema ID."
             )
         schema_id = content_type_parts[1]
     except AttributeError:
         raise InvalidContentError(
-            f"Content type {content_type} was not in the expected format of MIME type + schema ID."
+            f"Content type {content_type} was not in the expected format of Avro MIME type + schema ID."
         )
 
     return schema_id, content
