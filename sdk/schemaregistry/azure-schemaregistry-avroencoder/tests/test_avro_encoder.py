@@ -121,7 +121,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         # bad content type
         mime_type, schema_id = encoded_content_dict["content_type"].split("+")
-        encoded_content_dict["content_type"] = "binary/fakeavro+" + schema_id
+        encoded_content_dict["content_type"] = "binary/fake+" + schema_id
         with pytest.raises(InvalidContentError) as e:
             decoded_content = sr_avro_encoder.decode(encoded_content_dict)
 
