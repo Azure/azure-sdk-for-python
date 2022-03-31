@@ -5,48 +5,48 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-queue/12.3.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 19:02:39 GMT
+      - Wed, 30 Mar 2022 21:30:20 GMT
       x-ms-version:
       - '2021-02-12'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/pyqueueasync40eb1deb
+    uri: https://storagename.queue.core.windows.net/pyqueueasynccc071c4d
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Mar 2022 19:02:37 GMT
+      date: Wed, 30 Mar 2022 21:30:20 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-02-12'
     status:
       code: 201
       message: Created
-    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasync40eb1deb
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasynccc071c4d
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-queue/12.3.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 19:02:39 GMT
+      - Wed, 30 Mar 2022 21:30:20 GMT
       x-ms-version:
       - '2021-02-12'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/pyqueueasync40eb1deb
+    uri: https://storagename.queue.core.windows.net/pyqueueasynccc071c4d
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Mar 2022 19:02:38 GMT
+      date: Wed, 30 Mar 2022 21:30:20 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-02-12'
     status:
       code: 204
       message: No Content
-    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasync40eb1deb
+    url: https://vincenttrancanary.queue.core.windows.net/pyqueueasynccc071c4d
 version: 1
