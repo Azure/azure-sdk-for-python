@@ -155,7 +155,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_if_not_exists(self, **kwargs):
+    async def create_queue_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new queue in the storage account.
 
