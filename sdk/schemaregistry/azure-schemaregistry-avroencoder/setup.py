@@ -69,7 +69,7 @@ setup(
     python_requires=">=3.6",
     zip_safe=False,
     packages=find_namespace_packages(
-        include=['azure.*']
+        include=['azure.schemaregistry.*']
     ),
     install_requires=install_packages
 )
