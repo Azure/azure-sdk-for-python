@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class TextAnalyticsClientConfiguration(Configuration):
+class TextAnalyticsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for TextAnalyticsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,8 +27,12 @@ class TextAnalyticsClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :param endpoint: Supported Cognitive Services endpoint (e.g.,
+     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2022-03-01-preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -38,14 +42,17 @@ class TextAnalyticsClientConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(TextAnalyticsClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(TextAnalyticsClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://cognitiveservices.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'ai-textanalytics/{}'.format(VERSION))
         self._configure(**kwargs)

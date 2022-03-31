@@ -11,6 +11,58 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AnalyzeTextLROResultsKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enumeration of supported Text Analysis long-running operation task results.
+    """
+
+    SENTIMENT_ANALYSIS_LRO_RESULTS = "SentimentAnalysisLROResults"
+    ENTITY_RECOGNITION_LRO_RESULTS = "EntityRecognitionLROResults"
+    PII_ENTITY_RECOGNITION_LRO_RESULTS = "PiiEntityRecognitionLROResults"
+    KEY_PHRASE_EXTRACTION_LRO_RESULTS = "KeyPhraseExtractionLROResults"
+    ENTITY_LINKING_LRO_RESULTS = "EntityLinkingLROResults"
+    HEALTHCARE_LRO_RESULTS = "HealthcareLROResults"
+    EXTRACTIVE_SUMMARIZATION_LRO_RESULTS = "ExtractiveSummarizationLROResults"
+    CUSTOM_ENTITY_RECOGNITION_LRO_RESULTS = "CustomEntityRecognitionLROResults"
+    CUSTOM_SINGLE_LABEL_CLASSIFICATION_LRO_RESULTS = "CustomSingleLabelClassificationLROResults"
+    CUSTOM_MULTI_LABEL_CLASSIFICATION_LRO_RESULTS = "CustomMultiLabelClassificationLROResults"
+
+class AnalyzeTextLROTaskKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enumeration of supported long-running Text Analysis tasks.
+    """
+
+    SENTIMENT_ANALYSIS = "SentimentAnalysis"
+    ENTITY_RECOGNITION = "EntityRecognition"
+    PII_ENTITY_RECOGNITION = "PiiEntityRecognition"
+    KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
+    ENTITY_LINKING = "EntityLinking"
+    HEALTHCARE = "Healthcare"
+    EXTRACTIVE_SUMMARIZATION = "ExtractiveSummarization"
+    CUSTOM_ENTITY_RECOGNITION = "CustomEntityRecognition"
+    CUSTOM_SINGLE_LABEL_CLASSIFICATION = "CustomSingleLabelClassification"
+    CUSTOM_MULTI_LABEL_CLASSIFICATION = "CustomMultiLabelClassification"
+
+class AnalyzeTextTaskKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enumeration of supported Text Analysis tasks.
+    """
+
+    SENTIMENT_ANALYSIS = "SentimentAnalysis"
+    ENTITY_RECOGNITION = "EntityRecognition"
+    PII_ENTITY_RECOGNITION = "PiiEntityRecognition"
+    KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
+    LANGUAGE_DETECTION = "LanguageDetection"
+    ENTITY_LINKING = "EntityLinking"
+
+class AnalyzeTextTaskResultsKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enumeration of supported Text Analysis task results.
+    """
+
+    SENTIMENT_ANALYSIS_RESULTS = "SentimentAnalysisResults"
+    ENTITY_RECOGNITION_RESULTS = "EntityRecognitionResults"
+    PII_ENTITY_RECOGNITION_RESULTS = "PiiEntityRecognitionResults"
+    KEY_PHRASE_EXTRACTION_RESULTS = "KeyPhraseExtractionResults"
+    LANGUAGE_DETECTION_RESULTS = "LanguageDetectionResults"
+    ENTITY_LINKING_RESULTS = "EntityLinkingResults"
+
 class Association(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if the entity is the subject of the text or if it describes someone else.
     """
@@ -44,19 +96,33 @@ class DocumentSentimentValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     NEGATIVE = "negative"
     MIXED = "mixed"
 
-class ErrorCodeValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Error code.
+class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Human-readable error code.
     """
 
     INVALID_REQUEST = "InvalidRequest"
     INVALID_ARGUMENT = "InvalidArgument"
+    UNAUTHORIZED = "Unauthorized"
+    FORBIDDEN = "Forbidden"
+    NOT_FOUND = "NotFound"
+    PROJECT_NOT_FOUND = "ProjectNotFound"
+    OPERATION_NOT_FOUND = "OperationNotFound"
+    AZURE_COGNITIVE_SEARCH_NOT_FOUND = "AzureCognitiveSearchNotFound"
+    AZURE_COGNITIVE_SEARCH_INDEX_NOT_FOUND = "AzureCognitiveSearchIndexNotFound"
+    TOO_MANY_REQUESTS = "TooManyRequests"
+    AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
+    AZURE_COGNITIVE_SEARCH_INDEX_LIMIT_REACHED = "AzureCognitiveSearchIndexLimitReached"
     INTERNAL_SERVER_ERROR = "InternalServerError"
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
-    NOT_FOUND = "NotFound"
 
-class ExtractiveSummarizationTaskParametersSortBy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ExtractiveSummarizationSortingCriteria(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The sorting criteria to use for the results of Extractive Summarization.
+    """
 
+    #: Indicates that results should be sorted in order of appearance in the text.
     OFFSET = "Offset"
+    #: Indicates that results should be sorted in order of importance (i.e. rank score) according to
+    #: the model.
     RANK = "Rank"
 
 class HealthcareEntityCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -90,14 +156,19 @@ class HealthcareEntityCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     FAMILY_RELATION = "FAMILY_RELATION"
     TREATMENT_NAME = "TREATMENT_NAME"
 
-class InnerErrorCodeValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Error code.
+class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Human-readable error code.
     """
 
+    INVALID_REQUEST = "InvalidRequest"
     INVALID_PARAMETER_VALUE = "InvalidParameterValue"
+    KNOWLEDGE_BASE_NOT_FOUND = "KnowledgeBaseNotFound"
+    AZURE_COGNITIVE_SEARCH_NOT_FOUND = "AzureCognitiveSearchNotFound"
+    AZURE_COGNITIVE_SEARCH_THROTTLING = "AzureCognitiveSearchThrottling"
+    EXTRACTION_FAILURE = "ExtractionFailure"
     INVALID_REQUEST_BODY_FORMAT = "InvalidRequestBodyFormat"
     EMPTY_REQUEST = "EmptyRequest"
-    MISSING_INPUT_RECORDS = "MissingInputRecords"
+    MISSING_INPUT_DOCUMENTS = "MissingInputDocuments"
     INVALID_DOCUMENT = "InvalidDocument"
     MODEL_VERSION_INCORRECT = "ModelVersionIncorrect"
     INVALID_DOCUMENT_BATCH = "InvalidDocumentBatch"
@@ -280,9 +351,13 @@ class PiiCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ALL = "All"
     DEFAULT = "Default"
 
-class PiiTaskParametersDomain(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PiiDomain(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The PII domain used for PII Entity Recognition.
+    """
 
+    #: Indicates that entities in the Personal Health Information domain should be redacted.
     PHI = "phi"
+    #: Indicates that no domain is specified.
     NONE = "none"
 
 class RelationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -324,17 +399,21 @@ class State(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NOT_STARTED = "notStarted"
     RUNNING = "running"
     SUCCEEDED = "succeeded"
+    PARTIALLY_SUCCEEDED = "partiallySucceeded"
     FAILED = "failed"
-    REJECTED = "rejected"
     CANCELLED = "cancelled"
     CANCELLING = "cancelling"
 
 class StringIndexType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
+    according to Unicode v8.0.0. For additional information see
+    https://aka.ms/text-analytics-offsets.
+    """
 
     #: Returned offset and length values will correspond to TextElements (Graphemes and Grapheme
     #: clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is
     #: written in .Net Framework or .Net Core and you will be using StringInfo.
-    TEXT_ELEMENT_V8 = "TextElement_v8"
+    TEXT_ELEMENTS_V8 = "TextElements_v8"
     #: Returned offset and length values will correspond to Unicode code points. Use this option if
     #: your application is written in a language that support Unicode, for example Python.
     UNICODE_CODE_POINT = "UnicodeCodePoint"
