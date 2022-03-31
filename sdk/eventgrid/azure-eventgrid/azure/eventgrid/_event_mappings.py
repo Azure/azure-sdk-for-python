@@ -150,6 +150,12 @@ class SystemEventNames(str, Enum):
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
+    FhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
+
+    FhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
+
+    FhirResourceUpdatedEventName = 'Microsoft.HealthcareApis.FhirResourceUpdated'
+
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
 
     IotHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'

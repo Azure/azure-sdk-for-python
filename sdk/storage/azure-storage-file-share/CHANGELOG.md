@@ -1,9 +1,9 @@
 # Release History
 
-## 12.7.1 (Unreleased)
+## 12.8.0b1 (Unreleased)
 
 ### Features Added
-- Added support for `create_if_not_exists()` for `FileShareClient`
+- Added support for `create_share_if_not_exists()` for `FileShareClient`
 
 ### Bugs Fixed
 - Updated `create_share()` docstring to have the correct return-type of `None`

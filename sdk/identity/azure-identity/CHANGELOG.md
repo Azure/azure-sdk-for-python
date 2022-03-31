@@ -1,14 +1,18 @@
 # Release History
 
-## 1.9.0b2 (Unreleased)
+## 1.9.0 (2022-04-05)
 
 ### Features Added
 
+- Added PII logging if logging.DEBUG is enabled.    ([#23203](https://github.com/Azure/azure-sdk-for-python/issues/23203))
+
 ### Breaking Changes
+
+- `validate_authority` support is not available in 1.9.0.
 
 ### Bugs Fixed
 
-- Added check on `content` from msal response    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
+- Added check on `content` from msal response.    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
 - Fixed the issue that async OBO credential does not refresh correctly.    ([#21981](https://github.com/Azure/azure-sdk-for-python/issues/21981))
 
 ### Other Changes

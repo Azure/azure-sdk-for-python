@@ -109,7 +109,7 @@ class StorageShareTest(AsyncStorageTestCase):
         share = self._get_share_reference()
 
         # Act
-        created = await share.create_if_not_exists()
+        created = await share.create_share_if_not_exists()
 
         # Assert
         self.assertTrue(created)
@@ -123,7 +123,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Act
         await share.create_share()
-        created = await share.create_if_not_exists()
+        created = await share.create_share_if_not_exists()
 
         # Assert
         self.assertIsNone(created)
