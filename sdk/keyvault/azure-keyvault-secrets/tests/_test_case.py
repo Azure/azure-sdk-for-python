@@ -8,7 +8,6 @@ import pytest
 from azure.keyvault.secrets import ApiVersion
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import AzureRecordedTestCase, is_live
-from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 
 def get_decorator(**kwargs):
@@ -16,7 +15,7 @@ def get_decorator(**kwargs):
     return [(api_version) for api_version in ApiVersion]
 
 
-class SecretsClientPrepaper(AzureRecordedTestCase):
+class SecretsClientPreparer(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
         self.azure_keyvault_url = "https://vaultname.vault.azure.net"
 

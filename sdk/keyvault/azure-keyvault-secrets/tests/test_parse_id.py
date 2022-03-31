@@ -9,12 +9,12 @@ from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import SecretsClientPrepaper
+from _test_case import SecretsClientPreparer
 
 
 class TestParseId(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", [(DEFAULT_VERSION)])
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_parse_secret_id_with_version(self, client, **kwargs):
         secret_name = self.get_resource_name("secret")

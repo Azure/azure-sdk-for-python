@@ -10,7 +10,7 @@ import pytest
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import SecretsClientPrepaper, get_decorator
+from _test_case import SecretsClientPreparer, get_decorator
 
 all_api_versions = get_decorator()
 
@@ -34,7 +34,7 @@ def test_create_secret_client():
 
 class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_example_secret_crud_operations(self, client, **kwargs):
         secret_client = client
@@ -99,7 +99,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END delete_secret]
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_example_secret_list_operations(self, client, **kwargs):
         secret_client = client
@@ -146,7 +146,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_secrets]
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_example_secrets_backup_restore(self, client, **kwargs):
         secret_client = client
@@ -174,7 +174,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END restore_secret_backup]
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_example_secrets_recover(self, client, **kwargs):
         secret_client = client

@@ -7,7 +7,6 @@ import os
 import pytest
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import AzureRecordedTestCase, is_live
-from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 
 class AsyncSecretsClientPreparer(AzureRecordedTestCase):

@@ -18,7 +18,7 @@ from devtools_testutils import recorded_by_proxy
 
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import SecretsClientPrepaper, get_decorator
+from _test_case import SecretsClientPreparer, get_decorator
 
 all_api_versions = get_decorator()
 logging_enabled = get_decorator(logging_enable=True)
@@ -70,7 +70,7 @@ class TestSecretClient(KeyVaultTestCase):
         assert len(expected) == 0
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_secret_crud_operations(self, client, **kwargs):
         secret_name = self.get_resource_name("crud-secret")
@@ -139,7 +139,7 @@ class TestSecretClient(KeyVaultTestCase):
         assert deleted is not None
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
         max_secrets = list_test_size
@@ -159,7 +159,7 @@ class TestSecretClient(KeyVaultTestCase):
         self._validate_secret_list(result, expected)
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
 
@@ -187,7 +187,7 @@ class TestSecretClient(KeyVaultTestCase):
         assert len(expected) == 0
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
@@ -212,7 +212,7 @@ class TestSecretClient(KeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_backup_restore(self, client, **kwargs):
 
@@ -238,7 +238,7 @@ class TestSecretClient(KeyVaultTestCase):
         self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_recover(self, client, **kwargs):
 
@@ -268,7 +268,7 @@ class TestSecretClient(KeyVaultTestCase):
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper()
+    @SecretsClientPreparer()
     @recorded_by_proxy
     def test_purge(self, client, **kwargs):
 
@@ -298,7 +298,7 @@ class TestSecretClient(KeyVaultTestCase):
         assert not any(s in deleted for s in secrets.keys())
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper(logging_enable=True)
+    @SecretsClientPreparer(logging_enable=True)
     @recorded_by_proxy
     def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
@@ -332,7 +332,7 @@ class TestSecretClient(KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
-    @SecretsClientPrepaper(logging_enable=False)
+    @SecretsClientPreparer(logging_enable=False)
     @recorded_by_proxy
     def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
