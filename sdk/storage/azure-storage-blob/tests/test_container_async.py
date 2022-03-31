@@ -106,7 +106,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         # Act
         container = bsc.get_container_client(container_name)
-        created = await container.create_if_not_exists()
+        created = await container.create_container_if_not_exists()
 
         # Assert
         self.assertTrue(created)
@@ -120,7 +120,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Act
         container = bsc.get_container_client(container_name)
         await container.create_container()
-        created = await container.create_if_not_exists()
+        created = await container.create_container_if_not_exists()
 
         # Assert
         self.assertIsNone(created)

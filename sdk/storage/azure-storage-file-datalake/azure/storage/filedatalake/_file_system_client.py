@@ -265,7 +265,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                        public_access=public_access,
                                                        **kwargs)
 
-    def create_if_not_exists(self, **kwargs):
+    def create_file_system_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new file system under the specified account.
 
@@ -274,9 +274,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword Dict(str,str) metadata:
             A dict with name-value pairs to associate with the
             file system as metadata. Example: `{'Category':'test'}`
-        :keyword public_access:
+        :keyword ~azure.storage.filedatalake.PublicAccess public_access:
             To specify whether data in the file system may be accessed publicly and the level of access.
-        :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
