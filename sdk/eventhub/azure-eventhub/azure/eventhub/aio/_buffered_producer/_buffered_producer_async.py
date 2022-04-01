@@ -6,7 +6,7 @@ import asyncio
 import time
 import queue
 import logging
-from asyncio import Future, Lock, Condition, Semaphore
+from asyncio import Lock, Condition, Semaphore
 from weakref import WeakSet
 
 from typing import Optional, Any, Callable, List
@@ -53,20 +53,20 @@ class BufferedProducer:
         self._check_max_wait_time_future = None
         self.partition_id = partition_id
 
-    def start(self):
-        with self._lock:
+    async def start(self):
+        async with self._lock:
             self._cur_batch = EventDataBatch(self._max_message_size_on_link)
             self._buffered_queue.put(self._cur_batch)
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()
-                self._check_max_wait_time_future = self._executor.submit(self.check_max_wait_time_worker)
+                self._check_max_wait_time_future = asyncio.ensure_future(self.check_max_wait_time_worker())
 
-    def stop(self, flush=True, timeout=None):
+    async def stop(self, flush=True, timeout=None):
         self._running = False
         if self._check_max_wait_time_future:
             try:
-                self._check_max_wait_time_future.result(timeout)
+                await self._check_max_wait_time_future
             except Exception as exc:
                 _LOGGER.warning(
                     "Partition {} stopped with error {!r}".format(
@@ -75,7 +75,7 @@ class BufferedProducer:
                     )
                 )
         if flush:
-            self.flush(timeout=timeout, raise_error=False)
+            await self.flush(timeout=timeout, raise_error=False)
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
@@ -85,13 +85,13 @@ class BufferedProducer:
                         self._cur_buffered_len
                     )
                 )
-        self._producer.close()
+        await self._producer.close()
 
     async def put_events(self, events, timeout=None):
         # Put single event or EventDataBatch into the queue.
         # This method would raise OperationTimeout if the queue does not have enough space for the input and
         # flush cannot finish in timeout.
-        with self._not_full:
+        async with self._not_full:
             try:
                 new_events_len = len(events)
             except TypeError:
@@ -142,7 +142,7 @@ class BufferedProducer:
     async def flush(self, timeout=None, raise_error=True):
         # try flushing all the buffered batch within given time
         _LOGGER.info("Partition: {} started flushing.".format(self.partition_id))
-        with self._not_empty:
+        async with self._not_empty:
             timeout_time = time.time() + timeout if timeout else None
             while not self._buffered_queue.empty():
                 remaining_time = timeout_time - time.time() if timeout_time else None
@@ -196,17 +196,17 @@ class BufferedProducer:
 
     async def check_max_wait_time_worker(self):
         while self._running:
-            with self._not_empty:
+            async with self._not_empty:
                 if not self._buffered_queue.qsize():
                     _LOGGER.info("Partition {} worker is awaiting data.".format(self.partition_id))
                     await self._not_empty.wait()
-                now_time = time.time()
-                _LOGGER.info("Partition {} worker is checking max_wait_time.".format(self.partition_id))
-                if now_time - self._last_send_time > self._max_wait_time:
-                    # in the worker, not raising error for flush, users can not handle this
-                    await self.flush(raise_error=False)
-                    self._last_send_time = now_time
-            time.sleep(self._max_wait_time - (now_time - self._last_send_time))
+            now_time = time.time()
+            _LOGGER.info("Partition {} worker is checking max_wait_time.".format(self.partition_id))
+            if now_time - self._last_send_time > self._max_wait_time:
+                # in the worker, not raising error for flush, users can not handle this
+                await self.flush(raise_error=False)
+                self._last_send_time = now_time
+            await asyncio.sleep(self._max_wait_time - (now_time - self._last_send_time))
 
     @property
     def buffered_event_count(self):

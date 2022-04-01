@@ -163,8 +163,6 @@ class EventHubProducerClient(ClientBase):
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
         credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential],
-        *,
-        buffered_mode=False,  # type: bool
         **kwargs  # type: Any
     ):
         # type:(...) -> None
@@ -181,13 +179,13 @@ class EventHubProducerClient(ClientBase):
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
         self._lock = threading.Lock()
-        self._buffered_mode = buffered_mode
+        self._buffered_mode = kwargs.get("buffered_mode", False)
         self._on_success = kwargs.get("on_success")
         self._on_error = kwargs.get("on_error")
         self._buffered_producer_dispatcher = None
-        self._max_wait_time = kwargs.get("max_wait_time", 1)
-        self._max_buffer_length = kwargs.get("max_buffer_length", 1500)
-        self._max_concurrent_sends = kwargs.get("max_concurrent_sends", 1)
+        self._max_wait_time = kwargs.get("max_wait_time", None) or 1
+        self._max_buffer_length = kwargs.get("max_buffer_length") or 1500
+        self._max_concurrent_sends = kwargs.get("max_concurrent_sends") or 1
         self._executor = kwargs.get("executor")
         self._max_worker = kwargs.get("max_worker")
 
@@ -202,6 +200,14 @@ class EventHubProducerClient(ClientBase):
                 raise TypeError(
                     "EventHubProducerClient in buffered mode missing 1 required keyword argument: 'on_success'"
                 )
+            if self._max_wait_time is None:
+                self._max_wait_time = 1
+            if self._max_wait_time <= 0:
+                raise ValueError("'max_wait_time' must be a float greater than 0 in buffered mode")
+            if self._max_buffer_length is None:
+                self._max_buffer_length = 1500
+            if self._max_buffer_length <= 0:
+                raise ValueError("'max_buffer_length' must be an integer greater than 0 in buffered mode")
 
     def __enter__(self):
         return self
@@ -258,7 +264,7 @@ class EventHubProducerClient(ClientBase):
 
         self._buffered_send(
             event_data_batch,
-            partition_id=pid,  # pylint:disable=protected-access
+            partition_id=pid,
             partition_key=pkey,
             timeout=kwargs.get("timeout")
         )
@@ -687,12 +693,8 @@ class EventHubProducerClient(ClientBase):
         :keyword Optional[float] timeout: Timeout to flush the buffered events, default is None which means no timeout.
         :rtype: None
         """
-        if self._buffered_mode:
-            try:
-                self._buffered_producer_dispatcher.flush(timeout=kwargs.get("timeout"))
-            except AttributeError:
-                # buffered producer not instantiated yet
-                pass
+        if self._buffered_mode and self._buffered_producer_dispatcher:
+            self._buffered_producer_dispatcher.flush(timeout=kwargs.get("timeout"))
 
     def close(
         self,

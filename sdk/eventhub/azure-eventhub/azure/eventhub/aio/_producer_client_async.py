@@ -5,7 +5,21 @@
 import asyncio
 import logging
 
-from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, Literal, Callable, Awaitable, cast, overload
+from typing import (
+    Any,
+    Union,
+    List,
+    Optional,
+    Dict,
+    Callable,
+    cast
+)
+from typing_extensions import (
+    TYPE_CHECKING,
+    Literal,
+    Awaitable,
+    overload
+)
 from uamqp import constants
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -14,6 +28,8 @@ from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
+from ._buffered_producer import BufferedProducerDispatcher
+from .._utils import set_message_partition_key
 from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
 
@@ -125,31 +141,6 @@ class EventHubProducerClient(ClientBaseAsync):
         buffered_mode: Literal[False] = False,
         **kwargs: Any
     ):
-        """EventHubProducerClient in non-buffered mode. Calling send will block until acknowledgement is
-        received or operation times out.
-        :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
-         This is likely to be similar to <yournamespace>.servicebus.windows.net
-        :param str eventhub_name: The path of the specific Event Hub to connect the client to.
-        :param credential: The credential object used for authentication which
-         implements a particular interface for getting tokens. It accepts
-         :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
-         by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
-        :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
-         or ~azure.core.credentials.AzureNamedKeyCredential
-        :keyword on_success: The optional callback to be called once a batch has been successfully published.
-         The callback takes two parameters: `events` which are the list of events that have been successfully published
-         and `partition_id` which is the partition id that the events in the list have been published to.
-         The callback function should be defined like: `on_success(events, partition_id)`.
-        :paramtype on_success: Optional[Callable[[List[EventData], Optional[str]], Awaitable[None]]]
-        :keyword on_error: The optional callback to be called once a batch has failed to be published.
-         The callback takes three parameters: `events` which are the list of events that failed to be published,
-         `partition_id` which is the partition id that the events in the list have been tried to be published to and
-         `error` being the exception.
-         The callback function should be defined like: `on_error(events, error, partition_id)`.
-         If on_error is passed in non-buffered mode, callback will be called with the error instead of
-         error being raised from the send method.
-        :paramtype on_error: Optional[Callable[[List[EventData], Exception, Optional[str]], Awaitable[None]]]
-        """
         ...
 
     @overload
@@ -166,52 +157,9 @@ class EventHubProducerClient(ClientBaseAsync):
         on_success: Callable[[List["EventData"], Optional[str]], Awaitable[None]],
         max_event_buffer_length_per_partition: int = 10,
         max_wait_time: float = 1,
+        max_concurrent_sends: int = 1,
         **kwargs: Any
     ):
-        """EventHubProducerClient in buffered mode. Calling send will enqueue the event
-        into local buffer and return. The producer will do automatic batching and sending in the background.
-        :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
-         This is likely to be similar to <yournamespace>.servicebus.windows.net
-        :param str eventhub_name: The path of the specific Event Hub to connect the client to.
-        :param credential: The credential object used for authentication which
-         implements a particular interface for getting tokens. It accepts
-        :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
-         by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
-        :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
-         or ~azure.core.credentials.AzureNamedKeyCredential
-        :keyword bool buffered_mode: Set to True to get the producer client work in buffered mode. Default is False.
-        :keyword on_success: The callback to be called once a batch has successfully published.
-         The callback takes two parameters: `events` which are the list of events that have been successfully published
-         and `partition_id` which is the partition id that the events in the list have been published to.
-         The callback function should be defined like: `on_success(events, partition_id)`.
-        :paramtype on_success: Callable[[List[EventData], Optional[str]], Awaitable[None]]
-        :keyword on_error: The callback to be called once a batch has failed to publish.
-         The callback takes three parameters: `events` which are the list of events that failed to be published,
-         `partition_id` which is the partition id that the events in the list have been tried to be published to and
-         `error` being the exception.
-         The callback function should be defined like: `on_error(events, error, partition_id)`.
-         If on_error is passed in non-buffered mode, callback will be called with the error instead of
-         error being raised from the send method.
-        :paramtype on_error: Callable[[List[EventData], Exception, Optional[str]], Awaitable[None]]
-        :keyword int max_event_buffer_length_per_partition: Buffered mode only.
-         The total number of events that can be buffered for publishing at a given time for a given partition.
-         The default value is 10 in buffered mode.
-        :keyword Optional[float] max_wait_time: Buffered mode only.
-         The amount of time to wait for a batch to be built with events in the buffer before publishing.
-         The default value is 1 in buffered mode.
-        :keyword Optional[int] max_concurrent_sends: Buffered mode only. The total number of batches that may be sent
-         concurrently, across all partitions. This limit takes precedence over the value specified in
-         max_concurrent_sends_per_partition, ensuring this maximum is respected. By default, this will be set to
-         twice the number of processors available in the host environment.
-        :keyword Optional[int] max_concurrent_sends_per_partition: Buffered mode only. The number of batches that may
-         be sent concurrently for a given partition. This option is superseded by the value specified for
-         max_concurrent_sends, ensuring that limit is respected.
-        :keyword Optional[ThreadPoolExecutor] executor: Buffered mode only. A user-specified thread pool used to send
-         events in parallel.
-        :keyword Optional[int] max_workers: Buffered mode only. Specify the maximum workers in the thread pool. If not
-         specified the number used will be derived from the core count of the environment.
-         This cannot be combined with `executor`.
-        """
         ...
 
     def __init__(
@@ -223,6 +171,11 @@ class EventHubProducerClient(ClientBaseAsync):
         ],
         *,
         buffered_mode: bool = False,
+        on_error: Optional[Callable[[SendEventTypes, Exception, Optional[str]], Awaitable[None]]],
+        on_success: Optional[Callable[[SendEventTypes, Optional[str]], Awaitable[None]]],
+        max_buffer_length: Optional[int] = None,
+        max_wait_time: Optional[float] = None,
+        max_concurrent_sends: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         super(EventHubProducerClient, self).__init__(
@@ -240,6 +193,31 @@ class EventHubProducerClient(ClientBaseAsync):
         )  # sync the creation of self._producers
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
+        self._buffered_mode = buffered_mode
+        self._on_success = on_success
+        self._on_error = on_error
+        self._max_buffer_length = max_buffer_length
+        self._max_wait_time = max_wait_time
+        self._max_concurrent_sends = max_concurrent_sends
+        if self._buffered_mode:
+            self.send_batch = self._buffered_send_batch
+            self.send_event = self._buffered_send_event
+            if not self._on_error:
+                raise TypeError(
+                    "EventHubProducerClient in buffered mode missing 1 required keyword argument: 'on_error'"
+                )
+            if not self._on_success:
+                raise TypeError(
+                    "EventHubProducerClient in buffered mode missing 1 required keyword argument: 'on_success'"
+                )
+            if self._max_wait_time is None:
+                self._max_wait_time = 1
+            if self._max_wait_time <= 0:
+                raise ValueError("'max_wait_time' must be a float greater than 0 in buffered mode")
+            if self._max_buffer_length is None:
+                self._max_buffer_length = 1500
+            if self._max_buffer_length <= 0:
+                raise ValueError("'max_buffer_length' must be an integer greater than 0 in buffered mode")
 
     async def __aenter__(self):
         return self
@@ -247,13 +225,75 @@ class EventHubProducerClient(ClientBaseAsync):
     async def __aexit__(self, *args):
         await self.close()
 
+    async def _buffered_send(self, events, **kwargs):
+        try:
+            await self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
+        except AttributeError:
+            await self._get_partitions()
+            await self._get_max_message_size()
+            self._buffered_producer_dispatcher = BufferedProducerDispatcher(
+                self._partition_ids,
+                self._on_success,
+                self._on_error,
+                self._create_producer,
+                self.eventhub_name,
+                self._max_message_size_on_link,
+                max_wait_time=cast(int, self._max_wait_time),
+                max_buffer_length=self._max_buffer_length
+            )
+            await self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
+
+    async def _batch_preparer(self, event_data_batch, **kwargs):
+        partition_id = kwargs.pop("partition_id", None)
+        partition_key = kwargs.pop("partition_key", None)
+
+        if isinstance(event_data_batch, EventDataBatch):
+            if partition_id or partition_key:
+                raise TypeError(
+                    "partition_id and partition_key should be None when sending an EventDataBatch "
+                    "because type EventDataBatch itself may have partition_id or partition_key"
+                )
+            to_send_batch = event_data_batch
+        else:
+            to_send_batch = await self.create_batch(
+                partition_id=partition_id, partition_key=partition_key
+            )
+            to_send_batch._load_events(  # pylint:disable=protected-access
+                event_data_batch
+            )
+
+        return to_send_batch, to_send_batch._partition_id, partition_key  # pylint:disable=protected-access
+
+    async def _buffered_send_batch(self, event_data_batch, **kwargs):
+        batch, pid, pkey = await self._batch_preparer(event_data_batch, **kwargs)
+
+        if len(batch) == 0:
+            return
+
+        await self._buffered_send(
+            event_data_batch,
+            partition_id=pid,
+            partition_key=pkey,
+            timeout=kwargs.get("timeout")
+        )
+
+    async def _buffered_send_event(self, event, **kwargs):
+        partition_key = kwargs.get("partition_key")
+        set_message_partition_key(event.message, partition_key)
+        await self._buffered_send(
+            event,
+            partition_id=kwargs.get("partition_id"),
+            partition_key=partition_key,
+            timeout=kwargs.get("timeout")
+        )
+
     async def _get_partitions(self) -> None:
         if not self._partition_ids:
             self._partition_ids = await self.get_partition_ids()  # type: ignore
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
-    async def _get_max_mesage_size(self) -> None:
+    async def _get_max_message_size(self) -> None:
         # pylint: disable=protected-access,line-too-long
         async with self._lock:
             if not self._max_message_size_on_link:
@@ -320,13 +360,9 @@ class EventHubProducerClient(ClientBaseAsync):
         conn_str: str,
         *,
         eventhub_name: Optional[str] = None,
+        buffered_mode: Literal[False] = False,
         **kwargs: Any
     ) -> "EventHubProducerClient":
-        """Create an EventHubProducerClient in non-buffered mode from a connection string.
-        Calling send will block until acknowledgement is received or operation times out.
-        :param str conn_str: The connection string of an Event Hub.
-        :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
-        """
         ...
 
     @overload
@@ -338,48 +374,11 @@ class EventHubProducerClient(ClientBaseAsync):
         buffered_mode: Literal[True],
         on_error: Callable[[List["EventData"], Exception, Optional[str]], Awaitable[None]],
         on_success: Callable[[List["EventData"], Optional[str]], Awaitable[None]],
-        max_event_buffer_length_per_partition: int = 10,
+        max_event_buffer_length_per_partition: int = 1500,
         max_wait_time: float = 1,
+        max_concurrent_sends: int = 1,
         **kwargs: Any
     ) -> "EventHubProducerClient":
-        """Create an EventHubProducerClient in buffered mode from a connection string.
-        Calling send will enqueue the event into local buffer and return.
-        The producer will do automatic batching and sending in the background.
-        :param str conn_str: The connection string of an Event Hub.
-        :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
-        :keyword bool buffered_mode: Set to True to get the producer client work in buffered mode.
-        :keyword on_success: The callback to be called once a batch has successfully published.
-         The callback takes two parameters: `events` which are the list of events that have been successfully published
-         and `partition_id` which is the partition id that the events in the list have been published to.
-         The callback function should be defined like: `on_success(events, partition_id)`.
-        :paramtype on_success: Callable[[List[EventData], Optional[str]], Awaitable[None]]
-        :keyword on_error: The callback to be called once a batch has failed to publish.
-         The callback takes three parameters: `events` which are the list of events that failed to be published,
-         `partition_id` which is the partition id that the events in the list have been tried to be published to and
-         `error` being the exception.
-         The callback function should be defined like: `on_error(events, error, partition_id)`.
-         If on_error is passed in non-buffered mode, callback will be called with the error instead of
-         error being raised from the send method.
-        :paramtype on_error: Callable[[List[EventData], Exception, Optional[str]], Awaitable[None]]
-        :keyword int max_event_buffer_length_per_partition: Buffered mode only.
-         The total number of events that can be buffered for publishing at a given time for a given partition.
-         The default value is 10 in buffered mode.
-        :keyword float max_wait_time: Buffered mode only.
-         The amount of time to wait for a batch to be built with events in the buffer before publishing.
-         The default value is 1 in buffered mode.
-        :keyword Optional[int] max_concurrent_sends: Buffered mode only. The total number of batches that may be sent
-         concurrently, across all partitions. This limit takes precedence over the value specified in
-         max_concurrent_sends_per_partition, ensuring this maximum is respected. By default, this will be set to
-         twice the number of processors available in the host environment.
-        :keyword Optional[int] max_concurrent_sends_per_partition: Buffered mode only. The number of batches that may
-         be sent concurrently for a given partition. This option is superseded by the value specified for
-         max_concurrent_sends, ensuring that limit is respected.
-        :keyword Optional[ThreadPoolExecutor] executor: Buffered mode only. A user-specified thread pool used to send
-         events in parallel.
-        :keyword Optional[int] max_workers: Buffered mode only. Specify the maximum workers in the thread pool. If not
-         specified the number used will be derived from the core count of the environment.
-         This cannot be combined with `executor`.
-        """
         ...
 
     @classmethod
@@ -388,7 +387,12 @@ class EventHubProducerClient(ClientBaseAsync):
         conn_str: str,
         *,
         eventhub_name: Optional[str] = None,
-        buffered_mode: bool =False,
+        buffered_mode: bool = False,
+        on_error: Optional[Callable[[List["EventData"], Exception, Optional[str]], Awaitable[None]]],
+        on_success: Optional[Callable[[List["EventData"], Optional[str]], Awaitable[None]]],
+        max_event_buffer_length_per_partition: Optional[int] = None,
+        max_wait_time: Optional[float] = None,
+        max_concurrent_sends: Optional[float] = None,
         logging_enable: bool = False,
         http_proxy: Optional[Dict[str, Union[str, int]]] = None,
         auth_timeout: float = 60,
@@ -477,6 +481,12 @@ class EventHubProducerClient(ClientBaseAsync):
         constructor_args = cls._from_connection_string(
             conn_str,
             eventhub_name=eventhub_name,
+            buffered_mode=buffered_mode,
+            on_success=on_success,
+            on_error=on_error,
+            max_event_buffer_length_per_partition=max_event_buffer_length_per_partition,
+            max_wait_time=max_wait_time,
+            max_concurrent_sends=max_concurrent_sends,
             logging_enable=logging_enable,
             http_proxy=http_proxy,
             auth_timeout=auth_timeout,
@@ -641,7 +651,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         """
         if not self._max_message_size_on_link:
-            await self._get_max_mesage_size()
+            await self._get_max_message_size()
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
@@ -712,12 +722,13 @@ class EventHubProducerClient(ClientBaseAsync):
         :keyword Optional[float] timeout: Timeout to flush the buffered events, default is None which means no timeout.
         :rtype: None
         """
+        if self._buffered_mode and self._buffered_producer_dispatcher:
+            await self._buffered_producer_dispatcher.flush(timeout=kwargs.get("timeout"))
 
     async def close(
         self,
         *,
         flush: bool = True,
-        timeout: Optional[float] = None,
         **kwargs: Any
     ) -> None:
         """Close the Producer client underlying AMQP connection and links.
@@ -737,6 +748,10 @@ class EventHubProducerClient(ClientBaseAsync):
 
         """
         async with self._lock:
+            if self._buffered_mode and self._buffered_producer_dispatcher:
+                await self._buffered_producer_dispatcher.close(flush=flush, timeout=kwargs.get("timeout"))
+                self._buffered_producer_dispatcher = None
+
             for pid in self._producers:
                 if self._producers[pid] is not None:
                     await self._producers[pid].close()  # type: ignore
@@ -745,14 +760,20 @@ class EventHubProducerClient(ClientBaseAsync):
         await super(EventHubProducerClient, self)._close_async()
 
     def get_buffered_event_count(self, partition_id: str) -> Optional[int]:
-        """
+        if not self._buffered_mode:
+            return None
 
-        """
-        return 0
+        try:
+            return self._buffered_producer_dispatcher.get_buffered_event_count(partition_id)
+        except AttributeError:
+            return 0
 
     @property
     def total_buffered_event_count(self) -> Optional[int]:
-        """
+        if not self._buffered_mode:
+            return None
 
-        """
-        return 0
+        try:
+            return self._buffered_producer_dispatcher.total_buffered_event_count
+        except AttributeError:
+            return 0

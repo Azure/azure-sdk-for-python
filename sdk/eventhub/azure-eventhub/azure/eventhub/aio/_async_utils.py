@@ -19,6 +19,6 @@ def get_dict_with_loop_if_needed(loop):
 
 async def semaphore_acquire_with_timeout(semaphore: Semaphore, timeout=None):
     try:
-        return asyncio.wait_for(semaphore.acquire(), timeout=timeout)
+        return await asyncio.wait_for(semaphore.acquire(), timeout=timeout)
     except TimeoutError:
         return False
