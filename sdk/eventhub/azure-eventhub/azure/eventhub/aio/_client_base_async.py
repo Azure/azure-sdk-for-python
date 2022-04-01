@@ -44,13 +44,6 @@ from ._async_utils import get_dict_with_loop_if_needed
 from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-
-    try:
-        from typing_extensions import Protocol
-    except ImportError:
-        Protocol = object  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -144,9 +137,7 @@ class ClientBaseAsync(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential, EventHubSharedKeyCredential
-        ],
+        credential: "CredentialTypes",
         **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
@@ -377,6 +368,18 @@ class ClientBaseAsync(ClientBase):
 
 
 if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+    CredentialTypes = Union[
+        EventHubSharedKeyCredential,
+        AsyncTokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    ]
+
+    try:
+        from typing_extensions import Protocol
+    except ImportError:
+        Protocol = object  # type: ignore
 
     class AbstractConsumerProducer(Protocol):
         @property
