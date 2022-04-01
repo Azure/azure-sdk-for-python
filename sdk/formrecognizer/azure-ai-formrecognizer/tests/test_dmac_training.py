@@ -7,7 +7,7 @@
 import uuid
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
@@ -241,12 +241,9 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_azure_blob_path_filter(self, client, formrecognizer_storage_container_sas_url, **kwargs):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
+        set_bodiless_matcher()
         with pytest.raises(HttpResponseError) as e:
-            poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="subfolder")
+            poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="testfolder")
             model = poller.result()
 
     @pytest.mark.live_test_only
