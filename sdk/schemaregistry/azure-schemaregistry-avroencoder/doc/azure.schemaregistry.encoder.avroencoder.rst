@@ -5,11 +5,6 @@ azure.schemaregistry.encoder.avroencoder package
    :members:
    :undoc-members:
    :inherited-members:
-
-.. autoclass:: azure.schemaregistry.encoder.avroencoder.MessageType
-   :members:
-   :undoc-members:
-   :inherited-members:
    :special-members: __message_content__
 
 Subpackages
