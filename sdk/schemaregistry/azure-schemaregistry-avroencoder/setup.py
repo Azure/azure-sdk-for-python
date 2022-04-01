@@ -62,7 +62,7 @@ setup(
     python_requires=">=3.6",
     zip_safe=False,
     packages=find_namespace_packages(
-        include=['azure.schemaregistry.*']  # Exclude packages that will be covered by PEP420 or nspkg
+        include=['azure.schemaregistry.encoder.*']  # Exclude packages that will be covered by PEP420 or nspkg
     ),
     install_requires=install_packages
 )
