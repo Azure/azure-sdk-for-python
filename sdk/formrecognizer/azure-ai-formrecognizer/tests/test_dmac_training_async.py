@@ -8,7 +8,7 @@ import uuid
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_custom_default_matcher
+from devtools_testutils import set_bodiless_matcher, set_custom_default_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
@@ -252,6 +252,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_azure_blob_path_filter(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         with pytest.raises(HttpResponseError) as e:
             async with client:
                 poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="testfolder")
