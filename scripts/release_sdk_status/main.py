@@ -211,7 +211,7 @@ class PyPIClient:
 
 def sdk_info_from_pypi(sdk_info: List[Dict[str, str]], cli_dependency):
     all_sdk_status = []
-    # add_certificate(str(Path('../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem')))
+    add_certificate(str(Path('../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem')))
     for package in sdk_info:
         sdk_name = package['package_name']
         if sdk_name in cli_dependency.keys():
@@ -296,7 +296,7 @@ def run_playback_test(service_name: str, sdk_folder: str):
 
 def write_to_csv(sdk_status_list, csv_name):
     with open(csv_name, 'w') as file_out:
-        file_out.write('package name,'
+        file_out.write('foler/package name,'
                        'pypi link,'
                        'latest track1 version,'
                        'latest track1 release date,'
@@ -462,7 +462,7 @@ def main():
 
     out_file = 'release_sdk_status.csv'
     write_to_csv(all_sdk_status, out_file)
-    # commit_to_github()
+    commit_to_github()
 
     log_failed()
 
