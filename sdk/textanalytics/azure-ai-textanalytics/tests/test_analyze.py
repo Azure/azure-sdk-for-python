@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     RecognizeEntitiesAction,
@@ -652,7 +652,10 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
@@ -898,12 +901,12 @@ class TestAnalyze(TextAnalyticsTest):
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
             "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
             "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
-            "appeared to have agreed a deal with herfractured Cabinet on the UK's post Brexit relationship with "
+            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
             "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
             " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
             "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
             "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
-            "Prime Minister's latest plitical drama began late on Sunday night when Davis quit, declaring he could "
+            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
             "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
             "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
             "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
@@ -943,12 +946,12 @@ class TestAnalyze(TextAnalyticsTest):
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
             "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
             "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
-            "appeared to have agreed a deal with herfractured Cabinet on the UK's post Brexit relationship with "
+            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
             "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
             " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
             "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
             "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
-            "Prime Minister's latest plitical drama began late on Sunday night when Davis quit, declaring he could "
+            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
             "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
             "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
             "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
@@ -1011,7 +1014,10 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_single_category_classify_project_name,
             textanalytics_single_category_classify_deployment_name
     ):
-        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1051,7 +1057,10 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_multi_category_classify_project_name,
             textanalytics_multi_category_classify_deployment_name
     ):
-        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1092,7 +1101,10 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1438,3 +1450,42 @@ class TestAnalyze(TextAnalyticsTest):
             ).result())
             assert len(response) == len(docs)
         assert e.value.message == "(InternalServerError) 1 out of 1 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
+    @recorded_by_proxy
+    def test_analyze_works_with_v3_1(self, client):
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[
+                RecognizeEntitiesAction(),
+                ExtractKeyPhrasesAction(),
+                RecognizePiiEntitiesAction(),
+                RecognizeLinkedEntitiesAction(),
+                AnalyzeSentimentAction()
+            ],
+            polling_interval=self._interval(),
+        ).result()
+
+        results = list(response)
+        assert len(results) == len(docs)
+
+        document_order = ["56", "0", "19", "1"]
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+        ]
+        for doc_idx, document_results in enumerate(results):
+            assert len(document_results) == 5
+            for action_idx, document_result in enumerate(document_results):
+                assert document_result.id == document_order[doc_idx]
+                assert not document_result.is_error
+                assert self.document_result_to_action_type(document_result) == action_order[action_idx]

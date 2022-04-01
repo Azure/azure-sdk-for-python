@@ -6,18 +6,20 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-
 class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
+
+    def teardown(self):
+        self.sleep(4)
 
     @FormRecognizerPreparer()
     def test_document_analysis_none_model(self, **kwargs):
@@ -39,10 +41,13 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
         model = poller.result()
 
         responses = []
@@ -82,10 +87,13 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         da_client = client.get_document_analysis_client()
 
-        build_poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url)
+        build_poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template")
         model = build_poller.result()
 
         responses = []
@@ -124,10 +132,13 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url, **kwargs):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         da_client = client.get_document_analysis_client()
 
-        build_poller = client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url)
+        build_poller = client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url, "template")
         model = build_poller.result()
 
         responses = []

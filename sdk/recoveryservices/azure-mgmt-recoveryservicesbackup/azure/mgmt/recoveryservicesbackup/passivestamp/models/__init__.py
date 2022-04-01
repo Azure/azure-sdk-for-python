@@ -6,250 +6,128 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AADProperties
-    from ._models_py3 import AADPropertiesResource
-    from ._models_py3 import AzureFileShareRecoveryPoint
-    from ._models_py3 import AzureFileShareRestoreRequest
-    from ._models_py3 import AzureFileshareProtectedItem
-    from ._models_py3 import AzureFileshareProtectedItemExtendedInfo
-    from ._models_py3 import AzureIaaSClassicComputeVMProtectedItem
-    from ._models_py3 import AzureIaaSComputeVMProtectedItem
-    from ._models_py3 import AzureIaaSVMErrorInfo
-    from ._models_py3 import AzureIaaSVMHealthDetails
-    from ._models_py3 import AzureIaaSVMJob
-    from ._models_py3 import AzureIaaSVMJobExtendedInfo
-    from ._models_py3 import AzureIaaSVMJobTaskDetails
-    from ._models_py3 import AzureIaaSVMProtectedItem
-    from ._models_py3 import AzureIaaSVMProtectedItemExtendedInfo
-    from ._models_py3 import AzureSqlProtectedItem
-    from ._models_py3 import AzureSqlProtectedItemExtendedInfo
-    from ._models_py3 import AzureStorageErrorInfo
-    from ._models_py3 import AzureStorageJob
-    from ._models_py3 import AzureStorageJobExtendedInfo
-    from ._models_py3 import AzureStorageJobTaskDetails
-    from ._models_py3 import AzureVmWorkloadProtectedItem
-    from ._models_py3 import AzureVmWorkloadProtectedItemExtendedInfo
-    from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectedItem
-    from ._models_py3 import AzureVmWorkloadSAPHanaDatabaseProtectedItem
-    from ._models_py3 import AzureVmWorkloadSQLDatabaseProtectedItem
-    from ._models_py3 import AzureWorkloadErrorInfo
-    from ._models_py3 import AzureWorkloadJob
-    from ._models_py3 import AzureWorkloadJobExtendedInfo
-    from ._models_py3 import AzureWorkloadJobTaskDetails
-    from ._models_py3 import AzureWorkloadPointInTimeRecoveryPoint
-    from ._models_py3 import AzureWorkloadPointInTimeRestoreRequest
-    from ._models_py3 import AzureWorkloadRecoveryPoint
-    from ._models_py3 import AzureWorkloadRestoreRequest
-    from ._models_py3 import AzureWorkloadSAPHanaPointInTimeRecoveryPoint
-    from ._models_py3 import AzureWorkloadSAPHanaPointInTimeRestoreRequest
-    from ._models_py3 import AzureWorkloadSAPHanaRecoveryPoint
-    from ._models_py3 import AzureWorkloadSAPHanaRestoreRequest
-    from ._models_py3 import AzureWorkloadSQLPointInTimeRecoveryPoint
-    from ._models_py3 import AzureWorkloadSQLPointInTimeRestoreRequest
-    from ._models_py3 import AzureWorkloadSQLRecoveryPoint
-    from ._models_py3 import AzureWorkloadSQLRecoveryPointExtendedInfo
-    from ._models_py3 import AzureWorkloadSQLRestoreRequest
-    from ._models_py3 import BEKDetails
-    from ._models_py3 import BMSAADPropertiesQueryObject
-    from ._models_py3 import BMSBackupSummariesQueryObject
-    from ._models_py3 import BMSRPQueryObject
-    from ._models_py3 import BackupManagementUsage
-    from ._models_py3 import BackupManagementUsageList
-    from ._models_py3 import BackupResourceConfig
-    from ._models_py3 import BackupResourceConfigResource
-    from ._models_py3 import ClientScriptForConnect
-    from ._models_py3 import CrossRegionRestoreRequest
-    from ._models_py3 import CrossRegionRestoreRequestResource
-    from ._models_py3 import CrrAccessToken
-    from ._models_py3 import CrrAccessTokenResource
-    from ._models_py3 import CrrJobRequest
-    from ._models_py3 import CrrJobRequestResource
-    from ._models_py3 import DPMProtectedItem
-    from ._models_py3 import DPMProtectedItemExtendedInfo
-    from ._models_py3 import DiskExclusionProperties
-    from ._models_py3 import DiskInformation
-    from ._models_py3 import DpmErrorInfo
-    from ._models_py3 import DpmJob
-    from ._models_py3 import DpmJobExtendedInfo
-    from ._models_py3 import DpmJobTaskDetails
-    from ._models_py3 import EncryptionDetails
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ExtendedProperties
-    from ._models_py3 import GenericProtectedItem
-    from ._models_py3 import GenericRecoveryPoint
-    from ._models_py3 import IaasVMRecoveryPoint
-    from ._models_py3 import IaasVMRestoreRequest
-    from ._models_py3 import IdentityBasedRestoreDetails
-    from ._models_py3 import IdentityInfo
-    from ._models_py3 import InstantItemRecoveryTarget
-    from ._models_py3 import Job
-    from ._models_py3 import JobQueryObject
-    from ._models_py3 import JobResource
-    from ._models_py3 import JobResourceList
-    from ._models_py3 import KEKDetails
-    from ._models_py3 import KPIResourceHealthDetails
-    from ._models_py3 import KeyAndSecretDetails
-    from ._models_py3 import MabErrorInfo
-    from ._models_py3 import MabFileFolderProtectedItem
-    from ._models_py3 import MabFileFolderProtectedItemExtendedInfo
-    from ._models_py3 import MabJob
-    from ._models_py3 import MabJobExtendedInfo
-    from ._models_py3 import MabJobTaskDetails
-    from ._models_py3 import NameInfo
-    from ._models_py3 import NewErrorResponse
-    from ._models_py3 import NewErrorResponseError
-    from ._models_py3 import OperationStatus
-    from ._models_py3 import OperationStatusError
-    from ._models_py3 import OperationStatusExtendedInfo
-    from ._models_py3 import OperationStatusJobExtendedInfo
-    from ._models_py3 import OperationStatusJobsExtendedInfo
-    from ._models_py3 import OperationStatusProvisionILRExtendedInfo
-    from ._models_py3 import OperationStatusRecoveryPointExtendedInfo
-    from ._models_py3 import PointInTimeRange
-    from ._models_py3 import ProtectedItem
-    from ._models_py3 import ProtectedItemQueryObject
-    from ._models_py3 import ProtectedItemResource
-    from ._models_py3 import ProtectedItemResourceList
-    from ._models_py3 import RecoveryPoint
-    from ._models_py3 import RecoveryPointDiskConfiguration
-    from ._models_py3 import RecoveryPointMoveReadinessInfo
-    from ._models_py3 import RecoveryPointResource
-    from ._models_py3 import RecoveryPointResourceList
-    from ._models_py3 import RecoveryPointTierInformation
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceHealthDetails
-    from ._models_py3 import ResourceList
-    from ._models_py3 import RestoreFileSpecs
-    from ._models_py3 import RestoreRequest
-    from ._models_py3 import SQLDataDirectory
-    from ._models_py3 import SQLDataDirectoryMapping
-    from ._models_py3 import TargetAFSRestoreInfo
-    from ._models_py3 import TargetRestoreInfo
-    from ._models_py3 import WorkloadCrrAccessToken
-except (SyntaxError, ImportError):
-    from ._models import AADProperties  # type: ignore
-    from ._models import AADPropertiesResource  # type: ignore
-    from ._models import AzureFileShareRecoveryPoint  # type: ignore
-    from ._models import AzureFileShareRestoreRequest  # type: ignore
-    from ._models import AzureFileshareProtectedItem  # type: ignore
-    from ._models import AzureFileshareProtectedItemExtendedInfo  # type: ignore
-    from ._models import AzureIaaSClassicComputeVMProtectedItem  # type: ignore
-    from ._models import AzureIaaSComputeVMProtectedItem  # type: ignore
-    from ._models import AzureIaaSVMErrorInfo  # type: ignore
-    from ._models import AzureIaaSVMHealthDetails  # type: ignore
-    from ._models import AzureIaaSVMJob  # type: ignore
-    from ._models import AzureIaaSVMJobExtendedInfo  # type: ignore
-    from ._models import AzureIaaSVMJobTaskDetails  # type: ignore
-    from ._models import AzureIaaSVMProtectedItem  # type: ignore
-    from ._models import AzureIaaSVMProtectedItemExtendedInfo  # type: ignore
-    from ._models import AzureSqlProtectedItem  # type: ignore
-    from ._models import AzureSqlProtectedItemExtendedInfo  # type: ignore
-    from ._models import AzureStorageErrorInfo  # type: ignore
-    from ._models import AzureStorageJob  # type: ignore
-    from ._models import AzureStorageJobExtendedInfo  # type: ignore
-    from ._models import AzureStorageJobTaskDetails  # type: ignore
-    from ._models import AzureVmWorkloadProtectedItem  # type: ignore
-    from ._models import AzureVmWorkloadProtectedItemExtendedInfo  # type: ignore
-    from ._models import AzureVmWorkloadSAPAseDatabaseProtectedItem  # type: ignore
-    from ._models import AzureVmWorkloadSAPHanaDatabaseProtectedItem  # type: ignore
-    from ._models import AzureVmWorkloadSQLDatabaseProtectedItem  # type: ignore
-    from ._models import AzureWorkloadErrorInfo  # type: ignore
-    from ._models import AzureWorkloadJob  # type: ignore
-    from ._models import AzureWorkloadJobExtendedInfo  # type: ignore
-    from ._models import AzureWorkloadJobTaskDetails  # type: ignore
-    from ._models import AzureWorkloadPointInTimeRecoveryPoint  # type: ignore
-    from ._models import AzureWorkloadPointInTimeRestoreRequest  # type: ignore
-    from ._models import AzureWorkloadRecoveryPoint  # type: ignore
-    from ._models import AzureWorkloadRestoreRequest  # type: ignore
-    from ._models import AzureWorkloadSAPHanaPointInTimeRecoveryPoint  # type: ignore
-    from ._models import AzureWorkloadSAPHanaPointInTimeRestoreRequest  # type: ignore
-    from ._models import AzureWorkloadSAPHanaRecoveryPoint  # type: ignore
-    from ._models import AzureWorkloadSAPHanaRestoreRequest  # type: ignore
-    from ._models import AzureWorkloadSQLPointInTimeRecoveryPoint  # type: ignore
-    from ._models import AzureWorkloadSQLPointInTimeRestoreRequest  # type: ignore
-    from ._models import AzureWorkloadSQLRecoveryPoint  # type: ignore
-    from ._models import AzureWorkloadSQLRecoveryPointExtendedInfo  # type: ignore
-    from ._models import AzureWorkloadSQLRestoreRequest  # type: ignore
-    from ._models import BEKDetails  # type: ignore
-    from ._models import BMSAADPropertiesQueryObject  # type: ignore
-    from ._models import BMSBackupSummariesQueryObject  # type: ignore
-    from ._models import BMSRPQueryObject  # type: ignore
-    from ._models import BackupManagementUsage  # type: ignore
-    from ._models import BackupManagementUsageList  # type: ignore
-    from ._models import BackupResourceConfig  # type: ignore
-    from ._models import BackupResourceConfigResource  # type: ignore
-    from ._models import ClientScriptForConnect  # type: ignore
-    from ._models import CrossRegionRestoreRequest  # type: ignore
-    from ._models import CrossRegionRestoreRequestResource  # type: ignore
-    from ._models import CrrAccessToken  # type: ignore
-    from ._models import CrrAccessTokenResource  # type: ignore
-    from ._models import CrrJobRequest  # type: ignore
-    from ._models import CrrJobRequestResource  # type: ignore
-    from ._models import DPMProtectedItem  # type: ignore
-    from ._models import DPMProtectedItemExtendedInfo  # type: ignore
-    from ._models import DiskExclusionProperties  # type: ignore
-    from ._models import DiskInformation  # type: ignore
-    from ._models import DpmErrorInfo  # type: ignore
-    from ._models import DpmJob  # type: ignore
-    from ._models import DpmJobExtendedInfo  # type: ignore
-    from ._models import DpmJobTaskDetails  # type: ignore
-    from ._models import EncryptionDetails  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ExtendedProperties  # type: ignore
-    from ._models import GenericProtectedItem  # type: ignore
-    from ._models import GenericRecoveryPoint  # type: ignore
-    from ._models import IaasVMRecoveryPoint  # type: ignore
-    from ._models import IaasVMRestoreRequest  # type: ignore
-    from ._models import IdentityBasedRestoreDetails  # type: ignore
-    from ._models import IdentityInfo  # type: ignore
-    from ._models import InstantItemRecoveryTarget  # type: ignore
-    from ._models import Job  # type: ignore
-    from ._models import JobQueryObject  # type: ignore
-    from ._models import JobResource  # type: ignore
-    from ._models import JobResourceList  # type: ignore
-    from ._models import KEKDetails  # type: ignore
-    from ._models import KPIResourceHealthDetails  # type: ignore
-    from ._models import KeyAndSecretDetails  # type: ignore
-    from ._models import MabErrorInfo  # type: ignore
-    from ._models import MabFileFolderProtectedItem  # type: ignore
-    from ._models import MabFileFolderProtectedItemExtendedInfo  # type: ignore
-    from ._models import MabJob  # type: ignore
-    from ._models import MabJobExtendedInfo  # type: ignore
-    from ._models import MabJobTaskDetails  # type: ignore
-    from ._models import NameInfo  # type: ignore
-    from ._models import NewErrorResponse  # type: ignore
-    from ._models import NewErrorResponseError  # type: ignore
-    from ._models import OperationStatus  # type: ignore
-    from ._models import OperationStatusError  # type: ignore
-    from ._models import OperationStatusExtendedInfo  # type: ignore
-    from ._models import OperationStatusJobExtendedInfo  # type: ignore
-    from ._models import OperationStatusJobsExtendedInfo  # type: ignore
-    from ._models import OperationStatusProvisionILRExtendedInfo  # type: ignore
-    from ._models import OperationStatusRecoveryPointExtendedInfo  # type: ignore
-    from ._models import PointInTimeRange  # type: ignore
-    from ._models import ProtectedItem  # type: ignore
-    from ._models import ProtectedItemQueryObject  # type: ignore
-    from ._models import ProtectedItemResource  # type: ignore
-    from ._models import ProtectedItemResourceList  # type: ignore
-    from ._models import RecoveryPoint  # type: ignore
-    from ._models import RecoveryPointDiskConfiguration  # type: ignore
-    from ._models import RecoveryPointMoveReadinessInfo  # type: ignore
-    from ._models import RecoveryPointResource  # type: ignore
-    from ._models import RecoveryPointResourceList  # type: ignore
-    from ._models import RecoveryPointTierInformation  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceHealthDetails  # type: ignore
-    from ._models import ResourceList  # type: ignore
-    from ._models import RestoreFileSpecs  # type: ignore
-    from ._models import RestoreRequest  # type: ignore
-    from ._models import SQLDataDirectory  # type: ignore
-    from ._models import SQLDataDirectoryMapping  # type: ignore
-    from ._models import TargetAFSRestoreInfo  # type: ignore
-    from ._models import TargetRestoreInfo  # type: ignore
-    from ._models import WorkloadCrrAccessToken  # type: ignore
+from ._models_py3 import AADProperties
+from ._models_py3 import AADPropertiesResource
+from ._models_py3 import AzureFileShareRecoveryPoint
+from ._models_py3 import AzureFileShareRestoreRequest
+from ._models_py3 import AzureFileshareProtectedItem
+from ._models_py3 import AzureFileshareProtectedItemExtendedInfo
+from ._models_py3 import AzureIaaSClassicComputeVMProtectedItem
+from ._models_py3 import AzureIaaSComputeVMProtectedItem
+from ._models_py3 import AzureIaaSVMErrorInfo
+from ._models_py3 import AzureIaaSVMHealthDetails
+from ._models_py3 import AzureIaaSVMJob
+from ._models_py3 import AzureIaaSVMJobExtendedInfo
+from ._models_py3 import AzureIaaSVMJobTaskDetails
+from ._models_py3 import AzureIaaSVMProtectedItem
+from ._models_py3 import AzureIaaSVMProtectedItemExtendedInfo
+from ._models_py3 import AzureSqlProtectedItem
+from ._models_py3 import AzureSqlProtectedItemExtendedInfo
+from ._models_py3 import AzureStorageErrorInfo
+from ._models_py3 import AzureStorageJob
+from ._models_py3 import AzureStorageJobExtendedInfo
+from ._models_py3 import AzureStorageJobTaskDetails
+from ._models_py3 import AzureVmWorkloadProtectedItem
+from ._models_py3 import AzureVmWorkloadProtectedItemExtendedInfo
+from ._models_py3 import AzureVmWorkloadSAPAseDatabaseProtectedItem
+from ._models_py3 import AzureVmWorkloadSAPHanaDatabaseProtectedItem
+from ._models_py3 import AzureVmWorkloadSQLDatabaseProtectedItem
+from ._models_py3 import AzureWorkloadErrorInfo
+from ._models_py3 import AzureWorkloadJob
+from ._models_py3 import AzureWorkloadJobExtendedInfo
+from ._models_py3 import AzureWorkloadJobTaskDetails
+from ._models_py3 import AzureWorkloadPointInTimeRecoveryPoint
+from ._models_py3 import AzureWorkloadPointInTimeRestoreRequest
+from ._models_py3 import AzureWorkloadRecoveryPoint
+from ._models_py3 import AzureWorkloadRestoreRequest
+from ._models_py3 import AzureWorkloadSAPHanaPointInTimeRecoveryPoint
+from ._models_py3 import AzureWorkloadSAPHanaPointInTimeRestoreRequest
+from ._models_py3 import AzureWorkloadSAPHanaRecoveryPoint
+from ._models_py3 import AzureWorkloadSAPHanaRestoreRequest
+from ._models_py3 import AzureWorkloadSQLPointInTimeRecoveryPoint
+from ._models_py3 import AzureWorkloadSQLPointInTimeRestoreRequest
+from ._models_py3 import AzureWorkloadSQLRecoveryPoint
+from ._models_py3 import AzureWorkloadSQLRecoveryPointExtendedInfo
+from ._models_py3 import AzureWorkloadSQLRestoreRequest
+from ._models_py3 import BEKDetails
+from ._models_py3 import BMSAADPropertiesQueryObject
+from ._models_py3 import BMSBackupSummariesQueryObject
+from ._models_py3 import BMSRPQueryObject
+from ._models_py3 import BackupManagementUsage
+from ._models_py3 import BackupManagementUsageList
+from ._models_py3 import BackupResourceConfig
+from ._models_py3 import BackupResourceConfigResource
+from ._models_py3 import ClientScriptForConnect
+from ._models_py3 import CrossRegionRestoreRequest
+from ._models_py3 import CrossRegionRestoreRequestResource
+from ._models_py3 import CrrAccessToken
+from ._models_py3 import CrrAccessTokenResource
+from ._models_py3 import CrrJobRequest
+from ._models_py3 import CrrJobRequestResource
+from ._models_py3 import DPMProtectedItem
+from ._models_py3 import DPMProtectedItemExtendedInfo
+from ._models_py3 import DiskExclusionProperties
+from ._models_py3 import DiskInformation
+from ._models_py3 import DpmErrorInfo
+from ._models_py3 import DpmJob
+from ._models_py3 import DpmJobExtendedInfo
+from ._models_py3 import DpmJobTaskDetails
+from ._models_py3 import EncryptionDetails
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ExtendedProperties
+from ._models_py3 import GenericProtectedItem
+from ._models_py3 import GenericRecoveryPoint
+from ._models_py3 import IaasVMRecoveryPoint
+from ._models_py3 import IaasVMRestoreRequest
+from ._models_py3 import IdentityBasedRestoreDetails
+from ._models_py3 import IdentityInfo
+from ._models_py3 import InstantItemRecoveryTarget
+from ._models_py3 import Job
+from ._models_py3 import JobQueryObject
+from ._models_py3 import JobResource
+from ._models_py3 import JobResourceList
+from ._models_py3 import KEKDetails
+from ._models_py3 import KPIResourceHealthDetails
+from ._models_py3 import KeyAndSecretDetails
+from ._models_py3 import MabErrorInfo
+from ._models_py3 import MabFileFolderProtectedItem
+from ._models_py3 import MabFileFolderProtectedItemExtendedInfo
+from ._models_py3 import MabJob
+from ._models_py3 import MabJobExtendedInfo
+from ._models_py3 import MabJobTaskDetails
+from ._models_py3 import NameInfo
+from ._models_py3 import NewErrorResponse
+from ._models_py3 import NewErrorResponseError
+from ._models_py3 import OperationStatus
+from ._models_py3 import OperationStatusError
+from ._models_py3 import OperationStatusExtendedInfo
+from ._models_py3 import OperationStatusJobExtendedInfo
+from ._models_py3 import OperationStatusJobsExtendedInfo
+from ._models_py3 import OperationStatusProvisionILRExtendedInfo
+from ._models_py3 import OperationStatusRecoveryPointExtendedInfo
+from ._models_py3 import PointInTimeRange
+from ._models_py3 import ProtectedItem
+from ._models_py3 import ProtectedItemQueryObject
+from ._models_py3 import ProtectedItemResource
+from ._models_py3 import ProtectedItemResourceList
+from ._models_py3 import RecoveryPoint
+from ._models_py3 import RecoveryPointDiskConfiguration
+from ._models_py3 import RecoveryPointMoveReadinessInfo
+from ._models_py3 import RecoveryPointResource
+from ._models_py3 import RecoveryPointResourceList
+from ._models_py3 import RecoveryPointTierInformation
+from ._models_py3 import Resource
+from ._models_py3 import ResourceHealthDetails
+from ._models_py3 import ResourceList
+from ._models_py3 import RestoreFileSpecs
+from ._models_py3 import RestoreRequest
+from ._models_py3 import SQLDataDirectory
+from ._models_py3 import SQLDataDirectoryMapping
+from ._models_py3 import TargetAFSRestoreInfo
+from ._models_py3 import TargetRestoreInfo
+from ._models_py3 import WorkloadCrrAccessToken
+
 
 from ._recovery_services_backup_passive_client_enums import (
     BackupManagementType,

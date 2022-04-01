@@ -183,7 +183,7 @@ if __name__ == "__main__":
     os.mkdir(tmp_dl_folder)
 
     # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
-    if os.getenv("SetDevVersion"):
+    if os.getenv("SetDevVersion", 'false') == 'true':
         commands_options.append("--pre")
 
     if args.cache_dir:

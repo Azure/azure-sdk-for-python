@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AmlSkill
     from ._models_py3 import AnalyzeRequest
     from ._models_py3 import AnalyzeResult
     from ._models_py3 import AnalyzedTokenInfo
     from ._models_py3 import AsciiFoldingTokenFilter
     from ._models_py3 import AzureActiveDirectoryApplicationCredentials
+    from ._models_py3 import AzureMachineLearningSkill
     from ._models_py3 import BM25Similarity
     from ._models_py3 import CharFilter
     from ._models_py3 import CjkBigramTokenFilter
@@ -68,6 +68,7 @@ try:
     from ._models_py3 import LexicalNormalizer
     from ._models_py3 import LexicalTokenizer
     from ._models_py3 import LimitTokenFilter
+    from ._models_py3 import ListAliasesResult
     from ._models_py3 import ListDataSourcesResult
     from ._models_py3 import ListIndexersResult
     from ._models_py3 import ListIndexesResult
@@ -100,6 +101,7 @@ try:
     from ._models_py3 import ResourceCounter
     from ._models_py3 import ScoringFunction
     from ._models_py3 import ScoringProfile
+    from ._models_py3 import SearchAlias
     from ._models_py3 import SearchError
     from ._models_py3 import SearchField
     from ._models_py3 import SearchIndex
@@ -158,12 +160,12 @@ try:
     from ._models_py3 import WebApiSkill
     from ._models_py3 import WordDelimiterTokenFilter
 except (SyntaxError, ImportError):
-    from ._models import AmlSkill  # type: ignore
     from ._models import AnalyzeRequest  # type: ignore
     from ._models import AnalyzeResult  # type: ignore
     from ._models import AnalyzedTokenInfo  # type: ignore
     from ._models import AsciiFoldingTokenFilter  # type: ignore
     from ._models import AzureActiveDirectoryApplicationCredentials  # type: ignore
+    from ._models import AzureMachineLearningSkill  # type: ignore
     from ._models import BM25Similarity  # type: ignore
     from ._models import CharFilter  # type: ignore
     from ._models import CjkBigramTokenFilter  # type: ignore
@@ -219,6 +221,7 @@ except (SyntaxError, ImportError):
     from ._models import LexicalNormalizer  # type: ignore
     from ._models import LexicalTokenizer  # type: ignore
     from ._models import LimitTokenFilter  # type: ignore
+    from ._models import ListAliasesResult  # type: ignore
     from ._models import ListDataSourcesResult  # type: ignore
     from ._models import ListIndexersResult  # type: ignore
     from ._models import ListIndexesResult  # type: ignore
@@ -251,6 +254,7 @@ except (SyntaxError, ImportError):
     from ._models import ResourceCounter  # type: ignore
     from ._models import ScoringFunction  # type: ignore
     from ._models import ScoringProfile  # type: ignore
+    from ._models import SearchAlias  # type: ignore
     from ._models import SearchError  # type: ignore
     from ._models import SearchField  # type: ignore
     from ._models import SearchIndex  # type: ignore
@@ -355,12 +359,12 @@ from ._search_client_enums import (
 )
 
 __all__ = [
-    'AmlSkill',
     'AnalyzeRequest',
     'AnalyzeResult',
     'AnalyzedTokenInfo',
     'AsciiFoldingTokenFilter',
     'AzureActiveDirectoryApplicationCredentials',
+    'AzureMachineLearningSkill',
     'BM25Similarity',
     'CharFilter',
     'CjkBigramTokenFilter',
@@ -416,6 +420,7 @@ __all__ = [
     'LexicalNormalizer',
     'LexicalTokenizer',
     'LimitTokenFilter',
+    'ListAliasesResult',
     'ListDataSourcesResult',
     'ListIndexersResult',
     'ListIndexesResult',
@@ -448,6 +453,7 @@ __all__ = [
     'ResourceCounter',
     'ScoringFunction',
     'ScoringProfile',
+    'SearchAlias',
     'SearchError',
     'SearchField',
     'SearchIndex',

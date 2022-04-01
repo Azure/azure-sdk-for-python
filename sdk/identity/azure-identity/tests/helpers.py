@@ -175,7 +175,9 @@ def validating_transport(requests, responses):
     sessions = zip(requests, responses)
     sessions = (s for s in sessions)  # 2.7's zip returns a list, and nesting a generator doesn't break it for 3.x
 
-    def validate_request(request, **_):
+    def validate_request(request, **kwargs):
+        assert "tenant_id" not in kwargs
+        assert "claims" not in kwargs
         try:
             expected_request, response = next(sessions)
         except StopIteration:

@@ -44,7 +44,7 @@ setup(
     author_email="azurekeyvault@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -66,5 +66,5 @@ setup(
         ]
     ),
     python_requires=">=3.6",
-    install_requires=["azure-common~=1.1", "azure-core<2.0.0,>=1.15.0", "msrest>=0.6.21", "six>=1.11.0"],
+    install_requires=["azure-common~=1.1", "azure-core<2.0.0,>=1.20.0", "msrest>=0.6.21", "six>=1.11.0"],
 )

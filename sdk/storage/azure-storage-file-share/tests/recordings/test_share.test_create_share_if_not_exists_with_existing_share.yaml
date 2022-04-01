@@ -1,0 +1,153 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 21:25:22 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share21b0199a?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 30 Mar 2022 21:25:22 GMT
+      etag:
+      - '"0x8DA1293CC9CCD86"'
+      last-modified:
+      - Wed, 30 Mar 2022 21:25:22 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 21:25:23 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share21b0199a?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
+        specified share already exists.\nRequestId:55d51bdb-c01a-0082-477c-449b7c000000\nTime:2022-03-30T21:25:22.9416841Z</Message></Error>"
+    headers:
+      content-length:
+      - '222'
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 21:25:22 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ShareAlreadyExists
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 409
+      message: The specified share already exists.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 21:25:23 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?comp=list&include=snapshots
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share21b0199a</Name><Properties><Last-Modified>Wed,
+        30 Mar 2022 21:25:22 GMT</Last-Modified><Etag>\"0x8DA1293CC9CCD86\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Wed,
+        30 Mar 2022 21:25:22 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 21:25:22 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 21:25:23 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2021-04-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/share21b0199a?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 30 Mar 2022 21:25:22 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 202
+      message: Accepted
+version: 1

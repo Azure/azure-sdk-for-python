@@ -1,0 +1,62 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "25",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Wed, 09 Mar 2022 09:23:20 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "8fb7a1b7-9f8a-11ec-b0a0-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:23:20 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": {
+        "TableName": "my_table"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "Date": "Wed, 09 Mar 2022 09:23:21 GMT",
+        "ETag": "W/\u0022datetime\u00272022-03-09T09%3A23%3A21.4945288Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027my_table\u0027)",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "722fa399-6eaa-42a2-ad95-a8b9ba5c70e8"
+      },
+      "ResponseBody": {
+        "TableName": "my_table",
+        "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/$metadata#Tables/@Element"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027my_table\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Date": "Wed, 09 Mar 2022 09:23:24 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "91c482a3-9f8a-11ec-b719-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:23:24 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Date": "Wed, 09 Mar 2022 09:23:21 GMT",
+        "x-ms-request-id": "5ff91181-c0c2-4319-810d-0e53621a6fab"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

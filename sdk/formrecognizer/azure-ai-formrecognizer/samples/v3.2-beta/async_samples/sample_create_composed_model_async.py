@@ -27,7 +27,7 @@ USAGE:
     python sample_create_composed_model_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL - a container SAS URL to your Azure Storage blob container.
     4) PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL - a container SAS URL to your Azure Storage blob container.
@@ -43,6 +43,7 @@ async def sample_create_composed_model_async():
     # [START composed_model_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
+    from azure.ai.formrecognizer import DocumentBuildMode
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -54,16 +55,16 @@ async def sample_create_composed_model_async():
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_model_admin_client:
         supplies_poller = await document_model_admin_client.begin_build_model(
-            po_supplies, description="Purchase order-Office supplies"
+            po_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Office supplies"
         )
         equipment_poller = await document_model_admin_client.begin_build_model(
-            po_equipment, description="Purchase order-Office Equipment"
+            po_equipment, DocumentBuildMode.TEMPLATE, description="Purchase order-Office Equipment"
         )
         furniture_poller = await document_model_admin_client.begin_build_model(
-            po_furniture, description="Purchase order-Furniture"
+            po_furniture, DocumentBuildMode.TEMPLATE, description="Purchase order-Furniture"
         )
         cleaning_supplies_poller = await document_model_admin_client.begin_build_model(
-            po_cleaning_supplies, description="Purchase order-Cleaning Supplies"
+            po_cleaning_supplies, DocumentBuildMode.TEMPLATE, description="Purchase order-Cleaning Supplies"
         )
         supplies_model = await supplies_poller.result()
         equipment_model = await equipment_poller.result()

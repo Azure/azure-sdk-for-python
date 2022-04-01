@@ -1,5 +1,23 @@
 # Release History
 
+## 19.1.0 (2022-02-15)
+
+**Features**
+
+  - Added operation group LocalUsersOperations
+  - Model ActiveDirectoryProperties has a new parameter account_type
+  - Model ActiveDirectoryProperties has a new parameter sam_account_name
+  - Model EncryptionIdentity has a new parameter encryption_federated_identity_client_id
+  - Model StorageAccount has a new parameter allowed_copy_scope
+  - Model StorageAccount has a new parameter is_local_user_enabled
+  - Model StorageAccount has a new parameter is_sftp_enabled
+  - Model StorageAccountCreateParameters has a new parameter allowed_copy_scope
+  - Model StorageAccountCreateParameters has a new parameter is_local_user_enabled
+  - Model StorageAccountCreateParameters has a new parameter is_sftp_enabled
+  - Model StorageAccountUpdateParameters has a new parameter allowed_copy_scope
+  - Model StorageAccountUpdateParameters has a new parameter is_local_user_enabled
+  - Model StorageAccountUpdateParameters has a new parameter is_sftp_enabled
+
 ## 19.0.0 (2021-09-14)
 
 **Features**

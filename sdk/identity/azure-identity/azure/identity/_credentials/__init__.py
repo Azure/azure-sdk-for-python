@@ -17,6 +17,7 @@ from .azure_cli import AzureCliCredential
 from .device_code import DeviceCodeCredential
 from .user_password import UsernamePasswordCredential
 from .vscode import VisualStudioCodeCredential
+from .client_assertion import ClientAssertionCredential
 
 
 __all__ = [
@@ -25,6 +26,7 @@ __all__ = [
     "AzurePowerShellCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
+    "ClientAssertionCredential",
     "ClientSecretCredential",
     "DefaultAzureCredential",
     "DeviceCodeCredential",

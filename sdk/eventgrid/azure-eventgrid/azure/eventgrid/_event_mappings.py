@@ -53,11 +53,7 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
     KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
-
-    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
 
     SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
 
@@ -149,6 +145,12 @@ class SystemEventNames(str, Enum):
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
+
+    FhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
+
+    FhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
+
+    FhirResourceUpdatedEventName = 'Microsoft.HealthcareApis.FhirResourceUpdated'
 
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
 
@@ -338,3 +340,7 @@ class SystemEventNames(str, Enum):
 
     # servicebus alias
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
+
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
