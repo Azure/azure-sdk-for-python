@@ -13,7 +13,7 @@ class RegexPathFilter:
 
     def filtered(self, modules):
         paths = [r"sdk/storage/.*/_shared/models.py", r"sdk/storage/.*/_models.py", r"sdk/storage/.*/.*_lease.*", r"sdk/storage/.*/.*client.*", r"sdk\\storage\\.*\\_shared\\models.py", r"sdk\\storage\\.*\\_models.py", r"sdk\\storage\\.*\\.*_lease.*", r"sdk\\storage\\.*\\.*client.*"]
-        reg = re.compile("(%s|%s|%s|%s)" % (paths[0], paths[1], paths[2], paths[3]))
+        reg = re.compile("(%s|%s|%s|%s)" % (paths[0], paths[1], paths[2], paths[3], paths[4], paths[5], paths[6], paths[7]))
         new_modules = []
         for m in modules:
             if not reg.match(m['path']):
