@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, cast, Dict, List, Any, Union
+from typing import TYPE_CHECKING, cast, Dict, List, Any, Union, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import (
@@ -128,7 +128,7 @@ class EventGridPublisherClient(object):
         self,
         events: SendType,
         *,
-        channel_name: str = None,
+        channel_name: Optional[str] = None,
         **kwargs: Any
         ) -> None:
         """Sends events to a topic or a domain specified during the client initialization.

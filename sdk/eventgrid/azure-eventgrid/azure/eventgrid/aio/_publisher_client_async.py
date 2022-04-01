@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union, List, Dict, TYPE_CHECKING, cast
+from typing import Any, Union, List, Dict, TYPE_CHECKING, cast, Optional
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.messaging import CloudEvent
@@ -125,7 +125,7 @@ class EventGridPublisherClient:
         return policies
 
     @distributed_trace_async
-    async def send(self, events: SendType, *, channel_name: str = None, **kwargs: Any) -> None:
+    async def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None:
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
