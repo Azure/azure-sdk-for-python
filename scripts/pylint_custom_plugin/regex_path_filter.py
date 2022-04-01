@@ -12,7 +12,7 @@ class RegexPathFilter:
         return new_modules, errors
 
     def filtered(self, modules):
-        paths = [r"sdk\\storage\\.*\\_shared\\models.py", r"sdk\\storage\\.*\\_models.py", r"sdk\\storage\\.*\\_lease.py", r"sdk\\storage\\.*\\.*client.*"]
+        paths = [r"sdk\\storage\\.*\\_shared\\models.py", r"sdk\\storage\\.*\\_models.py", r"sdk\\storage\\.*\\.*_lease.*", r"sdk\\storage\\.*\\.*client.*"]
         reg = re.compile("(%s|%s|%s|%s)" % (paths[0], paths[1], paths[2], paths[3]))
         new_modules = []
         for m in modules:
