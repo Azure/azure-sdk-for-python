@@ -1,5 +1,12 @@
 # Release History
 
+## 6.0.0 (2022-03-29)
+
+**Breaking changes**
+
+  - Change from single-api package to multiple-api package which permits users to pass in different api version in client.
+
+
 ## 6.0.0b2 (2022-03-24)
 
 **Features**

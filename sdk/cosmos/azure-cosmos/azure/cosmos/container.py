@@ -44,8 +44,8 @@ class ContainerProxy(object):
     """An interface to interact with a specific DB Container.
 
     This class should not be instantiated directly. Instead, use the
-    :func:`DatabaseProxy.get_container_client` method to get an existing
-    container, or the :func:`Database.create_container` method to create a
+    :func:`~azure.cosmos.database.DatabaseProxy.get_container_client` method to get an existing
+    container, or the :func:`~azure.cosmos.database.DatabaseProxy.create_container` method to create a
     new container.
 
     A container in an Azure Cosmos DB SQL API database is a collection of
