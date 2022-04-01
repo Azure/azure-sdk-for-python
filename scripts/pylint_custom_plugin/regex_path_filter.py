@@ -6,8 +6,8 @@ class RegexPathFilter:
         self.old_expand_modules = utils.expand_modules
         utils.expand_modules = self.new_expand_modules
     
-    def new_expand_modules(self, files_or_modules, black_list, black_list_re, **kwargs):
-        modules, errors = self.old_expand_modules(files_or_modules, black_list, black_list_re, **kwargs)
+    def new_expand_modules(self, files_or_modules, block_list, block_list_re, **kwargs):
+        modules, errors = self.old_expand_modules(files_or_modules, block_list, block_list_re, **kwargs)
         new_modules = self.filtered(modules)
         return new_modules, errors
 
