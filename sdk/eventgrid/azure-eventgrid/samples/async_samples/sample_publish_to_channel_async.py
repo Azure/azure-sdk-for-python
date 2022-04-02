@@ -18,30 +18,31 @@ USAGE:
 # [START publish_cloud_event_to_topic]
 import os
 import asyncio
-from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
 
-topic_key = os.environ["EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY"]
-endpoint = os.environ["EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT"]
+topic_key = 'SDHyxKDFqyTWsQf65rSl+MU0g1apDvfqJ1nJMfANcgY='
+endpoint = 'https://data-plane-sdk-ns.centraluseuap-1.eventgrid.azure.net/api/events'
 
-channel_name = os.environ["EVENTGRID_PARTNER_CHANNEL_NAME"]
+channel_name = 'data-plane-sdk-pt-ch'
 
 
 async def publish():
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
-    await client.send(
-        [
-            CloudEvent(
-                type="Contoso.Items.ItemReceived",
-                source="/contoso/items",
-                data={"itemSku": "Contoso Item SKU #1"},
-                subject="Door1",
-            )
-        ],
-        channel_name=channel_name,
-    )
+    async with client:
+        await client.send(
+            [
+                CloudEvent(
+                    type="Contoso.Items.ItemReceived",
+                    source="/contoso/items",
+                    data={"itemSku": "Contoso Item SKU #1"},
+                    subject="Door1",
+                )
+            ],
+            channel_name=channel_name,
+        )
 
 
 if __name__ == "__main__":
