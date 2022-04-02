@@ -15,7 +15,7 @@ from .._generated.aio._monitor_query_client import MonitorQueryClient
 from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import construct_iso8601, order_results, process_error, process_prefer
 from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
-from ._helpers_asyc import get_authentication_policy
+from ._helpers_async import get_authentication_policy
 from .._exceptions import LogsQueryError
 
 if TYPE_CHECKING:

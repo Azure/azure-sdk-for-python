@@ -257,7 +257,9 @@ class KeyProperties(object):
 class KeyReleasePolicy(object):
     """The policy rules under which a key can be exported.
 
-    :param bytes encoded_policy: Blob encoding the policy rules under which the key can be released.
+    :param bytes encoded_policy: The policy rules under which the key can be released. Encoded based on the
+        ``content_type``. For more information regarding release policy grammar, please refer to:
+        https://aka.ms/policygrammarkeys for Azure Key Vault; https://aka.ms/policygrammarmhsm for Azure Managed HSM.
 
     :keyword str content_type: Content type and version of the release policy. Defaults to "application/json;
         charset=utf-8" if omitted.
