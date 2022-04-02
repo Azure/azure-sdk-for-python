@@ -80,17 +80,17 @@ class ChangeLog:
             return
 
         if remaining_path[0] == "parameters":
-            old_parameters_list = list(self._old_report["operations"][operation_name]["functions"][function_name]['parameters'])
-            new_parameters_list = list(self._new_report["operations"][operation_name]["functions"][function_name]['parameters'])
-            old_parameters = [param_name['name'] for param_name in old_parameters_list]
-            new_parameters = [param_name['name'] for param_name in new_parameters_list]
-            for removed_parameter in set(old_parameters) - set(new_parameters):
+            old_parameters_list = self._old_report["operations"][operation_name]["functions"][function_name]['parameters']
+            new_parameters_list = self._new_report["operations"][operation_name]["functions"][function_name]['parameters']
+            old_parameters = {param_name['name'] for param_name in old_parameters_list}
+            new_parameters = {param_name['name'] for param_name in new_parameters_list}
+            # The new parameter is optional or not. Be breaking change for now.
+            for removed_parameter in old_parameters - new_parameters:
                 self.breaking_changes.append(_REMOVE_OPERATION_PARAM.format(operation_name, function_name, removed_parameter))
-            for added_parameter in set(new_parameters) - set(old_parameters):
+            for added_parameter in new_parameters - old_parameters:
                 self.breaking_changes.append(_ADD_OPERATION_PARAM.format(operation_name, function_name,added_parameter))
             return
-        # So method signaure changed. Be vague for now
-        self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name))
+        raise NotImplementedError('')
 
     def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
@@ -156,7 +156,6 @@ _MODEL_ADD = "Added model {}"
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
 _REMOVE_OPERATION_PARAM = "Operation {}.{} no longer has parameter {}"
-_SIGNATURE_CHANGE = "Operation {}.{} has a new signature"
 _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
@@ -193,7 +192,7 @@ def get_report_from_parameter(input_parameter):
             with open(result[0], "r") as fd:
                 return json.load(fd)
 
-        raise NotImplementedError("Multi-api changelog not yet implemented")
+        raise NotImplementedError("Other situations. Be err for now")
 
     with open(input_parameter, "r") as fd:
         return json.load(fd)
