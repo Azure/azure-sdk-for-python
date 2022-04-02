@@ -23,25 +23,26 @@ class DenyAssignment(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The deny assignment type.
     :vartype type: str
-    :param deny_assignment_name: The display name of the deny assignment.
-    :type deny_assignment_name: str
-    :param description: The description of the deny assignment.
-    :type description: str
-    :param permissions: An array of permissions that are denied by the deny assignment.
-    :type permissions:
+    :ivar deny_assignment_name: The display name of the deny assignment.
+    :vartype deny_assignment_name: str
+    :ivar description: The description of the deny assignment.
+    :vartype description: str
+    :ivar permissions: An array of permissions that are denied by the deny assignment.
+    :vartype permissions:
      list[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentPermission]
-    :param scope: The deny assignment scope.
-    :type scope: str
-    :param do_not_apply_to_child_scopes: Determines if the deny assignment applies to child scopes.
+    :ivar scope: The deny assignment scope.
+    :vartype scope: str
+    :ivar do_not_apply_to_child_scopes: Determines if the deny assignment applies to child scopes.
      Default value is false.
-    :type do_not_apply_to_child_scopes: bool
-    :param principals: Array of principals to which the deny assignment applies.
-    :type principals: list[~azure.mgmt.authorization.v2018_07_01_preview.models.Principal]
-    :param exclude_principals: Array of principals to which the deny assignment does not apply.
-    :type exclude_principals: list[~azure.mgmt.authorization.v2018_07_01_preview.models.Principal]
-    :param is_system_protected: Specifies whether this deny assignment was created by Azure and
+    :vartype do_not_apply_to_child_scopes: bool
+    :ivar principals: Array of principals to which the deny assignment applies.
+    :vartype principals: list[~azure.mgmt.authorization.v2018_07_01_preview.models.Principal]
+    :ivar exclude_principals: Array of principals to which the deny assignment does not apply.
+    :vartype exclude_principals:
+     list[~azure.mgmt.authorization.v2018_07_01_preview.models.Principal]
+    :ivar is_system_protected: Specifies whether this deny assignment was created by Azure and
      cannot be edited or deleted.
-    :type is_system_protected: bool
+    :vartype is_system_protected: bool
     """
 
     _validation = {
@@ -77,6 +78,28 @@ class DenyAssignment(msrest.serialization.Model):
         is_system_protected: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword deny_assignment_name: The display name of the deny assignment.
+        :paramtype deny_assignment_name: str
+        :keyword description: The description of the deny assignment.
+        :paramtype description: str
+        :keyword permissions: An array of permissions that are denied by the deny assignment.
+        :paramtype permissions:
+         list[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignmentPermission]
+        :keyword scope: The deny assignment scope.
+        :paramtype scope: str
+        :keyword do_not_apply_to_child_scopes: Determines if the deny assignment applies to child
+         scopes. Default value is false.
+        :paramtype do_not_apply_to_child_scopes: bool
+        :keyword principals: Array of principals to which the deny assignment applies.
+        :paramtype principals: list[~azure.mgmt.authorization.v2018_07_01_preview.models.Principal]
+        :keyword exclude_principals: Array of principals to which the deny assignment does not apply.
+        :paramtype exclude_principals:
+         list[~azure.mgmt.authorization.v2018_07_01_preview.models.Principal]
+        :keyword is_system_protected: Specifies whether this deny assignment was created by Azure and
+         cannot be edited or deleted.
+        :paramtype is_system_protected: bool
+        """
         super(DenyAssignment, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -94,14 +117,14 @@ class DenyAssignment(msrest.serialization.Model):
 class DenyAssignmentFilter(msrest.serialization.Model):
     """Deny Assignments filter.
 
-    :param deny_assignment_name: Return deny assignment with specified name.
-    :type deny_assignment_name: str
-    :param principal_id: Return all deny assignments where the specified principal is listed in the
+    :ivar deny_assignment_name: Return deny assignment with specified name.
+    :vartype deny_assignment_name: str
+    :ivar principal_id: Return all deny assignments where the specified principal is listed in the
      principals list of deny assignments.
-    :type principal_id: str
-    :param gdpr_export_principal_id: Return all deny assignments where the specified principal is
+    :vartype principal_id: str
+    :ivar gdpr_export_principal_id: Return all deny assignments where the specified principal is
      listed either in the principals list or exclude principals list of deny assignments.
-    :type gdpr_export_principal_id: str
+    :vartype gdpr_export_principal_id: str
     """
 
     _attribute_map = {
@@ -118,6 +141,16 @@ class DenyAssignmentFilter(msrest.serialization.Model):
         gdpr_export_principal_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword deny_assignment_name: Return deny assignment with specified name.
+        :paramtype deny_assignment_name: str
+        :keyword principal_id: Return all deny assignments where the specified principal is listed in
+         the principals list of deny assignments.
+        :paramtype principal_id: str
+        :keyword gdpr_export_principal_id: Return all deny assignments where the specified principal is
+         listed either in the principals list or exclude principals list of deny assignments.
+        :paramtype gdpr_export_principal_id: str
+        """
         super(DenyAssignmentFilter, self).__init__(**kwargs)
         self.deny_assignment_name = deny_assignment_name
         self.principal_id = principal_id
@@ -127,10 +160,10 @@ class DenyAssignmentFilter(msrest.serialization.Model):
 class DenyAssignmentListResult(msrest.serialization.Model):
     """Deny assignment list operation result.
 
-    :param value: Deny assignment list.
-    :type value: list[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Deny assignment list.
+    :vartype value: list[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -145,6 +178,12 @@ class DenyAssignmentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Deny assignment list.
+        :paramtype value: list[~azure.mgmt.authorization.v2018_07_01_preview.models.DenyAssignment]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(DenyAssignmentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -153,15 +192,15 @@ class DenyAssignmentListResult(msrest.serialization.Model):
 class DenyAssignmentPermission(msrest.serialization.Model):
     """Deny assignment permissions.
 
-    :param actions: Actions to which the deny assignment does not grant access.
-    :type actions: list[str]
-    :param not_actions: Actions to exclude from that the deny assignment does not grant access.
-    :type not_actions: list[str]
-    :param data_actions: Data actions to which the deny assignment does not grant access.
-    :type data_actions: list[str]
-    :param not_data_actions: Data actions to exclude from that the deny assignment does not grant
+    :ivar actions: Actions to which the deny assignment does not grant access.
+    :vartype actions: list[str]
+    :ivar not_actions: Actions to exclude from that the deny assignment does not grant access.
+    :vartype not_actions: list[str]
+    :ivar data_actions: Data actions to which the deny assignment does not grant access.
+    :vartype data_actions: list[str]
+    :ivar not_data_actions: Data actions to exclude from that the deny assignment does not grant
      access.
-    :type not_data_actions: list[str]
+    :vartype not_data_actions: list[str]
     """
 
     _attribute_map = {
@@ -180,6 +219,17 @@ class DenyAssignmentPermission(msrest.serialization.Model):
         not_data_actions: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword actions: Actions to which the deny assignment does not grant access.
+        :paramtype actions: list[str]
+        :keyword not_actions: Actions to exclude from that the deny assignment does not grant access.
+        :paramtype not_actions: list[str]
+        :keyword data_actions: Data actions to which the deny assignment does not grant access.
+        :paramtype data_actions: list[str]
+        :keyword not_data_actions: Data actions to exclude from that the deny assignment does not grant
+         access.
+        :paramtype not_data_actions: list[str]
+        """
         super(DenyAssignmentPermission, self).__init__(**kwargs)
         self.actions = actions
         self.not_actions = not_actions
@@ -212,6 +262,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -255,6 +307,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -266,8 +320,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -280,6 +334,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.authorization.v2018_07_01_preview.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -287,14 +345,14 @@ class ErrorResponse(msrest.serialization.Model):
 class Principal(msrest.serialization.Model):
     """The name of the entity last modified it.
 
-    :param id: The id of the principal made changes.
-    :type id: str
-    :param display_name: The name of the principal made changes.
-    :type display_name: str
-    :param type: Type of principal such as user , group etc.
-    :type type: str
-    :param email: Email of principal.
-    :type email: str
+    :ivar id: The id of the principal made changes.
+    :vartype id: str
+    :ivar display_name: The name of the principal made changes.
+    :vartype display_name: str
+    :ivar type: Type of principal such as user , group etc.
+    :vartype type: str
+    :ivar email: Email of principal.
+    :vartype email: str
     """
 
     _attribute_map = {
@@ -313,6 +371,16 @@ class Principal(msrest.serialization.Model):
         email: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the principal made changes.
+        :paramtype id: str
+        :keyword display_name: The name of the principal made changes.
+        :paramtype display_name: str
+        :keyword type: Type of principal such as user , group etc.
+        :paramtype type: str
+        :keyword email: Email of principal.
+        :paramtype email: str
+        """
         super(Principal, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name

@@ -1,5 +1,22 @@
 # Release History
 
+## 2.1.0 (2022-04-02)
+
+**Features**
+
+  - Added operation AccessReviewInstancesOperations.create
+  - Added operation group AccessReviewInstanceContactedReviewersOperations
+  - Added operation group TenantLevelAccessReviewInstanceContactedReviewersOperations
+  - Model AccessReviewDefaultSettings has a new parameter recommendation_look_back_duration
+  - Model AccessReviewInstance has a new parameter backup_reviewers
+  - Model AccessReviewInstance has a new parameter reviewers
+  - Model AccessReviewInstance has a new parameter reviewers_type
+  - Model AccessReviewScheduleDefinition has a new parameter expand_nested_memberships
+  - Model AccessReviewScheduleDefinition has a new parameter recommendation_look_back_duration
+  - Model AccessReviewScheduleDefinitionProperties has a new parameter expand_nested_memberships
+  - Model AccessReviewScheduleDefinitionProperties has a new parameter recommendation_look_back_duration
+  - Model AccessReviewScheduleSettings has a new parameter recommendation_look_back_duration
+
 ## 2.0.0 (2021-09-26)
 
 **Features**

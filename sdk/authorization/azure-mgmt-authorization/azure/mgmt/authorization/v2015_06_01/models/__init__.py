@@ -6,18 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ClassicAdministrator
-    from ._models_py3 import ClassicAdministratorListResult
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-except (SyntaxError, ImportError):
-    from ._models import ClassicAdministrator  # type: ignore
-    from ._models import ClassicAdministratorListResult  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
+from ._models_py3 import ClassicAdministrator
+from ._models_py3 import ClassicAdministratorListResult
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+
 
 __all__ = [
     'ClassicAdministrator',

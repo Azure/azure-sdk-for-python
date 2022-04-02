@@ -17,8 +17,8 @@ from ._authorization_management_client_enums import *
 class ErrorDefinition(msrest.serialization.Model):
     """Error description and code explaining why an operation failed.
 
-    :param error: Error of the list gateway status.
-    :type error: ~azure.mgmt.authorization.v2021_01_01_preview.models.ErrorDefinitionProperties
+    :ivar error: Error of the list gateway status.
+    :vartype error: ~azure.mgmt.authorization.v2021_01_01_preview.models.ErrorDefinitionProperties
     """
 
     _attribute_map = {
@@ -31,6 +31,11 @@ class ErrorDefinition(msrest.serialization.Model):
         error: Optional["ErrorDefinitionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Error of the list gateway status.
+        :paramtype error:
+         ~azure.mgmt.authorization.v2021_01_01_preview.models.ErrorDefinitionProperties
+        """
         super(ErrorDefinition, self).__init__(**kwargs)
         self.error = error
 
@@ -42,8 +47,8 @@ class ErrorDefinitionProperties(msrest.serialization.Model):
 
     :ivar message: Description of the error.
     :vartype message: str
-    :param code: Error code of list gateway.
-    :type code: str
+    :ivar code: Error code of list gateway.
+    :vartype code: str
     """
 
     _validation = {
@@ -61,6 +66,10 @@ class ErrorDefinitionProperties(msrest.serialization.Model):
         code: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code of list gateway.
+        :paramtype code: str
+        """
         super(ErrorDefinitionProperties, self).__init__(**kwargs)
         self.message = None
         self.code = code
@@ -69,14 +78,14 @@ class ErrorDefinitionProperties(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """The definition of a Microsoft.Authorization operation.
 
-    :param name: Name of the operation.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param display: Display of the operation.
-    :type display: ~azure.mgmt.authorization.v2021_01_01_preview.models.OperationDisplay
-    :param origin: Origin of the operation. Values include user|system|user,system.
-    :type origin: str
+    :ivar name: Name of the operation.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: Display of the operation.
+    :vartype display: ~azure.mgmt.authorization.v2021_01_01_preview.models.OperationDisplay
+    :ivar origin: Origin of the operation. Values include user|system|user,system.
+    :vartype origin: str
     """
 
     _attribute_map = {
@@ -95,6 +104,16 @@ class Operation(msrest.serialization.Model):
         origin: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the operation.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword display: Display of the operation.
+        :paramtype display: ~azure.mgmt.authorization.v2021_01_01_preview.models.OperationDisplay
+        :keyword origin: Origin of the operation. Values include user|system|user,system.
+        :paramtype origin: str
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
@@ -135,6 +154,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -145,10 +166,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """The result of a request to list Microsoft.Authorization operations.
 
-    :param value: The collection value.
-    :type value: list[~azure.mgmt.authorization.v2021_01_01_preview.models.Operation]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~azure.mgmt.authorization.v2021_01_01_preview.models.Operation]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -163,6 +184,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~azure.mgmt.authorization.v2021_01_01_preview.models.Operation]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -179,8 +206,8 @@ class RoleAssignmentApproval(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param stages: This is the collection of stages returned when one does an expand on it.
-    :type stages:
+    :ivar stages: This is the collection of stages returned when one does an expand on it.
+    :vartype stages:
      list[~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApprovalStep]
     """
 
@@ -203,6 +230,11 @@ class RoleAssignmentApproval(msrest.serialization.Model):
         stages: Optional[List["RoleAssignmentApprovalStep"]] = None,
         **kwargs
     ):
+        """
+        :keyword stages: This is the collection of stages returned when one does an expand on it.
+        :paramtype stages:
+         list[~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApprovalStep]
+        """
         super(RoleAssignmentApproval, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -215,8 +247,9 @@ class RoleAssignmentApprovalListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Role Assignment Approval list.
-    :type value: list[~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApproval]
+    :ivar value: Role Assignment Approval list.
+    :vartype value:
+     list[~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApproval]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -236,6 +269,11 @@ class RoleAssignmentApprovalListResult(msrest.serialization.Model):
         value: Optional[List["RoleAssignmentApproval"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role Assignment Approval list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApproval]
+        """
         super(RoleAssignmentApprovalListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -252,8 +290,8 @@ class RoleAssignmentApprovalStep(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param display_name: The display name for the approval stage.
-    :type display_name: str
+    :ivar display_name: The display name for the approval stage.
+    :vartype display_name: str
     :ivar status: This read-only field specifies the status of an approval. Possible values
      include: "NotStarted", "InProgress", "Completed", "Expired", "Initializing", "Escalating",
      "Completing", "Escalated".
@@ -263,13 +301,13 @@ class RoleAssignmentApprovalStep(msrest.serialization.Model):
     :vartype assigned_to_me: bool
     :ivar reviewed_date_time: Date Time when a decision was taken.
     :vartype reviewed_date_time: ~datetime.datetime
-    :param review_result: The decision on the approval stage. This value is initially set to
+    :ivar review_result: The decision on the approval stage. This value is initially set to
      NotReviewed. Approvers can take action of Approve/Deny. Possible values include: "Approve",
      "Deny", "NotReviewed".
-    :type review_result: str or
+    :vartype review_result: str or
      ~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApprovalStepReviewResult
-    :param justification: Justification provided by approvers for their action.
-    :type justification: str
+    :ivar justification: Justification provided by approvers for their action.
+    :vartype justification: str
     :ivar principal_id: The identity id.
     :vartype principal_id: str
     :ivar principal_type: The identity type : user/servicePrincipal. Possible values include:
@@ -319,6 +357,17 @@ class RoleAssignmentApprovalStep(msrest.serialization.Model):
         justification: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: The display name for the approval stage.
+        :paramtype display_name: str
+        :keyword review_result: The decision on the approval stage. This value is initially set to
+         NotReviewed. Approvers can take action of Approve/Deny. Possible values include: "Approve",
+         "Deny", "NotReviewed".
+        :paramtype review_result: str or
+         ~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApprovalStepReviewResult
+        :keyword justification: Justification provided by approvers for their action.
+        :paramtype justification: str
+        """
         super(RoleAssignmentApprovalStep, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -340,8 +389,8 @@ class RoleAssignmentApprovalStepListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Role Assignment Approval Step list.
-    :type value:
+    :ivar value: Role Assignment Approval Step list.
+    :vartype value:
      list[~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApprovalStep]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
@@ -362,6 +411,11 @@ class RoleAssignmentApprovalStepListResult(msrest.serialization.Model):
         value: Optional[List["RoleAssignmentApprovalStep"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: Role Assignment Approval Step list.
+        :paramtype value:
+         list[~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApprovalStep]
+        """
         super(RoleAssignmentApprovalStepListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -372,8 +426,8 @@ class RoleAssignmentApprovalStepProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param display_name: The display name for the approval stage.
-    :type display_name: str
+    :ivar display_name: The display name for the approval stage.
+    :vartype display_name: str
     :ivar status: This read-only field specifies the status of an approval. Possible values
      include: "NotStarted", "InProgress", "Completed", "Expired", "Initializing", "Escalating",
      "Completing", "Escalated".
@@ -383,13 +437,13 @@ class RoleAssignmentApprovalStepProperties(msrest.serialization.Model):
     :vartype assigned_to_me: bool
     :ivar reviewed_date_time: Date Time when a decision was taken.
     :vartype reviewed_date_time: ~datetime.datetime
-    :param review_result: The decision on the approval stage. This value is initially set to
+    :ivar review_result: The decision on the approval stage. This value is initially set to
      NotReviewed. Approvers can take action of Approve/Deny. Possible values include: "Approve",
      "Deny", "NotReviewed".
-    :type review_result: str or
+    :vartype review_result: str or
      ~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApprovalStepReviewResult
-    :param justification: Justification provided by approvers for their action.
-    :type justification: str
+    :ivar justification: Justification provided by approvers for their action.
+    :vartype justification: str
     :ivar principal_id: The identity id.
     :vartype principal_id: str
     :ivar principal_type: The identity type : user/servicePrincipal. Possible values include:
@@ -433,6 +487,17 @@ class RoleAssignmentApprovalStepProperties(msrest.serialization.Model):
         justification: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: The display name for the approval stage.
+        :paramtype display_name: str
+        :keyword review_result: The decision on the approval stage. This value is initially set to
+         NotReviewed. Approvers can take action of Approve/Deny. Possible values include: "Approve",
+         "Deny", "NotReviewed".
+        :paramtype review_result: str or
+         ~azure.mgmt.authorization.v2021_01_01_preview.models.RoleAssignmentApprovalStepReviewResult
+        :keyword justification: Justification provided by approvers for their action.
+        :paramtype justification: str
+        """
         super(RoleAssignmentApprovalStepProperties, self).__init__(**kwargs)
         self.display_name = display_name
         self.status = None

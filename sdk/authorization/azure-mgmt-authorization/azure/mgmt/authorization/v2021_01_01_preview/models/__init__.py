@@ -6,28 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorDefinition
-    from ._models_py3 import ErrorDefinitionProperties
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import RoleAssignmentApproval
-    from ._models_py3 import RoleAssignmentApprovalListResult
-    from ._models_py3 import RoleAssignmentApprovalStep
-    from ._models_py3 import RoleAssignmentApprovalStepListResult
-    from ._models_py3 import RoleAssignmentApprovalStepProperties
-except (SyntaxError, ImportError):
-    from ._models import ErrorDefinition  # type: ignore
-    from ._models import ErrorDefinitionProperties  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import RoleAssignmentApproval  # type: ignore
-    from ._models import RoleAssignmentApprovalListResult  # type: ignore
-    from ._models import RoleAssignmentApprovalStep  # type: ignore
-    from ._models import RoleAssignmentApprovalStepListResult  # type: ignore
-    from ._models import RoleAssignmentApprovalStepProperties  # type: ignore
+from ._models_py3 import ErrorDefinition
+from ._models_py3 import ErrorDefinitionProperties
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import RoleAssignmentApproval
+from ._models_py3 import RoleAssignmentApprovalListResult
+from ._models_py3 import RoleAssignmentApprovalStep
+from ._models_py3 import RoleAssignmentApprovalStepListResult
+from ._models_py3 import RoleAssignmentApprovalStepProperties
+
 
 from ._authorization_management_client_enums import (
     RoleAssignmentApprovalActorIdentityType,

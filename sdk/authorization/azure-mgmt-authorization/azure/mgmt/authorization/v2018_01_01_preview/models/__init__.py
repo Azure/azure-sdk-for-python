@@ -6,40 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Permission
-    from ._models_py3 import PermissionGetResult
-    from ._models_py3 import ProviderOperation
-    from ._models_py3 import ProviderOperationsMetadata
-    from ._models_py3 import ProviderOperationsMetadataListResult
-    from ._models_py3 import ResourceType
-    from ._models_py3 import RoleAssignment
-    from ._models_py3 import RoleAssignmentCreateParameters
-    from ._models_py3 import RoleAssignmentFilter
-    from ._models_py3 import RoleAssignmentListResult
-    from ._models_py3 import RoleDefinition
-    from ._models_py3 import RoleDefinitionFilter
-    from ._models_py3 import RoleDefinitionListResult
-except (SyntaxError, ImportError):
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Permission  # type: ignore
-    from ._models import PermissionGetResult  # type: ignore
-    from ._models import ProviderOperation  # type: ignore
-    from ._models import ProviderOperationsMetadata  # type: ignore
-    from ._models import ProviderOperationsMetadataListResult  # type: ignore
-    from ._models import ResourceType  # type: ignore
-    from ._models import RoleAssignment  # type: ignore
-    from ._models import RoleAssignmentCreateParameters  # type: ignore
-    from ._models import RoleAssignmentFilter  # type: ignore
-    from ._models import RoleAssignmentListResult  # type: ignore
-    from ._models import RoleDefinition  # type: ignore
-    from ._models import RoleDefinitionFilter  # type: ignore
-    from ._models import RoleDefinitionListResult  # type: ignore
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Permission
+from ._models_py3 import PermissionGetResult
+from ._models_py3 import ProviderOperation
+from ._models_py3 import ProviderOperationsMetadata
+from ._models_py3 import ProviderOperationsMetadataListResult
+from ._models_py3 import ResourceType
+from ._models_py3 import RoleAssignment
+from ._models_py3 import RoleAssignmentCreateParameters
+from ._models_py3 import RoleAssignmentFilter
+from ._models_py3 import RoleAssignmentListResult
+from ._models_py3 import RoleDefinition
+from ._models_py3 import RoleDefinitionFilter
+from ._models_py3 import RoleDefinitionListResult
+
 
 __all__ = [
     'ErrorAdditionalInfo',
