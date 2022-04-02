@@ -33,7 +33,7 @@ class MobileNetworksOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -159,7 +159,7 @@ class MobileNetworksOperations:
         :type mobile_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MobileNetwork, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.MobileNetwork
+        :rtype: ~azure.mgmt.mobilenetwork.models.MobileNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MobileNetwork"]
@@ -260,7 +260,7 @@ class MobileNetworksOperations:
         :param mobile_network_name: The name of the mobile network.
         :type mobile_network_name: str
         :param parameters: Parameters supplied to the create or update mobile network operation.
-        :type parameters: ~mobile_network_management_client.models.MobileNetwork
+        :type parameters: ~azure.mgmt.mobilenetwork.models.MobileNetwork
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -271,8 +271,7 @@ class MobileNetworksOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MobileNetwork or the result of
          cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~mobile_network_management_client.models.MobileNetwork]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mobilenetwork.models.MobileNetwork]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -332,10 +331,10 @@ class MobileNetworksOperations:
         :param mobile_network_name: The name of the mobile network.
         :type mobile_network_name: str
         :param parameters: Parameters supplied to update mobile network tags.
-        :type parameters: ~mobile_network_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MobileNetwork, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.MobileNetwork
+        :rtype: ~azure.mgmt.mobilenetwork.models.MobileNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MobileNetwork"]
@@ -388,7 +387,7 @@ class MobileNetworksOperations:
         :return: An iterator like instance of either MobileNetworkListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~mobile_network_management_client.models.MobileNetworkListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.MobileNetworkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MobileNetworkListResult"]
@@ -457,7 +456,7 @@ class MobileNetworksOperations:
         :return: An iterator like instance of either MobileNetworkListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~mobile_network_management_client.models.MobileNetworkListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.MobileNetworkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MobileNetworkListResult"]
@@ -580,8 +579,7 @@ class MobileNetworksOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SimIdListResult or the result of
          cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~mobile_network_management_client.models.SimIdListResult]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mobilenetwork.models.SimIdListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
