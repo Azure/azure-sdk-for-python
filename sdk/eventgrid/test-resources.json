@@ -11,6 +11,10 @@
           "description": "The client OID to grant access to test resources."
         }
       },
+      "partnerNamespaces_data_plane_sdk_ns_name": {
+            "defaultValue": "data-plane-sdk-ns",
+            "type": "String"
+      },
       "testApplicationId": {
         "type": "string",
         "metadata": {
@@ -31,7 +35,7 @@
       "cloudeventDomainName": "[concat(parameters('baseName'), 'cloudevent-domain')]",
       "cloudeventTopicName": "[concat(parameters('baseName'), 'cloudevent-topic')]",
       "customeventTopicName": "[concat(parameters('baseName'), 'customevent-topic')]",
-      "eventGridDataSenderRoleId": "d5a91429-5739-47e2-a06b-3470a27159e7"
+      "eventGridDataSenderRoleId": "d5a91429-5739-47e2-a06b-3470a27159e7",
     },
     "resources": [
       {
