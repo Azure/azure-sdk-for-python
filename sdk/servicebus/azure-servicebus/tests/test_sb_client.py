@@ -24,6 +24,7 @@ from azure.servicebus.exceptions import (
     ServiceBusAuthorizationError
 )
 from sb_env_loader import ServiceBusPreparer
+from servicebus_preparer import ServiceBusNamespaceAuthorizationRulePreparer
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 class ServiceBusClientTests(AzureMgmtTestCase):
