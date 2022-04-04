@@ -28,19 +28,21 @@ contains some general typing tips and guidance as it relates to common types/pat
     - [Use TypeVar for generic type hinting](TODO)
     - [Use AnyStr when your parameter accepts both str and bytes](TODO)
     - [Use typing.Protocol for structural subtyping](TODO)
+    - [Use typing.Literal to indicate behavior based on exact values](TODO)
 - [How to ignore a mypy typing error](TODO)
 - [How to opt out of mypy type checking](TODO)
 
 ## Intro to typing in Python
 
-Python is a dynamically typed (or sometimes called "duck typed") language. This means that the interpreter only checks
-types as code runs and types are allowed to change. This is different from more statically typed languages, like Java,
-where you will have to declare types in code and check them at compile time. However,
-with [PEP 484](https://peps.python.org/pep-0484/), type hints were introduced to Python which makes it possible to do
-static type checking of Python code. Type hints can be written into Python code to indicate the type of a variable,
-argument, return type, etc. There are tools available to perform static type checking using type hints,
-like [mypy](https://mypy.readthedocs.io/en/stable/). Note that type hints have no effect on the code at runtime and are
-not enforced by the interpreter.
+Python is a dynamically typed (or sometimes
+called "[duck typed](https://docs.python.org/3/glossary.html#term-duck-typing)") language. This means that the
+interpreter only checks types as code runs and types are allowed to change. This is different from more statically typed
+languages, like Java, where you will have to declare types in code and check them at compile time. However,
+with [PEP 483](https://peps.python.org/pep-0483/)/[PEP 484](https://peps.python.org/pep-0484/), type hints were
+introduced to Python which makes it possible to do static type checking of Python code. Type hints can be written into
+Python code to indicate the type of a variable, argument, return type, etc. There are tools available to perform static
+type checking using type hints, like [mypy](https://mypy.readthedocs.io/en/stable/). Note that type hints have no effect
+on the code at runtime and are not enforced by the interpreter.
 
 There are some key benefits to using and checking type hints in Python code:
 
@@ -210,16 +212,18 @@ placed in code and will tell you the inferred static type of an expression.
 `reveal_locals()` can also be placed on any line and will tell you the inferred types of all local variables.
 
 ```python
-a = [1]   # mypy infers type
+a = [1]  # mypy infers type
 reveal_type(a)
 
-c = [1, 'a']    # `int` and `str` are not duck type compatible
+c = [1, 'a']  # `int` and `str` are not duck type compatible
 reveal_type(c)
+
 
 def hello_world(message: str) -> None:
     print(f'Hello world! {message}')
     reveal_locals()
-    
+
+
 reveal_type(hello_world)
 ```
 
@@ -291,10 +295,11 @@ something _or_ `None`. For example, `Optional` usage is appropriate here:
 ```python
 from typing import Optional
 
+
 def plant_trees(
-    yard_kind: Optional[str], # Required, but can be None
-    park_kind: Optional[str] = None, # None default, but can be str
-    treehouse_kind: Optional[str] = 'oak' # 'oak' default, but can be None
+        yard_kind: Optional[str],  # Required, but can be None
+        park_kind: Optional[str] = None,  # None default, but can be str
+        treehouse_kind: Optional[str] = 'oak'  # 'oak' default, but can be None
 ) -> None:
     if yard_kind:
         print(f'Planting {yard_kind} in front yard.')
@@ -318,7 +323,9 @@ There are a few things to consider when typing collections in Python.
    abstract types.
 
 2) It can be more useful to consider the set of supported operations as the defining characteristic of a type. We should
-   prefer [structural subtyping](https://en.wikipedia.org/wiki/Structural_type_system) over [nominal typing](https://en.wikipedia.org/wiki/Nominal_type_system) as this is what supports duck typing in Python.
+   prefer [structural subtyping](https://en.wikipedia.org/wiki/Structural_type_system)
+   over [nominal typing](https://en.wikipedia.org/wiki/Nominal_type_system) as this is what supports duck typing in
+   Python.
 
 #### Mapping Types
 
@@ -350,6 +357,7 @@ type hints for dictionaries with a fixed set of keys. The syntax for this looks 
 ```python
 # from typing import TypedDict  # Python >= 3.8
 from typing_extensions import TypedDict
+
 
 class Employee(TypedDict):
     name: str
@@ -475,7 +483,6 @@ main.py:4: note:     kwargs: builtins.dict[builtins.str, Any]]"
 as such in the code. If `*args` accepts more than just `str`, a `Union[]` type or `Any` can be used depending on how
 complex the type is.
 
-
 ### Use TYPE_CHECKING to avoid circular imports
 
 `typing.TYPE_CHECKING` is a constant that is evaluates to `True` when mypy is running, but is otherwise `False` at
@@ -560,6 +567,7 @@ def multiply(x: int, y: int) -> int:
 def do_math(op: Callable[[int, int], int], x: int, y: int) -> int:
     return op(x, y)
 
+
 product = do_math(multiply, 2, 2)
 sum = do_math(add, 2, 2)
 ```
@@ -636,8 +644,8 @@ class TreeHouse:
 
 `mypy` recognizes this syntax and will understand the type as `TreeHouse`.
 
-Forward references can also be useful when a type hint is used before a type is defined in a file.
-Here, `TreeHouse` is defined after `Yurt`. However, `Yurt` uses `Treehouse` in a type hint, so it must be a forward reference:
+Forward references can also be useful when a type hint is used before a type is defined in a file. Here, `TreeHouse` is
+defined after `Yurt`. However, `Yurt` uses `Treehouse` in a type hint, so it must be a forward reference:
 
 ```python
 class Yurt:
@@ -675,6 +683,7 @@ Consider a function which takes in different input types which then inform the o
 
 ```python
 from typing import Union
+
 
 def analyze_text(text: str, analysis_kind: Union[SentimentAnalysis, EntityRecognition, LanguageDetection]) -> Union[
     SentimentResult, EntityRecognitionResult, LanguageDetectionResult]:
@@ -837,8 +846,72 @@ def pick(p: Sequence[T]) -> T:
     return random_pick(p)
 ```
 
-There are also arguments available to set the variance in a `TypeVar` for the generic class to be more flexible --
-please see the [PEP 484](https://peps.python.org/pep-0484/#covariance-and-contravariance) for more information.
+**Use typing.TypeVar with typing.Generic to create a generic class**
+
+You can also use `TypeVar` with `typing.Generic` to create user-defined generic classes. Generics let you create a class
+which can be used with multiple types -- the type is just stated when the class is instantiated. After instantiation,
+the instance will only allow arguments of that type and mypy will type check it as such. An example
+is [azure.core.polling.LROPoller](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/_poller.py#L144)
+. The abbreviated snippet of its definition below shows that it is defined as a generic class that takes a single type
+parameter `PollingReturnType` which can then be used to type throughout the implementation.
+
+```python
+from typing import TypeVar, Generic, Callable, Any, Optional
+
+PollingReturnType = TypeVar("PollingReturnType")
+
+
+class LROPoller(Generic[PollingReturnType]):
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Callable,
+                 polling_method: PollingMethod[PollingReturnType]):
+        ...
+
+    def result(self, timeout: Optional[int] = None) -> PollingReturnType:
+        ...
+```
+
+When creating an instance of LROPoller, the actual type parameter is passed in `[]`, e.g. here `PollingReturnType` is
+equal to `Dict[str, str]`:
+
+```python
+from typing import Dict
+from azure.core.polling import LROPoller
+
+poller = LROPoller[Dict[str, str]](client, initial_response, deserialization_callback, polling_method)
+reveal_type(poller)
+
+result = poller.result()
+reveal_type(result)
+```
+
+mypy output:
+
+```cmd
+main.py:93: note: Revealed type is "azure.core.polling._poller.LROPoller[builtins.dict*[builtins.str, builtins.str]]"
+main.py:96: note: Revealed type is "builtins.dict*[builtins.str, builtins.str]"
+```
+
+If the actual type parameter is not passed when LROPoller is declared, mypy will infer the `PollingReturnType` as `Any`.
+
+Note that is redundant to type a class with `Generic`, when it already subclasses another generic type and specifies
+type variables, like in the `azure.core.paging` implementation
+of [ItemPaged](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/paging.py#L91)
+which subclasses `Iterator` with a type variable:
+
+```python
+from typing import Iterator, TypeVar
+
+ReturnType = TypeVar("ReturnType")
+
+
+class ItemPaged(Iterator[ReturnType]):
+    ...
+```
+
+There are arguments available to set the variance in a `TypeVar` for the generic class to be more flexible -- please
+see [PEP 484](https://peps.python.org/pep-0484/#covariance-and-contravariance) for more information.
+
+See more on `Generic` in the [reference docs](https://docs.python.org/3/library/typing.html#user-defined-generic-types).
 
 ### Use AnyStr when your parameter or return type expects both str and bytes
 
@@ -952,6 +1025,191 @@ Because this is a runtime check, only the presence of the required methods defin
 their type signatures.
 
 > Note that runtime_checkable is backported to older versions of Python by using typing_extensions.
+
+### Use typing.Literal to indicate behavior based on exact values
+
+[PEP 586](https://peps.python.org/pep-0586/) introduced the `typing.Literal` type which can be used to indicate that an
+expression has a literal specific value. A Literal can contain one or more literal bool, int, str, bytes, or enum
+values:
+
+```python
+# from typing import Literal  Python >=3.8
+from typing_extensions import Literal
+
+doc_type = Literal["prebuilt-receipt"]
+allowed_content_types = Literal["application/json", "text/plain", "image/png", "image/jpeg"] 
+```
+
+Literals can be useful with functions that behave differently based on an exact value that the caller specifies.
+
+Consider a function with a signature like this:
+
+```python
+from typing import Union
+
+
+def get_element(kind: str) -> Union[SelectionMark, FormWord, FormLine]:
+    ...
+```
+
+We want to overload this function since the input informs the output type, but since `str` is accepted for each
+variation, mypy can't distinguish the difference:
+
+```python
+from typing import overload
+
+@overload
+def get_element(kind: str) -> SelectionMark:
+    ...
+
+
+@overload
+def get_element(kind: str) -> FormWord:
+    ...
+
+
+@overload
+def get_element(kind: str) -> FormLine:
+    ...
+
+
+def get_element(kind):
+    ...
+
+
+s = get_element(kind="selectionMark")
+w = get_element(kind="word")
+l = get_element(kind="line")
+
+reveal_type(s)
+reveal_type(w)
+reveal_type(l)
+```
+
+mypy output:
+
+```cmd
+main.py:34: error: Overloaded function signature 2 will never be matched: signature 1's parameter type(s) are the same or broader
+main.py:38: error: Overloaded function signature 3 will never be matched: signature 1's parameter type(s) are the same or broader
+main.py:38: error: Overloaded function signature 3 will never be matched: signature 2's parameter type(s) are the same or broader
+main.py:49: note: Revealed type is "__main__.SelectionMark"
+main.py:50: note: Revealed type is "__main__.SelectionMark"
+main.py:51: note: Revealed type is "__main__.SelectionMark"
+```
+
+To solve this issue, we can update the `get_element` function to have overloads based on their Literal `kind`:
+
+```python
+from typing_extensions import Literal, overload
+
+
+@overload
+def get_element(kind: Literal["selectionMark"]) -> SelectionMark:
+    ...
+
+
+@overload
+def get_element(kind: Literal["word"]) -> FormWord:
+    ...
+
+
+@overload
+def get_element(kind: Literal["line"]) -> FormLine:
+    ...
+
+
+def get_element(kind):
+    ...
+
+
+s = get_element(kind="selectionMark")
+w = get_element(kind="word")
+l = get_element(kind="line")
+
+reveal_type(s)
+reveal_type(w)
+reveal_type(l)
+```
+
+mypy output:
+
+```cmd
+main.py:50: note: Revealed type is "__main__.SelectionMark"
+main.py:51: note: Revealed type is "__main__.FormWord"
+main.py:52: note: Revealed type is "__main__.FormLine"
+```
+
+`typing.Literal` can also be used to discriminate between types in Unions such that a user is not resigned to
+making `isinstance` checks to understand the result. The following example shows a function `get_element` which returns
+a Union of types which each contain a discriminator property, `kind`, typed as a Literal.
+
+```python
+from typing_extensions import Union, Literal
+
+
+# client library code
+class SelectionMark:
+
+    def __init__(self):
+        self.kind: Literal["selectionMark"] = "selectionMark"
+        self.state = "selected"
+
+
+class FormWord:
+
+    def __init__(self):
+        self.kind: Literal["word"] = "word"
+        self.word = "hello"
+
+
+class FormLine:
+
+    def __init__(self):
+        self.kind: Literal["line"] = "line"
+        self.line = "hello world"
+
+
+def get_element() -> Union[SelectionMark, FormWord, FormLine]:
+    ...
+
+
+# user code
+ele = get_element()
+
+if ele.kind == "selectionMark":
+    print(ele.state)
+elif ele.kind == "word":
+    print(ele.word)
+elif ele.kind == "line":
+    print(ele.line)
+```
+
+The above example requires only simple string comparison by the user and is valid by mypy. If we remove the `Literal`
+typing and type each `kind` as `str`, mypy complains:
+
+```cmd
+main.py:37: error: Item "FormWord" of "Union[SelectionMark, FormWord, FormLine]" has no attribute "state"
+main.py:37: error: Item "FormLine" of "Union[SelectionMark, FormWord, FormLine]" has no attribute "state"
+main.py:39: error: Item "SelectionMark" of "Union[SelectionMark, FormWord, FormLine]" has no attribute "word"
+main.py:39: error: Item "FormLine" of "Union[SelectionMark, FormWord, FormLine]" has no attribute "word"
+main.py:41: error: Item "SelectionMark" of "Union[SelectionMark, FormWord, FormLine]" has no attribute "line"
+main.py:41: error: Item "FormWord" of "Union[SelectionMark, FormWord, FormLine]" has no attribute "line"
+```
+
+This puts additional burden on the user and requires them to use `isinstance` checks to make the type checker happy:
+
+```python
+ele = get_element()
+
+if isinstance(ele, SelectionMark):
+    print(ele.state)
+elif isinstance(ele, FormWord):
+    print(ele.word)
+elif isinstance(ele, FormLine):
+    print(ele.line)
+```
+
+> Note that Literal is backported to older versions of Python by using typing_extensions.
 
 ## How to ignore mypy errors
 
