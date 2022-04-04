@@ -896,9 +896,8 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                             # If it can't infer the return, manually check
                             for inner_node in node.body:
                                 #If this is a return node
-                            
                                 if isinstance(inner_node, astroid.Return):
-                                    # If it is a func
+                                    # If it is a function
                                     if isinstance(inner_node.value, astroid.Call):
                                         returns = inner_node.value.func.name
                                         # If we got here, we couldn't grab the class of this function
