@@ -289,7 +289,7 @@ class ChatThreadOperations(object):
 
         :param chat_thread_id: The thread id of the message.
         :type chat_thread_id: str
-        :param max_page_size: The maximum number of messages to be returned per page. The limit can be found from https://docs.microsoft.com/en-us/azure/communication-services/concepts/service-limits.
+        :param max_page_size: The maximum number of messages to be returned per page. The limit can be found from https://docs.microsoft.com/azure/communication-services/concepts/service-limits.
         :type max_page_size: int
         :param start_time: The earliest point in time to get messages up to. The timestamp should be in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.

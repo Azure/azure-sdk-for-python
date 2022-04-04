@@ -371,7 +371,7 @@ class ChatThreadClient(object):
         # type: (...) -> ItemPaged[ChatMessage]
         """Gets a list of messages from a thread.
 
-        :keyword int results_per_page: The maximum number of messages to be returned per page. The limit can be found from https://docs.microsoft.com/en-us/azure/communication-services/concepts/service-limits.
+        :keyword int results_per_page: The maximum number of messages to be returned per page. The limit can be found from https://docs.microsoft.com/azure/communication-services/concepts/service-limits.
         :keyword ~datetime.datetime start_time: The earliest point in time to get messages up to.
         The timestamp should be in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :return: An iterator like instance of ChatMessage

@@ -364,7 +364,7 @@ class ChatThreadClient(object):
     ): # type: (...) -> AsyncItemPaged[ChatMessage]
         """Gets a list of messages from a thread.
 
-        :keyword int results_per_page: The maximum number of messages to be returned per page. The limit can be found from https://docs.microsoft.com/en-us/azure/communication-services/concepts/service-limits.
+        :keyword int results_per_page: The maximum number of messages to be returned per page. The limit can be found from https://docs.microsoft.com/azure/communication-services/concepts/service-limits.
         :keyword ~datetime.datetime start_time: The start time where the range query.
         :return: An iterator like instance of ChatMessage
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatMessage]
