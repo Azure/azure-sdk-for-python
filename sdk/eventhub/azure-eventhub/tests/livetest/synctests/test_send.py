@@ -14,7 +14,7 @@ import sys
 import uamqp
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
-from azure.eventhub.exceptions import EventDataSendError
+from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError
 from azure.eventhub.amqp import (
     AmqpMessageHeader,
     AmqpMessageBodyType,
@@ -57,6 +57,8 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub):
                     break
                 retry_total += 1
             except uamqp.errors.ConnectionClose:
+                for r in reconnect_receivers:
+                    r.close()
                 uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
                 sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
                     uri, live_eventhub['key_name'], live_eventhub['access_key'])
@@ -69,6 +71,9 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub):
                 partition = uamqp.ReceiveClient(source, auth=sas_auth, debug=True, timeout=0, prefetch=500)
                 reconnect_receivers.append(partition)
                 retry_total += 1
+        if retry_total == 3:
+            raise OperationTimeoutError(f"Exhausted retries for receiving from {live_eventhub['hostname']}.")
+
     for r in reconnect_receivers:
         r.close()
 
