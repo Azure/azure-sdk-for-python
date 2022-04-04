@@ -11,6 +11,13 @@ from ._models import (
 )
 
 
+def is_language_api(api_version):
+    """Language API is date-based
+    """
+    import re
+    return re.search(r'\d{4}-\d{2}-\d{2}', api_version)
+
+
 def _validate_input(documents, hint, whole_input_hint):
     """Validate that batch input has either all string docs
     or dict/DetectLanguageInput/TextDocumentInput, not a mix of both.
