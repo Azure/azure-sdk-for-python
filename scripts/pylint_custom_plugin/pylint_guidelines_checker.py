@@ -8,7 +8,6 @@ Pylint custom checkers for SDK guidelines: C4717 - C4744
 """
 
 import logging
-from typing import List
 import astroid
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
