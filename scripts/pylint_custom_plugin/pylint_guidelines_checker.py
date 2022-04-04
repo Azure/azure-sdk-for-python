@@ -888,9 +888,24 @@ class ClientListMethodsUseCorePaging(BaseChecker):
             if node.parent.name.endswith("Client") and node.parent.name not in self.ignore_clients and node.is_method():
                 if node.name.startswith("list"):
                     try:
+                        
                         # infer_call_result gives the method return value as a string
                         returns = next(node.infer_call_result()).as_string()
-  
+                
+                        if returns is astroid.Uninferable:
+                            # If it can't infer the return, manually check
+                            for inner_node in node.body:
+                                #If this is a return node
+                            
+                                if isinstance(inner_node, astroid.Return):
+                                    # If it is a func
+                                    if isinstance(inner_node.value, astroid.Call):
+                                        returns = inner_node.value.func.name
+                                        # If we got here, we couldn't grab the class of this function
+                                    # If it isn't a function
+                                    else:
+                                        returns = inner_node.value.name
+                            
                         # Also check the docstring return type and make sure rtype is there
                         if node.doc.split("rtype:")[-1] not in returns:
                             #Make sure that if returns is a custom class,that the class has a by_page
@@ -1940,6 +1955,8 @@ def register(linter):
     linter.register_checker(CheckNamingMismatchGeneratedCode(linter))
     linter.register_checker(CheckAPIVersion(linter))
     linter.register_checker(CheckEnum(linter))
+    linter.register_checker(ClientListMethodsUseCorePaging(linter))
+
     
 
 
@@ -1951,7 +1968,6 @@ def register(linter):
     # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     # linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     # linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
-    linter.register_checker(ClientListMethodsUseCorePaging(linter))
     # linter.register_checker(ClientLROMethodsUseCorePolling(linter))
     # linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
 
