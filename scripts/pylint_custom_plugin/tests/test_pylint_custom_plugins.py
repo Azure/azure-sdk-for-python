@@ -1872,8 +1872,6 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
                 ItemPaged()
         """)
 
-        print(function_node.doc.split("rtype")[-1])
-
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node)
 
@@ -1893,10 +1891,9 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         file.close()
 
         function_node = node.body[2].body[0]
-        returns = next(function_node.infer_call_result()).as_string()
-        print(function_node.doc.split("rtype:")[-1] not in returns)
-        print(returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1)
-       
+        # for i in function_node.body:
+        #     print(i)
+     
         with self.assertAddsMessages(
             pylint.testutils.Message(
                 msg_id="client-list-methods-use-paging", node=function_node
@@ -1931,7 +1928,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         class SomeClient(): #@
             def list_thing(self): #@
                 '''
-                :rtype: ItemPaged()
+                :rtype: ~azure.core.paging.ItemPaged[ModelOperationInfo]
                 '''
                 return ItemPaged()
             @distributed_trace
@@ -1988,9 +1985,6 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
                 '''
                 return LROPoller()
         """)
-
-        print(next(function_node_a.infer_call_result()).as_string())
-        print(next(function_node_b.infer_call_result()).as_string())
 
         with self.assertAddsMessages(
             pylint.testutils.Message(

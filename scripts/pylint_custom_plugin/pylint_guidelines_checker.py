@@ -902,6 +902,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                                     if isinstance(inner_node.value, astroid.Call):
                                         returns = inner_node.value.func.name
                                         # If we got here, we couldn't grab the class of this function
+                                        # We settle for getting the name
                                     # If it isn't a function
                                     else:
                                         returns = inner_node.value.name
@@ -914,7 +915,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                                 rtype = docstring[docstring.index(line)+1]
                         if rtype not in returns:
                             #Make sure that if returns is a custom class,that the class has a by_page
-                            if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1: 
+                            if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
                                 self.add_message(
                                     msgid="client-list-methods-use-paging", node=node, confidence=None
                                 )
