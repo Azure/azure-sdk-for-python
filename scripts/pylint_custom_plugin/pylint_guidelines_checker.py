@@ -891,7 +891,10 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                         
                         # infer_call_result gives the method return value as a string
                         returns = next(node.infer_call_result()).as_string()
-                
+                        
+                        #Check the inferred type of the return to compare against rtype
+                        type_of_return = next(node.infer_call_result()).pytype()
+
                         if returns is astroid.Uninferable:
                             # If it can't infer the return, manually check
                             for inner_node in node.body:
@@ -905,14 +908,17 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                                     # If it isn't a function
                                     else:
                                         returns = inner_node.value.name
-                            
+                         
                         # Also check the docstring return type and make sure rtype is there
                         docstring = node.doc.split(":")
                         rtype = ""
                         for line in docstring:
                             if line.startswith("rtype"):
                                 rtype = docstring[docstring.index(line)+1]
-                        if rtype not in returns:
+                                if rtype.find("()") !=-1:
+                                    rtype = rtype.replace("()","")
+
+                        if rtype not in type_of_return or rtype not in returns:
                             #Make sure that if returns is a custom class,that the class has a by_page
                             if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
                                 self.add_message(
