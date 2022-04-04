@@ -364,7 +364,7 @@ print("get_chat_message succeeded, message id:", chat_message.id, "content: ", c
 ### List messages
 
 Use `list_messages` method retrieves messages from the service.
-- Use `results_per_page`, optional, The maximum number of messages to be returned per page.
+- Use `results_per_page`, optional, The maximum number of messages to be returned per page. The limit can be found from https://docs.microsoft.com/en-us/azure/communication-services/concepts/service-limits.
 - Use `start_time`, optional, The start time where the range query.
 
 An iterator of `[ChatMessage]` is the response returned from listing messages
