@@ -92,22 +92,22 @@ class BufferedProducer:
         # This method would raise OperationTimeout if the queue does not have enough space for the input and
         # flush cannot finish in timeout.
         timeout_time = time.time() + timeout if timeout else None
-        async with self._not_full:
-            try:
-                new_events_len = len(events)
-            except TypeError:
-                new_events_len = 1
+        try:
+            new_events_len = len(events)
+        except TypeError:
+            new_events_len = 1
 
-            if self._max_buffer_len - self._cur_buffered_len < new_events_len:
-                _LOGGER.info(
-                    "Partition {} does not have enough room for coming {} events."
-                    "Flush first.".format(
-                        self.partition_id, new_events_len
-                    )
+        if self._max_buffer_len - self._cur_buffered_len < new_events_len:
+            _LOGGER.info(
+                "Partition {} does not have enough room for coming {} events."
+                "Flush first.".format(
+                    self.partition_id, new_events_len
                 )
-                # flush the buffer
-                await self.flush(timeout=timeout)
+            )
+            # flush the buffer
+            await self.flush(timeout=timeout)
 
+        async with self._not_full:
             if timeout_time and time.time() > timeout_time:
                 raise OperationTimeoutError("Failed to enqueue events into buffer due to timeout.")
 

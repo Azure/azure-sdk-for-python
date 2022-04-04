@@ -4,7 +4,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+import asyncio
 import time
 from collections import defaultdict
 from threading import Thread
@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 import pytest
 
 from azure.eventhub import EventData
-from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
+from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub._buffered_producer import PartitionResolver
 from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
@@ -40,11 +40,12 @@ def random_pkey_generation(partitions):
 
 
 @pytest.mark.liveTest()
-def test_producer_client_constructor(connection_str):
-    def on_success(events, pid):
+@pytest.mark.asyncio
+async def test_producer_client_constructor(connection_str):
+    async def on_success(events, pid):
         pass
 
-    def on_error(events, error, pid):
+    async def on_error(events, error, pid):
         pass
     with pytest.raises(TypeError):
         EventHubProducerClient.from_connection_string(connection_str, buffered_mode=True)
@@ -71,6 +72,7 @@ def test_producer_client_constructor(connection_str):
 
 
 @pytest.mark.liveTest
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
     [
@@ -79,26 +81,23 @@ def test_producer_client_constructor(connection_str):
         (False, True)
     ]
 )
-@pytest.mark.liveTest
-def test_basic_send_single_events_round_robin(connection_str, flush_after_sending, close_after_sending):
+async def test_basic_send_single_events_round_robin(connection_str, flush_after_sending, close_after_sending):
     received_events = defaultdict(list)
 
-    def on_event(partition_context, event):
+    async def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
-    receive_thread = Thread(target=consumer.receive, args=(on_event,))
-    receive_thread.daemon = True
-    receive_thread.start()
+    receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
     sent_events = defaultdict(list)
 
-    def on_success(events, pid):
+    async def on_success(events, pid):
         if len(events) > 1:
             on_success.batching = True
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    async def on_error(events, err, pid):
         on_error.err = err
 
     on_error.err = None  # ensure no error
@@ -110,8 +109,8 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
         on_error=on_error
     )
 
-    with producer:
-        partitions = producer.get_partition_ids()
+    async with producer:
+        partitions = await producer.get_partition_ids()
         partitions_cnt = len(partitions)
         # perform single sending round-robin
         total_single_event_cnt = 100
@@ -119,13 +118,13 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
         for i in range(total_single_event_cnt // 2):
             event = EventData("test:{}".format(i))
             event.properties = {"event_idx": i}
-            producer.send_event(event)
+            await producer.send_event(event)
             eventdata_set.add(i)
         for i in range(total_single_event_cnt // 2, total_single_event_cnt):
             event = AmqpAnnotatedMessage(data_body="test:{}".format(i))
             event.application_properties = {"event_idx": i}
             amqpannoated_set.add(i)
-            producer.send_event(event)
+            await producer.send_event(event)
 
         if not flush_after_sending and not close_after_sending:
             # ensure it's buffered sending
@@ -134,14 +133,14 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
             assert sum([len(sent_events[pid]) for pid in partitions]) < total_single_event_cnt
         else:
             if flush_after_sending:
-                producer.flush()
+                await producer.flush()
             if close_after_sending:
-                producer.close()
+                await producer.close()
             # ensure all events are sent after calling flush
             assert sum([len(sent_events[pid]) for pid in partitions]) == total_single_event_cnt
 
         # give some time for producer to complete sending and consumer to complete receiving
-        time.sleep(10)
+        await asyncio.sleep(10)
         assert len(sent_events) == len(received_events) == partitions_cnt
 
         assert not on_error.err
@@ -165,11 +164,12 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
         assert not eventdata_set
         assert not amqpannoated_set
 
-    consumer.close()
-    receive_thread.join()
+    await consumer.close()
+    await receive_thread
 
 
 @pytest.mark.liveTest
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "flush_after_sending, close_after_sending",
     [
@@ -178,23 +178,21 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
         (False, False)
     ]
 )
-def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending, close_after_sending):
+async def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending, close_after_sending):
     received_events = defaultdict(list)
 
-    def on_event(partition_context, event):
+    async def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
-    receive_thread = Thread(target=consumer.receive, args=(on_event,))
-    receive_thread.daemon = True
-    receive_thread.start()
+    receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
     sent_events = defaultdict(list)
 
-    def on_success(events, pid):
+    async def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    async def on_error(events, err, pid):
         on_error.err = err
 
     on_error.err = None
@@ -205,8 +203,8 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
         on_error=on_error
     )
 
-    with producer:
-        partitions = producer.get_partition_ids()
+    async with producer:
+        partitions = await producer.get_partition_ids()
         partitions_cnt = len(partitions)
         # perform batch sending round-robin
         total_events_cnt = 100
@@ -217,7 +215,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
         event_idx = 0
         eventdata_set, amqpannoated_set = set(), set()
         for i in range(batch_cnt):
-            batch = producer.create_batch()
+            batch = await producer.create_batch()
             for j in range(each_partition_cnt // 2):
                 event = EventData("test{}:{}".format(i, event_idx))
                 event.properties = {'batch_idx': i, 'event_idx': event_idx}
@@ -233,7 +231,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
             batches.append(batch)
 
         # put remain_events in the last batch
-        last_batch = producer.create_batch()
+        last_batch = await producer.create_batch()
         for i in range(remain_events):
             event = EventData("test:{}:{}".format(len(batches), event_idx))
             event.properties = {'batch_idx': len(batches), 'event_idx': event_idx}
@@ -243,7 +241,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
         batches.append(last_batch)
 
         for batch in batches:
-            producer.send_batch(batch)
+            await producer.send_batch(batch)
 
         if not flush_after_sending and not close_after_sending:
             # ensure it's buffered sending
@@ -253,13 +251,13 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
             # give some time for producer to complete sending and consumer to complete receiving
         else:
             if flush_after_sending:
-                producer.flush()
+                await producer.flush()
             if close_after_sending:
-                producer.close()
+                await producer.close()
             # ensure all events are sent
             assert sum([len(sent_events[pid]) for pid in partitions]) == total_events_cnt
 
-        time.sleep(10)
+        await asyncio.sleep(10)
         assert len(sent_events) == len(received_events) == partitions_cnt
 
         # ensure all events are received in the correct partition
@@ -280,28 +278,27 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
         assert not eventdata_set
         assert not on_error.err
 
-    consumer.close()
-    receive_thread.join()
+    await consumer.close()
+    await receive_thread
 
 
 @pytest.mark.liveTest
-def test_send_with_hybrid_partition_assignment(connection_str):
+@pytest.mark.asyncio
+async def test_send_with_hybrid_partition_assignment(connection_str):
     received_events = defaultdict(list)
 
-    def on_event(partition_context, event):
+    async def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
-    receive_thread = Thread(target=consumer.receive, args=(on_event,))
-    receive_thread.daemon = True
-    receive_thread.start()
+    receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
     sent_events = defaultdict(list)
 
-    def on_success(events, pid):
+    async def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    async def on_error(events, err, pid):
         on_error.err = err
 
     on_error.err = None
@@ -312,8 +309,8 @@ def test_send_with_hybrid_partition_assignment(connection_str):
         on_error=on_error
     )
 
-    with producer:
-        partitions = producer.get_partition_ids()
+    async with producer:
+        partitions = await producer.get_partition_ids()
         partitions_cnt = len(partitions)
         pid_to_pkey = random_pkey_generation(partitions)
         expected_event_idx_to_partition = {}
@@ -321,36 +318,36 @@ def test_send_with_hybrid_partition_assignment(connection_str):
         # 1. send by partition_key, each partition 2 events, two single + one batch containing two
         for pid in partitions:
             pkey = pid_to_pkey[pid]
-            producer.send_event(EventData('{}'.format(event_idx)), partition_key=pkey)
-            batch = producer.create_batch(partition_key=pkey)
+            await producer.send_event(EventData('{}'.format(event_idx)), partition_key=pkey)
+            batch = await producer.create_batch(partition_key=pkey)
             batch.add(EventData('{}'.format(event_idx + 1)))
-            producer.send_batch(batch)
+            await producer.send_batch(batch)
             for i in range(2):
                 expected_event_idx_to_partition[event_idx + i] = pid
             event_idx += 2
 
         # 2. send by partition_id, each partition 2 events, two single + one batch containing two
         for pid in partitions:
-            producer.send_event(EventData('{}'.format(event_idx)), partition_id=pid)
-            batch = producer.create_batch(partition_id=pid)
+            await producer.send_event(EventData('{}'.format(event_idx)), partition_id=pid)
+            batch = await producer.create_batch(partition_id=pid)
             batch.add(EventData('{}'.format(event_idx + 1)))
-            producer.send_batch(batch)
+            await producer.send_batch(batch)
             for i in range(2):
                 expected_event_idx_to_partition[event_idx + i] = pid
             event_idx += 2
 
         # 3. send without partition, each partition 2 events, two single + one batch containing two
         for _ in partitions:
-            producer.send_event(EventData('{}'.format(event_idx)))
-            batch = producer.create_batch()
+            await producer.send_event(EventData('{}'.format(event_idx)))
+            batch = await producer.create_batch()
             batch.add(EventData('{}'.format(event_idx + 1)))
-            producer.send_batch(batch)
+            await producer.send_batch(batch)
             event_idx += 2
 
-        producer.flush()
+        await producer.flush()
         assert len(sent_events) == partitions_cnt
 
-        time.sleep(10)
+        await asyncio.sleep(10)
 
         visited = set()
         for pid in partitions:
@@ -370,27 +367,27 @@ def test_send_with_hybrid_partition_assignment(connection_str):
         assert len(visited) == 2 * 3 * len(partitions)
 
     assert not on_error.err
-    consumer.close()
-    receive_thread.join()
+    await consumer.close()
+    await receive_thread
 
 
-def test_send_with_timing_configuration(connection_str):
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_with_timing_configuration(connection_str):
     received_events = defaultdict(list)
 
-    def on_event(partition_context, event):
+    async def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
-    receive_thread = Thread(target=consumer.receive, args=(on_event,))
-    receive_thread.daemon = True
-    receive_thread.start()
+    receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
     sent_events = defaultdict(list)
 
-    def on_success(events, pid):
+    async def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    async def on_error(events, err, pid):
         on_error.err = err
 
     on_error.err = None
@@ -404,12 +401,12 @@ def test_send_with_timing_configuration(connection_str):
         on_error=on_error
     )
 
-    with producer:
-        partitions = producer.get_partition_ids()
-        producer.send_event(EventData('data'))
-        time.sleep(5)
+    async with producer:
+        partitions = await producer.get_partition_ids()
+        await producer.send_event(EventData('data'))
+        await asyncio.sleep(5)
         assert not sent_events
-        time.sleep(7)
+        await asyncio.sleep(7)
         assert sum([len(sent_events[pid]) for pid in partitions]) == 1
 
     assert not on_error.err
@@ -426,36 +423,38 @@ def test_send_with_timing_configuration(connection_str):
 
     sent_events.clear()
     received_events.clear()
-    with producer:
-        partitions = producer.get_partition_ids()
+    async with producer:
+        partitions = await producer.get_partition_ids()
         for i in range(7):
-            producer.send_event(EventData('data'), partition_id="0")
+            await producer.send_event(EventData('data'), partition_id="0")
         assert not sent_events
-        batch = producer.create_batch(partition_id="0")
+        batch = await producer.create_batch(partition_id="0")
         for i in range(9):
             batch.add(EventData('9'))
-        producer.send_batch(batch)  # will flush 7 events and put the batch in buffer
+        await producer.send_batch(batch)  # will flush 7 events and put the batch in buffer
         assert sum([len(sent_events[pid]) for pid in partitions]) == 7
         for i in range(5):
-            producer.send_event(EventData('data'), partition_id="0")  # will flush batch (9 events) + 1 event, leaving 4 in buffer
+            await producer.send_event(EventData('data'), partition_id="0")  # will flush batch (9 events) + 1 event, leaving 4 in buffer
         assert sum([len(sent_events[pid]) for pid in partitions]) == 17
-        producer.flush()
+        await producer.flush()
         assert sum([len(sent_events[pid]) for pid in partitions]) == 21
 
-    time.sleep(5)
+    await asyncio.sleep(5)
     assert sum([len(received_events[pid]) for pid in partitions]) == 21
     assert not on_error.err
-    consumer.close()
-    receive_thread.join()
+    await consumer.close()
+    await receive_thread
 
 
-def test_send_failure_cases(connection_str):
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_failure_cases(connection_str):
     sent_events = defaultdict(list)
 
-    def on_success(events, pid):
+    async def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    async def on_error(events, err, pid):
         assert len(events) == 1
         assert pid == "0"
         on_error.err = err
@@ -467,85 +466,87 @@ def test_send_failure_cases(connection_str):
         on_error=on_error
     )
 
-    executor = ThreadPoolExecutor()
     on_error.err = None
 
-    with producer:
+    async with producer:
         # init the underlying producer
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
+        await producer.send_event(EventData('data'), partition_id="0")
+        await producer.flush()
 
         # error case: underlying producer send timed out
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush(timeout=0.01)
+        await producer.send_event(EventData('data'), partition_id="0")
+        await producer.flush(timeout=0.01)
         assert type(on_error.err) == OperationTimeoutError
 
         # error case: raw producer send error
-        def error_send(self, **kwargs):
+        async def error_send(self, **kwargs):
             raise EventDataSendError("Send failure")
         raw_producer = producer._buffered_producer_dispatcher._buffered_producers["0"]._producer
         original_send = raw_producer.send
         raw_producer.send = error_send
-        producer.send_event(EventData('data'), partition_id="0")
-        producer.flush()
+        await producer.send_event(EventData('data'), partition_id="0")
+        await producer.flush()
         assert type(on_error.err) == EventDataSendError
         raw_producer.send = original_send
 
         # error case: enqueue time out
         with pytest.raises(OperationTimeoutError):
             # mock back pressure
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
-            future = executor.submit(producer.send_event, EventData('data'), partition_id='0', timeout=1)
-            time.sleep(2)
+            await producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
+            future = asyncio.ensure_future(producer.send_event(EventData('data'), partition_id='0', timeout=1))
+            await asyncio.sleep(5)
             producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.release()
+            await future
             future.result()
 
         # error case: flush error, unable to flush/backpressure
         with pytest.raises(EventDataSendError):
             # mock back pressure
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
-            future = executor.submit(producer.flush, timeout=1)
-            time.sleep(5)
+            await producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
+            future = asyncio.ensure_future(producer.flush(timeout=1))
+            await asyncio.sleep(5)
             producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.release()
+            await future
             future.result()
 
         # error case: close error, unable to flush/backpressure in timeout
         with pytest.raises(EventDataSendError):
             # mock back pressure
-            producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
-            future = executor.submit(producer.close, timeout=1)
-            time.sleep(5)
+            await producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
+            future = asyncio.ensure_future(producer.close(timeout=1))
+            await asyncio.sleep(5)
             producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.release()
+            await future
             future.result()
 
         # error case: enqueue error, time out
-        def error_put_events(self, events, timeout=None):
+        async def error_put_events(self, events, timeout=None):
             raise OperationTimeoutError("Times out")
         original_put_events = producer._buffered_producer_dispatcher._buffered_producers["0"].put_events
         producer._buffered_producer_dispatcher._buffered_producers["0"].put_events = error_put_events
         with pytest.raises(OperationTimeoutError):
-            producer.send_event(EventData('data'), partition_id="0", timeout=1)
+            await producer.send_event(EventData('data'), partition_id="0", timeout=1)
         producer._buffered_producer_dispatcher._buffered_producers["0"].put_events = original_put_events
 
 
 @pytest.mark.liveTest
-def test_long_sleep(connection_str):
+@pytest.mark.asyncio
+async def test_long_sleep(connection_str):
     received_events = defaultdict(list)
 
-    def on_event(partition_context, event):
+    async def on_event(partition_context, event):
         received_events[partition_context.partition_id].append(event)
 
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default")
-    receive_thread = Thread(target=consumer.receive, args=(on_event,))
-    receive_thread.daemon = True
-    receive_thread.start()
+
+    receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
     sent_events = defaultdict(list)
 
-    def on_success(events, pid):
+    async def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    async def on_error(events, err, pid):
         on_error.err = err
 
     on_error.err = None  # ensure no error
@@ -556,15 +557,15 @@ def test_long_sleep(connection_str):
         on_error=on_error
     )
 
-    with producer:
-        producer.send_event(EventData("test"), partition_id="0")
-        time.sleep(300)
-        producer.send_event(EventData("test"), partition_id="0")
-        time.sleep(5)
+    async with producer:
+        await producer.send_event(EventData("test"), partition_id="0")
+        await asyncio.sleep(300)
+        await producer.send_event(EventData("test"), partition_id="0")
+        await asyncio.sleep(5)
 
     assert not on_error.err
     assert len(sent_events["0"]) == 2
     assert len(received_events["0"]) == 2
 
-    consumer.close()
-    receive_thread.join()
+    await consumer.close()
+    await receive_thread
