@@ -18,7 +18,7 @@ from .._deserialize import deserialize_dir_properties
 from ._path_client_async import PathClient
 from .._shared.base_client_async import AsyncTransportWrapper
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
     """A client to interact with the DataLake directory, even if the directory may not yet exist.
 

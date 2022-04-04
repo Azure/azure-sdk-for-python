@@ -22,7 +22,8 @@ from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
 
-
+# pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+# pylint: disable=enum-must-be-uppercase
 class BlobType(str, Enum):
 
     BlockBlob = "BlockBlob"

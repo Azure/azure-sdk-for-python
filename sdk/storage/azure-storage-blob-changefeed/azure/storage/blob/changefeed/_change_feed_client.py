@@ -16,6 +16,7 @@ from ._models import ChangeFeedPaged
 if TYPE_CHECKING:
     from datetime import datetime
 
+# pylint: disable=client-accepts-api-version-keyword
 
 class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific account change feed.

@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from .._models import (  # pylint: disable=unused-import
         ContentSettings)
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     """A client to interact with a specific file system, even if that file system
      may not yet exist.

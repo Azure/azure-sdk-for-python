@@ -33,7 +33,7 @@ from ._deserialize import process_storage_error, is_file_path
 
 ClassType = TypeVar("ClassType")
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class FileSystemClient(StorageAccountHostsMixin):
     """A client to interact with a specific file system, even if that file system
     may not yet exist.

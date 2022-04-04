@@ -19,7 +19,7 @@ from .._deserialize import process_storage_error, deserialize_file_properties
 from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class DataLakeFileClient(PathClient, DataLakeFileClientBase):
     """A client to interact with the DataLake file, even if the file may not yet exist.
 

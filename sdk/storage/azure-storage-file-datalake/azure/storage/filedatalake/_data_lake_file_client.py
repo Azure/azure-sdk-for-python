@@ -29,7 +29,7 @@ from ._models import FileProperties, DataLakeFileQueryError
 
 ClassType = TypeVar("ClassType")
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class DataLakeFileClient(PathClient):
     """A client to interact with the DataLake file, even if the file may not yet exist.
 

@@ -25,7 +25,7 @@ from ._generated import AzureDataLakeStorageRESTAPI
 
 ClassType = TypeVar("ClassType")
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class DataLakeServiceClient(StorageAccountHostsMixin):
     """A client to interact with the DataLake Service at the account level.
 

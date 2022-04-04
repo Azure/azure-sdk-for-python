@@ -16,7 +16,8 @@ def get_enum_value(value):
     except AttributeError:
         return value
 
-
+# pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+# pylint: disable=enum-must-be-uppercase
 class StorageErrorCode(str, Enum):
 
     # Generic storage values

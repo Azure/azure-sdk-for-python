@@ -22,7 +22,8 @@ from azure.storage.blob._generated.models import Logging as GenLogging, Metrics 
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
 from ._shared.models import DictMixin
 
-
+# pylint: disable=enum-must-be-uppercase
+# pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 class FileSystemProperties(DictMixin):
     """File System properties class.
 

@@ -22,7 +22,7 @@ from ._data_lake_file_client_async import DataLakeFileClient
 from ._models import FileSystemPropertiesPaged
 from .._models import UserDelegationKey, LocationMode
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClientBase):
     """A client to interact with the DataLake Service at the account level.
 

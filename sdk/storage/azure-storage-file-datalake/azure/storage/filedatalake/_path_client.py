@@ -31,7 +31,7 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class PathClient(StorageAccountHostsMixin):
     def __init__(
             self, account_url,  # type: str

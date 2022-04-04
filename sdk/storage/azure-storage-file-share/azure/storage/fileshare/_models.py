@@ -23,6 +23,8 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import DirectoryItem
 
 
+# pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+
 def _wrap_item(item):
     if isinstance(item, DirectoryItem):
         return {'name': item.name, 'is_directory': True}

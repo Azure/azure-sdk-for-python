@@ -18,7 +18,7 @@ from ._path_client import PathClient
 
 ClassType = TypeVar("ClassType")
 
-
+# pylint: disable=client-accepts-api-version-keyword
 class DataLakeDirectoryClient(PathClient):
     """A client to interact with the DataLake directory, even if the directory may not yet exist.
 
