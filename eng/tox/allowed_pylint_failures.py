@@ -59,5 +59,10 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-messaging-nspkg",
     "azure-agrifood-farming",
     "azure-ai-language-questionanswering",
-    "azure-ai-language-conversations"
+    "azure-ai-language-conversations",
+    "azure-storage-queue",
+    "azure-storage-blob",
+    "azure-storage-blob-changefeed",
+    "azure-storage-file-share",
+    "azure-storage-file-datalake",
 ]
