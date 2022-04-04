@@ -100,13 +100,11 @@ class BufferedProducerDispatcher:
                 _LOGGER.info("Flushing all partitions succeeded")
                 return
 
-            _LOGGER.info('Flushing all partitions partially succeeded with result {!r}.'.format(exc_results))
-            # TODO: better error?
+            _LOGGER.warning('Flushing all partitions partially failed with result {!r}.'.format(exc_results))
+            # TODO: better error for partial failure?
             raise EventDataSendError(
-                message="Flushing all partitions partially succeeded, failed partitions are {!r}.".format(
-                    exc_results.keys()
-                ),
-                details=exc_results
+                message="Flushing all partitions partially failed, failed partitions are {!r}"
+                        " Exception details are {!r}".format(exc_results.keys(), exc_results)
             )
 
     def close(self, flush=True, timeout=None, raise_error=False):
@@ -114,7 +112,12 @@ class BufferedProducerDispatcher:
         futures = []
         # stop all buffered producers
         for pid, producer in self._buffered_producers.items():
-            futures.append((pid, self._executor.submit(producer.stop, flush=flush, timeout=timeout)))
+            futures.append((pid, self._executor.submit(
+                producer.stop,
+                flush=flush,
+                timeout=timeout,
+                raise_error=raise_error
+            )))
 
         exc_results = {}
         # gather results
@@ -126,11 +129,11 @@ class BufferedProducerDispatcher:
 
         if exc_results:
             # TODO: better error?
-            _LOGGER.info('Stopping all partitions succeeded with result {!r}.'.format(exc_results))
+            _LOGGER.warning('Stopping all partitions partially failed with result {!r}.'.format(exc_results))
             if raise_error:
                 raise EventDataSendError(
-                    message="Stopping partially succeeded, failed partitions are {!r}.".format(exc_results.keys()),
-                    details=exc_results
+                    message="Stopping all partitions partially failed, failed partitions are {!r}"
+                            " Exception details are {!r}".format(exc_results.keys(), exc_results)
                 )
 
         if not self._existing_executor:

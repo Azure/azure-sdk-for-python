@@ -62,7 +62,7 @@ class BufferedProducer:
                 self._last_send_time = time.time()
                 self._check_max_wait_time_future = asyncio.ensure_future(self.check_max_wait_time_worker())
 
-    async def stop(self, flush=True, timeout=None):
+    async def stop(self, flush=True, timeout=None, raise_error=False):
         self._running = False
         if self._check_max_wait_time_future:
             try:
@@ -75,7 +75,7 @@ class BufferedProducer:
                     )
                 )
         if flush:
-            await self.flush(timeout=timeout, raise_error=False)
+            await self.flush(timeout=timeout, raise_error=raise_error)
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
@@ -91,12 +91,12 @@ class BufferedProducer:
         # Put single event or EventDataBatch into the queue.
         # This method would raise OperationTimeout if the queue does not have enough space for the input and
         # flush cannot finish in timeout.
+        timeout_time = time.time() + timeout if timeout else None
         async with self._not_full:
             try:
                 new_events_len = len(events)
             except TypeError:
                 new_events_len = 1
-            timeout_time = time.time() + timeout if timeout else None
 
             if self._max_buffer_len - self._cur_buffered_len < new_events_len:
                 _LOGGER.info(
@@ -142,8 +142,8 @@ class BufferedProducer:
     async def flush(self, timeout=None, raise_error=True):
         # try flushing all the buffered batch within given time
         _LOGGER.info("Partition: {} started flushing.".format(self.partition_id))
+        timeout_time = time.time() + timeout if timeout else None
         async with self._not_empty:
-            timeout_time = time.time() + timeout if timeout else None
             while not self._buffered_queue.empty():
                 remaining_time = timeout_time - time.time() if timeout_time else None
                 # If flush could get the semaphore, perform sending
@@ -188,6 +188,8 @@ class BufferedProducer:
                     )
                     if raise_error:
                         raise OperationTimeoutError("Failed to flush {!r}".format(self.partition_id))
+                    else:
+                        break
         # after finishing flushing, reset cur batch and put it into the buffer
         self._last_send_time = time.time()
         self._cur_batch = EventDataBatch(self._max_message_size_on_link)
@@ -205,8 +207,7 @@ class BufferedProducer:
             if now_time - self._last_send_time > self._max_wait_time:
                 # in the worker, not raising error for flush, users can not handle this
                 await self.flush(raise_error=False)
-                self._last_send_time = now_time
-            await asyncio.sleep(self._max_wait_time - (now_time - self._last_send_time))
+            await asyncio.sleep(min(self._max_wait_time, 5))
 
     @property
     def buffered_event_count(self):

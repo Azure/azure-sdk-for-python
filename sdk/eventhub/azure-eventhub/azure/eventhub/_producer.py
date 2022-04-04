@@ -34,6 +34,7 @@ from ._utils import (
     transform_outbound_single_message,
 )
 from ._constants import TIMEOUT_SYMBOL
+from .amqp import AmqpAnnotatedMessage
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -184,12 +185,12 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
+        event_data,  # type: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]]
         span,  # type: Optional[AbstractSpan]
         partition_key,  # type: Optional[AnyStr]
     ):
         # type: (...) -> Union[EventData, EventDataBatch]
-        if isinstance(event_data, EventData):
+        if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
             outgoing_event_data = transform_outbound_single_message(event_data, EventData)
             if partition_key:
                 set_message_partition_key(outgoing_event_data.message, partition_key)

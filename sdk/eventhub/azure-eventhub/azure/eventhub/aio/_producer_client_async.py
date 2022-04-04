@@ -29,7 +29,7 @@ from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from ._buffered_producer import BufferedProducerDispatcher
-from .._utils import set_message_partition_key
+from .._utils import set_event_partition_key
 from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
 
@@ -196,6 +196,7 @@ class EventHubProducerClient(ClientBaseAsync):
         self._buffered_mode = buffered_mode
         self._on_success = on_success
         self._on_error = on_error
+        self._buffered_producer_dispatcher = None
         self._max_buffer_length = max_buffer_length
         self._max_wait_time = max_wait_time
         self._max_concurrent_sends = max_concurrent_sends
@@ -279,7 +280,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
     async def _buffered_send_event(self, event, **kwargs):
         partition_key = kwargs.get("partition_key")
-        set_message_partition_key(event.message, partition_key)
+        set_event_partition_key(event, partition_key)
         await self._buffered_send(
             event,
             partition_id=kwargs.get("partition_id"),
@@ -527,6 +528,25 @@ class EventHubProducerClient(ClientBaseAsync):
          to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
          partition_key to only be string type, they might fail to parse the non-string value.**
         """
+        partition_id = kwargs.get("partition_id") or ALL_PARTITIONS
+        partition_key = kwargs.get("partition_key")
+        try:
+            try:
+                await cast(EventHubProducer, self._producers[partition_id]).send(
+                    event_data, partition_key=partition_key, timeout=timeout
+                )
+            except (KeyError, AttributeError, EventHubError):
+                await self._start_producer(partition_id, timeout)
+                await cast(EventHubProducer, self._producers[partition_id]).send(
+                    event_data, partition_key=partition_key, timeout=timeout
+                )
+            if self._on_success:
+                await self._on_success([event_data], partition_id)
+        except Exception as exc:
+            if self._on_error:
+                await self._on_error([event_data], exc, partition_id)
+            else:
+                raise
 
     async def send_batch(
         self,
@@ -581,40 +601,32 @@ class EventHubProducerClient(ClientBaseAsync):
                 :caption: Asynchronously sends event data
 
         """
-        partition_id = kwargs.get("partition_id")
-        partition_key = kwargs.get("partition_key")
+        batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
 
-        if isinstance(event_data_batch, EventDataBatch):
-            if partition_id or partition_key:
-                raise TypeError(
-                    "partition_id and partition_key should be None when sending an EventDataBatch "
-                    "because type EventDataBatch itself may have partition_id or partition_key"
-                )
-            to_send_batch = event_data_batch
-        else:
-            to_send_batch = await self.create_batch(
-                partition_id=partition_id, partition_key=partition_key
-            )
-            to_send_batch._load_events(  # pylint:disable=protected-access
-                event_data_batch
-            )
-
-        if len(to_send_batch) == 0:
+        if len(batch) == 0:
             return
 
-        partition_id = (
-            to_send_batch._partition_id  # pylint:disable=protected-access
-            or ALL_PARTITIONS
-        )
+        partition_id = pid or ALL_PARTITIONS
+
         try:
-            await cast(EventHubProducer, self._producers[partition_id]).send(
-                to_send_batch, timeout=timeout
-            )
-        except (KeyError, AttributeError, EventHubError):
-            await self._start_producer(partition_id, timeout)
-            await cast(EventHubProducer, self._producers[partition_id]).send(
-                to_send_batch, timeout=timeout
-            )
+            try:
+                await cast(EventHubProducer, self._producers[partition_id]).send(
+                    batch, timeout=timeout
+                )
+                if self._on_success:
+                    await self._on_success(batch._internal_events, pid)
+            except (KeyError, AttributeError, EventHubError):
+                await self._start_producer(partition_id, timeout)
+                await cast(EventHubProducer, self._producers[partition_id]).send(
+                    batch, timeout=timeout
+                )
+                if self._on_success:
+                    await self._on_success(batch._internal_events, pid)
+        except Exception as exc:
+            if self._on_error:
+                await self._on_error(batch._internal_events, exc, pid)
+            else:
+                raise
 
     async def create_batch(
         self,
@@ -749,7 +761,11 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         async with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                await self._buffered_producer_dispatcher.close(flush=flush, timeout=kwargs.get("timeout"))
+                await self._buffered_producer_dispatcher.close(
+                    flush=flush,
+                    timeout=kwargs.get("timeout"),
+                    raise_error=True
+                )
                 self._buffered_producer_dispatcher = None
 
             for pid in self._producers:

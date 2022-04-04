@@ -184,6 +184,9 @@ class PartitionResolver:
 
     @property
     def next_partition_id(self):
+        """
+        round-robin partition assignment
+        """
         with self._lock:
             self._idx += 1
             self._idx %= self._partitions_cnt

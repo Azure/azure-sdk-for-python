@@ -24,7 +24,7 @@ from ._common import EventDataBatch, EventData
 from ._constants import ALL_PARTITIONS
 from ._producer import EventHubProducer
 from ._buffered_producer import BufferedProducerDispatcher
-from ._utils import set_message_partition_key
+from ._utils import set_event_partition_key
 from .amqp import AmqpAnnotatedMessage
 from .exceptions import ConnectError, EventHubError
 
@@ -183,9 +183,9 @@ class EventHubProducerClient(ClientBase):
         self._on_success = kwargs.get("on_success")
         self._on_error = kwargs.get("on_error")
         self._buffered_producer_dispatcher = None
-        self._max_wait_time = kwargs.get("max_wait_time", None) or 1
-        self._max_buffer_length = kwargs.get("max_buffer_length") or 1500
-        self._max_concurrent_sends = kwargs.get("max_concurrent_sends") or 1
+        self._max_wait_time = kwargs.get("max_wait_time", None)
+        self._max_buffer_length = kwargs.get("max_buffer_length")
+        self._max_concurrent_sends = kwargs.get("max_concurrent_sends")
         self._executor = kwargs.get("executor")
         self._max_worker = kwargs.get("max_worker")
 
@@ -271,7 +271,7 @@ class EventHubProducerClient(ClientBase):
 
     def _buffered_send_event(self, event, **kwargs):
         partition_key = kwargs.get("partition_key")
-        set_message_partition_key(event.message, partition_key)
+        set_event_partition_key(event, partition_key)
         self._buffered_send(
             event,
             partition_id=kwargs.get("partition_id"),
@@ -488,23 +488,21 @@ class EventHubProducerClient(ClientBase):
         partition_id = kwargs.get("partition_id") or ALL_PARTITIONS
         partition_key = kwargs.get("partition_key")
         send_timeout = kwargs.get("timeout")
-        if partition_key:
-            set_message_partition_key(event_data.message, partition_key)
         try:
             try:
                 cast(EventHubProducer, self._producers[partition_id]).send(
-                    event_data, timeout=send_timeout
+                    event_data, partition_key=partition_key, timeout=send_timeout
                 )
             except (KeyError, AttributeError, EventHubError):
                 self._start_producer(partition_id, send_timeout)
                 cast(EventHubProducer, self._producers[partition_id]).send(
-                    event_data, timeout=send_timeout
+                    event_data, partition_key=partition_key, timeout=send_timeout
                 )
             if self._on_success:
-                self._on_success(event_data, partition_id)
+                self._on_success([event_data], partition_id)
         except Exception as exc:
             if self._on_error:
-                self._on_error(event_data, exc, partition_id)
+                self._on_error([event_data], exc, partition_id)
             else:
                 raise
 
@@ -566,7 +564,6 @@ class EventHubProducerClient(ClientBase):
             return
 
         partition_id = pid or ALL_PARTITIONS
-
         send_timeout = kwargs.pop("timeout", None)
 
         try:
@@ -581,6 +578,8 @@ class EventHubProducerClient(ClientBase):
                 cast(EventHubProducer, self._producers[partition_id]).send(
                     batch, timeout=send_timeout
                 )
+                if self._on_success:
+                    self._on_success(batch._internal_events, pid)
         except Exception as exc:
             if self._on_error:
                 self._on_error(batch._internal_events, exc, pid)
@@ -721,7 +720,7 @@ class EventHubProducerClient(ClientBase):
         """
         with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                self._buffered_producer_dispatcher.close(flush=flush, timeout=timeout)
+                self._buffered_producer_dispatcher.close(flush=flush, timeout=timeout, raise_error=True)
                 self._buffered_producer_dispatcher = None
 
             for pid in self._producers:
