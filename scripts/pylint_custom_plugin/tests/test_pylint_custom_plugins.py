@@ -1860,21 +1860,6 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
 class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientListMethodsUseCorePaging
 
-    def test_list_return_type_acceptable(self):
-        class_node, function_node = astroid.extract_node("""
-        from azure.core.paging import ItemPaged
-
-        class SomeClient(): #@
-            def list_thing(self): #@
-                '''
-                :rtype: ItemPaged()
-                '''
-                ItemPaged()
-        """)
-
-        with self.assertNoMessages():
-            self.checker.visit_functiondef(function_node)
-
     def test_list_return_type_file_custom_class_acceptable(self):
         file = open("./test_files/list_return_type_custom_class_acceptable.py")
         node = astroid.parse(file.read())
@@ -1890,11 +1875,8 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         node = astroid.parse(file.read())
         file.close()
 
-        # function_node = node.body[2].body[0]
-        function_node = node.body[1].body[0]
-        # for i in function_node.body:
-        #     print(i)
-     
+        function_node = node.body[2].body[0]
+   
         with self.assertAddsMessages(
             pylint.testutils.Message(
                 msg_id="client-list-methods-use-paging", node=function_node
@@ -1929,23 +1911,24 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         class SomeClient(): #@
             def list_thing(self): #@
                 '''
-                :rtype: ~azure.core.paging.ItemPaged[ModelOperationInfo]
-                '''
-                return ItemPaged()
-            @distributed_trace
-            def list_thing2(self): #@
-                '''
-                :rtype: ItemPaged()
+                :rtype: ~azure.core.paging.ItemPaged[BlobPropertiesPaged]
                 '''
                 return ItemPaged(
                     command, prefix=name_starts_with, results_per_page=results_per_page,
                     page_iterator_class=BlobPropertiesPaged)
+                
+            @distributed_trace
+            def list_thing2(self): #@
+                '''
+                :rtype: ~azure.core.paging.ItemPaged()
+                '''
+                return ItemPaged()
         """)
 
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
-
+      
     def test_ignores_methods_return_AsyncItemPaged(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
         from azure.core.async_paging import AsyncItemPaged
@@ -1956,6 +1939,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
                 :rtype: AsyncItemPaged()
                 '''
                 return AsyncItemPaged()
+
             @distributed_trace
             def list_thing2(self): #@
                 '''
@@ -1979,7 +1963,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
                 '''
                 :rtype: list()
                 '''
-                return list()
+                return [thing1, thing2, thing3, thing4]
             def list_thing2(self): #@
                 '''
                 :rtype: LROPoller()
@@ -2005,9 +1989,10 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         class SomeClient(): #@
             async def list_thing(self, **kwargs): #@
                 '''
-                :rtype: list()
+                :rtype: dict(str, str)
                 '''
-                return list()
+                return {"thing1":"thing2","thing3":"thing4"}
+
             async def list_thing2(self, **kwargs): #@
                 '''
                 :rtype: LROPoller()
@@ -2016,9 +2001,9 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="client-list-methods-use-paging", node=function_node_a
-            ),
+            # pylint.testutils.Message(
+            #     msg_id="client-list-methods-use-paging", node=function_node_a
+            # ),
             pylint.testutils.Message(
                 msg_id="client-list-methods-use-paging", node=function_node_b
             ),
