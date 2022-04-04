@@ -300,6 +300,43 @@ class QueueMessageSamples(object):
             # Delete the queue
             queue.delete_queue()
 
+    def receive_messages_with_max_messages(self):
+        # Instantiate a queue client
+        from azure.storage.queue import QueueClient
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue9")
+
+        # Create the queue
+        queue.create_queue()
+
+        try:
+            queue.send_message(u"message1")
+            queue.send_message(u"message2")
+            queue.send_message(u"message3")
+            queue.send_message(u"message4")
+            queue.send_message(u"message5")
+            queue.send_message(u"message6")
+            queue.send_message(u"message7")
+            queue.send_message(u"message8")
+            queue.send_message(u"message9")
+            queue.send_message(u"message10")
+
+            # Receive messages one-by-one
+            messages = queue.receive_messages(max_messages=5)
+            for msg in messages:
+                print(msg.content)
+                queue.delete_message(msg)
+
+            # Only prints 5 messages because 'max_messages'=5
+            # >>message1
+            # >>message2
+            # >>message3
+            # >>message4
+            # >>message5
+
+        finally:
+            # Delete the queue
+            queue.delete_queue()
+
 
 if __name__ == '__main__':
     sample = QueueMessageSamples()
@@ -311,3 +348,4 @@ if __name__ == '__main__':
     sample.delete_and_clear_messages()
     sample.peek_messages()
     sample.update_message()
+    sample.receive_messages_with_max_messages()
