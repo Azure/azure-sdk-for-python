@@ -907,9 +907,14 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                                         returns = inner_node.value.name
                             
                         # Also check the docstring return type and make sure rtype is there
-                        if node.doc.split("rtype:")[-1] not in returns:
+                        docstring = node.doc.split(":")
+                        rtype = ""
+                        for line in docstring:
+                            if line.startswith("rtype"):
+                                rtype = docstring[docstring.index(line)+1]
+                        if rtype not in returns:
                             #Make sure that if returns is a custom class,that the class has a by_page
-                            if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
+                            if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1: 
                                 self.add_message(
                                     msgid="client-list-methods-use-paging", node=node, confidence=None
                                 )
