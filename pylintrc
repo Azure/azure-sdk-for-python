@@ -5,7 +5,7 @@ reports=no
 # PYLINT DIRECTORY BLACKLIST.
 ignore=_vendor,_generated,samples,examples,test,tests,doc,.tox
 
-init-hook='import sys; sys.path.append(os.getcwd()); sys.path.insert(0, os.path.abspath(os.getcwd().rsplit("azure-sdk-for-python", 1)[0] + "azure-sdk-for-python/scripts/pylint_custom_plugin"))'
+init-hook='import sys; sys.path.insert(0, os.path.abspath(os.getcwd().rsplit("azure-sdk-for-python", 1)[0] + "azure-sdk-for-python/scripts/pylint_custom_plugin"))'
 load-plugins=pylint_guidelines_checker
 
 
