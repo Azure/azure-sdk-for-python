@@ -51,6 +51,9 @@ except OSError:
 
 def _get_refresh_token(service_name, account_name):
     if not _libsecret:
+        _LOGGER.debug(
+            '"libsecret" is not found. You need to install pygobject to make VSCodeCredential work correctly.'
+        )
         return None
 
     err = ct.c_int()
