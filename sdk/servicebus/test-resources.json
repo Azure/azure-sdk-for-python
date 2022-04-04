@@ -193,47 +193,47 @@
     }
   ],
   "outputs": {
-    "SERVICE_BUS_CONNECTION_STR": {
+    "SERVICEBUS_CONNECTION_STR": {
       "type": "string",
       "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
     },
-    "SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE": {
+    "SERVICEBUS_FULLY_QUALIFIED_NAMESPACE": {
       "type": "string",
       "value": "[concat(variables('serviceBusNamespace'), '.servicebus.windows.net')]"
     },
-    "SERVICE_BUS_TOPIC_NAME": {
+    "SERVICEBUS_TOPIC_NAME": {
       "type": "string",
       "value": "[variables('serviceBusTopicName')]"
     },
-    "SERVICE_BUS_SUBSCRIPTION_NAME": {
+    "SERVICEBUS_SUBSCRIPTION_NAME": {
       "type": "string",
       "value": "[variables('serviceBusSubscriptionName')]"
     },
-    "SERVICE_BUS_QUEUE_NAME": {
+    "SERVICEBUS_QUEUE_NAME": {
       "type": "string",
       "value": "[variables('serviceBusQueueName')]"
     },
-    "SERVICE_BUS_SAS_POLICY":{
+    "SERVICEBUS_SAS_POLICY":{
       "type": "string",
       "value": "[variables('queueAuthorizationRuleName')]"
     },
-    "SERVICE_BUS_SAS_KEY":{
+    "SERVICEBUS_SAS_KEY":{
       "type": "string",
       "value": "[listkeys(variables('queueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
     },
-    "SERVICE_BUS_SESSION_QUEUE_NAME": {
+    "SERVICEBUS_SESSION_QUEUE_NAME": {
       "type": "string",
       "value": "[variables('serviceBusSessionQueueName')]"
     },
-    "SERVICE_BUS_SESSION_ID":{
+    "SERVICEBUS_SESSION_ID":{
       "type": "string",
       "value": "[variables('serviceBusSessionId')]"
     },
-    "SERVICE_BUS_SESSION_QUEUE_SAS_POLICY":{
+    "SERVICEBUS_SESSION_QUEUE_SAS_POLICY":{
       "type": "string",
       "value": "[variables('sessionQueueAuthorizationRuleName')]"
     },
-    "SERVICE_BUS_SESSION_QUEUE_SAS_KEY":{
+    "SERVICEBUS_SESSION_QUEUE_SAS_KEY":{
       "type": "string",
       "value": "[listkeys(variables('sessionQueueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
     }
