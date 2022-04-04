@@ -1865,7 +1865,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         from azure.core.paging import ItemPaged
 
         class SomeClient(): #@
-            def _list_thing(self): #@
+            def list_thing(self): #@
                 '''
                 :rtype: ItemPaged()
                 '''
@@ -1890,7 +1890,8 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         node = astroid.parse(file.read())
         file.close()
 
-        function_node = node.body[2].body[0]
+        # function_node = node.body[2].body[0]
+        function_node = node.body[1].body[0]
         # for i in function_node.body:
         #     print(i)
      
