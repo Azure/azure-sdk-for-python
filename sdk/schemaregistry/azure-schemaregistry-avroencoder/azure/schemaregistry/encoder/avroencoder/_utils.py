@@ -4,21 +4,12 @@
 # --------------------------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Mapping,
-    Optional,
-    Type,
-    Union,
-    cast
-)
-from avro.errors import SchemaResolutionException   # type: ignore
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, Union, cast
+from avro.errors import SchemaResolutionException  # type: ignore
 
 from ._exceptions import (  # pylint: disable=import-error
     InvalidContentError,
-    InvalidSchemaError
+    InvalidSchemaError,
 )
 from ._message_protocol import (  # pylint: disable=import-error
     MessageContent,
@@ -27,18 +18,19 @@ from ._message_protocol import (  # pylint: disable=import-error
 from ._constants import (  # pylint: disable=import-error
     AVRO_MIME_TYPE,
 )
+
 if TYPE_CHECKING:
     from ._apache_avro_encoder import (  # pylint: disable=import-error
         ApacheAvroObjectEncoder as AvroObjectEncoder,
     )
 
+
 def validate_schema(avro_encoder: "AvroObjectEncoder", raw_input_schema: str):
     try:
         return avro_encoder.get_schema_fullname(raw_input_schema)
     except Exception as exc:  # pylint:disable=broad-except
-        raise InvalidSchemaError(
-            f"Cannot parse schema: {raw_input_schema}"
-        ) from exc
+        raise InvalidSchemaError(f"Cannot parse schema: {raw_input_schema}") from exc
+
 
 def create_message_content(
     avro_encoder: "AvroObjectEncoder",
@@ -46,7 +38,7 @@ def create_message_content(
     raw_input_schema: str,
     schema_id: str,
     message_type: Optional[Type[MessageType]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Union[MessageType, MessageContent]:
     content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
@@ -69,19 +61,18 @@ def create_message_content(
 
     if message_type:
         try:
-            return message_type.from_message_content(
-                payload, content_type, **kwargs
-            )
+            return message_type.from_message_content(payload, content_type, **kwargs)
         except AttributeError as exc:
             raise TypeError(
                 f"""Cannot set content and content type on model object. The content model
                     {str(message_type)} must be a subtype of the MessageType protocol.
                     If using an Azure SDK model class, please check the README.md for the full list
                     of supported Azure SDK models and their corresponding versions.""",
-                {"content": payload, "content_type": content_type}
+                {"content": payload, "content_type": content_type},
             ) from exc
 
     return MessageContent({"content": payload, "content_type": content_type})
+
 
 def validate_message(message: Union[MessageType, MessageContent]):
     try:
@@ -115,17 +106,16 @@ def validate_message(message: Union[MessageType, MessageContent]):
 
     return schema_id, content
 
+
 def decode_content(
     avro_encoder: "AvroObjectEncoder",
     content: bytes,
     schema_id: str,
     schema_definition: str,
-    readers_schema: Optional[str] = None
+    readers_schema: Optional[str] = None,
 ):
     try:
-        reader = avro_encoder.get_schema_reader(
-            schema_definition, readers_schema
-        )
+        reader = avro_encoder.get_schema_reader(schema_definition, readers_schema)
     except Exception as exc:
         error_message = (
             f"Invalid schema for the following writer's schema with schema ID {schema_id}:"
@@ -142,9 +132,7 @@ def decode_content(
         ) from exc
 
     try:
-        dict_value = avro_encoder.decode(
-            content, reader
-        )  # type: Dict[str, Any]
+        dict_value = avro_encoder.decode(content, reader)  # type: Dict[str, Any]
     except SchemaResolutionException as exc:
         raise InvalidSchemaError(
             f"Incompatible schemas.\nWriter's Schema: {schema_definition}\nReader's Schema: {readers_schema}",
