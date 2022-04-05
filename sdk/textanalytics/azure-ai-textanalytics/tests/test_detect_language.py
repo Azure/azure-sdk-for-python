@@ -634,11 +634,24 @@ class TestDetectLanguage(TextAnalyticsTest):
         client.detect_language(["please don't fail"])
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
     def test_disable_service_logs(self, client):
         def callback(resp):
             assert resp.http_request.query['loggingOptOut']
+        client.detect_language(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_03_01_PREVIEW})
+    @recorded_by_proxy
+    def test_disable_service_logs_body_param(self, client):
+        def callback(resp):
+            import json
+            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
         client.detect_language(
             documents=["Test for logging disable"],
             disable_service_logs=True,

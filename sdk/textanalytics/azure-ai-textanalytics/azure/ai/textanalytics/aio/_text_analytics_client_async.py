@@ -17,6 +17,7 @@ from .._request_handlers import (
     _validate_input,
     _determine_action_type,
     _check_string_index_type_arg,
+    is_language_api
 )
 from .._response_handlers import (
     process_http_response_error,
@@ -192,13 +193,29 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
+
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return await self._client.analyze_text(
+                    body=models.AnalyzeTextLanguageDetectionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.LanguageDetectionTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", language_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return await self._client.languages(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", language_result),
                 **kwargs,
             )
