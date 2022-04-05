@@ -901,7 +901,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                         if type_of_return is not astroid.Uninferable:
                             type_of_return = type_of_return.split(".")[-1]
                             if type_of_return == "ItemPaged" or type_of_return == "AsyncItemPaged":
-                                print("Got here")
+                                # print("Got here")
                                 logger.debug("This method returns a Paging class, but does not follow list naming conventions")
                                 pass
                     except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
