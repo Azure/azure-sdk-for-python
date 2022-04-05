@@ -895,6 +895,10 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                         # Check the inferred type of the return to compare against rtype
                         type_of_return = next(node.infer_call_result()).pytype()
 
+                        # print(returns)
+                        # print(type_of_return)
+
+
                         if type_of_return is not astroid.Uninferable:
                             # Get the type of what is being returned
                             # Builtins.dict, or azure.core.polling.LROPoller()
@@ -923,9 +927,13 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                             if line.startswith("rtype"):
                                 rtype = docstring[docstring.index(line)+1]
                         
+                        # print(rtype, type_of_return)
+
+                        # if type_of_return.lower() not in rtype.lower(): print("not")
+                        
                         # If return type is inferrable, check if it is in rtype. (issues with () reason for no direct comparison: dict(str,str) vs. builtins.dict)
                         # If return type is not inferrable, see if the rtype in the docstring is in the name of the returned item. 
-                        if type_of_return not in rtype or rtype not in returns:
+                        if type_of_return.lower() not in rtype.lower() or rtype not in returns:
 
                             # Make sure that if returns is a custom class, that the class has a by_page
                             if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
