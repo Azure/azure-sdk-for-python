@@ -300,19 +300,33 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             self._api_version,
             string_index_type_default=self._string_index_type_default,
         )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextEntityRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.EntitiesTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", entities_result),
+                    **kwargs
+                )
+
             return self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                string_index_type=string_index_type,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", entities_result),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
