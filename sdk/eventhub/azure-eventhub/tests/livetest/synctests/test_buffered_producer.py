@@ -98,7 +98,7 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
             on_success.batching = True
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    def on_error(events, pid, err):
         on_error.err = err
 
     on_error.err = None  # ensure no error
@@ -194,7 +194,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
     def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    def on_error(events, pid, err):
         on_error.err = err
 
     on_error.err = None
@@ -301,7 +301,7 @@ def test_send_with_hybrid_partition_assignment(connection_str):
     def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    def on_error(events, pid, err):
         on_error.err = err
 
     on_error.err = None
@@ -390,7 +390,7 @@ def test_send_with_timing_configuration(connection_str):
     def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    def on_error(events, pid, err):
         on_error.err = err
 
     on_error.err = None
@@ -455,7 +455,7 @@ def test_send_failure_cases(connection_str):
     def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    def on_error(events, pid, err):
         assert len(events) == 1
         assert pid == "0"
         on_error.err = err
@@ -545,7 +545,7 @@ def test_long_sleep(connection_str):
     def on_success(events, pid):
         sent_events[pid].extend(events)
 
-    def on_error(events, err, pid):
+    def on_error(events, pid, err):
         on_error.err = err
 
     on_error.err = None  # ensure no error

@@ -25,7 +25,7 @@ class BufferedProducer:
             producer: EventHubProducer,
             partition_id: str,
             on_success: Callable[[List[EventData], Optional[str]], None],
-            on_error: Callable[[List[EventData], Exception, Optional[str]], None],
+            on_error: Callable[[List[EventData], Optional[str], Exception], None],
             max_message_size_on_link,
             *,
             max_wait_time: float = 1,
@@ -80,7 +80,7 @@ class BufferedProducer:
             if self._cur_buffered_len:
                 _LOGGER.warning(
                     "Shutting down Partition {}."
-                    " There are still {} events in the buffer which will got lost".format(
+                    " There are still {} events in the buffer which will be lost".format(
                         self.partition_id,
                         self._cur_buffered_len
                     )
@@ -162,19 +162,19 @@ class BufferedProducer:
                             batch,
                             timeout=timeout_time - time.time() if timeout_time else None
                         )
-                        await self._on_success(batch._internal_events, self.partition_id)
                         _LOGGER.info(
                             "Partition {} sending {} events succeeded.".format(
                                 self.partition_id, len(batch)
                             )
                         )
+                        await self._on_success(batch._internal_events, self.partition_id)
                     except Exception as exc:
-                        await self._on_error(batch._internal_events, exc, self.partition_id)
                         _LOGGER.info(
                             "Partition {} sending {} events failed due to exception: {!r} ".format(
                                 self.partition_id, len(batch), exc
                             )
                         )
+                        await self._on_error(batch._internal_events, self.partition_id, exc)
                     finally:
                         self._cur_buffered_len -= len(batch)
                         self._max_concurrent_sends_semaphore.release()

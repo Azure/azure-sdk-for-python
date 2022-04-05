@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show sending events with different options to an Event Hub partition.
+Examples to show sending events in buffered mode to an Event Hub.
 """
 
 import time
@@ -22,9 +22,9 @@ def on_success(events, pid):
     print(events, pid)
 
 
-def on_error(event, error, pid):
+def on_error(events, pid, error):
     # sending failed
-    print(event, error, pid)
+    print(events, pid, error)
 
 
 producer = EventHubProducerClient.from_connection_string(
@@ -37,12 +37,18 @@ producer = EventHubProducerClient.from_connection_string(
 
 start_time = time.time()
 with producer:
+    # single events will be batched automatically
     for i in range(10):
+        # the method returning indicates the event has been enqueued to the buffer
         producer.send_event(EventData('Single data {}'.format(i)))
 
     batch = producer.create_batch()
     for i in range(10):
         batch.add(EventData('Single data in batch {}'.format(i)))
+    # alternatively, you can enqueue an EventDataBatch object to the buffer
     producer.send_batch(batch)
+
+    # calling flush sends out the events in the buffered immediately
+    producer.flush()
 
 print("Send messages in {} seconds.".format(time.time() - start_time))

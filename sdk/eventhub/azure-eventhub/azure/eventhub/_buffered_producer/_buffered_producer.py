@@ -24,7 +24,7 @@ class BufferedProducer:
             producer: EventHubProducer,
             partition_id: str,
             on_success: Callable[[List[EventData], Optional[str]], None],
-            on_error: Callable[[List[EventData], Exception, Optional[str]], None],
+            on_error: Callable[[List[EventData], Optional[str], Exception], None],
             max_message_size_on_link,
             executor: ThreadPoolExecutor,
             *,
@@ -81,7 +81,7 @@ class BufferedProducer:
             if self._cur_buffered_len:
                 _LOGGER.warning(
                     "Shutting down Partition {}."
-                    " There are still {} events in the buffer which will got lost".format(
+                    " There are still {} events in the buffer which will be lost".format(
                         self.partition_id,
                         self._cur_buffered_len
                     )
@@ -140,16 +140,6 @@ class BufferedProducer:
 
         return wrapper_callback
 
-    def sent_callback(self, events, future: Future):
-        try:
-            future.result()
-            self._on_success(events, self.partition_id)
-        except Exception as exc:
-            self._on_error(events, exc, self.partition_id)
-        finally:
-            self._cur_buffered_len -= len(events)
-            self._max_concurrent_sends_semaphore.release()
-
     def flush(self, timeout=None, raise_error=True):
         # try flushing all the buffered batch within given time
         _LOGGER.info("Partition: {} started flushing.".format(self.partition_id))
@@ -170,19 +160,19 @@ class BufferedProducer:
                             batch,
                             timeout=timeout_time - time.time() if timeout_time else None
                         )
-                        self._on_success(batch._internal_events, self.partition_id)
                         _LOGGER.info(
                             "Partition {} sending {} events succeeded.".format(
                                 self.partition_id, len(batch)
                             )
                         )
+                        self._on_success(batch._internal_events, self.partition_id)
                     except Exception as exc:
-                        self._on_error(batch._internal_events, exc, self.partition_id)
                         _LOGGER.info(
                             "Partition {} sending {} events failed due to exception: {!r} ".format(
                                 self.partition_id, len(batch), exc
                             )
                         )
+                        self._on_error(batch._internal_events, self.partition_id, exc)
                     finally:
                         self._cur_buffered_len -= len(batch)
                         self._max_concurrent_sends_semaphore.release()

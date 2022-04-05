@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show sending events with different options to an Event Hub asynchronously.
+Examples to show sending events in buffered mode to an Event Hub asynchronously.
 """
 
 import time
@@ -14,7 +14,6 @@ import asyncio
 import os
 
 from azure.eventhub.aio import EventHubProducerClient
-from azure.eventhub.exceptions import EventHubError
 from azure.eventhub import EventData
 
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
@@ -26,9 +25,9 @@ async def on_success(events, pid):
     print(events, pid)
 
 
-async def on_error(event, error, pid):
+async def on_error(events, pid, error):
     # sending failed
-    print(event, error, pid)
+    print(events, pid, error)
 
 
 async def run():
@@ -42,13 +41,19 @@ async def run():
     )
 
     async with producer:
+        # single events will be batched automatically
         for i in range(10):
+            # the method returning indicates the event has been enqueued to the buffer
             await producer.send_event(EventData('Single data {}'.format(i)))
 
         batch = await producer.create_batch()
         for i in range(10):
             batch.add(EventData('Single data in batch {}'.format(i)))
+        # alternatively, you can enqueue an EventDataBatch object to the buffer
         await producer.send_batch(batch)
+
+        # calling flush sends out the events in the buffered immediately
+        await producer.flush()
 
 start_time = time.time()
 asyncio.run(run())

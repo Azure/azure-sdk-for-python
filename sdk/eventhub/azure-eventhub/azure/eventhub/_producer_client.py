@@ -49,38 +49,31 @@ class EventHubProducerClient(ClientBase):
      by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
      or ~azure.core.credentials.AzureNamedKeyCredential
-    :keyword bool buffered_mode: Set to True to get the producer client work in buffered mode. Default is False.
+    :keyword bool buffered_mode: If True, the producer client will collect events in a buffer, efficiently batch,
+     then publish. Default is False.
     :keyword on_success: The callback to be called once a batch has successfully published.
-     The callback takes two parameters: `events` which are the list of events that have been successfully published
-     and `partition_id` which is the partition id that the events in the list have been published to.
+     The callback takes two parameters:
+        - `events`: The list of events that have been successfully published
+        - `partition_id`: The partition id that the events in the list have been published to.
      The callback function should be defined like: `on_success(events, partition_id)`.
+     It is required when buffered_mode is True while optional if buffered mode is False.
     :paramtype on_success: Optional[Callable[[List[EventData], Optional[str]], None]]
-    :keyword on_error: The callback to be called once a batch has failed to publish.
-     The callback takes three parameters: `events` which are the list of events that failed to be published,
-     `partition_id` which is the partition id that the events in the list have been tried to be published to and
-     `error` being the exception.
-     The callback function should be defined like: `on_error(events, error, partition_id)`.
-     If on_error is passed in non-buffered mode, callback will be called with the error instead of
-     error being raised from the send method.
-    :paramtype on_error: Optional[Callable[[List[EventData], Exception, Optional[str]], None]]
+    :keyword on_error: The callback to be called once a batch has failed to be published.
+     The callback takes three parameters:
+        - `events`: The list of events that failed to be published,
+        - `partition_id`: The partition id that the events in the list have been tried to be published to and
+        - `error`: The exception related to the sending failure.
+     The callback function should be defined like: `on_error(events, partition_id, error)`.
+     It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
+     If `on_error is` passed when `buffered_mode`, instead of error being raised from the send methods,
+     the `on_error` callback will be called with the error information related to sending.
+    :paramtype on_error: Optional[Callable[[List[EventData], Optional[str], Exception], None]]
     :keyword int max_buffer_length: Buffered mode only.
-     The total number of events that can be buffered for publishing at a given time for a given partition.
+     The total number of events that can be buffered before a flush will be triggered.
      The default value is 1500 in buffered mode.
     :keyword Optional[float] max_wait_time: Buffered mode only.
      The amount of time to wait for a batch to be built with events in the buffer before publishing.
      The default value is 1 in buffered mode.
-    :keyword Optional[int] max_concurrent_sends: Buffered mode only. The total number of batches that may be sent
-     concurrently, across all partitions. This limit takes precedence over the value specified in
-     max_concurrent_sends, ensuring this maximum is respected. By default, this will be set to
-     twice the number of processors available in the host environment.
-    :keyword Optional[int] max_concurrent_sends: Buffered mode only. The number of batches that may
-     be sent concurrently for a given partition. This option is superseded by the value specified for
-     max_concurrent_sends, ensuring that limit is respected.
-    :keyword Optional[ThreadPoolExecutor] executor: Buffered mode only. A user-specified thread pool used to send
-     events in parallel.
-    :keyword Optional[int] max_workers: Buffered mode only. Specify the maximum workers in the thread pool. If not
-     specified the number used will be derived from the core count of the environment.
-     This cannot be combined with `executor`.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
@@ -105,7 +98,7 @@ class EventHubProducerClient(ClientBase):
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
      be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
@@ -133,7 +126,7 @@ class EventHubProducerClient(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union["AzureSasCredential", "TokenCredential", "AzureNamedKeyCredential"],
+        credential: "CredentialTypes",
         **kwargs: Any
     ):
         ...
@@ -143,10 +136,10 @@ class EventHubProducerClient(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union["AzureSasCredential", "TokenCredential", "AzureNamedKeyCredential"],
+        credential: "CredentialTypes",
         *,
         buffered_mode: Literal[True],
-        on_error: Callable[[List["EventData"], Exception, Optional[str]], None],
+        on_error: Callable[[List["EventData"], Optional[str], Exception], None],
         on_success: Callable[[List["EventData"], Optional[str]], None],
         max_buffer_length: int = 1500,
         max_wait_time: float = 1,
@@ -344,6 +337,7 @@ class EventHubProducerClient(ClientBase):
         conn_str: str,
         *,
         eventhub_name: Optional[str] = None,
+        buffered_mode: Literal[False] = False,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         ...
@@ -355,7 +349,8 @@ class EventHubProducerClient(ClientBase):
         *,
         eventhub_name: Optional[str] = None,
         buffered_mode: Literal[True],
-        on_error: Callable[[List["EventData"], Exception, Optional[str]], None],
+
+        on_error: Callable[[List["EventData"], Optional[str], Exception], None],
         on_success: Callable[[List["EventData"], Optional[str]], None],
         max_buffer_length: int = 1500,
         max_wait_time: float = 1,
@@ -375,38 +370,31 @@ class EventHubProducerClient(ClientBase):
 
         :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
-        :keyword bool buffered_mode: Set to True to get the producer client work in buffered mode. Default is False.
+        :keyword bool buffered_mode: If True, the producer client will collect events in a buffer, efficiently batch,
+         then publish. Default is False.
         :keyword on_success: The callback to be called once a batch has successfully published.
-         The callback takes two parameters: `events` which are the list of events that have been successfully published
-         and `partition_id` which is the partition id that the events in the list have been published to.
+         The callback takes two parameters:
+            - `events`: The list of events that have been successfully published
+            - `partition_id`: The partition id that the events in the list have been published to.
          The callback function should be defined like: `on_success(events, partition_id)`.
+         It is required when buffered_mode is True while optional if buffered mode is False.
         :paramtype on_success: Optional[Callable[[List[EventData], Optional[str]], None]]
-        :keyword on_error: The callback to be called once a batch has failed to publish.
-         The callback takes three parameters: `events` which are the list of events that failed to be published,
-         `partition_id` which is the partition id that the events in the list have been tried to be published to and
-         `error` being the exception.
-         The callback function should be defined like: `on_error(events, error, partition_id)`.
-         If on_error is passed in non-buffered mode, callback will be called with the error instead of
-         error being raised from the send method.
-        :paramtype on_error: Optional[Callable[[List[EventData], Exception, Optional[str]], None]]
+        :keyword on_error: The callback to be called once a batch has failed to be published.
+         The callback takes three parameters:
+            - `events`: The list of events that failed to be published,
+            - `partition_id`: The partition id that the events in the list have been tried to be published to and
+            - `error`: The exception related to the sending failure.
+         The callback function should be defined like: `on_error(events, partition_id, error)`.
+         It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
+         If `on_error is` passed when `buffered_mode`, instead of error being raised from the send methods,
+         the `on_error` callback will be called with the error information related to sending.
+        :paramtype on_error: Optional[Callable[[List[EventData], Optional[str], Exception], None]]
         :keyword int max_buffer_length: Buffered mode only.
-         The total number of events that can be buffered for publishing at a given time for a given partition.
+         The total number of events that can be buffered before a flush will be triggered.
          The default value is 1500 in buffered mode.
-        :keyword float max_wait_time: Buffered mode only.
+        :keyword Optional[float] max_wait_time: Buffered mode only.
          The amount of time to wait for a batch to be built with events in the buffer before publishing.
          The default value is 1 in buffered mode.
-        :keyword Optional[int] max_concurrent_sends: Buffered mode only. The total number of batches that may be sent
-         concurrently, across all partitions. This limit takes precedence over the value specified in
-         max_concurrent_sends, ensuring this maximum is respected. By default, this will be set to
-         twice the number of processors available in the host environment.
-        :keyword Optional[int] max_concurrent_sends: Buffered mode only. The number of batches that may
-         be sent concurrently for a given partition. This option is superseded by the value specified for
-         max_concurrent_sends, ensuring that limit is respected.
-        :keyword Optional[ThreadPoolExecutor] executor: Buffered mode only. A user-specified thread pool used to send
-         events in parallel.
-        :keyword Optional[int] max_workers: Buffered mode only. Specify the maximum workers in the thread pool. If not
-         specified the number used will be derived from the core count of the environment.
-         This cannot be combined with `executor`.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
@@ -460,9 +448,14 @@ class EventHubProducerClient(ClientBase):
         # type: (Union[EventData, AmqpAnnotatedMessage], Any) -> None
         """
         Sends an event data.
-        By default the method will blocks until acknowledgement is received or operation times out.
+        By default, the method will block until acknowledgement is received or operation times out.
         If the `EventHubProducerClient` is configured to run in buffered mode, the method will enqueue the event
         into local buffer and return. The producer will do automatic batching and sending in the background.
+
+        If `on_error` is passed while `buffered_mode` is False when instantiating the producer client,
+        instead of error being raised from the send methods,
+        the `on_error` callback will be called with the error information related to sending.
+
         :param event_data: The `EventData` object to be sent.
         :type event_data: Union[~azure.eventhub.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage]
         :keyword float timeout: The maximum wait time to send the event data.
@@ -498,7 +491,7 @@ class EventHubProducerClient(ClientBase):
                 self._on_success([event_data], partition_id)
         except Exception as exc:
             if self._on_error:
-                self._on_error([event_data], exc, partition_id)
+                self._on_error([event_data], partition_id, exc)
             else:
                 raise
 
@@ -506,9 +499,16 @@ class EventHubProducerClient(ClientBase):
         # type: (Union[EventDataBatch, SendEventTypes], Any) -> None
         """
         Sends a batch of event data.
-        By default the method will blocks until acknowledgement is received or operation times out.
+        By default, the method will block until acknowledgement is received or operation times out.
         If the `EventHubProducerClient` is configured to run in buffered mode, the method will enqueue the events
         into local buffer and return. The producer will do automatic sending in the background.
+
+        In non-buffered mode, if `on_error` is passed in when instantiating the producer client,
+        instead of error being raised from the send methods in error scenarios,
+        the `on_error` callback will be called with the error related to sending failure.
+
+        In buffered mode, sending a batch will remain intact and sent as a single unit.
+        The batch will not be rearranged. This may result in inefficiency of sending events.
 
         If you're sending a finite list of `EventData` or `AmqpAnnotatedMessage` and you know it's within the
         event hub frame size limit, you can send them with a `send_batch` call. Otherwise, use :meth:`create_batch`
@@ -578,7 +578,7 @@ class EventHubProducerClient(ClientBase):
                     self._on_success(batch._internal_events, pid)
         except Exception as exc:
             if self._on_error:
-                self._on_error(batch._internal_events, exc, pid)
+                self._on_error(batch._internal_events, pid, exc)
             else:
                 raise
 
@@ -682,8 +682,8 @@ class EventHubProducerClient(ClientBase):
 
     def flush(self, **kwargs: Any) -> None:
         """
+        Buffered mode only.
         Flush events in the buffer to be sent immediately if the client is working in buffered mode.
-        This will be a no-op if the client is working in non-buffered mode.
 
         :keyword Optional[float] timeout: Timeout to flush the buffered events, default is None which means no timeout.
         :rtype: None
@@ -695,13 +695,14 @@ class EventHubProducerClient(ClientBase):
         self,
         *,
         flush: bool = True,
-        timeout: Optional[float] = None,
         **kwargs: Any
     ) -> None:
         """Close the Producer client underlying AMQP connection and links.
 
-        :keyword bool flush: If set to True and the client works in buffered mode, events in the buffer will be sent
-         immediately. If the client is working in non-buffered mode, the parameter is of no use. Default is True.
+        :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
+         immediately. Default is True.
+        :keyword Optional[float] timeout: Buffered mode only. Timeout to close the producer.
+         Default is None which means no timeout.
         :rtype: None
 
         .. admonition:: Example:
@@ -716,7 +717,7 @@ class EventHubProducerClient(ClientBase):
         """
         with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                self._buffered_producer_dispatcher.close(flush=flush, timeout=timeout, raise_error=True)
+                self._buffered_producer_dispatcher.close(flush=flush, timeout=kwargs.get("timeout"), raise_error=True)
                 self._buffered_producer_dispatcher = None
 
             for pid in self._producers:
@@ -726,6 +727,13 @@ class EventHubProducerClient(ClientBase):
         super(EventHubProducerClient, self)._close()
 
     def get_buffered_event_count(self, partition_id: str) -> Optional[int]:
+        """
+        The number of events that are buffered and waiting to be published for a given partition.
+        Returns None in non-buffered mode.
+
+        :param str partition_id: The target partition ID.
+        :rtype: int or None
+        """
         if not self._buffered_mode:
             return None
 
@@ -735,8 +743,13 @@ class EventHubProducerClient(ClientBase):
             return 0
 
     @property
-    def total_buffered_event_count(self):
-        # type: () -> Optional[int]
+    def total_buffered_event_count(self) -> Optional[int]:
+        """
+        The total number of events that are currently buffered and waiting to be published, across all partitions.
+        Returns None in non-buffered mode.
+
+        :rtype: int or None
+        """
         if not self._buffered_mode:
             return None
 
