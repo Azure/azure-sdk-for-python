@@ -8,6 +8,7 @@ from abc import abstractmethod
 
 ObjectType = TypeVar("ObjectType")
 
+
 class AbstractAvroObjectEncoder(object):
     """
     An Avro encoder used for encoding/decoding an Avro RecordSchema.
@@ -28,7 +29,6 @@ class AbstractAvroObjectEncoder(object):
         :rtype: str
         """
 
-
     @abstractmethod
     def encode(
         self,
@@ -48,11 +48,7 @@ class AbstractAvroObjectEncoder(object):
         """
 
     @abstractmethod
-    def decode(
-        self,
-        content: Union[bytes, BinaryIO],
-        reader: Any
-    ):
+    def decode(self, content: Union[bytes, BinaryIO], reader: Any):
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param content: A stream of bytes or bytes directly
