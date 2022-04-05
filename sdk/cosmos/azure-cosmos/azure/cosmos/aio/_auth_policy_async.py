@@ -52,6 +52,9 @@ class _AsyncCosmosBearerTokenCredentialPolicyBase(object):
     def _update_headers(headers, token):
         # type: (Dict[str, str], str) -> None
         """Updates the Authorization header with the cosmos signature and bearer token.
+        This is the main method that differentiates this policy from core's BearerTokenCredentialPolicy and works
+        to properly sign the authorization header for Cosmos' REST API. For more information:
+        https://docs.microsoft.com/rest/api/cosmos-db/access-control-on-cosmosdb-resources#authorization-header
 
         :param dict headers: The HTTP Request headers
         :param str token: The OAuth token.
