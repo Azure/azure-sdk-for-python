@@ -57,6 +57,8 @@ class ApiKey(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ApiKey, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -69,10 +71,10 @@ class ApiKey(msrest.serialization.Model):
 class ApiKeyListResult(msrest.serialization.Model):
     """The result of a request to list API keys.
 
-    :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.ApiKey]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~app_configuration_management_client.models.ApiKey]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -87,6 +89,12 @@ class ApiKeyListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~app_configuration_management_client.models.ApiKey]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(ApiKeyListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -97,11 +105,11 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name to check for availability.
-    :type name: str
-    :param type: Required. The resource type to check for name availability. Possible values
+    :ivar name: Required. The name to check for availability.
+    :vartype name: str
+    :ivar type: Required. The resource type to check for name availability. Possible values
      include: "Microsoft.AppConfiguration/configurationStores".
-    :type type: str or ~app_configuration_management_client.models.ConfigurationResourceType
+    :vartype type: str or ~app_configuration_management_client.models.ConfigurationResourceType
     """
 
     _validation = {
@@ -121,6 +129,13 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
         type: Union[str, "ConfigurationResourceType"],
         **kwargs
     ):
+        """
+        :keyword name: Required. The name to check for availability.
+        :paramtype name: str
+        :keyword type: Required. The resource type to check for name availability. Possible values
+         include: "Microsoft.AppConfiguration/configurationStores".
+        :paramtype type: str or ~app_configuration_management_client.models.ConfigurationResourceType
+        """
         super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -157,6 +172,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -178,10 +195,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -206,6 +223,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -226,14 +249,14 @@ class ConfigurationStore(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: The managed identity information, if configured.
-    :type identity: ~app_configuration_management_client.models.ResourceIdentity
-    :param sku: Required. The sku of the configuration store.
-    :type sku: ~app_configuration_management_client.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: The managed identity information, if configured.
+    :vartype identity: ~app_configuration_management_client.models.ResourceIdentity
+    :ivar sku: Required. The sku of the configuration store.
+    :vartype sku: ~app_configuration_management_client.models.Sku
     :ivar system_data: Resource system metadata.
     :vartype system_data: ~app_configuration_management_client.models.SystemData
     :ivar provisioning_state: The provisioning state of the configuration store. Possible values
@@ -244,18 +267,27 @@ class ConfigurationStore(TrackedResource):
     :vartype creation_date: ~datetime.datetime
     :ivar endpoint: The DNS endpoint where the configuration store API will be available.
     :vartype endpoint: str
-    :param encryption: The encryption settings of the configuration store.
-    :type encryption: ~app_configuration_management_client.models.EncryptionProperties
+    :ivar encryption: The encryption settings of the configuration store.
+    :vartype encryption: ~app_configuration_management_client.models.EncryptionProperties
     :ivar private_endpoint_connections: The list of private endpoint connections that are set up
      for this resource.
     :vartype private_endpoint_connections:
      list[~app_configuration_management_client.models.PrivateEndpointConnectionReference]
-    :param public_network_access: Control permission for data plane traffic coming from public
+    :ivar public_network_access: Control permission for data plane traffic coming from public
      networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or
+    :vartype public_network_access: str or
      ~app_configuration_management_client.models.PublicNetworkAccess
-    :param disable_local_auth: Disables all authentication methods other than AAD authentication.
-    :type disable_local_auth: bool
+    :ivar disable_local_auth: Disables all authentication methods other than AAD authentication.
+    :vartype disable_local_auth: bool
+    :ivar soft_delete_retention_in_days: The amount of time in days that the configuration store
+     will be retained when it is soft deleted.
+    :vartype soft_delete_retention_in_days: int
+    :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
+     for this configuration store.
+    :vartype enable_purge_protection: bool
+    :ivar create_mode: Indicates whether the configuration store need to be recovered. Possible
+     values include: "Recover", "Default".
+    :vartype create_mode: str or ~app_configuration_management_client.models.CreateMode
     """
 
     _validation = {
@@ -287,6 +319,9 @@ class ConfigurationStore(TrackedResource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnectionReference]'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
+        'enable_purge_protection': {'key': 'properties.enablePurgeProtection', 'type': 'bool'},
+        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
     }
 
     def __init__(
@@ -298,9 +333,39 @@ class ConfigurationStore(TrackedResource):
         identity: Optional["ResourceIdentity"] = None,
         encryption: Optional["EncryptionProperties"] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
-        disable_local_auth: Optional[bool] = None,
+        disable_local_auth: Optional[bool] = False,
+        soft_delete_retention_in_days: Optional[int] = 7,
+        enable_purge_protection: Optional[bool] = False,
+        create_mode: Optional[Union[str, "CreateMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The managed identity information, if configured.
+        :paramtype identity: ~app_configuration_management_client.models.ResourceIdentity
+        :keyword sku: Required. The sku of the configuration store.
+        :paramtype sku: ~app_configuration_management_client.models.Sku
+        :keyword encryption: The encryption settings of the configuration store.
+        :paramtype encryption: ~app_configuration_management_client.models.EncryptionProperties
+        :keyword public_network_access: Control permission for data plane traffic coming from public
+         networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~app_configuration_management_client.models.PublicNetworkAccess
+        :keyword disable_local_auth: Disables all authentication methods other than AAD authentication.
+        :paramtype disable_local_auth: bool
+        :keyword soft_delete_retention_in_days: The amount of time in days that the configuration store
+         will be retained when it is soft deleted.
+        :paramtype soft_delete_retention_in_days: int
+        :keyword enable_purge_protection: Property specifying whether protection against purge is
+         enabled for this configuration store.
+        :paramtype enable_purge_protection: bool
+        :keyword create_mode: Indicates whether the configuration store need to be recovered. Possible
+         values include: "Recover", "Default".
+        :paramtype create_mode: str or ~app_configuration_management_client.models.CreateMode
+        """
         super(ConfigurationStore, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.sku = sku
@@ -312,15 +377,18 @@ class ConfigurationStore(TrackedResource):
         self.private_endpoint_connections = None
         self.public_network_access = public_network_access
         self.disable_local_auth = disable_local_auth
+        self.soft_delete_retention_in_days = soft_delete_retention_in_days
+        self.enable_purge_protection = enable_purge_protection
+        self.create_mode = create_mode
 
 
 class ConfigurationStoreListResult(msrest.serialization.Model):
     """The result of a request to list configuration stores.
 
-    :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.ConfigurationStore]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~app_configuration_management_client.models.ConfigurationStore]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -335,6 +403,12 @@ class ConfigurationStoreListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~app_configuration_management_client.models.ConfigurationStore]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(ConfigurationStoreListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -343,20 +417,23 @@ class ConfigurationStoreListResult(msrest.serialization.Model):
 class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a configuration store.
 
-    :param identity: The managed identity information for the configuration store.
-    :type identity: ~app_configuration_management_client.models.ResourceIdentity
-    :param sku: The SKU of the configuration store.
-    :type sku: ~app_configuration_management_client.models.Sku
-    :param tags: A set of tags. The ARM resource tags.
-    :type tags: dict[str, str]
-    :param encryption: The encryption settings of the configuration store.
-    :type encryption: ~app_configuration_management_client.models.EncryptionProperties
-    :param disable_local_auth: Disables all authentication methods other than AAD authentication.
-    :type disable_local_auth: bool
-    :param public_network_access: Control permission for data plane traffic coming from public
+    :ivar identity: The managed identity information for the configuration store.
+    :vartype identity: ~app_configuration_management_client.models.ResourceIdentity
+    :ivar sku: The SKU of the configuration store.
+    :vartype sku: ~app_configuration_management_client.models.Sku
+    :ivar tags: A set of tags. The ARM resource tags.
+    :vartype tags: dict[str, str]
+    :ivar encryption: The encryption settings of the configuration store.
+    :vartype encryption: ~app_configuration_management_client.models.EncryptionProperties
+    :ivar disable_local_auth: Disables all authentication methods other than AAD authentication.
+    :vartype disable_local_auth: bool
+    :ivar public_network_access: Control permission for data plane traffic coming from public
      networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or
+    :vartype public_network_access: str or
      ~app_configuration_management_client.models.PublicNetworkAccess
+    :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
+     for this configuration store.
+    :vartype enable_purge_protection: bool
     """
 
     _attribute_map = {
@@ -366,6 +443,7 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'enable_purge_protection': {'key': 'properties.enablePurgeProtection', 'type': 'bool'},
     }
 
     def __init__(
@@ -377,8 +455,28 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         encryption: Optional["EncryptionProperties"] = None,
         disable_local_auth: Optional[bool] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        enable_purge_protection: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword identity: The managed identity information for the configuration store.
+        :paramtype identity: ~app_configuration_management_client.models.ResourceIdentity
+        :keyword sku: The SKU of the configuration store.
+        :paramtype sku: ~app_configuration_management_client.models.Sku
+        :keyword tags: A set of tags. The ARM resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword encryption: The encryption settings of the configuration store.
+        :paramtype encryption: ~app_configuration_management_client.models.EncryptionProperties
+        :keyword disable_local_auth: Disables all authentication methods other than AAD authentication.
+        :paramtype disable_local_auth: bool
+        :keyword public_network_access: Control permission for data plane traffic coming from public
+         networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~app_configuration_management_client.models.PublicNetworkAccess
+        :keyword enable_purge_protection: Property specifying whether protection against purge is
+         enabled for this configuration store.
+        :paramtype enable_purge_protection: bool
+        """
         super(ConfigurationStoreUpdateParameters, self).__init__(**kwargs)
         self.identity = identity
         self.sku = sku
@@ -386,13 +484,113 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         self.encryption = encryption
         self.disable_local_auth = disable_local_auth
         self.public_network_access = public_network_access
+        self.enable_purge_protection = enable_purge_protection
+
+
+class DeletedConfigurationStore(msrest.serialization.Model):
+    """Deleted configuration store information with extended details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID for the deleted configuration store.
+    :vartype id: str
+    :ivar name: The name of the configuration store.
+    :vartype name: str
+    :ivar type: The resource type of the configuration store.
+    :vartype type: str
+    :ivar configuration_store_id: The resource id of the original configuration store.
+    :vartype configuration_store_id: str
+    :ivar location: The location of the original configuration store.
+    :vartype location: str
+    :ivar deletion_date: The deleted date.
+    :vartype deletion_date: ~datetime.datetime
+    :ivar scheduled_purge_date: The scheduled purged date.
+    :vartype scheduled_purge_date: ~datetime.datetime
+    :ivar tags: A set of tags. Tags of the original configuration store.
+    :vartype tags: dict[str, str]
+    :ivar purge_protection_enabled: Purge protection status of the original configuration store.
+    :vartype purge_protection_enabled: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'configuration_store_id': {'readonly': True},
+        'location': {'readonly': True},
+        'deletion_date': {'readonly': True},
+        'scheduled_purge_date': {'readonly': True},
+        'tags': {'readonly': True},
+        'purge_protection_enabled': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'configuration_store_id': {'key': 'properties.configurationStoreId', 'type': 'str'},
+        'location': {'key': 'properties.location', 'type': 'str'},
+        'deletion_date': {'key': 'properties.deletionDate', 'type': 'iso-8601'},
+        'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'iso-8601'},
+        'tags': {'key': 'properties.tags', 'type': '{str}'},
+        'purge_protection_enabled': {'key': 'properties.purgeProtectionEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DeletedConfigurationStore, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.configuration_store_id = None
+        self.location = None
+        self.deletion_date = None
+        self.scheduled_purge_date = None
+        self.tags = None
+        self.purge_protection_enabled = None
+
+
+class DeletedConfigurationStoreListResult(msrest.serialization.Model):
+    """List of deleted configuration stores.
+
+    :ivar value: The list of deleted configuration store.
+    :vartype value: list[~app_configuration_management_client.models.DeletedConfigurationStore]
+    :ivar next_link: The URL to get the next set of deleted configuration stores.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DeletedConfigurationStore]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["DeletedConfigurationStore"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of deleted configuration store.
+        :paramtype value: list[~app_configuration_management_client.models.DeletedConfigurationStore]
+        :keyword next_link: The URL to get the next set of deleted configuration stores.
+        :paramtype next_link: str
+        """
+        super(DeletedConfigurationStoreListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class EncryptionProperties(msrest.serialization.Model):
     """The encryption settings for a configuration store.
 
-    :param key_vault_properties: Key vault properties.
-    :type key_vault_properties: ~app_configuration_management_client.models.KeyVaultProperties
+    :ivar key_vault_properties: Key vault properties.
+    :vartype key_vault_properties: ~app_configuration_management_client.models.KeyVaultProperties
     """
 
     _attribute_map = {
@@ -405,6 +603,10 @@ class EncryptionProperties(msrest.serialization.Model):
         key_vault_properties: Optional["KeyVaultProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword key_vault_properties: Key vault properties.
+        :paramtype key_vault_properties: ~app_configuration_management_client.models.KeyVaultProperties
+        """
         super(EncryptionProperties, self).__init__(**kwargs)
         self.key_vault_properties = key_vault_properties
 
@@ -434,6 +636,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -468,6 +672,8 @@ class ErrorDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetails, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -477,8 +683,8 @@ class ErrorDetails(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
 
-    :param error: The details of the error.
-    :type error: ~app_configuration_management_client.models.ErrorDetails
+    :ivar error: The details of the error.
+    :vartype error: ~app_configuration_management_client.models.ErrorDetails
     """
 
     _attribute_map = {
@@ -491,6 +697,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetails"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The details of the error.
+        :paramtype error: ~app_configuration_management_client.models.ErrorDetails
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -512,12 +722,12 @@ class KeyValue(msrest.serialization.Model):
     :ivar label: A value used to group key-values.
      The label is used in unison with the key to uniquely identify a key-value.
     :vartype label: str
-    :param value: The value of the key-value.
-    :type value: str
-    :param content_type: The content type of the key-value's value.
+    :ivar value: The value of the key-value.
+    :vartype value: str
+    :ivar content_type: The content type of the key-value's value.
      Providing a proper content-type can enable transformations of values when they are retrieved
      by applications.
-    :type content_type: str
+    :vartype content_type: str
     :ivar e_tag: An ETag indicating the state of a key-value within a configuration store.
     :vartype e_tag: str
     :ivar last_modified: The last time a modifying operation was performed on the given key-value.
@@ -525,9 +735,9 @@ class KeyValue(msrest.serialization.Model):
     :ivar locked: A value indicating whether the key-value is locked.
      A locked key-value may not be modified until it is unlocked.
     :vartype locked: bool
-    :param tags: A set of tags. A dictionary of tags that can help identify what a key-value may be
+    :ivar tags: A set of tags. A dictionary of tags that can help identify what a key-value may be
      applicable for.
-    :type tags: dict[str, str]
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -563,6 +773,17 @@ class KeyValue(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The value of the key-value.
+        :paramtype value: str
+        :keyword content_type: The content type of the key-value's value.
+         Providing a proper content-type can enable transformations of values when they are retrieved
+         by applications.
+        :paramtype content_type: str
+        :keyword tags: A set of tags. A dictionary of tags that can help identify what a key-value may
+         be applicable for.
+        :paramtype tags: dict[str, str]
+        """
         super(KeyValue, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -580,10 +801,10 @@ class KeyValue(msrest.serialization.Model):
 class KeyValueListResult(msrest.serialization.Model):
     """The result of a request to list key-values.
 
-    :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.KeyValue]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~app_configuration_management_client.models.KeyValue]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -598,6 +819,12 @@ class KeyValueListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~app_configuration_management_client.models.KeyValue]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(KeyValueListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -606,11 +833,10 @@ class KeyValueListResult(msrest.serialization.Model):
 class KeyVaultProperties(msrest.serialization.Model):
     """Settings concerning key vault encryption for a configuration store.
 
-    :param key_identifier: The URI of the key vault key used to encrypt data.
-    :type key_identifier: str
-    :param identity_client_id: The client id of the identity which will be used to access key
-     vault.
-    :type identity_client_id: str
+    :ivar key_identifier: The URI of the key vault key used to encrypt data.
+    :vartype key_identifier: str
+    :ivar identity_client_id: The client id of the identity which will be used to access key vault.
+    :vartype identity_client_id: str
     """
 
     _attribute_map = {
@@ -625,6 +851,13 @@ class KeyVaultProperties(msrest.serialization.Model):
         identity_client_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_identifier: The URI of the key vault key used to encrypt data.
+        :paramtype key_identifier: str
+        :keyword identity_client_id: The client id of the identity which will be used to access key
+         vault.
+        :paramtype identity_client_id: str
+        """
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_identifier = key_identifier
         self.identity_client_id = identity_client_id
@@ -633,12 +866,12 @@ class KeyVaultProperties(msrest.serialization.Model):
 class LogSpecification(msrest.serialization.Model):
     """Specifications of the Log for Azure Monitoring.
 
-    :param name: Name of the log.
-    :type name: str
-    :param display_name: Localized friendly display name of the log.
-    :type display_name: str
-    :param blob_duration: Blob duration of the log.
-    :type blob_duration: str
+    :ivar name: Name of the log.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the log.
+    :vartype display_name: str
+    :ivar blob_duration: Blob duration of the log.
+    :vartype blob_duration: str
     """
 
     _attribute_map = {
@@ -655,6 +888,14 @@ class LogSpecification(msrest.serialization.Model):
         blob_duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the log.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the log.
+        :paramtype display_name: str
+        :keyword blob_duration: Blob duration of the log.
+        :paramtype blob_duration: str
+        """
         super(LogSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -664,12 +905,12 @@ class LogSpecification(msrest.serialization.Model):
 class MetricDimension(msrest.serialization.Model):
     """Specifications of the Dimension of metrics.
 
-    :param name: Name of the dimension.
-    :type name: str
-    :param display_name: Localized friendly display name of the dimension.
-    :type display_name: str
-    :param internal_name: Internal name of the dimension.
-    :type internal_name: str
+    :ivar name: Name of the dimension.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the dimension.
+    :vartype display_name: str
+    :ivar internal_name: Internal name of the dimension.
+    :vartype internal_name: str
     """
 
     _attribute_map = {
@@ -686,6 +927,14 @@ class MetricDimension(msrest.serialization.Model):
         internal_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the dimension.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the dimension.
+        :paramtype display_name: str
+        :keyword internal_name: Internal name of the dimension.
+        :paramtype internal_name: str
+        """
         super(MetricDimension, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -695,24 +944,24 @@ class MetricDimension(msrest.serialization.Model):
 class MetricSpecification(msrest.serialization.Model):
     """Specifications of the Metrics for Azure Monitoring.
 
-    :param name: Name of the metric.
-    :type name: str
-    :param display_name: Localized friendly display name of the metric.
-    :type display_name: str
-    :param display_description: Localized friendly description of the metric.
-    :type display_description: str
-    :param unit: Unit that makes sense for the metric.
-    :type unit: str
-    :param aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
+    :ivar name: Name of the metric.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the metric.
+    :vartype display_name: str
+    :ivar display_description: Localized friendly description of the metric.
+    :vartype display_description: str
+    :ivar unit: Unit that makes sense for the metric.
+    :vartype unit: str
+    :ivar aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
      Maximum, Total, Count.
-    :type aggregation_type: str
-    :param internal_metric_name: Internal metric name.
-    :type internal_metric_name: str
-    :param dimensions: Dimensions of the metric.
-    :type dimensions: list[~app_configuration_management_client.models.MetricDimension]
-    :param fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
+    :vartype aggregation_type: str
+    :ivar internal_metric_name: Internal metric name.
+    :vartype internal_metric_name: str
+    :ivar dimensions: Dimensions of the metric.
+    :vartype dimensions: list[~app_configuration_management_client.models.MetricDimension]
+    :ivar fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
      duration where no metric is emitted/published.
-    :type fill_gap_with_zero: bool
+    :vartype fill_gap_with_zero: bool
     """
 
     _attribute_map = {
@@ -739,6 +988,26 @@ class MetricSpecification(msrest.serialization.Model):
         fill_gap_with_zero: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the metric.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the metric.
+        :paramtype display_name: str
+        :keyword display_description: Localized friendly description of the metric.
+        :paramtype display_description: str
+        :keyword unit: Unit that makes sense for the metric.
+        :paramtype unit: str
+        :keyword aggregation_type: Only provide one value for this field. Valid values: Average,
+         Minimum, Maximum, Total, Count.
+        :paramtype aggregation_type: str
+        :keyword internal_metric_name: Internal metric name.
+        :paramtype internal_metric_name: str
+        :keyword dimensions: Dimensions of the metric.
+        :paramtype dimensions: list[~app_configuration_management_client.models.MetricDimension]
+        :keyword fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
+         duration where no metric is emitted/published.
+        :paramtype fill_gap_with_zero: bool
+        """
         super(MetricSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -780,6 +1049,8 @@ class NameAvailabilityStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(NameAvailabilityStatus, self).__init__(**kwargs)
         self.name_available = None
         self.message = None
@@ -789,16 +1060,16 @@ class NameAvailabilityStatus(msrest.serialization.Model):
 class OperationDefinition(msrest.serialization.Model):
     """The definition of a configuration store operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param display: The display information for the configuration store operation.
-    :type display: ~app_configuration_management_client.models.OperationDefinitionDisplay
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param properties: Properties of the operation.
-    :type properties: ~app_configuration_management_client.models.OperationProperties
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: The display information for the configuration store operation.
+    :vartype display: ~app_configuration_management_client.models.OperationDefinitionDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar properties: Properties of the operation.
+    :vartype properties: ~app_configuration_management_client.models.OperationProperties
     """
 
     _attribute_map = {
@@ -819,6 +1090,18 @@ class OperationDefinition(msrest.serialization.Model):
         properties: Optional["OperationProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword display: The display information for the configuration store operation.
+        :paramtype display: ~app_configuration_management_client.models.OperationDefinitionDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword properties: Properties of the operation.
+        :paramtype properties: ~app_configuration_management_client.models.OperationProperties
+        """
         super(OperationDefinition, self).__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
@@ -834,12 +1117,12 @@ class OperationDefinitionDisplay(msrest.serialization.Model):
 
     :ivar provider: The resource provider name: Microsoft App Configuration.".
     :vartype provider: str
-    :param resource: The resource on which the operation is performed.
-    :type resource: str
-    :param operation: The operation that users can perform.
-    :type operation: str
-    :param description: The description for the operation.
-    :type description: str
+    :ivar resource: The resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: The operation that users can perform.
+    :vartype operation: str
+    :ivar description: The description for the operation.
+    :vartype description: str
     """
 
     _validation = {
@@ -861,6 +1144,14 @@ class OperationDefinitionDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword resource: The resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: The operation that users can perform.
+        :paramtype operation: str
+        :keyword description: The description for the operation.
+        :paramtype description: str
+        """
         super(OperationDefinitionDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = resource
@@ -871,10 +1162,10 @@ class OperationDefinitionDisplay(msrest.serialization.Model):
 class OperationDefinitionListResult(msrest.serialization.Model):
     """The result of a request to list configuration store operations.
 
-    :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.OperationDefinition]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~app_configuration_management_client.models.OperationDefinition]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -889,6 +1180,12 @@ class OperationDefinitionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~app_configuration_management_client.models.OperationDefinition]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(OperationDefinitionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -897,8 +1194,9 @@ class OperationDefinitionListResult(msrest.serialization.Model):
 class OperationProperties(msrest.serialization.Model):
     """Extra Operation properties.
 
-    :param service_specification: Service specifications of the operation.
-    :type service_specification: ~app_configuration_management_client.models.ServiceSpecification
+    :ivar service_specification: Service specifications of the operation.
+    :vartype service_specification:
+     ~app_configuration_management_client.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -911,6 +1209,11 @@ class OperationProperties(msrest.serialization.Model):
         service_specification: Optional["ServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword service_specification: Service specifications of the operation.
+        :paramtype service_specification:
+         ~app_configuration_management_client.models.ServiceSpecification
+        """
         super(OperationProperties, self).__init__(**kwargs)
         self.service_specification = service_specification
 
@@ -918,8 +1221,8 @@ class OperationProperties(msrest.serialization.Model):
 class PrivateEndpoint(msrest.serialization.Model):
     """Private endpoint which a connection belongs to.
 
-    :param id: The resource Id for private endpoint.
-    :type id: str
+    :ivar id: The resource Id for private endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -932,6 +1235,10 @@ class PrivateEndpoint(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The resource Id for private endpoint.
+        :paramtype id: str
+        """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = id
 
@@ -951,11 +1258,11 @@ class PrivateEndpointConnection(msrest.serialization.Model):
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~app_configuration_management_client.models.ProvisioningState
-    :param private_endpoint: The resource of private endpoint.
-    :type private_endpoint: ~app_configuration_management_client.models.PrivateEndpoint
-    :param private_link_service_connection_state: A collection of information about the state of
-     the connection between service consumer and provider.
-    :type private_link_service_connection_state:
+    :ivar private_endpoint: The resource of private endpoint.
+    :vartype private_endpoint: ~app_configuration_management_client.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
      ~app_configuration_management_client.models.PrivateLinkServiceConnectionState
     """
 
@@ -982,6 +1289,14 @@ class PrivateEndpointConnection(msrest.serialization.Model):
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The resource of private endpoint.
+        :paramtype private_endpoint: ~app_configuration_management_client.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~app_configuration_management_client.models.PrivateLinkServiceConnectionState
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -994,10 +1309,10 @@ class PrivateEndpointConnection(msrest.serialization.Model):
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """A list of private endpoint connections.
 
-    :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.PrivateEndpointConnection]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~app_configuration_management_client.models.PrivateEndpointConnection]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1012,6 +1327,12 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~app_configuration_management_client.models.PrivateEndpointConnection]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1032,11 +1353,11 @@ class PrivateEndpointConnectionReference(msrest.serialization.Model):
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~app_configuration_management_client.models.ProvisioningState
-    :param private_endpoint: The resource of private endpoint.
-    :type private_endpoint: ~app_configuration_management_client.models.PrivateEndpoint
-    :param private_link_service_connection_state: A collection of information about the state of
-     the connection between service consumer and provider.
-    :type private_link_service_connection_state:
+    :ivar private_endpoint: The resource of private endpoint.
+    :vartype private_endpoint: ~app_configuration_management_client.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
      ~app_configuration_management_client.models.PrivateLinkServiceConnectionState
     """
 
@@ -1063,6 +1384,14 @@ class PrivateEndpointConnectionReference(msrest.serialization.Model):
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: The resource of private endpoint.
+        :paramtype private_endpoint: ~app_configuration_management_client.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~app_configuration_management_client.models.PrivateLinkServiceConnectionState
+        """
         super(PrivateEndpointConnectionReference, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1113,6 +1442,8 @@ class PrivateLinkResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1125,10 +1456,10 @@ class PrivateLinkResource(msrest.serialization.Model):
 class PrivateLinkResourceListResult(msrest.serialization.Model):
     """A list of private link resources.
 
-    :param value: The collection value.
-    :type value: list[~app_configuration_management_client.models.PrivateLinkResource]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar value: The collection value.
+    :vartype value: list[~app_configuration_management_client.models.PrivateLinkResource]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1143,6 +1474,12 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection value.
+        :paramtype value: list[~app_configuration_management_client.models.PrivateLinkResource]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1153,11 +1490,11 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param status: The private link service connection status. Possible values include: "Pending",
+    :ivar status: The private link service connection status. Possible values include: "Pending",
      "Approved", "Rejected", "Disconnected".
-    :type status: str or ~app_configuration_management_client.models.ConnectionStatus
-    :param description: The private link service connection description.
-    :type description: str
+    :vartype status: str or ~app_configuration_management_client.models.ConnectionStatus
+    :ivar description: The private link service connection description.
+    :vartype description: str
     :ivar actions_required: Any action that is required beyond basic workflow (approve/ reject/
      disconnect). Possible values include: "None", "Recreate".
     :vartype actions_required: str or ~app_configuration_management_client.models.ActionsRequired
@@ -1180,6 +1517,13 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword status: The private link service connection status. Possible values include:
+         "Pending", "Approved", "Rejected", "Disconnected".
+        :paramtype status: str or ~app_configuration_management_client.models.ConnectionStatus
+        :keyword description: The private link service connection description.
+        :paramtype description: str
+        """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -1189,8 +1533,8 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 class RegenerateKeyParameters(msrest.serialization.Model):
     """The parameters used to regenerate an API key.
 
-    :param id: The id of the key to regenerate.
-    :type id: str
+    :ivar id: The id of the key to regenerate.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -1203,6 +1547,10 @@ class RegenerateKeyParameters(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The id of the key to regenerate.
+        :paramtype id: str
+        """
         super(RegenerateKeyParameters, self).__init__(**kwargs)
         self.id = id
 
@@ -1212,15 +1560,15 @@ class ResourceIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type: The type of managed identity used. The type 'SystemAssigned, UserAssigned'
-     includes both an implicitly created identity and a set of user-assigned identities. The type
-     'None' will remove any identities. Possible values include: "None", "SystemAssigned",
-     "UserAssigned", "SystemAssigned, UserAssigned".
-    :type type: str or ~app_configuration_management_client.models.IdentityType
-    :param user_assigned_identities: The list of user-assigned identities associated with the
+    :ivar type: The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes
+     both an implicitly created identity and a set of user-assigned identities. The type 'None' will
+     remove any identities. Possible values include: "None", "SystemAssigned", "UserAssigned",
+     "SystemAssigned, UserAssigned".
+    :vartype type: str or ~app_configuration_management_client.models.IdentityType
+    :ivar user_assigned_identities: The list of user-assigned identities associated with the
      resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :type user_assigned_identities: dict[str,
+    :vartype user_assigned_identities: dict[str,
      ~app_configuration_management_client.models.UserIdentity]
     :ivar principal_id: The principal id of the identity. This property will only be provided for a
      system-assigned identity.
@@ -1249,6 +1597,18 @@ class ResourceIdentity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "UserIdentity"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type of managed identity used. The type 'SystemAssigned, UserAssigned'
+         includes both an implicitly created identity and a set of user-assigned identities. The type
+         'None' will remove any identities. Possible values include: "None", "SystemAssigned",
+         "UserAssigned", "SystemAssigned, UserAssigned".
+        :paramtype type: str or ~app_configuration_management_client.models.IdentityType
+        :keyword user_assigned_identities: The list of user-assigned identities associated with the
+         resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        :paramtype user_assigned_identities: dict[str,
+         ~app_configuration_management_client.models.UserIdentity]
+        """
         super(ResourceIdentity, self).__init__(**kwargs)
         self.type = type
         self.user_assigned_identities = user_assigned_identities
@@ -1259,10 +1619,10 @@ class ResourceIdentity(msrest.serialization.Model):
 class ServiceSpecification(msrest.serialization.Model):
     """Service specification payload.
 
-    :param log_specifications: Specifications of the Log for Azure Monitoring.
-    :type log_specifications: list[~app_configuration_management_client.models.LogSpecification]
-    :param metric_specifications: Specifications of the Metrics for Azure Monitoring.
-    :type metric_specifications:
+    :ivar log_specifications: Specifications of the Log for Azure Monitoring.
+    :vartype log_specifications: list[~app_configuration_management_client.models.LogSpecification]
+    :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
+    :vartype metric_specifications:
      list[~app_configuration_management_client.models.MetricSpecification]
     """
 
@@ -1278,6 +1638,14 @@ class ServiceSpecification(msrest.serialization.Model):
         metric_specifications: Optional[List["MetricSpecification"]] = None,
         **kwargs
     ):
+        """
+        :keyword log_specifications: Specifications of the Log for Azure Monitoring.
+        :paramtype log_specifications:
+         list[~app_configuration_management_client.models.LogSpecification]
+        :keyword metric_specifications: Specifications of the Metrics for Azure Monitoring.
+        :paramtype metric_specifications:
+         list[~app_configuration_management_client.models.MetricSpecification]
+        """
         super(ServiceSpecification, self).__init__(**kwargs)
         self.log_specifications = log_specifications
         self.metric_specifications = metric_specifications
@@ -1288,8 +1656,8 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The SKU name of the configuration store.
-    :type name: str
+    :ivar name: Required. The SKU name of the configuration store.
+    :vartype name: str
     """
 
     _validation = {
@@ -1306,6 +1674,10 @@ class Sku(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The SKU name of the configuration store.
+        :paramtype name: str
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
 
@@ -1313,20 +1685,21 @@ class Sku(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~app_configuration_management_client.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~app_configuration_management_client.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~app_configuration_management_client.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or
+     ~app_configuration_management_client.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1349,6 +1722,23 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~app_configuration_management_client.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~app_configuration_management_client.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -1383,6 +1773,8 @@ class UserIdentity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None

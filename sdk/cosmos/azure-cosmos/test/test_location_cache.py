@@ -12,7 +12,6 @@ import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.cosmos import _retry_utility
 import test_config
-import six
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -20,11 +19,7 @@ pytestmark = pytest.mark.cosmosEmulator
 class RefreshThread(threading.Thread):
     def __init__(self, group=None, target=None, name=None,
                  args=(), kwargs=None, verbose=None):
-        if six.PY2:
-            super(RefreshThread, self).__init__(group=group, target=target,
-                                      name=name, verbose=verbose)
-        else:
-            super().__init__()
+        super().__init__()
         self.endpoint_manager = kwargs['endpoint_manager']
 
     def run(self):

@@ -36,7 +36,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
 
 ## Prerequisites
-* Python 3.7 or later is required to use this package
+* Python 3.6 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Text Analytics account][azure_text_analytics_account] to run these samples.
 
@@ -54,8 +54,8 @@ For more information about how the versioning story of the SDK corresponds to th
   pip install azure-identity
   ```
 
-2. Clone or download this sample repository
-3. Open the sample folder in Visual Studio Code or your IDE of choice.
+2. Clone the repo or download the sample file
+3. Open the sample file in Visual Studio Code or your IDE of choice.
 
 ## Running the samples
 

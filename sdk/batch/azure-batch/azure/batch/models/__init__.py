@@ -84,6 +84,7 @@ try:
     from ._models_py3 import FileListFromComputeNodeOptions
     from ._models_py3 import FileListFromTaskOptions
     from ._models_py3 import FileProperties
+    from ._models_py3 import HttpHeader
     from ._models_py3 import ImageInformation
     from ._models_py3 import ImageReference
     from ._models_py3 import InboundEndpoint
@@ -307,6 +308,7 @@ except (SyntaxError, ImportError):
     from ._models import FileListFromComputeNodeOptions
     from ._models import FileListFromTaskOptions
     from ._models import FileProperties
+    from ._models import HttpHeader
     from ._models import ImageInformation
     from ._models import ImageReference
     from ._models import InboundEndpoint
@@ -595,6 +597,7 @@ __all__ = [
     'FileListFromComputeNodeOptions',
     'FileListFromTaskOptions',
     'FileProperties',
+    'HttpHeader',
     'ImageInformation',
     'ImageReference',
     'InboundEndpoint',

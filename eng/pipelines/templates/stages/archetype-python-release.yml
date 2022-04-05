@@ -89,7 +89,7 @@ stages:
                       - task: TwineAuthenticate@1
                         displayName: 'Authenticate to registry: pypi.org'
                         inputs:
-                          pythonUploadServiceConnection: 'pypi.org - azure-sdk'
+                          pythonUploadServiceConnection: 'PyPI Upload (azure-sdk token)'
 
                       - task: TwineAuthenticate@0
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'

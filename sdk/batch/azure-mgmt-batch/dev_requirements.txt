@@ -2,3 +2,4 @@
 azure-mgmt-keyvault<9.0.0
 azure-mgmt-network<19.0.0
 -e ../../../tools/azure-devtools
+../../identity/azure-identity

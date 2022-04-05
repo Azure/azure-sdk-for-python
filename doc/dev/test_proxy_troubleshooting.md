@@ -61,7 +61,7 @@ the wrong repo.
 
 Try updating your machine's version of Docker. Older versions of Docker may not return a status to indicate whether or
 not the proxy container is running, which the
-[proxy_docker_startup.py](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py)
+[proxy_startup.py](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py)
 script needs to determine.
 
 ## ConnectionError during test startup

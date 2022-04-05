@@ -6,276 +6,141 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AbnormalTimePeriod
-    from ._models_py3 import AnalysisData
-    from ._models_py3 import AnalysisDefinition
-    from ._models_py3 import ApiDefinitionInfo
-    from ._models_py3 import AppServiceEnvironment
-    from ._models_py3 import AppServicePlan
-    from ._models_py3 import AppServicePlanCollection
-    from ._models_py3 import ApplicationStack
-    from ._models_py3 import ApplicationStackCollection
-    from ._models_py3 import AutoHealActions
-    from ._models_py3 import AutoHealCustomAction
-    from ._models_py3 import AutoHealRules
-    from ._models_py3 import AutoHealTriggers
-    from ._models_py3 import BillingMeter
-    from ._models_py3 import BillingMeterCollection
-    from ._models_py3 import Capability
-    from ._models_py3 import Certificate
-    from ._models_py3 import CertificateCollection
-    from ._models_py3 import CertificatePatchResource
-    from ._models_py3 import CloningInfo
-    from ._models_py3 import ConnStringInfo
-    from ._models_py3 import CorsSettings
-    from ._models_py3 import CsmMoveResourceEnvelope
-    from ._models_py3 import CsmOperationCollection
-    from ._models_py3 import CsmOperationDescription
-    from ._models_py3 import CsmOperationDescriptionProperties
-    from ._models_py3 import CsmOperationDisplay
-    from ._models_py3 import CsmUsageQuota
-    from ._models_py3 import CsmUsageQuotaCollection
-    from ._models_py3 import DataSource
-    from ._models_py3 import DataTableResponseColumn
-    from ._models_py3 import DataTableResponseObject
-    from ._models_py3 import DefaultErrorResponse
-    from ._models_py3 import DefaultErrorResponseError
-    from ._models_py3 import DefaultErrorResponseErrorDetailsItem
-    from ._models_py3 import DeletedSite
-    from ._models_py3 import DeletedWebAppCollection
-    from ._models_py3 import DeploymentLocations
-    from ._models_py3 import DetectorAbnormalTimePeriod
-    from ._models_py3 import DetectorDefinition
-    from ._models_py3 import DetectorInfo
-    from ._models_py3 import DetectorResponse
-    from ._models_py3 import DetectorResponseCollection
-    from ._models_py3 import DiagnosticAnalysis
-    from ._models_py3 import DiagnosticAnalysisCollection
-    from ._models_py3 import DiagnosticCategory
-    from ._models_py3 import DiagnosticCategoryCollection
-    from ._models_py3 import DiagnosticData
-    from ._models_py3 import DiagnosticDetectorCollection
-    from ._models_py3 import DiagnosticDetectorResponse
-    from ._models_py3 import DiagnosticMetricSample
-    from ._models_py3 import DiagnosticMetricSet
-    from ._models_py3 import Dimension
-    from ._models_py3 import ErrorEntity
-    from ._models_py3 import Experiments
-    from ._models_py3 import GeoRegion
-    from ._models_py3 import GeoRegionCollection
-    from ._models_py3 import GlobalCsmSkuDescription
-    from ._models_py3 import HandlerMapping
-    from ._models_py3 import HostNameSslState
-    from ._models_py3 import HostingEnvironmentDeploymentInfo
-    from ._models_py3 import HostingEnvironmentProfile
-    from ._models_py3 import HybridConnection
-    from ._models_py3 import HybridConnectionKey
-    from ._models_py3 import Identifier
-    from ._models_py3 import IdentifierCollection
-    from ._models_py3 import IpSecurityRestriction
-    from ._models_py3 import LocalizableString
-    from ._models_py3 import ManagedServiceIdentity
-    from ._models_py3 import MetricAvailability
-    from ._models_py3 import MetricSpecification
-    from ._models_py3 import NameIdentifier
-    from ._models_py3 import NameValuePair
-    from ._models_py3 import NetworkAccessControlEntry
-    from ._models_py3 import Operation
-    from ._models_py3 import PremierAddOnOffer
-    from ._models_py3 import PremierAddOnOfferCollection
-    from ._models_py3 import ProxyOnlyResource
-    from ._models_py3 import PushSettings
-    from ._models_py3 import RampUpRule
-    from ._models_py3 import Recommendation
-    from ._models_py3 import RecommendationCollection
-    from ._models_py3 import RecommendationRule
-    from ._models_py3 import Rendering
-    from ._models_py3 import RequestsBasedTrigger
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceHealthMetadata
-    from ._models_py3 import ResourceHealthMetadataCollection
-    from ._models_py3 import ResourceMetric
-    from ._models_py3 import ResourceMetricAvailability
-    from ._models_py3 import ResourceMetricCollection
-    from ._models_py3 import ResourceMetricDefinition
-    from ._models_py3 import ResourceMetricDefinitionCollection
-    from ._models_py3 import ResourceMetricName
-    from ._models_py3 import ResourceMetricProperty
-    from ._models_py3 import ResourceMetricValue
-    from ._models_py3 import ResourceNameAvailability
-    from ._models_py3 import ResourceNameAvailabilityRequest
-    from ._models_py3 import ResponseMetaData
-    from ._models_py3 import ServiceSpecification
-    from ._models_py3 import Site
-    from ._models_py3 import SiteConfig
-    from ._models_py3 import SiteLimits
-    from ._models_py3 import SiteMachineKey
-    from ._models_py3 import SkuCapacity
-    from ._models_py3 import SkuDescription
-    from ._models_py3 import SkuInfos
-    from ._models_py3 import SlotSwapStatus
-    from ._models_py3 import SlowRequestsBasedTrigger
-    from ._models_py3 import SnapshotRecoveryRequest
-    from ._models_py3 import SnapshotRecoveryTarget
-    from ._models_py3 import Solution
-    from ._models_py3 import SourceControl
-    from ._models_py3 import SourceControlCollection
-    from ._models_py3 import StackMajorVersion
-    from ._models_py3 import StackMinorVersion
-    from ._models_py3 import StampCapacity
-    from ._models_py3 import StatusCodesBasedTrigger
-    from ._models_py3 import User
-    from ._models_py3 import ValidateRequest
-    from ._models_py3 import ValidateResponse
-    from ._models_py3 import ValidateResponseError
-    from ._models_py3 import VirtualApplication
-    from ._models_py3 import VirtualDirectory
-    from ._models_py3 import VirtualIPMapping
-    from ._models_py3 import VirtualNetworkProfile
-    from ._models_py3 import VnetGateway
-    from ._models_py3 import VnetInfo
-    from ._models_py3 import VnetParameters
-    from ._models_py3 import VnetRoute
-    from ._models_py3 import VnetValidationFailureDetails
-    from ._models_py3 import VnetValidationTestFailure
-    from ._models_py3 import WebAppCollection
-    from ._models_py3 import WorkerPool
-except (SyntaxError, ImportError):
-    from ._models import AbnormalTimePeriod  # type: ignore
-    from ._models import AnalysisData  # type: ignore
-    from ._models import AnalysisDefinition  # type: ignore
-    from ._models import ApiDefinitionInfo  # type: ignore
-    from ._models import AppServiceEnvironment  # type: ignore
-    from ._models import AppServicePlan  # type: ignore
-    from ._models import AppServicePlanCollection  # type: ignore
-    from ._models import ApplicationStack  # type: ignore
-    from ._models import ApplicationStackCollection  # type: ignore
-    from ._models import AutoHealActions  # type: ignore
-    from ._models import AutoHealCustomAction  # type: ignore
-    from ._models import AutoHealRules  # type: ignore
-    from ._models import AutoHealTriggers  # type: ignore
-    from ._models import BillingMeter  # type: ignore
-    from ._models import BillingMeterCollection  # type: ignore
-    from ._models import Capability  # type: ignore
-    from ._models import Certificate  # type: ignore
-    from ._models import CertificateCollection  # type: ignore
-    from ._models import CertificatePatchResource  # type: ignore
-    from ._models import CloningInfo  # type: ignore
-    from ._models import ConnStringInfo  # type: ignore
-    from ._models import CorsSettings  # type: ignore
-    from ._models import CsmMoveResourceEnvelope  # type: ignore
-    from ._models import CsmOperationCollection  # type: ignore
-    from ._models import CsmOperationDescription  # type: ignore
-    from ._models import CsmOperationDescriptionProperties  # type: ignore
-    from ._models import CsmOperationDisplay  # type: ignore
-    from ._models import CsmUsageQuota  # type: ignore
-    from ._models import CsmUsageQuotaCollection  # type: ignore
-    from ._models import DataSource  # type: ignore
-    from ._models import DataTableResponseColumn  # type: ignore
-    from ._models import DataTableResponseObject  # type: ignore
-    from ._models import DefaultErrorResponse  # type: ignore
-    from ._models import DefaultErrorResponseError  # type: ignore
-    from ._models import DefaultErrorResponseErrorDetailsItem  # type: ignore
-    from ._models import DeletedSite  # type: ignore
-    from ._models import DeletedWebAppCollection  # type: ignore
-    from ._models import DeploymentLocations  # type: ignore
-    from ._models import DetectorAbnormalTimePeriod  # type: ignore
-    from ._models import DetectorDefinition  # type: ignore
-    from ._models import DetectorInfo  # type: ignore
-    from ._models import DetectorResponse  # type: ignore
-    from ._models import DetectorResponseCollection  # type: ignore
-    from ._models import DiagnosticAnalysis  # type: ignore
-    from ._models import DiagnosticAnalysisCollection  # type: ignore
-    from ._models import DiagnosticCategory  # type: ignore
-    from ._models import DiagnosticCategoryCollection  # type: ignore
-    from ._models import DiagnosticData  # type: ignore
-    from ._models import DiagnosticDetectorCollection  # type: ignore
-    from ._models import DiagnosticDetectorResponse  # type: ignore
-    from ._models import DiagnosticMetricSample  # type: ignore
-    from ._models import DiagnosticMetricSet  # type: ignore
-    from ._models import Dimension  # type: ignore
-    from ._models import ErrorEntity  # type: ignore
-    from ._models import Experiments  # type: ignore
-    from ._models import GeoRegion  # type: ignore
-    from ._models import GeoRegionCollection  # type: ignore
-    from ._models import GlobalCsmSkuDescription  # type: ignore
-    from ._models import HandlerMapping  # type: ignore
-    from ._models import HostNameSslState  # type: ignore
-    from ._models import HostingEnvironmentDeploymentInfo  # type: ignore
-    from ._models import HostingEnvironmentProfile  # type: ignore
-    from ._models import HybridConnection  # type: ignore
-    from ._models import HybridConnectionKey  # type: ignore
-    from ._models import Identifier  # type: ignore
-    from ._models import IdentifierCollection  # type: ignore
-    from ._models import IpSecurityRestriction  # type: ignore
-    from ._models import LocalizableString  # type: ignore
-    from ._models import ManagedServiceIdentity  # type: ignore
-    from ._models import MetricAvailability  # type: ignore
-    from ._models import MetricSpecification  # type: ignore
-    from ._models import NameIdentifier  # type: ignore
-    from ._models import NameValuePair  # type: ignore
-    from ._models import NetworkAccessControlEntry  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import PremierAddOnOffer  # type: ignore
-    from ._models import PremierAddOnOfferCollection  # type: ignore
-    from ._models import ProxyOnlyResource  # type: ignore
-    from ._models import PushSettings  # type: ignore
-    from ._models import RampUpRule  # type: ignore
-    from ._models import Recommendation  # type: ignore
-    from ._models import RecommendationCollection  # type: ignore
-    from ._models import RecommendationRule  # type: ignore
-    from ._models import Rendering  # type: ignore
-    from ._models import RequestsBasedTrigger  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceHealthMetadata  # type: ignore
-    from ._models import ResourceHealthMetadataCollection  # type: ignore
-    from ._models import ResourceMetric  # type: ignore
-    from ._models import ResourceMetricAvailability  # type: ignore
-    from ._models import ResourceMetricCollection  # type: ignore
-    from ._models import ResourceMetricDefinition  # type: ignore
-    from ._models import ResourceMetricDefinitionCollection  # type: ignore
-    from ._models import ResourceMetricName  # type: ignore
-    from ._models import ResourceMetricProperty  # type: ignore
-    from ._models import ResourceMetricValue  # type: ignore
-    from ._models import ResourceNameAvailability  # type: ignore
-    from ._models import ResourceNameAvailabilityRequest  # type: ignore
-    from ._models import ResponseMetaData  # type: ignore
-    from ._models import ServiceSpecification  # type: ignore
-    from ._models import Site  # type: ignore
-    from ._models import SiteConfig  # type: ignore
-    from ._models import SiteLimits  # type: ignore
-    from ._models import SiteMachineKey  # type: ignore
-    from ._models import SkuCapacity  # type: ignore
-    from ._models import SkuDescription  # type: ignore
-    from ._models import SkuInfos  # type: ignore
-    from ._models import SlotSwapStatus  # type: ignore
-    from ._models import SlowRequestsBasedTrigger  # type: ignore
-    from ._models import SnapshotRecoveryRequest  # type: ignore
-    from ._models import SnapshotRecoveryTarget  # type: ignore
-    from ._models import Solution  # type: ignore
-    from ._models import SourceControl  # type: ignore
-    from ._models import SourceControlCollection  # type: ignore
-    from ._models import StackMajorVersion  # type: ignore
-    from ._models import StackMinorVersion  # type: ignore
-    from ._models import StampCapacity  # type: ignore
-    from ._models import StatusCodesBasedTrigger  # type: ignore
-    from ._models import User  # type: ignore
-    from ._models import ValidateRequest  # type: ignore
-    from ._models import ValidateResponse  # type: ignore
-    from ._models import ValidateResponseError  # type: ignore
-    from ._models import VirtualApplication  # type: ignore
-    from ._models import VirtualDirectory  # type: ignore
-    from ._models import VirtualIPMapping  # type: ignore
-    from ._models import VirtualNetworkProfile  # type: ignore
-    from ._models import VnetGateway  # type: ignore
-    from ._models import VnetInfo  # type: ignore
-    from ._models import VnetParameters  # type: ignore
-    from ._models import VnetRoute  # type: ignore
-    from ._models import VnetValidationFailureDetails  # type: ignore
-    from ._models import VnetValidationTestFailure  # type: ignore
-    from ._models import WebAppCollection  # type: ignore
-    from ._models import WorkerPool  # type: ignore
+from ._models_py3 import AbnormalTimePeriod
+from ._models_py3 import AnalysisData
+from ._models_py3 import AnalysisDefinition
+from ._models_py3 import ApiDefinitionInfo
+from ._models_py3 import AppServiceEnvironment
+from ._models_py3 import AppServicePlan
+from ._models_py3 import AppServicePlanCollection
+from ._models_py3 import ApplicationStack
+from ._models_py3 import ApplicationStackCollection
+from ._models_py3 import AutoHealActions
+from ._models_py3 import AutoHealCustomAction
+from ._models_py3 import AutoHealRules
+from ._models_py3 import AutoHealTriggers
+from ._models_py3 import BillingMeter
+from ._models_py3 import BillingMeterCollection
+from ._models_py3 import Capability
+from ._models_py3 import Certificate
+from ._models_py3 import CertificateCollection
+from ._models_py3 import CertificatePatchResource
+from ._models_py3 import CloningInfo
+from ._models_py3 import ConnStringInfo
+from ._models_py3 import CorsSettings
+from ._models_py3 import CsmMoveResourceEnvelope
+from ._models_py3 import CsmOperationCollection
+from ._models_py3 import CsmOperationDescription
+from ._models_py3 import CsmOperationDescriptionProperties
+from ._models_py3 import CsmOperationDisplay
+from ._models_py3 import CsmUsageQuota
+from ._models_py3 import CsmUsageQuotaCollection
+from ._models_py3 import DataSource
+from ._models_py3 import DataTableResponseColumn
+from ._models_py3 import DataTableResponseObject
+from ._models_py3 import DefaultErrorResponse
+from ._models_py3 import DefaultErrorResponseError
+from ._models_py3 import DefaultErrorResponseErrorDetailsItem
+from ._models_py3 import DeletedSite
+from ._models_py3 import DeletedWebAppCollection
+from ._models_py3 import DeploymentLocations
+from ._models_py3 import DetectorAbnormalTimePeriod
+from ._models_py3 import DetectorDefinition
+from ._models_py3 import DetectorInfo
+from ._models_py3 import DetectorResponse
+from ._models_py3 import DetectorResponseCollection
+from ._models_py3 import DiagnosticAnalysis
+from ._models_py3 import DiagnosticAnalysisCollection
+from ._models_py3 import DiagnosticCategory
+from ._models_py3 import DiagnosticCategoryCollection
+from ._models_py3 import DiagnosticData
+from ._models_py3 import DiagnosticDetectorCollection
+from ._models_py3 import DiagnosticDetectorResponse
+from ._models_py3 import DiagnosticMetricSample
+from ._models_py3 import DiagnosticMetricSet
+from ._models_py3 import Dimension
+from ._models_py3 import ErrorEntity
+from ._models_py3 import Experiments
+from ._models_py3 import GeoRegion
+from ._models_py3 import GeoRegionCollection
+from ._models_py3 import GlobalCsmSkuDescription
+from ._models_py3 import HandlerMapping
+from ._models_py3 import HostNameSslState
+from ._models_py3 import HostingEnvironmentDeploymentInfo
+from ._models_py3 import HostingEnvironmentProfile
+from ._models_py3 import HybridConnection
+from ._models_py3 import HybridConnectionKey
+from ._models_py3 import Identifier
+from ._models_py3 import IdentifierCollection
+from ._models_py3 import IpSecurityRestriction
+from ._models_py3 import LocalizableString
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import MetricAvailability
+from ._models_py3 import MetricSpecification
+from ._models_py3 import NameIdentifier
+from ._models_py3 import NameValuePair
+from ._models_py3 import NetworkAccessControlEntry
+from ._models_py3 import Operation
+from ._models_py3 import PremierAddOnOffer
+from ._models_py3 import PremierAddOnOfferCollection
+from ._models_py3 import ProxyOnlyResource
+from ._models_py3 import PushSettings
+from ._models_py3 import RampUpRule
+from ._models_py3 import Recommendation
+from ._models_py3 import RecommendationCollection
+from ._models_py3 import RecommendationRule
+from ._models_py3 import Rendering
+from ._models_py3 import RequestsBasedTrigger
+from ._models_py3 import Resource
+from ._models_py3 import ResourceHealthMetadata
+from ._models_py3 import ResourceHealthMetadataCollection
+from ._models_py3 import ResourceMetric
+from ._models_py3 import ResourceMetricAvailability
+from ._models_py3 import ResourceMetricCollection
+from ._models_py3 import ResourceMetricDefinition
+from ._models_py3 import ResourceMetricDefinitionCollection
+from ._models_py3 import ResourceMetricName
+from ._models_py3 import ResourceMetricProperty
+from ._models_py3 import ResourceMetricValue
+from ._models_py3 import ResourceNameAvailability
+from ._models_py3 import ResourceNameAvailabilityRequest
+from ._models_py3 import ResponseMetaData
+from ._models_py3 import ServiceSpecification
+from ._models_py3 import Site
+from ._models_py3 import SiteConfig
+from ._models_py3 import SiteLimits
+from ._models_py3 import SiteMachineKey
+from ._models_py3 import SkuCapacity
+from ._models_py3 import SkuDescription
+from ._models_py3 import SkuInfos
+from ._models_py3 import SlotSwapStatus
+from ._models_py3 import SlowRequestsBasedTrigger
+from ._models_py3 import SnapshotRecoveryRequest
+from ._models_py3 import SnapshotRecoveryTarget
+from ._models_py3 import Solution
+from ._models_py3 import SourceControl
+from ._models_py3 import SourceControlCollection
+from ._models_py3 import StackMajorVersion
+from ._models_py3 import StackMinorVersion
+from ._models_py3 import StampCapacity
+from ._models_py3 import StatusCodesBasedTrigger
+from ._models_py3 import User
+from ._models_py3 import ValidateRequest
+from ._models_py3 import ValidateResponse
+from ._models_py3 import ValidateResponseError
+from ._models_py3 import VirtualApplication
+from ._models_py3 import VirtualDirectory
+from ._models_py3 import VirtualIPMapping
+from ._models_py3 import VirtualNetworkProfile
+from ._models_py3 import VnetGateway
+from ._models_py3 import VnetInfo
+from ._models_py3 import VnetParameters
+from ._models_py3 import VnetRoute
+from ._models_py3 import VnetValidationFailureDetails
+from ._models_py3 import VnetValidationTestFailure
+from ._models_py3 import WebAppCollection
+from ._models_py3 import WorkerPool
+
 
 from ._web_site_management_client_enums import (
     AccessControlEntryAction,

@@ -1,16 +1,24 @@
 # Release History
 
-## 5.2.0b3 (Unreleased)
+## 5.2.0b4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
-- `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.
 
 ### Other Changes
-- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+
+## 5.2.0b3 (2022-03-08)
+
+### Bugs Fixed
+- `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.
+- Fixed a bug in `begin_analyze_actions` where incorrect action types were being sent in the request if targeting the older API version `v3.1` in the beta version of the client library.
+- `string_index_type` option `Utf16CodePoint` is corrected to `Utf16CodeUnit`.
+
+### Other Changes
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 5.2.0b2 (2021-11-02)
 
@@ -349,7 +357,7 @@ This version uses a next-generation code generator that *might* introduce breaki
   At a glance:
 
   - "is" should not be used at all.
-  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be preferred.
 
 **Bugfixes**
 

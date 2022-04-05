@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRights(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessRights(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The permissions assigned to the shared access policy.
     """
 
@@ -46,14 +31,14 @@ class AccessRights(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REGISTRY_WRITE_SERVICE_CONNECT_DEVICE_CONNECT = "RegistryWrite, ServiceConnect, DeviceConnect"
     REGISTRY_READ_REGISTRY_WRITE_SERVICE_CONNECT_DEVICE_CONNECT = "RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect"
 
-class Capabilities(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Capabilities(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The capabilities and features enabled for the IoT hub.
     """
 
     NONE = "None"
     DEVICE_MANAGEMENT = "DeviceManagement"
 
-class EndpointHealthStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointHealthStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The health status code of the endpoint
     """
 
@@ -62,14 +47,14 @@ class EndpointHealthStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNHEALTHY = "unhealthy"
     DEAD = "dead"
 
-class IotHubNameUnavailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IotHubNameUnavailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reason for unavailability.
     """
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class IotHubScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IotHubScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the scaling enabled.
     """
 
@@ -77,7 +62,7 @@ class IotHubScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANUAL = "Manual"
     NONE = "None"
 
-class IotHubSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IotHubSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the SKU.
     """
 
@@ -89,7 +74,7 @@ class IotHubSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     B2 = "B2"
     B3 = "B3"
 
-class IotHubSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IotHubSkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The billing tier for the IoT hub.
     """
 
@@ -97,14 +82,14 @@ class IotHubSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     BASIC = "Basic"
 
-class IpFilterActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IpFilterActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The desired action for requests captured by this rule.
     """
 
     ACCEPT = "Accept"
     REJECT = "Reject"
 
-class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the job.
     """
 
@@ -115,7 +100,7 @@ class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "failed"
     CANCELLED = "cancelled"
 
-class JobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the job.
     """
 
@@ -130,7 +115,7 @@ class JobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FACTORY_RESET_DEVICE = "factoryResetDevice"
     FIRMWARE_UPDATE = "firmwareUpdate"
 
-class OperationMonitoringLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationMonitoringLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The operations monitoring level.
     """
 
@@ -139,14 +124,14 @@ class OperationMonitoringLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     INFORMATION = "Information"
     ERROR_INFORMATION = "Error, Information"
 
-class RouteErrorSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RouteErrorSeverity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Severity of the route error
     """
 
     ERROR = "error"
     WARNING = "warning"
 
-class RoutingSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoutingSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The source that the routing rule is to be applied to, such as DeviceMessages.
     """
 
@@ -156,7 +141,7 @@ class RoutingSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEVICE_LIFECYCLE_EVENTS = "DeviceLifecycleEvents"
     DEVICE_JOB_LIFECYCLE_EVENTS = "DeviceJobLifecycleEvents"
 
-class TestResultStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TestResultStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Result of testing route
     """
 

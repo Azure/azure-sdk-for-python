@@ -6,22 +6,114 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+import functools
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+def build_get_request(
+    resource_uri: str,
+    metric_name: str,
+    *,
+    timespan: Optional[str] = None,
+    interval: Optional[datetime.timedelta] = None,
+    aggregation: Optional[str] = None,
+    sensitivities: Optional[str] = None,
+    result_type: Optional[Union[str, "_models.ResultType"]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2017-11-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.Insights/baseline/{metricName}')
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, 'str', skip_quote=True),
+        "metricName": _SERIALIZER.url("metric_name", metric_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if timespan is not None:
+        query_parameters['timespan'] = _SERIALIZER.query("timespan", timespan, 'str')
+    if interval is not None:
+        query_parameters['interval'] = _SERIALIZER.query("interval", interval, 'duration')
+    if aggregation is not None:
+        query_parameters['aggregation'] = _SERIALIZER.query("aggregation", aggregation, 'str')
+    if sensitivities is not None:
+        query_parameters['sensitivities'] = _SERIALIZER.query("sensitivities", sensitivities, 'str')
+    if result_type is not None:
+        query_parameters['resultType'] = _SERIALIZER.query("result_type", result_type, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_calculate_baseline_request(
+    resource_uri: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    api_version = "2017-11-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.Insights/calculatebaseline')
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        json=json,
+        content=content,
+        **kwargs
+    )
 
 class MetricBaselineOperations(object):
     """MetricBaselineOperations operations.
@@ -45,18 +137,18 @@ class MetricBaselineOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def get(
         self,
-        resource_uri,  # type: str
-        metric_name,  # type: str
-        timespan=None,  # type: Optional[str]
-        interval=None,  # type: Optional[datetime.timedelta]
-        aggregation=None,  # type: Optional[str]
-        sensitivities=None,  # type: Optional[str]
-        result_type=None,  # type: Optional[Union[str, "_models.ResultType"]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.BaselineResponse"
+        resource_uri: str,
+        metric_name: str,
+        timespan: Optional[str] = None,
+        interval: Optional[datetime.timedelta] = None,
+        aggregation: Optional[str] = None,
+        sensitivities: Optional[str] = None,
+        result_type: Optional[Union[str, "_models.ResultType"]] = None,
+        **kwargs: Any
+    ) -> "_models.BaselineResponse":
         """**Gets the baseline values for a specific metric**.
 
         :param resource_uri: The identifier of the resource. It has the following structure:
@@ -88,42 +180,27 @@ class MetricBaselineOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-11-01-preview"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-            'metricName': self._serialize.url("metric_name", metric_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_request(
+            resource_uri=resource_uri,
+            metric_name=metric_name,
+            timespan=timespan,
+            interval=interval,
+            aggregation=aggregation,
+            sensitivities=sensitivities,
+            result_type=result_type,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if timespan is not None:
-            query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
-        if interval is not None:
-            query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-        if aggregation is not None:
-            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
-        if sensitivities is not None:
-            query_parameters['sensitivities'] = self._serialize.query("sensitivities", sensitivities, 'str')
-        if result_type is not None:
-            query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BaselineResponse', pipeline_response)
@@ -132,15 +209,17 @@ class MetricBaselineOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/baseline/{metricName}'}  # type: ignore
 
+
+    @distributed_trace
     def calculate_baseline(
         self,
-        resource_uri,  # type: str
-        time_series_information,  # type: "_models.TimeSeriesInformation"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CalculateBaselineResponse"
+        resource_uri: str,
+        time_series_information: "_models.TimeSeriesInformation",
+        **kwargs: Any
+    ) -> "_models.CalculateBaselineResponse":
         """**Lists the baseline values for a resource**.
 
         :param resource_uri: The identifier of the resource. It has the following structure:
@@ -150,7 +229,8 @@ class MetricBaselineOperations(object):
         :type resource_uri: str
         :param time_series_information: Information that need to be specified to calculate a baseline
          on a time series.
-        :type time_series_information: ~$(python-base-namespace).v2017_11_01_preview.models.TimeSeriesInformation
+        :type time_series_information:
+         ~$(python-base-namespace).v2017_11_01_preview.models.TimeSeriesInformation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CalculateBaselineResponse, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2017_11_01_preview.models.CalculateBaselineResponse
@@ -161,36 +241,26 @@ class MetricBaselineOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-11-01-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
-        # Construct URL
-        url = self.calculate_baseline.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        _json = self._serialize.body(time_series_information, 'TimeSeriesInformation')
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        request = build_calculate_baseline_request(
+            resource_uri=resource_uri,
+            content_type=content_type,
+            json=_json,
+            template_url=self.calculate_baseline.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(time_series_information, 'TimeSeriesInformation')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CalculateBaselineResponse', pipeline_response)
@@ -199,4 +269,6 @@ class MetricBaselineOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     calculate_baseline.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/calculatebaseline'}  # type: ignore
+

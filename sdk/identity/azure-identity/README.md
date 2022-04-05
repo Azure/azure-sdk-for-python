@@ -9,7 +9,7 @@ The Azure Identity library provides [Azure Active Directory (AAD)](https://docs.
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -24,7 +24,7 @@ pip install azure-identity
 ### Prerequisites
 
 - an [Azure subscription](https://azure.microsoft.com/free/)
-- Python 2.7 or a recent version of Python 3 (this library doesn't support
+- Python 3.6 or a recent version of Python 3 (this library doesn't support
   end-of-life versions)
 
 ### Authenticate during local development
@@ -36,12 +36,9 @@ local development.
 
 #### Authenticate via Visual Studio Code
 
-`DefaultAzureCredential` and `VisualStudioCodeCredential` can authenticate as
-the user signed in to Visual Studio Code's
-[Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account).
-After installing the extension, sign in to Azure in Visual Studio Code by
-pressing `F1` to open the command palette and running the `Azure: Sign In`
-command.
+Developers using Visual Studio Code can use the [Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) to authenticate via the editor. Apps using `DefaultAzureCredential` or `VisualStudioCodeCredential` can then use this account to authenticate calls in their app when running locally.
+
+To authenticate in Visual Studio Code, ensure **version 0.9.11 or earlier** of the Azure Account extension is installed. To track progress toward supporting newer extension versions, see [this GitHub issue](https://github.com/Azure/azure-sdk-for-net/issues/27263). Once installed, open the **Command Palette** and run the **Azure: Sign In** command.
 
 #### Authenticate via the Azure CLI
 
@@ -185,7 +182,7 @@ client = EventHubProducerClient(namespace, eventhub_name, credential_chain)
 
 ### Async credentials
 
-This library includes an async API supported on Python 3. To use the async
+This library includes a set of async APIs. To use the async
 credentials in [azure.identity.aio][ref_docs_aio], you must first install an
 async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation][azure_core_transport_doc] for more information.
@@ -396,7 +393,7 @@ additional questions or comments.
 [managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/managedidentitycredential
 [ref_docs]: https://aka.ms/azsdk/python/identity/docs
 [ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
-[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/Troubleshoot.md
+[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
 [userpass_cred_ref]: https://aka.ms/azsdk/python/identity/usernamepasswordcredential
 [vscode_cred_ref]: https://aka.ms/azsdk/python/identity/vscodecredential
 

@@ -81,7 +81,6 @@ from ._managed_instance_vulnerability_assessments_operations import ManagedInsta
 from ._managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from ._managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
 from ._operations import Operations
-from ._operations_health_operations import OperationsHealthOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
@@ -125,6 +124,9 @@ from ._managed_instances_operations import ManagedInstancesOperations
 from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from ._restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
 from ._server_connection_policies_operations import ServerConnectionPoliciesOperations
+from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations
+from ._server_trust_certificates_operations import ServerTrustCertificatesOperations
+from ._ipv6_firewall_rules_operations import IPv6FirewallRulesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -202,7 +204,6 @@ __all__ = [
     'ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations',
     'ManagedServerSecurityAlertPoliciesOperations',
     'Operations',
-    'OperationsHealthOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'RecoverableManagedDatabasesOperations',
@@ -246,4 +247,7 @@ __all__ = [
     'RestorableDroppedDatabasesOperations',
     'RestorableDroppedManagedDatabasesOperations',
     'ServerConnectionPoliciesOperations',
+    'DistributedAvailabilityGroupsOperations',
+    'ServerTrustCertificatesOperations',
+    'IPv6FirewallRulesOperations',
 ]

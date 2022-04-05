@@ -9,8 +9,6 @@
 Example to show sending, receiving and parsing amqp annotated message(s) to a Service Bus Queue asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
@@ -93,5 +91,4 @@ async def main():
             await receive_and_parse_message(receiver)
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

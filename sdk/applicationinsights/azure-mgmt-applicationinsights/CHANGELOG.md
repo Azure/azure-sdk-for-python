@@ -1,5 +1,17 @@
 # Release History
 
+## 3.0.0 (2022-03-23)
+
+**Breaking changes**
+
+  - Operation WorkbooksOperations.get has a new signature
+
+## 2.1.0 (2022-01-25)
+
+**Features**
+
+  - Model OperationLive has a new parameter is_data_action
+
 ## 2.0.0 (2021-12-12)
 
 **Features**

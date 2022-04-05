@@ -6,83 +6,115 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from devtools_testutils import AzureTestCase
-
+import functools
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureRecordedTestCase
+from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
     DatasourceSqlConnectionString,
     DatasourceDataLakeGen2SharedKey,
     DatasourceServicePrincipal,
     DatasourceServicePrincipalInKeyVault
 )
-from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
+from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, ids
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
-class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBaseAsync):
+class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
-    @AzureTestCase.await_prepared_test
-    async def test_create_datasource_sql_connection_string(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_create_datasource_sql_connection_string(self, client, variables):
         credential_name = self.create_random_name("testsqlcredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceSqlConnectionString(
-                        name=credential_name,
+                        name=variables["credential_name"],
                         connection_string=self.sql_server_connection_string,
                         description="my credential",
                     )
                 )
-                self.assertIsNotNone(credential.id)
-                self.assertEqual(credential.name, credential_name)
-                self.assertEqual(credential.credential_type, 'AzureSQLConnectionString')
+                if self.is_live:
+                    variables["credential_id"] = credential.id
+                assert credential.id is not None
+                assert credential.name == variables["credential_name"]
+                assert credential.credential_type == 'AzureSQLConnectionString'
             finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_datasource_datalake_gen2_shared_key(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_datasource_datalake_gen2_shared_key(self, client, variables):
         credential_name = self.create_random_name("testdatalakecredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceDataLakeGen2SharedKey(
-                        name=credential_name,
-                        account_key=self.azure_datalake_account_key,
+                        name=variables["credential_name"],
+                        account_key="azure_datalake_account_key",
                         description="my credential",
                     )
                 )
-                self.assertIsNotNone(credential.id)
-                self.assertEqual(credential.name, credential_name)
-                self.assertEqual(credential.credential_type, 'DataLakeGen2SharedKey')
+                if self.is_live:
+                    variables["credential_id"] = credential.id
+                assert credential.id is not None
+                assert credential.name == variables["credential_name"]
+                assert credential.credential_type == 'DataLakeGen2SharedKey'
             finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_datasource_service_principal(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_datasource_service_principal(self, client, variables):
         credential_name = self.create_random_name("testserviceprincipalcredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceServicePrincipal(
-                        name=credential_name,
+                        name=variables["credential_name"],
                         client_id="client_id",
                         client_secret="client_secret",
                         tenant_id="tenant_id",
                         description="my credential",
                     )
                 )
-                self.assertIsNotNone(credential.id)
-                self.assertEqual(credential.name, credential_name)
-                self.assertEqual(credential.credential_type, 'ServicePrincipal')
+                if self.is_live:
+                    variables["credential_id"] = credential.id
+                assert credential.id is not None
+                assert credential.name == variables["credential_name"]
+                assert credential.credential_type == 'ServicePrincipal'
             finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_datasource_service_principal_in_kv(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_datasource_service_principal_in_kv(self, client, variables):
         credential_name = self.create_random_name("testserviceprincipalcredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceServicePrincipalInKeyVault(
-                        name=credential_name,
+                        name=variables["credential_name"],
                         key_vault_endpoint="key_vault_endpoint",
                         key_vault_client_id="key_vault_client_id",
                         key_vault_client_secret="key_vault_client_secret",
@@ -92,101 +124,142 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         description="my credential",
                     )
                 )
-                self.assertIsNotNone(credential.id)
-                self.assertEqual(credential.name, credential_name)
-                self.assertEqual(credential.credential_type, 'ServicePrincipalInKV')
+                if self.is_live:
+                    variables["credential_id"] = credential.id
+                assert credential.id is not None
+                assert credential.name == variables["credential_name"]
+                assert credential.credential_type == 'ServicePrincipalInKV'
             finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_datasource_credentials(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_datasource_credentials(self, client, variables):
         credential_name = self.create_random_name("testsqlcredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceSqlConnectionString(
-                        name=credential_name,
+                        name=variables["credential_name"],
                         connection_string=self.sql_server_connection_string,
                         description="my credential",
                     )
                 )
-                credentials = self.admin_client.list_datasource_credentials()
-                credentials_list = []
-                async for credential in credentials:
-                    credentials_list.append(credential)
-                assert len(credentials_list) > 0
-            finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                if self.is_live:
+                    variables["credential_id"] = credential.id
+                credentials = client.list_datasource_credentials()
+                creds_list = []
+                async for cred in credentials:
+                    creds_list.append(cred)
+                assert len(creds_list) > 0
 
-    @AzureTestCase.await_prepared_test
-    async def test_update_datasource_sql_connection_string(self):
+            finally:
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables
+
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_update_datasource_sql_connection_string(self, client, variables):
         credential_name = self.create_random_name("testsqlcredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceSqlConnectionString(
-                        name=credential_name,
+                        name=variables["credential_name"],
                         connection_string=self.sql_server_connection_string,
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 credential.connection_string = "update"
                 credential.description = "update"
-                credential_updated = await self.admin_client.update_datasource_credential(credential)
-                self.assertEqual(credential_updated.description, "update")
+                credential_updated = await client.update_datasource_credential(credential)
+                assert credential_updated.description == "update"
             finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_update_datasource_datalake_gen2_shared_key(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_update_datasource_datalake_gen2_shared_key(self, client, variables):
         credential_name = self.create_random_name("testdatalakecredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceDataLakeGen2SharedKey(
-                        name=credential_name,
-                        account_key=self.azure_datalake_account_key,
+                        name=variables["credential_name"],
+                        account_key="azure_datalake_account_key",
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 credential.account_key = "update"
                 credential.description = "update"
-                credential_updated = await self.admin_client.update_datasource_credential(credential)
-                self.assertEqual(credential_updated.description, "update")
+                credential_updated = await client.update_datasource_credential(credential)
+                assert credential_updated.description == "update"
             finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_update_datasource_service_principal(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_update_datasource_service_principal(self, client, variables):
         credential_name = self.create_random_name("testserviceprincipalcredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceServicePrincipal(
-                        name=credential_name,
+                        name=variables["credential_name"],
                         client_id="client_id",
                         client_secret="client_secret",
                         tenant_id="tenant_id",
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 credential.client_id = "update"
                 credential.client_secret = "update"
                 credential.tenant_id = "update"
                 credential.description = "update"
-                credential_updated = await self.admin_client.update_datasource_credential(credential)
-                self.assertEqual(credential_updated.description, "update")
+                credential_updated = await client.update_datasource_credential(credential)
+                assert credential_updated.description == "update"
             finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables
 
-    @AzureTestCase.await_prepared_test
-    async def test_update_datasource_service_principal_in_kv(self):
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_update_datasource_service_principal_in_kv(self, client, variables):
         credential_name = self.create_random_name("testserviceprincipalcredential")
-        async with self.admin_client:
+        if self.is_live:
+            variables["credential_name"] = credential_name
+        async with client:
             try:
-                credential = await self.admin_client.create_datasource_credential(
+                credential = await client.create_datasource_credential(
                     datasource_credential=DatasourceServicePrincipalInKeyVault(
-                        name=credential_name,
+                        name=variables["credential_name"],
                         key_vault_endpoint="key_vault_endpoint",
                         key_vault_client_id="key_vault_client_id",
                         key_vault_client_secret="key_vault_client_secret",
@@ -196,6 +269,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         description="my credential",
                     )
                 )
+                if self.is_live:
+                    variables["credential_id"] = credential.id
                 credential.key_vault_endpoint = "update"
                 credential.key_vault_client_id = "update"
                 credential.key_vault_client_secret = "update"
@@ -203,7 +278,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 credential.service_principal_secret_name_in_kv = "update"
                 credential.tenant_id = "update"
                 credential.description = "update"
-                credential_updated = await self.admin_client.update_datasource_credential(credential)
-                self.assertEqual(credential_updated.description, "update")
+                credential_updated = await client.update_datasource_credential(credential)
+                assert credential_updated.description == "update"
             finally:
-                await self.admin_client.delete_datasource_credential(credential.id)
+                await self.clean_up(client.delete_datasource_credential, variables, key="credential_id")
+            return variables

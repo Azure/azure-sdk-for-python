@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -19,26 +19,20 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    azure_region,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-
-    api_version = "2018-12-20"
+    azure_region: str,
+    subscription_id: str,
+    *,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-11-15"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupAadProperties')
@@ -67,7 +61,6 @@ def build_get_request(
         **kwargs
     )
 
-# fmt: on
 class AadPropertiesOperations(object):
     """AadPropertiesOperations operations.
 
@@ -93,11 +86,10 @@ class AadPropertiesOperations(object):
     @distributed_trace
     def get(
         self,
-        azure_region,  # type: str
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AADPropertiesResource"
+        azure_region: str,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.AADPropertiesResource":
         """Fetches the AAD properties from target region BCM stamp.
 
         Fetches the AAD properties from target region BCM stamp.

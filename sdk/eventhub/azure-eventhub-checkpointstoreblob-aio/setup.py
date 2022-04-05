@@ -55,7 +55,7 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -74,12 +74,5 @@ setup(
         # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
         'aiohttp<4.0,>=3.0',
-    ],
-    extras_require={
-        # dependencies for the vendored storage blob
-        ":python_version<'3.0'": ['futures'],
-        ":python_version<'3.4'": ['enum34>=1.0.4'],
-        ":python_version<'3.5'": ["typing"]
-        # end of dependencies for the vendored storage blob
-    },
+    ]
 )

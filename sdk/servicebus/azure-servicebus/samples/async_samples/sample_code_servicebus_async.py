@@ -356,9 +356,8 @@ async def example_schedule_ops_async():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(example_send_and_receive_async())
-    loop.run_until_complete(example_receive_deferred_async())
-    loop.run_until_complete(example_schedule_ops_async())
-    loop.run_until_complete(example_receive_deadletter_async())
-    loop.run_until_complete(example_session_ops_async())
+    asyncio.run(example_send_and_receive_async())
+    asyncio.run(example_receive_deferred_async())
+    asyncio.run(example_schedule_ops_async())
+    asyncio.run(example_receive_deadletter_async())
+    asyncio.run(example_session_ops_async())

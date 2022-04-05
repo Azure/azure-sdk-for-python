@@ -22,7 +22,6 @@
 """Internal class for partitioned query execution info implementation in the Azure Cosmos database service.
 """
 
-import six
 from azure.cosmos.documents import _DistinctType
 
 
@@ -121,7 +120,7 @@ class _PartitionedQueryExecutionInfo(object):
     def _extract(self, path):
 
         item = self._query_execution_info
-        if isinstance(path, six.string_types):
+        if isinstance(path, str):
             return item.get(path)
 
         for p in path:

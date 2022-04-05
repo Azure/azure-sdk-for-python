@@ -24,12 +24,12 @@
 
 from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
 
-import six
+
 import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options
+from ._base import build_options, validate_cache_staleness_value
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer
@@ -46,8 +46,8 @@ class ContainerProxy(object):
     """An interface to interact with a specific DB Container.
 
     This class should not be instantiated directly. Instead, use the
-    :func:`DatabaseProxy.get_container_client` method to get an existing
-    container, or the :func:`Database.create_container` method to create a
+    :func:`~azure.cosmos.database.DatabaseProxy.get_container_client` method to get an existing
+    container, or the :func:`~azure.cosmos.database.DatabaseProxy.create_container` method to create a
     new container.
 
     A container in an Azure Cosmos DB SQL API database is a collection of
@@ -95,13 +95,13 @@ class ContainerProxy(object):
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str]) -> str
-        if isinstance(item_or_link, six.string_types):
+        if isinstance(item_or_link, str):
             return u"{}/docs/{}".format(self.container_link, item_or_link)
         return item_or_link["_self"]
 
     def _get_conflict_link(self, conflict_or_link):
         # type: (Union[Dict[str, Any], str]) -> str
-        if isinstance(conflict_or_link, six.string_types):
+        if isinstance(conflict_or_link, str):
             return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
@@ -173,6 +173,11 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -201,6 +206,10 @@ class ContainerProxy(object):
             request_options["populateQueryMetrics"] = populate_query_metrics
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
         if response_hook:
@@ -221,6 +230,11 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -234,6 +248,10 @@ class ContainerProxy(object):
                 UserWarning,
             )
             feed_options["populateQueryMetrics"] = populate_query_metrics
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
+            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
@@ -327,6 +345,11 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
 
@@ -360,6 +383,10 @@ class ContainerProxy(object):
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
+            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()

@@ -52,6 +52,5 @@ async def send_message():
             await sender.send_messages([ServiceBusMessage("hello")])
 
 
-loop = asyncio.get_event_loop()
 start_time = time.time()
-loop.run_until_complete(send_message())
+asyncio.run(send_message())

@@ -1,0 +1,44 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "150",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "405a2ecd-7f2b-11ec-91a1-c8348e073d30"
+      },
+      "RequestBody": {
+        "modelId": "da59f2bf-7c63-4232-ac85-51609b230627",
+        "buildMode": "template",
+        "azureBlobSource": {
+          "containerUrl": "https://fakeuri.com/blank%20space"
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "b86b1901-463d-4372-b372-a4f1f6ce4607",
+        "Content-Type": "application/json",
+        "Date": "Thu, 27 Jan 2022 04:40:27 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "48"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidArgument",
+          "message": "Invalid argument.",
+          "innererror": {
+            "code": "InvalidContentSourceFormat",
+            "message": "Invalid content source: Source Uri must include container path"
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
