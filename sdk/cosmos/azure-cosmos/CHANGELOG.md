@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+- Added user warning to non-query methods trying to use `populate_query_metrics` options.
 
 ### 4.3.0b3 (2022-03-10)
 
