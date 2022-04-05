@@ -143,7 +143,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(_AsyncCosmosBearerTokenCredentialPo
         # pylint:disable=unused-argument,no-self-use
         return False
 
-    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> "Union[None, Awaitable[None]]":
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> Union[None, Awaitable[None]]:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -152,7 +152,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(_AsyncCosmosBearerTokenCredentialPo
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    def on_exception(self, request: "PipelineRequest") -> None:
+    def on_exception(self, request: PipelineRequest) -> None:
         """Executed when an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.
