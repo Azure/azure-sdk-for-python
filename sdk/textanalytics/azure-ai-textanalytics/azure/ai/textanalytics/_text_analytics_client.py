@@ -890,17 +890,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
             string_index_type_default=self._string_index_type_default,
         )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
-
         if show_opinion_mining is not None:
             if (
                 self._api_version == TextAnalyticsApiVersion.V3_0
@@ -909,12 +903,32 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 raise ValueError(
                     "'show_opinion_mining' is only available for API version v3.1 and up"
                 )
-            kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextSentimentAnalysisInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.SentimentAnalysisTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type,
+                            opinion_mining=show_opinion_mining,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", sentiment_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.sentiment(
                 documents=docs,
+                logging_opt_out=disable_service_logs,
                 model_version=model_version,
+                string_index_type=string_index_type,
+                opinion_mining=show_opinion_mining,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
