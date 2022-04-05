@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -18,7 +18,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._private_link_association_operations import build_delete_request, build_get_request, build_put_request
+from ...operations._private_link_association_operations import build_delete_request, build_get_request, build_list_request, build_put_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -49,7 +49,7 @@ class PrivateLinkAssociationOperations:
         self,
         group_id: str,
         pla_id: str,
-        parameters: "_models.PrivateLinkAssociationProperties",
+        parameters: "_models.PrivateLinkAssociationObject",
         **kwargs: Any
     ) -> "_models.PrivateLinkAssociation":
         """Create a PrivateLinkAssociation.
@@ -60,7 +60,7 @@ class PrivateLinkAssociationOperations:
         :type pla_id: str
         :param parameters: Parameters supplied to create the private link association.
         :type parameters:
-         ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociationProperties
+         ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociationObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkAssociation, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociation
@@ -74,7 +74,7 @@ class PrivateLinkAssociationOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'PrivateLinkAssociationProperties')
+        _json = self._serialize.body(parameters, 'PrivateLinkAssociationObject')
 
         request = build_put_request(
             group_id=group_id,
@@ -82,6 +82,60 @@ class PrivateLinkAssociationOperations:
             content_type=content_type,
             json=_json,
             template_url=self.put.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PrivateLinkAssociation', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('PrivateLinkAssociation', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    put.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Authorization/privateLinkAssociations/{plaId}'}  # type: ignore
+
+
+    @distributed_trace_async
+    async def get(
+        self,
+        group_id: str,
+        pla_id: str,
+        **kwargs: Any
+    ) -> "_models.PrivateLinkAssociation":
+        """Get a single private link association.
+
+        :param group_id: The management group ID.
+        :type group_id: str
+        :param pla_id: The ID of the PLA.
+        :type pla_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PrivateLinkAssociation, or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociation
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkAssociation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_get_request(
+            group_id=group_id,
+            pla_id=pla_id,
+            template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -100,7 +154,7 @@ class PrivateLinkAssociationOperations:
 
         return deserialized
 
-    put.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Authorization/privateLinkAssociations/{plaId}'}  # type: ignore
+    get.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Authorization/privateLinkAssociations/{plaId}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -150,7 +204,7 @@ class PrivateLinkAssociationOperations:
 
 
     @distributed_trace_async
-    async def get(
+    async def list(
         self,
         group_id: str,
         **kwargs: Any
@@ -171,9 +225,9 @@ class PrivateLinkAssociationOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_get_request(
+        request = build_list_request(
             group_id=group_id,
-            template_url=self.get.metadata['url'],
+            template_url=self.list.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -192,5 +246,5 @@ class PrivateLinkAssociationOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Authorization/privateLinkAssociations'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Authorization/privateLinkAssociations'}  # type: ignore
 

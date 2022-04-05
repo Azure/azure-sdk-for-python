@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ComplianceStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ComplianceStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The compliance state of the configuration.
     """
 
@@ -36,17 +21,17 @@ class ComplianceStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INSTALLED = "Installed"
     FAILED = "Failed"
 
-class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum0(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     MICROSOFT_CONTAINER_SERVICE = "Microsoft.ContainerService"
     MICROSOFT_KUBERNETES = "Microsoft.Kubernetes"
 
-class Enum1(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum1(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     MANAGED_CLUSTERS = "managedClusters"
     CONNECTED_CLUSTERS = "connectedClusters"
 
-class InstallStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InstallStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of installation of this instance of the extension.
     """
 
@@ -54,7 +39,7 @@ class InstallStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INSTALLED = "Installed"
     FAILED = "Failed"
 
-class LevelType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LevelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Level of the status.
     """
 
@@ -62,7 +47,7 @@ class LevelType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     INFORMATION = "Information"
 
-class MessageLevelType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MessageLevelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Level of the message.
     """
 
@@ -70,20 +55,20 @@ class MessageLevelType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     INFORMATION = "Information"
 
-class OperatorScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperatorScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Scope at which the operator will be installed.
     """
 
     CLUSTER = "cluster"
     NAMESPACE = "namespace"
 
-class OperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperatorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the operator
     """
 
     FLUX = "Flux"
 
-class ProvisioningStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the resource provider.
     """
 
@@ -93,7 +78,7 @@ class ProvisioningStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the configuration. Type 'SystemAssigned' will use an implicitly
     created identity. Type 'None' will not use Managed Identity for the configuration.
     """

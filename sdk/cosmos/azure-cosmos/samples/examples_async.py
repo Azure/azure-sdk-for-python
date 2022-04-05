@@ -38,7 +38,7 @@ async def examples_async():
         try:
             database = await client.create_database(id=database_name)
         except exceptions.CosmosResourceExistsError:
-            database = client.get_database_client(database_id=database_name)
+            database = client.get_database_client(database=database_name)
         # [END create_database]
 
         # Create a container, handling the exception if a container with the
@@ -156,11 +156,15 @@ async def examples_async():
         # [START create_user]
         try:
             await database.create_user(dict(id="Walter Harp"))
+            print("Created user Walter Harp.")
         except exceptions.CosmosResourceExistsError:
             print("A user with that ID already exists.")
         except exceptions.CosmosHttpResponseError as failure:
             print("Failed to create user. Status code:{}".format(failure.status_code))
         # [END create_user]
+
+        await client.delete_database(database_name)
+        print("Sample done running!")
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

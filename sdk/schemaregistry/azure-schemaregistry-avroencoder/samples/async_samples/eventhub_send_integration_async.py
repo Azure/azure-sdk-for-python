@@ -50,7 +50,7 @@ avro_encoder = AvroEncoder(
         credential=azure_credential
     ),
     group_name=GROUP_NAME,
-    auto_register_schemas=True
+    auto_register=True
 )
 
 async def send_event_data_batch(producer, encoder):

@@ -23,7 +23,7 @@ pip install azure-schemaregistry-avroencoder azure-identity
 ### Prerequisites:
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
-* [Azure Schema Registry][schemaregistry_service]
+* [Azure Schema Registry][schemaregistry_service] - [Here is the quickstart guide][quickstart_guide] to create a Schema Registry group using the Azure portal.
 * Python 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
@@ -70,7 +70,7 @@ content type with schema ID. Uses [SchemaRegistryClient][schemaregistry_client] 
 
 Support has been added to certain Azure Messaging SDK model classes for interoperability with the `AvroEncoder`. These models are subtypes of the `MessageType` protocol defined under the `azure.schemaregistry.encoder.avroencoder` namespace. Currently, the supported model classes are:
 
-- `azure.eventhub.EventData` for `azure-eventhub==5.9.0b2`
+- `azure.eventhub.EventData` for `azure-eventhub==5.9.0b3`
 
 ### Message format
 
@@ -86,7 +86,7 @@ If a message type that follows the MessageType protocol is provided to the encod
   - `avro/binary` is the format indicator
   - `<schema ID>` is the hexadecimal representation of GUID, same format and byte order as the string from the Schema Registry service.
 
-If message type or callback function is not provided, and by default, the encoder will create the following dict:
+If message type is not provided, and by default, the encoder will create the following dict:
 `{"content": <Avro encoded payload>, "content_type": 'avro/binary+<schema ID>' }`
 
 ## Examples
@@ -101,7 +101,7 @@ The following sections provide several code snippets covering some of the most c
 ### Encoding
 
 Use `AvroEncoder.encode` method to encode dict content with the given Avro schema.
-The method will use a schema previously registered to the Schema Registry service and keep the schema cached for future encoding usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `encode` method by instantiating the `AvroEncoder` with the keyword argument `auto_register_schemas=True`.
+The method will use a schema previously registered to the Schema Registry service and keep the schema cached for future encoding usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `encode` method by instantiating the `AvroEncoder` with the keyword argument `auto_register=True`.
 
 ```python
 import os
@@ -202,7 +202,7 @@ definition = """
 }"""
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-avro_encoder = AvroEncoder(client=schema_registry_client, group_name=group_name, auto_register_schemas=True)
+avro_encoder = AvroEncoder(client=schema_registry_client, group_name=group_name, auto_register=True)
 
 eventhub_producer = EventHubProducerClient.from_connection_string(
     conn_str=eventhub_connection_str,
@@ -327,3 +327,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
+[quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry

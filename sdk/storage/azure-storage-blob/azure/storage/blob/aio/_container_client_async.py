@@ -169,7 +169,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_if_not_exists(self, **kwargs):
+    async def create_container_if_not_exists(self, **kwargs):
         # type: (**Any) -> None
         """
         Creates a new container under the specified account. If the container
