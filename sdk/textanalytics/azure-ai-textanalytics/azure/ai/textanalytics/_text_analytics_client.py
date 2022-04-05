@@ -319,6 +319,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
 
+            # api_versions 3.0, 3.1
             return self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
@@ -408,25 +409,41 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         domain_filter = kwargs.pop("domain_filter", None)
         categories_filter = kwargs.pop("categories_filter", None)
-
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
             string_index_type_default=self._string_index_type_default,
         )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextPiiEntitiesRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.PiiTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            domain=domain_filter,
+                            pii_categories=categories_filter,
+                            string_index_type=string_index_type
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", pii_entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
                 pii_categories=categories_filter,
+                logging_opt_out=disable_service_logs,
+                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )

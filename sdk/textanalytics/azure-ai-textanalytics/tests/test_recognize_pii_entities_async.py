@@ -6,7 +6,7 @@ import os
 import pytest
 import platform
 import functools
-
+import json
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest
@@ -677,7 +677,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert "'string_index_type' is only available for API version V3_1 and up" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
         def callback(response):
@@ -689,7 +689,19 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_03_01_PREVIEW})
+    @recorded_by_proxy_async
+    async def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
+        def callback(response):
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
+
+        res = await client.recognize_pii_entities(
+            documents=["Hello world"],
+            raw_response_hook=callback
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_explicit_set_string_index_type(self, client):
         def callback(response):
@@ -702,11 +714,36 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_03_01_PREVIEW})
+    @recorded_by_proxy_async
+    async def test_explicit_set_string_index_type_body_param(self, client):
+        def callback(response):
+            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
+
+        res = await client.recognize_pii_entities(
+            documents=["Hello world"],
+            string_index_type="TextElements_v8",
+            raw_response_hook=callback
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_disable_service_logs(self, client):
         def callback(resp):
             assert resp.http_request.query['loggingOptOut']
+        await client.recognize_pii_entities(
+            documents=["Test for logging disable"],
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_03_01_PREVIEW})
+    @recorded_by_proxy_async
+    async def test_disable_service_logs_body_param(self, client):
+        def callback(resp):
+            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
         await client.recognize_pii_entities(
             documents=["Test for logging disable"],
             disable_service_logs=True,
