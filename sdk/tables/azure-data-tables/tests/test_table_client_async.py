@@ -119,24 +119,24 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async with client:
                 with pytest.raises(ValueError) as error:
                     await client.create_table()
-                assert 'Table names must be alphanumeric' in str(error.value)
+                assert 'Storage table names must be alphanumeric' in str(error.value)
                 with pytest.raises(ValueError) as error:
                     await client.create_entity({'PartitionKey': 'foo', 'RowKey': 'bar'})
-                assert 'Table names must be alphanumeric' in str(error.value)
+                assert 'Storage table names must be alphanumeric' in str(error.value)
                 with pytest.raises(ValueError) as error:
                     await client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-                assert 'Table names must be alphanumeric' in str(error.value)
+                assert 'Storage table names must be alphanumeric' in str(error.value)
                 with pytest.raises(ValueError) as error:
                     await client.delete_entity("PK", "RK")
-                assert 'Table names must be alphanumeric' in str(error.value)
+                assert 'Storage table names must be alphanumeric' in str(error.value)
                 with pytest.raises(ValueError) as error:
                     await client.get_table_access_policy()
-                assert 'Table names must be alphanumeric' in str(error.value)
+                assert 'Storage table names must be alphanumeric' in str(error.value)
                 with pytest.raises(ValueError) as error:
                     batch = []
                     batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                     await client.submit_transaction(batch)
-                assert 'Table names must be alphanumeric' in str(error.value)
+                assert 'Storage table names must be alphanumeric' in str(error.value)
 
 
 class TestTableClientUnit(AsyncTableTestCase):

@@ -2598,9 +2598,18 @@ class DocumentField(object):
         :return: dict
         :rtype: dict
         """
+        value = self.value
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper to_dict() method.
+        if self.value_type == "currency":
+            value = self.value.to_dict()
+        elif isinstance(self.value, dict):
+            value = {k: v.to_dict() for k, v in self.value.items()}
+        elif isinstance(self.value, list):
+            value = [v.to_dict() for v in self.value]
         return {
             "value_type": self.value_type,
-            "value": self.value,
+            "value": value,
             "content": self.content,
             "bounding_regions": [f.to_dict() for f in self.bounding_regions]
             if self.bounding_regions
@@ -2620,9 +2629,20 @@ class DocumentField(object):
         :return: DocumentField
         :rtype: DocumentField
         """
+
+        value = data.get("value", None)
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper from_dict() method.
+        if data.get("value_type", None) == "currency":
+            value = CurrencyValue.from_dict(data.get("value"))  #type: ignore
+        elif isinstance(data.get("value"), dict):
+            value = {k: DocumentField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
+        elif isinstance(data.get("value"), list):
+            value = [DocumentField.from_dict(v) for v in data.get("value")]  # type: ignore
+
         return cls(
             value_type=data.get("value_type", None),
-            value=data.get("value", None),
+            value=value,
             content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
@@ -2880,7 +2900,7 @@ class DocumentPage(object):
     :vartype width: float
     :ivar height: The height of the image/PDF in pixels/inches, respectively.
     :vartype height: float
-    :ivar unit: The unit used by the width, height, and boundingBox properties. For
+    :ivar unit: The unit used by the width, height, and bounding box properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
     :vartype unit: str
@@ -4086,30 +4106,30 @@ class DocTypeInfo(object):
 class AccountInfo(object):
     """Info regarding models under the Form Recognizer resource.
 
-    :ivar int model_count: Number of custom models in the current resource.
-    :ivar int model_limit: Maximum number of custom models supported in the current resource.
+    :ivar int document_model_count: Number of custom models in the current resource.
+    :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.model_count = kwargs.get('model_count', None)
-        self.model_limit = kwargs.get('model_limit', None)
+        self.document_model_count = kwargs.get('document_model_count', None)
+        self.document_model_limit = kwargs.get('document_model_limit', None)
 
     def __repr__(self):
         return (
-            "AccountInfo(model_count={}, model_limit={})".format(
-                self.model_count,
-                self.model_limit,
+            "AccountInfo(document_model_count={}, document_model_limit={})".format(
+                self.document_model_count,
+                self.document_model_limit,
             )
         )
 
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            model_count=info.count,
-            model_limit=info.limit,
+            document_model_count=info.count,
+            document_model_limit=info.limit,
         )
 
 
@@ -4121,8 +4141,8 @@ class AccountInfo(object):
         :rtype: dict
         """
         return {
-            "model_count": self.model_count,
-            "model_limit": self.model_limit,
+            "document_model_count": self.document_model_count,
+            "document_model_limit": self.document_model_limit,
         }
 
     @classmethod
@@ -4135,8 +4155,8 @@ class AccountInfo(object):
         :rtype: AccountInfo
         """
         return cls(
-            model_count=data.get("model_count", None),
-            model_limit=data.get("model_limit", None),
+            document_model_count=data.get("document_model_count", None),
+            document_model_limit=data.get("document_model_limit", None),
         )
 
 
