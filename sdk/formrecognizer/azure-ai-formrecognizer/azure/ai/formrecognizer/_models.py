@@ -2598,9 +2598,18 @@ class DocumentField(object):
         :return: dict
         :rtype: dict
         """
+        value = self.value
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper to_dict() method.
+        if self.value_type == "currency":
+            value = self.value.to_dict()
+        elif isinstance(self.value, dict):
+            value = {k: v.to_dict() for k, v in self.value.items()}
+        elif isinstance(self.value, list):
+            value = [v.to_dict() for v in self.value]
         return {
             "value_type": self.value_type,
-            "value": self.value,
+            "value": value,
             "content": self.content,
             "bounding_regions": [f.to_dict() for f in self.bounding_regions]
             if self.bounding_regions
@@ -2620,9 +2629,20 @@ class DocumentField(object):
         :return: DocumentField
         :rtype: DocumentField
         """
+
+        value = data.get("value", None)
+        # CurrencyValue objects are interpreted as dict, therefore need to be processed first
+        # to call the proper from_dict() method.
+        if data.get("value_type", None) == "currency":
+            value = CurrencyValue.from_dict(data.get("value"))  #type: ignore
+        elif isinstance(data.get("value"), dict):
+            value = {k: DocumentField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
+        elif isinstance(data.get("value"), list):
+            value = [DocumentField.from_dict(v) for v in data.get("value")]  # type: ignore
+
         return cls(
             value_type=data.get("value_type", None),
-            value=data.get("value", None),
+            value=value,
             content=data.get("content", None),
             bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
             if len(data.get("bounding_regions", [])) > 0
@@ -2880,7 +2900,7 @@ class DocumentPage(object):
     :vartype width: float
     :ivar height: The height of the image/PDF in pixels/inches, respectively.
     :vartype height: float
-    :ivar unit: The unit used by the width, height, and boundingBox properties. For
+    :ivar unit: The unit used by the width, height, and bounding box properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
     :vartype unit: str

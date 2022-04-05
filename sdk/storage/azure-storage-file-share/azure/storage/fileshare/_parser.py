@@ -39,4 +39,6 @@ def _parse_datetime_from_str(string_datetime):
 
 
 def _datetime_to_str(datetime_obj):
+    if not datetime_obj:
+        return None
     return datetime_obj if isinstance(datetime_obj, str) else datetime_obj.isoformat() + '0Z'
