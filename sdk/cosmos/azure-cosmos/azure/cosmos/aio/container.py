@@ -106,10 +106,9 @@ class ContainerProxy(object):
             return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
-    async def _set_partition_key(self, partition_key):
-        if partition_key == NonePartitionKeyValue:
-            return CosmosClientConnection._return_undefined_or_empty_partition_key(await self.is_system_key)
-        return partition_key
+    async def _set_none_partition_key(self):
+        return CosmosClientConnection._return_undefined_or_empty_partition_key(await self.is_system_key)
+
 
     @distributed_trace_async
     async def read(
@@ -348,7 +347,10 @@ class ContainerProxy(object):
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if partition_key is not None:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+            if partition_key == NonePartitionKeyValue:
+                feed_options["partitionKey"] = self._set_none_partition_key()
+            else:
+                feed_options["partitionKey"] = partition_key
         else:
             feed_options["enableCrossPartitionQuery"] = True
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
