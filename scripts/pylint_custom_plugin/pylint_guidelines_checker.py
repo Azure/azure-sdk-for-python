@@ -11,6 +11,7 @@ import logging
 import astroid
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
+from urllib3 import Retry
 logger = logging.getLogger(__name__)
 
 
@@ -892,54 +893,42 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                         # infer_call_result gives the method return value as a string
                         returns = next(node.infer_call_result()).as_string()
                         
-                        # Check the inferred type of the return to compare against rtype
+                        # Check the inferred type of the return
                         type_of_return = next(node.infer_call_result()).pytype()
-
-                        # print(returns)
-                        # print(type_of_return)
-
+                    
+                        print(type_of_return,returns)
 
                         if type_of_return is not astroid.Uninferable:
                             # Get the type of what is being returned
-                            # Builtins.dict, or azure.core.polling.LROPoller()
                             type_of_return = type_of_return.split(".")[-1]
+                            if type_of_return == "ItemPaged" or type_of_return == "AsyncItemPaged":
+                                return
 
                         # If it can't infer the return, manually check for the return
                         if returns is astroid.Uninferable:
                             # Look for return statement within the function body
-                            for inner_node in node.body:
-                                # If this is a return node
-                                if isinstance(inner_node, astroid.Return):
-                                    # Check if it is returning a function
-                                    if isinstance(inner_node.value, astroid.Call):
-                                        returns = inner_node.value.func.name
-                                        # If we got here, we couldn't grab the class of this function
-                                        # We settle for getting the name
+                            returns = ''
+                            # for inner_node in node.body:
+                            #     # If this is a return node
+                            #     if isinstance(inner_node, astroid.Return):
+                            #         print(inner_node.value)
+                            #         # Check if it is returning a function
+                            #         try:
+                            #             returns = inner_node.value.func.name
+                            #             # If we got here, we couldn't grab the class of this function
+                            #             # We settle for getting the name
 
-                                    # If it isn't a function, get the name of what it is returning
-                                    else:
-                                        returns = inner_node.value.name
+                            #         # If it isn't a function, get the name of what it is returning
+                            #         except:
+                            #             returns = inner_node.value.name
                          
-                        # Also check the docstring return type to compare to the return
-                        docstring = node.doc.split(":")
-                        rtype = ""
-                        for line in docstring:
-                            if line.startswith("rtype"):
-                                rtype = docstring[docstring.index(line)+1]
                         
-                        # print(rtype, type_of_return)
-
-                        # if type_of_return.lower() not in rtype.lower(): print("not")
-                        
-                        # If return type is inferrable, check if it is in rtype. (issues with () reason for no direct comparison: dict(str,str) vs. builtins.dict)
-                        # If return type is not inferrable, see if the rtype in the docstring is in the name of the returned item. 
-                        if type_of_return.lower() not in rtype.lower() or rtype not in returns:
-
-                            # Make sure that if returns is a custom class, that the class has a by_page
-                            if returns.find("ItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
-                                self.add_message(
-                                    msgid="client-list-methods-use-paging", node=node, confidence=None
-                                )
+                    
+                        # Make sure that if it wasn't inferrable it isn't an ItemPaged or AsyncItemPaged. Check that if it returns a custom class, that the class has a by_page
+                        if returns.find("AsyncItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
+                            self.add_message(
+                                msgid="client-list-methods-use-paging", node=node, confidence=None
+                            )
                     except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
                         logger.debug("Pylint custom checker failed to check if client list method uses core paging.")
                         pass
