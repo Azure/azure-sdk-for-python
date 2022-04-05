@@ -9,9 +9,9 @@ from io import BytesIO
 import avro  # type: ignore
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder  # type: ignore
 
-from ._abstract_avro_encoder import (
+from ._abstract_avro_encoder import (  # pylint: disable=import-error
     AbstractAvroObjectEncoder,
-)  # pylint: disable=import-error
+)
 
 ObjectType = TypeVar("ObjectType")
 
