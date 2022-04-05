@@ -86,14 +86,13 @@ class CosmosEmulatorCredential(object):
 
         emulator_key = test_config._test_config.masterKey
 
-        str_io_obj = StringIO()
-        json.dump(aad_claim_cosmos_emulator_format, str_io_obj)
-        aad_claim_cosmos_emulator_format_string = str(str_io_obj.getvalue()).replace(" ", "")
-
         first_encoded_bytes = base64.urlsafe_b64encode(aad_header_cosmos_emulator.encode("utf-8"))
         first_encoded_padded = str(first_encoded_bytes, "utf-8")
         first_encoded = _remove_padding(first_encoded_padded)
 
+        str_io_obj = StringIO()
+        json.dump(aad_claim_cosmos_emulator_format, str_io_obj)
+        aad_claim_cosmos_emulator_format_string = str(str_io_obj.getvalue()).replace(" ", "")
         second = aad_claim_cosmos_emulator_format_string
         second_encoded_bytes = base64.urlsafe_b64encode(second.encode("utf-8"))
         second_encoded_padded = str(second_encoded_bytes, "utf-8")
