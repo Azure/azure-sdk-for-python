@@ -887,6 +887,10 @@ class ClientListMethodsUseCorePaging(BaseChecker):
         """
         try:
             if node.parent.name.endswith("Client") and node.parent.name not in self.ignore_clients and node.is_method():
+
+                # TODO: Flag functions that return an ItemPaged but don't start with "list"
+
+
                 if node.name.startswith("list"):
                     try:
                         
@@ -914,18 +918,22 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                             #         print(inner_node.value)
                             #         # Check if it is returning a function
                             #         try:
+                            #             # If it is a function that was not inferred try getting function name
+                            #             print(inner_node.value)
                             #             returns = inner_node.value.func.name
                             #             # If we got here, we couldn't grab the class of this function
                             #             # We settle for getting the name
 
                             #         # If it isn't a function, get the name of what it is returning
                             #         except:
-                            #             returns = inner_node.value.name
+                            #             print("here")
+                            #             returns = inner_node.value
+                            #             print(returns)
                          
                         
-                    
+                        # returns.find("AsyncItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and 
                         # Make sure that if it wasn't inferrable it isn't an ItemPaged or AsyncItemPaged. Check that if it returns a custom class, that the class has a by_page
-                        if returns.find("AsyncItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
+                        if  returns.find("AsyncItemPaged") == -1 and returns.find("AsyncItemPaged") == -1 and returns.find("def by_page") == -1:
                             self.add_message(
                                 msgid="client-list-methods-use-paging", node=node, confidence=None
                             )

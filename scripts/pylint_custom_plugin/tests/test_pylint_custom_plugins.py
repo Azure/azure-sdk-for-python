@@ -1869,6 +1869,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
        
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node)
+     
 
     def test_list_return_type_file_custom_class_violation(self):
         file = open("./test_files/list_return_type_custom_class_violation.py")
@@ -1928,6 +1929,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
+     
       
     def test_ignores_methods_return_AsyncItemPaged(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
@@ -1985,19 +1987,23 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
     def test_finds_method_returning_something_else_async(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
         from azure.core.polling import LROPoller
+        from typing import Set, Dict, Iterator, Union, Optional, Callable
         
         class SomeClient(): #@
             async def list_thing(self, **kwargs): #@
                 '''
-                :rtype: dict(str, str)
+                :rtype: Iterator[int]
                 '''
-                return {"thing1":"thing2","thing3":"thing4"}
+                i = 0
+                while i < n:
+                    yield i
+                    i += 1
 
-            async def list_thing2(self, **kwargs): #@
+            async def list_thing2(self,ints, **kwargs): #@
                 '''
-                :rtype: LROPoller()
+                :rtype: list[str]
                 '''
-                return LROPoller()
+                return [str(x) for x in ints]
         """)
 
         with self.assertAddsMessages(
