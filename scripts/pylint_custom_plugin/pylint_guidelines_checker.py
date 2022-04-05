@@ -889,18 +889,32 @@ class ClientListMethodsUseCorePaging(BaseChecker):
             if node.parent.name.endswith("Client") and node.parent.name not in self.ignore_clients and node.is_method():
 
                 # TODO: Flag functions that return an ItemPaged but don't start with "list"
-
-
-                if node.name.startswith("list"):
+                # print(node.name)
+                if not node.name.startswith("list") and not node.name.startswith("_"):
+                    # infer_call_result gives the method return value as a string
                     try:
-                        
-                        # infer_call_result gives the method return value as a string
                         returns = next(node.infer_call_result()).as_string()
                         
                         # Check the inferred type of the return
                         type_of_return = next(node.infer_call_result()).pytype()
-                    
-                        print(type_of_return,returns)
+
+                        if type_of_return is not astroid.Uninferable:
+                            type_of_return = type_of_return.split(".")[-1]
+                            if type_of_return == "ItemPaged" or type_of_return == "AsyncItemPaged":
+                                print("Got here")
+                                logger.debug("This method returns a Paging class, but does not follow list naming conventions")
+                                pass
+                    except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
+                        pass
+                    #search in _search_client.py returns SearchItemPaged
+
+                elif node.name.startswith("list"):
+                    try:
+                        # print(type_of_return,returns)
+                        returns = next(node.infer_call_result()).as_string()
+                        
+                        # Check the inferred type of the return
+                        type_of_return = next(node.infer_call_result()).pytype()
 
                         if type_of_return is not astroid.Uninferable:
                             # Get the type of what is being returned
@@ -938,6 +952,8 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                                 msgid="client-list-methods-use-paging", node=node, confidence=None
                             )
                     except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
+                        # If it can't infer the return of a list method, that means that there is no return?
+                
                         logger.debug("Pylint custom checker failed to check if client list method uses core paging.")
                         pass
         except AttributeError:
