@@ -2001,9 +2001,9 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertAddsMessages(
-            # pylint.testutils.Message(
-            #     msg_id="client-list-methods-use-paging", node=function_node_a
-            # ),
+            pylint.testutils.Message(
+                msg_id="client-list-methods-use-paging", node=function_node_a
+            ),
             pylint.testutils.Message(
                 msg_id="client-list-methods-use-paging", node=function_node_b
             ),
