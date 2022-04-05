@@ -29,11 +29,7 @@ from .amqp import AmqpAnnotatedMessage
 from .exceptions import ConnectError, EventHubError
 
 if TYPE_CHECKING:
-    from azure.core.credentials import (
-        TokenCredential,
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-    )
+    from ._client_base import CredentialTypes
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
@@ -162,7 +158,7 @@ class EventHubProducerClient(ClientBase):
         self,
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
-        credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential],
+        credential,  # type: CredentialTypes
         **kwargs  # type: Any
     ):
         # type:(...) -> None

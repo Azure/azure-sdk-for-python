@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b3 (2022-04-05)
+
+### Breaking Changes
+
+- `auto_register_schemas` keyword in the sync and async `AvroEncoder` constructors has been renamed `auto_register`.
+- `SchemaParseError`, `SchemaEncodeError`, and `SchemaDecodeError` have been replaced with `InvalidContentError` and `InvalidSchemaError`. The errors have been added under the `azure.schemaregistry.encoder.avroencoder` namespace.
+- The `exceptions` module in `azure.schemaregistry.encoder.avroencoder` has been removed.
+- The `encode` method on the sync and async `AvroEncoder` only allows subtypes of the `MessageType` protocol as values to the `message_type` optional parameter, rather than any callable that has the method signature `(content: bytes, content_type: str, **kwargs: Any)`.
+- The number of hits/misses, in addition to number of entries, for the schema/schema ID caches will be logged at an info level when a new entry is added.
+
+### Other Changes
+
+- This release and future releases will not have backward compatibility support for decoding data that was encoded with the AvroSerializer.
+- The `encode` and `decode` methods on `AvroEncoder` support the following message models:
+  - `azure.eventhub.EventData` in `azure-eventhub==5.9.0b3`
+
 ## 1.0.0b2 (2022-03-09)
 
 ### Features Added

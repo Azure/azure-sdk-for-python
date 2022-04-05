@@ -22,8 +22,6 @@ from typing_extensions import (
 )
 from uamqp import constants
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-
 from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ClientBaseAsync
@@ -34,7 +32,7 @@ from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from ._client_base_async import CredentialTypes
     from uamqp.constants import TransportType  # pylint: disable=ungrouped-imports
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
@@ -134,9 +132,7 @@ class EventHubProducerClient(ClientBaseAsync):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: "CredentialTypes",
         *,
         buffered_mode: Literal[False] = False,
         **kwargs: Any
@@ -148,9 +144,7 @@ class EventHubProducerClient(ClientBaseAsync):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: "CredentialTypes",
         *,
         buffered_mode: Literal[True],
         on_error: Callable[[List["EventData"], Exception, Optional[str]], Awaitable[None]],
@@ -166,9 +160,7 @@ class EventHubProducerClient(ClientBaseAsync):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: "CredentialTypes",
         *,
         buffered_mode: bool = False,
         on_error: Optional[Callable[[SendEventTypes, Exception, Optional[str]], Awaitable[None]]],
