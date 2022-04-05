@@ -522,21 +522,35 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
             string_index_type_default=self._string_code_unit,
         )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return await self._client.analyze_text(
+                    body=models.AnalyzeTextEntityLinkingInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.EntityLinkingTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", linked_entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return await self._client.entities_linking(
                 documents=docs,
+                logging_opt_out=disable_service_logs,
                 model_version=model_version,
+                string_index_type=string_index_type,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", linked_entities_result),
                 **kwargs,
