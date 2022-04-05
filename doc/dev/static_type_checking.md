@@ -5,32 +5,34 @@ contains some general typing tips and guidance as it relates to common types/pat
 
 ### Table of contents
 
-- [Intro to typing in Python](TODO)
-- [Typing a client library](TODO)
-- [Types usable in annotations](TODO)
-- [Install and run mypy on your client library code](TODO)
-- [Typing tips and guidance for the Python SDK](TODO)
-    - [Debug mypy with reveal_type() and reveal_locals()](TODO)
-    - [Use typing.Any sparingly](TODO)
-    - [Use typing.Union when accepting more than one type](TODO)
-    - [Use typing.Optional when a parameter default is None](TODO)
-    - [Typing for collections](TODO)
-        - [Mapping types](TODO)
-        - [List](TODO)
-        - [Tuple](TODO)
-    - [Typing variadic arguments - *args and **kwargs](TODO)
-    - [Use TYPE_CHECKING to avoid circular imports](TODO)
-    - [Passing a function or a class as a parameter or return type](TODO)
-    - [Use forward references when the type is not defined yet](TODO)
-    - [Use typing.TypeAlias when creating a type alias](TODO)
-    - [Use typing.overload to overload a function](TODO)
-    - [Use typing.cast to help mypy understand a type](TODO)
-    - [Use TypeVar for generic type hinting](TODO)
-    - [Use AnyStr when your parameter accepts both str and bytes](TODO)
-    - [Use typing.Protocol for structural subtyping](TODO)
-    - [Use typing.Literal to indicate behavior based on exact values](TODO)
-- [How to ignore a mypy typing error](TODO)
-- [How to opt out of mypy type checking](TODO)
+  - [Intro to typing in Python](#intro-to-typing-in-python)
+  - [Typing a client library](#typing-a-client-library)
+  - [Types usable in annotations](#types-usable-in-annotations)
+  - [Install and run mypy on your client library code](#install-and-run-mypy-on-your-client-library-code)
+  - [Typing tips and guidance for the Python SDK](#typing-tips-and-guidance-for-the-python-sdk)
+    - [Debug mypy with reveal_type and reveal_locals](#debug-mypy-with-reveal_type-and-reveal_locals)
+    - [Use typing.Any sparingly](#use-typingany-sparingly)
+    - [Use typing.Union when accepting more than one type](#use-typingunion-when-accepting-more-than-one-type)
+    - [Use typing.Optional when a parameter can be None](#use-typingoptional-when-a-parameter-can-be-none)
+    - [Typing for collections](#typing-for-collections)
+      - [Mapping Types](#mapping-types)
+      - [List](#list)
+      - [Tuples](#tuples)
+    - [Typing variadic arguments - *args and **kwargs](#typing-variadic-arguments---args-and-kwargs)
+    - [Use TYPE_CHECKING to avoid circular imports](#use-type_checking-to-avoid-circular-imports)
+    - [Passing a function or a class as a parameter or return type](#passing-a-function-or-a-class-as-a-parameter-or-return-type)
+    - [Use forward references when the type is not defined yet](#use-forward-references-when-the-type-is-not-defined-yet)
+    - [Use typing.TypeAlias when creating a type alias](#use-typingtypealias-when-creating-a-type-alias)
+    - [Use typing.overload to overload a function](#use-typingoverload-to-overload-a-function)
+    - [Use typing.cast to help mypy understand a type](#use-typingcast-to-help-mypy-understand-a-type)
+    - [Use TypeVar for generic type hinting](#use-typevar-for-generic-type-hinting)
+    - [Use AnyStr when your parameter or return type expects both str and bytes](#use-anystr-when-your-parameter-or-return-type-expects-both-str-and-bytes)
+    - [Use typing.Protocol for structural subtyping](#use-typingprotocol-for-structural-subtyping)
+      - [Use runtime_checkable to do simple, runtime structural checks](#use-runtime_checkable-to-do-simple-runtime-structural-checks)
+    - [Use typing.Literal to indicate behavior based on exact values](#use-typingliteral-to-indicate-behavior-based-on-exact-values)
+  - [How to ignore mypy errors](#how-to-ignore-mypy-errors)
+  - [How to opt out of mypy type checking](#how-to-opt-out-of-mypy-type-checking)
+  - [Additional Resources](#additional-resources)
 
 ## Intro to typing in Python
 
@@ -110,7 +112,7 @@ or impossible given the expressiveness of Python as a language. So, in practice,
 > Note: It's important to call out that if a function is not annotated, `mypy` will not type check any code
 > contained in the function. You can pass argument `--check-untyped-defs` to `mypy` to check such functions.
 
-### Types usable in annotations
+## Types usable in annotations
 
 Almost anything can be used as a type in annotations.
 
@@ -162,8 +164,7 @@ backported.
 
 Our Python SDK repo has the version of mypy that we run in CI pinned to a specific version (
 currently [0.931](https://pypi.org/project/mypy/0.931/)). This is to avoid surprise typing errors raised when a new
-version of `mypy` ships. All client libraries in the Python SDK repo are automatically opted in to running mypy (TODO
-not yet).
+version of `mypy` ships. All client libraries in the Python SDK repo are automatically opted in to running mypy.
 
 The easiest way to install and run mypy locally is
 with [tox](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox). This reproduces the exact mypy
@@ -281,7 +282,7 @@ Tips:
 A `Union` requires at least two types and is more useful with types that are not consistent with each other. For
 example, usage of `Union[int, float]` is not necessary since `int` is consistent with `float` -- just use `float`. It's
 also recommended trying to avoid having functions return `Union` types as it causes the user to need to understand/parse
-through the return value before acting on it. Sometimes this can be resolved by using an [overload](TODO).
+through the return value before acting on it. Sometimes this can be resolved by using an [overload](#use-typingoverload-to-overload-a-function).
 
 ### Use typing.Optional when a parameter can be None
 
@@ -1144,7 +1145,8 @@ making `isinstance` checks to understand the result. The following example shows
 a Union of types which each contain a discriminator property, `kind`, typed as a Literal.
 
 ```python
-from typing_extensions import Union, Literal
+from typing import Union
+from typing_extensions import Literal
 
 
 # client library code
@@ -1184,7 +1186,7 @@ elif ele.kind == "line":
     print(ele.line)
 ```
 
-The above example requires only simple string comparison by the user and is valid by mypy. If we remove the `Literal`
+The above example requires only simple string comparison by the user and is valid by mypy. If we replace the `Literal`
 typing and type each `kind` as `str`, mypy complains:
 
 ```cmd
@@ -1208,6 +1210,8 @@ elif isinstance(ele, FormWord):
 elif isinstance(ele, FormLine):
     print(ele.line)
 ```
+
+Therefore, it is preferred to use `typing.Literal` in this situation to provide the best type checking experience for our users.
 
 > Note that Literal is backported to older versions of Python by using typing_extensions.
 
@@ -1234,9 +1238,16 @@ official [mypy docs](https://mypy.readthedocs.io/en/stable/type_inference_and_an
 
 ## How to opt out of mypy type checking
 
-All client libraries in the Python SDK repo are automatically opted in to running mypy (TODO not yet). If there is a
+All client libraries in the Python SDK repo are automatically opted in to running mypy. If there is a
 reason why a particular library should not run mypy, it is possible to add that library to a block list to prevent mypy
 from running checks.
 
 1) Place the package name on this block list: TODO
 2) Open an issue tracking that "library-name" should be opted in to running mypy
+
+
+## Additional Resources
+
+Typing school: https://github.com/python/typing/discussions
+Mypy docs: https://mypy.readthedocs.io/en/stable/introduction.html
+Pyright docs: https://github.com/microsoft/pyright/tree/main/docs
