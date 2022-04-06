@@ -2,6 +2,8 @@
 
 ## 12.7.0b1 (Unreleased)
 
+### Features Added
+
 ### Bugs Fixed
 - Updated `create_file_system()` docstring to have the correct return-type of `None`
 

@@ -2,6 +2,8 @@
 
 ## 12.12.0b1 (Unreleased)
 
+### Features Added
+
 ## 12.11.0 (2022-03-29)
 
 **Warning** This release involves a bug fix that may change the behavior for some users. In previous versions,

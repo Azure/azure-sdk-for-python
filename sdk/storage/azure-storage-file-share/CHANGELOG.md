@@ -2,6 +2,8 @@
 
 ## 12.8.0b1 (Unreleased)
 
+### Features Added
+
 ### Bugs Fixed
 - Updated `create_share()` docstring to have the correct return-type of `None`
 
