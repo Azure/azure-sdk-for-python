@@ -52,7 +52,7 @@ async def run():
         # alternatively, you can enqueue an EventDataBatch object to the buffer
         await producer.send_batch(batch)
 
-        # calling flush sends out the events in the buffered immediately
+        # calling flush sends out the events in the buffer immediately
         await producer.flush()
 
 start_time = time.time()

@@ -227,7 +227,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 self._create_producer,
                 self.eventhub_name,
                 self._max_message_size_on_link,
-                max_wait_time=cast(int, self._max_wait_time),
+                max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length
             )
             await self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)

@@ -45,8 +45,8 @@ class BufferedProducer:
         self._max_concurrent_sends = max_concurrent_sends
         self._max_concurrent_sends_semaphore = Semaphore(self._max_concurrent_sends)
         self._max_wait_time = max_wait_time
-        self._on_success = self.enhanced_callback_decorator(on_success)
-        self._on_error = self.enhanced_callback_decorator(on_error)
+        self._on_success = self.failsafe_callback(on_success)
+        self._on_error = self.failsafe_callback(on_error)
         self._last_send_time = None
         self._running = False
         self._cur_batch: Optional[EventDataBatch] = None
@@ -128,7 +128,7 @@ class BufferedProducer:
             # notify the max_wait_time worker
             self._not_empty.notify()
 
-    def enhanced_callback_decorator(self, callback):
+    def failsafe_callback(self, callback):
         def wrapper_callback(*args, **kwargs):
             try:
                 callback(*args, **kwargs)

@@ -7,7 +7,7 @@ import logging
 from typing import Dict, List, Callable, Optional, Awaitable, Any, TYPE_CHECKING
 from asyncio import Lock
 
-from ..._buffered_producer import PartitionResolver
+from ._partition_resolver_async import PartitionResolver
 from ...aio._producer_async import EventHubProducer
 from ._buffered_producer_async import BufferedProducer
 from ...exceptions import EventDataSendError, ConnectError
@@ -30,7 +30,7 @@ class BufferedProducerDispatcher:
             max_message_size_on_link: int,
             *,
             max_buffer_length: int = 1500,
-            max_wait_time: int = 1,
+            max_wait_time: float = 1,
             max_concurrent_sends: int = 1
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
@@ -46,7 +46,7 @@ class BufferedProducerDispatcher:
         self._max_buffer_length = max_buffer_length
         self._max_concurrent_sends = max_concurrent_sends
 
-    def _get_partition_id(self, partition_id, partition_key):
+    async def _get_partition_id(self, partition_id, partition_key):
         if partition_id:
             if partition_id not in self._partition_ids:
                 raise ConnectError(
@@ -56,17 +56,17 @@ class BufferedProducerDispatcher:
                 )
             return partition_id
         if isinstance(partition_key, str):
-            return self._partition_resolver.get_partition_id_by_partition_key(partition_key)
-        return self._partition_resolver.next_partition_id
+            return await self._partition_resolver.get_partition_id_by_partition_key(partition_key)
+        return await self._partition_resolver.get_next_partition_id()
 
     async def enqueue_events(self, events, *, partition_id=None, partition_key=None, timeout=None):
-        pid = self._get_partition_id(partition_id, partition_key)
+        pid = await self._get_partition_id(partition_id, partition_key)
         async with self._lock:
             try:
                 await self._buffered_producers[pid].put_events(events, timeout)
             except KeyError:
                 buffered_producer = BufferedProducer(
-                    self._create_producer(partition=pid),
+                    self._create_producer(partition_id=pid),
                     pid,
                     self._on_success,
                     self._on_error,
@@ -105,7 +105,7 @@ class BufferedProducerDispatcher:
                         " Exception details are {!r}".format(exc_results.keys(), exc_results)
             )
 
-    async def close(self, flush=True, timeout=None, raise_error=False):
+    async def close(self, *, flush=True, timeout=None, raise_error=False):
 
         futures = []
         # stop all buffered producers

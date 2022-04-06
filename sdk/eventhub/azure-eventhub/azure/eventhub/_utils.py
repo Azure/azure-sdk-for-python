@@ -118,9 +118,9 @@ def set_event_partition_key(event, partition_key):
         return
 
     try:
-        raw_message = cast(EventData, event).raw_amqp_message
+        raw_message = event.raw_amqp_message  # type: ignore
     except AttributeError:
-        raw_message = cast(AmqpAnnotatedMessage, event)
+        raw_message = event
 
     annotations = raw_message.annotations
     if annotations is None:

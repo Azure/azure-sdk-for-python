@@ -30,7 +30,7 @@ class BufferedProducerDispatcher:
             max_message_size_on_link: int,
             *,
             max_buffer_length: int = 1500,
-            max_wait_time: int = 1,
+            max_wait_time: float = 1,
             max_concurrent_sends: int = 1,
             executor: Optional[ThreadPoolExecutor] = None,
             max_worker: Optional[int] = None
@@ -61,7 +61,7 @@ class BufferedProducerDispatcher:
             return partition_id
         if isinstance(partition_key, str):
             return self._partition_resolver.get_partition_id_by_partition_key(partition_key)
-        return self._partition_resolver.next_partition_id
+        return self._partition_resolver.get_next_partition_id()
 
     def enqueue_events(self, events, *, partition_id=None, partition_key=None, timeout=None):
         pid = self._get_partition_id(partition_id, partition_key)
@@ -110,7 +110,7 @@ class BufferedProducerDispatcher:
                         " Exception details are {!r}".format(exc_results.keys(), exc_results)
             )
 
-    def close(self, flush=True, timeout=None, raise_error=False):
+    def close(self, *, flush=True, timeout=None, raise_error=False):
 
         futures = []
         # stop all buffered producers

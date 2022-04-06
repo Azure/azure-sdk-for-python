@@ -183,8 +183,7 @@ class PartitionResolver:
         self._partitions_cnt = len(self._partitions)
         self._lock = Lock()
 
-    @property
-    def next_partition_id(self):
+    def get_next_partition_id(self):
         """
         round-robin partition assignment
         """

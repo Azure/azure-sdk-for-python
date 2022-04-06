@@ -5,31 +5,28 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import asyncio
-import time
 from collections import defaultdict
-from threading import Thread
 from uuid import uuid4
-from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
-from azure.eventhub._buffered_producer import PartitionResolver
+from azure.eventhub.aio._buffered_producer import PartitionResolver
 from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
 )
 from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError
 
 
-def random_pkey_generation(partitions):
+async def random_pkey_generation(partitions):
     pr = PartitionResolver(partitions)
     total = len(partitions)
     dic = {}
 
     while total:
         key = str(uuid4())
-        pid = pr.get_partition_id_by_partition_key(key)
+        pid = await pr.get_partition_id_by_partition_key(key)
         if pid in dic:
             continue
         else:
@@ -312,7 +309,7 @@ async def test_send_with_hybrid_partition_assignment(connection_str):
     async with producer:
         partitions = await producer.get_partition_ids()
         partitions_cnt = len(partitions)
-        pid_to_pkey = random_pkey_generation(partitions)
+        pid_to_pkey = await random_pkey_generation(partitions)
         expected_event_idx_to_partition = {}
         event_idx = 0
         # 1. send by partition_key, each partition 2 events, two single + one batch containing two
