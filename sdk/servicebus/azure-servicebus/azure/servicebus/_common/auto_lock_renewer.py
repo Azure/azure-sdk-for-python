@@ -258,8 +258,8 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         :type receiver: ~azure.servicebus.ServiceBusReceiver
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.ServiceBusReceivedMessage, ~azure.servicebus.ServiceBusSession]
-        :param max_lock_renewal_duration: A time in seconds that the lock should be maintained for. If set to None,
-         `max_lock_renewal_duration` value passed to constructor will be used. Default value is None.
+        :param max_lock_renewal_duration: A time in seconds that the lock should be maintained for.
+         Default value is None. If specified, this value will override the default value specified at the constructor.
         :type max_lock_renewal_duration: Optional[float]
         :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
          that is being registered. Default value is None (no callback).
