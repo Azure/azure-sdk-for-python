@@ -35,7 +35,7 @@ class TestPartitionResolver:
         pr = PartitionResolver(partitions)
         for i in range(2*partition_cnt):
             expected = str(i % partition_cnt)
-            real = pr.next_partition_id
+            real = pr.get_next_partition_id()
             assert expected == real
 
     @pytest.mark.parametrize("partition_cnt", [1, 2, 16, 32, 256])
@@ -48,7 +48,7 @@ class TestPartitionResolver:
         lock = Lock()
 
         def gen_pid():
-            pid = pr.next_partition_id
+            pid = pr.get_next_partition_id()
             with lock:
                 dic[pid] += 1
 

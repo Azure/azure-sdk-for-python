@@ -600,7 +600,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 :caption: Asynchronously sends event data
 
         """
-        batch, pid, pkey = self._batch_preparer(event_data_batch, **kwargs)
+        batch, pid, pkey = await self._batch_preparer(event_data_batch, **kwargs)
 
         if len(batch) == 0:
             return
