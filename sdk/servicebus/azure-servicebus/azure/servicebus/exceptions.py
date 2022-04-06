@@ -216,7 +216,7 @@ class ServiceBusError(AzureError):
     :ivar str message: A stringified version of the message parameter
     """
 
-    def __init__(self, message, *args, **kwargs):
+    def __init__(self, message: str, *args, **kwargs):
         self._retryable = kwargs.pop("retryable", False)
         self._shutdown_handler = kwargs.pop("shutdown_handler", True)
         self._condition = kwargs.pop("condition", None)
