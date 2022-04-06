@@ -75,3 +75,21 @@ directive:
       transform: >
         $["x-ms-client-name"] = "confidence";
 ```
+
+### Set default values for ParticipantID, and ConversationID
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]["properties"]["participantId"]
+      transform: >
+        $["x-ms-client-default"] = 1;
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]["properties"]["id"]
+      transform: >
+        $["x-ms-client-default"] = 1;
+```
