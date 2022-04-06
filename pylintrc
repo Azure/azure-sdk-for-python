@@ -17,8 +17,8 @@ load-plugins=pylint_guidelines_checker
 # too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
 # Let's black deal with bad-continuation
 
-# Added disable raise-missing-from,super-with-arguments,inconsistent-return-statements,deprecated-module,use-a-generator,consider-using-max-builtin,consider-using-dict-items,assigning-non-slot
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,bad-continuation,check-docstrings,import-outside-toplevel,super-with-arguments,raise-missing-from,inconsistent-return-statements,deprecated-module,use-a-generator,consider-using-max-builtin,consider-using-dict-items,assigning-non-slot
+# Added disable raise-missing-from,super-with-arguments,inconsistent-return-statements,deprecated-module,use-a-generator,consider-using-max-builtin,consider-using-dict-items,assigning-non-slot,consider-using-with,consider-using-generator,unused-private-member,deprecated-class,consider-using-from-import,ungrouped-imports
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,bad-continuation,check-docstrings,import-outside-toplevel,super-with-arguments,raise-missing-from,inconsistent-return-statements,deprecated-module,use-a-generator,consider-using-max-builtin,consider-using-dict-items,assigning-non-slot,consider-using-with,consider-using-generator,unused-private-member,deprecated-class,consider-using-from-import,ungrouped-imports
 
 [FORMAT]
 max-line-length=120
