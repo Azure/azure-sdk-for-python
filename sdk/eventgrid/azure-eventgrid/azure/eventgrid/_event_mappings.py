@@ -14,7 +14,8 @@ class SystemEventNames(str, Enum):
     Azure Event Grid. To check the list of recognizable system topics,
     visit https://docs.microsoft.com/azure/event-grid/system-topics.
     """
-    # these names below are for backward compat only
+    # These names at the top are 'corrected' aliases of duplicate values that appear below, which are
+    # deprecated but maintained for backwards compatibility.
     AcsChatMemberAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatMemberAddedToThreadWithUser'
 
     ResourceWriteFailureEventName = 'Microsoft.Resources.ResourceWriteFailure'
@@ -53,7 +54,7 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
-    # backward compat ends here
+    # Aliases end here
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'

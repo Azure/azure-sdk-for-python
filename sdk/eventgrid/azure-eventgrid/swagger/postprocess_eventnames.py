@@ -22,10 +22,11 @@ def extract(definitions):
     return tups
 
 def generate_enum_content(tuples):
-    print("# these names below are for backward compat only")
+    print("# These names at the top are 'corrected' aliases of duplicate values that appear below, which are")
+    print("# deprecated but maintained for backwards compatibility.")
     for k, v in backward_compat.items():
         print(k + " = '" + v + "'\n")
-    print("# backward compat ends here")
+    print("# Aliases end here")
     for tup in tup_list:
         print(tup[0] + " = '" + tup[1].replace('API', 'Api') + "'\n")
     for k, v in additional_events.items():
