@@ -695,7 +695,7 @@ We can annotate this function with overloads to help inform the type checker (an
 which output type.
 
 ```python
-from typing import overload
+from typing import overload, Union
 
 
 @overload
@@ -712,8 +712,9 @@ def analyze_text(text: str, analysis_kind: EntityRecognition) -> EntityRecogniti
 def analyze_text(text: str, analysis_kind: SentimentAnalysis) -> SentimentResult:
     ...
 
-
-def analyze_text(text, analysis_kind):  # the actual implementation shouldn't be annotated
+# actual implementation
+def analyze_text(text: str, analysis_kind: Union[SentimentAnalysis, EntityRecognition, LanguageDetection]) -> Union[
+    SentimentResult, EntityRecognitionResult, LanguageDetectionResult]:
     return _analyze(text, analysis_kind)
 ```
 
@@ -730,7 +731,7 @@ Another use of typing.overload is when there are a different number of arguments
 imagine that `analyze_text` has an additional overload which does not take an `analysis_kind`:
 
 ```python
-from typing import overload
+from typing import overload, Union, Any
 
 
 @overload
@@ -752,8 +753,8 @@ def analyze_text(text: str, analysis_kind: SentimentAnalysis) -> SentimentResult
 def analyze_text(text: str) -> str:
     ...
 
-
-def analyze_text(*args, **kwargs):  # the actual implementation shouldn't be annotated
+# actual implementation
+def analyze_text(*args: Union[str, LanguageDetection, EntityRecognition, SentimentAnalysis], **kwargs: Any) -> Union[str, SentimentResult, EntityRecognitionResult, LanguageDetectionResult]:
     # logic parsing args / kwargs
     ...
 ```
@@ -791,6 +792,9 @@ def receive_deferred_messages(
     if isinstance(sequence_numbers, int):
         sequence_numbers = [sequence_numbers]
     sequence_numbers = cast(List[int], sequence_numbers)  # mypy clarity
+
+    for num in sequence_numbers:  # if not casted to List[int], mypy will error
+        print(num)
 ```
 
 If you are using cast often, however, it might be an indication that the code should be otherwise written or refactored.
@@ -930,6 +934,18 @@ arguments / return type:
 ```python
 def concat(a: AnyStr, b: AnyStr) -> AnyStr:
     return a + b
+```
+
+If passing `bytes` for parameter `a` in the above function, note that `bytes` must be passed for both `b` and the return type. Mixing `bytes` and `str` will result in error:
+
+```python
+res = concat(b'hello', 'world')  # mixing bytes and str
+```
+
+mypy output:
+
+```cmd
+main.py:6: error: Value of type variable "AnyStr" of "concat" cannot be "Sequence[object]"
 ```
 
 > Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar](https://docs.python.org/3/library/typing.html#typing.TypeVar).
