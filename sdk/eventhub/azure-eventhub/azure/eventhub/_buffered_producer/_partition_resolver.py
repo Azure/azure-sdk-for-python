@@ -95,6 +95,7 @@ def final(a, b, c):
 
 
 def compute_hash(data, init_val=0, init_val2=0):
+    # pylint: disable=too-many-statements
     """
     implementation by:
     https://stackoverflow.com/questions/3279615/python-implementation-of-jenkins-hash

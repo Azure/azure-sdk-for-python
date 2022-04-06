@@ -221,7 +221,7 @@ class EventHubProducer(
 
     def send(
         self,
-        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
+        event_data,  # type: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]]
         partition_key=None,  # type: Optional[AnyStr]
         timeout=None,  # type: Optional[float]
     ):

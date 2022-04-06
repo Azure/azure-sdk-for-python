@@ -207,7 +207,7 @@ class EventHubProducer(
 
     async def send(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]],
         *,
         partition_key: Optional[AnyStr] = None,
         timeout: Optional[float] = None

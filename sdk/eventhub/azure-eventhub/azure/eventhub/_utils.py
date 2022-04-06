@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping, cast
 
 import six
 
@@ -118,9 +118,9 @@ def set_event_partition_key(event, partition_key):
         return
 
     try:
-        raw_message = event.raw_amqp_message
+        raw_message = cast(EventData, event).raw_amqp_message
     except AttributeError:
-        raw_message = event
+        raw_message = cast(AmqpAnnotatedMessage, event)
 
     annotations = raw_message.annotations
     if annotations is None:

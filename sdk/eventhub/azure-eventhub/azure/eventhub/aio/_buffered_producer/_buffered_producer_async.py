@@ -3,37 +3,36 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import asyncio
-import time
-import queue
 import logging
+import queue
+import time
 from asyncio import Lock, Condition, Semaphore
-from weakref import WeakSet
+from typing import Optional, Callable
 
-from typing import Optional, Any, Callable, List
-
-from .._producer_async import EventHubProducer
-from ..._common import EventData, EventDataBatch
-from ...exceptions import OperationTimeoutError
 from .._async_utils import semaphore_acquire_with_timeout
+from .._producer_async import EventHubProducer
+from ..._common import EventDataBatch
+from ..._producer_client import SendEventTypes
+from ...exceptions import OperationTimeoutError
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class BufferedProducer:
+    # pylint: disable=too-many-instance-attributes
     def __init__(
             self,
             producer: EventHubProducer,
             partition_id: str,
-            on_success: Callable[[List[EventData], Optional[str]], None],
-            on_error: Callable[[List[EventData], Optional[str], Exception], None],
-            max_message_size_on_link,
+            on_success: Callable[[SendEventTypes, Optional[str]], None],
+            on_error: Callable[[SendEventTypes, Optional[str], Exception], None],
+            max_message_size_on_link: int,
             *,
             max_wait_time: float = 1,
             max_concurrent_sends: int = 1,
-            max_buffer_length: int = 10,
-            **kwargs: Any
+            max_buffer_length: int = 10
     ):
-        self._buffered_queue = queue.Queue()
+        self._buffered_queue: queue.Queue = queue.Queue()
         self._cur_buffered_len = 0
         self._producer: EventHubProducer = producer
         self._lock = Lock()
@@ -49,7 +48,6 @@ class BufferedProducer:
         self._running = False
         self._cur_batch: Optional[EventDataBatch] = None
         self._max_message_size_on_link = max_message_size_on_link
-        self._send_futures = WeakSet()
         self._check_max_wait_time_future = None
         self.partition_id = partition_id
 
@@ -67,23 +65,21 @@ class BufferedProducer:
         if self._check_max_wait_time_future:
             try:
                 await self._check_max_wait_time_future
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-except
                 _LOGGER.warning(
-                    "Partition {} stopped with error {!r}".format(
-                        self.partition_id,
-                        exc
-                    )
+                    "Partition %r stopped with error %r",
+                    self.partition_id,
+                    exc
                 )
         if flush:
             await self.flush(timeout=timeout, raise_error=raise_error)
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
-                    "Shutting down Partition {}."
-                    " There are still {} events in the buffer which will be lost".format(
-                        self.partition_id,
-                        self._cur_buffered_len
-                    )
+                    "Shutting down Partition %r."
+                    " There are still %r events in the buffer which will be lost",
+                    self.partition_id,
+                    self._cur_buffered_len
                 )
         await self._producer.close()
 
@@ -99,10 +95,10 @@ class BufferedProducer:
 
         if self._max_buffer_len - self._cur_buffered_len < new_events_len:
             _LOGGER.info(
-                "Partition {} does not have enough room for coming {} events."
-                "Flush first.".format(
-                    self.partition_id, new_events_len
-                )
+                "Partition %r does not have enough room for coming %r events."
+                "Flush first.",
+                self.partition_id,
+                new_events_len
             )
             # flush the buffer
             await self.flush(timeout=timeout)
@@ -134,14 +130,20 @@ class BufferedProducer:
         async def wrapper_callback(*args, **kwargs):
             try:
                 await callback(*args, **kwargs)
-            except Exception as exc:
-                _LOGGER.warning("callback exception", callback.__name__, exc, self.partition_id)
+            except Exception as exc:  # pylint: disable=broad-except
+                _LOGGER.warning(
+                    "On partition %r, callback %r encountered exception %r",
+                    callback.__name__,
+                    exc,
+                    self.partition_id
+                )
 
         return wrapper_callback
 
     async def flush(self, timeout=None, raise_error=True):
+        # pylint: disable=protected-access
         # try flushing all the buffered batch within given time
-        _LOGGER.info("Partition: {} started flushing.".format(self.partition_id))
+        _LOGGER.info("Partition: %r started flushing.", self.partition_id)
         timeout_time = time.time() + timeout if timeout else None
         async with self._not_empty:
             while not self._buffered_queue.empty():
@@ -153,26 +155,28 @@ class BufferedProducer:
                             timeout=remaining_time
                         ):
                     batch = self._buffered_queue.get()
+                    self._buffered_queue.task_done()
                     if not batch:
                         self._max_concurrent_sends_semaphore.release()
                         continue
                     try:
-                        _LOGGER.info("Partition {} is sending.".format(self.partition_id))
+                        _LOGGER.info("Partition %r is sending.", self.partition_id)
                         await self._producer.send(
                             batch,
                             timeout=timeout_time - time.time() if timeout_time else None
                         )
                         _LOGGER.info(
-                            "Partition {} sending {} events succeeded.".format(
-                                self.partition_id, len(batch)
-                            )
+                            "Partition %r sending %r events succeeded.",
+                            self.partition_id,
+                            len(batch)
                         )
                         await self._on_success(batch._internal_events, self.partition_id)
-                    except Exception as exc:
+                    except Exception as exc:  # pylint: disable=broad-except
                         _LOGGER.info(
-                            "Partition {} sending {} events failed due to exception: {!r} ".format(
-                                self.partition_id, len(batch), exc
-                            )
+                            "Partition %r sending %r events failed due to exception: %r",
+                            self.partition_id,
+                            len(batch),
+                            exc
                         )
                         await self._on_error(batch._internal_events, self.partition_id, exc)
                     finally:
@@ -182,28 +186,26 @@ class BufferedProducer:
                 # If flush could not get the semaphore, we log and raise error if wanted
                 else:
                     _LOGGER.info(
-                        "Partition {} fails to flush due to timeout.".format(
-                            self.partition_id
-                        )
+                        "Partition %r fails to flush due to timeout.",
+                        self.partition_id
                     )
                     if raise_error:
                         raise OperationTimeoutError("Failed to flush {!r}".format(self.partition_id))
-                    else:
-                        break
+                    break
         # after finishing flushing, reset cur batch and put it into the buffer
         self._last_send_time = time.time()
         self._cur_batch = EventDataBatch(self._max_message_size_on_link)
         self._buffered_queue.put(self._cur_batch)
-        _LOGGER.info("Partition {} finished flushing.".format(self.partition_id))
+        _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     async def check_max_wait_time_worker(self):
         while self._running:
             async with self._not_empty:
                 if not self._buffered_queue.qsize():
-                    _LOGGER.info("Partition {} worker is awaiting data.".format(self.partition_id))
+                    _LOGGER.info("Partition %r worker is awaiting data.", self.partition_id)
                     await self._not_empty.wait()
             now_time = time.time()
-            _LOGGER.info("Partition {} worker is checking max_wait_time.".format(self.partition_id))
+            _LOGGER.info("Partition %r worker is checking max_wait_time.", self.partition_id)
             if now_time - self._last_send_time > self._max_wait_time:
                 # in the worker, not raising error for flush, users can not handle this
                 await self.flush(raise_error=False)

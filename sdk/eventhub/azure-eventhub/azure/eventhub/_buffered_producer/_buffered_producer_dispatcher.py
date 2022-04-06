@@ -15,6 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BufferedProducerDispatcher:
+    # pylint: disable=too-many-instance-attributes
     def __init__(
             self,
             partitions,
@@ -28,8 +29,7 @@ class BufferedProducerDispatcher:
             max_wait_time: int = 1,
             max_concurrent_sends: int = 1,
             executor: Optional[ThreadPoolExecutor] = None,
-            max_worker: Optional[int] = None,
-            **kwargs
+            max_worker: Optional[int] = None
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
@@ -93,14 +93,14 @@ class BufferedProducerDispatcher:
             for pid, future in futures:
                 try:
                     future.result()
-                except Exception as exc:
+                except Exception as exc:  # pylint: disable=broad-except
                     exc_results[pid] = exc
 
             if not exc_results:
                 _LOGGER.info("Flushing all partitions succeeded")
                 return
 
-            _LOGGER.warning('Flushing all partitions partially failed with result {!r}.'.format(exc_results))
+            _LOGGER.warning('Flushing all partitions partially failed with result %r.', exc_results)
             # TODO: better error for partial failure?
             raise EventDataSendError(
                 message="Flushing all partitions partially failed, failed partitions are {!r}"
@@ -124,12 +124,12 @@ class BufferedProducerDispatcher:
         for pid, future in futures:
             try:
                 future.result()
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-except
                 exc_results[pid] = exc
 
         if exc_results:
             # TODO: better error?
-            _LOGGER.warning('Stopping all partitions partially failed with result {!r}.'.format(exc_results))
+            _LOGGER.warning('Stopping all partitions partially failed with result %r.', exc_results)
             if raise_error:
                 raise EventDataSendError(
                     message="Stopping all partitions partially failed, failed partitions are {!r}"

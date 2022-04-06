@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing_extensions import Literal
 from typing import (
     Any,
     Union,
@@ -16,6 +15,7 @@ from typing import (
     cast,
     overload,
 )
+from typing_extensions import Literal
 
 from uamqp import constants
 
@@ -37,6 +37,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EventHubProducerClient(ClientBase):
+    # pylint: disable=too-many-instance-attributes
     """The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
 
@@ -57,7 +58,7 @@ class EventHubProducerClient(ClientBase):
         - `partition_id`: The partition id that the events in the list have been published to.
      The callback function should be defined like: `on_success(events, partition_id)`.
      It is required when buffered_mode is True while optional if buffered mode is False.
-    :paramtype on_success: Optional[Callable[[List[EventData], Optional[str]], None]]
+    :paramtype on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]]
     :keyword on_error: The callback to be called once a batch has failed to be published.
      The callback takes three parameters:
         - `events`: The list of events that failed to be published,
@@ -67,9 +68,9 @@ class EventHubProducerClient(ClientBase):
      It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
      If `on_error is` passed when `buffered_mode`, instead of error being raised from the send methods,
      the `on_error` callback will be called with the error information related to sending.
-    :paramtype on_error: Optional[Callable[[List[EventData], Optional[str], Exception], None]]
+    :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], None]]
     :keyword int max_buffer_length: Buffered mode only.
-     The total number of events that can be buffered before a flush will be triggered.
+     The total number of events per partition that can be buffered before a flush will be triggered.
      The default value is 1500 in buffered mode.
     :keyword Optional[float] max_wait_time: Buffered mode only.
      The amount of time to wait for a batch to be built with events in the buffer before publishing.
@@ -127,8 +128,10 @@ class EventHubProducerClient(ClientBase):
         fully_qualified_namespace: str,
         eventhub_name: str,
         credential: "CredentialTypes",
+        *,
+        buffered_mode: Literal[False] = False,
         **kwargs: Any
-    ):
+    ) -> None:
         ...
 
     @overload
@@ -139,12 +142,12 @@ class EventHubProducerClient(ClientBase):
         credential: "CredentialTypes",
         *,
         buffered_mode: Literal[True],
-        on_error: Callable[[List["EventData"], Optional[str], Exception], None],
-        on_success: Callable[[List["EventData"], Optional[str]], None],
+        on_error: Callable[[SendEventTypes, Optional[str], Exception], None],
+        on_success: Callable[[SendEventTypes, Optional[str]], None],
         max_buffer_length: int = 1500,
         max_wait_time: float = 1,
         **kwargs: Any
-    ):
+    ) -> None:
         ...
 
     def __init__(
@@ -174,13 +177,12 @@ class EventHubProducerClient(ClientBase):
         self._buffered_producer_dispatcher = None
         self._max_wait_time = kwargs.get("max_wait_time", None)
         self._max_buffer_length = kwargs.get("max_buffer_length")
-        self._max_concurrent_sends = kwargs.get("max_concurrent_sends")
         self._executor = kwargs.get("executor")
         self._max_worker = kwargs.get("max_worker")
 
         if self._buffered_mode:
-            self.send_batch = self._buffered_send_batch
-            self.send_event = self._buffered_send_event
+            setattr(self, "send_batch", self._buffered_send_batch)
+            setattr(self, "send_event", self._buffered_send_event)
             if not self._on_error:
                 raise TypeError(
                     "EventHubProducerClient in buffered mode missing 1 required keyword argument: 'on_error'"
@@ -331,6 +333,7 @@ class EventHubProducerClient(ClientBase):
         )
         return handler
 
+    @classmethod
     @overload
     def from_connection_string(
         cls,
@@ -342,6 +345,7 @@ class EventHubProducerClient(ClientBase):
     ) -> "EventHubProducerClient":
         ...
 
+    @classmethod
     @overload
     def from_connection_string(
         cls,
@@ -349,9 +353,8 @@ class EventHubProducerClient(ClientBase):
         *,
         eventhub_name: Optional[str] = None,
         buffered_mode: Literal[True],
-
-        on_error: Callable[[List["EventData"], Optional[str], Exception], None],
-        on_success: Callable[[List["EventData"], Optional[str]], None],
+        on_error: Callable[[SendEventTypes, Optional[str], Exception], None],
+        on_success: Callable[[SendEventTypes, Optional[str]], None],
         max_buffer_length: int = 1500,
         max_wait_time: float = 1,
         **kwargs: Any
@@ -378,7 +381,7 @@ class EventHubProducerClient(ClientBase):
             - `partition_id`: The partition id that the events in the list have been published to.
          The callback function should be defined like: `on_success(events, partition_id)`.
          It is required when buffered_mode is True while optional if buffered mode is False.
-        :paramtype on_success: Optional[Callable[[List[EventData], Optional[str]], None]]
+        :paramtype on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]]
         :keyword on_error: The callback to be called once a batch has failed to be published.
          The callback takes three parameters:
             - `events`: The list of events that failed to be published,
@@ -388,9 +391,9 @@ class EventHubProducerClient(ClientBase):
          It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
          If `on_error is` passed when `buffered_mode`, instead of error being raised from the send methods,
          the `on_error` callback will be called with the error information related to sending.
-        :paramtype on_error: Optional[Callable[[List[EventData], Optional[str], Exception], None]]
+        :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], None]]
         :keyword int max_buffer_length: Buffered mode only.
-         The total number of events that can be buffered before a flush will be triggered.
+         The total number of events per partition that can be buffered before a flush will be triggered.
          The default value is 1500 in buffered mode.
         :keyword Optional[float] max_wait_time: Buffered mode only.
          The amount of time to wait for a batch to be built with events in the buffer before publishing.
@@ -489,7 +492,7 @@ class EventHubProducerClient(ClientBase):
                 )
             if self._on_success:
                 self._on_success([event_data], partition_id)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             if self._on_error:
                 self._on_error([event_data], partition_id, exc)
             else:
@@ -497,6 +500,7 @@ class EventHubProducerClient(ClientBase):
 
     def send_batch(self, event_data_batch, **kwargs):
         # type: (Union[EventDataBatch, SendEventTypes], Any) -> None
+        # pylint: disable=protected-access
         """
         Sends a batch of event data.
         By default, the method will block until acknowledgement is received or operation times out.
@@ -565,18 +569,18 @@ class EventHubProducerClient(ClientBase):
         try:
             try:
                 cast(EventHubProducer, self._producers[partition_id]).send(
-                    batch, timeout=send_timeout
+                    batch, partition_key=pkey, timeout=send_timeout
                 )
                 if self._on_success:
                     self._on_success(batch._internal_events, pid)
             except (KeyError, AttributeError, EventHubError):
                 self._start_producer(partition_id, send_timeout)
                 cast(EventHubProducer, self._producers[partition_id]).send(
-                    batch, timeout=send_timeout
+                    batch, partition_key=pkey, timeout=send_timeout
                 )
                 if self._on_success:
                     self._on_success(batch._internal_events, pid)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             if self._on_error:
                 self._on_error(batch._internal_events, pid, exc)
             else:
@@ -738,7 +742,10 @@ class EventHubProducerClient(ClientBase):
             return None
 
         try:
-            return self._buffered_producer_dispatcher.get_buffered_event_count(partition_id)
+            return cast(
+                BufferedProducerDispatcher,
+                self._buffered_producer_dispatcher
+            ).get_buffered_event_count(partition_id)
         except AttributeError:
             return 0
 
@@ -754,6 +761,9 @@ class EventHubProducerClient(ClientBase):
             return None
 
         try:
-            return self._buffered_producer_dispatcher.total_buffered_event_count
+            return cast(
+                BufferedProducerDispatcher,
+                self._buffered_producer_dispatcher
+            ).total_buffered_event_count
         except AttributeError:
             return 0
