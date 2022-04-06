@@ -22,11 +22,12 @@ def extract(definitions):
     return tups
 
 def generate_enum_content(tuples):
-    for tup in tup_list:
-        print(tup[0] + " = '" + tup[1].replace('API', 'Api') + "'\n")
     print("# these names below are for backward compat only")
     for k, v in backward_compat.items():
         print(k + " = '" + v + "'\n")
+    print("# backward compat ends here")
+    for tup in tup_list:
+        print(tup[0] + " = '" + tup[1].replace('API', 'Api') + "'\n")
 
 definitions = {}
 for fp in files:

@@ -14,6 +14,54 @@ class SystemEventNames(str, Enum):
     Azure Event Grid. To check the list of recognizable system topics,
     visit https://docs.microsoft.com/azure/event-grid/system-topics.
     """
+    # these names below are for backward compat only
+    AcsChatMemberAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatMemberAddedToThreadWithUser'
+
+    ResourceWriteFailureEventName = 'Microsoft.Resources.ResourceWriteFailure'
+
+    IoTHubDeviceDeletedEventName = 'Microsoft.Devices.DeviceDeleted'
+
+    IoTHubDeviceDisconnectedEventName = 'Microsoft.Devices.DeviceDisconnected'
+
+    ResourceDeleteFailureEventName = 'Microsoft.Resources.ResourceDeleteFailure'
+
+    ResourceDeleteCancelEventName = 'Microsoft.Resources.ResourceDeleteCancel'
+
+    AcsChatThreadParticipantAddedEventName = 'Microsoft.Communication.ChatThreadParticipantAdded'
+
+    ResourceDeleteSuccessEventName = 'Microsoft.Resources.ResourceDeleteSuccess'
+
+    EventGridSubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
+
+    ResourceWriteSuccessEventName = 'Microsoft.Resources.ResourceWriteSuccess'
+
+    ResourceActionSuccessEventName = 'Microsoft.Resources.ResourceActionSuccess'
+
+    ResourceWriteCancelEventName = 'Microsoft.Resources.ResourceWriteCancel'
+
+    ResourceActionFailureEventName = 'Microsoft.Resources.ResourceActionFailure'
+
+    AcsChatMemberRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatMemberRemovedFromThreadWithUser'
+
+    IoTHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
+
+    EventGridSubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
+
+    AcsChatThreadParticipantRemovedEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'
+
+    ResourceActionCancelEventName = 'Microsoft.Resources.ResourceActionCancel'
+
+    IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
+
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
+
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
+
+    # backward compat ends here
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
@@ -266,6 +314,10 @@ class SystemEventNames(str, Enum):
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
 
+    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
+
+    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
+
     WebAppServicePlanUpdatedEventName = 'Microsoft.Web.AppServicePlanUpdated'
 
     WebAppUpdatedEventName = 'Microsoft.Web.AppUpdated'
@@ -291,54 +343,3 @@ class SystemEventNames(str, Enum):
     WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
-
-    # these names below are for backward compat only
-    AcsChatMemberAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatMemberAddedToThreadWithUser'
-
-    ResourceWriteFailureEventName = 'Microsoft.Resources.ResourceWriteFailure'
-
-    IoTHubDeviceDeletedEventName = 'Microsoft.Devices.DeviceDeleted'
-
-    IoTHubDeviceDisconnectedEventName = 'Microsoft.Devices.DeviceDisconnected'
-
-    ResourceDeleteFailureEventName = 'Microsoft.Resources.ResourceDeleteFailure'
-
-    ResourceDeleteCancelEventName = 'Microsoft.Resources.ResourceDeleteCancel'
-
-    AcsChatThreadParticipantAddedEventName = 'Microsoft.Communication.ChatThreadParticipantAdded'
-
-    ResourceDeleteSuccessEventName = 'Microsoft.Resources.ResourceDeleteSuccess'
-
-    EventGridSubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
-
-    ResourceWriteSuccessEventName = 'Microsoft.Resources.ResourceWriteSuccess'
-
-    ResourceActionSuccessEventName = 'Microsoft.Resources.ResourceActionSuccess'
-
-    ResourceWriteCancelEventName = 'Microsoft.Resources.ResourceWriteCancel'
-
-    ResourceActionFailureEventName = 'Microsoft.Resources.ResourceActionFailure'
-
-    AcsChatMemberRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatMemberRemovedFromThreadWithUser'
-
-    IoTHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
-
-    EventGridSubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
-
-    AcsChatThreadParticipantRemovedEventName = 'Microsoft.Communication.ChatThreadParticipantRemoved'
-
-    ResourceActionCancelEventName = 'Microsoft.Resources.ResourceActionCancel'
-
-    IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
-
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
-    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
-
-    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
-
-    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
-
-    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
-
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
