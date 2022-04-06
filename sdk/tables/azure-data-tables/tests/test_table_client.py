@@ -3,12 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from multiprocessing.sharedctypes import Value
 import pytest
 import platform
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables._error import _validate_storage_tablename
+from azure.data.tables import TableServiceClient, TableClient, TableTransactionError
 from azure.data.tables import __version__ as VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
@@ -103,6 +105,38 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         count = 0
         for table in tables:
             count += 1
+
+    @pytest.mark.live_test_only
+    @tables_decorator
+    @recorded_by_proxy
+    def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):
+        endpoint = self.account_url(tables_storage_account_name, "table")
+
+        # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
+        invalid_table_names = ["1table", "a"*2, "a"*64, "a//", "my_table"]
+        for invalid_name in invalid_table_names:
+            client = TableClient(
+                endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+            with pytest.raises(ValueError) as error:
+                client.create_table()
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.create_entity({'PartitionKey': 'foo', 'RowKey': 'bar'})
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.delete_entity("PK", "RK")
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.get_table_access_policy()
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError):
+                batch = []
+                batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+                client.submit_transaction(batch)
+            assert 'Storage table names must be alphanumeric' in str(error.value)
 
 
 class TestTableUnitTests(TableTestCase):
@@ -392,12 +426,14 @@ class TestTableUnitTests(TableTestCase):
             assert service.credential.named_key.name == self.tables_storage_account_name
             assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
+            assert service.scheme == 'http'
 
         service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
@@ -405,6 +441,7 @@ class TestTableUnitTests(TableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token.signature)
         assert service.account_name == "custom"
@@ -412,6 +449,7 @@ class TestTableUnitTests(TableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
     def test_create_table_client_with_complete_table_url(self):
         # Arrange
@@ -432,17 +470,6 @@ class TestTableUnitTests(TableTestCase):
         assert service.scheme == 'https'
         assert service.table_name == 'bar'
         assert service.account_name == self.tables_storage_account_name
-
-    def test_create_table_client_with_invalid_name(self):
-        # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format("test")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
 
     def test_error_with_malformed_conn_str(self):
         # Arrange
@@ -550,6 +577,7 @@ class TestTableUnitTests(TableTestCase):
         assert client.credential.named_key.key == self.tables_primary_storage_account_key
         assert client.credential.named_key.name == "devstoreaccount1"
         assert not client._cosmos_endpoint
+        assert client.scheme == 'http'
 
         client = TableServiceClient.from_connection_string(https_connstr)
         assert client.account_name == "devstoreaccount1"
@@ -559,6 +587,7 @@ class TestTableUnitTests(TableTestCase):
         assert client.credential.named_key.key == self.tables_primary_storage_account_key
         assert client.credential.named_key.name == "devstoreaccount1"
         assert not client._cosmos_endpoint
+        assert client.scheme == 'https'
 
         table = TableClient(account_url, "tablename", credential=azurite_credential)
         assert table.account_name == "myaccount"
@@ -579,6 +608,7 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == self.tables_primary_storage_account_key
         assert table.credential.named_key.name == "devstoreaccount1"
         assert not table._cosmos_endpoint
+        assert table.scheme == 'http'
 
         table = TableClient.from_connection_string(https_connstr, "tablename")
         assert table.account_name == "devstoreaccount1"
@@ -589,6 +619,7 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == self.tables_primary_storage_account_key
         assert table.credential.named_key.name == "devstoreaccount1"
         assert not table._cosmos_endpoint
+        assert table.scheme == 'https'
 
         table_url = "https://127.0.0.1:10002/myaccount/Tables('tablename')"
         table = TableClient.from_table_url(table_url, credential=azurite_credential)
@@ -600,3 +631,21 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == azurite_credential.named_key.key
         assert table.credential.named_key.name == azurite_credential.named_key.name
         assert not table._cosmos_endpoint
+    
+    def test_validate_storage_tablename(self):
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aa")
+        _validate_storage_tablename("aaa")
+        _validate_storage_tablename("a"*63)
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a"*64)
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aaa-")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aaa ")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a aa")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("1aaa")

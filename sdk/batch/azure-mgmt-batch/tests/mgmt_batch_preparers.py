@@ -92,7 +92,7 @@ class KeyVaultPreparer(AzureMgmtPreparer):
 
 class SimpleBatchPreparer(AzureMgmtPreparer):
     def __init__(self,
-                 name_prefix='batch',
+                 name_prefix='batch11',
                  location='westus',
                  parameter_name='batch_account',
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
@@ -118,7 +118,7 @@ class SimpleBatchPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(
-                azure.mgmt.batch.BatchManagement)
+                azure.mgmt.batch.BatchManagementClient)
             group = self._get_resource_group(**kwargs)
             batch_account = azure.mgmt.batch.models.BatchAccountCreateParameters(
                 location=self.location,

@@ -54,8 +54,7 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -72,6 +71,7 @@ setup(
             "azure",
         ]
     ),
+    python_requires=">=3.6",
     install_requires=[
         "azure-core<2.0.0,>=1.11.0",
         "cryptography>=2.5",
@@ -79,8 +79,4 @@ setup(
         "msal-extensions~=0.3.0",
         "six>=1.12.0",
     ],
-    extras_require={
-        ":python_version<'3.0'": ["azure-nspkg"],
-        ":python_version<'3.5'": ["typing"],
-    },
 )

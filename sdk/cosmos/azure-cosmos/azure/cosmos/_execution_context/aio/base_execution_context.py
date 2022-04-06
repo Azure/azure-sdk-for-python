@@ -121,6 +121,7 @@ class _QueryExecutionContextBase(object):
                 self._has_started = True
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
+
             (fetched_items, response_headers) = await fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.

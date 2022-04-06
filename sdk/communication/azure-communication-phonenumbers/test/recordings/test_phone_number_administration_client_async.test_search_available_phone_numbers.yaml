@@ -10,30 +10,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 22 Jun 2021 20:47:43 GMT
+      - Wed, 12 Jan 2022 16:28:17 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2
   response:
     body:
       string: ''
     headers:
       access-control-expose-headers: Location,Operation-Location,operation-id,search-id
-      api-supported-versions: '2021-03-07'
+      api-supported-versions: 2021-03-07, 2022-01-11-preview2
       content-length: '0'
-      date: Tue, 22 Jun 2021 20:47:45 GMT
-      ms-cv: d2IuwtOW+km0VKnygc3F2g.0
-      operation-id: search_ca052693-7500-4cc3-a225-7d9c1fd34b1b
-      operation-location: /phoneNumbers/operations/search_ca052693-7500-4cc3-a225-7d9c1fd34b1b?api-version=2021-03-07
+      date: Wed, 12 Jan 2022 16:28:18 GMT
+      ms-cv: j0wnfJQmYkCRbaw5ds3lrg.0
+      operation-id: search_8c7b9296-ccca-468a-90ca-d51bcbbed8d3
+      operation-location: /phoneNumbers/operations/search_8c7b9296-ccca-468a-90ca-d51bcbbed8d3?api-version=2022-01-11-preview2
       request-context: appId=
-      search-id: ca052693-7500-4cc3-a225-7d9c1fd34b1b
+      search-id: 8c7b9296-ccca-468a-90ca-d51bcbbed8d3
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 1984ms
+      x-processing-time: 4646ms
     status:
       code: 202
       message: Accepted
-    url: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+    url: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2
 version: 1

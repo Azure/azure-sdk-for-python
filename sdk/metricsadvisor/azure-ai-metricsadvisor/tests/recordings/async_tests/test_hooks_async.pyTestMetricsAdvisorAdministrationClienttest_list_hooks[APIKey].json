@@ -1,0 +1,47 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "4e0e6982-5e0d-11ec-b1f1-6245b51668de"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b703d681-486c-4a50-81c2-4f856ad91445",
+        "Content-Length": "293",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:12:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "102",
+        "X-Request-ID": "b703d681-486c-4a50-81c2-4f856ad91445"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "hookId": "995d23e0-582e-436d-98d7-c4ff247c3535",
+            "hookName": "krista\u0027s test webhook",
+            "hookType": "Webhook",
+            "externalLink": "",
+            "description": "",
+            "admins": [
+              "krpratic@microsoft.com"
+            ],
+            "hookParameter": {
+              "endpoint": "https://www.bing.com",
+              "username": "",
+              "password": "",
+              "certificatePassword": ""
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

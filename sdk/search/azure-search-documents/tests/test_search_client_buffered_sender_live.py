@@ -3,213 +3,167 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import json
-from os.path import dirname, join, realpath
-import time
 
 import pytest
-
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from azure_devtools.scenario_tests import ReplayableTest
-
-from search_service_preparer import SearchServicePreparer
-
-CWD = dirname(realpath(__file__))
-
-SCHEMA = open(join(CWD, "hotel_schema.json")).read()
-try:
-    BATCH = json.load(open(join(CWD, "hotel_small.json")))
-except UnicodeDecodeError:
-    BATCH = json.load(open(join(CWD, "hotel_small.json"), encoding='utf-8'))
+import time
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchIndexingBufferedSender, SearchClient
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 TIME_TO_SLEEP = 3
 
-class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_upload_documents_new(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        batch_client = SearchIndexingBufferedSender(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+class TestSearchIndexingBufferedSender(AzureRecordedTestCase):
+
+    @SearchEnvVarPreparer()
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
+    @recorded_by_proxy
+    def test_search_client_index_buffered_sender(self, endpoint, api_key, index_name):
+        client = SearchClient(endpoint, index_name, api_key)
+        batch_client = SearchIndexingBufferedSender(endpoint, index_name, api_key)
+        try:
+            doc_count = 10
+            doc_count = self._test_upload_documents_new(client, batch_client, doc_count)
+            doc_count = self._test_upload_documents_existing(client, batch_client, doc_count)
+            doc_count = self._test_delete_documents_existing(client, batch_client, doc_count)
+            doc_count = self._test_delete_documents_missing(client, batch_client, doc_count)
+            doc_count = self._test_merge_documents_existing(client, batch_client, doc_count)
+            doc_count = self._test_merge_documents_missing(client, batch_client, doc_count)
+            doc_count = self._test_merge_or_upload_documents(client, batch_client, doc_count)
+        finally:
+            batch_client.close()
+
+    def _test_upload_documents_new(self, client, batch_client, doc_count):
         batch_client._batch_action_count = 2
-        DOCUMENTS = [
+        docs = [
             {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
             {"hotelId": "1001", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
         ]
-        batch_client.upload_documents(DOCUMENTS)
+        batch_client.upload_documents(docs)
+        doc_count += 2
 
         # There can be some lag before a document is searchable
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
 
-        assert client.get_document_count() == 12
-        for doc in DOCUMENTS:
+        assert client.get_document_count() == doc_count
+        for doc in docs:
             result = client.get_document(key=doc["hotelId"])
             assert result["hotelId"] == doc["hotelId"]
             assert result["hotelName"] == doc["hotelName"]
             assert result["rating"] == doc["rating"]
             assert result["rooms"] == doc["rooms"]
-        batch_client.close()
+        return doc_count
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_upload_documents_existing(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        batch_client = SearchIndexingBufferedSender(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+    def _test_upload_documents_existing(self, client, batch_client, doc_count):
         batch_client._batch_action_count = 2
-        DOCUMENTS = [
-            {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
+        # add one new and one existing
+        docs = [
+            {"hotelId": "1002", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
             {"hotelId": "3", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
         ]
-        batch_client.upload_documents(DOCUMENTS)
+        batch_client.upload_documents(docs)
+        doc_count += 1
 
         # There can be some lag before a document is searchable
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
 
-        assert client.get_document_count() == 11
-        batch_client.close()
+        assert client.get_document_count() == doc_count
+        return doc_count
 
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_delete_documents_existing(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        batch_client = SearchIndexingBufferedSender(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+    def _test_delete_documents_existing(self, client, batch_client, doc_count):
         batch_client._batch_action_count = 2
-        batch_client.delete_documents([{"hotelId": "3"}, {"hotelId": "4"}])
-        batch_client.close()
+        docs = [{"hotelId": "3"}, {"hotelId": "4"}]
+        batch_client.delete_documents(docs)
+        doc_count -= 2
 
         # There can be some lag before a document is searchable
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
 
-        assert client.get_document_count() == 8
+        assert client.get_document_count() == doc_count
 
         with pytest.raises(HttpResponseError):
             client.get_document(key="3")
 
         with pytest.raises(HttpResponseError):
             client.get_document(key="4")
+        return doc_count
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_delete_documents_missing(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        batch_client = SearchIndexingBufferedSender(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+    def _test_delete_documents_missing(self, client, batch_client, doc_count):
         batch_client._batch_action_count = 2
-        batch_client.delete_documents([{"hotelId": "1000"}, {"hotelId": "4"}])
-        batch_client.close()
+        # delete one existing and one missing
+        docs = [{"hotelId": "1003"}, {"hotelId": "2"}]
+        batch_client.delete_documents(docs)
+        doc_count -= 1
 
         # There can be some lag before a document is searchable
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
 
-        assert client.get_document_count() == 9
-
+        assert client.get_document_count() == doc_count
         with pytest.raises(HttpResponseError):
-            client.get_document(key="1000")
-
+            client.get_document(key="1003")
         with pytest.raises(HttpResponseError):
-            client.get_document(key="4")
+            client.get_document(key="2")
+        return doc_count
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_merge_documents_existing(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        batch_client = SearchIndexingBufferedSender(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+    def _test_merge_documents_existing(self, client, batch_client, doc_count):
         batch_client._batch_action_count = 2
-        batch_client.merge_documents(
-            [{"hotelId": "3", "rating": 1}, {"hotelId": "4", "rating": 2}]
-        )
-        batch_client.close()
+        docs = [{"hotelId": "5", "rating": 1}, {"hotelId": "6", "rating": 2}]
+        batch_client.merge_documents(docs)
 
         # There can be some lag before a document is searchable
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
 
-        assert client.get_document_count() == 10
+        assert client.get_document_count() == doc_count
 
-        result = client.get_document(key="3")
+        result = client.get_document(key="5")
         assert result["rating"] == 1
 
-        result = client.get_document(key="4")
+        result = client.get_document(key="6")
         assert result["rating"] == 2
+        return doc_count
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_merge_documents_missing(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        batch_client = SearchIndexingBufferedSender(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+    def _test_merge_documents_missing(self, client, batch_client, doc_count):
         batch_client._batch_action_count = 2
-        batch_client.merge_documents(
-            [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
-        )
-        batch_client.close()
+        # merge to one existing and one missing document
+        docs = [{"hotelId": "1003", "rating": 1}, {"hotelId": "1", "rating": 2}]
+        batch_client.merge_documents(docs)
 
         # There can be some lag before a document is searchable
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
 
-        assert client.get_document_count() == 10
+        assert client.get_document_count() == doc_count
 
         with pytest.raises(HttpResponseError):
-            client.get_document(key="1000")
+            client.get_document(key="1003")
 
-        result = client.get_document(key="4")
+        result = client.get_document(key="1")
         assert result["rating"] == 2
+        return doc_count
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_merge_or_upload_documents(self, api_key, endpoint, index_name, **kwargs):
-        client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        batch_client = SearchIndexingBufferedSender(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+    def _test_merge_or_upload_documents(self, client, batch_client, doc_count):
         batch_client._batch_action_count = 2
-        batch_client.merge_or_upload_documents(
-            [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
-        )
-        batch_client.close()
+        # merge to one existing and one missing
+        docs = [{"hotelId": "1003", "rating": 1}, {"hotelId": "1", "rating": 2}]
+        batch_client.merge_or_upload_documents(docs)
+        doc_count += 1
 
         # There can be some lag before a document is searchable
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
 
-        assert client.get_document_count() == 11
+        assert client.get_document_count() == doc_count
 
-        result = client.get_document(key="1000")
+        result = client.get_document(key="1003")
         assert result["rating"] == 1
 
-        result = client.get_document(key="4")
+        result = client.get_document(key="1")
         assert result["rating"] == 2
+        return doc_count

@@ -16,10 +16,10 @@ from ._container_registry_management_client_enums import *
 class OperationDefinition(msrest.serialization.Model):
     """The definition of a container registry operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The display information for the container registry operation.
-    :type display: ~azure.mgmt.containerregistry.v2017_03_01.models.OperationDisplayDefinition
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The display information for the container registry operation.
+    :vartype display: ~azure.mgmt.containerregistry.v2017_03_01.models.OperationDisplayDefinition
     """
 
     _attribute_map = {
@@ -34,6 +34,12 @@ class OperationDefinition(msrest.serialization.Model):
         display: Optional["OperationDisplayDefinition"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The display information for the container registry operation.
+        :paramtype display: ~azure.mgmt.containerregistry.v2017_03_01.models.OperationDisplayDefinition
+        """
         super(OperationDefinition, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -42,14 +48,14 @@ class OperationDefinition(msrest.serialization.Model):
 class OperationDisplayDefinition(msrest.serialization.Model):
     """The display information for a container registry operation.
 
-    :param provider: The resource provider name: Microsoft.ContainerRegistry.
-    :type provider: str
-    :param resource: The resource on which the operation is performed.
-    :type resource: str
-    :param operation: The operation that users can perform.
-    :type operation: str
-    :param description: The description for the operation.
-    :type description: str
+    :ivar provider: The resource provider name: Microsoft.ContainerRegistry.
+    :vartype provider: str
+    :ivar resource: The resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: The operation that users can perform.
+    :vartype operation: str
+    :ivar description: The description for the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -68,6 +74,16 @@ class OperationDisplayDefinition(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: The resource provider name: Microsoft.ContainerRegistry.
+        :paramtype provider: str
+        :keyword resource: The resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: The operation that users can perform.
+        :paramtype operation: str
+        :keyword description: The description for the operation.
+        :paramtype description: str
+        """
         super(OperationDisplayDefinition, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -78,12 +94,12 @@ class OperationDisplayDefinition(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """The result of a request to list container registry operations.
 
-    :param value: The list of container registry operations. Since this list may be incomplete, the
+    :ivar value: The list of container registry operations. Since this list may be incomplete, the
      nextLink field should be used to request the next list of operations.
-    :type value: list[~azure.mgmt.containerregistry.v2017_03_01.models.OperationDefinition]
-    :param next_link: The URI that can be used to request the next list of container registry
+    :vartype value: list[~azure.mgmt.containerregistry.v2017_03_01.models.OperationDefinition]
+    :ivar next_link: The URI that can be used to request the next list of container registry
      operations.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -98,6 +114,14 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of container registry operations. Since this list may be incomplete,
+         the nextLink field should be used to request the next list of operations.
+        :paramtype value: list[~azure.mgmt.containerregistry.v2017_03_01.models.OperationDefinition]
+        :keyword next_link: The URI that can be used to request the next list of container registry
+         operations.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -108,9 +132,9 @@ class RegenerateCredentialParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Specifies name of the password which should be regenerated -- password
-     or password2. Possible values include: "password", "password2".
-    :type name: str or ~azure.mgmt.containerregistry.v2017_03_01.models.PasswordName
+    :ivar name: Required. Specifies name of the password which should be regenerated -- password or
+     password2. Possible values include: "password", "password2".
+    :vartype name: str or ~azure.mgmt.containerregistry.v2017_03_01.models.PasswordName
     """
 
     _validation = {
@@ -127,6 +151,11 @@ class RegenerateCredentialParameters(msrest.serialization.Model):
         name: Union[str, "PasswordName"],
         **kwargs
     ):
+        """
+        :keyword name: Required. Specifies name of the password which should be regenerated -- password
+         or password2. Possible values include: "password", "password2".
+        :paramtype name: str or ~azure.mgmt.containerregistry.v2017_03_01.models.PasswordName
+        """
         super(RegenerateCredentialParameters, self).__init__(**kwargs)
         self.name = name
 
@@ -144,11 +173,11 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Required. The location of the resource. This cannot be changed after the
+    :ivar location: Required. The location of the resource. This cannot be changed after the
      resource is created.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: A set of tags. The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -173,6 +202,13 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource. This cannot be changed after the
+         resource is created.
+        :paramtype location: str
+        :keyword tags: A set of tags. The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -194,13 +230,13 @@ class Registry(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Required. The location of the resource. This cannot be changed after the
+    :ivar location: Required. The location of the resource. This cannot be changed after the
      resource is created.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param sku: Required. The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
+    :vartype location: str
+    :ivar tags: A set of tags. The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar sku: Required. The SKU of the container registry.
+    :vartype sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
     :ivar login_server: The URL that can be used to log into the container registry.
     :vartype login_server: str
     :ivar creation_date: The creation date of the container registry in ISO8601 format.
@@ -209,10 +245,10 @@ class Registry(Resource):
      operation was called. Possible values include: "Creating", "Succeeded".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2017_03_01.models.ProvisioningState
-    :param admin_user_enabled: The value that indicates whether the admin user is enabled.
-    :type admin_user_enabled: bool
-    :param storage_account: The properties of the storage account for the container registry.
-    :type storage_account:
+    :ivar admin_user_enabled: The value that indicates whether the admin user is enabled.
+    :vartype admin_user_enabled: bool
+    :ivar storage_account: The properties of the storage account for the container registry.
+    :vartype storage_account:
      ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountProperties
     """
 
@@ -251,6 +287,20 @@ class Registry(Resource):
         storage_account: Optional["StorageAccountProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the resource. This cannot be changed after the
+         resource is created.
+        :paramtype location: str
+        :keyword tags: A set of tags. The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Required. The SKU of the container registry.
+        :paramtype sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
+        :keyword admin_user_enabled: The value that indicates whether the admin user is enabled.
+        :paramtype admin_user_enabled: bool
+        :keyword storage_account: The properties of the storage account for the container registry.
+        :paramtype storage_account:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountProperties
+        """
         super(Registry, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.login_server = None
@@ -265,18 +315,18 @@ class RegistryCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param tags: A set of tags. The tags for the container registry.
-    :type tags: dict[str, str]
-    :param location: Required. The location of the container registry. This cannot be changed after
+    :ivar tags: A set of tags. The tags for the container registry.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The location of the container registry. This cannot be changed after
      the resource is created.
-    :type location: str
-    :param sku: Required. The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
-    :param admin_user_enabled: The value that indicates whether the admin user is enabled.
-    :type admin_user_enabled: bool
-    :param storage_account: The parameters of a storage account for the container registry. If
+    :vartype location: str
+    :ivar sku: Required. The SKU of the container registry.
+    :vartype sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
+    :ivar admin_user_enabled: The value that indicates whether the admin user is enabled.
+    :vartype admin_user_enabled: bool
+    :ivar storage_account: The parameters of a storage account for the container registry. If
      specified, the storage account must be in the same physical location as the container registry.
-    :type storage_account:
+    :vartype storage_account:
      ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters
     """
 
@@ -303,6 +353,21 @@ class RegistryCreateParameters(msrest.serialization.Model):
         storage_account: Optional["StorageAccountParameters"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags for the container registry.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The location of the container registry. This cannot be changed
+         after the resource is created.
+        :paramtype location: str
+        :keyword sku: Required. The SKU of the container registry.
+        :paramtype sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
+        :keyword admin_user_enabled: The value that indicates whether the admin user is enabled.
+        :paramtype admin_user_enabled: bool
+        :keyword storage_account: The parameters of a storage account for the container registry. If
+         specified, the storage account must be in the same physical location as the container registry.
+        :paramtype storage_account:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters
+        """
         super(RegistryCreateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -314,10 +379,10 @@ class RegistryCreateParameters(msrest.serialization.Model):
 class RegistryListCredentialsResult(msrest.serialization.Model):
     """The response from the ListCredentials operation.
 
-    :param username: The username for a container registry.
-    :type username: str
-    :param passwords: The list of passwords for a container registry.
-    :type passwords: list[~azure.mgmt.containerregistry.v2017_03_01.models.RegistryPassword]
+    :ivar username: The username for a container registry.
+    :vartype username: str
+    :ivar passwords: The list of passwords for a container registry.
+    :vartype passwords: list[~azure.mgmt.containerregistry.v2017_03_01.models.RegistryPassword]
     """
 
     _attribute_map = {
@@ -332,6 +397,12 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
         passwords: Optional[List["RegistryPassword"]] = None,
         **kwargs
     ):
+        """
+        :keyword username: The username for a container registry.
+        :paramtype username: str
+        :keyword passwords: The list of passwords for a container registry.
+        :paramtype passwords: list[~azure.mgmt.containerregistry.v2017_03_01.models.RegistryPassword]
+        """
         super(RegistryListCredentialsResult, self).__init__(**kwargs)
         self.username = username
         self.passwords = passwords
@@ -340,11 +411,11 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
 class RegistryListResult(msrest.serialization.Model):
     """The result of a request to list container registries.
 
-    :param value: The list of container registries. Since this list may be incomplete, the nextLink
+    :ivar value: The list of container registries. Since this list may be incomplete, the nextLink
      field should be used to request the next list of container registries.
-    :type value: list[~azure.mgmt.containerregistry.v2017_03_01.models.Registry]
-    :param next_link: The URI that can be used to request the next list of container registries.
-    :type next_link: str
+    :vartype value: list[~azure.mgmt.containerregistry.v2017_03_01.models.Registry]
+    :ivar next_link: The URI that can be used to request the next list of container registries.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -359,6 +430,13 @@ class RegistryListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of container registries. Since this list may be incomplete, the
+         nextLink field should be used to request the next list of container registries.
+        :paramtype value: list[~azure.mgmt.containerregistry.v2017_03_01.models.Registry]
+        :keyword next_link: The URI that can be used to request the next list of container registries.
+        :paramtype next_link: str
+        """
         super(RegistryListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -371,8 +449,8 @@ class RegistryNameCheckRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the container registry.
-    :type name: str
+    :ivar name: Required. The name of the container registry.
+    :vartype name: str
     :ivar type: The resource type of the container registry. This field must be set to
      'Microsoft.ContainerRegistry/registries'. Has constant value:
      "Microsoft.ContainerRegistry/registries".
@@ -397,6 +475,10 @@ class RegistryNameCheckRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the container registry.
+        :paramtype name: str
+        """
         super(RegistryNameCheckRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -404,13 +486,13 @@ class RegistryNameCheckRequest(msrest.serialization.Model):
 class RegistryNameStatus(msrest.serialization.Model):
     """The result of a request to check the availability of a container registry name.
 
-    :param name_available: The value that indicates whether the name is available.
-    :type name_available: bool
-    :param reason: If any, the reason that the name is not available.
-    :type reason: str
-    :param message: If any, the error message that provides more detail for the reason that the
-     name is not available.
-    :type message: str
+    :ivar name_available: The value that indicates whether the name is available.
+    :vartype name_available: bool
+    :ivar reason: If any, the reason that the name is not available.
+    :vartype reason: str
+    :ivar message: If any, the error message that provides more detail for the reason that the name
+     is not available.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -427,6 +509,15 @@ class RegistryNameStatus(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: The value that indicates whether the name is available.
+        :paramtype name_available: bool
+        :keyword reason: If any, the reason that the name is not available.
+        :paramtype reason: str
+        :keyword message: If any, the error message that provides more detail for the reason that the
+         name is not available.
+        :paramtype message: str
+        """
         super(RegistryNameStatus, self).__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
@@ -436,10 +527,10 @@ class RegistryNameStatus(msrest.serialization.Model):
 class RegistryPassword(msrest.serialization.Model):
     """The login password for the container registry.
 
-    :param name: The password name. Possible values include: "password", "password2".
-    :type name: str or ~azure.mgmt.containerregistry.v2017_03_01.models.PasswordName
-    :param value: The password value.
-    :type value: str
+    :ivar name: The password name. Possible values include: "password", "password2".
+    :vartype name: str or ~azure.mgmt.containerregistry.v2017_03_01.models.PasswordName
+    :ivar value: The password value.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -454,6 +545,12 @@ class RegistryPassword(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The password name. Possible values include: "password", "password2".
+        :paramtype name: str or ~azure.mgmt.containerregistry.v2017_03_01.models.PasswordName
+        :keyword value: The password value.
+        :paramtype value: str
+        """
         super(RegistryPassword, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -462,13 +559,13 @@ class RegistryPassword(msrest.serialization.Model):
 class RegistryUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a container registry.
 
-    :param tags: A set of tags. The tags for the container registry.
-    :type tags: dict[str, str]
-    :param admin_user_enabled: The value that indicates whether the admin user is enabled.
-    :type admin_user_enabled: bool
-    :param storage_account: The parameters of a storage account for the container registry. If
+    :ivar tags: A set of tags. The tags for the container registry.
+    :vartype tags: dict[str, str]
+    :ivar admin_user_enabled: The value that indicates whether the admin user is enabled.
+    :vartype admin_user_enabled: bool
+    :ivar storage_account: The parameters of a storage account for the container registry. If
      specified, the storage account must be in the same physical location as the container registry.
-    :type storage_account:
+    :vartype storage_account:
      ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters
     """
 
@@ -486,6 +583,16 @@ class RegistryUpdateParameters(msrest.serialization.Model):
         storage_account: Optional["StorageAccountParameters"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags for the container registry.
+        :paramtype tags: dict[str, str]
+        :keyword admin_user_enabled: The value that indicates whether the admin user is enabled.
+        :paramtype admin_user_enabled: bool
+        :keyword storage_account: The parameters of a storage account for the container registry. If
+         specified, the storage account must be in the same physical location as the container registry.
+        :paramtype storage_account:
+         ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters
+        """
         super(RegistryUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.admin_user_enabled = admin_user_enabled
@@ -499,9 +606,9 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The SKU name of the container registry. Required for registry creation.
+    :ivar name: Required. The SKU name of the container registry. Required for registry creation.
      Allowed value: Basic.
-    :type name: str
+    :vartype name: str
     :ivar tier: The SKU tier based on the SKU name. Possible values include: "Basic".
     :vartype tier: str or ~azure.mgmt.containerregistry.v2017_03_01.models.SkuTier
     """
@@ -522,6 +629,11 @@ class Sku(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The SKU name of the container registry. Required for registry
+         creation. Allowed value: Basic.
+        :paramtype name: str
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = None
@@ -532,10 +644,10 @@ class StorageAccountParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the storage account.
-    :type name: str
-    :param access_key: Required. The access key to the storage account.
-    :type access_key: str
+    :ivar name: Required. The name of the storage account.
+    :vartype name: str
+    :ivar access_key: Required. The access key to the storage account.
+    :vartype access_key: str
     """
 
     _validation = {
@@ -555,6 +667,12 @@ class StorageAccountParameters(msrest.serialization.Model):
         access_key: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the storage account.
+        :paramtype name: str
+        :keyword access_key: Required. The access key to the storage account.
+        :paramtype access_key: str
+        """
         super(StorageAccountParameters, self).__init__(**kwargs)
         self.name = name
         self.access_key = access_key
@@ -563,8 +681,8 @@ class StorageAccountParameters(msrest.serialization.Model):
 class StorageAccountProperties(msrest.serialization.Model):
     """The properties of a storage account for a container registry.
 
-    :param name: The name of the storage account.
-    :type name: str
+    :ivar name: The name of the storage account.
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -577,5 +695,9 @@ class StorageAccountProperties(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the storage account.
+        :paramtype name: str
+        """
         super(StorageAccountProperties, self).__init__(**kwargs)
         self.name = name

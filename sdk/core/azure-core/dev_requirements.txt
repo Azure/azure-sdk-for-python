@@ -1,10 +1,8 @@
-trio; python_version >= '3.5'
-aiohttp>=3.0; python_version >= '3.5'
-typing_extensions>=3.7.2
+trio
+aiohttp>=3.0
 opencensus>=0.6.0
 opencensus-ext-azure
 opencensus-ext-threading
-mock; python_version < '3.3'
 -e ../../../tools/azure-sdk-tools
 -e ../../../tools/azure-devtools
 -e tests/testserver_tests/coretestserver

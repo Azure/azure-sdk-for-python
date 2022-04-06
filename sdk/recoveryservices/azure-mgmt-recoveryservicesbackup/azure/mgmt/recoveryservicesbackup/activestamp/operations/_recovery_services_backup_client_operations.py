@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,26 +21,21 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_operation_status_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    operation_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/operationStatus/{operationId}')
@@ -71,15 +66,17 @@ def build_get_operation_status_request(
 
 
 def build_bms_prepare_data_move_request_initial(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/prepareDataMove')
@@ -106,20 +103,24 @@ def build_bms_prepare_data_move_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_bms_trigger_data_move_request_initial(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/triggerDataMove')
@@ -146,24 +147,28 @@ def build_bms_trigger_data_move_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_move_recovery_point_request_initial(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    fabric_name,  # type: str
-    container_name,  # type: str
-    protected_item_name,  # type: str
-    recovery_point_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    fabric_name: str,
+    container_name: str,
+    protected_item_name: str,
+    recovery_point_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/move')
@@ -194,21 +199,21 @@ def build_move_recovery_point_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class RecoveryServicesBackupClientOperationsMixin(object):
 
     @distributed_trace
     def get_operation_status(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.OperationStatus"
+        vault_name: str,
+        resource_group_name: str,
+        operation_id: str,
+        **kwargs: Any
+    ) -> "_models.OperationStatus":
         """Fetches operation status for data move operation on vault.
 
         :param vault_name: The name of the recovery services vault.
@@ -260,12 +265,11 @@ class RecoveryServicesBackupClientOperationsMixin(object):
 
     def _bms_prepare_data_move_initial(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        parameters,  # type: "_models.PrepareDataMoveRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        vault_name: str,
+        resource_group_name: str,
+        parameters: "_models.PrepareDataMoveRequest",
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -303,12 +307,11 @@ class RecoveryServicesBackupClientOperationsMixin(object):
     @distributed_trace
     def begin_bms_prepare_data_move(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        parameters,  # type: "_models.PrepareDataMoveRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        vault_name: str,
+        resource_group_name: str,
+        parameters: "_models.PrepareDataMoveRequest",
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Prepares source vault for Data Move operation.
 
         :param vault_name: The name of the recovery services vault.
@@ -371,12 +374,11 @@ class RecoveryServicesBackupClientOperationsMixin(object):
 
     def _bms_trigger_data_move_initial(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        parameters,  # type: "_models.TriggerDataMoveRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        vault_name: str,
+        resource_group_name: str,
+        parameters: "_models.TriggerDataMoveRequest",
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -414,12 +416,11 @@ class RecoveryServicesBackupClientOperationsMixin(object):
     @distributed_trace
     def begin_bms_trigger_data_move(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        parameters,  # type: "_models.TriggerDataMoveRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        vault_name: str,
+        resource_group_name: str,
+        parameters: "_models.TriggerDataMoveRequest",
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Triggers Data Move Operation on target vault.
 
         :param vault_name: The name of the recovery services vault.
@@ -482,16 +483,15 @@ class RecoveryServicesBackupClientOperationsMixin(object):
 
     def _move_recovery_point_initial(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
-        recovery_point_id,  # type: str
-        parameters,  # type: "_models.MoveRPAcrossTiersRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        vault_name: str,
+        resource_group_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        parameters: "_models.MoveRPAcrossTiersRequest",
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -533,16 +533,15 @@ class RecoveryServicesBackupClientOperationsMixin(object):
     @distributed_trace
     def begin_move_recovery_point(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
-        recovery_point_id,  # type: str
-        parameters,  # type: "_models.MoveRPAcrossTiersRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        vault_name: str,
+        resource_group_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        parameters: "_models.MoveRPAcrossTiersRequest",
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Move recovery point from one datastore to another store.
 
         Move recovery point from one datastore to another store.

@@ -1,5 +1,5 @@
 ## _Disclaimer_
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. This change will be effective azure-storage-queue>12.1.6 For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Azure Storage Queues client library for Python
 
@@ -15,7 +15,7 @@ Common uses of Queue storage include:
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (ending Python 2.7 support starting 01 January 2022).
+* Python 3.6 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -81,6 +81,7 @@ The `credential` parameter may be provided in a number of different forms, depen
         account_key="<account-access-key>",
         resource_types=ResourceTypes(service=True),
         permission=AccountSasPermissions(read=True),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=1)
     )
 

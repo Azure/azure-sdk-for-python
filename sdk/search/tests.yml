@@ -6,12 +6,20 @@ stages:
       BuildTargetingString: azure-search-documents
       # TODO: change/remove location back to default westus2 after search RP fixes deletion metadata issue
       # https://github.com/Azure/azure-sdk-tools/issues/2216
-      Location: 'eastus2'
+      SupportedClouds: 'Public,UsGov,China'
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          Location: 'eastus2'
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
       ServiceDirectory: search
       EnvVars:
         AZURE_CLIENT_ID: $(SEARCH_CLIENT_ID)
         AZURE_CLIENT_SECRET: $(SEARCH_CLIENT_SECRET)
         AZURE_TENANT_ID: $(SEARCH_TENANT_ID)
         AZURE_CLIENT_OID: $(SEARCH_CLIENT_OID)
-        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_TEST_RUN_LIVE: 'True'
         AZURE_SKIP_LIVE_RECORDING: 'True'

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -19,26 +19,20 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    operation_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupJobs/operationResults/{operationId}')
@@ -67,7 +61,6 @@ def build_get_request(
         **kwargs
     )
 
-# fmt: on
 class ExportJobsOperationResultsOperations(object):
     """ExportJobsOperationResultsOperations operations.
 
@@ -93,12 +86,11 @@ class ExportJobsOperationResultsOperations(object):
     @distributed_trace
     def get(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.OperationResultInfoBaseResource"
+        vault_name: str,
+        resource_group_name: str,
+        operation_id: str,
+        **kwargs: Any
+    ) -> "_models.OperationResultInfoBaseResource":
         """Gets the operation result of operation triggered by Export Jobs API. If the operation is
         successful, then it also
         contains URL of a Blob and a SAS key to access the same. The blob contains exported jobs in

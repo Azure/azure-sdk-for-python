@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,6 +11,7 @@ from testcase import Document
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, \
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import ContainerClient
 from azure.ai.translation.document._generated.models import StartTranslationDetails as _StartTranslationDetails
@@ -26,13 +26,13 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
-    async def test_active_directory_auth_async(self):
-        token = self.generate_oauth_token()
-        endpoint = self.get_oauth_endpoint()
+    async def test_active_directory_auth_async(self, **kwargs):
+        translation_document_test_endpoint = kwargs.pop("translation_document_test_endpoint")
+        token = self.get_credential(DocumentTranslationClient, is_async=True)
         kwargs = {}
         if os.getenv("AZURE_COGNITIVE_SCOPE"):
             kwargs["credential_scopes"] = [os.getenv("AZURE_COGNITIVE_SCOPE")]
-        client = DocumentTranslationClient(endpoint, token, **kwargs)
+        client = DocumentTranslationClient(translation_document_test_endpoint, token, **kwargs)
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
@@ -56,11 +56,14 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_single_source_single_target(self, client):
+    @recorded_by_proxy_async
+    async def test_single_source_single_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -77,15 +80,19 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
         # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_single_source_two_targets(self, client):
+    @recorded_by_proxy_async
+    async def test_single_source_two_targets(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
-        target_container_sas_url = self.create_target_container()
-        additional_target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
+        additional_target_container_sas_url = self.create_target_container(variables=variables, container_suffix="2")
 
         # prepare translation inputs
         translation_inputs = [
@@ -106,16 +113,20 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
         # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 2)
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_multiple_sources_single_target(self, client):
+    @recorded_by_proxy_async
+    async def test_multiple_sources_single_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
         blob_data = b'This is some text2'
-        additional_source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
-        target_container_sas_url = self.create_target_container()
+        additional_source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables, container_suffix="2")
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -141,15 +152,19 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
         # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 2)
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_single_source_single_target_with_prefix(self, client):
+    @recorded_by_proxy_async
+    async def test_single_source_single_target_with_prefix(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         prefix = "xyz"
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data, prefix=prefix))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data, prefix=prefix), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -167,15 +182,19 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
         # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_single_source_single_target_with_suffix(self, client):
+    @recorded_by_proxy_async
+    async def test_single_source_single_target_with_suffix(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         suffix = "txt"
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -193,12 +212,16 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
         # submit translation and test
         await self._begin_and_validate_translation_async(client, translation_inputs, 1, "es")
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_bad_input_source(self, client):
+    @recorded_by_proxy_async
+    async def test_bad_input_source(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        target_container_sas_url = self.create_target_container()
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -212,18 +235,22 @@ class TestTranslation(AsyncDocumentTranslationTest):
                 ]
             )
         ]
-
-        with pytest.raises(HttpResponseError) as e:
-            poller = await client.begin_translation(translation_inputs)
-            result = await poller.result()
-        assert e.value.error.code == "InvalidDocumentAccessLevel"
+        async with client:
+            with pytest.raises(HttpResponseError) as e:
+                poller = await client.begin_translation(translation_inputs)
+                result = await poller.result()
+            assert e.value.error.code == "InvalidDocumentAccessLevel"
+            return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_bad_input_target(self, client):
+    @recorded_by_proxy_async
+    async def test_bad_input_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
-        source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -238,21 +265,27 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        with pytest.raises(HttpResponseError) as e:
-            poller = await client.begin_translation(translation_inputs)
-            result = await poller.result()
-        assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
+        async with client:
+            with pytest.raises(HttpResponseError) as e:
+                poller = await client.begin_translation(translation_inputs)
+                result = await poller.result()
+            assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
+            return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_use_supported_and_unsupported_files(self, client):
+    @recorded_by_proxy_async
+    async def test_use_supported_and_unsupported_files(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[
                 Document(suffix=".txt"),
                 Document(suffix=".jpg")
-            ]
+            ],
+            variables=variables
         )
-        target_container_sas_url = self.create_target_container()
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -266,19 +299,23 @@ class TestTranslation(AsyncDocumentTranslationTest):
                 ]
             )
         ]
-
-        poller = await client.begin_translation(translation_inputs)
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
-        async for document in result:
-            self._validate_doc_status(document, "es")
+        async with client:
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+            async for document in result:
+                self._validate_doc_status(document, "es")
+            return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_existing_documents_in_target(self, client):
+    @recorded_by_proxy_async
+    async def test_existing_documents_in_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(name="document"))
-        target_container_sas_url = self.create_target_container(data=Document(name="document"))
+        source_container_sas_url = self.create_source_container(data=Document(name="document"), variables=variables)
+        target_container_sas_url = self.create_target_container(data=Document(name="document"), variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -293,48 +330,25 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        poller = await client.begin_translation(translation_inputs)
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
+        async with client:
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
 
-        async for doc in result:
-            assert doc.status == "Failed"
-            assert doc.error.code == "TargetFileAlreadyExists"
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    async def test_existing_documents_in_target_one_valid(self, client):
-        # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=[Document(name="document"), Document()])
-        target_container_sas_url = self.create_target_container(data=Document(name="document"))
-
-        # prepare translation inputs
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code="es"
-                    )
-                ]
-            )
-        ]
-
-        poller = await client.begin_translation(translation_inputs)
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=2, failed=1)
-
-        async for doc in result:
-            if doc.status == "Failed":
+            async for doc in result:
+                assert doc.status == "Failed"
                 assert doc.error.code == "TargetFileAlreadyExists"
+            return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_empty_document(self, client):
+    @recorded_by_proxy_async
+    async def test_existing_documents_in_target_one_valid(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(Document(data=b''))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=[Document(name="document"), Document()], variables=variables)
+        target_container_sas_url = self.create_target_container(data=Document(name="document"), variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
@@ -348,22 +362,58 @@ class TestTranslation(AsyncDocumentTranslationTest):
                 ]
             )
         ]
+        async with client:
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Succeeded", total=2, failed=1)
 
-        poller = await client.begin_translation(translation_inputs)
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
-
-        async for doc in result:
-            assert doc.status == "Failed"
-            assert doc.error.code == "NoTranslatableText"
+            async for doc in result:
+                if doc.status == "Failed":
+                    assert doc.error.code == "TargetFileAlreadyExists"
+            return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_overloaded_inputs(self, client):
+    @recorded_by_proxy_async
+    async def test_empty_document(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
-        target_container_sas_url = self.create_target_container()
-        target_container_sas_url_2 = self.create_target_container()
+        source_container_sas_url = self.create_source_container(Document(data=b''), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+        async with client:
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Failed", total=1, failed=1)
+
+            async for doc in result:
+                assert doc.status == "Failed"
+                assert doc.error.code == "NoTranslatableText"
+            return variables
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    @recorded_by_proxy_async
+    async def test_overloaded_inputs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
+        target_container_sas_url_2 = self.create_target_container(variables=variables, container_suffix="2")
 
         # prepare translation inputs
         translation_inputs = [
@@ -380,37 +430,45 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
 
         # positional
-        poller = await client.begin_translation(translation_inputs)
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        async with client:
+            poller = await client.begin_translation(translation_inputs)
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
 
-        # keyword
-        translation_inputs[0].targets[0].target_url = target_container_sas_url_2
-        poller = await client.begin_translation(inputs=translation_inputs)
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+            # keyword
+            translation_inputs[0].targets[0].target_url = target_container_sas_url_2
+            poller = await client.begin_translation(inputs=translation_inputs)
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+            return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_overloaded_single_input(self, client):
+    @recorded_by_proxy_async
+    async def test_overloaded_single_input(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
-        target_container_sas_url = self.create_target_container()
-        target_container_sas_url_2 = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
+        target_container_sas_url_2 = self.create_target_container(variables=variables, container_suffix="2")
 
         # positional
-        poller = await client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        async with client:
+            poller = await client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
 
-        # keyword
-        poller = await client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language_code="es")
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+            # keyword
+            poller = await client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language_code="es")
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+            return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_overloaded_bad_input(self, client):
+    async def test_overloaded_bad_input(self, **kwargs):
+        client = kwargs.pop("client")
         translation_inputs = [
             DocumentTranslationInput(
                 source_url="container",
@@ -423,41 +481,47 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
         ]
 
-        with pytest.raises(ValueError):
-            await client.begin_translation("container")
+        async with client:
+            with pytest.raises(ValueError):
+                await client.begin_translation("container")
 
-        with pytest.raises(ValueError):
-            await client.begin_translation("container", "container")
+            with pytest.raises(ValueError):
+                await client.begin_translation("container", "container")
 
-        with pytest.raises(ValueError):
-            await client.begin_translation(source_url=translation_inputs)
+            with pytest.raises(ValueError):
+                await client.begin_translation(source_url=translation_inputs)
 
-        with pytest.raises(ValueError):
-            await client.begin_translation(inputs="container")
+            with pytest.raises(ValueError):
+                await client.begin_translation(inputs="container")
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_translation_continuation_token(self, client):
+    async def test_translation_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
         target_container_sas_url = self.create_target_container()
 
-        initial_poller = await client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
-        cont_token = initial_poller.continuation_token()
+        async with client:
+            initial_poller = await client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
+            cont_token = initial_poller.continuation_token()
 
-        poller = await client.begin_translation(None, continuation_token=cont_token)
-        result = await poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
-        async for doc in result:
-            self._validate_doc_status(doc, target_language="es")
-        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            poller = await client.begin_translation(None, continuation_token=cont_token)
+            result = await poller.result()
+            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+            async for doc in result:
+                self._validate_doc_status(doc, target_language="es")
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_single_input_with_kwargs(self, client):
+    @recorded_by_proxy_async
+    async def test_single_input_with_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
-        target_container_sas_url = self.create_target_container()
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         def callback(request):
             req = _StartTranslationDetails.deserialize(json.loads(request.http_request.body))
@@ -493,14 +557,19 @@ class TestTranslation(AsyncDocumentTranslationTest):
                 await poller.result()
             except HttpResponseError as e:
                 pass
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_single_input_with_kwarg_successful(self, client):
+    @recorded_by_proxy_async
+    async def test_single_input_with_kwarg_successful(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[Document(data=b'hello world', prefix="kwargs"),
-                                                                      Document(data=b'hello world')])
-        target_container_sas_url = self.create_target_container()
+                                                                      Document(data=b'hello world')],
+                                                                variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
 
         async with client:
             poller = await client.begin_translation(
@@ -513,11 +582,13 @@ class TestTranslation(AsyncDocumentTranslationTest):
             self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
             async for doc in result:
                 self._validate_doc_status(doc, target_language="fr")
+        return variables
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_translation_with_glossary(self, client):
+    async def test_translation_with_glossary(self, **kwargs):
+        client = kwargs.pop("client")
         doc = Document(data=b'testing')
         source_container_sas_url = self.create_source_container(data=[doc])
         target_container_sas_url = self.create_target_container()

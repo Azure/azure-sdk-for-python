@@ -10,6 +10,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from uamqp.constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
+from azure.core.pipeline.policies import RetryMode
 
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes
@@ -17,6 +18,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.user_agent = kwargs.get("user_agent")  # type: Optional[str]
         self.retry_total = kwargs.get("retry_total", 3)  # type: int
         self.max_retries = self.retry_total  # type: int
+        self.retry_mode = RetryMode(kwargs.get("retry_mode", "exponential"))
         self.backoff_factor = kwargs.get("retry_backoff_factor", 0.8)  # type: float
         self.backoff_max = kwargs.get("retry_backoff_max", 120)  # type: int
         self.network_tracing = kwargs.get("network_tracing", False)  # type: bool

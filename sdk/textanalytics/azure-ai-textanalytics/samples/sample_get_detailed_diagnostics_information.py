@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -54,7 +52,7 @@ def sample_get_detailed_diagnostics_information():
         _LOGGER.debug("valid_document_count: {}".format(resp.statistics["valid_document_count"]))
         _LOGGER.debug("erroneous_document_count: {}".format(resp.statistics["erroneous_document_count"]))
         _LOGGER.debug("transaction_count: {}".format(resp.statistics["transaction_count"]))
-        _LOGGER.debug("model_version: {}".format(resp.model_version))
+        _LOGGER.debug(f"model_version: {resp.model_version}")
         json_response = json.dumps(resp.raw_response)
         json_responses.append(json_response)
 
@@ -65,9 +63,9 @@ def sample_get_detailed_diagnostics_information():
         raw_response_hook=callback
     )
     for doc in result:
-        _LOGGER.warning("Doc with id {} has these warnings: {}".format(doc.id, doc.warnings))
+        _LOGGER.warning(f"Doc with id {doc.id} has these warnings: {doc.warnings}")
 
-    _LOGGER.debug("json response: {}".format(json_responses[0]))
+    _LOGGER.debug(f"json response: {json_responses[0]}")
 
 
 if __name__ == '__main__':

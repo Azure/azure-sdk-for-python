@@ -13,7 +13,7 @@ and other secrets
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 ### Install the package
@@ -27,7 +27,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 2.7, 3.5.3, or later
+* Python 3.6 or later
 * A Key Vault. If you need to create one, you can use the
 [Azure Cloud Shell][azure_cloud_shell] to create one with these commands
 (replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
@@ -147,7 +147,7 @@ This section contains code snippets covering common tasks:
 * [Retrieve a Certificate](#retrieve-a-certificate "Retrieve a Certificate")
 * [Update Properties of an existing Certificate](#update-properties-of-an-existing-certificate "Update Properties of an existing Certificate")
 * [Delete a Certificate](#delete-a-certificate "Delete a Certificate")
-* [List Properites of Certificates](#list-properties-of-certificates "List Properties of Certificates")
+* [List Properties of Certificates](#list-properties-of-certificates "List Properties of Certificates")
 * [Asynchronously create a Certificate](#asynchronously-create-a-certificate "Asynchronously create a Certificate")
 * [Asynchronously list properties of Certificates](#asynchronously-list-properties-of-certificates "Asynchronously list properties of Certificates")
 
@@ -266,7 +266,7 @@ for certificate in certificates:
 ```
 
 ### Async operations
-This library includes a complete async API supported on Python 3.5+. To use it, you must
+This library includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
@@ -335,6 +335,11 @@ async for certificate in certificates:
 ```
 
 ## Troubleshooting
+
+See the `azure-keyvault-certificates`
+[troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/TROUBLESHOOTING.md)
+for details on how to diagnose various failure scenarios.
+
 ### General
 Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
 For example, if you try to get a key that doesn't exist in the vault, [CertificateClient][certificate_client_docs]

@@ -1,15 +1,15 @@
-# coding=utf-8  pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 import re
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
 )
-
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_2_preview_2 import models as _v3_2_preview_models
 from ._version import DEFAULT_API_VERSION
@@ -19,7 +19,7 @@ def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
 
 
-class DictMixin(object):
+class DictMixin:
     def __setitem__(self, key, item):
         self.__dict__[key] = item
 
@@ -72,14 +72,14 @@ class DictMixin(object):
         return default
 
 
-class EntityAssociation(str, Enum):
+class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes if the entity is the subject of the text or if it describes someone else."""
 
     SUBJECT = "subject"
     OTHER = "other"
 
 
-class EntityCertainty(str, Enum):
+class EntityCertainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the entities certainty and polarity."""
 
     POSITIVE = "positive"
@@ -89,14 +89,14 @@ class EntityCertainty(str, Enum):
     NEGATIVE = "negative"
 
 
-class EntityConditionality(str, Enum):
+class EntityConditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes any conditionality on the entity."""
 
     HYPOTHETICAL = "hypothetical"
     CONDITIONAL = "conditional"
 
 
-class HealthcareEntityRelation(str, Enum):
+class HealthcareEntityRelation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of relation. Examples include: 'DosageOfMedication' or 'FrequencyOfMedication', etc."""
 
     ABBREVIATION = "Abbreviation"
@@ -122,7 +122,7 @@ class HealthcareEntityRelation(str, Enum):
     VALUE_OF_EXAMINATION = "ValueOfExamination"
 
 
-class PiiEntityCategory(str, Enum):
+class PiiEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Categories of Personally Identifiable Information (PII)."""
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
@@ -306,7 +306,7 @@ class PiiEntityCategory(str, Enum):
     DEFAULT = "Default"
 
 
-class HealthcareEntityCategory(str, Enum):
+class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Healthcare Entity Category."""
 
     BODY_STRUCTURE = "BodyStructure"
@@ -337,7 +337,7 @@ class HealthcareEntityCategory(str, Enum):
     TREATMENT_NAME = "TreatmentName"
 
 
-class PiiEntityDomain(str, Enum):
+class PiiEntityDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The different domains of PII entities that users can filter by"""
 
     PROTECTED_HEALTH_INFORMATION = (
@@ -588,7 +588,7 @@ class HealthcareRelationRole(DictMixin):
 
     For example, in "The subject took 100 mg of ibuprofen",
     "100 mg" is a dosage entity fulfilling the role "Dosage"
-    in the extracted relation "DosageofMedication".
+    in the extracted relation "DosageOfMedication".
 
     :ivar name: The role of the entity in the relationship. I.e., in the relation
         "The subject took 100 mg of ibuprofen", the dosage entity "100 mg" has role
@@ -606,10 +606,10 @@ class HealthcareRelationRole(DictMixin):
 
     @staticmethod
     def _get_entity(healthcare_role_result, entities):
-        nums = _get_indices(healthcare_role_result.ref)
-        entity_index = nums[
+        numbers = _get_indices(healthcare_role_result.ref)
+        entity_index = numbers[
             1
-        ]  # first num parsed from index is document #, second is entity index
+        ]  # first number parsed from index is document #, second is entity index
         return entities[entity_index]
 
     @classmethod
@@ -1199,7 +1199,7 @@ class DocumentError(DictMixin):
                 )
             )
         raise AttributeError(
-            "'DocumentError' object has no attribute '{}'".format(attr)
+            f"'DocumentError' object has no attribute '{attr}'"
         )
 
     @classmethod
@@ -1221,8 +1221,8 @@ class DocumentError(DictMixin):
 class DetectLanguageInput(LanguageInput):
     """The input document to be analyzed for detecting language.
 
-    :keyword str id: Unique, non-empty document identifier.
-    :keyword str text: The input text to process.
+    :keyword str id: Required. Unique, non-empty document identifier.
+    :keyword str text: Required. The input text to process.
     :keyword str country_hint: A country hint to help better detect
      the language of the text. Accepts two letter country codes
      specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
@@ -1239,7 +1239,7 @@ class DetectLanguageInput(LanguageInput):
     """
 
     def __init__(self, **kwargs):
-        super(DetectLanguageInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.country_hint = kwargs.get("country_hint", None)
@@ -1374,8 +1374,8 @@ class LinkedEntityMatch(DictMixin):
 class TextDocumentInput(DictMixin, MultiLanguageInput):
     """The input document to be analyzed by the service.
 
-    :keyword str id: Unique, non-empty document identifier.
-    :keyword str text: The input text to process.
+    :keyword str id: Required. Unique, non-empty document identifier.
+    :keyword str text: Required. The input text to process.
     :keyword str language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc. If
      not set, uses "en" for English as default.
@@ -1390,7 +1390,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     """
 
     def __init__(self, **kwargs):
-        super(TextDocumentInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = kwargs.get("id", None)
         self.text = kwargs.get("text", None)
         self.language = kwargs.get("language", None)
@@ -1415,7 +1415,7 @@ class TextDocumentBatchStatistics(DictMixin):
         This includes empty, over-size limit or non-supported languages documents.
     :vartype erroneous_document_count: int
     :ivar transaction_count: Number of transactions for the request.
-    :vartype transaction_count: long
+    :vartype transaction_count: int
     """
 
     def __init__(self, **kwargs):
@@ -1559,9 +1559,9 @@ class MinedOpinion(DictMixin):
         ]
         assessments = []
         for assessment_relation in assessment_relations:
-            nums = _get_indices(assessment_relation)
-            sentence_index = nums[1]
-            assessment_index = nums[2]
+            numbers = _get_indices(assessment_relation)
+            sentence_index = numbers[1]
+            assessment_index = numbers[2]
             assessments.append(
                 sentiment.sentences[sentence_index].assessments[assessment_index]
             )
@@ -1733,7 +1733,7 @@ class SentimentConfidenceScores(DictMixin):
         )[:1024]
 
 
-class _AnalyzeActionsType(str, Enum):
+class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of action that was applied to the documents"""
 
     RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
@@ -1751,7 +1751,7 @@ class _AnalyzeActionsType(str, Enum):
     MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
 
 
-class ActionPointerKind(str, Enum):
+class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOGNIZE_ENTITIES = "entityRecognitionTasks"
     RECOGNIZE_PII_ENTITIES = "entityRecognitionPiiTasks"
     EXTRACT_KEY_PHRASES = "keyPhraseExtractionTasks"
@@ -1773,7 +1773,7 @@ class RecognizeEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1786,7 +1786,7 @@ class RecognizeEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1841,7 +1841,7 @@ class AnalyzeSentimentAction(DictMixin):
         will have property `mined_opinions` containing the result of this analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1859,7 +1859,7 @@ class AnalyzeSentimentAction(DictMixin):
         will have property `mined_opinions` containing the result of this analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1919,10 +1919,10 @@ class RecognizePiiEntitiesAction(DictMixin):
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
         `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
+    :paramtype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
         input text on the service side for troubleshooting. If set to False, Text Analytics logs your
@@ -1938,10 +1938,10 @@ class RecognizePiiEntitiesAction(DictMixin):
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
         `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :vartype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
+    :vartype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
         input text on the service side for troubleshooting. If set to False, Text Analytics logs your
@@ -2052,7 +2052,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2065,7 +2065,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2113,7 +2113,7 @@ class ExtractSummaryAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2128,7 +2128,7 @@ class ExtractSummaryAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2277,7 +2277,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
     :param str deployment_name: This field indicates the deployment name for the model.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2291,7 +2291,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
     :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2305,10 +2305,10 @@ class RecognizeCustomEntitiesAction(DictMixin):
 
     def __init__(
         self,
-        project_name,
-        deployment_name,
+        project_name: str,
+        deployment_name: str,
         **kwargs
-    ):
+    ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
@@ -2421,10 +2421,10 @@ class MultiCategoryClassifyAction(DictMixin):
 
     def __init__(
         self,
-        project_name,
-        deployment_name,
+        project_name: str,
+        deployment_name: str,
         **kwargs
-    ):
+    ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
@@ -2535,10 +2535,10 @@ class SingleCategoryClassifyAction(DictMixin):
 
     def __init__(
         self,
-        project_name,
-        deployment_name,
+        project_name: str,
+        deployment_name: str,
         **kwargs
-    ):
+    ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = kwargs.get('disable_service_logs', None)

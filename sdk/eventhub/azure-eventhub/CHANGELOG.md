@@ -1,14 +1,40 @@
 # Release History
 
-## 5.6.2 (Unreleased)
+## 5.9.0b3 (Unreleased)
 
-### Features Added
+### Other Changes
+
+- Updated `EventData` internals for interoperability with the Schema Registry Avro Encoder library.
+
+## 5.9.0b2 (2022-03-09)
 
 ### Breaking Changes
 
+- `from_message_data` on `EventData` has been renamed `from_message_content` for interoperability with the Schema Registry Avro Encoder library. The `data` parameter has been renamed to `content`.
+
+## 5.9.0b1 (2022-02-09)
+
+### Features Added
+
+- The classmethod `from_message_data` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `data` and `content_type` as positional parameters.
+
+## 5.7.0 (2022-01-12)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+
+- Added support for fixed (linear) retry backoff:
+  - Sync/async `EventHubProducerClient` and `EventHubConsumerClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
+
 ### Bugs Fixed
 
+- Fixed a bug that `EventHubProducerClient` could be reopened for sending events instead of encountering with `KeyError` when the client is previously closed (issue #21849).
+
 ### Other Changes
+
+- Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
+- Updated uAMQP dependency to 1.5.1.
 
 ## 5.6.1 (2021-10-06)
 

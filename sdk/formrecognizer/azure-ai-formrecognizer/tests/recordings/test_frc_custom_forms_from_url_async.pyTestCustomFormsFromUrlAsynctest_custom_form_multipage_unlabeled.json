@@ -1,0 +1,274 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "109",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "8bcc0420-5eb9-11ec-9b59-c8348e073d30"
+      },
+      "RequestBody": {
+        "source": "https://blob_sas_url",
+        "sourceFilter": {
+          "prefix": "",
+          "includeSubFolders": false
+        },
+        "useLabelFile": false
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "5bd75d28-8b57-4fe4-8c53-f7fc8088ca3b",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 21:45:54 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "543"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "8bcc0420-5eb9-11ec-9b59-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d909e7e7-5fb2-4c87-980a-c212f0800bdb",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 21:45:59 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "18"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "63cf18af-91bf-470b-8b76-95e80a7c5a25",
+          "status": "creating",
+          "createdDateTime": "2021-12-16T21:45:54Z",
+          "lastUpdatedDateTime": "2021-12-16T21:45:54Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "8bcc0420-5eb9-11ec-9b59-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b65b4a90-b09c-45c0-b7a1-ec3a20f98f86",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 21:46:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "18"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "63cf18af-91bf-470b-8b76-95e80a7c5a25",
+          "status": "creating",
+          "createdDateTime": "2021-12-16T21:45:54Z",
+          "lastUpdatedDateTime": "2021-12-16T21:45:54Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "8bcc0420-5eb9-11ec-9b59-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "13f06722-eda8-4446-a831-4d17c4cdf67a",
+        "Content-Length": "170",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 21:46:10 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "17"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "63cf18af-91bf-470b-8b76-95e80a7c5a25",
+          "status": "creating",
+          "createdDateTime": "2021-12-16T21:45:54Z",
+          "lastUpdatedDateTime": "2021-12-16T21:45:54Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25?includeKeys=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "8bcc0420-5eb9-11ec-9b59-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "a2c04782-8146-4250-9608-85a8abeee0a3",
+        "Content-Length": "784",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 21:46:14 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "15"
+      },
+      "ResponseBody": {
+        "modelInfo": {
+          "modelId": "63cf18af-91bf-470b-8b76-95e80a7c5a25",
+          "status": "ready",
+          "createdDateTime": "2021-12-16T21:45:54Z",
+          "lastUpdatedDateTime": "2021-12-16T21:46:14Z"
+        },
+        "keys": {
+          "clusters": {
+            "0": [
+              "Address:",
+              "Invoice For:",
+              "Item",
+              "Price",
+              "Quantity",
+              "Redmond, WA",
+              "Signature:",
+              "Subtotal:",
+              "Tax:",
+              "Tip:",
+              "Total:"
+            ]
+          }
+        },
+        "trainResult": {
+          "trainingDocuments": [
+            {
+              "documentName": "multipage_invoice1.pdf",
+              "pages": 3,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice2.pdf",
+              "pages": 3,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice3.pdf",
+              "pages": 3,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice4.pdf",
+              "pages": 3,
+              "errors": [],
+              "status": "succeeded"
+            },
+            {
+              "documentName": "multipage_invoice5.pdf",
+              "pages": 3,
+              "errors": [],
+              "status": "succeeded"
+            }
+          ],
+          "errors": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25/analyze?includeTextDetails=false",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "33",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "98d1da59-5eb9-11ec-a3d7-c8348e073d30"
+      },
+      "RequestBody": {
+        "source": "https://blob_sas_url"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "7ab558cd-c07a-484a-8320-58a576c030dc",
+        "Content-Length": "0",
+        "Date": "Thu, 16 Dec 2021 21:46:15 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25/analyzeresults/191921dc-8f3e-4dd7-ad50-d8143ded3ac5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "354"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25/analyzeresults/191921dc-8f3e-4dd7-ad50-d8143ded3ac5",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "98d1da59-5eb9-11ec-a3d7-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "eacb0593-1bc1-4dc9-889e-52771786edac",
+        "Content-Length": "134",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 21:46:20 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "20"
+      },
+      "ResponseBody": "{\u0022status\u0022: \u0022running\u0022, \u0022createdDateTime\u0022: \u00222021-12-16T21:46:15Z\u0022, \u0022lastUpdatedDateTime\u0022: \u00222021-12-16T21:46:16Z\u0022, \u0022analyzeResult\u0022: null}"
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models/63cf18af-91bf-470b-8b76-95e80a7c5a25/analyzeresults/191921dc-8f3e-4dd7-ad50-d8143ded3ac5",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "98d1da59-5eb9-11ec-a3d7-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "6d3808db-7335-4894-aae1-7c711b51030f",
+        "Content-Length": "17290",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 21:46:25 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "34"
+      },
+      "ResponseBody": "{\u0022status\u0022: \u0022succeeded\u0022, \u0022createdDateTime\u0022: \u00222021-12-16T21:46:15Z\u0022, \u0022lastUpdatedDateTime\u0022: \u00222021-12-16T21:46:24Z\u0022, \u0022analyzeResult\u0022: {\u0022version\u0022: \u00222.1.0\u0022, \u0022readResults\u0022: [{\u0022page\u0022: 1, \u0022angle\u0022: 0, \u0022width\u0022: 8.5, \u0022height\u0022: 11.0, \u0022unit\u0022: \u0022inch\u0022, \u0022lines\u0022: [], \u0022selectionMarks\u0022: null}, {\u0022page\u0022: 2, \u0022angle\u0022: 0, \u0022width\u0022: 8.5, \u0022height\u0022: 11.0, \u0022unit\u0022: \u0022inch\u0022, \u0022lines\u0022: [], \u0022selectionMarks\u0022: null}, {\u0022page\u0022: 3, \u0022angle\u0022: 0, \u0022width\u0022: 8.5, \u0022height\u0022: 11.0, \u0022unit\u0022: \u0022inch\u0022, \u0022lines\u0022: [], \u0022selectionMarks\u0022: null}], \u0022pageResults\u0022: [{\u0022page\u0022: 1, \u0022keyValuePairs\u0022: [{\u0022key\u0022: {\u0022text\u0022: \u0022Invoice For:\u0022, \u0022boundingBox\u0022: [6.0028, 1.059, 7.0556, 1.059, 7.0556, 1.2292, 6.0028, 1.2292], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022Bilbo Baggins 123 Hobbit Lane\u0022, \u0022boundingBox\u0022: [6.0, 1.4428, 7.1, 1.4428, 7.1, 1.8056, 6.0, 1.8056], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Address:\u0022, \u0022boundingBox\u0022: [0.875, 1.4757, 1.5764, 1.4757, 1.5764, 1.6285, 0.875, 1.6285], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022567 Main St.\u0022, \u0022boundingBox\u0022: [0.875, 1.8368, 1.7194, 1.8368, 1.7194, 1.9698, 0.875, 1.9698], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Redmond, WA\u0022, \u0022boundingBox\u0022: [6.0, 1.8848, 6.9556, 1.8848, 6.9556, 2.0256, 6.0, 2.0256], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022555-555-5555\u0022, \u0022boundingBox\u0022: [5.9972, 2.1076, 6.9306, 2.1076, 6.9306, 2.2465, 5.9972, 2.2465], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Redmond, WA\u0022, \u0022boundingBox\u0022: [0.875, 2.0547, 1.8264, 2.0547, 1.8264, 2.1962, 0.875, 2.1962], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022555-555-5555\u0022, \u0022boundingBox\u0022: [0.875, 2.2743, 1.8056, 2.2743, 1.8056, 2.4132, 0.875, 2.4132], \u0022elements\u0022: null}, \u0022confidence\u0022: 0.29}, {\u0022key\u0022: {\u0022text\u0022: \u0022Subtotal:\u0022, \u0022boundingBox\u0022: [5.4972, 4.8889, 6.1319, 4.8889, 6.1319, 5.0278, 5.4972, 5.0278], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022300.00\u0022, \u0022boundingBox\u0022: [6.1597, 4.8889, 6.6222, 4.8889, 6.6222, 5.0243, 6.1597, 5.0243], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Tax:\u0022, \u0022boundingBox\u0022: [5.5, 5.1181, 5.7889, 5.1181, 5.7889, 5.2465, 5.5, 5.2465], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u002230.00\u0022, \u0022boundingBox\u0022: [5.8125, 5.1146, 6.1833, 5.1146, 6.1833, 5.25, 5.8125, 5.25], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Tip:\u0022, \u0022boundingBox\u0022: [5.5, 5.3299, 5.7528, 5.3299, 5.7528, 5.4861, 5.5, 5.4861], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022100.00\u0022, \u0022boundingBox\u0022: [5.7847, 5.3299, 6.2639, 5.3299, 6.2639, 5.4826, 5.7847, 5.4826], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Total:\u0022, \u0022boundingBox\u0022: [5.5, 5.5486, 5.8958, 5.5486, 5.8958, 5.6875, 5.5, 5.6875], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022430.00\u0022, \u0022boundingBox\u0022: [5.9194, 5.5521, 6.3861, 5.5521, 6.3861, 5.6875, 5.9194, 5.6875], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Signature:\u0022, \u0022boundingBox\u0022: [1.0, 6.6458, 1.7194, 6.6458, 1.7194, 6.8125, 1.0, 6.8125], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022Bilbo Baggins\u0022, \u0022boundingBox\u0022: [2.0694, 6.6322, 3.0028, 6.6322, 3.0028, 6.804, 2.0694, 6.804], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}], \u0022tables\u0022: [{\u0022rows\u0022: 8, \u0022columns\u0022: 3, \u0022boundingBox\u0022: [1.0694, 2.9896, 5.775, 2.9896, 5.775, 4.5938, 1.0694, 4.5938], \u0022cells\u0022: [{\u0022text\u0022: \u0022Item\u0022, \u0022rowIndex\u0022: 0, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0764, 2.9931, 1.3167, 2.9931, 1.3167, 3.1146, 1.0764, 3.1146], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: true, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022Quantity\u0022, \u0022rowIndex\u0022: 0, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 2.9965, 3.8306, 2.9965, 3.8306, 3.1354, 3.2431, 3.1354], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: true, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022Price\u0022, \u0022rowIndex\u0022: 0, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4, 2.9896, 5.7292, 2.9896, 5.7292, 3.1181, 5.4, 3.1181], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: true, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022A\u0022, \u0022rowIndex\u0022: 1, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0764, 3.2049, 1.1528, 3.2049, 1.1528, 3.3229, 1.0764, 3.3229], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u00221\u0022, \u0022rowIndex\u0022: 1, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2361, 3.1944, 3.3083, 3.1944, 3.3083, 3.3229, 3.2361, 3.3229], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002210.99\u0022, \u0022rowIndex\u0022: 1, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4194, 3.1979, 5.7667, 3.1979, 5.7667, 3.3299, 5.4194, 3.3299], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022B\u0022, \u0022rowIndex\u0022: 2, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0806, 3.4167, 1.1528, 3.4167, 1.1528, 3.5451, 1.0806, 3.5451], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u00222\u0022, \u0022rowIndex\u0022: 2, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 3.4097, 3.3222, 3.4097, 3.3222, 3.5451, 3.2431, 3.5451], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002214.67\u0022, \u0022rowIndex\u0022: 2, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4139, 3.4167, 5.775, 3.4167, 5.775, 3.5451, 5.4139, 3.5451], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022C\u0022, \u0022rowIndex\u0022: 3, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0722, 3.6285, 1.1389, 3.6285, 1.1389, 3.7431, 1.0722, 3.7431], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u00224\u0022, \u0022rowIndex\u0022: 3, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 3.6215, 3.3125, 3.6215, 3.3125, 3.7326, 3.2431, 3.7326], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002215.66\u0022, \u0022rowIndex\u0022: 3, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4167, 3.6215, 5.7708, 3.6215, 5.7708, 3.7569, 5.4167, 3.7569], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022D\u0022, \u0022rowIndex\u0022: 4, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0764, 3.8403, 1.1528, 3.8403, 1.1528, 3.9618, 1.0764, 3.9618], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u00221\u0022, \u0022rowIndex\u0022: 4, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 3.8438, 3.3125, 3.8438, 3.3125, 3.9722, 3.2431, 3.9722], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002212.00\u0022, \u0022rowIndex\u0022: 4, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4167, 3.8333, 5.7708, 3.8333, 5.7708, 3.9653, 5.4167, 3.9653], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022E\u0022, \u0022rowIndex\u0022: 5, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0833, 4.0486, 1.1458, 4.0486, 1.1458, 4.1597, 1.0833, 4.1597], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u00224\u0022, \u0022rowIndex\u0022: 5, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 4.0417, 3.3125, 4.0417, 3.3125, 4.1562, 3.2431, 4.1562], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002210.00\u0022, \u0022rowIndex\u0022: 5, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4194, 4.0417, 5.7667, 4.0417, 5.7667, 4.1701, 5.4194, 4.1701], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022F\u0022, \u0022rowIndex\u0022: 6, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0694, 4.2604, 1.1389, 4.2604, 1.1389, 4.3785, 1.0694, 4.3785], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u00226\u0022, \u0022rowIndex\u0022: 6, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 4.2535, 3.3167, 4.2535, 3.3167, 4.3819, 3.2431, 4.3819], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002212.00\u0022, \u0022rowIndex\u0022: 6, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4167, 4.2569, 5.7639, 4.2569, 5.7639, 4.3854, 5.4167, 4.3854], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022G\u0022, \u0022rowIndex\u0022: 7, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0806, 4.4653, 1.15, 4.4653, 1.15, 4.5903, 1.0806, 4.5903], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u00228\u0022, \u0022rowIndex\u0022: 7, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2389, 4.4583, 3.3083, 4.4583, 3.3083, 4.5799, 3.2389, 4.5799], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002222.00\u0022, \u0022rowIndex\u0022: 7, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4056, 4.4549, 5.775, 4.4549, 5.775, 4.5938, 5.4056, 4.5938], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}]}], \u0022clusterId\u0022: 0}, {\u0022page\u0022: 2, \u0022keyValuePairs\u0022: [], \u0022tables\u0022: [], \u0022clusterId\u0022: null}, {\u0022page\u0022: 3, \u0022keyValuePairs\u0022: [{\u0022key\u0022: {\u0022text\u0022: \u0022Invoice For:\u0022, \u0022boundingBox\u0022: [6.0028, 1.059, 7.0583, 1.059, 7.0583, 1.2292, 6.0028, 1.2292], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022Frodo Baggins 123 Hobbit Lane\u0022, \u0022boundingBox\u0022: [6.0, 1.4444, 7.0972, 1.4444, 7.0972, 1.8046, 6.0, 1.8046], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Address:\u0022, \u0022boundingBox\u0022: [0.875, 1.4757, 1.5764, 1.4757, 1.5764, 1.6285, 0.875, 1.6285], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022567 Main St.\u0022, \u0022boundingBox\u0022: [0.875, 1.8368, 1.7194, 1.8368, 1.7194, 1.9698, 0.875, 1.9698], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Redmond, WA\u0022, \u0022boundingBox\u0022: [6.0, 1.8848, 6.9514, 1.8848, 6.9514, 2.0256, 6.0, 2.0256], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022555-555-5555\u0022, \u0022boundingBox\u0022: [5.9972, 2.1076, 6.9306, 2.1076, 6.9306, 2.2465, 5.9972, 2.2465], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Redmond, WA\u0022, \u0022boundingBox\u0022: [0.875, 2.0547, 1.8264, 2.0547, 1.8264, 2.1962, 0.875, 2.1962], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022555-555-5555\u0022, \u0022boundingBox\u0022: [0.875, 2.2743, 1.8056, 2.2743, 1.8056, 2.4132, 0.875, 2.4132], \u0022elements\u0022: null}, \u0022confidence\u0022: 0.29}, {\u0022key\u0022: {\u0022text\u0022: \u0022Subtotal:\u0022, \u0022boundingBox\u0022: [5.4972, 4.8924, 6.1319, 4.8924, 6.1319, 5.0278, 5.4972, 5.0278], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u00223000.00\u0022, \u0022boundingBox\u0022: [6.1556, 4.8889, 6.7014, 4.8889, 6.7014, 5.0243, 6.1556, 5.0243], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Tax:\u0022, \u0022boundingBox\u0022: [5.5, 5.1181, 5.7917, 5.1181, 5.7917, 5.25, 5.5, 5.25], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022300.00\u0022, \u0022boundingBox\u0022: [5.8194, 5.1146, 6.2778, 5.1146, 6.2778, 5.25, 5.8194, 5.25], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Tip:\u0022, \u0022boundingBox\u0022: [5.4972, 5.3299, 5.7528, 5.3299, 5.7528, 5.4861, 5.4972, 5.4861], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u00221000.00\u0022, \u0022boundingBox\u0022: [5.7806, 5.3299, 6.3403, 5.3299, 6.3403, 5.4826, 5.7806, 5.4826], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Total:\u0022, \u0022boundingBox\u0022: [5.5, 5.5486, 5.9, 5.5486, 5.9, 5.6875, 5.5, 5.6875], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u00224300.00\u0022, \u0022boundingBox\u0022: [5.9278, 5.5521, 6.4792, 5.5521, 6.4792, 5.691, 5.9278, 5.691], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}, {\u0022key\u0022: {\u0022text\u0022: \u0022Signature:\u0022, \u0022boundingBox\u0022: [1.0, 6.6458, 1.7194, 6.6458, 1.7194, 6.8125, 1.0, 6.8125], \u0022elements\u0022: null}, \u0022value\u0022: {\u0022text\u0022: \u0022Frodo Baggins\u0022, \u0022boundingBox\u0022: [2.0722, 6.6474, 3.0528, 6.6474, 3.0528, 6.7903, 2.0722, 6.7903], \u0022elements\u0022: null}, \u0022confidence\u0022: 1.0}], \u0022tables\u0022: [{\u0022rows\u0022: 8, \u0022columns\u0022: 3, \u0022boundingBox\u0022: [1.0694, 2.9896, 5.8611, 2.9896, 5.8611, 4.5972, 1.0694, 4.5972], \u0022cells\u0022: [{\u0022text\u0022: \u0022Item\u0022, \u0022rowIndex\u0022: 0, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0764, 2.9931, 1.3167, 2.9931, 1.3167, 3.1146, 1.0764, 3.1146], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: true, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022Quantity\u0022, \u0022rowIndex\u0022: 0, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 2.9965, 3.8403, 2.9965, 3.8403, 3.1389, 3.2431, 3.1389], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: true, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022Price\u0022, \u0022rowIndex\u0022: 0, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4, 2.9896, 5.7292, 2.9896, 5.7292, 3.1181, 5.4, 3.1181], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: true, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022A\u0022, \u0022rowIndex\u0022: 1, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0764, 3.2049, 1.1528, 3.2049, 1.1528, 3.3229, 1.0764, 3.3229], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002210\u0022, \u0022rowIndex\u0022: 1, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2472, 3.1979, 3.3861, 3.1979, 3.3861, 3.3264, 3.2472, 3.3264], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022100.99\u0022, \u0022rowIndex\u0022: 1, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4194, 3.1979, 5.8611, 3.1979, 5.8611, 3.3333, 5.4194, 3.3333], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022B\u0022, \u0022rowIndex\u0022: 2, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0806, 3.4167, 1.1528, 3.4167, 1.1528, 3.5451, 1.0806, 3.5451], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002220\u0022, \u0022rowIndex\u0022: 2, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2472, 3.4132, 3.3889, 3.4132, 3.3889, 3.5417, 3.2472, 3.5417], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022140.67\u0022, \u0022rowIndex\u0022: 2, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4167, 3.4201, 5.8583, 3.4201, 5.8583, 3.5486, 5.4167, 3.5486], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022C\u0022, \u0022rowIndex\u0022: 3, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0722, 3.6285, 1.1389, 3.6285, 1.1389, 3.7431, 1.0722, 3.7431], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002240\u0022, \u0022rowIndex\u0022: 3, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2472, 3.6215, 3.3889, 3.6215, 3.3889, 3.7465, 3.2472, 3.7465], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022150.66\u0022, \u0022rowIndex\u0022: 3, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4167, 3.625, 5.85, 3.625, 5.85, 3.7569, 5.4167, 3.7569], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022D\u0022, \u0022rowIndex\u0022: 4, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0764, 3.8403, 1.1528, 3.8403, 1.1528, 3.9618, 1.0764, 3.9618], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002210\u0022, \u0022rowIndex\u0022: 4, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2389, 3.8368, 3.3861, 3.8368, 3.3861, 3.9618, 3.2389, 3.9618], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022120.00\u0022, \u0022rowIndex\u0022: 4, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4028, 3.8333, 5.8583, 3.8333, 5.8583, 3.9688, 5.4028, 3.9688], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022E\u0022, \u0022rowIndex\u0022: 5, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0833, 4.0486, 1.1458, 4.0486, 1.1458, 4.1597, 1.0833, 4.1597], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002240\u0022, \u0022rowIndex\u0022: 5, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 4.0382, 3.3889, 4.0382, 3.3889, 4.1632, 3.2431, 4.1632], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022100.00\u0022, \u0022rowIndex\u0022: 5, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4097, 4.0417, 5.8611, 4.0417, 5.8611, 4.1736, 5.4097, 4.1736], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022F\u0022, \u0022rowIndex\u0022: 6, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0694, 4.2604, 1.1389, 4.2604, 1.1389, 4.3785, 1.0694, 4.3785], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002260\u0022, \u0022rowIndex\u0022: 6, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 4.2535, 3.3917, 4.2535, 3.3917, 4.3819, 3.2431, 4.3819], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022120.00\u0022, \u0022rowIndex\u0022: 6, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4097, 4.2535, 5.8472, 4.2535, 5.8472, 4.3889, 5.4097, 4.3889], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022G\u0022, \u0022rowIndex\u0022: 7, \u0022columnIndex\u0022: 0, \u0022boundingBox\u0022: [1.0806, 4.4653, 1.15, 4.4653, 1.15, 4.5903, 1.0806, 4.5903], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u002280\u0022, \u0022rowIndex\u0022: 7, \u0022columnIndex\u0022: 1, \u0022boundingBox\u0022: [3.2431, 4.4583, 3.3917, 4.4583, 3.3917, 4.5938, 3.2431, 4.5938], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}, {\u0022text\u0022: \u0022220.00\u0022, \u0022rowIndex\u0022: 7, \u0022columnIndex\u0022: 2, \u0022boundingBox\u0022: [5.4139, 4.4618, 5.8542, 4.4618, 5.8542, 4.5972, 5.4139, 4.5972], \u0022confidence\u0022: 1.0, \u0022rowSpan\u0022: 1, \u0022columnSpan\u0022: 1, \u0022elements\u0022: null, \u0022isHeader\u0022: false, \u0022isFooter\u0022: false}]}], \u0022clusterId\u0022: 0}], \u0022documentResults\u0022: [], \u0022errors\u0022: []}}"
+    }
+  ],
+  "Variables": {}
+}

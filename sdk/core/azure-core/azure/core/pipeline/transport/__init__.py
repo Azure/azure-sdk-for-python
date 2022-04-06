@@ -87,6 +87,8 @@ try:
                         return TrioRequestsTransportResponse
                     except ImportError:
                         raise ImportError("trio package is not installed")
+                if name == '__bases__':
+                    raise AttributeError("module 'azure.core.pipeline.transport' has no attribute '__bases__'")
                 return name
 
         else:

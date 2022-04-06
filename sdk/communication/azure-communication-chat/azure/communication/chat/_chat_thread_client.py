@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
+from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy

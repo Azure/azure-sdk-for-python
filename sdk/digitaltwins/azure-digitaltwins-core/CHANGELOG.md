@@ -1,5 +1,17 @@
 # Release History
 
+## 1.2.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+
 ## 1.1.0 (2020-11-24)
 
 - The is the GA release containing the following changes:

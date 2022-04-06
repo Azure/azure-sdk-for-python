@@ -1,0 +1,1010 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5e8669d7-7fc3-11ec-83ab-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "99",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:21 GMT",
+        "elapsed-time": "38",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5e8669d7-7fc3-11ec-83ab-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "128",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5eef4e8f-7fc3-11ec-ae41-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-create",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "277",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:22 GMT",
+        "elapsed-time": "21",
+        "ETag": "W/\u00220x8D9E1E74302CE66\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-create\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5eef4e8f-7fc3-11ec-ae41-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E74302CE66\u0022",
+        "name": "synmap-create",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5f04badb-7fc3-11ec-93a3-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "281",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:22 GMT",
+        "elapsed-time": "12",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5f04badb-7fc3-11ec-93a3-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9E1E74302CE66\u0022",
+            "name": "synmap-create",
+            "format": "solr",
+            "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-create\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5f18096b-7fc3-11ec-af95-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 27 Jan 2022 22:49:22 GMT",
+        "elapsed-time": "302",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "5f18096b-7fc3-11ec-af95-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "125",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5f572ff0-7fc3-11ec-a2c1-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-del",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "274",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:22 GMT",
+        "elapsed-time": "61",
+        "ETag": "W/\u00220x8D9E1E7436F62F0\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-del\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5f572ff0-7fc3-11ec-a2c1-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E7436F62F0\u0022",
+        "name": "synmap-del",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5f71318c-7fc3-11ec-a8ab-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "278",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:22 GMT",
+        "elapsed-time": "12",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5f71318c-7fc3-11ec-a8ab-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9E1E7436F62F0\u0022",
+            "name": "synmap-del",
+            "format": "solr",
+            "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-del\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5f83e86b-7fc3-11ec-bec3-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 27 Jan 2022 22:49:22 GMT",
+        "elapsed-time": "12",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "5f83e86b-7fc3-11ec-bec3-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5f967556-7fc3-11ec-9b65-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "99",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:23 GMT",
+        "elapsed-time": "7",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5f967556-7fc3-11ec-9b65-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "129",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5fa88744-7fc3-11ec-b95f-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-delunch",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "278",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:23 GMT",
+        "elapsed-time": "38",
+        "ETag": "W/\u00220x8D9E1E743BDC582\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5fa88744-7fc3-11ec-b95f-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E743BDC582\u0022",
+        "name": "synmap-delunch",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "127",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5fbf9693-7fc3-11ec-8fe4-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-delunch",
+        "format": "solr",
+        "synonyms": "W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n \nW\na\ns\nh\n.\n \n=\n\u003E\n \nW\nA"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "276",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:23 GMT",
+        "elapsed-time": "27",
+        "ETag": "W/\u00220x8D9E1E743D51AB0\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5fbf9693-7fc3-11ec-8fe4-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E743D51AB0\u0022",
+        "name": "synmap-delunch",
+        "format": "solr",
+        "synonyms": "W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n \nW\na\ns\nh\n.\n \n=\n\u003E\n \nW\nA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "If-Match": "\u00220x8D9E1E743BDC582\u0022",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5fd71c34-7fc3-11ec-857f-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 412,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Language": "en",
+        "Content-Length": "160",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:23 GMT",
+        "elapsed-time": "8",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5fd71c34-7fc3-11ec-857f-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "",
+          "message": "The precondition given in one of the request headers evaluated to false. No change was made to the resource from this request."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-delunch\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5fe92ef9-7fc3-11ec-80b3-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 27 Jan 2022 22:49:23 GMT",
+        "elapsed-time": "13",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "5fe92ef9-7fc3-11ec-80b3-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "5ffd1454-7fc3-11ec-b78e-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "99",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:23 GMT",
+        "elapsed-time": "7",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "5ffd1454-7fc3-11ec-b78e-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "125",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "600f8c67-7fc3-11ec-84c1-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-get",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "274",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:23 GMT",
+        "elapsed-time": "22",
+        "ETag": "W/\u00220x8D9E1E74421CFDE\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "600f8c67-7fc3-11ec-84c1-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E74421CFDE\u0022",
+        "name": "synmap-get",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "6023cda8-7fc3-11ec-b02a-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "278",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:23 GMT",
+        "elapsed-time": "13",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "6023cda8-7fc3-11ec-b02a-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9E1E74421CFDE\u0022",
+            "name": "synmap-get",
+            "format": "solr",
+            "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "6036a25e-7fc3-11ec-9c4d-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "274",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:24 GMT",
+        "elapsed-time": "7",
+        "ETag": "W/\u00220x8D9E1E74421CFDE\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "6036a25e-7fc3-11ec-9c4d-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E74421CFDE\u0022",
+        "name": "synmap-get",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-get\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "60491d0b-7fc3-11ec-8aba-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 27 Jan 2022 22:49:24 GMT",
+        "elapsed-time": "12",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "60491d0b-7fc3-11ec-8aba-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "127",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "605bd6a0-7fc3-11ec-ad69-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-list1",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "276",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:24 GMT",
+        "elapsed-time": "25",
+        "ETag": "W/\u00220x8D9E1E7446F212B\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list1\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "605bd6a0-7fc3-11ec-ad69-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E7446F212B\u0022",
+        "name": "synmap-list1",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "81",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "6070f0cf-7fc3-11ec-ae66-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-list2",
+        "format": "solr",
+        "synonyms": "Washington, Wash. =\u003E WA"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "230",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:24 GMT",
+        "elapsed-time": "23",
+        "ETag": "W/\u00220x8D9E1E744839088\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list2\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "6070f0cf-7fc3-11ec-ae66-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E744839088\u0022",
+        "name": "synmap-list2",
+        "format": "solr",
+        "synonyms": "Washington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "60855f7e-7fc3-11ec-a8e5-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "416",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:24 GMT",
+        "elapsed-time": "18",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "60855f7e-7fc3-11ec-a8e5-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9E1E7446F212B\u0022",
+            "name": "synmap-list1",
+            "format": "solr",
+            "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8D9E1E744839088\u0022",
+            "name": "synmap-list2",
+            "format": "solr",
+            "synonyms": "Washington, Wash. =\u003E WA",
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list1\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "609971aa-7fc3-11ec-8ad7-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 27 Jan 2022 22:49:24 GMT",
+        "elapsed-time": "41",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "609971aa-7fc3-11ec-8ad7-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-list2\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "60b19cce-7fc3-11ec-9246-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 27 Jan 2022 22:49:24 GMT",
+        "elapsed-time": "13",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "60b19cce-7fc3-11ec-9246-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "60c5c4ee-7fc3-11ec-8abb-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "99",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:24 GMT",
+        "elapsed-time": "7",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "60c5c4ee-7fc3-11ec-8abb-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "125",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "60d7cad6-7fc3-11ec-87fc-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-cou",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "274",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:26 GMT",
+        "elapsed-time": "40",
+        "ETag": "W/\u00220x8D9E1E744F3CE0E\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "60d7cad6-7fc3-11ec-87fc-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E744F3CE0E\u0022",
+        "name": "synmap-cou",
+        "format": "solr",
+        "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "60f8d047-7fc3-11ec-8d83-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "278",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:26 GMT",
+        "elapsed-time": "13",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "60f8d047-7fc3-11ec-8d83-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9E1E744F3CE0E\u0022",
+            "name": "synmap-cou",
+            "format": "solr",
+            "synonyms": "USA, United States, United States of America\nWashington, Wash. =\u003E WA",
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "79",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "610bb66b-7fc3-11ec-baca-74c63bed1137"
+      },
+      "RequestBody": {
+        "name": "synmap-cou",
+        "format": "solr",
+        "synonyms": "Washington, Wash. =\u003E WA"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "228",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:26 GMT",
+        "elapsed-time": "21",
+        "ETag": "W/\u00220x8D9E1E745258521\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "610bb66b-7fc3-11ec-baca-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E745258521\u0022",
+        "name": "synmap-cou",
+        "format": "solr",
+        "synonyms": "Washington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "6127eb91-7fc3-11ec-bc45-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "232",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:26 GMT",
+        "elapsed-time": "12",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "6127eb91-7fc3-11ec-bc45-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9E1E745258521\u0022",
+            "name": "synmap-cou",
+            "format": "solr",
+            "synonyms": "Washington, Wash. =\u003E WA",
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "613b49eb-7fc3-11ec-8515-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "228",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Thu, 27 Jan 2022 22:49:26 GMT",
+        "elapsed-time": "7",
+        "ETag": "W/\u00220x8D9E1E745258521\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "613b49eb-7fc3-11ec-8515-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#synonymmaps/$entity",
+        "@odata.etag": "\u00220x8D9E1E745258521\u0022",
+        "name": "synmap-cou",
+        "format": "solr",
+        "synonyms": "Washington, Wash. =\u003E WA",
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/synonymmaps(\u0027synmap-cou\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "614cd23a-7fc3-11ec-93d3-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 27 Jan 2022 22:49:26 GMT",
+        "elapsed-time": "12",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "614cd23a-7fc3-11ec-93d3-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

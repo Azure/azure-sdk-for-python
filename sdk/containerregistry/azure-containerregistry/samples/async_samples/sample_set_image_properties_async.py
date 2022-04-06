@@ -35,13 +35,12 @@ class SetImagePropertiesAsync(object):
         load_dotenv(find_dotenv())
 
     async def set_image_properties(self):
-        # Create a new ContainerRegistryClient
+        # Instantiate an instance of ContainerRegistryClient
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         audience = "https://management.azure.com"
         credential = DefaultAzureCredential()
         client = ContainerRegistryClient(endpoint, credential, audience=audience)
 
-        # [START update_manifest_properties]
         # Set permissions on the v1 image's "latest" tag
         await client.update_manifest_properties(
             "library/hello-world",
@@ -49,7 +48,6 @@ class SetImagePropertiesAsync(object):
             can_write=False,
             can_delete=False
         )
-        # [END update_manifest_properties]
         # After this update, if someone were to push an update to "myacr.azurecr.io\hello-world:v1", it would fail.
         # It's worth noting that if this image also had another tag, such as "latest", and that tag did not have
         # permissions set to prevent reads or deletes, the image could still be overwritten. For example,

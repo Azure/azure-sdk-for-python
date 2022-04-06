@@ -1,5 +1,27 @@
 # Release History
 
+## 9.1.0 (2022-03-03)
+
+**Features**
+
+  - Added operation RegistriesOperations.begin_generate_credentials
+  - Model NetworkRuleSet has a new parameter virtual_network_rules
+  - Model Registry has a new parameter anonymous_pull_enabled
+  - Model RegistryUpdateParameters has a new parameter anonymous_pull_enabled
+
+## 9.0.0 (2022-01-19)
+
+**Features**
+
+  - Added operation RegistriesOperations.get_private_link_resource
+
+**Breaking changes**
+
+  - Model NetworkRuleSet no longer has parameter virtual_network_rules
+  - Model Registry no longer has parameter anonymous_pull_enabled
+  - Model RegistryUpdateParameters no longer has parameter anonymous_pull_enabled
+  - Removed operation RegistriesOperations.begin_generate_credentials
+
 ## 8.2.0 (2021-10-26)
 
 **Features**

@@ -10,8 +10,8 @@ DESCRIPTION:
 USAGE:
     python sample_publish_custom_schema_to_a_topic_async.py
     Set the environment variables with your own values before running the sample:
-    1) CUSTOM_SCHEMA_ACCESS_KEY - The access key of your eventgrid account.
-    2) CUSTOM_SCHEMA_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
+    1) EVENTGRID_CUSTOM_EVENT_TOPIC_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_CUSTOM_EVENT_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
@@ -25,8 +25,8 @@ import datetime as dt
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid.aio import EventGridPublisherClient
 
-key = os.environ["CUSTOM_SCHEMA_ACCESS_KEY"]
-endpoint = os.environ["CUSTOM_SCHEMA_TOPIC_HOSTNAME"]
+key = os.environ["EVENTGRID_CUSTOM_EVENT_TOPIC_KEY"]
+endpoint = os.environ["EVENTGRID_CUSTOM_EVENT_TOPIC_ENDPOINT"]
 
 async def publish_event():
     # authenticate client

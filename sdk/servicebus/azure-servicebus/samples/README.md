@@ -14,7 +14,7 @@ urlFragment: servicebus-samples
 > which has different APIs than the older version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples) for samples of version 0.50 of this library.
 
 These are code samples that show common scenario operations with the Azure Service Bus client library.
-Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples) of samples are provided, async samples require Python 3.6 or later.
+Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples) of samples are provided.
 
 - [send_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/send_queue_async.py)) - Examples to send messages to a service bus queue:
     - From a connection string
@@ -96,7 +96,8 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 - [topic_subscription_with_rule_operations.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/topic_subscription_with_rule_operations.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/async_samples/topic_subscription_with_rule_operations_async.py)) - Example to manage rules on topic subscriptions and to explore different forms of subscription filters.
 
 ## Prerequisites
-- Python 2.7, 3.6 or later.
+
+- Python 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Service Bus, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
@@ -121,5 +122,5 @@ pip install azure-identity
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/index.html) to learn more about
+Check out the [API reference documentation](https://docs.microsoft.com/python/api/overview/azure/servicebus-readme) to learn more about
 what you can do with the Azure Service Bus client library.
