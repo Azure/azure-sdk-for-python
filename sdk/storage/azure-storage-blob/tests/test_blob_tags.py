@@ -284,7 +284,7 @@ class StorageBlobTagsTest(StorageTestCase):
             self.container_name,
             source_blob.blob_name,
             account_key=storage_account_key,
-            permission=BlobSasPermissions(read=True),
+            permission=BlobSasPermissions(read=True, tag=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         source_url = source_blob.url + '?' + source_sas
@@ -292,9 +292,9 @@ class StorageBlobTagsTest(StorageTestCase):
 
         # Act
         with self.assertRaises(ValueError):
-            dest_blob.start_copy_from_url(source_url, copy_source_tags="COPY")
+            dest_blob.start_copy_from_url(source_url, tags="COPY")
 
-        copy = dest_blob.start_copy_from_url(source_url, copy_source_tags="COPY", requires_sync=True)
+        copy = dest_blob.start_copy_from_url(source_url, tags="COPY", requires_sync=True)
 
         # Assert
         self.assertIsNotNone(copy)
@@ -328,10 +328,7 @@ class StorageBlobTagsTest(StorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
 
         # Act
-        with self.assertRaises(ValueError):
-            dest_blob.start_copy_from_url(source_url, copy_source_tags="REPLACE")
-
-        copy = dest_blob.start_copy_from_url(source_url, copy_source_tags="REPLACE", tags=tags2, requires_sync=True)
+        copy = dest_blob.start_copy_from_url(source_url, tags=tags2, requires_sync=True)
 
         # Assert
         self.assertIsNotNone(copy)

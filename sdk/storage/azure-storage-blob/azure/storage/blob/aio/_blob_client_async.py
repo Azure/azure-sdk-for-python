@@ -1188,11 +1188,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_).
+
+            The (case-sensitive) literal "COPY" can instead be passed to copy tags from the source blob.
+            This option is only available when `incremental_copy=False` and `requires_sync=True`.
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: dict(str, str) or Literal["COPY"]
         :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
             Specifies the immutability policy of a blob, blob snapshot or blob version.
 
@@ -1290,13 +1293,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
 
             .. versionadded:: 12.10.0
-
-        :keyword str copy_source_tags:
-            Indicates if source tags should be copied or replaced with the tags specified by the `tags` parameter.
-            Possible string values are "REPLACE" or "COPY". If not specified the, default behavior is to replace.
-            This option is only available when `incremental_copy` is set to False and `requires_sync` is set to True.
-
-            .. versionadded:: 12.12.0
 
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, Union[str, ~datetime.datetime]]
