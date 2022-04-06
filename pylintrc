@@ -14,7 +14,13 @@ load-plugins=pylint_guidelines_checker
 # cyclic-import: because of https://github.com/PyCQA/pylint/issues/850
 # too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
 # Let's black deal with bad-continuation
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,bad-continuation,check-docstrings,import-outside-toplevel
+
+# Added disable raise-missing-from,super-with-arguments,inconsistent-return-statements,deprecated-module,use-a-generator,consider-using-max-builtin
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,bad-continuation,check-docstrings,import-outside-toplevel,super-with-arguments,raise-missing-from,inconsistent-return-statements,deprecated-module,use-a-generator,consider-using-max-builtin
+
+[FORMAT]
+max-line-length=120
+
 
 [FORMAT]
 max-line-length=120
