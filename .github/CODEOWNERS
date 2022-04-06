@@ -85,7 +85,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott @JericHunter
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @simorenoh @gahl-levy
