@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.cosmos import CosmosClient
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
-from azure.identity import ClientSecretCredential, DefaultAzureCredential
+from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential
 import config
+import asyncio
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequistes -
@@ -48,60 +49,68 @@ def get_test_item(num):
     return test_item
 
 
-def create_sample_resources():
+async def create_sample_resources():
     print("creating sample resources")
-    client = CosmosClient(HOST, MASTER_KEY)
-    db = client.create_database(DATABASE_ID)
-    db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
+    async with CosmosClient(HOST, MASTER_KEY) as client:
+        db = await client.create_database(DATABASE_ID)
+        await db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
 
 
-def delete_sample_resources():
+async def delete_sample_resources():
     print("deleting sample resources")
-    client = CosmosClient(HOST, MASTER_KEY)
-    client.delete_database(DATABASE_ID)
+    async with CosmosClient(HOST, MASTER_KEY) as client:
+        await client.delete_database(DATABASE_ID)
 
 
-def run_sample():
+async def run_sample():
     # Since Azure Cosmos DB data plane SDK does not cover management operations, we have to create our resources
     # with a master key authenticated client for this sample.
-    create_sample_resources()
+    await create_sample_resources()
 
     # With this done, you can use your AAD service principal id and secret to create your ClientSecretCredential.
-    aad_credentials = ClientSecretCredential(
-        tenant_id=TENANT_ID,
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET)
+    # The async ClientSecretCredentials, like the async client, also have a context manager,
+    # and as such should be used with the `async with` keywords.
+    async with ClientSecretCredential(
+            tenant_id=TENANT_ID,
+            client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET) as aad_credentials:
+
+        # Use your credentials to authenticate your client.
+        async with CosmosClient(HOST, aad_credentials) as aad_client:
+            print("Showed ClientSecretCredential, now showing DefaultAzureCredential")
 
     # You can also utilize DefaultAzureCredential rather than directly passing in the id's and secrets.
     # This is the recommended method of authentication, and uses environment variables rather than in-code strings.
-    aad_credentials = DefaultAzureCredential()
+    async with DefaultAzureCredential() as aad_credentials:
 
-    # Use your credentials to authenticate your client.
-    aad_client = CosmosClient(HOST, aad_credentials)
+        # Use your credentials to authenticate your client.
+        async with CosmosClient(HOST, aad_credentials) as aad_client:
 
-    # Do any R/W data operations with your authorized AAD client.
-    db = aad_client.get_database_client(DATABASE_ID)
-    container = db.get_container_client(CONTAINER_ID)
+            # Do any R/W data operations with your authorized AAD client.
+            db = aad_client.get_database_client(DATABASE_ID)
+            container = db.get_container_client(CONTAINER_ID)
 
-    print("Container info: " + str(container.read()))
-    container.create_item(get_test_item(0))
-    print("Point read result: " + str(container.read_item(item='Item_0', partition_key='Item_0')))
-    query_results = list(container.query_items(query='select * from c', partition_key='Item_0'))
-    assert len(query_results) == 1
-    print("Query result: " + str(query_results[0]))
-    container.delete_item(item='Item_0', partition_key='Item_0')
+            print("Container info: " + str(container.read()))
+            await container.create_item(get_test_item(879))
+            print("Point read result: " + str(container.read_item(item='Item_0', partition_key='Item_0')))
+            query_results = [item async for item in
+                             container.query_items(query='select * from c', partition_key='Item_0')]
+            assert len(query_results) == 1
+            print("Query result: " + str(query_results[0]))
+            await container.delete_item(item='Item_0', partition_key='Item_0')
 
-    # Attempting to do management operations will return a 403 Forbidden exception.
-    try:
-        aad_client.delete_database(DATABASE_ID)
-    except exceptions.CosmosHttpResponseError as e:
-        assert e.status_code == 403
-        print("403 error assertion success")
+            # Attempting to do management operations will return a 403 Forbidden exception.
+            try:
+                await aad_client.delete_database(DATABASE_ID)
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 403
+                print("403 error assertion success")
 
-    # To clean up the sample, we use a master key client again to get access to deleting containers and databases.
-    delete_sample_resources()
+    # To clean up the sample, we use a master key client again to get access to deleting containers/ databases.
+    await delete_sample_resources()
     print("end of sample")
 
 
 if __name__ == "__main__":
-    run_sample()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_sample())
