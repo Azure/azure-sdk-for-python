@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast, Awaitable
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace  # pylint: disable=unused-import
@@ -106,8 +106,10 @@ class ContainerProxy(object):
             return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
-    async def _set_none_partition_key(self):
-        return CosmosClientConnection._return_undefined_or_empty_partition_key(await self.is_system_key)
+    def _set_partition_key(self, partition_key) -> Union[str, Awaitable]:
+        if partition_key == NonePartitionKeyValue:
+            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+        return partition_key
 
 
     @distributed_trace_async
@@ -230,10 +232,7 @@ class ContainerProxy(object):
         doc_link = self._get_document_link(item)
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if partition_key == NonePartitionKeyValue:
-            request_options["partitionKey"] = self._set_none_partition_key()
-        else:
-            request_options["partitionKey"] = partition_key
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
@@ -349,10 +348,7 @@ class ContainerProxy(object):
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if partition_key is not None:
-            if partition_key == NonePartitionKeyValue:
-                feed_options["partitionKey"] = self._set_none_partition_key()
-            else:
-                feed_options["partitionKey"] = partition_key
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
@@ -403,10 +399,7 @@ class ContainerProxy(object):
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         partition_key = kwargs.pop("partitionKey", None)
         if partition_key is not None:
-            if partition_key == NonePartitionKeyValue:
-                feed_options["partitionKey"] = self._set_none_partition_key()
-            else:
-                feed_options["partitionKey"] = partition_key
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if is_start_from_beginning is not None:
             feed_options["isStartFromBeginning"] = is_start_from_beginning
         if max_item_count is not None:
@@ -541,10 +534,7 @@ class ContainerProxy(object):
         """
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if partition_key == NonePartitionKeyValue:
-            request_options["partitionKey"] = self._set_none_partition_key()
-        else:
-            request_options["partitionKey"] = partition_key
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -668,10 +658,7 @@ class ContainerProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if partition_key is not None:
-            if partition_key == NonePartitionKeyValue:
-                feed_options["partitionKey"] = self._set_none_partition_key()
-            else:
-                feed_options["partitionKey"] = partition_key
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
 
@@ -703,10 +690,7 @@ class ContainerProxy(object):
         """
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if partition_key == NonePartitionKeyValue:
-            request_options["partitionKey"] = self._set_none_partition_key()
-        else:
-            request_options["partitionKey"] = partition_key
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         result = await self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
@@ -734,10 +718,7 @@ class ContainerProxy(object):
         """
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if partition_key == NonePartitionKeyValue:
-            request_options["partitionKey"] = self._set_none_partition_key()
-        else:
-            request_options["partitionKey"] = partition_key
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         result = await self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
