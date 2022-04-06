@@ -6,7 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 from datetime import timedelta
-import unittest
+import pytest
 
 import azure.mgmt.scheduler.models
 import azure.mgmt.scheduler.patch
@@ -22,6 +22,7 @@ class TestMgmtScheduler(AzureMgmtRecordedTestCase):
             azure.mgmt.scheduler.SchedulerManagementClient
         )
 
+    @pytest.mark.skip("(BadRequest) Malformed Job Object")
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_scheduler(self, resource_group, location):
@@ -43,7 +44,7 @@ class TestMgmtScheduler(AzureMgmtRecordedTestCase):
         )
         assert result.name == jobcollection_name
 
-    @unittest.skip("(BadRequest) Malformed Job Object")
+    @pytest.mark.skip("(BadRequest) Malformed Job Object")
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_scheduler_job_custom_time(self, resource_group, location):
