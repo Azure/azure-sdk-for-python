@@ -325,5 +325,4 @@ async def main():
     await sample_delete_alert_config_async(alert_config.id)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

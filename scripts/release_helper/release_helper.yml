@@ -7,6 +7,13 @@ trigger:
     exclude:
     - '*'
 
+# avoid being triggered as part of CI check
+pr:
+  branches:
+    exclude:
+    - '*'
+
+
 schedules:
   - cron: "0,30 1-9 * * *"
     displayName: Daily release
@@ -15,12 +22,18 @@ schedules:
       - main
     always: true
 
+variables:
+  - group: Release Secrets for GitHub
+  - group: SDK Release Helper
+  - group: Azure SDK Auto Release Pipeline Secrets
+
+
 jobs:
 - job: ReleaseHelper
   displayName: ReleaseHelper Python 3.8
   timeoutInMinutes: 30
   strategy:
-    maxParallel: 3
+    maxParallel: 1
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
@@ -44,10 +57,9 @@ jobs:
         export PYTHON_BIGCAT_TOKEN=$(Jiefeng-GitToken)
         export PYTHON_ZED_TOKEN=$(Zed-GitToken)
         export PYTHON_MSYYC_TOKEN=$(Yuchao-GitToken)
-        export JAVA_WEIDONGXU_TOKEN=$(Weidong-GitToken)
-        export GO_DAPENGZHANG_TOKEN=$(Dapeng-GitToken)
-        export JS_QIAOQIAO_TOKEN=$(QiaoQiao-GitToken)
+        export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
         export LANGUAGE=$(RUN_LANGUAGE)
+
 
         # create virtual env
         python -m venv venv-sdk

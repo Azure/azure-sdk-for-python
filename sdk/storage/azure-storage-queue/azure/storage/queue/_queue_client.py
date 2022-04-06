@@ -16,7 +16,7 @@ except ImportError:
 
 import six
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._serialize import get_api_version
@@ -105,7 +105,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
-        self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
@@ -241,6 +241,28 @@ class QueueClient(StorageAccountHostsMixin):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def create_queue_if_not_exists(self, **kwargs):
+        # type: (Any) -> None
+        """Creates a new queue in the storage account.
+
+        If a queue with the same name already exists, it is not changed.
+
+        :keyword Dict(str,str) metadata:
+            A dict containing name-value pairs to associate with the queue as
+            metadata. Note that metadata names preserve the case with which they
+            were created, but are case-insensitive when set or read.
+        :keyword int timeout:
+            The server timeout, expressed in seconds.
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises: StorageErrorException
+        """
+        try:
+            return self.create_queue(**kwargs)
+        except ResourceExistsError:
+            return None
 
     @distributed_trace
     def delete_queue(self, **kwargs):
@@ -566,7 +588,9 @@ class QueueClient(StorageAccountHostsMixin):
         content and a pop_receipt value, which is required to delete the message.
         The message is not automatically deleted from the queue, but after it has
         been retrieved, it is not visible to other clients for the time interval
-        specified by the visibility_timeout parameter.
+        specified by the visibility_timeout parameter. The iterator will continuously
+        fetch messages until the queue is empty or max_messages is reached (if max_messages
+        is set).
 
         If the key-encryption-key or resolver field is set on the local service object, the messages will be
         decrypted before being returned.
@@ -596,6 +620,8 @@ class QueueClient(StorageAccountHostsMixin):
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :keyword int max_messages:
+            An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.QueueMessage]
@@ -612,6 +638,7 @@ class QueueClient(StorageAccountHostsMixin):
         messages_per_page = kwargs.pop('messages_per_page', None)
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
+        max_messages = kwargs.pop('max_messages', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -624,7 +651,11 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return ItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged)
+            if max_messages is not None and messages_per_page is not None:
+                if max_messages < messages_per_page:
+                    raise ValueError("max_messages must be greater or equal to messages_per_page")
+            return ItemPaged(command, results_per_page=messages_per_page,
+                             page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
             process_storage_error(error)
 

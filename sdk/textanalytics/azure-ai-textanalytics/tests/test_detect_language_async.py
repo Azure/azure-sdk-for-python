@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -91,11 +90,11 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_passing_only_string(self, client):
         docs = [
-            u"I should take my cat to the veterinarian.",
-            u"Este es un document escrito en Español.",
-            u"猫は幸せ",
-            u"Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
-            u""
+            "I should take my cat to the veterinarian.",
+            "Este es un document escrito en Español.",
+            "猫は幸せ",
+            "Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
+            ""
         ]
 
         response = await client.detect_language(docs)
@@ -190,7 +189,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             DetectLanguageInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above documents"
+            "You cannot mix string input with the above documents"
         ]
         with pytest.raises(TypeError):
             response = await client.detect_language(docs)
@@ -240,7 +239,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_batch_size_over_limit(self, client):
-        docs = [u"hello world"] * 1050
+        docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = await client.detect_language(docs)
 
@@ -254,9 +253,9 @@ class TestDetectLanguage(TextAnalyticsTest):
             assert country == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback)
@@ -271,9 +270,9 @@ class TestDetectLanguage(TextAnalyticsTest):
             assert country == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = await client.detect_language(docs, country_hint="", raw_response_hook=callback)
@@ -546,7 +545,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     async def test_batch_size_over_limit_error(self, client):
 
         # Batch size over limit
-        docs = [u"hello world"] * 1001
+        docs = ["hello world"] * 1001
         try:
             response = await client.detect_language(docs)
         except HttpResponseError as err:

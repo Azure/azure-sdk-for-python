@@ -25,6 +25,8 @@ class PhoneNumbersClientConfiguration(Configuration):
 
     :param endpoint: The communication resource, for example https://resourcename.communication.azure.com.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -33,12 +35,14 @@ class PhoneNumbersClientConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(PhoneNumbersClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-01-11-preview2")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(PhoneNumbersClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-03-07"
+        self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'phonenumbersclient/{}'.format(VERSION))
         self._configure(**kwargs)
 

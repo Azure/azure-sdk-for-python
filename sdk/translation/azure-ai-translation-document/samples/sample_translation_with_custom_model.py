@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -50,25 +49,24 @@ def sample_translation_with_custom_model():
     )
     result = poller.result()
 
-    print("Operation status: {}".format(result.status))
-    print("Operation created on: {}".format(result.created_on))
-    print("Operation last updated on: {}".format(result.last_updated_on))
-    print("Total number of translations on documents: {}".format(result.documents_total_count))
+    print(f"Operation status: {poller.details.status}")
+    print(f"Operation created on: {poller.details.created_on}")
+    print(f"Operation last updated on: {poller.details.last_updated_on}")
+    print(f"Total number of translations on documents: {poller.details.documents_total_count}")
 
     print("\nOf total documents...")
-    print("{} failed".format(result.documents_failed_count))
-    print("{} succeeded".format(result.documents_succeeded_count))
+    print(f"{poller.details.documents_failed_count} failed")
+    print(f"{poller.details.documents_succeeded_count} succeeded")
 
-    doc_results = client.list_document_statuses(result.id)
-    for document in doc_results:
-        print("Document ID: {}".format(document.id))
-        print("Document status: {}".format(document.status))
+    for document in result:
+        print(f"Document ID: {document.id}")
+        print(f"Document status: {document.status}")
         if document.status == "Succeeded":
-            print("Source document location: {}".format(document.source_document_url))
-            print("Translated document location: {}".format(document.translated_document_url))
-            print("Translated to language: {}\n".format(document.translate_to))
+            print(f"Source document location: {document.source_document_url}")
+            print(f"Translated document location: {document.translated_document_url}")
+            print(f"Translated to language: {document.translated_to}\n")
         else:
-            print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+            print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
 
 if __name__ == '__main__':

@@ -14,20 +14,21 @@
 #   proximity_placement_groups: 6/6
 #   resource_skus: 1/1
 
+import os
 import datetime as dt
 import unittest
 
+import pytest
 import azure.mgmt.compute
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtComputeTest(AzureMgmtTestCase):
+class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtComputeTest, self).setUp()
-        self.re_replacer.register_pattern_pair('"value":".{88}"', '"value":"FakeValue"')
+    def setup_method(self, method):
+        # self.re_replacer.register_pattern_pair('"value":".{88}"', '"value":"FakeValue"')
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
@@ -102,14 +103,16 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 container_name="foo",
                 blob_name="default"
             )
-            self.scrubber.register_name_pair(container_client.url, "fakeuri")
+            # self.scrubber.register_name_pair(container_client.url, "fakeuri")
             return container_client.url
             # container_client.create_container()
             # return container_client.url + "?" + sas_token
         else:
             return "fakeuri"
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute(self, resource_group):
 
         # List operations (TODO: need swagger file)
@@ -121,7 +124,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Lists all available Resource SKUs[get]
         result = self.mgmt_client.resource_skus.list()
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_availability_sets(self, resource_group):
         AVAILABILITY_SET_NAME = self.get_resource_name("availabilitysets")
 
@@ -155,7 +160,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Delete availability sets (TODO: need a swagger file)
         resout = self.mgmt_client.availability_sets.delete(resource_group.name, AVAILABILITY_SET_NAME)
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_proximity_placement_groups(self, resource_group):
         PROXIMITY_PLACEMENT_GROUP_NAME = self.get_resource_name("proximiityplacementgroups")
         
@@ -185,7 +192,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Delete a proximity placement group.[delete]
         result = self.mgmt_client.proximity_placement_groups.delete(resource_group.name, PROXIMITY_PLACEMENT_GROUP_NAME)
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_log_analytics(self, resource_group):
         RESOURCE_GROUP = resource_group.name
         STORAGE_ACCOUNT_NAME = self.get_resource_name("accountxyz")

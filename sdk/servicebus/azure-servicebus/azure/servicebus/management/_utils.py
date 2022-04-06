@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any
+from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any, Optional
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
@@ -335,7 +335,7 @@ def _validate_topic_subscription_and_rule_types(
 def _normalize_entity_path_to_full_path_if_needed(
     entity_path, fully_qualified_namespace
 ):
-    # type: (str, str) -> str
+    # type: (Optional[str], str) -> Optional[str]
     if not entity_path:
         return entity_path
     parsed = urlparse.urlparse(entity_path)

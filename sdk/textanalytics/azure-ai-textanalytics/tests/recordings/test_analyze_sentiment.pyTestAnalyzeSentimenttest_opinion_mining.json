@@ -9,20 +9,28 @@
         "Connection": "keep-alive",
         "Content-Length": "132",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b11a798a-5d10-11ec-8856-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "8f2180f2-a4a0-11ec-a734-b831b58100e8"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022It has a sleek premium aluminum design that makes it beautiful to look at.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "0",
+            "text": "It has a sleek premium aluminum design that makes it beautiful to look at.",
+            "language": "en"
+          }
+        ]
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "bab6db00-9136-4ca9-bb70-0e7abd904136",
+        "apim-request-id": "d5725979-804c-4b3f-aab8-0d3d36e26769",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 14 Dec 2021 19:04:40 GMT",
+        "Date": "Tue, 15 Mar 2022 20:42:59 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "130"
+        "x-envoy-upstream-service-time": "21"
       },
       "ResponseBody": {
         "documents": [
@@ -30,16 +38,16 @@
             "id": "0",
             "sentiment": "positive",
             "confidenceScores": {
-              "positive": 0.98,
-              "neutral": 0.02,
+              "positive": 0.99,
+              "neutral": 0.01,
               "negative": 0.0
             },
             "sentences": [
               {
                 "sentiment": "positive",
                 "confidenceScores": {
-                  "positive": 0.98,
-                  "neutral": 0.02,
+                  "positive": 0.99,
+                  "neutral": 0.01,
                   "negative": 0.0
                 },
                 "offset": 0,
@@ -85,9 +93,9 @@
                       "positive": 1.0,
                       "negative": 0.0
                     },
-                    "offset": 15,
-                    "length": 7,
-                    "text": "premium",
+                    "offset": 53,
+                    "length": 9,
+                    "text": "beautiful",
                     "isNegated": false
                   }
                 ]
@@ -97,7 +105,7 @@
           }
         ],
         "errors": [],
-        "modelVersion": "2020-04-01"
+        "modelVersion": "2021-10-01"
       }
     }
   ],

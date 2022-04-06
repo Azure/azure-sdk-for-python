@@ -4,6 +4,8 @@
 # ------------------------------------
 import time
 
+import pytest
+
 from _shared.test_case import KeyVaultTestCase
 from _test_case import AdministrationTestCase, backup_client_setup, get_decorator
 

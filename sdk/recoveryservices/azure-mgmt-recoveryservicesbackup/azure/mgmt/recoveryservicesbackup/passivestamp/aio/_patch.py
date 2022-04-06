@@ -24,8 +24,38 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Any, TYPE_CHECKING
+import importlib
+from .._patch import DUPLICATE_PARAMS_POLICY
+from ._recovery_services_backup_passive_client import RecoveryServicesBackupPassiveClient as RecoveryServicesBackupPassiveClientGenerated
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+
+class RecoveryServicesBackupPassiveClient(RecoveryServicesBackupPassiveClientGenerated):
+    __doc__ = RecoveryServicesBackupPassiveClientGenerated.__doc__
+    def __init__(
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        per_call_policies = kwargs.pop("per_call_policies", [])
+        try:
+            per_call_policies.append(DUPLICATE_PARAMS_POLICY)
+        except AttributeError:
+            per_call_policies = [per_call_policies, DUPLICATE_PARAMS_POLICY]
+        super().__init__(
+            credential=credential,
+            subscription_id=subscription_id,
+            base_url=base_url,
+            per_call_policies=per_call_policies,
+            **kwargs
+        )
 
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
 def patch_sdk():
-    pass
+    curr_package = importlib.import_module("azure.mgmt.recoveryservicesbackup.passivestamp.aio")
+    curr_package.RecoveryServicesBackupPassiveClient = RecoveryServicesBackupPassiveClient

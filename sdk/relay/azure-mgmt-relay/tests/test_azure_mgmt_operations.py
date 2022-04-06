@@ -7,18 +7,18 @@
 # --------------------------------------------------------------------------
 import unittest
 import azure.mgmt.relay
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
-class MgmtRelayTest(AzureMgmtTestCase):
+class TestMgmtRelay(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtRelayTest, self).setUp()
+    def setup_method(self, method):
 
         self.relay_client = self.create_mgmt_client(
             azure.mgmt.relay.RelayAPI
         )
 
+    @recorded_by_proxy
     def test_operations_list(self):
         # Check the namespace availability
         result = self.relay_client.operations.list()

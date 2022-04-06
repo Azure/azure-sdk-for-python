@@ -11,8 +11,7 @@ urlFragment: storage-blobchangefeed-samples
 # Azure Storage Blob client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Storage Blob ChangeFeed client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations,
-and require Python 3.5 or later.
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations.
 
 Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
 
@@ -23,7 +22,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * list events starting from a continuation token
 
 ## Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
+* Python 3.6 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to run these samples.
 

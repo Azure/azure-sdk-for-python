@@ -304,7 +304,7 @@ class ScriptsProxy(object):
     @distributed_trace_async
     async def replace_trigger(self, trigger, body, **kwargs):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
-        """Replace a specified tigger in the container.
+        """Replace a specified trigger in the container.
 
         If the trigger does not already exist in the container, an exception is raised.
 

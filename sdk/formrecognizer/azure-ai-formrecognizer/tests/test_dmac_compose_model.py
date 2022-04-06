@@ -7,8 +7,9 @@
 import pytest
 import uuid
 import functools
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModel
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -16,22 +17,29 @@ from preparers import FormRecognizerPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-
 class TestTraining(FormRecognizerTest):
+
+    def teardown(self):
+        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_compose_model(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy
+    def test_compose_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         model_id_1 = str(uuid.uuid4())
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, model_id=model_id_1, description="model1")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_1, description="model1")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, model_id=model_id_2, description="model2")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
         model_2 = poller.result()
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model")
+        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
 
         composed_model = poller.result()
         if self.is_live:
@@ -40,6 +48,7 @@ class TestTraining(FormRecognizerTest):
         assert composed_model.model_id
         assert composed_model.description == "my composed model"
         assert composed_model.created_on
+        assert composed_model.tags == {"testkey": "testvalue"}
         for name, doc_type in composed_model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():
@@ -49,11 +58,16 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url):
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="model1")
+    @recorded_by_proxy
+    def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="model1")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="model2")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="model2")
         model_2 = poller.result()
 
         raw_response = []
@@ -79,12 +93,13 @@ class TestTraining(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_compose_continuation_token(self, client, formrecognizer_storage_container_sas_url):
-
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+    def test_compose_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller.result()
 
         initial_poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
@@ -98,11 +113,16 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url):
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+    @recorded_by_proxy
+    def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller.result()
 
         poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])

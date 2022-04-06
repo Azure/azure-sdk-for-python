@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -72,9 +71,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_passing_only_string(self, client):
         docs = [
-            u"Microsoft was founded by Bill Gates and Paul Allen",
-            u"Microsoft fue fundado por Bill Gates y Paul Allen",
-            u""
+            "Microsoft was founded by Bill Gates and Paul Allen",
+            "Microsoft fue fundado por Bill Gates y Paul Allen",
+            ""
         ]
 
         response = await client.extract_key_phrases(docs)
@@ -165,7 +164,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above inputs"
+            "You cannot mix string input with the above inputs"
         ]
         with pytest.raises(TypeError):
             response = await client.extract_key_phrases(docs)
@@ -215,7 +214,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_batch_size_over_limit(self, client):
-        docs = [u"hello world"] * 1050
+        docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = await client.extract_key_phrases(docs)
 
@@ -229,9 +228,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert language == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = await client.extract_key_phrases(docs, language="fr", raw_response_hook=callback)
@@ -246,9 +245,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert language == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = await client.extract_key_phrases(docs, language="", raw_response_hook=callback)
@@ -514,7 +513,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_batch_size_over_limit_error(self, client):
         # Batch size over limit
-        docs = [u"hello world"] * 1001
+        docs = ["hello world"] * 1001
         try:
             response = await client.extract_key_phrases(docs)
         except HttpResponseError as err:

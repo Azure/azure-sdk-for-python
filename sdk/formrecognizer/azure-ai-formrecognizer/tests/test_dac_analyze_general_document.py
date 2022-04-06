@@ -4,7 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
+from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
@@ -18,8 +20,12 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeDocument(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_document_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -54,6 +60,7 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_document_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
@@ -88,6 +95,7 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_document_multipage_transform(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -120,23 +128,26 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_document_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
-            myfile = fd.read()
-        poller = client.begin_analyze_document("prebuilt-document", myfile)
+            my_file = fd.read()
+        poller = client.begin_analyze_document("prebuilt-document", my_file)
         document = poller.result()
         assert len(document.tables) == 3
-        assert document.tables[0].row_count == 29
+        assert document.tables[0].row_count == 30
         assert document.tables[0].column_count == 5
         assert document.tables[1].row_count == 6
-        assert document.tables[1].column_count == 4
+        assert document.tables[1].column_count == 5
         assert document.tables[2].row_count == 23
         assert document.tables[2].column_count == 5
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
     def test_document_specify_pages(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()

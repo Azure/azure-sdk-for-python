@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ContainerServiceOrchestratorTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceOrchestratorTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The orchestrator to use to manage container service cluster resources. Valid values are
     Kubernetes, Swarm, DCOS, DockerCE and Custom.
     """
@@ -37,7 +22,7 @@ class ContainerServiceOrchestratorTypes(with_metaclass(_CaseInsensitiveEnumMeta,
     DOCKER_CE = "DockerCE"
     CUSTOM = "Custom"
 
-class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceStorageProfileTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Storage profile specifies what kind of storage used. Choose from StorageAccount and
     ManagedDisks. Leave it empty, we will choose for you based on the orchestrator choice.
     """
@@ -45,7 +30,7 @@ class ContainerServiceStorageProfileTypes(with_metaclass(_CaseInsensitiveEnumMet
     STORAGE_ACCOUNT = "StorageAccount"
     MANAGED_DISKS = "ManagedDisks"
 
-class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContainerServiceVMSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Size of agent VMs.
     """
 
@@ -224,7 +209,7 @@ class ContainerServiceVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     STANDARD_NV24 = "Standard_NV24"
     STANDARD_NV6 = "Standard_NV6"
 
-class Count(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+class Count(with_metaclass(CaseInsensitiveEnumMeta, int, Enum)):
     """Number of masters (VMs) in the container service cluster. Allowed values are 1, 3, and 5. The
     default value is 1.
     """
@@ -233,7 +218,7 @@ class Count(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     THREE = 3
     FIVE = 5
 
-class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
     """
 

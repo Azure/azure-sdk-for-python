@@ -12,9 +12,10 @@ from datetime import datetime, timedelta
 import os
 import sys
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
 
 from azure.core import MatchConditions
+from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import (
     ResourceNotFoundError,
@@ -31,7 +32,8 @@ from azure.data.tables import (
     TableSasPermissions,
     RequestTooLargeError,
     TransactionOperation,
-    TableErrorCode
+    TableErrorCode,
+    TableClient
 )
 
 from _shared.testcase import TableTestCase
@@ -46,7 +48,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -80,7 +85,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_single_update(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -118,7 +126,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_update(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -158,7 +169,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -200,7 +214,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_update_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -231,7 +248,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_update_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -262,7 +282,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_single_op_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -309,7 +332,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_insert_replace(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -342,7 +368,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -375,7 +404,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -410,7 +442,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_inserts(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -448,7 +483,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_all_operations_together(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -521,7 +559,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -563,7 +604,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -594,7 +638,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_different_partition_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -622,7 +669,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_too_many_ops(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -648,7 +698,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_different_partition_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -668,7 +721,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_new_non_existent_table(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -689,7 +745,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         invalid_key = tables_primary_storage_account_key.named_key.key[0:-6] + "==" # cut off a bit from the end to invalidate
         tables_primary_storage_account_key = AzureNamedKeyCredential(tables_storage_account_name, invalid_key)
@@ -709,7 +768,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -728,7 +790,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_delete_batch_with_bad_kwarg(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -759,7 +824,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.live_test_only
     @tables_decorator
     def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -811,7 +879,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.live_test_only  # Request bodies are very large
     @tables_decorator
     def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -838,7 +909,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_with_mode(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -885,7 +959,10 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_batch_with_specialchar_partitionkey(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -942,3 +1019,282 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
 
         finally:
             self._tear_down()
+
+
+class RequestCorrect(Exception):
+    pass
+
+
+class CheckBatchURL(HTTPPolicy):
+    def __init__(self, account_url, table_name):
+        if not account_url.startswith('http'):
+            account_url = 'https://' + account_url
+        self.url = account_url
+        self.table = table_name
+        super().__init__()
+
+    def send(self, request):
+        assert request.http_request.url == self.url + '/$batch'
+        payload = request.http_request.body
+        for line in payload.split(b'\r\n\r\n'):
+            if line.startswith(b"PATCH") or line.startswith(b"POST"):
+                assert line[line.index(b" ") + 1:].decode().startswith(self.url + "/" + self.table)
+                raise RequestCorrect()
+        raise AssertionError(
+            "No matching PATCH/POST requests found in batch:\n{}".format(payload.decode()))
+
+
+class TestBatchUnitTests(TableTestCase):
+    tables_storage_account_name = "fake_storage_account"
+    tables_sas_credential = "fake_sas_credential"
+    tables_primary_storage_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA=="
+    credential = AzureSasCredential(tables_sas_credential)
+    entity1 = {
+        "PartitionKey": "pk001",
+        "RowKey": "rk001"
+    }
+    entity2 = {
+        "PartitionKey": "pk001",
+        "RowKey": "rk002"
+    }
+    batch = [
+        ("upsert", entity1),
+        ("upsert", entity2)
+    ]
+
+    def test_batch_url_http(self):
+        url = self.account_url(self.tables_storage_account_name, "table").replace('https', 'http')
+        table = TableClient(
+            url,
+            "batchtablename",
+            credential=self.credential,
+            per_call_policies=[CheckBatchURL(url, "batchtablename")])
+
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_https(self):
+        table = TableClient(
+            self.account_url(self.tables_storage_account_name, "table"),
+            "batchtablename",
+            credential=self.credential,
+            per_call_policies=[CheckBatchURL(self.account_url(self.tables_storage_account_name, "table"), "batchtablename")])
+
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_china(self):
+        url = self.account_url(self.tables_storage_account_name, "table").replace('core.windows.net', 'core.chinacloudapi.cn')
+        table = TableClient(
+            url,
+            credential=self.credential,
+            table_name='foo',
+            per_call_policies=[CheckBatchURL(url, "foo")])
+
+        # Assert
+        assert table.account_name == self.tables_storage_account_name
+        assert table.url.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
+        assert table.scheme == 'https'
+
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_with_connection_string_key(self):
+        conn_string = 'AccountName={};AccountKey={};'.format(self.tables_storage_account_name, self.tables_primary_storage_account_key)
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name='foo',
+            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name), "foo")]
+        )
+        assert table.scheme == 'https'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_with_connection_string_sas(self):
+        token = AzureSasCredential(self.generate_sas_token())
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_storage_account_name, token.signature)
+
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name='foo',
+            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name), "foo")]
+        )
+
+        assert table.account_name == self.tables_storage_account_name
+        assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.core.windows.net')
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_with_connection_string_cosmos(self):
+        conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
+            self.tables_storage_account_name, self.tables_primary_storage_account_key)
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name='foo',
+            per_call_policies=[CheckBatchURL("https://{}.table.cosmos.azure.com:443".format(self.tables_storage_account_name), "foo")]
+        )
+        assert table.account_name == self.tables_storage_account_name
+        assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
+        assert table.scheme == 'https'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_with_connection_string_endpoint_protocol(self):
+        # Arrange
+        conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
+            self.tables_storage_account_name, self.tables_primary_storage_account_key)
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name="foo",
+            per_call_policies=[CheckBatchURL("http://{}.table.core.chinacloudapi.cn".format(self.tables_storage_account_name), "foo")]
+        )
+        assert table.account_name == self.tables_storage_account_name
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_with_connection_string_custom_domain(self):
+        conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com;'.format(
+            self.tables_storage_account_name, self.tables_primary_storage_account_key)
+
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name="foo",
+            per_call_policies=[CheckBatchURL("https://www.mydomain.com", "foo")]
+        )
+        assert table.url.startswith('https://www.mydomain.com')
+        assert table.scheme == 'https'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+        conn_string = 'AccountName={};AccountKey={};TableEndpoint=http://www.mydomain.com;'.format(
+            self.tables_storage_account_name, self.tables_primary_storage_account_key)
+
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name="foo",
+            per_call_policies=[CheckBatchURL("http://www.mydomain.com", "foo")]
+        )
+        assert table.url.startswith('http://www.mydomain.com')
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_with_custom_account_endpoint_path(self):
+        token = AzureSasCredential(self.generate_sas_token())
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + token.signature
+        conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
+            self.tables_storage_account_name, self.tables_primary_storage_account_key, custom_account_url)
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name="foo",
+            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path", "foo")]
+        )
+        assert table.account_name == self.tables_storage_account_name
+        assert table._primary_hostname == 'local-machine:11002/custom/account/path'
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+        table = TableClient(
+            endpoint=custom_account_url,
+            table_name="foo",
+            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path", "foo")]
+        )
+        assert table.account_name == "custom"
+        assert table.table_name == "foo"
+        assert table.credential == None
+        assert table.url.startswith('http://local-machine:11002/custom/account/path')
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+        table = TableClient.from_table_url(
+            "http://local-machine:11002/custom/account/path/foo" + token.signature,
+            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path", "foo")]
+        )
+        assert table.account_name == "custom"
+        assert table.table_name == "foo"
+        assert table.credential == None
+        assert table.url.startswith('http://local-machine:11002/custom/account/path')
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_with_complete_table_url(self):
+        table_url = self.account_url(self.tables_storage_account_name, "table") + "/foo"
+        table = TableClient(
+            table_url,
+            table_name='bar',
+            credential=self.credential,
+            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net/foo".format(self.tables_storage_account_name), "bar")]
+        )
+
+        assert table.scheme == 'https'
+        assert table.table_name == 'bar'
+        assert table.account_name == self.tables_storage_account_name
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_with_complete_url(self):
+        # Arrange
+        table_url = "https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name)
+        table = TableClient(
+            endpoint=table_url,
+            table_name='bar',
+            credential=self.credential,
+            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name), "bar")]
+        )
+
+        # Assert
+        assert table.scheme == 'https'
+        assert table.table_name == 'bar'
+        assert table.account_name == self.tables_storage_account_name
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+    def test_batch_url_for_cosmos_emulator(self):
+        emulator_credential = AzureNamedKeyCredential('localhost', self.tables_primary_storage_account_key)
+        emulator_connstr = "DefaultEndpointsProtocol=http;AccountName=localhost;AccountKey={};TableEndpoint=http://localhost:8902/;".format(
+            self.tables_primary_storage_account_key
+        )
+
+        table = TableClient.from_connection_string(
+            emulator_connstr,
+            'tablename',
+            per_call_policies=[CheckBatchURL("http://localhost:8902", "tablename")]
+        )
+        assert table.url == "http://localhost:8902"
+        assert table.account_name == 'localhost'
+        assert table.table_name == 'tablename'
+        assert table._cosmos_endpoint
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+        table = TableClient(
+            "http://localhost:8902/",
+            "tablename",
+            credential=emulator_credential,
+            per_call_policies=[CheckBatchURL("http://localhost:8902", "tablename")]
+        )
+        assert table.url == "http://localhost:8902"
+        assert table.account_name == 'localhost'
+        assert table.table_name == 'tablename'
+        assert table._cosmos_endpoint
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
+        table = TableClient.from_table_url(
+            "http://localhost:8902/Tables('tablename')",
+            credential=emulator_credential,
+            per_call_policies=[CheckBatchURL("http://localhost:8902", "tablename")]
+        )
+        assert table.url == "http://localhost:8902"
+        assert table.account_name == 'localhost'
+        assert table.table_name == 'tablename'
+        assert table._cosmos_endpoint
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)

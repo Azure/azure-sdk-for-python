@@ -4,11 +4,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_bodiless_matcher, set_custom_default_matcher
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -17,26 +20,37 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-
 class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
-    async def test_analyze_document_none_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    async def test_analyze_document_none_model_id(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 await client.begin_analyze_document(model=None, document=b"xx")
 
     @FormRecognizerPreparer()
-    async def test_analyze_document_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    async def test_analyze_document_empty_model_id(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             async with client:
                 await client.begin_analyze_document(model="", document=b"xx")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_custom_document_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         da_client = client.get_document_analysis_client()
 
         responses = []
@@ -48,16 +62,16 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
-            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url)
+            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model = await build_polling.result()
 
             async with da_client:
                 poller = await da_client.begin_analyze_document(
                     model.model_id,
-                    myfile,
+                    my_file,
                     cls=callback
                 )
                 document = await poller.result()
@@ -82,7 +96,12 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_custom_document_multipage_transform(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         da_client = client.get_document_analysis_client()
 
         responses = []
@@ -94,16 +113,16 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
-            build_poller = await client.begin_build_model(formrecognizer_multipage_storage_container_sas_url)
+            build_poller = await client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
             model = await build_poller.result()
 
             async with da_client:
                 poller = await da_client.begin_analyze_document(
                     model.model_id,
-                    myfile,
+                    my_file,
                     cls=callback
                 )
                 document = await poller.result()
@@ -128,10 +147,15 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_custom_document_selection_mark(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         da_client = client.get_document_analysis_client()
         with open(self.selection_form_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         responses = []
 
@@ -142,12 +166,12 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            poller = await client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
+            poller = await client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
             model = await poller.result()
 
             poller = await da_client.begin_analyze_document(
                 model.model_id,
-                myfile,
+                my_file,
                 cls=callback
             )
             document = await poller.result()
@@ -172,38 +196,46 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_pages_kwarg_specified(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
-            build_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
+            build_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model = await build_poller.result()
 
             async with da_client:
-                poller = await da_client.begin_analyze_document(model.model_id, myfile, pages="1")
+                poller = await da_client.begin_analyze_document(model.model_id, my_file, pages="1")
                 assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
                 result = await poller.result()
                 assert result
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_custom_document_signature_field(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
-            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url)
+            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model = await build_polling.result()
 
             async with da_client:
                 poller = await da_client.begin_analyze_document(
                     model.model_id,
-                    myfile,
+                    my_file,
                 )
                 result = await poller.result()
 

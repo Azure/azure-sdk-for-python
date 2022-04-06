@@ -17,15 +17,17 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class CommunicationNetworkTraversalClientConfiguration(Configuration):
+class CommunicationNetworkTraversalClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for CommunicationNetworkTraversalClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
+    :param endpoint: The communication resource, for example
+     https://my-resource.communication.azure.com.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2021-10-08-preview". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -36,7 +38,7 @@ class CommunicationNetworkTraversalClientConfiguration(Configuration):
     ):
         # type: (...) -> None
         super(CommunicationNetworkTraversalClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2021-10-08-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

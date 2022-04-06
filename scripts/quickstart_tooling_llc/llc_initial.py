@@ -77,7 +77,8 @@ def build_package(**kwargs) -> None:
 
     # generate code with autorest and swagger readme
     _LOGGER.info("generate SDK code with autorest")
-    check_call(f'autorest --version=latest --python --use=@autorest/python@latest --python-mode=update {swagger_readme}', shell=True)
+    check_call(f'autorest --version=3.7.2 --python --use=@autorest/python@5.12.0 --use=@autorest/modelerfour@4.19.2'
+               f'  --python-mode=update {swagger_readme}', shell=True)
 
     # generate necessary file(setup.py, CHANGELOG.md, etc)
     work_path = Path(output_folder)

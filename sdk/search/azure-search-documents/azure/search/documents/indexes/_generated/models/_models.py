@@ -320,6 +320,209 @@ class AzureActiveDirectoryApplicationCredentials(msrest.serialization.Model):
         self.application_secret = kwargs.get('application_secret', None)
 
 
+class SearchIndexerSkill(msrest.serialization.Model):
+    """Base type for skills.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureMachineLearningSkill, WebApiSkill, CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SentimentSkill, SplitSkill, TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3, ConditionalSkill, DocumentExtractionSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :vartype odata_type: str
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :vartype context: str
+    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Skills.Custom.AmlSkill': 'AzureMachineLearningSkill', '#Microsoft.Skills.Custom.WebApiSkill': 'WebApiSkill', '#Microsoft.Skills.Text.CustomEntityLookupSkill': 'CustomEntityLookupSkill', '#Microsoft.Skills.Text.EntityRecognitionSkill': 'EntityRecognitionSkill', '#Microsoft.Skills.Text.KeyPhraseExtractionSkill': 'KeyPhraseExtractionSkill', '#Microsoft.Skills.Text.LanguageDetectionSkill': 'LanguageDetectionSkill', '#Microsoft.Skills.Text.MergeSkill': 'MergeSkill', '#Microsoft.Skills.Text.PIIDetectionSkill': 'PIIDetectionSkill', '#Microsoft.Skills.Text.SentimentSkill': 'SentimentSkill', '#Microsoft.Skills.Text.SplitSkill': 'SplitSkill', '#Microsoft.Skills.Text.TranslationSkill': 'TextTranslationSkill', '#Microsoft.Skills.Text.V3.EntityLinkingSkill': 'EntityLinkingSkill', '#Microsoft.Skills.Text.V3.EntityRecognitionSkill': 'EntityRecognitionSkillV3', '#Microsoft.Skills.Text.V3.SentimentSkill': 'SentimentSkillV3', '#Microsoft.Skills.Util.ConditionalSkill': 'ConditionalSkill', '#Microsoft.Skills.Util.DocumentExtractionSkill': 'DocumentExtractionSkill', '#Microsoft.Skills.Util.ShaperSkill': 'ShaperSkill', '#Microsoft.Skills.Vision.ImageAnalysisSkill': 'ImageAnalysisSkill', '#Microsoft.Skills.Vision.OcrSkill': 'OcrSkill'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
+         with no name defined will be given a default name of its 1-based index in the skills array,
+         prefixed with the character '#'.
+        :paramtype name: str
+        :keyword description: The description of the skill which describes the inputs, outputs, and
+         usage of the skill.
+        :paramtype description: str
+        :keyword context: Represents the level at which operations take place, such as the document
+         root or document content (for example, /document or /document/content). The default is
+         /document.
+        :paramtype context: str
+        :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+         the output of an upstream skill.
+        :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+        :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+         value that can be consumed as an input by another skill.
+        :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+        """
+        super(SearchIndexerSkill, self).__init__(**kwargs)
+        self.odata_type = None  # type: Optional[str]
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.context = kwargs.get('context', None)
+        self.inputs = kwargs['inputs']
+        self.outputs = kwargs['outputs']
+
+
+class AzureMachineLearningSkill(SearchIndexerSkill):
+    """The AML skill allows you to extend AI enrichment with a custom Azure Machine Learning (AML) model. Once an AML model is trained and deployed, an AML skill integrates it into AI enrichment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :vartype odata_type: str
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :vartype context: str
+    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :ivar scoring_uri: (Required for no authentication or key authentication) The scoring URI of
+     the AML service to which the JSON payload will be sent. Only the https URI scheme is allowed.
+    :vartype scoring_uri: str
+    :ivar authentication_key: (Required for key authentication) The key for the AML service.
+    :vartype authentication_key: str
+    :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
+     of the AML service. It should be in the format
+     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
+    :vartype resource_id: str
+    :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
+     API call.
+    :vartype timeout: ~datetime.timedelta
+    :ivar region: (Optional for token authentication). The region the AML service is deployed in.
+    :vartype region: str
+    :ivar degree_of_parallelism: (Optional) When specified, indicates the number of calls the
+     indexer will make in parallel to the endpoint you have provided. You can decrease this value if
+     your endpoint is failing under too high of a request load, or raise it if your endpoint is able
+     to accept more requests and you would like an increase in the performance of the indexer. If
+     not set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10
+     and a minimum of 1.
+    :vartype degree_of_parallelism: int
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'scoring_uri': {'key': 'uri', 'type': 'str'},
+        'authentication_key': {'key': 'key', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'timeout': {'key': 'timeout', 'type': 'duration'},
+        'region': {'key': 'region', 'type': 'str'},
+        'degree_of_parallelism': {'key': 'degreeOfParallelism', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
+         with no name defined will be given a default name of its 1-based index in the skills array,
+         prefixed with the character '#'.
+        :paramtype name: str
+        :keyword description: The description of the skill which describes the inputs, outputs, and
+         usage of the skill.
+        :paramtype description: str
+        :keyword context: Represents the level at which operations take place, such as the document
+         root or document content (for example, /document or /document/content). The default is
+         /document.
+        :paramtype context: str
+        :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
+         the output of an upstream skill.
+        :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
+        :keyword outputs: Required. The output of a skill is either a field in a search index, or a
+         value that can be consumed as an input by another skill.
+        :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+        :keyword scoring_uri: (Required for no authentication or key authentication) The scoring URI of
+         the AML service to which the JSON payload will be sent. Only the https URI scheme is allowed.
+        :paramtype scoring_uri: str
+        :keyword authentication_key: (Required for key authentication) The key for the AML service.
+        :paramtype authentication_key: str
+        :keyword resource_id: (Required for token authentication). The Azure Resource Manager resource
+         ID of the AML service. It should be in the format
+         subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
+        :paramtype resource_id: str
+        :keyword timeout: (Optional) When specified, indicates the timeout for the http client making
+         the API call.
+        :paramtype timeout: ~datetime.timedelta
+        :keyword region: (Optional for token authentication). The region the AML service is deployed
+         in.
+        :paramtype region: str
+        :keyword degree_of_parallelism: (Optional) When specified, indicates the number of calls the
+         indexer will make in parallel to the endpoint you have provided. You can decrease this value if
+         your endpoint is failing under too high of a request load, or raise it if your endpoint is able
+         to accept more requests and you would like an increase in the performance of the indexer. If
+         not set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10
+         and a minimum of 1.
+        :paramtype degree_of_parallelism: int
+        """
+        super(AzureMachineLearningSkill, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Skills.Custom.AmlSkill'  # type: str
+        self.scoring_uri = kwargs.get('scoring_uri', None)
+        self.authentication_key = kwargs.get('authentication_key', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.region = kwargs.get('region', None)
+        self.degree_of_parallelism = kwargs.get('degree_of_parallelism', None)
+
+
 class Similarity(msrest.serialization.Model):
     """Base type for similarity algorithms. Similarity algorithms are used to calculate scores that tie queries to documents. The higher the score, the more relevant the document is to that specific query. Those scores are used to rank the search results.
 
@@ -765,86 +968,6 @@ class CommonGramTokenFilter(TokenFilter):
         self.common_words = kwargs['common_words']
         self.ignore_case = kwargs.get('ignore_case', False)
         self.use_query_mode = kwargs.get('use_query_mode', False)
-
-
-class SearchIndexerSkill(msrest.serialization.Model):
-    """Base type for skills.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WebApiSkill, CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SentimentSkill, SplitSkill, TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3, ConditionalSkill, DocumentExtractionSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar odata_type: Required. Identifies the concrete type of the skill.Constant filled by
-     server.
-    :vartype odata_type: str
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
-     with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character '#'.
-    :vartype name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :vartype description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :vartype context: str
-    :ivar inputs: Required. Inputs of the skills could be a column in the source data set, or the
-     output of an upstream skill.
-    :vartype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-    :ivar outputs: Required. The output of a skill is either a field in a search index, or a value
-     that can be consumed as an input by another skill.
-    :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    """
-
-    _validation = {
-        'odata_type': {'required': True},
-        'inputs': {'required': True},
-        'outputs': {'required': True},
-    }
-
-    _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'context': {'key': 'context', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
-        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
-    }
-
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Skills.Custom.WebApiSkill': 'WebApiSkill', '#Microsoft.Skills.Text.CustomEntityLookupSkill': 'CustomEntityLookupSkill', '#Microsoft.Skills.Text.EntityRecognitionSkill': 'EntityRecognitionSkill', '#Microsoft.Skills.Text.KeyPhraseExtractionSkill': 'KeyPhraseExtractionSkill', '#Microsoft.Skills.Text.LanguageDetectionSkill': 'LanguageDetectionSkill', '#Microsoft.Skills.Text.MergeSkill': 'MergeSkill', '#Microsoft.Skills.Text.PIIDetectionSkill': 'PIIDetectionSkill', '#Microsoft.Skills.Text.SentimentSkill': 'SentimentSkill', '#Microsoft.Skills.Text.SplitSkill': 'SplitSkill', '#Microsoft.Skills.Text.TranslationSkill': 'TextTranslationSkill', '#Microsoft.Skills.Text.V3.EntityLinkingSkill': 'EntityLinkingSkill', '#Microsoft.Skills.Text.V3.EntityRecognitionSkill': 'EntityRecognitionSkillV3', '#Microsoft.Skills.Text.V3.SentimentSkill': 'SentimentSkillV3', '#Microsoft.Skills.Util.ConditionalSkill': 'ConditionalSkill', '#Microsoft.Skills.Util.DocumentExtractionSkill': 'DocumentExtractionSkill', '#Microsoft.Skills.Util.ShaperSkill': 'ShaperSkill', '#Microsoft.Skills.Vision.ImageAnalysisSkill': 'ImageAnalysisSkill', '#Microsoft.Skills.Vision.OcrSkill': 'OcrSkill'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
-         with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character '#'.
-        :paramtype name: str
-        :keyword description: The description of the skill which describes the inputs, outputs, and
-         usage of the skill.
-        :paramtype description: str
-        :keyword context: Represents the level at which operations take place, such as the document
-         root or document content (for example, /document or /document/content). The default is
-         /document.
-        :paramtype context: str
-        :keyword inputs: Required. Inputs of the skills could be a column in the source data set, or
-         the output of an upstream skill.
-        :paramtype inputs: list[~azure.search.documents.indexes.models.InputFieldMappingEntry]
-        :keyword outputs: Required. The output of a skill is either a field in a search index, or a
-         value that can be consumed as an input by another skill.
-        :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-        """
-        super(SearchIndexerSkill, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.context = kwargs.get('context', None)
-        self.inputs = kwargs['inputs']
-        self.outputs = kwargs['outputs']
 
 
 class ConditionalSkill(SearchIndexerSkill):
@@ -1385,9 +1508,13 @@ class CustomEntityLookupSkill(SearchIndexerSkill):
 class LexicalNormalizer(msrest.serialization.Model):
     """Base type for normalizers.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CustomNormalizer.
+
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. Identifies the concrete type of the normalizer.
+    :ivar odata_type: Required. Identifies the concrete type of the normalizer.Constant filled by
+     server.
     :vartype odata_type: str
     :ivar name: Required. The name of the normalizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -1406,13 +1533,15 @@ class LexicalNormalizer(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Azure.Search.CustomNormalizer': 'CustomNormalizer'}
+    }
+
     def __init__(
         self,
         **kwargs
     ):
         """
-        :keyword odata_type: Required. Identifies the concrete type of the normalizer.
-        :paramtype odata_type: str
         :keyword name: Required. The name of the normalizer. It must only contain letters, digits,
          spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
          limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
@@ -1420,7 +1549,7 @@ class LexicalNormalizer(msrest.serialization.Model):
         :paramtype name: str
         """
         super(LexicalNormalizer, self).__init__(**kwargs)
-        self.odata_type = kwargs['odata_type']
+        self.odata_type = None  # type: Optional[str]
         self.name = kwargs['name']
 
 
@@ -1429,7 +1558,8 @@ class CustomNormalizer(LexicalNormalizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. Identifies the concrete type of the normalizer.
+    :ivar odata_type: Required. Identifies the concrete type of the normalizer.Constant filled by
+     server.
     :vartype odata_type: str
     :ivar name: Required. The name of the normalizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -1463,8 +1593,6 @@ class CustomNormalizer(LexicalNormalizer):
         **kwargs
     ):
         """
-        :keyword odata_type: Required. Identifies the concrete type of the normalizer.
-        :paramtype odata_type: str
         :keyword name: Required. The name of the normalizer. It must only contain letters, digits,
          spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
          limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
@@ -1480,6 +1608,7 @@ class CustomNormalizer(LexicalNormalizer):
         :paramtype char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
         """
         super(CustomNormalizer, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.CustomNormalizer'  # type: str
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
 
@@ -3793,6 +3922,35 @@ class LimitTokenFilter(TokenFilter):
         self.consume_all_tokens = kwargs.get('consume_all_tokens', False)
 
 
+class ListAliasesResult(msrest.serialization.Model):
+    """Response from a List Aliases request. If successful, it includes the associated index mappings for all aliases.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar aliases: Required. The aliases in the Search service.
+    :vartype aliases: list[~azure.search.documents.indexes.models.SearchAlias]
+    """
+
+    _validation = {
+        'aliases': {'required': True, 'readonly': True},
+    }
+
+    _attribute_map = {
+        'aliases': {'key': 'value', 'type': '[SearchAlias]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ListAliasesResult, self).__init__(**kwargs)
+        self.aliases = None
+
+
 class ListDataSourcesResult(msrest.serialization.Model):
     """Response from a List Datasources request. If successful, it includes the full definitions of all datasources.
 
@@ -4668,7 +4826,7 @@ class OcrSkill(SearchIndexerSkill):
     :ivar default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "zh-Hans", "zh-Hant", "cs", "da", "nl", "en", "fi", "fr", "de", "el",
      "hu", "it", "ja", "ko", "nb", "pl", "pt", "ru", "es", "sv", "tr", "ar", "ro", "sr-Cyrl",
-     "sr-Latn", "sk".
+     "sr-Latn", "sk", "unk".
     :vartype default_language_code: str or ~azure.search.documents.indexes.models.OcrSkillLanguage
     :ivar should_detect_orientation: A value indicating to turn orientation detection on or not.
      Default is false.
@@ -4722,7 +4880,7 @@ class OcrSkill(SearchIndexerSkill):
         :keyword default_language_code: A value indicating which language code to use. Default is en.
          Possible values include: "zh-Hans", "zh-Hant", "cs", "da", "nl", "en", "fi", "fr", "de", "el",
          "hu", "it", "ja", "ko", "nb", "pl", "pt", "ru", "es", "sv", "tr", "ar", "ro", "sr-Cyrl",
-         "sr-Latn", "sk".
+         "sr-Latn", "sk", "unk".
         :paramtype default_language_code: str or
          ~azure.search.documents.indexes.models.OcrSkillLanguage
         :keyword should_detect_orientation: A value indicating to turn orientation detection on or not.
@@ -5482,6 +5640,50 @@ class ScoringProfile(msrest.serialization.Model):
         self.text_weights = kwargs.get('text_weights', None)
         self.functions = kwargs.get('functions', None)
         self.function_aggregation = kwargs.get('function_aggregation', None)
+
+
+class SearchAlias(msrest.serialization.Model):
+    """Represents an index alias, which describes a mapping from the alias name to an index. The alias name can be used in place of the index name for supported operations.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. The name of the alias.
+    :vartype name: str
+    :ivar indexes: Required. The name of the index this alias maps to. Only one index name may be
+     specified.
+    :vartype indexes: list[str]
+    :ivar e_tag: The ETag of the alias.
+    :vartype e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'indexes': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'indexes': {'key': 'indexes', 'type': '[str]'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword name: Required. The name of the alias.
+        :paramtype name: str
+        :keyword indexes: Required. The name of the index this alias maps to. Only one index name may
+         be specified.
+        :paramtype indexes: list[str]
+        :keyword e_tag: The ETag of the alias.
+        :paramtype e_tag: str
+        """
+        super(SearchAlias, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.indexes = kwargs['indexes']
+        self.e_tag = kwargs.get('e_tag', None)
 
 
 class SearchError(msrest.serialization.Model):
@@ -7368,6 +7570,8 @@ class ServiceCounters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar alias_counter: Total number of aliases.
+    :vartype alias_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :ivar document_counter: Required. Total number of documents across all indexes in the service.
     :vartype document_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :ivar index_counter: Required. Total number of indexes.
@@ -7394,6 +7598,7 @@ class ServiceCounters(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'alias_counter': {'key': 'aliasesCount', 'type': 'ResourceCounter'},
         'document_counter': {'key': 'documentCount', 'type': 'ResourceCounter'},
         'index_counter': {'key': 'indexesCount', 'type': 'ResourceCounter'},
         'indexer_counter': {'key': 'indexersCount', 'type': 'ResourceCounter'},
@@ -7408,6 +7613,8 @@ class ServiceCounters(msrest.serialization.Model):
         **kwargs
     ):
         """
+        :keyword alias_counter: Total number of aliases.
+        :paramtype alias_counter: ~azure.search.documents.indexes.models.ResourceCounter
         :keyword document_counter: Required. Total number of documents across all indexes in the
          service.
         :paramtype document_counter: ~azure.search.documents.indexes.models.ResourceCounter
@@ -7425,6 +7632,7 @@ class ServiceCounters(msrest.serialization.Model):
         :paramtype skillset_counter: ~azure.search.documents.indexes.models.ResourceCounter
         """
         super(ServiceCounters, self).__init__(**kwargs)
+        self.alias_counter = kwargs.get('alias_counter', None)
         self.document_counter = kwargs['document_counter']
         self.index_counter = kwargs['index_counter']
         self.indexer_counter = kwargs['indexer_counter']

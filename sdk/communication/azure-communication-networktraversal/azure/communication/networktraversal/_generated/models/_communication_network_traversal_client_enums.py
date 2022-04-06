@@ -12,7 +12,10 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class RouteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The routing methodology to where the ICE server will be located from the client.
+    """The routing methodology to where the ICE server will be located from the client. "any" will
+    have higher reliability while "nearest" will have lower latency. It is recommended to default
+    to use the "any" routing method unless there are specific scenarios which minimizing latency is
+    critical.
     """
 
     ANY = "any"

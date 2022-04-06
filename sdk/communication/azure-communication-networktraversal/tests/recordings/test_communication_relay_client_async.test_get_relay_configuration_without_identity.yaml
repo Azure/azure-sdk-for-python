@@ -1,40 +1,41 @@
 interactions:
 - request:
-    body: '{}'
+    body: '{"ttl": 172800}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '2'
+      - '15'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0b1 Python/3.7.4 (Windows-10-10.0.22494-SP0)
+      - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Tue, 16 Nov 2021 23:06:42 GMT
+      - Wed, 23 Mar 2022 18:20:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-10-08-preview
+    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
   response:
     body:
-      string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:world.relay.skype.com:3478"],
+      string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANvMy40gB19zQSlEkRVh1/NNKh1DiLyF8/XLlsvAAAAAMARCsgNlqhd5IsZldo6P6NifIJL2J21avFzCaenmOaE4FLkbOnpI=",
-        "credential": "3kkYslXJ8YfdkE2umnl6QSrEGXk="}], "expiresOn": "2021-11-16T23:06:42.230697+00:00"}'
+        "BQAANhHetjIB2EB1eHWCKiwibpcg5XIgj5K2ueZjGjAAAAAMARCsgNlqhd5IsZldo6P6NifIgH5x+psweLg9zXALExnFbvcofgI=",
+        "credential": "uZAcoVxrEfxU5UgVVJjvCtYVPVk="}], "expiresOn": "2022-03-25T18:20:56.2606548+00:00"}'
     headers:
-      api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview
-      content-length: '559'
+      api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
+        2022-03-01-preview
+      content-length: '546'
       content-type: application/json; charset=utf-8
-      date: Tue, 16 Nov 2021 23:06:41 GMT
-      ms-cv: bLTqTS2HfEGkVtY9HQA9+w.0
+      date: Wed, 23 Mar 2022 18:20:55 GMT
+      ms-cv: wfPeqMcHFk22Z5/5GUvT7A.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 21ms
+      x-processing-time: 22ms
     status:
       code: 200
       message: OK
-    url: https://smstestapp.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-10-08-preview
+    url: https://smstestapp.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
 version: 1

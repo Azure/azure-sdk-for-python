@@ -20,7 +20,7 @@ USAGE:
     python sample_build_model.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
 """
@@ -30,7 +30,7 @@ import os
 
 def sample_build_model():
     # [START build_model]
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient
+    from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
     from azure.core.credentials import AzureKeyCredential
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -39,7 +39,7 @@ def sample_build_model():
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
     poller = document_model_admin_client.begin_build_model(
-        container_sas_url, description="my model description"
+        container_sas_url, DocumentBuildMode.TEMPLATE, description="my model description"
     )
     model = poller.result()
 
@@ -48,7 +48,7 @@ def sample_build_model():
     print("Model created on: {}\n".format(model.created_on))
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
-        print("\nDoc Type: '{}' which has the following fields:".format(name))
+        print("\nDoc Type: '{}' built with '{}' mode which has the following fields:".format(name, doc_type.build_mode))
         for field_name, field in doc_type.field_schema.items():
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]
