@@ -90,7 +90,7 @@ class ChangeLog:
             for added_parameter in new_parameters - old_parameters:
                 self.breaking_changes.append(_ADD_OPERATION_PARAM.format(operation_name, function_name,added_parameter))
             return
-        raise NotImplementedError('')
+        raise NotImplementedError("Other situations. Be err for now.")
 
     def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
@@ -192,7 +192,7 @@ def get_report_from_parameter(input_parameter):
             with open(result[0], "r") as fd:
                 return json.load(fd)
 
-        raise NotImplementedError("Other situations. Be err for now")
+        raise NotImplementedError("Multi-api changelog not yet implemented")
 
     with open(input_parameter, "r") as fd:
         return json.load(fd)
