@@ -9,8 +9,9 @@
 from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core import PipelineClient
 
 from . import models
 from ._configuration import CommunicationIdentityClientConfiguration
@@ -31,7 +32,7 @@ class CommunicationIdentityClient(object):
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2022-06-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """

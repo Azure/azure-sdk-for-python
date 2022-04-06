@@ -184,6 +184,8 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
     async def get_token_for_teams_user(
             self,
             aad_token,  # type: str
+            app_id, # type: str
+            user_id, # type: str
             **kwargs
         ) -> AccessToken:
         # type: (...) -> AccessToken
@@ -191,12 +193,18 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
 
         :param aad_token: an AAD access token of a Teams User
         :type aad_token: str
+        :param app_id: a Client ID of an Azure AD application to be verified against the appId claim in the Azure AD access token.
+        :type app_id: str
+        :param user_id: an Object ID of an Azure AD user (Teams User) to be verified against the OID claim in the Azure AD access token.
+        :type user_id: str
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
         api_version = kwargs.pop("api_version", self._api_version)
         return await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
             token=aad_token,
+            app_id=app_id,
+            user_id=user_id,
             api_version=api_version,
             cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
