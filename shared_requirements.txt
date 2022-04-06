@@ -315,3 +315,5 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-signalr msrest>=0.6.21
 #override azure-mgmt-signalr azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-storage azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-azureadexternalidentities msrest>=0.6.21
+#override azure-mgmt-azureadexternalidentities azure-mgmt-core>=1.3.0,<2.0.0
