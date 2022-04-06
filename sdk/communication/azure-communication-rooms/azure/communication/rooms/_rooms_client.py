@@ -5,7 +5,8 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
-from azure.communication.rooms._models import CommunicationRoom
+from pyparsing import null_debug_action
+from azure.communication.rooms._models import CommunicationRoom, RoomParticipant
 
 from ._generated._azure_communication_rooms_service import AzureCommunicationRoomsService
 from ._generated.models import (
@@ -83,7 +84,7 @@ class RoomsClient(object):
         self,
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
-        participants=None, # type: Optional[Dict[str, Any]]
+        participants=None, # type: Optional[List[RoomParticipant]]
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
@@ -96,15 +97,19 @@ class RoomsClient(object):
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type valid_until: ~datetime
         :keyword participants: (Optional) Collection of identities invited to the room.
-        :paramtype participants: dict[str, any]
+        :paramtype participants: list[RoomParticipant]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        if participants is None:
+            participantDict = {}
+        else:
+           participantDict = {participant.identifier: participant for participant in participants}
         create_room_request = CreateRoomRequest(
             valid_from=valid_from,
             valid_until=valid_until,
-            participants=participants
+            participants=participantDict
         )
         create_room_response = self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
@@ -183,7 +188,7 @@ class RoomsClient(object):
     def add_participants(
         self,
         room_id, # type: str
-        participants, # type: Dict[str, Any]
+        participants, # type: List[RoomParticipant]
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
@@ -196,8 +201,9 @@ class RoomsClient(object):
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
+        participantsDict = {participant.identifier: participant for participant in participants}
         update_room_request = UpdateRoomRequest(
-            participants=participants
+            participants=participantsDict
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, update_room_request=update_room_request, **kwargs)
@@ -207,7 +213,7 @@ class RoomsClient(object):
     def remove_participants(
         self,
         room_id, # type: str
-        participants, # type: Dict[str, Any]
+        participants, # type: List[RoomParticipant]
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
@@ -220,11 +226,12 @@ class RoomsClient(object):
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
+        participantDict = {}
         # set participants object to None
-        for identity in participants.keys():
-            participants[identity] = None
+        for participant in participants:
+            participantDict[participant.identifier] = None
         update_room_request = UpdateRoomRequest(
-            participants=participants
+            participants=participantDict
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, update_room_request=update_room_request, **kwargs)

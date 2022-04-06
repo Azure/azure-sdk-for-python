@@ -37,22 +37,21 @@ client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
 
 - `valid_from`: A datetime object from which room will start existing
 - `valid_until`: A datetime object after which room meeting would end
-- `paritcipants`: A dict with MRI's of invitees to the room
-All the above attributes are optional. The service provides default values of valid_unti and
-valid_from if the are missing.
-RoomRequest can be used in following method invokations:
+- `participants`: A list of RoomParticipant containing MRI's of invitees to the room
+All the above attributes are optional. The service provides default values of valid_until and
+valid_from if they are missing.
 
 `Create Room`
 ```python
-from azure.communication.rooms import RoomsClient, RoomRequest
+from azure.communication.rooms import RoomsClient
 from azure.core.exceptions import HttpResponseError
 
-client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
+client = RoomsClient.from_connection_string(conn_str='<connection_str>')
 try:
     response = client.create_room(
         valid_from="start-datetime",
         valid_until="meeting-end-datetime"
-        participants={"first-participant":{}, "second-participant":{}}
+        participants=["first-participant", "second-participant"]
     )
 )
 except HttpResponseError as e:
@@ -61,10 +60,10 @@ except HttpResponseError as e:
 ```
 `Update Room`
 ```python
-from azure.communication.rooms import RoomsClient, RoomRequest
+from azure.communication.rooms import RoomsClient
 from azure.core.exceptions import HttpResponseError
 
-client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
+client = RoomsClient.from_connection_string(conn_str='<connection_str>')
 try:
     response = client.update_room(
         room_id="id of the room to be updated",
@@ -78,7 +77,7 @@ except HttpResponseError as e:
 
 `Delete a Room`
 ```python
-from azure.communication.rooms import RoomsClient, RoomRequest
+from azure.communication.rooms import RoomsClient
 from azure.core.exceptions import HttpResponseError
 
 client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
@@ -92,14 +91,14 @@ except HttpResponseError as e:
 
 `Add participants to Room`
 ```python
-from azure.communication.rooms import RoomsClient, RoomRequest
+from azure.communication.rooms import RoomsClient
 from azure.core.exceptions import HttpResponseError
 
 client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
 try:
     response = client.add_participants(
         room_id="id of the room to be updated",
-        participants="new participants as a dict"
+        participants="new participants as a list"
     )
 except HttpResponseError as e:
     print('service responds error: {}'.format(e.response.json()))

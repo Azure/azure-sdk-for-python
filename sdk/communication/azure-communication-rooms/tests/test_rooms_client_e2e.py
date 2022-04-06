@@ -53,9 +53,9 @@ class RoomsClientTest(CommunicationTestCase):
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str)
         self.users = {
-            "john" : self.identity_client.create_user(),
-            "fred" : self.identity_client.create_user(),
-            "chris" : self.identity_client.create_user()
+            "john" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"]),
+            "fred" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"]),
+            "chris" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"])
         }
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str, 
@@ -99,10 +99,10 @@ class RoomsClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_create_room_only_participants(self):
         # add john and chris to room
-        participants = {
-            self.users["john"].properties["id"] : {},
-            self.users["chris"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
         
         response = self.rooms_client.create_room(participants=participants)
         # delete created room
@@ -143,12 +143,11 @@ class RoomsClientTest(CommunicationTestCase):
 
     @pytest.mark.live_test_only
     def test_create_room_none_participant(self):
-        participants = {}
         # add john and chris to room
-        participants = {
-            self.users["john"].properties["id"] : {},
-            self.users["chris"].properties["id"] : None
-        }
+        participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
         
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.create_room(participants=participants)
@@ -158,10 +157,10 @@ class RoomsClientTest(CommunicationTestCase):
     
     def test_create_room_incorretMri(self):
         # room attributes
-        participants = {
-            "wrong_mir" : {},
-            self.users["john"].properties["id"] : {}
-        }
+        participants = [
+            RoomParticipant(identifier="wrong_mir"),
+            self.users["john"]
+        ]
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.create_room(participants=participants)
@@ -174,9 +173,9 @@ class RoomsClientTest(CommunicationTestCase):
         # room attributes
         valid_from =  datetime.now() + relativedelta(days=+3)
         valid_until = valid_from + relativedelta(months=+4)
-        participants = {
-            self.users["john"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"]
+        ]
         
         response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
         
@@ -192,9 +191,9 @@ class RoomsClientTest(CommunicationTestCase):
         valid_from =  datetime.now() + relativedelta(days=+3)
         valid_until = valid_from + relativedelta(months=+2)
         # add john to room
-        participants = {
-            self.users["john"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"]
+        ]
         
         # create a room first
         create_response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
@@ -327,9 +326,9 @@ class RoomsClientTest(CommunicationTestCase):
         create_response = self.rooms_client.create_room()
         
         # update room attributes
-        participants = {
-            self.users["john"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"]
+        ]
         update_response = self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
         
         # delete created room
@@ -344,23 +343,23 @@ class RoomsClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_update_room_remove_participant(self):
         # add john and chris to room
-        create_participants = {
-            self.users["john"].properties["id"] : {},
-            self.users["chris"].properties["id"] : {}
-        }
+        create_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # participants to be removed                
-        removed_participants = {
-            self.users["john"].properties["id"] : {},
-        }
+        removed_participants = [
+            self.users["john"],
+        ]
         
         update_response = self.rooms_client.remove_participants(room_id=create_response.id, participants=removed_participants)
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
-        participants = {
-            self.users["chris"].properties["id"] : {}
-        }
+        participants = [
+            self.users["chris"]
+        ]
         
         self.verify_successful_room_response(
             response=update_response,
@@ -373,10 +372,10 @@ class RoomsClientTest(CommunicationTestCase):
         # room with no attributes
         create_response = self.rooms_client.create_room()
 
-        participants = {
-            "wrong_mir" : {},
-            self.users["john"].properties["id"] : {}
-        }
+        participants = [
+            RoomParticipant(identifier="wrong_mir"),
+            self.users["john"]
+        ]
         
         # update room attributes
         with pytest.raises(HttpResponseError) as ex:
@@ -388,10 +387,10 @@ class RoomsClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_update_room_clear_participant_dict(self):
         # add john and chris to the room
-        participants = {
-            self.users["john"].properties["id"] : {},
-            self.users["chris"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
         create_response = self.rooms_client.create_room(participants=participants)
         
         # clear participants

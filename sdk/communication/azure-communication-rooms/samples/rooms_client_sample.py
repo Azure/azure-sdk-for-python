@@ -55,9 +55,9 @@ class RoomsSample(object):
         
         valid_from =  datetime.now()
         valid_until = valid_from + relativedelta(months=+4)
-        participants = {}
+        participants = []
 
-        participants["<PARTICIPANT_MRI"] = RoomParticipant()
+        participants.append(RoomParticipant("<PARTICIPANT_MRI>"))
 
         try:
             create_room_response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
@@ -93,8 +93,8 @@ class RoomsSample(object):
             print(ex)
 
     def add_participants(self, room_id):
-        participants = {}
-        participants["<PARTICIPANT_MRI"] = RoomParticipant()
+        participants = [RoomParticipant("<PARTICIPANT_MRI>")]
+
         try:
             update_room_response = self.rooms_client.add_participants(room_id=room_id, participants=participants)
             self.printRoom(response=update_room_response)

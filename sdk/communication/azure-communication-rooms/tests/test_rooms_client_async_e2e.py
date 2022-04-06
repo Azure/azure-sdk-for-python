@@ -7,13 +7,14 @@
 import asyncio
 from turtle import update
 import pytest
-from datetime import datetime, timezone, tzinfo
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms.aio import RoomsClient
+from azure.communication.rooms._models import RoomParticipant
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import (
     BodyReplacerProcessor,
@@ -46,9 +47,9 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str)
         self.users = {
-            "john" : self.identity_client.create_user(),
-            "fred" : self.identity_client.create_user(),
-            "chris" : self.identity_client.create_user()
+            "john" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"]),
+            "fred" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"]),
+            "chris" : RoomParticipant(identifier=self.identity_client.create_user().properties["id"])
         }
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str, 
@@ -99,10 +100,10 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_only_participants_async(self):
         # add john and chris to room
-        participants = {
-            self.users["john"].properties["id"] : {},
-            self.users["chris"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
         
         async with self.rooms_client:
             response = await self.rooms_client.create_room(participants=participants)
@@ -154,10 +155,10 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         # room attributes
         
         # add john and chris to room
-        participants = {
-            self.users["john"].properties["id"] : {},
-            self.users["chris"].properties["id"] : None
-        }
+        participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
         
         with pytest.raises(HttpResponseError) as ex:
             async with self.rooms_client:
@@ -169,10 +170,10 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_incorretMri_async(self):
         # room attributes
-        participants = {
-            "wrong_mir" : {},
-            self.users["john"].properties["id"] : {}
-        }
+        participants = [
+            RoomParticipant(identifier="wrong_mri"),
+            self.users["john"]
+        ]
         
         with pytest.raises(HttpResponseError) as ex:
             async with self.rooms_client:
@@ -188,9 +189,9 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         valid_from =  datetime.now() + relativedelta(days=+3)
         valid_until = valid_from + relativedelta(months=+4)
         # add john to room
-        participants = {
-            self.users["john"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"]
+        ]
         
         async with self.rooms_client:
             response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
@@ -208,9 +209,9 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         valid_until = valid_from + relativedelta(months=+2)
         
         # add john to room
-        participants = {
-            self.users["john"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"]
+        ]
         async with self.rooms_client:
             # create a room first
             create_response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
@@ -361,9 +362,9 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             create_response = await self.rooms_client.create_room()
             
             # update room attributes
-            participants = {
-                self.users["john"].properties["id"] : {}
-            }
+            participants = [
+                self.users["john"]
+            ]
             update_response = await self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
@@ -378,13 +379,13 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_remove_participant_async(self):
         # add john and chris to room
-        create_participants = {
-            self.users["john"].properties["id"] : {},
-            self.users["chris"].properties["id"] : {}
-        }
-        remove_participants = {
-            self.users["john"].properties["id"] : {}
-        }
+        create_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
+        remove_participants = [
+            self.users["john"]
+        ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
 
@@ -392,7 +393,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
             participants = {
-                self.users["chris"].properties["id"] : {}
+                self.users["chris"] : {}
             }
             self.verify_successful_room_response(
                 response=update_response,
@@ -407,10 +408,10 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room()
 
-            participants = {
-                "wrong_mir" : {},
-                self.users["john"].properties["id"] : {}
-            }
+            participants = [
+                RoomParticipant(identifier="wrong_mri"),
+                self.users["john"]
+            ]
             
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
@@ -423,10 +424,10 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_clear_participant_dict_async(self):
         # add john and chris to the room
-        participants = {
-            self.users["john"].properties["id"] : {},
-            self.users["chris"].properties["id"] : {}
-        }
+        participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=participants)
             

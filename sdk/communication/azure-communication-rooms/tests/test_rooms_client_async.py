@@ -9,6 +9,7 @@ import datetime
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms.aio import RoomsClient
+from azure.communication.rooms import RoomParticipant
 from unittest_helpers import mock_response
 
 from unittest.mock import Mock, patch
@@ -27,9 +28,11 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
         valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
         raised = False
-        participants = {}
-        participants["8:acs:abc"] = {}
-        
+        participantsList = [RoomParticipant(identifier="8:acs:abcd")]
+        participants = {
+            "8:acs:abcd": {}
+        }
+
 
         async def mock_send(*_, **__):
             return mock_response(status_code=201, json_payload={
@@ -46,7 +49,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
 
         response = None
         try:
-            response = await rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants) 
+            response = await rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participantsList) 
         except:
             raised = True
             raise

@@ -141,23 +141,23 @@ class CommunicationRoom(msrest.serialization.Model):
 class RoomParticipant(msrest.serialization.Model):
     """The participant to a meeting room.
 
-    :ivar role: Participant role in the room.
-    :vartype role: str
+    :ivar identifier: Participant MRI.
+    :vartype id: str
     """
 
     _attribute_map = {
-        'role': {'key': 'role', 'type': 'str'}
+        'identifier': {'key': 'identifier', 'type': 'str'}
     }
 
     def __init__(
         self,
         *,
-        role="", # type: Optional[str]
+        identifier, # type: Required[str]
         **kwargs
     ):
         """
-        :keyword role: Participant role in the room
-        :paramtype role: str
+        :keyword identifier: Participant MRI
+        :paramtype identifier: str
         """
         super(RoomParticipant, self).__init__(**kwargs)
-        self.role = role
+        self.identifier = identifier

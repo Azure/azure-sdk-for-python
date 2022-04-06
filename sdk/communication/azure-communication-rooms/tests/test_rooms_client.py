@@ -26,9 +26,10 @@ class TestRoomsClient(unittest.TestCase):
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
         valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
         raised = False
-        participants = {}
-        participants["8:acs:abcd"] = {}
-        
+        participantsList = [RoomParticipant(identifier="8:acs:abcd")]
+        participants = {
+            "8:acs:abcd": {}
+        }
 
         def mock_send(*_, **__):
             return mock_response(status_code=201, json_payload={
@@ -44,7 +45,7 @@ class TestRoomsClient(unittest.TestCase):
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
         response = None
         try:
-            response = rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
+            response = rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participantsList)
         except:
             raised = True
             raise
