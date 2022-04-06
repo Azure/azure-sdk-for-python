@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 from datetime import timedelta
+import time
 import unittest
 
 import azure.mgmt.scheduler.models
@@ -36,6 +37,7 @@ class TestMgmtScheduler(AzureMgmtRecordedTestCase):
                 )
             )
         )
+        time.sleep(2)
 
         result = self.scheduler_client.job_collections.get(
             resource_group.name, 
