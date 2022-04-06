@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.3.0b4 (Unreleased)
+### 4.3.0b4 (2022-04-07)
 
 #### Features Added
 - Added support for AAD authentication for the async client.
