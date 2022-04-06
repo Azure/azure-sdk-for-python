@@ -3,8 +3,11 @@
 ### 4.3.0b4 (Unreleased)
 
 #### Features Added
-- Added support for AAD authentication for the async client
-- Added support for AAD authentication for the sync client
+- Added support for AAD authentication for the async client.
+- Added support for AAD authentication for the sync client.
+
+#### Other Changes
+- Changed `_set_partition_key` return typehint in async client.
 
 ### 4.3.0b3 (2022-03-10)
 
