@@ -53,8 +53,6 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
-    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
-
     SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
 
     SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
@@ -344,3 +342,5 @@ class SystemEventNames(str, Enum):
     ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
 
     ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
