@@ -3,11 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+# pylint:skip-file (#ref https://github.com/PyCQA/pylint/issues/5935)
 from enum import Enum
 from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
-
-
 class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: this is the default version
     V2020_06_30 = "2020-06-30"
