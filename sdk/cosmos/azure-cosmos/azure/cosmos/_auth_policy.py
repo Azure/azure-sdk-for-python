@@ -4,10 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+
 from typing import Any, Dict, Optional
-from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.credentials import AccessToken
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
+from azure.cosmos import http_constants
 
 
 # pylint:disable=too-few-public-methods
@@ -55,7 +57,7 @@ class _CosmosBearerTokenCredentialPolicyBase(object):
         :param dict headers: The HTTP Request headers
         :param str token: The OAuth token.
         """
-        headers["Authorization"] = "type=aad&ver=1.0&sig={}".format(token)
+        headers[http_constants.HttpHeaders.Authorization] = "type=aad&ver=1.0&sig={}".format(token)
 
     @property
     def _need_new_token(self):
