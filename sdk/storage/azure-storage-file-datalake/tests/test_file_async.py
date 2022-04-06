@@ -105,6 +105,22 @@ class FileTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(response)
 
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_create_file_extra_backslashes_async(self, datalake_storage_account_name, datalake_storage_account_key):
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_client = await self._create_file_and_return_client()
+
+        new_file_client = DataLakeFileClient(self.account_url(datalake_storage_account_name, 'dfs'),
+                                             file_client.file_system_name + '/',
+                                             '/' + file_client.path_name,
+                                             credential=datalake_storage_account_key, logging_enable=True)
+        response = await file_client.create_file()
+
+        # Assert
+        self.assertIsNotNone(response)
+
     @DataLakePreparer()
     async def test_file_exists(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
