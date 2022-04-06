@@ -100,11 +100,11 @@ class SystemEventNames(str, Enum):
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
-    FhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
+    HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
 
-    FhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
+    HealthcareFhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
 
-    FhirResourceUpdatedEventName = 'Microsoft.HealthcareApis.FhirResourceUpdated'
+    HealthcareFhirResourceUpdatedEventName = 'Microsoft.HealthcareApis.FhirResourceUpdated'
 
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
 
@@ -342,3 +342,7 @@ class SystemEventNames(str, Enum):
     SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
 
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
+
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'

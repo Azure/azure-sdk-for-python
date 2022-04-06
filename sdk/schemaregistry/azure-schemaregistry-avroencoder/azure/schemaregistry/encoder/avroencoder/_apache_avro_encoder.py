@@ -6,16 +6,17 @@
 from functools import lru_cache
 from typing import BinaryIO, Union, TypeVar, cast
 from io import BytesIO
-import avro # type: ignore
+import avro  # type: ignore
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder  # type: ignore
 
-from ._abstract_avro_encoder import AbstractAvroObjectEncoder   # pylint: disable=import-error
+from ._abstract_avro_encoder import (  # pylint: disable=import-error
+    AbstractAvroObjectEncoder,
+)
 
 ObjectType = TypeVar("ObjectType")
 
 
 class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
-
     def __init__(self, codec=None):
         """A Avro encoder using avro lib from Apache.
         :param str codec: The writer codec. If None, let the avro library decides.
@@ -23,7 +24,7 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         self._writer_codec = codec
 
     @lru_cache(maxsize=128)
-    def parse_schema(self, schema):   # pylint: disable=no-self-use
+    def parse_schema(self, schema):  # pylint: disable=no-self-use
         return avro.schema.parse(schema)
 
     def get_schema_fullname(self, schema):
@@ -31,12 +32,14 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         return parsed_schema.fullname
 
     @lru_cache(maxsize=128)
-    def get_schema_writer(self, schema):   # pylint: disable=no-self-use
+    def get_schema_writer(self, schema):  # pylint: disable=no-self-use
         schema = self.parse_schema(schema)
         return DatumWriter(schema)
 
     @lru_cache(maxsize=128)
-    def get_schema_reader(self, schema, readers_schema=None):   # pylint: disable=no-self-use
+    def get_schema_reader(
+        self, schema, readers_schema=None
+    ):  # pylint: disable=no-self-use
         schema = self.parse_schema(schema)
         if readers_schema:
             readers_schema = self.parse_schema(readers_schema)
@@ -86,11 +89,11 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         :returns: An instantiated object
         :rtype: ObjectType
         """
-        if not hasattr(content, 'read'):
+        if not hasattr(content, "read"):
             content = cast(bytes, content)
             content = BytesIO(content)
 
-        with content:   # type: ignore
+        with content:  # type: ignore
             bin_decoder = BinaryDecoder(content)
             decoded_content = reader.read(bin_decoder)
 
