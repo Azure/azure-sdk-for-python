@@ -9,7 +9,7 @@ import pytest
 from datetime import datetime
 import sys
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.data.tables import (
@@ -178,7 +178,10 @@ class TestTableAAD(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_aad_batch_all_operations_together(self, tables_storage_account_name):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
 
         self._set_up(tables_storage_account_name, self.get_token_credential())
         try:

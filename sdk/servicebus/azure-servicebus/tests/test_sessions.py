@@ -1097,7 +1097,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)
+    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug")
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
