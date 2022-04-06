@@ -53,14 +53,6 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
-    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
-
-    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
-
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
-
     # backward compat ends here
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
@@ -343,3 +335,11 @@ class SystemEventNames(str, Enum):
     WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
+
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
+
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'

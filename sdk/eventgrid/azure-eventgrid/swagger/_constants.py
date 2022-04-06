@@ -49,6 +49,9 @@ backward_compat = {
     'AcsChatThreadParticipantRemovedEventName': "Microsoft.Communication.ChatThreadParticipantRemoved",
     'ResourceActionCancelEventName': "Microsoft.Resources.ResourceActionCancel",
     'IoTHubDeviceCreatedEventName': "Microsoft.Devices.DeviceCreated",
+}
+
+additional_events = {
     'ContainerRegistryArtifactEventName': 'Microsoft.AppConfiguration.KeyValueModified',
     'KeyVaultAccessPolicyChangedEventName': 'Microsoft.KeyVault.VaultAccessPolicyChanged',
     'ContainerRegistryEventName': 'Microsoft.ContainerRegistry.ChartPushed',

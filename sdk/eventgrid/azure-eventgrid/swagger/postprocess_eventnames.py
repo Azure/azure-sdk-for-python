@@ -4,7 +4,7 @@ import warnings
 import sys
 from urllib.request import urlopen
 from azure.eventgrid._generated import models
-from _constants import files, backward_compat, EXCEPTIONS
+from _constants import files, backward_compat, additional_events, EXCEPTIONS
 
 def extract(definitions):
     if not definitions:
@@ -28,6 +28,8 @@ def generate_enum_content(tuples):
     print("# backward compat ends here")
     for tup in tup_list:
         print(tup[0] + " = '" + tup[1].replace('API', 'Api') + "'\n")
+    for k, v in additional_events.items():
+        print(k + " = '" + v + "'\n")
 
 definitions = {}
 for fp in files:
