@@ -1,14 +1,10 @@
 # Release History
 
-## 7.6.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 7.6.1 (2022-04-06)
 
 ### Other Changes
+
+- Improved receiving by releasing messages from internal buffer when the `prefetch_count` of `ServiceBusReceiver`  is set 0 and there is no active receive call, this helps avoid receiving expired messages and incrementing delivery count of a message.
 
 ## 7.6.0 (2022-02-10)
 
