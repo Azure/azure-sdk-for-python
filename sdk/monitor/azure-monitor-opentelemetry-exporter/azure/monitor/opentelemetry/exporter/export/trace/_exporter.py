@@ -7,7 +7,6 @@ from urllib.parse import urlparse
 
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
-from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import Span, SpanKind
 
 from azure.monitor.opentelemetry.exporter import _utils
@@ -96,16 +95,10 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-locals
+# pylint: disable=protected-access
 def _convert_span_to_envelope(span: Span) -> TelemetryItem:
-    envelope = TelemetryItem(
-        name="",
-        instrumentation_key="",
-        tags=dict(_utils.azure_monitor_context),
-        time=ns_to_iso_str(span.start_time),
-    )
-    # pylint: disable=protected-access
+    envelope = _utils._create_telemetry_item(span.start_time)
     envelope.tags.update(_utils._populate_part_a_fields(span.resource))
-
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
     if SpanAttributes.ENDUSER_ID in span.attributes:
         envelope.tags["ai.user.id"] = span.attributes[SpanAttributes.ENDUSER_ID]
@@ -113,7 +106,6 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         envelope.tags["ai.operation.parentId"] = "{:016x}".format(
             span.parent.span_id
         )
-
     # pylint: disable=too-many-nested-blocks
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = "Microsoft.ApplicationInsights.Request"
@@ -396,18 +388,12 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         data.properties["_MS.links"] = json.dumps(links)
     return envelope
 
+# pylint: disable=protected-access
 def _convert_span_events_to_envelopes(span: Span) -> Sequence[TelemetryItem]:
     envelopes = []
     for event in span.events:
-        envelope = TelemetryItem(
-            name="",
-            instrumentation_key="",
-            tags=dict(_utils.azure_monitor_context),
-            time=ns_to_iso_str(event.timestamp),
-        )
-        # pylint: disable=protected-access
+        envelope = _utils._create_telemetry_item(event.timestamp)
         envelope.tags.update(_utils._populate_part_a_fields(span.resource))
-
         envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
         if span.parent and span.parent.span_id:
             envelope.tags["ai.operation.parentId"] = "{:016x}".format(

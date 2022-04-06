@@ -7,7 +7,6 @@ from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk._logs.severity import SeverityNumber
 from opentelemetry.sdk._logs.export import LogExporter, LogExportResult
-from opentelemetry.sdk.util import ns_to_iso_str
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -90,12 +89,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
 # pylint: disable=protected-access
 def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     log_record = log_data.log_record
-    envelope = TelemetryItem(
-        name="",
-        instrumentation_key="",
-        tags=dict(_utils.azure_monitor_context),
-        time=ns_to_iso_str(log_record.timestamp),
-    )
+    envelope = _utils._create_telemetry_item(log_record.timestamp)
     envelope.tags.update(_utils._populate_part_a_fields(log_record.resource))
     envelope.tags["ai.operation.id"] = "{:032x}".format(
         log_record.trace_id or _DEFAULT_TRACE_ID
