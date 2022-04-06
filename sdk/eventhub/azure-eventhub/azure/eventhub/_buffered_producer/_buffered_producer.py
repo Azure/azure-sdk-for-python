@@ -7,13 +7,14 @@ import queue
 import logging
 from threading import RLock, Condition, Semaphore
 from concurrent.futures import ThreadPoolExecutor
-
-from typing import Optional, Callable
+from typing import Optional, Callable, TYPE_CHECKING
 
 from .._producer import EventHubProducer
 from .._common import EventDataBatch
-from .._producer_client import SendEventTypes
 from ..exceptions import OperationTimeoutError
+
+if TYPE_CHECKING:
+    from .._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,8 +25,8 @@ class BufferedProducer:
             self,
             producer: EventHubProducer,
             partition_id: str,
-            on_success: Callable[[SendEventTypes, Optional[str]], None],
-            on_error: Callable[[SendEventTypes, Optional[str], Exception], None],
+            on_success: Callable[["SendEventTypes", Optional[str]], None],
+            on_error: Callable[["SendEventTypes", Optional[str], Exception], None],
             max_message_size_on_link: int,
             executor: ThreadPoolExecutor,
             *,

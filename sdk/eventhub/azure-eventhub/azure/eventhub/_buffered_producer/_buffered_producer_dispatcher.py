@@ -5,11 +5,15 @@
 import logging
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Callable, TYPE_CHECKING
 
 from ._partition_resolver import PartitionResolver
 from ._buffered_producer import BufferedProducer
+from .._producer import EventHubProducer
 from ..exceptions import EventDataSendError, ConnectError
+
+if TYPE_CHECKING:
+    from .._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,12 +22,12 @@ class BufferedProducerDispatcher:
     # pylint: disable=too-many-instance-attributes
     def __init__(
             self,
-            partitions,
-            on_success,
-            on_error,
-            create_producer,
-            eventhub_name,
-            max_message_size_on_link,
+            partitions: List[str],
+            on_success: Callable[["SendEventTypes", Optional[str]], None],
+            on_error: Callable[["SendEventTypes", Optional[str], Exception], None],
+            create_producer: Callable[..., EventHubProducer],
+            eventhub_name: str,
+            max_message_size_on_link: int,
             *,
             max_buffer_length: int = 1500,
             max_wait_time: int = 1,
@@ -101,7 +105,6 @@ class BufferedProducerDispatcher:
                 return
 
             _LOGGER.warning('Flushing all partitions partially failed with result %r.', exc_results)
-            # TODO: better error for partial failure?
             raise EventDataSendError(
                 message="Flushing all partitions partially failed, failed partitions are {!r}"
                         " Exception details are {!r}".format(exc_results.keys(), exc_results)
@@ -128,7 +131,6 @@ class BufferedProducerDispatcher:
                 exc_results[pid] = exc
 
         if exc_results:
-            # TODO: better error?
             _LOGGER.warning('Stopping all partitions partially failed with result %r.', exc_results)
             if raise_error:
                 raise EventDataSendError(

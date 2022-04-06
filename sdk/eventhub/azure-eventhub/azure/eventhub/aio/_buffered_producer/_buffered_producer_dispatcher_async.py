@@ -4,12 +4,16 @@
 # --------------------------------------------------------------------------------------------
 import asyncio
 import logging
-from typing import Dict, List
+from typing import Dict, List, Callable, Optional, Awaitable, Any, TYPE_CHECKING
 from asyncio import Lock
 
 from ..._buffered_producer import PartitionResolver
+from ...aio._producer_async import EventHubProducer
 from ._buffered_producer_async import BufferedProducer
 from ...exceptions import EventDataSendError, ConnectError
+
+if TYPE_CHECKING:
+    from ..._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,12 +22,12 @@ class BufferedProducerDispatcher:
     # pylint: disable=too-many-instance-attributes
     def __init__(
             self,
-            partitions,
-            on_success,
-            on_error,
-            create_producer,
-            eventhub_name,
-            max_message_size_on_link,
+            partitions: List[str],
+            on_success: Callable[["SendEventTypes", Optional[str]], Awaitable[None]],
+            on_error: Callable[["SendEventTypes", Optional[str], Exception], Awaitable[None]],
+            create_producer: Callable[..., EventHubProducer],
+            eventhub_name: str,
+            max_message_size_on_link: int,
             *,
             max_buffer_length: int = 1500,
             max_wait_time: int = 1,
@@ -62,7 +66,7 @@ class BufferedProducerDispatcher:
                 await self._buffered_producers[pid].put_events(events, timeout)
             except KeyError:
                 buffered_producer = BufferedProducer(
-                    self._create_producer(partition_id=pid),
+                    self._create_producer(partition=pid),
                     pid,
                     self._on_success,
                     self._on_error,
@@ -96,7 +100,6 @@ class BufferedProducerDispatcher:
                 return
 
             _LOGGER.warning('Flushing all partitions partially failed with result %r.', exc_results)
-            # TODO: better error for partial failure?
             raise EventDataSendError(
                 message="Flushing all partitions partially failed, failed partitions are {!r}"
                         " Exception details are {!r}".format(exc_results.keys(), exc_results)
@@ -120,7 +123,6 @@ class BufferedProducerDispatcher:
                 exc_results[pid] = exc
 
         if exc_results:
-            # TODO: better error?
             _LOGGER.warning('Stopping all partitions failed with result %r.', exc_results)
             if raise_error:
                 raise EventDataSendError(

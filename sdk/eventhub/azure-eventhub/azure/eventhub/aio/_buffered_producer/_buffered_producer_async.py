@@ -7,13 +7,15 @@ import logging
 import queue
 import time
 from asyncio import Lock, Condition, Semaphore
-from typing import Optional, Callable
+from typing import Optional, Callable, Awaitable, TYPE_CHECKING
 
 from .._async_utils import semaphore_acquire_with_timeout
 from .._producer_async import EventHubProducer
 from ..._common import EventDataBatch
-from ..._producer_client import SendEventTypes
 from ...exceptions import OperationTimeoutError
+
+if TYPE_CHECKING:
+    from ..._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,8 +26,8 @@ class BufferedProducer:
             self,
             producer: EventHubProducer,
             partition_id: str,
-            on_success: Callable[[SendEventTypes, Optional[str]], None],
-            on_error: Callable[[SendEventTypes, Optional[str], Exception], None],
+            on_success: Callable[["SendEventTypes", Optional[str]], Awaitable[None]],
+            on_error: Callable[["SendEventTypes", Optional[str], Exception], Awaitable[None]],
             max_message_size_on_link: int,
             *,
             max_wait_time: float = 1,
