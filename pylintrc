@@ -4,7 +4,7 @@ reports=no
 
 # PYLINT DIRECTORY BLACKLIST.
 ignore=_vendor,_generated,samples,examples,test,tests,doc,.tox
-# Added ignre-paths for storage
+# Added ignore-paths for storage
 ignore-paths=azure\\storage\\.*\\_shared\\models.py,azure/storage/.*/_shared/models.py,azure\\storage\\.*\\_models.py,azure/storage/.*/_models.py,azure\\storage\\.*\\.*lease.*,azure/storage/.*/.*lease.*,azure\\storage\\.*\\.*client.*,azure/storage/.*/.*client.*
 
 init-hook='import sys; import os; sys.path.insert(0, os.path.abspath(os.getcwd().rsplit("azure-sdk-for-python", 1)[0] + "azure-sdk-for-python/scripts/pylint_custom_plugin"))'
