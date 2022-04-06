@@ -31,7 +31,7 @@ from ._index import (
     SimpleField,
     SearchIndex,
 )
-from . import _edm as SearchFieldDataType
+from . import _edm
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
     SearchAlias,
@@ -182,6 +182,8 @@ from ._models import (
     SentimentSkillVersion,
     SynonymMap,
 )
+
+SearchFieldDataType = _edm
 
 class BM25SimilarityAlgorithm(BM25Similarity):
     pass
