@@ -6,12 +6,20 @@
 import asyncio
 import time
 
-from typing import Any, Awaitable, Optional, Union
+from typing import Any, Awaitable, Optional, Dict, Union
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline._tools_async import await_result
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.cosmos import http_constants
+
+
+async def await_result(func, *args, **kwargs):
+    """If func returns an awaitable, await it."""
+    result = func(*args, **kwargs)
+    if hasattr(result, "__await__"):
+        # type ignore on await: https://github.com/python/mypy/issues/7587
+        return await result  # type: ignore
+    return result
 
 
 class _AsyncCosmosBearerTokenCredentialPolicyBase(object):
