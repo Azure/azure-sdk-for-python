@@ -283,8 +283,49 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         receiver.complete_message(msg)
                     assert outter_recv_cnt == 4
 
+            def sub_test_non_releasing_messages():
+                # test not releasing messages when prefetch is not 1
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+
+                def _hack_disable_receive_context_message_received(self, message):
+                    # pylint: disable=protected-access
+                    self._handler._was_message_received = True
+                    self._handler._received_messages.put(message)
+
+                with sender, receiver:
+                    # send 10 msgs to queue first
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    receiver._handler.message_handler.on_message_received = types.MethodType(
+                        _hack_disable_receive_context_message_received, receiver)
+                    # issue 30 link credits, client should consume 10 msgs from the service
+                    # leaving 20 credits on the wire
+                    received_msgs = receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        receiver.complete_message(msg)
+
+                    # send 20 more messages, those messages would arrive at the client while the program is sleeping
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                    time.sleep(15)  # sleep > message expiration time
+
+                    # issue 20 link credits, client should consume 20 msgs from the service, leaving no link credits
+                    received_msgs = receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    assert len(received_msgs) == 20
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 0
+                        with pytest.raises(ServiceBusError):
+                            receiver.complete_message(msg)
+
+                    # re-received message with delivery count increased
+                    received_msgs = receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 1
+                        receiver.complete_message(msg)
+                    assert len(received_msgs) == 20
+
             sub_test_releasing_messages()
             sub_test_releasing_messages_iterator()
+            sub_test_non_releasing_messages()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

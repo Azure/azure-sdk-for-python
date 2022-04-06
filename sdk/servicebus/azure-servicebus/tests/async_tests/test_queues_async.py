@@ -62,7 +62,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     async def test_async_queue_by_queue_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -201,8 +201,49 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         await receiver.complete_message(msg)
                     assert outter_recv_cnt == 4
 
+            async def sub_test_non_releasing_messages():
+                # test not releasing messages when prefetch is not 1
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+
+                def _hack_disable_receive_context_message_received(self, message):
+                    # pylint: disable=protected-access
+                    self._handler._was_message_received = True
+                    self._handler._received_messages.put(message)
+
+                async with sender, receiver:
+                    # send 10 msgs to queue first
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    receiver._handler.message_handler.on_message_received = types.MethodType(
+                        _hack_disable_receive_context_message_received, receiver)
+                    # issue 30 link credits, client should consume 10 msgs from the service
+                    # leaving 20 credits on the wire
+                    received_msgs = await receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        await receiver.complete_message(msg)
+
+                    # send 20 more messages, those messages would arrive at the client while the program is sleeping
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                    await asyncio.sleep(15)  # sleep > message expiration time
+
+                    # issue 20 link credits, client should consume 20 msgs from the service, leaving no link credits
+                    received_msgs = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    assert len(received_msgs) == 20
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 0
+                        with pytest.raises(ServiceBusError):
+                            await receiver.complete_message(msg)
+
+                    # re-received message with delivery count increased
+                    received_msgs = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 1
+                        await receiver.complete_message(msg)
+                    assert len(received_msgs) == 20
+
             await sub_test_releasing_messages()
             await sub_test_releasing_messages_iterator()
+            await sub_test_non_releasing_messages()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
