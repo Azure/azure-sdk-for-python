@@ -744,8 +744,8 @@ class ConversationItemBase(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        participant_id: str,
-        id: str,
+        participant_id: str = "1",
+        id: str = "1",
         language: Optional[str] = None,
         **kwargs
     ):
@@ -1163,6 +1163,11 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
     :vartype verbose: bool
     :ivar is_logging_enabled: If true, the service will keep the query for further review.
     :vartype is_logging_enabled: bool
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
+     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
+    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
     :ivar direct_target: The name of a target project to forward the request to.
     :vartype direct_target: str
     :ivar target_project_parameters: A dictionary representing the parameters for each target
@@ -1181,6 +1186,7 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         'deployment_name': {'key': 'deploymentName', 'type': 'str'},
         'verbose': {'key': 'verbose', 'type': 'bool'},
         'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
+        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
         'direct_target': {'key': 'directTarget', 'type': 'str'},
         'target_project_parameters': {'key': 'targetProjectParameters', 'type': '{AnalysisParameters}'},
     }
@@ -1192,6 +1198,7 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         deployment_name: str,
         verbose: Optional[bool] = None,
         is_logging_enabled: Optional[bool] = None,
+        string_index_type: Optional[Union[str, "StringIndexType"]] = "TextElements_v8",
         direct_target: Optional[str] = None,
         target_project_parameters: Optional[Dict[str, "AnalysisParameters"]] = None,
         **kwargs
@@ -1205,6 +1212,11 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         :paramtype verbose: bool
         :keyword is_logging_enabled: If true, the service will keep the query for further review.
         :paramtype is_logging_enabled: bool
+        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
+         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
+        :paramtype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
         :keyword direct_target: The name of a target project to forward the request to.
         :paramtype direct_target: str
         :keyword target_project_parameters: A dictionary representing the parameters for each target
@@ -1217,6 +1229,7 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         self.deployment_name = deployment_name
         self.verbose = verbose
         self.is_logging_enabled = is_logging_enabled
+        self.string_index_type = string_index_type
         self.direct_target = direct_target
         self.target_project_parameters = target_project_parameters
 
@@ -2577,8 +2590,8 @@ class TextConversationItem(ConversationItemBase):
     def __init__(
         self,
         *,
-        participant_id: str,
-        id: str,
+        participant_id: str = "1",
+        id: str = "1",
         text: str,
         language: Optional[str] = None,
         **kwargs
