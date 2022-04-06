@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+- Changed `_set_partition_key` return typehint in async client.
 
 ### 4.3.0b3 (2022-03-10)
 
