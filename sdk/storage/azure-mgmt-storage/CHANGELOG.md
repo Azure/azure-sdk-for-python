@@ -1,5 +1,28 @@
 # Release History
 
+## 20.0.0 (2022-04-06)
+
+**Features**
+
+  - Model BlobInventoryPolicyFilter has a new parameter exclude_prefix
+  - Model BlobInventoryPolicyFilter has a new parameter include_deleted
+  - Model BlobInventoryPolicySchema has a new parameter destination
+  - Model DateAfterCreation has a new parameter days_after_last_tier_change_greater_than
+  - Model DateAfterModification has a new parameter days_after_creation_greater_than
+  - Model DateAfterModification has a new parameter days_after_last_tier_change_greater_than
+  - Model DeleteRetentionPolicy has a new parameter allow_permanent_delete
+  - Model KeyVaultProperties has a new parameter current_versioned_key_expiration_timestamp
+  - Model StorageAccount has a new parameter dns_endpoint_type
+  - Model StorageAccount has a new parameter storage_account_sku_conversion_status
+  - Model StorageAccountCreateParameters has a new parameter dns_endpoint_type
+  - Model StorageAccountUpdateParameters has a new parameter dns_endpoint_type
+  - Model Table has a new parameter signed_identifiers
+
+**Breaking changes**
+
+  - Operation TableOperations.create has a new signature
+  - Operation TableOperations.update has a new signature
+
 ## 19.1.0 (2022-02-15)
 
 **Features**
