@@ -342,7 +342,3 @@ class SystemEventNames(str, Enum):
     SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
 
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
-
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
-    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
