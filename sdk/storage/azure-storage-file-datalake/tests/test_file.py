@@ -98,7 +98,6 @@ class FileTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(response)
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
     def test_create_file_extra_backslashes(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)

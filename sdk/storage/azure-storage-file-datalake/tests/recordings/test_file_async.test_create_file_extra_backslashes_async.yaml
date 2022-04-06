@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 06 Apr 2022 21:20:37 GMT
+      - Wed, 06 Apr 2022 22:36:34 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 06 Apr 2022 21:20:36 GMT
-      etag: '"0x8DA18134B9A1964"'
-      last-modified: Wed, 06 Apr 2022 21:20:37 GMT
+      date: Wed, 06 Apr 2022 22:36:34 GMT
+      etag: '"0x8DA181DE7C7C166"'
+      last-modified: Wed, 06 Apr 2022 22:36:34 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2020-10-02'
     status:
@@ -34,7 +34,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 06 Apr 2022 21:20:38 GMT
+      - Wed, 06 Apr 2022 22:36:35 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -44,9 +44,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 06 Apr 2022 21:20:37 GMT
-      etag: '"0x8DA18134BC68167"'
-      last-modified: Wed, 06 Apr 2022 21:20:38 GMT
+      date: Wed, 06 Apr 2022 22:36:34 GMT
+      etag: '"0x8DA181DE7F67F66"'
+      last-modified: Wed, 06 Apr 2022 22:36:35 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 06 Apr 2022 21:20:38 GMT
+      - Wed, 06 Apr 2022 22:36:35 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -72,9 +72,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 06 Apr 2022 21:20:37 GMT
-      etag: '"0x8DA18134BD17C52"'
-      last-modified: Wed, 06 Apr 2022 21:20:38 GMT
+      date: Wed, 06 Apr 2022 22:36:34 GMT
+      etag: '"0x8DA181DE80068FD"'
+      last-modified: Wed, 06 Apr 2022 22:36:35 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-10-02'
@@ -90,7 +90,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 06 Apr 2022 21:20:38 GMT
+      - Wed, 06 Apr 2022 22:36:35 GMT
       x-ms-version:
       - '2020-10-02'
     method: DELETE
@@ -100,7 +100,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 06 Apr 2022 21:20:37 GMT
+      date: Wed, 06 Apr 2022 22:36:34 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2020-10-02'
     status:
