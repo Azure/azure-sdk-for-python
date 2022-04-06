@@ -28,7 +28,8 @@ import asyncio
 
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder, MessageContent
+from azure.schemaregistry.encoder.avroencoder import MessageContent
+from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]

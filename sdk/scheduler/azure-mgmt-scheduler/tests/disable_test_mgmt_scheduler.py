@@ -12,18 +12,18 @@ import azure.mgmt.scheduler.models
 import azure.mgmt.scheduler.patch
 
 from devtools_testutils import (
-    AzureMgmtTestCase, ResourceGroupPreparer,
+    AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 )
 
-class MgmtSchedulerTest(AzureMgmtTestCase):
+class TestMgmtScheduler(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtSchedulerTest, self).setUp()
+    def setup_method(self, method):
         self.scheduler_client = self.create_mgmt_client(
             azure.mgmt.scheduler.SchedulerManagementClient
         )
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_scheduler(self, resource_group, location):
         jobcollection_name = "myjobcollection"
         self.scheduler_client.job_collections.create_or_update(
@@ -41,10 +41,11 @@ class MgmtSchedulerTest(AzureMgmtTestCase):
             resource_group.name, 
             jobcollection_name,
         )
-        self.assertEqual(result.name, jobcollection_name)
+        assert result.name == jobcollection_name
 
     @unittest.skip("(BadRequest) Malformed Job Object")
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_scheduler_job_custom_time(self, resource_group, location):
         jobcollection_name = "myjobcollection"
         self.scheduler_client.job_collections.create_or_update(
@@ -80,7 +81,7 @@ class MgmtSchedulerTest(AzureMgmtTestCase):
                 "state": "Disabled"
             }
         )
-        self.assertEqual(job_properties.action.retry_policy.retry_interval, timedelta(days=1))
+        assert job_properties.action.retry_policy.retry_interval == timedelta(days=1)
 
         job_name = "myjob"
         self.scheduler_client.jobs.create_or_update(
@@ -95,7 +96,7 @@ class MgmtSchedulerTest(AzureMgmtTestCase):
             jobcollection_name,
             job_name
         )
-        self.assertEqual(job.properties.action.retry_policy.retry_interval, timedelta(days=1))
+        assert job.properties.action.retry_policy.retry_interval == timedelta(days=1)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
