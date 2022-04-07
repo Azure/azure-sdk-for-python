@@ -282,7 +282,7 @@ class SystemTopicEventSubscriptionsOperations:
     ) -> AsyncLROPoller[None]:
         """Delete an event subscription of a system topic.
 
-        Delete an event subscription of a system topic.
+        Delete an existing event subscription of a system topic.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
@@ -399,7 +399,7 @@ class SystemTopicEventSubscriptionsOperations:
     ) -> AsyncLROPoller["_models.EventSubscription"]:
         """Update event subscription of a system topic.
 
-        Update event subscription of a system topic.
+        Update an existing event subscription of a system topic.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
