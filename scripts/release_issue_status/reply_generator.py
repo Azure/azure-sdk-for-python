@@ -30,6 +30,7 @@ def get_links(readme_link):
     pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
     pattern_tag = re.compile(r'package-[\w+-.]+')
     readme_path = pattern_readme.search(readme_link).group()
+    print(f"comment body: {comment_body}")
     readme_tag = pattern_tag.search(comment_body).group()
     resource_manager = pattern_resource_manager.search(readme_link).group()
     link_dict['readme_path'] = readme_path
