@@ -6,6 +6,7 @@
 
 from enum import Enum
 import msrest.serialization
+from azure.core import CaseInsensitiveEnumMeta
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -26,7 +27,6 @@ from .._generated.models import (
     AzureActiveDirectoryApplicationCredentials,
 )
 
-from azure.core import CaseInsensitiveEnumMeta
 
 DELIMITER = "|"
 
@@ -104,7 +104,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         return cls(**kwargs)
 
 
-class EntityRecognitionSkillVersion(str, Enum, metaclass = CaseInsensitiveEnumMeta):
+class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
 
     #: Use Entity Recognition skill V1.
@@ -246,7 +246,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         return None
 
 
-class SentimentSkillVersion(str, Enum, metaclass = CaseInsensitiveEnumMeta):
+class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ Specifies the Sentiment Skill version to use."""
 
     #: Use Sentiment skill V1.
