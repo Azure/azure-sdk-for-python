@@ -7,20 +7,22 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import WebPubSubServiceClientConfiguration
 from ._operations import WebPubSubServiceClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional
+    from typing import Dict
 
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
+
 
 class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     """WebPubSubServiceClient.
@@ -32,20 +34,13 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        hub,  # type: str
-        endpoint,  # type: str
-        credential,  # type: "TokenCredential"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        _endpoint = '{Endpoint}'
+    def __init__(self, hub: str, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{Endpoint}"
         self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -53,13 +48,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -79,7 +68,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -9,18 +9,20 @@
 from copy import deepcopy
 from typing import Any, Awaitable
 
+from msrest import Deserializer, Serializer
+
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import KeyVaultClientConfiguration
 from .operations import KeyVaultClientOperationsMixin
 
 class KeyVaultClient(KeyVaultClientOperationsMixin):
-    """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
+    """The key vault client performs cryptographic key operations and vault operations against the Key
+    Vault service.
 
-    :keyword api_version: Api Version. The default value is "2016-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2016-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """

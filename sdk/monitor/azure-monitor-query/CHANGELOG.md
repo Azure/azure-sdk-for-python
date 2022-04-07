@@ -26,7 +26,7 @@
 
 ### Breaking Changes
 
-- `LogsQueryResult` now iterates over the tables directly as a convinience.
+- `LogsQueryResult` now iterates over the tables directly as a convenience.
 - `query` API in logs is renamed to `query_workspace`
 - `query` API in metrics is renamed to `query_resource`
 - `query_workspace` API now returns a union of `LogsQueryPartialResult` and `LogsQueryResult`.

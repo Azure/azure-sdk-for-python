@@ -15,22 +15,7 @@ _ASSIGNEE_TOKEN_JAVA = {
 
 
 class IssueProcessJava(IssueProcess):
-
-    def auto_parse(self) -> None:
-        if AUTO_PARSE_LABEL in self.issue_package.labels_name:
-            return
-
-        self.add_label(AUTO_PARSE_LABEL)
-        issue_body_list = self.get_issue_body()
-
-        # Get the origin link and readme tag in issue body
-        origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
-
-        # get readme_link
-        self.get_readme_link(origin_link)
-
-        self.edit_issue_body()
-
+    pass
 
 class Java(Common):
     def __init__(self, issues, assignee_token, language_owner):

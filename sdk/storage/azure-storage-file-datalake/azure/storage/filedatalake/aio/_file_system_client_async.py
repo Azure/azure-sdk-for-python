@@ -95,8 +95,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
-        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url,
+                                                   file_system=file_system_name, pipeline=self._pipeline)
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
+                                                                               base_url=self._container_client.url,
                                                                                file_system=file_system_name,
                                                                                pipeline=self._pipeline)
         api_version = get_api_version(kwargs)
@@ -192,7 +194,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.filedatalake.aio.FileSystemClient
+        :rtype: None
 
         .. admonition:: Example:
 

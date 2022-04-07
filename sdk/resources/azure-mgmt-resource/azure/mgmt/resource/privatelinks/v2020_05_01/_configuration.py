@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class PolicyClientConfiguration(Configuration):
-    """Configuration for PolicyClient.
+class ResourcePrivateLinkClientConfiguration(Configuration):
+    """Configuration for ResourcePrivateLinkClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -37,7 +37,7 @@ class PolicyClientConfiguration(Configuration):
         subscription_id: str,
         **kwargs: Any
     ) -> None:
-        super(PolicyClientConfiguration, self).__init__(**kwargs)
+        super(ResourcePrivateLinkClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:

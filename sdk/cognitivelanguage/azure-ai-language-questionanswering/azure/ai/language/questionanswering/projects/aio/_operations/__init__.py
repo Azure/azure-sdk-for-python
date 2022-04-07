@@ -9,5 +9,5 @@
 from ._operations import QuestionAnsweringProjectsClientOperationsMixin
 
 __all__ = [
-    'QuestionAnsweringProjectsClientOperationsMixin',
+    "QuestionAnsweringProjectsClientOperationsMixin",
 ]

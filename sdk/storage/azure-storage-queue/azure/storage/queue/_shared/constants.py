@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 
 import sys
-from .._generated import AzureQueueStorage
+from .._serialize import _SUPPORTED_API_VERSIONS
 
 
-X_MS_VERSION = AzureQueueStorage(url="get_api_version")._config.version  # pylint: disable=protected-access
+X_MS_VERSION = _SUPPORTED_API_VERSIONS[-1]
 
 # Socket timeout in seconds
 CONNECTION_TIMEOUT = 20

@@ -57,7 +57,7 @@ class FileSystemTest(StorageTestCase):
             pass
 
 
-    # --Helpers-----------------------------------------------------------------
+    # --Test cases for file system ---------------------------------------------
 
     @DataLakePreparer()
     def test_create_file_system(self, datalake_storage_account_name, datalake_storage_account_key):

@@ -81,8 +81,8 @@ class FileSystemTest(StorageTestCase):
         async for item in async_iterator:
             result.append(item)
         return result
-    # --Helpers-----------------------------------------------------------------
 
+    # --Test cases for file system ---------------------------------------------
     @DataLakePreparer()
     async def test_create_file_system_async(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)

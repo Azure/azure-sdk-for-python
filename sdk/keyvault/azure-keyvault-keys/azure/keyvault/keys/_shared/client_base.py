@@ -2,9 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint:skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
 from typing import TYPE_CHECKING
 from enum import Enum
+from six import with_metaclass
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import HttpLoggingPolicy
 
@@ -18,18 +21,18 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ApiVersion(str, Enum):
+class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
-    V7_3_PREVIEW = "7.3-preview"
+    V7_3 = "7.3"
     V7_2 = "7.2"
     V7_1 = "7.1"
     V7_0 = "7.0"
     V2016_10_01 = "2016-10-01"
 
 
-DEFAULT_VERSION = ApiVersion.V7_3_PREVIEW
+DEFAULT_VERSION = ApiVersion.V7_3
 
 
 class KeyVaultClientBase(object):
