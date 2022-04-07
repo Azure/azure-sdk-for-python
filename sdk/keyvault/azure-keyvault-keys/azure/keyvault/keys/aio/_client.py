@@ -25,7 +25,7 @@ from .. import (
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from azure.core.async_paging import AsyncItemPaged
-    from typing import Any, Iterable, Optional, Union
+    from typing import Any, List, Optional, Union
     from .. import KeyType
 
 
@@ -686,7 +686,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :keyword str version: A specific version of the key to release. If unspecified, the latest version is released.
         :keyword algorithm: The encryption algorithm to use to protect the released key material.
-        :paramtype algorithm: ~azure.keyvault.keys.KeyExportEncryptionAlgorithm
+        :paramtype algorithm: Union[str, ~azure.keyvault.keys.KeyExportEncryptionAlgorithm]
         :keyword str nonce: A client-provided nonce for freshness.
 
         :return: The result of the key release.
@@ -775,7 +775,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key. This will
             override the lifetime actions of the provided ``policy``.
-        :paramtype lifetime_actions: Iterable[~azure.keyvault.keys.KeyRotationLifetimeAction]
+        :paramtype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
         :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
             ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
             `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.
@@ -798,7 +798,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             ]
 
         attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", policy.expires_in))
-        new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions, attributes=attributes)
+        new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions or [], attributes=attributes)
         result = await self._client.update_key_rotation_policy(
             vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy
         )

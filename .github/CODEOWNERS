@@ -33,7 +33,7 @@
 /sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @tasherif-msft @jalauzon-msft
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @tasherif-msft @jalauzon-msft @vincenttran-msft
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
@@ -41,18 +41,26 @@
 /sdk/applicationinsights/azure-applicationinsights/                  @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 /sdk/loganalytics/azure-loganalytics/                                @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
-/sdk/attestation/azure-security-attestation                          @larryosterman @anilba06 @Azure/azure-sdk-write-attestation
+/sdk/attestation/azure-security-attestation                          @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
+# PRLabel: %Communication - Phone Numbers
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
+
+# PRLabel: %Communication - SMS
+/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+
+# PRLabel: %Communication - Identity
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+
+# PRLabel: %Communication - Common
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
-/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
-/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk
-/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
@@ -61,7 +69,7 @@
 /sdk/loganalytics/                                                   @alexeldeib
 
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen
+/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen @hectorhdzg
 
 # PRLabel: %Monitor - Log
 /sdk/monitor/azure-monitor-query                                     @rakshith91
@@ -151,7 +159,7 @@
 /sdk/containerregistry/                                              @YalinLi0312
 
 # PRLabel: %Digital Twins
-/sdk/digitaltwins/                                                   @johngallardo @Aashish93-stack
+/sdk/digitaltwins/                                                   @johngallardo @Aashish93-stack @sjiherzig @Satya-Kolluri
 
 # PRLabel: %VideoAnalyzer
 /sdk/videoanalyzer/                                                  @hivyas

@@ -60,10 +60,13 @@ def _build_auth(credential):
         auth['resourceTokens'] = credential  # type: ignore
     elif hasattr(credential, '__iter__'):
         auth['permissionFeed'] = credential
+    elif hasattr(credential, 'get_token'):
+        auth['clientSecretCredential'] = credential
     else:
         raise TypeError(
-            "Unrecognized credential type. Please supply the master key as str, "
-            "or a dictionary or resource tokens, or a list of permissions.")
+            "Unrecognized credential type. Please supply the master key as a string "
+            "or a dictionary, or resource tokens, or a list of permissions, or any instance of a class implementing"
+            " TokenCredential (see azure.identity module for specific implementations such as ClientSecretCredential).")
     return auth
 
 

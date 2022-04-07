@@ -1,6 +1,25 @@
 ## Release History
 
-### 4.3.0b3 (Unreleased)
+### 4.3.0b5 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.3.0b4 (2022-04-07)
+
+#### Features Added
+- Added support for AAD authentication for the async client.
+- Added support for AAD authentication for the sync client.
+
+#### Other Changes
+- Changed `_set_partition_key` return typehint in async client.
+
+### 4.3.0b3 (2022-03-10)
 
 >[WARNING]
 >The default `Session` consistency bugfix will impact customers whose database accounts have a `Bounded Staleness` or `Strong`
@@ -12,13 +31,17 @@
 > for more details on consistency levels, or the README section on this change [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#note-on-client-consistency-levels).
 
 #### Features Added
-- Added support for split-proof queries for the async client.
+- Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
+  to make use of the **preview** CosmosDB integrated cache functionality.
+  Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
+- Added support for split-proof queries for the async client
 
 ### Bugs fixed
-- Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
-  consistency level of the user's cosmos account setting on initialization if not passed during client initialization.
-  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency will need to pass it explicitly if their account consistency is different than `Session`.
-  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.
+- Default consistency level for the sync and async clients is no longer `Session` and will instead be set to the 
+  consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
+  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency
+  will need to pass it explicitly if their account consistency is different than `Session`.
+  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
 - Fixed invalid request body being sent when passing in `serverScript` body parameter to replace operations for trigger, sproc and udf resources.
 - Moved `is_system_key` logic in async client.
 - Fixed TypeErrors not being thrown when passing in invalid connection retry policies to the client.

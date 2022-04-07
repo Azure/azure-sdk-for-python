@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
+
 class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsMixin):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
@@ -41,13 +42,8 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsM
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: AzureKeyCredential,
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{Endpoint}/language'
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+        _endpoint = "{Endpoint}/language"
         self._config = QuestionAnsweringProjectsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -55,12 +51,7 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsM
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -80,7 +71,7 @@ class QuestionAnsweringProjectsClient(QuestionAnsweringProjectsClientOperationsM
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

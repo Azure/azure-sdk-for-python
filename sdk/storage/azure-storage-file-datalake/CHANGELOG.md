@@ -1,5 +1,13 @@
 # Release History
 
+## 12.7.0b1 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- Updated `create_file_system()` docstring to have the correct return-type of `None`
+- Fixed parsing of extra `/` symbols not being stripped properly in `async` clients
+
 ## 12.6.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.

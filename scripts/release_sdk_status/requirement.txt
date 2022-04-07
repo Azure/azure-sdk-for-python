@@ -4,7 +4,6 @@ idna==2.10
 lxml==4.6.5
 requests==2.25.1
 urllib3==1.26.6
-azure.storage.blob==12.8.1
 pytest==6.2.5
 pytest-cov==3.0.0
 PyGithub==1.55

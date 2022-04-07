@@ -1,5 +1,14 @@
 # Release History
 
+## 12.3.0b1 (Unreleased)
+
+### Features Added
+- Added support for `max_messages` in `receive_messages()` to specify the maximum number of messages to receive from the queue.
+
+### Other Changes
+- Updated documentation for `receive_messages()` to explain iterator behavior and life-cycle.
+- Added a sample to `queue_samples_message.py` (and async-equivalent) showcasing the use of `max_messages` in `receive_messages()`. 
+
 ## 12.2.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
