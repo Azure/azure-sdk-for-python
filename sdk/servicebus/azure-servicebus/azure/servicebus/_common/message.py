@@ -53,7 +53,6 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
-    from datetime import datetime
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
     )
@@ -65,8 +64,7 @@ if TYPE_CHECKING:
         bytes,
         bool,
         str,
-        uuid.UUID,
-        datetime
+        uuid.UUID
     ]
 
 _LOGGER = logging.getLogger(__name__)
