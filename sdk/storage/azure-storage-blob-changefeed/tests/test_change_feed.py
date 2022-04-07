@@ -18,7 +18,6 @@ from devtools_testutils.storage import StorageTestCase
 from settings.testcase import ChangeFeedPreparer
 
 
-
 @pytest.mark.playback_test_only
 class StorageChangeFeedTest(StorageTestCase):
 
