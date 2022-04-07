@@ -917,10 +917,19 @@ class ContainerSasPermissions(object):
         List blobs in the container.
     :param bool tag:
         Set or get tags on the blobs in the container.
+    :keyword bool add:
+        Add a block to an append blob.
+    :keyword bool create:
+        Write a new blob, snapshot a blob, or copy a blob to a new blob.
     :keyword bool permanent_delete:
         To enable permanent delete on the blob is permitted.
-    :keyword bool find:
-        To enable finding blobs by tags
+    :keyword bool filter_by_tags:
+        To enable finding blobs by tags.
+    :keyword bool move:
+        Move a blob or a directory and its contents to a new location.
+    :keyword bool execute:
+        Get the system properties and, if the hierarchical namespace is enabled for the storage account,
+        get the POSIX ACL of a blob.
     :keyword bool set_immutability_policy:
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
@@ -928,22 +937,30 @@ class ContainerSasPermissions(object):
     def __init__(self, read=False, write=False, delete=False,
                  list=False, delete_previous_version=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
         self.read = read
+        self.add = kwargs.pop('add', False)
+        self.create = kwargs.pop('create', False)
         self.write = write
         self.delete = delete
         self.delete_previous_version = delete_previous_version
         self.permanent_delete = kwargs.pop('permanent_delete', False)
         self.list = list
         self.tag = tag
-        self.find = kwargs.pop('find', False)
+        self.filter_by_tags = kwargs.pop('filter_by_tags', False)
+        self.move = kwargs.pop('move', False)
+        self.execute = kwargs.pop('execute', False)
         self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
                      ('y' if self.permanent_delete else '') +
                      ('l' if self.list else '') +
                      ('t' if self.tag else '') +
-                     ('f' if self.find else '') +
+                     ('f' if self.filter_by_tags else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
                      ('i' if self.set_immutability_policy else ''))
 
     def __str__(self):
@@ -963,17 +980,22 @@ class ContainerSasPermissions(object):
         :rtype: ~azure.storage.blob.ContainerSasPermissions
         """
         p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_delete_previous_version = 'x' in permission
         p_permanent_delete = 'y' in permission
         p_list = 'l' in permission
         p_tag = 't' in permission
-        p_find = 'f' in permission
+        p_filter_by_tags = 'f' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
         p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag, find=p_find,
-                     set_immutability_policy=p_set_immutability_policy, permanent_delete=p_permanent_delete)
+                     delete_previous_version=p_delete_previous_version, tag=p_tag, add=p_add,
+                     create=p_create, permanent_delete=p_permanent_delete, filter_by_tags=p_filter_by_tags,
+                     move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 
@@ -999,14 +1021,19 @@ class BlobSasPermissions(object):
         Delete the previous blob version for the versioning enabled storage account.
     :param bool tag:
         Set or get tags on the blob.
+    :keyword bool permanent_delete:
+        To enable permanent delete on the blob is permitted.
+    :keyword bool move:
+        Move a blob or a directory and its contents to a new location.
+    :keyword bool execute:
+        Get the system properties and, if the hierarchical namespace is enabled for the storage account,
+        get the POSIX ACL of a blob.
     :keyword bool set_immutability_policy:
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
-    :keyword bool permanent_delete:
-        To enable permanent delete on the blob is permitted.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, delete_previous_version=False, tag=True, **kwargs):
+                 delete=False, delete_previous_version=False, tag=False, **kwargs):
         self.read = read
         self.add = add
         self.create = create
@@ -1015,6 +1042,8 @@ class BlobSasPermissions(object):
         self.delete_previous_version = delete_previous_version
         self.permanent_delete = kwargs.pop('permanent_delete', False)
         self.tag = tag
+        self.move = kwargs.pop('move', False)
+        self.execute = kwargs.pop('execute', False)
         self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
@@ -1024,6 +1053,8 @@ class BlobSasPermissions(object):
                      ('x' if self.delete_previous_version else '') +
                      ('y' if self.permanent_delete else '') +
                      ('t' if self.tag else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
                      ('i' if self.set_immutability_policy else ''))
 
     def __str__(self):
@@ -1050,11 +1081,13 @@ class BlobSasPermissions(object):
         p_delete_previous_version = 'x' in permission
         p_permanent_delete = 'y' in permission
         p_tag = 't' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
         p_set_immutability_policy = 'i' in permission
 
         parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag,
-                     set_immutability_policy=p_set_immutability_policy, permanent_delete=p_permanent_delete)
+                     delete_previous_version=p_delete_previous_version, tag=p_tag, permanent_delete=p_permanent_delete,
+                     move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 

@@ -18,6 +18,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestGetChildren(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -31,8 +34,6 @@ class TestGetChildren(FormRecognizerTest):
         elements = result.pages[0].lines[0].get_words()
         assert len(elements) == 1
         assert elements[0].content == "Contoso"
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -56,5 +57,3 @@ class TestGetChildren(FormRecognizerTest):
         line = DocumentLine.from_dict(d)
         with pytest.raises(ValueError):
             elements = line.get_words()
-        
-        return {}

@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any, List
 
@@ -200,13 +201,21 @@ class RepositoryProperties(object):
             can_list=self.can_list,
         )
 
+    def __getattr__(self, name):
+        if name == "last_udpated_on":
+            warnings.warn(
+                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", # pylint: disable=line-too-long
+                DeprecationWarning)
+            return self.last_updated_on
+        return super().__getattr__(self, name) # pylint: disable=no-member
+
     @property
     def created_on(self):
         # type: () -> datetime
         return self._created_on
 
     @property
-    def last_udpated_on(self):
+    def last_updated_on(self):
         # type: () -> datetime
         return self._last_updated_on
 

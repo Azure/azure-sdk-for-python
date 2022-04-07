@@ -43,7 +43,7 @@ class LogsPerfTest(PerfStressTest):
         """The synchronous perf test.
         
         Try to keep this minimal and focused. Using only a single client API.
-        Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
+        Avoid putting any ancillary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
         start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc)
@@ -58,7 +58,7 @@ class LogsPerfTest(PerfStressTest):
         """The asynchronous perf test.
         
         Try to keep this minimal and focused. Using only a single client API.
-        Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
+        Avoid putting any ancillary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
         start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc)

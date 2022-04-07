@@ -42,11 +42,9 @@ from ._constants import (
     MGMT_STATUS_DESC,
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
-_Address = collections.namedtuple("Address", "hostname path")
+_Address = collections.namedtuple("_Address", "hostname path")
 
 
 def _parse_conn_str(conn_str, **kwargs):
@@ -264,9 +262,19 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+    CredentialTypes = Union[
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+        EventHubSharedKeyCredential,
+        TokenCredential
+    ]
+
+
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
+        # type: (str, str, CredentialTypes, Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")

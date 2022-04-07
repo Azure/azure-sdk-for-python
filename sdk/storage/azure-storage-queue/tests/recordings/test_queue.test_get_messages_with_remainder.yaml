@@ -1,0 +1,841 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 30 Mar 2022 18:29:07 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message1</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f7a1229-5156-4e45-ac8b-21dd675da18f</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:08 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:08
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAxVuTC2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:08 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:07 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message2</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>c905f8d1-2b81-4ffd-bdf6-ae062f6ff2ff</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:08 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:08
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA6ECfC2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:08 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message3</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>088cb43b-8db6-433e-b19f-72844f6628a0</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAWF6sC2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message4</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>873cf6d7-e1d8-4e3c-9674-6f3b7231a764</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAWs63C2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message5</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f893864e-263f-4947-a5e2-6940d12ed944</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAlwHEC2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message6</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>566fba70-5972-4209-9873-ef931a0828b4</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAACB/RC2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message7</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>35dde36e-6e52-40c0-af23-ebbd80303b45</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA8UDcC2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message8</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>eae7a8ef-2377-4af3-be39-b7bc0295eb31</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAJB3sC2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message9</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>1a56746d-f8d1-4ef7-ac74-7d69b946111f</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAKrT3C2RE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message10</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f34db96b-ab4b-48d5-b2e7-e136bcdf2d4c</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAgFwEDGRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message11</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>24644654-d8a0-448a-bdc1-8df0b9bf32b7</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAjvMPDGRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message12</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>099e838a-0c24-4cd5-a214-9fb64bd5eb35</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA65scDGRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:09 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:10 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages?numofmessages=3
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9f7a1229-5156-4e45-ac8b-21dd675da18f</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:08 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:08
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAzWAJHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:39 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage><QueueMessage><MessageId>c905f8d1-2b81-4ffd-bdf6-ae062f6ff2ff</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:08 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:08
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAzWAJHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:39 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message2</MessageText></QueueMessage><QueueMessage><MessageId>088cb43b-8db6-433e-b19f-72844f6628a0</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAzWAJHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:39 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message3</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:08 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:10 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages?numofmessages=3
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>873cf6d7-e1d8-4e3c-9674-6f3b7231a764</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA3fcUHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:39 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message4</MessageText></QueueMessage><QueueMessage><MessageId>f893864e-263f-4947-a5e2-6940d12ed944</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA3fcUHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:39 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message5</MessageText></QueueMessage><QueueMessage><MessageId>566fba70-5972-4209-9873-ef931a0828b4</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA3fcUHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:39 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message6</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:10 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages?numofmessages=3
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>35dde36e-6e52-40c0-af23-ebbd80303b45</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA8bUgHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:40 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message7</MessageText></QueueMessage><QueueMessage><MessageId>eae7a8ef-2377-4af3-be39-b7bc0295eb31</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA8bUgHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:40 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message8</MessageText></QueueMessage><QueueMessage><MessageId>1a56746d-f8d1-4ef7-ac74-7d69b946111f</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA8bUgHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:40 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message9</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:10 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages?numofmessages=1
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>f34db96b-ab4b-48d5-b2e7-e136bcdf2d4c</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAKuksHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:40 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message10</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:10 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>24644654-d8a0-448a-bdc1-8df0b9bf32b7</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAD+Q3HmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:40 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message11</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:10 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>099e838a-0c24-4cd5-a214-9fb64bd5eb35</MessageId><InsertionTime>Wed,
+        30 Mar 2022 18:29:09 GMT</InsertionTime><ExpirationTime>Wed, 06 Apr 2022 18:29:09
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAQBdEHmRE2AE=</PopReceipt><TimeNextVisible>Wed,
+        30 Mar 2022 18:29:40 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message12</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-queue/12.2.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 30 Mar 2022 18:29:10 GMT
+      x-ms-version:
+      - '2021-02-12'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueuesync867611ba/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList
+        />"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/xml
+      date:
+      - Wed, 30 Mar 2022 18:29:09 GMT
+      server:
+      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-02-12'
+    status:
+      code: 200
+      message: OK
+version: 1

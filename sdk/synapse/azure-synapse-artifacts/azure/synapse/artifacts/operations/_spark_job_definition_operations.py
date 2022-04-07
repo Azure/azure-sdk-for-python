@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,21 +21,16 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_spark_job_definitions_by_workspace_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -60,13 +55,15 @@ def build_get_spark_job_definitions_by_workspace_request(
 
 
 def build_create_or_update_spark_job_definition_request_initial(
-    spark_job_definition_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    spark_job_definition_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    if_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -94,17 +91,19 @@ def build_create_or_update_spark_job_definition_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_spark_job_definition_request(
-    spark_job_definition_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    spark_job_definition_name: str,
+    *,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -135,10 +134,9 @@ def build_get_spark_job_definition_request(
 
 
 def build_delete_spark_job_definition_request_initial(
-    spark_job_definition_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    spark_job_definition_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -168,10 +166,9 @@ def build_delete_spark_job_definition_request_initial(
 
 
 def build_execute_spark_job_definition_request_initial(
-    spark_job_definition_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    spark_job_definition_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -201,10 +198,12 @@ def build_execute_spark_job_definition_request_initial(
 
 
 def build_rename_spark_job_definition_request_initial(
-    spark_job_definition_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    spark_job_definition_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -232,14 +231,18 @@ def build_rename_spark_job_definition_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_debug_spark_job_definition_request_initial(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -262,10 +265,11 @@ def build_debug_spark_job_definition_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class SparkJobDefinitionOperations(object):
     """SparkJobDefinitionOperations operations.
 
@@ -291,9 +295,8 @@ class SparkJobDefinitionOperations(object):
     @distributed_trace
     def get_spark_job_definitions_by_workspace(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.SparkJobDefinitionsListResponse"]
+        **kwargs: Any
+    ) -> Iterable["_models.SparkJobDefinitionsListResponse"]:
         """Lists spark job definitions.
 
         :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
@@ -372,12 +375,11 @@ class SparkJobDefinitionOperations(object):
 
     def _create_or_update_spark_job_definition_initial(
         self,
-        spark_job_definition_name,  # type: str
-        properties,  # type: "_models.SparkJobDefinition"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.SparkJobDefinitionResource"]
+        spark_job_definition_name: str,
+        properties: "_models.SparkJobDefinition",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional["_models.SparkJobDefinitionResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SparkJobDefinitionResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -426,12 +428,11 @@ class SparkJobDefinitionOperations(object):
     @distributed_trace
     def begin_create_or_update_spark_job_definition(
         self,
-        spark_job_definition_name,  # type: str
-        properties,  # type: "_models.SparkJobDefinition"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.SparkJobDefinitionResource"]
+        spark_job_definition_name: str,
+        properties: "_models.SparkJobDefinition",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller["_models.SparkJobDefinitionResource"]:
         """Creates or updates a Spark Job Definition.
 
         :param spark_job_definition_name: The spark job definition name.
@@ -509,11 +510,10 @@ class SparkJobDefinitionOperations(object):
     @distributed_trace
     def get_spark_job_definition(
         self,
-        spark_job_definition_name,  # type: str
-        if_none_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.SparkJobDefinitionResource"]
+        spark_job_definition_name: str,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional["_models.SparkJobDefinitionResource"]:
         """Gets a Spark Job Definition.
 
         :param spark_job_definition_name: The spark job definition name.
@@ -573,10 +573,9 @@ class SparkJobDefinitionOperations(object):
 
     def _delete_spark_job_definition_initial(
         self,
-        spark_job_definition_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        spark_job_definition_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -613,10 +612,9 @@ class SparkJobDefinitionOperations(object):
     @distributed_trace
     def begin_delete_spark_job_definition(
         self,
-        spark_job_definition_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        spark_job_definition_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes a Spark Job Definition.
 
         :param spark_job_definition_name: The spark job definition name.
@@ -679,10 +677,9 @@ class SparkJobDefinitionOperations(object):
 
     def _execute_spark_job_definition_initial(
         self,
-        spark_job_definition_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SparkBatchJob"
+        spark_job_definition_name: str,
+        **kwargs: Any
+    ) -> "_models.SparkBatchJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -727,10 +724,9 @@ class SparkJobDefinitionOperations(object):
     @distributed_trace
     def begin_execute_spark_job_definition(
         self,
-        spark_job_definition_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.SparkBatchJob"]
+        spark_job_definition_name: str,
+        **kwargs: Any
+    ) -> LROPoller["_models.SparkBatchJob"]:
         """Executes the spark job definition.
 
         :param spark_job_definition_name: The spark job definition name.
@@ -797,11 +793,10 @@ class SparkJobDefinitionOperations(object):
 
     def _rename_spark_job_definition_initial(
         self,
-        spark_job_definition_name,  # type: str
-        new_name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        spark_job_definition_name: str,
+        new_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -843,11 +838,10 @@ class SparkJobDefinitionOperations(object):
     @distributed_trace
     def begin_rename_spark_job_definition(
         self,
-        spark_job_definition_name,  # type: str
-        new_name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        spark_job_definition_name: str,
+        new_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Renames a sparkJobDefinition.
 
         :param spark_job_definition_name: The spark job definition name.
@@ -915,10 +909,9 @@ class SparkJobDefinitionOperations(object):
 
     def _debug_spark_job_definition_initial(
         self,
-        properties,  # type: "_models.SparkJobDefinition"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SparkBatchJob"
+        properties: "_models.SparkJobDefinition",
+        **kwargs: Any
+    ) -> "_models.SparkBatchJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -967,10 +960,9 @@ class SparkJobDefinitionOperations(object):
     @distributed_trace
     def begin_debug_spark_job_definition(
         self,
-        properties,  # type: "_models.SparkJobDefinition"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.SparkBatchJob"]
+        properties: "_models.SparkJobDefinition",
+        **kwargs: Any
+    ) -> LROPoller["_models.SparkBatchJob"]:
         """Debug the spark job definition.
 
         :param properties: Properties of spark job definition.

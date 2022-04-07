@@ -116,6 +116,10 @@
       "REMOTERENDERING_ARR_SERVICE_ENDPOINT": {
         "type": "string",
         "value": "[concat('https://remoterendering.', parameters('location'), '.mixedreality.azure.com')]"
+      },
+      "REMOTERENDERING_STORAGE_ENDPOINT_SUFFIX": {
+        "type": "string",
+        "value": "core.windows.net"
       }
     }
 }

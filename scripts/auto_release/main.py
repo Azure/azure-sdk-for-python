@@ -239,7 +239,7 @@ class CodegenTestPR:
         # self.prepare_branch_with_base_branch()
 
     def check_sdk_readme(self):
-        sdk_readme = str(Path(f'sdk/{self.sdk_folder}/{self.package_name}/README.md'))
+        sdk_readme = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/README.md'))
 
         def edit_sdk_readme(content: List[str]):
             for i in range(0, len(content)):
@@ -257,6 +257,13 @@ class CodegenTestPR:
 
         modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
 
+    # Use the template to update readme and setup by packaging_tools
+    @return_origin_path
+    def check_file_with_packaging_tool(self):
+        os.chdir(Path(f'sdk/{self.sdk_folder}'))
+        print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
+        log('packaging_tools --build-conf successfully ')
+
     def check_pprint_name(self):
         pprint_name = self.package_name.capitalize()
 
@@ -265,8 +272,9 @@ class CodegenTestPR:
                 content[i] = content[i].replace('MyService', pprint_name)
 
         for file in os.listdir(self.sdk_code_path()):
-            if os.path.isfile(file):
-                modify_file(file, edit_file_for_pprint_name)
+            file_path = str(Path(self.sdk_code_path()) / file)
+            if os.path.isfile(file_path):
+                modify_file(file_path, edit_file_for_pprint_name)
         log(f' replace \"MyService\" with \"{pprint_name}\" successfully ')
 
     def get_all_files_under_package_folder(self) -> List[str]:
@@ -367,7 +375,7 @@ class CodegenTestPR:
         def edit_changelog_for_new_service_proc(content: List[str]):
             for i in range(0, len(content)):
                 if '##' in content[i]:
-                    content[i] = f'## {self.next_version}({current_time()})'
+                    content[i] = f'## {self.next_version} ({current_time()})\n'
                     break
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_for_new_service_proc)
@@ -401,7 +409,9 @@ class CodegenTestPR:
         self.check_ci_file_proc('azure-mgmt-core>=1.3.0,<2.0.0')
 
     def check_file(self):
+        self.check_file_with_packaging_tool()
         self.check_pprint_name()
+        self.check_sdk_readme()
         self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()

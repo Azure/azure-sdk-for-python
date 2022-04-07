@@ -1,5 +1,28 @@
 # Release History
 
+## 9.0.0 (2022-03-30)
+
+**Features**
+
+  - Added operation StreamingEndpointsOperations.skus
+  - Added operation group OperationResultsOperations
+  - Added operation group OperationStatusesOperations
+  - Added operation group TracksOperations
+  - Model H264Layer has a new parameter crf
+  - Model H264Video has a new parameter rate_control_mode
+  - Model H265Layer has a new parameter crf
+  - Model StreamingEndpoint has a new parameter sku
+
+**Breaking changes**
+
+  - Model H264Layer no longer has parameter odata_type
+  - Model H265Layer no longer has parameter odata_type
+  - Model H265VideoLayer no longer has parameter odata_type
+  - Model JpgLayer no longer has parameter odata_type
+  - Model Layer no longer has parameter odata_type
+  - Model PngLayer no longer has parameter odata_type
+  - Model VideoLayer no longer has parameter odata_type
+
 ## 8.0.0 (2021-07-15)
 
 **Features**

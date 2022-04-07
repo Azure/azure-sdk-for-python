@@ -46,11 +46,69 @@ from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    CredentialTypes = Union[
+        "EventHubSharedKeyCredential",
+        AsyncTokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    ]
 
     try:
         from typing_extensions import Protocol
     except ImportError:
         Protocol = object  # type: ignore
+
+    class AbstractConsumerProducer(Protocol):
+        @property
+        def _name(self):
+            # type: () -> str
+            """Name of the consumer or producer"""
+
+        @_name.setter
+        def _name(self, value):
+            pass
+
+        @property
+        def _client(self):
+            # type: () -> ClientBaseAsync
+            """The instance of EventHubComsumerClient or EventHubProducerClient"""
+
+        @_client.setter
+        def _client(self, value):
+            pass
+
+        @property
+        def _handler(self):
+            # type: () -> AMQPClientAsync
+            """The instance of SendClientAsync or ReceiveClientAsync"""
+
+        @property
+        def _internal_kwargs(self):
+            # type: () -> dict
+            """The dict with an event loop that users may pass in to wrap sync calls to async API.
+            It's furthur passed to uamqp APIs
+            """
+
+        @_internal_kwargs.setter
+        def _internal_kwargs(self, value):
+            pass
+
+        @property
+        def running(self):
+            # type: () -> bool
+            """Whether the consumer or producer is running"""
+
+        @running.setter
+        def running(self, value):
+            pass
+
+        def _create_handler(self, auth: authentication.JWTTokenAsync) -> None:
+            pass
+
+    _MIXIN_BASE = AbstractConsumerProducer
+else:
+    _MIXIN_BASE = object
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -144,9 +202,7 @@ class ClientBaseAsync(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: "CredentialTypes",
         **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
@@ -374,60 +430,6 @@ class ClientBaseAsync(ClientBase):
 
     async def _close_async(self) -> None:
         await self._conn_manager_async.close_connection()
-
-
-if TYPE_CHECKING:
-
-    class AbstractConsumerProducer(Protocol):
-        @property
-        def _name(self):
-            # type: () -> str
-            """Name of the consumer or producer"""
-
-        @_name.setter
-        def _name(self, value):
-            pass
-
-        @property
-        def _client(self):
-            # type: () -> ClientBaseAsync
-            """The instance of EventHubComsumerClient or EventHubProducerClient"""
-
-        @_client.setter
-        def _client(self, value):
-            pass
-
-        @property
-        def _handler(self):
-            # type: () -> AMQPClientAsync
-            """The instance of SendClientAsync or ReceiveClientAsync"""
-
-        @property
-        def _internal_kwargs(self):
-            # type: () -> dict
-            """The dict with an event loop that users may pass in to wrap sync calls to async API.
-            It's furthur passed to uamqp APIs
-            """
-
-        @_internal_kwargs.setter
-        def _internal_kwargs(self, value):
-            pass
-
-        @property
-        def running(self):
-            # type: () -> bool
-            """Whether the consumer or producer is running"""
-
-        @running.setter
-        def running(self, value):
-            pass
-
-        def _create_handler(self, auth: authentication.JWTTokenAsync) -> None:
-            pass
-
-    _MIXIN_BASE = AbstractConsumerProducer
-else:
-    _MIXIN_BASE = object
 
 
 class ConsumerProducerMixin(_MIXIN_BASE):

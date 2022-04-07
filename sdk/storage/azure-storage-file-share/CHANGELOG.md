@@ -1,5 +1,26 @@
 # Release History
 
+## 12.8.0b1 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- Updated `create_share()` docstring to have the correct return-type of `None`
+
+## 12.7.0 (2022-03-08)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Stable release of preview features
+- Added support for service version 2021-02-12, 2021-04-10.
+- Added support for premium file share provisioned_bandwidth property.
+- Added support for checking if a directory exists using `exists()`.
+- Added support for `rename_directory()` and `rename_file()`.
+- Added support for `Create (c)` SAS permission for Share SAS.
+
+### Bugs Fixed
+- Fixed a bug where `start_copy_from_url()` was not sending the `ignore_read_only` parameter correctly.
+
 ## 12.7.0b2 (2022-02-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
@@ -11,7 +32,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
-- Fixed a bug, that was introuced in the previous beta release, where `generate_account_sas()`
+- Fixed a bug, that was introduced in the previous beta release, where `generate_account_sas()`
 was not generating the proper SAS signature.
 
 ## 12.7.0b1 (2021-12-13)
