@@ -743,7 +743,7 @@ class FileProperties(DictMixin):
         return props
 
 
-class ShareProtocols(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ShareProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enabled protocols on the share"""
     SMB = "SMB"
     NFS = "NFS"

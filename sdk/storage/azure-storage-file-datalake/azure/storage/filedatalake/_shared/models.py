@@ -20,7 +20,7 @@ def get_enum_value(value):
         return value
 
 
-class StorageErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     # Generic storage values
     ACCOUNT_ALREADY_EXISTS = "AccountAlreadyExists"

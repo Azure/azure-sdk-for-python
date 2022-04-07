@@ -25,14 +25,14 @@ from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
 
 
-class BlobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BlobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BLOCKBLOB = "BlockBlob"
     PAGEBLOB = "PageBlob"
     APPENDBLOB = "AppendBlob"
 
 
-class BlockState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BlockState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Block blob block types."""
 
     COMMITTED = 'Committed'  #: Committed blocks.
@@ -40,7 +40,7 @@ class BlockState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNCOMMITTED = 'Uncommitted'  #: Uncommitted blocks.
 
 
-class StandardBlobTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StandardBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the blob tier to set the blob to. This is only applicable for
     block blobs on standard storage accounts.
@@ -51,7 +51,7 @@ class StandardBlobTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HOT = 'Hot'  #: Hot
 
 
-class PremiumPageBlobTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PremiumPageBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the page blob tier to set the blob to. This is only applicable to page
     blobs on premium storage accounts. Please take a look at:
@@ -69,7 +69,7 @@ class PremiumPageBlobTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     P60 = 'P60'  #: P60 Tier
 
 
-class QuickQueryDialect(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class QuickQueryDialect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the quick query input/output dialect."""
 
     DELIMITEDTEXT = 'DelimitedTextDialect'
@@ -77,7 +77,7 @@ class QuickQueryDialect(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PARQUET = 'ParquetDialect'
 
 
-class SequenceNumberAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SequenceNumberAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sequence number actions."""
 
     INCREMENT = 'increment'
@@ -96,7 +96,7 @@ class SequenceNumberAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Sets the sequence number to the value included with the request."""
 
 
-class PublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies whether data in the container may be accessed publicly and the level of access.
     """
@@ -122,7 +122,7 @@ class PublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """
 
 
-class BlobImmutabilityPolicyMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BlobImmutabilityPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the immutability policy mode to set on the blob.
     "Mutable" can only be returned by service, don't set to "Mutable".
@@ -1201,7 +1201,7 @@ class ArrowDialect(ArrowField):
         super(ArrowDialect, self).__init__(type=type, **kwargs)
 
 
-class ArrowType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INT64 = "int64"
     BOOL = "bool"

@@ -669,7 +669,7 @@ class UserDelegationKey(BlobUserDelegationKey):
         return delegation_key
 
 
-class PublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies whether data in the file system may be accessed publicly and the level of access.
     """
@@ -746,7 +746,7 @@ class ArrowDialect(BlobArrowDialect):
     """
 
 
-class QuickQueryDialect(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class QuickQueryDialect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the quick query input/output dialect."""
 
     DELIMITEDTEXT = 'DelimitedTextDialect'
@@ -754,7 +754,7 @@ class QuickQueryDialect(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PARQUET = 'ParquetDialect'
 
 
-class ArrowType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INT64 = "int64"
     BOOL = "bool"
