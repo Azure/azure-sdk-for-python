@@ -898,10 +898,11 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                         # If this is a return node
                         if isinstance(inner_node, astroid.Return):
                 
-                            # If it is a function call, it will be an instance of Call
                             try:
-                                if "def by_page(" in next(inner_node.value.infer()).as_string():
-                                    paging_class = True
+                                # Checking that what we are returning is a function call
+                                if isinstance(inner_node.value, astroid.Call):
+                                    if "def by_page(" in next(inner_node.value.infer()).as_string():
+                                        paging_class = True
                             
                             except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
                                 logger.debug("Pylint custom checker failed to check if client list method uses core paging.")
