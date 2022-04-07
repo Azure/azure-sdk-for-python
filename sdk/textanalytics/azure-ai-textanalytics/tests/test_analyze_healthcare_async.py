@@ -481,3 +481,22 @@ class TestHealth(TextAnalyticsTest):
                     assert result.entities
 
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    async def test_healthcare_multiapi_validate_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            poller = await client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'begin_analyze_healthcare_entities' is only available for API version v3.1 and up."

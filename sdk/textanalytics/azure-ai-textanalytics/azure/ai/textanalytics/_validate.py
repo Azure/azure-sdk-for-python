@@ -11,7 +11,7 @@ def check_for_unsupported_actions_types(*args, **kwargs):
 
     client = args[0]
     # this assumes the client has an _api_version attribute
-    selected_api_version = client._api_version
+    selected_api_version = client._api_version  # pylint: disable=protected-access
 
     if "actions" not in kwargs:
         actions = args[2]
@@ -59,7 +59,7 @@ def inspect_args(versions_supported, **kwargs):
             try:
                 # this assumes the client has an _api_version attribute
                 client = args[0]
-                selected_api_version = client._api_version
+                selected_api_version = client._api_version  # pylint: disable=protected-access
             except AttributeError:
                 return func(*args, **kwargs)
 

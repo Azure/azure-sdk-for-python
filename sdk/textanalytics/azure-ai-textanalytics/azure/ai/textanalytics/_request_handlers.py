@@ -98,24 +98,3 @@ def _determine_action_type(action):  # pylint: disable=too-many-return-statement
     if action.__class__.__name__ == "CustomMultiClassificationTask":
         return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
-
-
-def _check_string_index_type_arg(
-    string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"
-):
-    string_index_type = None
-
-    if api_version == "v3.0":
-        if string_index_type_arg is not None:
-            raise ValueError(
-                "'string_index_type' is only available for API version V3_1 and up"
-            )
-
-    else:
-        if string_index_type_arg is None:
-            string_index_type = string_index_type_default
-
-        else:
-            string_index_type = string_index_type_arg
-
-    return string_index_type

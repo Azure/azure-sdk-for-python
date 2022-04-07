@@ -16,12 +16,11 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
+from ._base_client import TextAnalyticsClientBase
 from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
 from ._request_handlers import (
     _validate_input,
     _determine_action_type,
-    _check_string_index_type_arg,
 )
 from ._validate import inspect_args, check_for_unsupported_actions_types
 from ._version import DEFAULT_API_VERSION, VERSIONS_SUPPORTED
