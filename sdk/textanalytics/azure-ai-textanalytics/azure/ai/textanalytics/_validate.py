@@ -28,7 +28,7 @@ def check_for_unsupported_actions_types(*args, **kwargs):
     }
 
     unsupported = {
-        version: arg
+        arg: version
         for version, args in actions_version_mapping.items()
         for arg in args
         if arg in [action.__class__.__name__ for action in actions]
@@ -39,7 +39,7 @@ def check_for_unsupported_actions_types(*args, **kwargs):
     if unsupported:
         error_strings = [
             f"'{param}' is only available for API version {version} and up.\n"
-            for version, param in unsupported.items()
+            for param, version in unsupported.items()
         ]
         raise ValueError("".join(error_strings))
 
@@ -52,10 +52,6 @@ def inspect_args(versions_supported, **kwargs):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-
-            if custom_wrapper:
-                custom_wrapper(*args, **kwargs)
-
             try:
                 # this assumes the client has an _api_version attribute
                 client = args[0]
@@ -86,6 +82,9 @@ def inspect_args(versions_supported, **kwargs):
                         for version, param in unsupported.items()
                     ]
                     raise ValueError("".join(error_strings))
+
+            if custom_wrapper:
+                custom_wrapper(*args, **kwargs)
 
             return func(*args, **kwargs)
 

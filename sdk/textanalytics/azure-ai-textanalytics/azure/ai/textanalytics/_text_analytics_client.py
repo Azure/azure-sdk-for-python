@@ -683,7 +683,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     @inspect_args(
         versions_supported=VERSIONS_SUPPORTED,
-        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs"]}
+        args_mapping={"v3.0": ["disable_service_logs"]}
     )
     def extract_key_phrases(
         self,
