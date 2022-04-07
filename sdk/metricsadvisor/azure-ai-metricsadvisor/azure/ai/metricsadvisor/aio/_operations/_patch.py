@@ -38,7 +38,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from ...models import _models_py3 as generated_models
+from ...models import _models as generated_models
 from ...models._patch import (
     IngestionProgressResetOptions,
     ErrorCode,

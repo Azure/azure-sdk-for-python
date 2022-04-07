@@ -42,7 +42,7 @@ from azure.core.exceptions import (
 from . import _operations as operations
 from ._operations import MetricsAdvisorClientOperationsMixin as _MetricsAdvisorClientOperationsMixin
 from .. import models
-from ..models import _models_py3 as generated_models
+from ..models import _models as generated_models
 from ..models._patch import (
     AlertingResultQuery,
     MetricDataQueryOptions,

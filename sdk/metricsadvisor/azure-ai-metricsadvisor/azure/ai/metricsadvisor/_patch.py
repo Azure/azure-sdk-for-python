@@ -11,7 +11,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
-from ._metrics_advisor_client import MetricsAdvisorClient as _Client
+from ._client import MetricsAdvisorClient as _Client
 from ._version import SDK_MONIKER
 from ._operations._patch import (
     DataFeedSourceUnion,

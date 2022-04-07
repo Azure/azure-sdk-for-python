@@ -6,81 +6,81 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import AlertResultList
-from ._models_py3 import AnomalyAlert
-from ._models_py3 import AnomalyAlertConfiguration
-from ._models_py3 import AnomalyAlertingConfigurationList
-from ._models_py3 import AnomalyDetectionConfiguration
-from ._models_py3 import AnomalyDetectionConfigurationList
-from ._models_py3 import AnomalyDimensionList
-from ._models_py3 import AnomalyFeedback
-from ._models_py3 import AnomalyIncident
-from ._models_py3 import AnomalyResultList
-from ._models_py3 import AzureApplicationInsightsDataFeedSource
-from ._models_py3 import AzureBlobDataFeedSource
-from ._models_py3 import AzureCosmosDbDataFeedSource
-from ._models_py3 import AzureDataExplorerDataFeedSource
-from ._models_py3 import AzureDataLakeStorageGen2DataFeedSource
-from ._models_py3 import AzureEventHubsDataFeedSource
-from ._models_py3 import AzureLogAnalyticsDataFeedSource
-from ._models_py3 import AzureTableDataFeedSource
-from ._models_py3 import ChangePointFeedback
-from ._models_py3 import ChangeThresholdCondition
-from ._models_py3 import CommentFeedback
-from ._models_py3 import DataFeed
-from ._models_py3 import DataFeedDimension
-from ._models_py3 import DataFeedIngestionProgress
-from ._models_py3 import DataFeedIngestionStatus
-from ._models_py3 import DataFeedList
-from ._models_py3 import DataFeedMetric
-from ._models_py3 import DataPointAnomaly
-from ._models_py3 import DataSourceCredentialList
-from ._models_py3 import DatasourceCredential
-from ._models_py3 import DatasourceDataLakeGen2SharedKey
-from ._models_py3 import DatasourceServicePrincipal
-from ._models_py3 import DatasourceServicePrincipalInKeyVault
-from ._models_py3 import DatasourceSqlConnectionString
-from ._models_py3 import DetectionAnomalyFilterCondition
-from ._models_py3 import DetectionIncidentFilterCondition
-from ._models_py3 import DimensionGroupIdentity
-from ._models_py3 import EmailNotificationHook
-from ._models_py3 import EnrichmentStatus
-from ._models_py3 import EnrichmentStatusList
-from ._models_py3 import HardThresholdCondition
-from ._models_py3 import HookList
-from ._models_py3 import IncidentResultList
-from ._models_py3 import IncidentRootCause
-from ._models_py3 import InfluxDbDataFeedSource
-from ._models_py3 import IngestionStatusList
-from ._models_py3 import MetricAlertConfiguration
-from ._models_py3 import MetricAnomalyAlertSnoozeCondition
-from ._models_py3 import MetricBoundaryCondition
-from ._models_py3 import MetricDataList
-from ._models_py3 import MetricDetectionCondition
-from ._models_py3 import MetricDimensionList
-from ._models_py3 import MetricEnrichedSeriesData
-from ._models_py3 import MetricFeedback
-from ._models_py3 import MetricFeedbackList
-from ._models_py3 import MetricSeriesData
-from ._models_py3 import MetricSeriesDefinition
-from ._models_py3 import MetricSeriesGroupDetectionCondition
-from ._models_py3 import MetricSeriesList
-from ._models_py3 import MetricSingleSeriesDetectionCondition
-from ._models_py3 import MongoDbDataFeedSource
-from ._models_py3 import NotificationHook
-from ._models_py3 import PeriodFeedback
-from ._models_py3 import RootCauseList
-from ._models_py3 import SeriesIdentity
-from ._models_py3 import SeriesResultList
-from ._models_py3 import SeverityCondition
-from ._models_py3 import SeverityFilterCondition
-from ._models_py3 import SmartDetectionCondition
-from ._models_py3 import SuppressCondition
-from ._models_py3 import TopNGroupScope
-from ._models_py3 import WebNotificationHook
+from ._models import AlertResultList
+from ._models import AnomalyAlert
+from ._models import AnomalyAlertConfiguration
+from ._models import AnomalyAlertingConfigurationList
+from ._models import AnomalyDetectionConfiguration
+from ._models import AnomalyDetectionConfigurationList
+from ._models import AnomalyDimensionList
+from ._models import AnomalyFeedback
+from ._models import AnomalyIncident
+from ._models import AnomalyResultList
+from ._models import AzureApplicationInsightsDataFeedSource
+from ._models import AzureBlobDataFeedSource
+from ._models import AzureCosmosDbDataFeedSource
+from ._models import AzureDataExplorerDataFeedSource
+from ._models import AzureDataLakeStorageGen2DataFeedSource
+from ._models import AzureEventHubsDataFeedSource
+from ._models import AzureLogAnalyticsDataFeedSource
+from ._models import AzureTableDataFeedSource
+from ._models import ChangePointFeedback
+from ._models import ChangeThresholdCondition
+from ._models import CommentFeedback
+from ._models import DataFeed
+from ._models import DataFeedDimension
+from ._models import DataFeedIngestionProgress
+from ._models import DataFeedIngestionStatus
+from ._models import DataFeedList
+from ._models import DataFeedMetric
+from ._models import DataPointAnomaly
+from ._models import DataSourceCredentialList
+from ._models import DatasourceCredential
+from ._models import DatasourceDataLakeGen2SharedKey
+from ._models import DatasourceServicePrincipal
+from ._models import DatasourceServicePrincipalInKeyVault
+from ._models import DatasourceSqlConnectionString
+from ._models import DetectionAnomalyFilterCondition
+from ._models import DetectionIncidentFilterCondition
+from ._models import DimensionGroupIdentity
+from ._models import EmailNotificationHook
+from ._models import EnrichmentStatus
+from ._models import EnrichmentStatusList
+from ._models import HardThresholdCondition
+from ._models import HookList
+from ._models import IncidentResultList
+from ._models import IncidentRootCause
+from ._models import InfluxDbDataFeedSource
+from ._models import IngestionStatusList
+from ._models import MetricAlertConfiguration
+from ._models import MetricAnomalyAlertSnoozeCondition
+from ._models import MetricBoundaryCondition
+from ._models import MetricDataList
+from ._models import MetricDetectionCondition
+from ._models import MetricDimensionList
+from ._models import MetricEnrichedSeriesData
+from ._models import MetricFeedback
+from ._models import MetricFeedbackList
+from ._models import MetricSeriesData
+from ._models import MetricSeriesDefinition
+from ._models import MetricSeriesGroupDetectionCondition
+from ._models import MetricSeriesList
+from ._models import MetricSingleSeriesDetectionCondition
+from ._models import MongoDbDataFeedSource
+from ._models import NotificationHook
+from ._models import PeriodFeedback
+from ._models import RootCauseList
+from ._models import SeriesIdentity
+from ._models import SeriesResultList
+from ._models import SeverityCondition
+from ._models import SeverityFilterCondition
+from ._models import SmartDetectionCondition
+from ._models import SuppressCondition
+from ._models import TopNGroupScope
+from ._models import WebNotificationHook
 
 
-from ._metrics_advisor_client_enums import (
+from ._enums import (
     AnomalyDetectorDirection,
     AnomalyIncidentStatus,
     AnomalySeverity,
@@ -102,46 +102,11 @@ from ._metrics_advisor_client_enums import (
     PeriodType,
     SnoozeScope,
 )
-
-from ._patch import MetricAnomalyAlertConfigurationsOperator
-from ._patch import DataFeedGranularity
-from ._patch import DataFeedIngestionSettings
-from ._patch import DataFeedMissingDataPointFillSettings
-from ._patch import DataFeedRollupSettings
-from ._patch import DataFeedSchema
-from ._patch import MetricAnomalyAlertScope
-from ._patch import SqlServerDataFeedSource
-from ._patch import MySqlDataFeedSource
-from ._patch import PostgreSqlDataFeedSource
-from ._patch import DetectionConditionOperator
-from ._patch import MetricAnomalyAlertConditions
-from ._patch import MetricAnomalyAlertScopeType
-from ._patch import DataFeedRollupType
-from ._patch import DataFeedSource
-from ._patch import AlertQueryTimeMode
-from ._patch import FeedbackQueryTimeMode
-from ._patch import AlertQueryTimeMode
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "MetricAnomalyAlertConfigurationsOperator",
-    "DataFeedGranularity",
-    "DataFeedIngestionSettings",
-    "DataFeedMissingDataPointFillSettings",
-    "DataFeedRollupSettings",
-    "DataFeedSchema",
-    "MetricAnomalyAlertScope",
-    "SqlServerDataFeedSource",
-    "MySqlDataFeedSource",
-    "PostgreSqlDataFeedSource",
-    "DetectionConditionOperator",
-    "MetricAnomalyAlertConditions",
-    "MetricAnomalyAlertScopeType",
-    "DataFeedRollupType",
-    "DataFeedSource",
-    "AlertQueryTimeMode",
-    "FeedbackQueryTimeMode",
-    "AlertQueryTimeMode",
     "AlertResultList",
     "AnomalyAlert",
     "AnomalyAlertConfiguration",
@@ -235,5 +200,5 @@ __all__ = [
     "PeriodType",
     "SnoozeScope",
 ]
-
+__all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -22,6 +22,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._vendor import MixinABC, _format_url_section
@@ -35,7 +36,10 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_get_alert_configuration_request(configuration_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/alert/anomaly/configurations/{configurationId}"
     path_format_arguments = {
@@ -45,18 +49,19 @@ def build_get_alert_configuration_request(configuration_id: str, **kwargs: Any) 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_update_alert_configuration_request(
     configuration_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/alert/anomaly/configurations/{configurationId}"
     path_format_arguments = {
@@ -66,16 +71,18 @@ def build_update_alert_configuration_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_delete_alert_configuration_request(configuration_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/alert/anomaly/configurations/{configurationId}"
     path_format_arguments = {
@@ -85,28 +92,28 @@ def build_delete_alert_configuration_request(configuration_id: str, **kwargs: An
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
 
 
 def build_create_alert_configuration_request(
     *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/alert/anomaly/configurations"
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_alerts_request(
@@ -118,9 +125,12 @@ def build_list_alerts_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/alert/anomaly/configurations/{configurationId}/alerts/query"
     path_format_arguments = {
@@ -130,27 +140,17 @@ def build_list_alerts_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_anomalies_for_alert_request(
@@ -161,7 +161,11 @@ def build_list_anomalies_for_alert_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/anomalies"
     path_format_arguments = {
@@ -172,17 +176,15 @@ def build_list_anomalies_for_alert_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_incidents_for_alert_request(
@@ -193,7 +195,11 @@ def build_list_incidents_for_alert_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/incidents"
     path_format_arguments = {
@@ -204,21 +210,22 @@ def build_list_incidents_for_alert_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_detection_configuration_request(detection_configuration_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}"
     path_format_arguments = {
@@ -228,18 +235,19 @@ def build_get_detection_configuration_request(detection_configuration_id: str, *
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_update_detection_configuration_request(
     configuration_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}"
     path_format_arguments = {
@@ -249,16 +257,18 @@ def build_update_detection_configuration_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_delete_detection_configuration_request(configuration_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}"
     path_format_arguments = {
@@ -268,34 +278,38 @@ def build_delete_detection_configuration_request(configuration_id: str, **kwargs
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
 
 
 def build_create_detection_configuration_request(
     *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations"
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_alert_configurations_request(
     configuration_id: str, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations"
     path_format_arguments = {
@@ -305,25 +319,25 @@ def build_list_alert_configurations_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_metric_enriched_series_data_request(
     configuration_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}/series/query"
     path_format_arguments = {
@@ -333,12 +347,11 @@ def build_list_metric_enriched_series_data_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_get_anomalies_by_anomaly_detection_configuration_request(
@@ -350,9 +363,12 @@ def build_get_anomalies_by_anomaly_detection_configuration_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/query"
     path_format_arguments = {
@@ -362,27 +378,17 @@ def build_get_anomalies_by_anomaly_detection_configuration_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_anomaly_dimension_values_request(
@@ -394,9 +400,12 @@ def build_list_anomaly_dimension_values_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/dimension/query"
     path_format_arguments = {
@@ -406,27 +415,17 @@ def build_list_anomaly_dimension_values_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_get_incidents_by_anomaly_detection_configuration_request(
@@ -437,9 +436,12 @@ def build_get_incidents_by_anomaly_detection_configuration_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query"
     path_format_arguments = {
@@ -449,31 +451,25 @@ def build_get_incidents_by_anomaly_detection_configuration_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
     configuration_id: str, *, maxpagesize: Optional[int] = None, token: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query"
     path_format_arguments = {
@@ -483,23 +479,24 @@ def build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     if token is not None:
-        _query_parameters["$token"] = _SERIALIZER.query("token", token, "str")
+        _params["$token"] = _SERIALIZER.query("token", token, "str")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_incident_root_causes_request(
     detection_configuration_id: str, incident_id: str, **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"
     path_format_arguments = {
@@ -510,57 +507,61 @@ def build_list_incident_root_causes_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_create_datasource_credential_request(
     *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/credentials"
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_datasource_credentials_request(
     *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/credentials"
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_update_datasource_credential_request(
     credential_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/credentials/{credentialId}"
     path_format_arguments = {
@@ -570,16 +571,18 @@ def build_update_datasource_credential_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_delete_datasource_credential_request(credential_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/credentials/{credentialId}"
     path_format_arguments = {
@@ -589,14 +592,16 @@ def build_delete_datasource_credential_request(credential_id: str, **kwargs: Any
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
 
 
 def build_get_datasource_credential_request(credential_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/credentials/{credentialId}"
     path_format_arguments = {
@@ -606,10 +611,9 @@ def build_get_datasource_credential_request(credential_id: str, **kwargs: Any) -
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_list_data_feeds_request(
@@ -623,52 +627,58 @@ def build_list_data_feeds_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataFeeds"
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if data_feed_name is not None:
-        _query_parameters["dataFeedName"] = _SERIALIZER.query("data_feed_name", data_feed_name, "str")
+        _params["dataFeedName"] = _SERIALIZER.query("data_feed_name", data_feed_name, "str")
     if data_source_type is not None:
-        _query_parameters["dataSourceType"] = _SERIALIZER.query("data_source_type", data_source_type, "str")
+        _params["dataSourceType"] = _SERIALIZER.query("data_source_type", data_source_type, "str")
     if granularity_name is not None:
-        _query_parameters["granularityName"] = _SERIALIZER.query("granularity_name", granularity_name, "str")
+        _params["granularityName"] = _SERIALIZER.query("granularity_name", granularity_name, "str")
     if status is not None:
-        _query_parameters["status"] = _SERIALIZER.query("status", status, "str")
+        _params["status"] = _SERIALIZER.query("status", status, "str")
     if creator is not None:
-        _query_parameters["creator"] = _SERIALIZER.query("creator", creator, "str")
+        _params["creator"] = _SERIALIZER.query("creator", creator, "str")
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_create_data_feed_request(*, json: JSONType = None, content: Any = None, **kwargs: Any) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataFeeds"
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_get_data_feed_request(data_feed_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataFeeds/{dataFeedId}"
     path_format_arguments = {
@@ -678,18 +688,19 @@ def build_get_data_feed_request(data_feed_id: str, **kwargs: Any) -> HttpRequest
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_update_data_feed_request(
     data_feed_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataFeeds/{dataFeedId}"
     path_format_arguments = {
@@ -699,16 +710,18 @@ def build_update_data_feed_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_delete_data_feed_request(data_feed_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataFeeds/{dataFeedId}"
     path_format_arguments = {
@@ -718,14 +731,16 @@ def build_delete_data_feed_request(data_feed_id: str, **kwargs: Any) -> HttpRequ
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
 
 
 def build_get_feedback_request(feedback_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/feedback/metric/{feedbackId}"
     path_format_arguments = {
@@ -735,10 +750,9 @@ def build_get_feedback_request(feedback_id: str, **kwargs: Any) -> HttpRequest:
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_list_feedback_request(
@@ -749,93 +763,93 @@ def build_list_feedback_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/feedback/metric/query"
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_add_feedback_request(*, json: JSONType = None, content: Any = None, **kwargs: Any) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/feedback/metric"
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_hooks_request(
     *, hook_name: Optional[str] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/hooks"
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if hook_name is not None:
-        _query_parameters["hookName"] = _SERIALIZER.query("hook_name", hook_name, "str")
+        _params["hookName"] = _SERIALIZER.query("hook_name", hook_name, "str")
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_create_hook_request(*, json: JSONType = None, content: Any = None, **kwargs: Any) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/hooks"
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_get_hook_request(hook_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/hooks/{hookId}"
     path_format_arguments = {
@@ -845,18 +859,19 @@ def build_get_hook_request(hook_id: str, **kwargs: Any) -> HttpRequest:
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_update_hook_request(
     hook_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/hooks/{hookId}"
     path_format_arguments = {
@@ -866,16 +881,18 @@ def build_update_hook_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_delete_hook_request(hook_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/hooks/{hookId}"
     path_format_arguments = {
@@ -885,10 +902,9 @@ def build_delete_hook_request(hook_id: str, **kwargs: Any) -> HttpRequest:
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
 
 
 def build_list_data_feed_ingestion_status_request(
@@ -900,9 +916,12 @@ def build_list_data_feed_ingestion_status_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataFeeds/{dataFeedId}/ingestionStatus/query"
     path_format_arguments = {
@@ -912,35 +931,27 @@ def build_list_data_feed_ingestion_status_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_refresh_data_feed_ingestion_request(
     data_feed_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataFeeds/{dataFeedId}/ingestionProgress/reset"
     path_format_arguments = {
@@ -950,16 +961,18 @@ def build_refresh_data_feed_ingestion_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_get_data_feed_ingestion_progress_request(data_feed_id: str, **kwargs: Any) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataFeeds/{dataFeedId}/ingestionProgress"
     path_format_arguments = {
@@ -969,18 +982,19 @@ def build_get_data_feed_ingestion_progress_request(data_feed_id: str, **kwargs: 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_list_metric_series_data_request(
     metric_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/metrics/{metricId}/data/query"
     path_format_arguments = {
@@ -990,12 +1004,11 @@ def build_list_metric_series_data_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_metric_series_definitions_request(
@@ -1007,9 +1020,12 @@ def build_list_metric_series_definitions_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/metrics/{metricId}/series/query"
     path_format_arguments = {
@@ -1019,27 +1035,17 @@ def build_list_metric_series_definitions_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_metric_dimension_values_request(
@@ -1051,9 +1057,12 @@ def build_list_metric_dimension_values_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/metrics/{metricId}/dimension/query"
     path_format_arguments = {
@@ -1063,33 +1072,27 @@ def build_list_metric_dimension_values_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_list_detection_configurations_request(
     metric_id: str, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/metrics/{metricId}/enrichment/anomalyDetection/configurations"
     path_format_arguments = {
@@ -1099,17 +1102,15 @@ def build_list_detection_configurations_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_metric_enrichment_status_request(
@@ -1121,9 +1122,12 @@ def build_list_metric_enrichment_status_request(
     maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/metrics/{metricId}/status/enrichment/anomalyDetection/query"
     path_format_arguments = {
@@ -1133,32 +1137,22 @@ def build_list_metric_enrichment_status_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
-    def get_alert_configuration(self, configuration_id: str, **kwargs: Any) -> "_models.AnomalyAlertConfiguration":
+    def get_alert_configuration(self, configuration_id: str, **kwargs: Any) -> _models.AnomalyAlertConfiguration:
         """Query a single anomaly alerting configuration.
 
         Query a single anomaly alerting configuration.
@@ -1170,12 +1164,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyAlertConfiguration]
 
         request = build_get_alert_configuration_request(
             configuration_id=configuration_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1202,7 +1201,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def update_alert_configuration(
         self, configuration_id: str, body: Any, **kwargs: Any
-    ) -> "_models.AnomalyAlertConfiguration":
+    ) -> _models.AnomalyAlertConfiguration:
         """Update anomaly alerting configuration.
 
         Update anomaly alerting configuration.
@@ -1216,10 +1215,15 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/merge-patch+json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyAlertConfiguration]
 
         _json = self._serialize.body(body, "object")
 
@@ -1227,6 +1231,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             configuration_id=configuration_id,
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1265,12 +1271,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_alert_configuration_request(
             configuration_id=configuration_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1292,7 +1303,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def create_alert_configuration(  # pylint: disable=inconsistent-return-statements
-        self, body: "_models.AnomalyAlertConfiguration", **kwargs: Any
+        self, body: _models.AnomalyAlertConfiguration, **kwargs: Any
     ) -> None:
         """Create anomaly alerting configuration.
 
@@ -1305,9 +1316,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "AnomalyAlertConfiguration")
@@ -1315,6 +1331,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         request = build_create_alert_configuration_request(
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1346,7 +1364,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.AlertResultList"]:
+    ) -> Iterable[_models.AlertResultList]:
         """Query alerts under anomaly alerting configuration.
 
         Query alerts under anomaly alerting configuration.
@@ -1363,11 +1381,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AlertResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AlertResultList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AlertResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -1379,6 +1402,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1394,6 +1419,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1443,7 +1470,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.AnomalyResultList"]:
+    ) -> Iterable[_models.AnomalyResultList]:
         """Query anomalies under a specific alert.
 
         Query anomalies under a specific alert.
@@ -1460,10 +1487,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyResultList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -1473,6 +1503,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     alert_id=alert_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1486,6 +1518,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_anomalies_for_alert_request(
                     alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1535,7 +1569,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.IncidentResultList"]:
+    ) -> Iterable[_models.IncidentResultList]:
         """Query incidents under a specific alert.
 
         Query incidents under a specific alert.
@@ -1552,10 +1586,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.IncidentResultList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IncidentResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -1565,6 +1602,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     alert_id=alert_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1578,6 +1617,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_incidents_for_alert_request(
                     alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1621,7 +1662,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def get_detection_configuration(
         self, detection_configuration_id: str, **kwargs: Any
-    ) -> "_models.AnomalyDetectionConfiguration":
+    ) -> _models.AnomalyDetectionConfiguration:
         """Query a single anomaly detection configuration.
 
         Query a single anomaly detection configuration.
@@ -1633,12 +1674,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDetectionConfiguration"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyDetectionConfiguration]
 
         request = build_get_detection_configuration_request(
             detection_configuration_id=detection_configuration_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1665,7 +1711,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def update_detection_configuration(
         self, configuration_id: str, body: Any, **kwargs: Any
-    ) -> "_models.AnomalyDetectionConfiguration":
+    ) -> _models.AnomalyDetectionConfiguration:
         """Update anomaly detection configuration.
 
         Update anomaly detection configuration.
@@ -1679,10 +1725,15 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDetectionConfiguration"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/merge-patch+json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyDetectionConfiguration]
 
         _json = self._serialize.body(body, "object")
 
@@ -1690,6 +1741,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             configuration_id=configuration_id,
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1728,12 +1781,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_detection_configuration_request(
             configuration_id=configuration_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1755,7 +1813,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def create_detection_configuration(  # pylint: disable=inconsistent-return-statements
-        self, body: "_models.AnomalyDetectionConfiguration", **kwargs: Any
+        self, body: _models.AnomalyDetectionConfiguration, **kwargs: Any
     ) -> None:
         """Create anomaly detection configuration.
 
@@ -1768,9 +1826,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "AnomalyDetectionConfiguration")
@@ -1778,6 +1841,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         request = build_create_detection_configuration_request(
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1803,7 +1868,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_alert_configurations(
         self, configuration_id: str, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.AnomalyAlertingConfigurationList"]:
+    ) -> Iterable[_models.AnomalyAlertingConfigurationList]:
         """List all anomaly alerting configurations for specific anomaly detection configuration.
 
         List all anomaly alerting configurations for specific anomaly detection configuration.
@@ -1819,10 +1884,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
          ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertingConfigurationList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyAlertingConfigurationList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -1831,6 +1899,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     configuration_id=configuration_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1843,6 +1913,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
                 request = build_list_alert_configurations_request(
                     configuration_id=configuration_id,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1886,7 +1958,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_metric_enriched_series_data(
         self, configuration_id: str, body: Any, **kwargs: Any
-    ) -> Iterable["_models.SeriesResultList"]:
+    ) -> Iterable[_models.SeriesResultList]:
         """Query series enriched by anomaly detection.
 
         Query series enriched by anomaly detection.
@@ -1899,11 +1971,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.SeriesResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SeriesResultList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SeriesResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -1913,6 +1990,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1928,6 +2007,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1977,7 +2058,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.AnomalyResultList"]:
+    ) -> Iterable[_models.AnomalyResultList]:
         """Query anomalies under anomaly detection configuration.
 
         Query anomalies under anomaly detection configuration.
@@ -1994,11 +2075,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyResultList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -2010,6 +2096,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2025,6 +2113,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2074,7 +2164,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.AnomalyDimensionList"]:
+    ) -> Iterable[_models.AnomalyDimensionList]:
         """Query dimension values of anomalies.
 
         Query dimension values of anomalies.
@@ -2091,11 +2181,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyDimensionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDimensionList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyDimensionList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -2107,6 +2202,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2122,6 +2219,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2165,7 +2264,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration(
         self, configuration_id: str, body: Any, *, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.IncidentResultList"]:
+    ) -> Iterable[_models.IncidentResultList]:
         """Query incidents under anomaly detection configuration.
 
         Query incidents under anomaly detection configuration.
@@ -2180,11 +2279,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.IncidentResultList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IncidentResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -2195,6 +2299,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     content_type=content_type,
                     json=_json,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2210,6 +2316,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2253,7 +2361,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration_next_pages(
         self, configuration_id: str, *, maxpagesize: Optional[int] = None, token: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.IncidentResultList"]:
+    ) -> Iterable[_models.IncidentResultList]:
         """Query incidents under anomaly detection configuration.
 
         Query incidents under anomaly detection configuration.
@@ -2268,10 +2376,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.IncidentResultList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IncidentResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -2280,6 +2391,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     configuration_id=configuration_id,
                     maxpagesize=maxpagesize,
                     token=token,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2292,6 +2405,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
                 request = build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
                     configuration_id=configuration_id,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2335,7 +2450,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_incident_root_causes(
         self, detection_configuration_id: str, incident_id: str, **kwargs: Any
-    ) -> Iterable["_models.RootCauseList"]:
+    ) -> Iterable[_models.RootCauseList]:
         """Query root cause for incident.
 
         Query root cause for incident.
@@ -2348,10 +2463,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.RootCauseList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RootCauseList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RootCauseList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -2359,6 +2477,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_incident_root_causes_request(
                     detection_configuration_id=detection_configuration_id,
                     incident_id=incident_id,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2372,6 +2492,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_incident_root_causes_request(
                     detection_configuration_id=detection_configuration_id,
                     incident_id=incident_id,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2414,7 +2536,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def create_datasource_credential(  # pylint: disable=inconsistent-return-statements
-        self, body: "_models.DatasourceCredential", **kwargs: Any
+        self, body: _models.DatasourceCredential, **kwargs: Any
     ) -> None:
         """Create a new data source credential.
 
@@ -2427,9 +2549,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "DatasourceCredential")
@@ -2437,6 +2564,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         request = build_create_datasource_credential_request(
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2462,7 +2591,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_datasource_credentials(
         self, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.DataSourceCredentialList"]:
+    ) -> Iterable[_models.DataSourceCredentialList]:
         """List all credentials.
 
         List all credentials.
@@ -2475,10 +2604,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataSourceCredentialList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataSourceCredentialList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataSourceCredentialList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -2486,6 +2618,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_datasource_credentials_request(
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2496,7 +2630,10 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
             else:
 
-                request = build_list_datasource_credentials_request()
+                request = build_list_datasource_credentials_request(
+                    headers=_headers,
+                    params=_params,
+                )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -2551,9 +2688,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/merge-patch+json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[Any]
 
         _json = self._serialize.body(body, "object")
@@ -2562,6 +2704,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             credential_id=credential_id,
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2600,12 +2744,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_datasource_credential_request(
             credential_id=credential_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2638,12 +2787,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[Any]
 
         request = build_get_datasource_credential_request(
             credential_id=credential_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2679,7 +2833,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.DataFeedList"]:
+    ) -> Iterable[_models.DataFeedList]:
         """List all data feeds.
 
         List all data feeds.
@@ -2702,10 +2856,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeedList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeedList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataFeedList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -2718,6 +2875,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     creator=creator,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2728,7 +2887,10 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
             else:
 
-                request = build_list_data_feeds_request()
+                request = build_list_data_feeds_request(
+                    headers=_headers,
+                    params=_params,
+                )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -2770,7 +2932,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def create_data_feed(  # pylint: disable=inconsistent-return-statements
-        self, body: "_models.DataFeed", **kwargs: Any
+        self, body: _models.DataFeed, **kwargs: Any
     ) -> None:
         """Create a new data feed.
 
@@ -2783,9 +2945,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "DataFeed")
@@ -2793,6 +2960,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         request = build_create_data_feed_request(
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2816,7 +2985,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace
-    def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> "_models.DataFeed":
+    def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> _models.DataFeed:
         """Get a data feed by its id.
 
         Get a data feed by its id.
@@ -2828,12 +2997,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeed"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataFeed]
 
         request = build_get_data_feed_request(
             data_feed_id=data_feed_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2872,9 +3046,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/merge-patch+json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[Any]
 
         _json = self._serialize.body(body, "object")
@@ -2883,6 +3062,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             data_feed_id=data_feed_id,
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2921,12 +3102,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_data_feed_request(
             data_feed_id=data_feed_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2947,7 +3133,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def get_feedback(self, feedback_id: str, **kwargs: Any) -> "_models.MetricFeedback":
+    def get_feedback(self, feedback_id: str, **kwargs: Any) -> _models.MetricFeedback:
         """Get a metric feedback by its id.
 
         Get a metric feedback by its id.
@@ -2959,12 +3145,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricFeedback"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricFeedback]
 
         request = build_get_feedback_request(
             feedback_id=feedback_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -2991,7 +3182,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_feedback(
         self, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.MetricFeedbackList"]:
+    ) -> Iterable[_models.MetricFeedbackList]:
         """List feedback on the given metric.
 
         List feedback on the given metric.
@@ -3006,11 +3197,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricFeedbackList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricFeedbackList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricFeedbackList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -3021,6 +3217,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3035,6 +3233,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 request = build_list_feedback_request(
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3077,7 +3277,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def add_feedback(  # pylint: disable=inconsistent-return-statements
-        self, feedback: "_models.MetricFeedback", **kwargs: Any
+        self, feedback: _models.MetricFeedback, **kwargs: Any
     ) -> None:
         """Create a new metric feedback.
 
@@ -3090,9 +3290,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(feedback, "MetricFeedback")
@@ -3100,6 +3305,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         request = build_add_feedback_request(
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -3130,7 +3337,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.HookList"]:
+    ) -> Iterable[_models.HookList]:
         """List all hooks.
 
         List all hooks.
@@ -3145,10 +3352,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.HookList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.HookList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.HookList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -3157,6 +3367,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     hook_name=hook_name,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3167,7 +3379,10 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
             else:
 
-                request = build_list_hooks_request()
+                request = build_list_hooks_request(
+                    headers=_headers,
+                    params=_params,
+                )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -3209,7 +3424,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
     @distributed_trace
     def create_hook(  # pylint: disable=inconsistent-return-statements
-        self, body: "_models.NotificationHook", **kwargs: Any
+        self, body: _models.NotificationHook, **kwargs: Any
     ) -> None:
         """Create a new hook.
 
@@ -3222,9 +3437,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "NotificationHook")
@@ -3232,6 +3452,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         request = build_create_hook_request(
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -3255,7 +3477,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace
-    def get_hook(self, hook_id: str, **kwargs: Any) -> "_models.NotificationHook":
+    def get_hook(self, hook_id: str, **kwargs: Any) -> _models.NotificationHook:
         """Get a hook by its id.
 
         Get a hook by its id.
@@ -3267,12 +3489,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.NotificationHook"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NotificationHook]
 
         request = build_get_hook_request(
             hook_id=hook_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -3297,7 +3524,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         return deserialized
 
     @distributed_trace
-    def update_hook(self, hook_id: str, body: Any, **kwargs: Any) -> "_models.NotificationHook":
+    def update_hook(self, hook_id: str, body: Any, **kwargs: Any) -> _models.NotificationHook:
         """Update a hook.
 
         Update a hook.
@@ -3311,10 +3538,15 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.NotificationHook"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/merge-patch+json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NotificationHook]
 
         _json = self._serialize.body(body, "object")
 
@@ -3322,6 +3554,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             hook_id=hook_id,
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -3358,12 +3592,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_hook_request(
             hook_id=hook_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -3392,7 +3631,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.IngestionStatusList"]:
+    ) -> Iterable[_models.IngestionStatusList]:
         """Get data ingestion status by data feed.
 
         Get data ingestion status by data feed.
@@ -3409,11 +3648,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IngestionStatusList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.IngestionStatusList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IngestionStatusList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -3425,6 +3669,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3440,6 +3686,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     data_feed_id=data_feed_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3497,9 +3745,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "object")
@@ -3508,6 +3761,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             data_feed_id=data_feed_id,
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -3528,7 +3783,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def get_data_feed_ingestion_progress(self, data_feed_id: str, **kwargs: Any) -> "_models.DataFeedIngestionProgress":
+    def get_data_feed_ingestion_progress(self, data_feed_id: str, **kwargs: Any) -> _models.DataFeedIngestionProgress:
         """Get data last success ingestion job timestamp by data feed.
 
         Get data last success ingestion job timestamp by data feed.
@@ -3540,12 +3795,17 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeedIngestionProgress"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataFeedIngestionProgress]
 
         request = build_get_data_feed_ingestion_progress_request(
             data_feed_id=data_feed_id,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -3570,7 +3830,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         return deserialized
 
     @distributed_trace
-    def list_metric_series_data(self, metric_id: str, body: Any, **kwargs: Any) -> Iterable["_models.MetricDataList"]:
+    def list_metric_series_data(self, metric_id: str, body: Any, **kwargs: Any) -> Iterable[_models.MetricDataList]:
         """Get time series data from metric.
 
         Get time series data from metric.
@@ -3583,11 +3843,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricDataList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricDataList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricDataList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -3597,6 +3862,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3612,6 +3879,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3655,7 +3924,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_metric_series_definitions(
         self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.MetricSeriesList"]:
+    ) -> Iterable[_models.MetricSeriesList]:
         """List series (dimension combinations) from metric.
 
         List series (dimension combinations) from metric.
@@ -3672,11 +3941,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricSeriesList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricSeriesList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -3688,6 +3962,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3703,6 +3979,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3746,7 +4024,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_metric_dimension_values(
         self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.MetricDimensionList"]:
+    ) -> Iterable[_models.MetricDimensionList]:
         """List dimension from certain metric.
 
         List dimension from certain metric.
@@ -3763,11 +4041,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricDimensionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricDimensionList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricDimensionList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -3779,6 +4062,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3794,6 +4079,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3837,7 +4124,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_detection_configurations(
         self, metric_id: str, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.AnomalyDetectionConfigurationList"]:
+    ) -> Iterable[_models.AnomalyDetectionConfigurationList]:
         """List all anomaly detection configurations for specific metric.
 
         List all anomaly detection configurations for specific metric.
@@ -3853,10 +4140,13 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
          ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDetectionConfigurationList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyDetectionConfigurationList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -3865,6 +4155,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     metric_id=metric_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3877,6 +4169,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
                 request = build_list_detection_configurations_request(
                     metric_id=metric_id,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3920,7 +4214,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_metric_enrichment_status(
         self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.EnrichmentStatusList"]:
+    ) -> Iterable[_models.EnrichmentStatusList]:
         """Query anomaly detection status.
 
         Query anomaly detection status.
@@ -3937,11 +4231,16 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatusList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.EnrichmentStatusList"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnrichmentStatusList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -3953,6 +4252,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     json=_json,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3968,6 +4269,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
+                    headers=_headers,
+                    params=_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

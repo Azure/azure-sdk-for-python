@@ -42,7 +42,7 @@ from .._patch import (
     MetricsAdvisorKeyCredential,
     get_authentication_policy,
 )
-from ._metrics_advisor_client import MetricsAdvisorClient as _ClientAsync
+from ._client import MetricsAdvisorClient as _ClientAsync
 from .. import models
 
 

@@ -12,7 +12,8 @@ from this import d
 from typing import Any, Tuple, Union, List, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 import msrest
-from . import _models_py3 as generated_models
+from . import _models as generated_models
+from . import _enums as generated_enums
 from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -181,7 +182,7 @@ class DataFeedGranularity:
     :keyword int custom_granularity_value: Must be populated if granularity_type is "Custom".
     """
 
-    def __init__(self, granularity_type: Union[str, generated_models.DataFeedGranularityType], **kwargs: Any) -> None:
+    def __init__(self, granularity_type: Union[str, generated_enums.DataFeedGranularityType], **kwargs: Any) -> None:
         self.granularity_type = granularity_type
         self.custom_granularity_value = kwargs.get("custom_granularity_value", None)
 
@@ -565,8 +566,8 @@ class SeverityCondition(generated_models.SeverityCondition):
 
     def __init__(
         self,
-        min_alert_severity: Union[str, "generated_models.AnomalySeverity"],
-        max_alert_severity: Union[str, "generated_models.AnomalySeverity"],
+        min_alert_severity: Union[str, "generated_enums.AnomalySeverity"],
+        max_alert_severity: Union[str, "generated_enums.AnomalySeverity"],
         **kwargs: Any
     ) -> None:
         super().__init__(min_alert_severity=min_alert_severity, max_alert_severity=max_alert_severity)
@@ -591,7 +592,7 @@ class MetricAnomalyAlertSnoozeCondition(generated_models.MetricAnomalyAlertSnooz
     def __init__(
         self,
         auto_snooze: int,
-        snooze_scope: Union[str, "generated_models.SnoozeScope"],
+        snooze_scope: Union[str, "generated_enums.SnoozeScope"],
         only_for_successive: bool,
         **kwargs: Any
     ) -> None:
@@ -644,7 +645,7 @@ class MetricBoundaryCondition(generated_models.MetricBoundaryCondition):
      metric should be specified only when using other metric to filter.
     """
 
-    def __init__(self, direction: Union[str, "generated_models.AnomalyDetectorDirection"], **kwargs: Any) -> None:
+    def __init__(self, direction: Union[str, "generated_enums.AnomalyDetectorDirection"], **kwargs: Any) -> None:
         super().__init__(direction=direction, **kwargs)
 
     def __repr__(self):
@@ -1436,14 +1437,17 @@ class NotificationHook(generated_models.NotificationHook):
         super().__init__(name=name, **kwargs)
 
     def __repr__(self):
-        return "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, " "hook_type={})".format(
-            self.id,
-            self.name,
-            self.description,
-            self.external_link,
-            self.admins,
-            self.hook_type,
-        )[:1024]
+        return (
+            "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, "
+            "hook_type={})".format(
+                self.id,
+                self.name,
+                self.description,
+                self.external_link,
+                self.admins,
+                self.hook_type,
+            )[:1024]
+        )
 
 
 class EmailNotificationHook(NotificationHook, generated_models.EmailNotificationHook):
@@ -1567,7 +1571,7 @@ class ChangeThresholdCondition(generated_models.ChangeThresholdCondition):
         change_percentage: float,
         shift_point: int,
         within_range: bool,
-        anomaly_detector_direction: Union[str, "generated_models.AnomalyDetectorDirection"],
+        anomaly_detector_direction: Union[str, "generated_enums.AnomalyDetectorDirection"],
         suppress_condition: "SuppressCondition",
         **kwargs: Any
     ) -> None:
@@ -1625,7 +1629,7 @@ class SmartDetectionCondition(generated_models.SmartDetectionCondition):
     def __init__(
         self,
         sensitivity: float,
-        anomaly_detector_direction: Union[str, "generated_models.AnomalyDetectorDirection"],
+        anomaly_detector_direction: Union[str, "generated_enums.AnomalyDetectorDirection"],
         suppress_condition: "SuppressCondition",
         **kwargs: Any
     ) -> None:
@@ -1663,7 +1667,7 @@ class HardThresholdCondition(generated_models.HardThresholdCondition):
 
     def __init__(
         self,
-        anomaly_detector_direction: Union[str, "generated_models.AnomalyDetectorDirection"],
+        anomaly_detector_direction: Union[str, "generated_enums.AnomalyDetectorDirection"],
         suppress_condition: "SuppressCondition",
         **kwargs: Any
     ) -> None:
@@ -2647,7 +2651,7 @@ class MetricSeriesQueryOptions(msrest.serialization.Model):
         self.dimension_filter = dimension_filter
 
 
-class AlertQueryTimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AlertQueryTimeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """time mode"""
 
     ANOMALY_TIME = "AnomalyTime"
@@ -2830,7 +2834,7 @@ class EnrichmentStatusQueryOption(msrest.serialization.Model):
         self.end_time = end_time
 
 
-class FeedbackQueryTimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class FeedbackQueryTimeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """time mode to filter feedback"""
 
     METRIC_TIMESTAMP = "MetricTimestamp"
@@ -2965,7 +2969,7 @@ class MetricFeedbackFilter(msrest.serialization.Model):
         *,
         metric_id: str,
         dimension_filter: Optional[FeedbackDimensionFilter] = None,
-        feedback_type: Optional[Union[str, "generated_models.FeedbackType"]] = None,
+        feedback_type: Optional[Union[str, "generated_enums.FeedbackType"]] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         time_mode: Optional[Union[str, "FeedbackQueryTimeMode"]] = None,
