@@ -25,7 +25,7 @@ from .._generated.models import (
     DataSourceCredentials,
     AzureActiveDirectoryApplicationCredentials,
 )
-from six import with_metaclass
+
 from azure.core import CaseInsensitiveEnumMeta
 
 DELIMITER = "|"
@@ -104,7 +104,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         return cls(**kwargs)
 
 
-class EntityRecognitionSkillVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EntityRecognitionSkillVersion(str, Enum, metaclass = CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
 
     #: Use Entity Recognition skill V1.
@@ -246,7 +246,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         return None
 
 
-class SentimentSkillVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SentimentSkillVersion(str, Enum, metaclass = CaseInsensitiveEnumMeta):
     """ Specifies the Sentiment Skill version to use."""
 
     #: Use Sentiment skill V1.

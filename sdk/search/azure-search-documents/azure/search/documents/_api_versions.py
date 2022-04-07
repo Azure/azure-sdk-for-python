@@ -5,9 +5,9 @@
 
 # pylint:skip-file (#ref https://github.com/PyCQA/pylint/issues/5935)
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
-class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ApiVersion(str, Enum, metaclass = CaseInsensitiveEnumMeta):
     #: this is the default version
     V2020_06_30 = "2020-06-30"
     V2021_04_30_PREVIEW = "2021-04-30-Preview"
