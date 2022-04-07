@@ -53,11 +53,21 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
+    from datetime import datetime
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
     )
     from .._servicebus_receiver import ServiceBusReceiver
     from azure.core.tracing import AbstractSpan
+    PrimitiveTypes = Union[
+        int,
+        float,
+        bytes,
+        bool,
+        str,
+        uuid.UUID,
+        datetime
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -70,7 +80,9 @@ class ServiceBusMessage(
     :param body: The data to send in a single message.
     :type body: Optional[Union[str, bytes]]
 
-    :keyword Optional[Dict[str, Any]] application_properties: The user defined properties on the message.
+    :keyword application_properties: The user defined properties on the message.
+    :paramtype application_properties: Dict[str, Union[int or float or bool or
+     bytes or str or uuid.UUID or datetime or None]]
     :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
     :keyword Optional[str] message_id: The id to identify the message.
     :keyword Optional[datetime.datetime] scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
@@ -98,7 +110,7 @@ class ServiceBusMessage(
         self,
         body: Optional[Union[str, bytes]],
         *,
-        application_properties: Optional[Dict[str, Any]] = None,
+        application_properties: Optional[Dict[str, "PrimitiveTypes"]] = None,
         session_id: Optional[str] = None,
         message_id: Optional[str] = None,
         scheduled_enqueue_time_utc: Optional[datetime.datetime] = None,
