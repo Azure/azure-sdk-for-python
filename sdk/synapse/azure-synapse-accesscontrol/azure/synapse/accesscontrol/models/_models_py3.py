@@ -15,12 +15,12 @@ import msrest.serialization
 class CheckAccessDecision(msrest.serialization.Model):
     """Check access response details.
 
-    :param access_decision: Access Decision.
-    :type access_decision: str
-    :param action_id: Action Id.
-    :type action_id: str
-    :param role_assignment: Role Assignment response details.
-    :type role_assignment: ~azure.synapse.accesscontrol.models.RoleAssignmentDetails
+    :ivar access_decision: Access Decision.
+    :vartype access_decision: str
+    :ivar action_id: Action Id.
+    :vartype action_id: str
+    :ivar role_assignment: Role Assignment response details.
+    :vartype role_assignment: ~azure.synapse.accesscontrol.models.RoleAssignmentDetails
     """
 
     _attribute_map = {
@@ -37,6 +37,14 @@ class CheckAccessDecision(msrest.serialization.Model):
         role_assignment: Optional["RoleAssignmentDetails"] = None,
         **kwargs
     ):
+        """
+        :keyword access_decision: Access Decision.
+        :paramtype access_decision: str
+        :keyword action_id: Action Id.
+        :paramtype action_id: str
+        :keyword role_assignment: Role Assignment response details.
+        :paramtype role_assignment: ~azure.synapse.accesscontrol.models.RoleAssignmentDetails
+        """
         super(CheckAccessDecision, self).__init__(**kwargs)
         self.access_decision = access_decision
         self.action_id = action_id
@@ -48,12 +56,12 @@ class CheckPrincipalAccessRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param subject: Required. Subject details.
-    :type subject: ~azure.synapse.accesscontrol.models.SubjectInfo
-    :param actions: Required. List of actions.
-    :type actions: list[~azure.synapse.accesscontrol.models.RequiredAction]
-    :param scope: Required. Scope at which the check access is done.
-    :type scope: str
+    :ivar subject: Required. Subject details.
+    :vartype subject: ~azure.synapse.accesscontrol.models.SubjectInfo
+    :ivar actions: Required. List of actions.
+    :vartype actions: list[~azure.synapse.accesscontrol.models.RequiredAction]
+    :ivar scope: Required. Scope at which the check access is done.
+    :vartype scope: str
     """
 
     _validation = {
@@ -76,6 +84,14 @@ class CheckPrincipalAccessRequest(msrest.serialization.Model):
         scope: str,
         **kwargs
     ):
+        """
+        :keyword subject: Required. Subject details.
+        :paramtype subject: ~azure.synapse.accesscontrol.models.SubjectInfo
+        :keyword actions: Required. List of actions.
+        :paramtype actions: list[~azure.synapse.accesscontrol.models.RequiredAction]
+        :keyword scope: Required. Scope at which the check access is done.
+        :paramtype scope: str
+        """
         super(CheckPrincipalAccessRequest, self).__init__(**kwargs)
         self.subject = subject
         self.actions = actions
@@ -85,13 +101,13 @@ class CheckPrincipalAccessRequest(msrest.serialization.Model):
 class CheckPrincipalAccessResponse(msrest.serialization.Model):
     """Check access response details.
 
-    :param access_decisions: To check if the current user, group, or service principal has
+    :ivar access_decisions: To check if the current user, group, or service principal has
      permission to read artifacts in the specified workspace.
-    :type access_decisions: list[~azure.synapse.accesscontrol.models.CheckAccessDecision]
+    :vartype access_decisions: list[~azure.synapse.accesscontrol.models.CheckAccessDecision]
     """
 
     _attribute_map = {
-        'access_decisions': {'key': 'accessDecisions', 'type': '[CheckAccessDecision]'},
+        'access_decisions': {'key': 'AccessDecisions', 'type': '[CheckAccessDecision]'},
     }
 
     def __init__(
@@ -100,6 +116,11 @@ class CheckPrincipalAccessResponse(msrest.serialization.Model):
         access_decisions: Optional[List["CheckAccessDecision"]] = None,
         **kwargs
     ):
+        """
+        :keyword access_decisions: To check if the current user, group, or service principal has
+         permission to read artifacts in the specified workspace.
+        :paramtype access_decisions: list[~azure.synapse.accesscontrol.models.CheckAccessDecision]
+        """
         super(CheckPrincipalAccessResponse, self).__init__(**kwargs)
         self.access_decisions = access_decisions
 
@@ -129,6 +150,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -137,8 +160,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 class ErrorContract(msrest.serialization.Model):
     """Contains details when the response code indicates an error.
 
-    :param error: The error details.
-    :type error: ~azure.synapse.accesscontrol.models.ErrorResponse
+    :ivar error: The error details.
+    :vartype error: ~azure.synapse.accesscontrol.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -151,6 +174,10 @@ class ErrorContract(msrest.serialization.Model):
         error: Optional["ErrorResponse"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.synapse.accesscontrol.models.ErrorResponse
+        """
         super(ErrorContract, self).__init__(**kwargs)
         self.error = error
 
@@ -192,6 +219,8 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -205,10 +234,10 @@ class RequiredAction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Action Id.
-    :type id: str
-    :param is_data_action: Required. Is a data action or not.
-    :type is_data_action: bool
+    :ivar id: Required. Action Id.
+    :vartype id: str
+    :ivar is_data_action: Required. Is a data action or not.
+    :vartype is_data_action: bool
     """
 
     _validation = {
@@ -228,6 +257,12 @@ class RequiredAction(msrest.serialization.Model):
         is_data_action: bool,
         **kwargs
     ):
+        """
+        :keyword id: Required. Action Id.
+        :paramtype id: str
+        :keyword is_data_action: Required. Is a data action or not.
+        :paramtype is_data_action: bool
+        """
         super(RequiredAction, self).__init__(**kwargs)
         self.id = id
         self.is_data_action = is_data_action
@@ -236,16 +271,16 @@ class RequiredAction(msrest.serialization.Model):
 class RoleAssignmentDetails(msrest.serialization.Model):
     """Role Assignment response details.
 
-    :param id: Role Assignment ID.
-    :type id: str
-    :param role_definition_id: Role ID of the Synapse Built-In Role.
-    :type role_definition_id: str
-    :param principal_id: Object ID of the AAD principal or security-group.
-    :type principal_id: str
-    :param scope: Scope at the role assignment is created.
-    :type scope: str
-    :param principal_type: Type of the principal Id: User, Group or ServicePrincipal.
-    :type principal_type: str
+    :ivar id: Role Assignment ID.
+    :vartype id: str
+    :ivar role_definition_id: Role ID of the Synapse Built-In Role.
+    :vartype role_definition_id: str
+    :ivar principal_id: Object ID of the AAD principal or security-group.
+    :vartype principal_id: str
+    :ivar scope: Scope at the role assignment is created.
+    :vartype scope: str
+    :ivar principal_type: Type of the principal Id: User, Group or ServicePrincipal.
+    :vartype principal_type: str
     """
 
     _attribute_map = {
@@ -266,6 +301,18 @@ class RoleAssignmentDetails(msrest.serialization.Model):
         principal_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Role Assignment ID.
+        :paramtype id: str
+        :keyword role_definition_id: Role ID of the Synapse Built-In Role.
+        :paramtype role_definition_id: str
+        :keyword principal_id: Object ID of the AAD principal or security-group.
+        :paramtype principal_id: str
+        :keyword scope: Scope at the role assignment is created.
+        :paramtype scope: str
+        :keyword principal_type: Type of the principal Id: User, Group or ServicePrincipal.
+        :paramtype principal_type: str
+        """
         super(RoleAssignmentDetails, self).__init__(**kwargs)
         self.id = id
         self.role_definition_id = role_definition_id
@@ -277,10 +324,10 @@ class RoleAssignmentDetails(msrest.serialization.Model):
 class RoleAssignmentDetailsList(msrest.serialization.Model):
     """Role Assignment response details.
 
-    :param count: Number of role assignments.
-    :type count: int
-    :param value: A list of role assignments.
-    :type value: list[~azure.synapse.accesscontrol.models.RoleAssignmentDetails]
+    :ivar count: Number of role assignments.
+    :vartype count: int
+    :ivar value: A list of role assignments.
+    :vartype value: list[~azure.synapse.accesscontrol.models.RoleAssignmentDetails]
     """
 
     _attribute_map = {
@@ -295,6 +342,12 @@ class RoleAssignmentDetailsList(msrest.serialization.Model):
         value: Optional[List["RoleAssignmentDetails"]] = None,
         **kwargs
     ):
+        """
+        :keyword count: Number of role assignments.
+        :paramtype count: int
+        :keyword value: A list of role assignments.
+        :paramtype value: list[~azure.synapse.accesscontrol.models.RoleAssignmentDetails]
+        """
         super(RoleAssignmentDetailsList, self).__init__(**kwargs)
         self.count = count
         self.value = value
@@ -305,14 +358,14 @@ class RoleAssignmentRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param role_id: Required. Role ID of the Synapse Built-In Role.
-    :type role_id: str
-    :param principal_id: Required. Object ID of the AAD principal or security-group.
-    :type principal_id: str
-    :param scope: Required. Scope at which the role assignment is created.
-    :type scope: str
-    :param principal_type: Type of the principal Id: User, Group or ServicePrincipal.
-    :type principal_type: str
+    :ivar role_id: Required. Role ID of the Synapse Built-In Role.
+    :vartype role_id: str
+    :ivar principal_id: Required. Object ID of the AAD principal or security-group.
+    :vartype principal_id: str
+    :ivar scope: Required. Scope at which the role assignment is created.
+    :vartype scope: str
+    :ivar principal_type: Type of the principal Id: User, Group or ServicePrincipal.
+    :vartype principal_type: str
     """
 
     _validation = {
@@ -337,6 +390,16 @@ class RoleAssignmentRequest(msrest.serialization.Model):
         principal_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword role_id: Required. Role ID of the Synapse Built-In Role.
+        :paramtype role_id: str
+        :keyword principal_id: Required. Object ID of the AAD principal or security-group.
+        :paramtype principal_id: str
+        :keyword scope: Required. Scope at which the role assignment is created.
+        :paramtype scope: str
+        :keyword principal_type: Type of the principal Id: User, Group or ServicePrincipal.
+        :paramtype principal_type: str
+        """
         super(RoleAssignmentRequest, self).__init__(**kwargs)
         self.role_id = role_id
         self.principal_id = principal_id
@@ -349,10 +412,10 @@ class SubjectInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param principal_id: Required. Principal Id.
-    :type principal_id: str
-    :param group_ids: List of group Ids that the principalId is part of.
-    :type group_ids: list[str]
+    :ivar principal_id: Required. Principal Id.
+    :vartype principal_id: str
+    :ivar group_ids: List of group Ids that the principalId is part of.
+    :vartype group_ids: list[str]
     """
 
     _validation = {
@@ -371,6 +434,12 @@ class SubjectInfo(msrest.serialization.Model):
         group_ids: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: Required. Principal Id.
+        :paramtype principal_id: str
+        :keyword group_ids: List of group Ids that the principalId is part of.
+        :paramtype group_ids: list[str]
+        """
         super(SubjectInfo, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.group_ids = group_ids
@@ -379,14 +448,14 @@ class SubjectInfo(msrest.serialization.Model):
 class SynapseRbacPermission(msrest.serialization.Model):
     """Synapse role definition details.
 
-    :param actions: List of actions.
-    :type actions: list[str]
-    :param not_actions: List of Not actions.
-    :type not_actions: list[str]
-    :param data_actions: List of data actions.
-    :type data_actions: list[str]
-    :param not_data_actions: List of Not data actions.
-    :type not_data_actions: list[str]
+    :ivar actions: List of actions.
+    :vartype actions: list[str]
+    :ivar not_actions: List of Not actions.
+    :vartype not_actions: list[str]
+    :ivar data_actions: List of data actions.
+    :vartype data_actions: list[str]
+    :ivar not_data_actions: List of Not data actions.
+    :vartype not_data_actions: list[str]
     """
 
     _attribute_map = {
@@ -405,6 +474,16 @@ class SynapseRbacPermission(msrest.serialization.Model):
         not_data_actions: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword actions: List of actions.
+        :paramtype actions: list[str]
+        :keyword not_actions: List of Not actions.
+        :paramtype not_actions: list[str]
+        :keyword data_actions: List of data actions.
+        :paramtype data_actions: list[str]
+        :keyword not_data_actions: List of Not data actions.
+        :paramtype not_data_actions: list[str]
+        """
         super(SynapseRbacPermission, self).__init__(**kwargs)
         self.actions = actions
         self.not_actions = not_actions
@@ -415,20 +494,20 @@ class SynapseRbacPermission(msrest.serialization.Model):
 class SynapseRoleDefinition(msrest.serialization.Model):
     """Synapse role definition details.
 
-    :param id: Role Definition ID.
-    :type id: str
-    :param name: Name of the Synapse role.
-    :type name: str
-    :param is_built_in: Is a built-in role or not.
-    :type is_built_in: bool
-    :param description: Description for the Synapse role.
-    :type description: str
-    :param permissions: Permissions for the Synapse role.
-    :type permissions: list[~azure.synapse.accesscontrol.models.SynapseRbacPermission]
-    :param scopes: Allowed scopes for the Synapse role.
-    :type scopes: list[str]
-    :param availability_status: Availability of the Synapse role.
-    :type availability_status: str
+    :ivar id: Role Definition ID.
+    :vartype id: str
+    :ivar name: Name of the Synapse role.
+    :vartype name: str
+    :ivar is_built_in: Is a built-in role or not.
+    :vartype is_built_in: bool
+    :ivar description: Description for the Synapse role.
+    :vartype description: str
+    :ivar permissions: Permissions for the Synapse role.
+    :vartype permissions: list[~azure.synapse.accesscontrol.models.SynapseRbacPermission]
+    :ivar scopes: Allowed scopes for the Synapse role.
+    :vartype scopes: list[str]
+    :ivar availability_status: Availability of the Synapse role.
+    :vartype availability_status: str
     """
 
     _attribute_map = {
@@ -453,6 +532,22 @@ class SynapseRoleDefinition(msrest.serialization.Model):
         availability_status: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Role Definition ID.
+        :paramtype id: str
+        :keyword name: Name of the Synapse role.
+        :paramtype name: str
+        :keyword is_built_in: Is a built-in role or not.
+        :paramtype is_built_in: bool
+        :keyword description: Description for the Synapse role.
+        :paramtype description: str
+        :keyword permissions: Permissions for the Synapse role.
+        :paramtype permissions: list[~azure.synapse.accesscontrol.models.SynapseRbacPermission]
+        :keyword scopes: Allowed scopes for the Synapse role.
+        :paramtype scopes: list[str]
+        :keyword availability_status: Availability of the Synapse role.
+        :paramtype availability_status: str
+        """
         super(SynapseRoleDefinition, self).__init__(**kwargs)
         self.id = id
         self.name = name

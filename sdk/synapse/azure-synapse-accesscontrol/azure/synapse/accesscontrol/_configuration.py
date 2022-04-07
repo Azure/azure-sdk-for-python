@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -15,8 +15,6 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
     from azure.core.credentials import TokenCredential
 
 
@@ -30,24 +28,27 @@ class AccessControlClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "TokenCredential",
+        endpoint: str,
+        **kwargs: Any
+    ) -> None:
+        super(AccessControlClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(AccessControlClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2020-12-01"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
         kwargs.setdefault('sdk_moniker', 'synapse-accesscontrol/{}'.format(VERSION))
         self._configure(**kwargs)

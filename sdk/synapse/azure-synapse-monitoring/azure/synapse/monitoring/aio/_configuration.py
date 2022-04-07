@@ -28,6 +28,8 @@ class MonitoringClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -36,15 +38,17 @@ class MonitoringClientConfiguration(Configuration):
         endpoint: str,
         **kwargs: Any
     ) -> None:
+        super(MonitoringClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(MonitoringClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2019-11-01-preview"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
         kwargs.setdefault('sdk_moniker', 'synapse-monitoring/{}'.format(VERSION))
         self._configure(**kwargs)

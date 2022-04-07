@@ -42,6 +42,7 @@ class SparkClientConfiguration(Configuration):
         livy_api_version: str = "2019-11-01-preview",
         **kwargs: Any
     ) -> None:
+        super(SparkClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
@@ -50,7 +51,6 @@ class SparkClientConfiguration(Configuration):
             raise ValueError("Parameter 'spark_pool_name' must not be None.")
         if livy_api_version is None:
             raise ValueError("Parameter 'livy_api_version' must not be None.")
-        super(SparkClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint

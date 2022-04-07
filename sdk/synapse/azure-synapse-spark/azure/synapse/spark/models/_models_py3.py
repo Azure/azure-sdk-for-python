@@ -19,44 +19,44 @@ class SparkBatchJob(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param livy_info:
-    :type livy_info: ~azure.synapse.spark.models.SparkBatchJobState
-    :param name: The batch name.
-    :type name: str
-    :param workspace_name: The workspace name.
-    :type workspace_name: str
-    :param spark_pool_name: The Spark pool name.
-    :type spark_pool_name: str
-    :param submitter_name: The submitter name.
-    :type submitter_name: str
-    :param submitter_id: The submitter identifier.
-    :type submitter_id: str
-    :param artifact_id: The artifact identifier.
-    :type artifact_id: str
-    :param job_type: The job type. Possible values include: "SparkBatch", "SparkSession".
-    :type job_type: str or ~azure.synapse.spark.models.SparkJobType
-    :param result: The Spark batch job result. Possible values include: "Uncertain", "Succeeded",
+    :ivar livy_info:
+    :vartype livy_info: ~azure.synapse.spark.models.SparkBatchJobState
+    :ivar name: The batch name.
+    :vartype name: str
+    :ivar workspace_name: The workspace name.
+    :vartype workspace_name: str
+    :ivar spark_pool_name: The Spark pool name.
+    :vartype spark_pool_name: str
+    :ivar submitter_name: The submitter name.
+    :vartype submitter_name: str
+    :ivar submitter_id: The submitter identifier.
+    :vartype submitter_id: str
+    :ivar artifact_id: The artifact identifier.
+    :vartype artifact_id: str
+    :ivar job_type: The job type. Possible values include: "SparkBatch", "SparkSession".
+    :vartype job_type: str or ~azure.synapse.spark.models.SparkJobType
+    :ivar result: The Spark batch job result. Possible values include: "Uncertain", "Succeeded",
      "Failed", "Cancelled".
-    :type result: str or ~azure.synapse.spark.models.SparkBatchJobResultType
-    :param scheduler: The scheduler information.
-    :type scheduler: ~azure.synapse.spark.models.SparkScheduler
-    :param plugin: The plugin information.
-    :type plugin: ~azure.synapse.spark.models.SparkServicePlugin
-    :param errors: The error information.
-    :type errors: list[~azure.synapse.spark.models.SparkServiceError]
-    :param tags: A set of tags. The tags.
-    :type tags: dict[str, str]
-    :param id: Required. The session Id.
-    :type id: int
-    :param app_id: The application id of this session.
-    :type app_id: str
-    :param app_info: The detailed application info.
-    :type app_info: dict[str, str]
-    :param state: The batch state. Possible values include: "not_started", "starting", "idle",
+    :vartype result: str or ~azure.synapse.spark.models.SparkBatchJobResultType
+    :ivar scheduler: The scheduler information.
+    :vartype scheduler: ~azure.synapse.spark.models.SparkScheduler
+    :ivar plugin: The plugin information.
+    :vartype plugin: ~azure.synapse.spark.models.SparkServicePlugin
+    :ivar errors: The error information.
+    :vartype errors: list[~azure.synapse.spark.models.SparkServiceError]
+    :ivar tags: A set of tags. The tags.
+    :vartype tags: dict[str, str]
+    :ivar id: Required. The session Id.
+    :vartype id: int
+    :ivar app_id: The application id of this session.
+    :vartype app_id: str
+    :ivar app_info: The detailed application info.
+    :vartype app_info: dict[str, str]
+    :ivar state: The batch state. Possible values include: "not_started", "starting", "idle",
      "busy", "shutting_down", "error", "dead", "killed", "success", "running", "recovering".
-    :type state: str or ~azure.synapse.spark.models.LivyStates
-    :param log_lines: The log lines.
-    :type log_lines: list[str]
+    :vartype state: str or ~azure.synapse.spark.models.LivyStates
+    :ivar log_lines: The log lines.
+    :vartype log_lines: list[str]
     """
 
     _validation = {
@@ -107,6 +107,46 @@ class SparkBatchJob(msrest.serialization.Model):
         log_lines: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword livy_info:
+        :paramtype livy_info: ~azure.synapse.spark.models.SparkBatchJobState
+        :keyword name: The batch name.
+        :paramtype name: str
+        :keyword workspace_name: The workspace name.
+        :paramtype workspace_name: str
+        :keyword spark_pool_name: The Spark pool name.
+        :paramtype spark_pool_name: str
+        :keyword submitter_name: The submitter name.
+        :paramtype submitter_name: str
+        :keyword submitter_id: The submitter identifier.
+        :paramtype submitter_id: str
+        :keyword artifact_id: The artifact identifier.
+        :paramtype artifact_id: str
+        :keyword job_type: The job type. Possible values include: "SparkBatch", "SparkSession".
+        :paramtype job_type: str or ~azure.synapse.spark.models.SparkJobType
+        :keyword result: The Spark batch job result. Possible values include: "Uncertain", "Succeeded",
+         "Failed", "Cancelled".
+        :paramtype result: str or ~azure.synapse.spark.models.SparkBatchJobResultType
+        :keyword scheduler: The scheduler information.
+        :paramtype scheduler: ~azure.synapse.spark.models.SparkScheduler
+        :keyword plugin: The plugin information.
+        :paramtype plugin: ~azure.synapse.spark.models.SparkServicePlugin
+        :keyword errors: The error information.
+        :paramtype errors: list[~azure.synapse.spark.models.SparkServiceError]
+        :keyword tags: A set of tags. The tags.
+        :paramtype tags: dict[str, str]
+        :keyword id: Required. The session Id.
+        :paramtype id: int
+        :keyword app_id: The application id of this session.
+        :paramtype app_id: str
+        :keyword app_info: The detailed application info.
+        :paramtype app_info: dict[str, str]
+        :keyword state: The batch state. Possible values include: "not_started", "starting", "idle",
+         "busy", "shutting_down", "error", "dead", "killed", "success", "running", "recovering".
+        :paramtype state: str or ~azure.synapse.spark.models.LivyStates
+        :keyword log_lines: The log lines.
+        :paramtype log_lines: list[str]
+        """
         super(SparkBatchJob, self).__init__(**kwargs)
         self.livy_info = livy_info
         self.name = name
@@ -133,12 +173,12 @@ class SparkBatchJobCollection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param from_property: Required. The start index of fetched sessions.
-    :type from_property: int
-    :param total: Required. Number of sessions fetched.
-    :type total: int
-    :param sessions: Batch list.
-    :type sessions: list[~azure.synapse.spark.models.SparkBatchJob]
+    :ivar from_property: Required. The start index of fetched sessions.
+    :vartype from_property: int
+    :ivar total: Required. Number of sessions fetched.
+    :vartype total: int
+    :ivar sessions: Batch list.
+    :vartype sessions: list[~azure.synapse.spark.models.SparkBatchJob]
     """
 
     _validation = {
@@ -160,6 +200,14 @@ class SparkBatchJobCollection(msrest.serialization.Model):
         sessions: Optional[List["SparkBatchJob"]] = None,
         **kwargs
     ):
+        """
+        :keyword from_property: Required. The start index of fetched sessions.
+        :paramtype from_property: int
+        :keyword total: Required. Number of sessions fetched.
+        :paramtype total: int
+        :keyword sessions: Batch list.
+        :paramtype sessions: list[~azure.synapse.spark.models.SparkBatchJob]
+        """
         super(SparkBatchJobCollection, self).__init__(**kwargs)
         self.from_property = from_property
         self.total = total
@@ -171,38 +219,38 @@ class SparkBatchJobOptions(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param tags: A set of tags. Dictionary of :code:`<string>`.
-    :type tags: dict[str, str]
-    :param artifact_id:
-    :type artifact_id: str
-    :param name: Required.
-    :type name: str
-    :param file: Required.
-    :type file: str
-    :param class_name:
-    :type class_name: str
-    :param arguments:
-    :type arguments: list[str]
-    :param jars:
-    :type jars: list[str]
-    :param python_files:
-    :type python_files: list[str]
-    :param files:
-    :type files: list[str]
-    :param archives:
-    :type archives: list[str]
-    :param configuration: Dictionary of :code:`<string>`.
-    :type configuration: dict[str, str]
-    :param driver_memory:
-    :type driver_memory: str
-    :param driver_cores:
-    :type driver_cores: int
-    :param executor_memory:
-    :type executor_memory: str
-    :param executor_cores:
-    :type executor_cores: int
-    :param executor_count:
-    :type executor_count: int
+    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar artifact_id:
+    :vartype artifact_id: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar file: Required.
+    :vartype file: str
+    :ivar class_name:
+    :vartype class_name: str
+    :ivar arguments:
+    :vartype arguments: list[str]
+    :ivar jars:
+    :vartype jars: list[str]
+    :ivar python_files:
+    :vartype python_files: list[str]
+    :ivar files:
+    :vartype files: list[str]
+    :ivar archives:
+    :vartype archives: list[str]
+    :ivar configuration: Dictionary of :code:`<string>`.
+    :vartype configuration: dict[str, str]
+    :ivar driver_memory:
+    :vartype driver_memory: str
+    :ivar driver_cores:
+    :vartype driver_cores: int
+    :ivar executor_memory:
+    :vartype executor_memory: str
+    :ivar executor_cores:
+    :vartype executor_cores: int
+    :ivar executor_count:
+    :vartype executor_count: int
     """
 
     _validation = {
@@ -250,6 +298,40 @@ class SparkBatchJobOptions(msrest.serialization.Model):
         executor_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword artifact_id:
+        :paramtype artifact_id: str
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword file: Required.
+        :paramtype file: str
+        :keyword class_name:
+        :paramtype class_name: str
+        :keyword arguments:
+        :paramtype arguments: list[str]
+        :keyword jars:
+        :paramtype jars: list[str]
+        :keyword python_files:
+        :paramtype python_files: list[str]
+        :keyword files:
+        :paramtype files: list[str]
+        :keyword archives:
+        :paramtype archives: list[str]
+        :keyword configuration: Dictionary of :code:`<string>`.
+        :paramtype configuration: dict[str, str]
+        :keyword driver_memory:
+        :paramtype driver_memory: str
+        :keyword driver_cores:
+        :paramtype driver_cores: int
+        :keyword executor_memory:
+        :paramtype executor_memory: str
+        :keyword executor_cores:
+        :paramtype executor_cores: int
+        :keyword executor_count:
+        :paramtype executor_count: int
+        """
         super(SparkBatchJobOptions, self).__init__(**kwargs)
         self.tags = tags
         self.artifact_id = artifact_id
@@ -272,24 +354,24 @@ class SparkBatchJobOptions(msrest.serialization.Model):
 class SparkBatchJobState(msrest.serialization.Model):
     """SparkBatchJobState.
 
-    :param not_started_at: the time that at which "not_started" livy state was first seen.
-    :type not_started_at: ~datetime.datetime
-    :param starting_at: the time that at which "starting" livy state was first seen.
-    :type starting_at: ~datetime.datetime
-    :param running_at: the time that at which "running" livy state was first seen.
-    :type running_at: ~datetime.datetime
-    :param dead_at: time that at which "dead" livy state was first seen.
-    :type dead_at: ~datetime.datetime
-    :param success_at: the time that at which "success" livy state was first seen.
-    :type success_at: ~datetime.datetime
-    :param terminated_at: the time that at which "killed" livy state was first seen.
-    :type terminated_at: ~datetime.datetime
-    :param recovering_at: the time that at which "recovering" livy state was first seen.
-    :type recovering_at: ~datetime.datetime
-    :param current_state: the Spark job state.
-    :type current_state: str
-    :param job_creation_request:
-    :type job_creation_request: ~azure.synapse.spark.models.SparkRequest
+    :ivar not_started_at: the time that at which "not_started" livy state was first seen.
+    :vartype not_started_at: ~datetime.datetime
+    :ivar starting_at: the time that at which "starting" livy state was first seen.
+    :vartype starting_at: ~datetime.datetime
+    :ivar running_at: the time that at which "running" livy state was first seen.
+    :vartype running_at: ~datetime.datetime
+    :ivar dead_at: time that at which "dead" livy state was first seen.
+    :vartype dead_at: ~datetime.datetime
+    :ivar success_at: the time that at which "success" livy state was first seen.
+    :vartype success_at: ~datetime.datetime
+    :ivar terminated_at: the time that at which "killed" livy state was first seen.
+    :vartype terminated_at: ~datetime.datetime
+    :ivar recovering_at: the time that at which "recovering" livy state was first seen.
+    :vartype recovering_at: ~datetime.datetime
+    :ivar current_state: the Spark job state.
+    :vartype current_state: str
+    :ivar job_creation_request:
+    :vartype job_creation_request: ~azure.synapse.spark.models.SparkRequest
     """
 
     _attribute_map = {
@@ -318,6 +400,26 @@ class SparkBatchJobState(msrest.serialization.Model):
         job_creation_request: Optional["SparkRequest"] = None,
         **kwargs
     ):
+        """
+        :keyword not_started_at: the time that at which "not_started" livy state was first seen.
+        :paramtype not_started_at: ~datetime.datetime
+        :keyword starting_at: the time that at which "starting" livy state was first seen.
+        :paramtype starting_at: ~datetime.datetime
+        :keyword running_at: the time that at which "running" livy state was first seen.
+        :paramtype running_at: ~datetime.datetime
+        :keyword dead_at: time that at which "dead" livy state was first seen.
+        :paramtype dead_at: ~datetime.datetime
+        :keyword success_at: the time that at which "success" livy state was first seen.
+        :paramtype success_at: ~datetime.datetime
+        :keyword terminated_at: the time that at which "killed" livy state was first seen.
+        :paramtype terminated_at: ~datetime.datetime
+        :keyword recovering_at: the time that at which "recovering" livy state was first seen.
+        :paramtype recovering_at: ~datetime.datetime
+        :keyword current_state: the Spark job state.
+        :paramtype current_state: str
+        :keyword job_creation_request:
+        :paramtype job_creation_request: ~azure.synapse.spark.models.SparkRequest
+        """
         super(SparkBatchJobState, self).__init__(**kwargs)
         self.not_started_at = not_started_at
         self.starting_at = starting_at
@@ -333,34 +435,34 @@ class SparkBatchJobState(msrest.serialization.Model):
 class SparkRequest(msrest.serialization.Model):
     """SparkRequest.
 
-    :param name:
-    :type name: str
-    :param file:
-    :type file: str
-    :param class_name:
-    :type class_name: str
-    :param arguments:
-    :type arguments: list[str]
-    :param jars:
-    :type jars: list[str]
-    :param python_files:
-    :type python_files: list[str]
-    :param files:
-    :type files: list[str]
-    :param archives:
-    :type archives: list[str]
-    :param configuration: Dictionary of :code:`<string>`.
-    :type configuration: dict[str, str]
-    :param driver_memory:
-    :type driver_memory: str
-    :param driver_cores:
-    :type driver_cores: int
-    :param executor_memory:
-    :type executor_memory: str
-    :param executor_cores:
-    :type executor_cores: int
-    :param executor_count:
-    :type executor_count: int
+    :ivar name:
+    :vartype name: str
+    :ivar file:
+    :vartype file: str
+    :ivar class_name:
+    :vartype class_name: str
+    :ivar arguments:
+    :vartype arguments: list[str]
+    :ivar jars:
+    :vartype jars: list[str]
+    :ivar python_files:
+    :vartype python_files: list[str]
+    :ivar files:
+    :vartype files: list[str]
+    :ivar archives:
+    :vartype archives: list[str]
+    :ivar configuration: Dictionary of :code:`<string>`.
+    :vartype configuration: dict[str, str]
+    :ivar driver_memory:
+    :vartype driver_memory: str
+    :ivar driver_cores:
+    :vartype driver_cores: int
+    :ivar executor_memory:
+    :vartype executor_memory: str
+    :ivar executor_cores:
+    :vartype executor_cores: int
+    :ivar executor_count:
+    :vartype executor_count: int
     """
 
     _attribute_map = {
@@ -399,6 +501,36 @@ class SparkRequest(msrest.serialization.Model):
         executor_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword file:
+        :paramtype file: str
+        :keyword class_name:
+        :paramtype class_name: str
+        :keyword arguments:
+        :paramtype arguments: list[str]
+        :keyword jars:
+        :paramtype jars: list[str]
+        :keyword python_files:
+        :paramtype python_files: list[str]
+        :keyword files:
+        :paramtype files: list[str]
+        :keyword archives:
+        :paramtype archives: list[str]
+        :keyword configuration: Dictionary of :code:`<string>`.
+        :paramtype configuration: dict[str, str]
+        :keyword driver_memory:
+        :paramtype driver_memory: str
+        :keyword driver_cores:
+        :paramtype driver_cores: int
+        :keyword executor_memory:
+        :paramtype executor_memory: str
+        :keyword executor_cores:
+        :paramtype executor_cores: int
+        :keyword executor_count:
+        :paramtype executor_count: int
+        """
         super(SparkRequest, self).__init__(**kwargs)
         self.name = name
         self.file = file
@@ -419,16 +551,16 @@ class SparkRequest(msrest.serialization.Model):
 class SparkScheduler(msrest.serialization.Model):
     """SparkScheduler.
 
-    :param submitted_at:
-    :type submitted_at: ~datetime.datetime
-    :param scheduled_at:
-    :type scheduled_at: ~datetime.datetime
-    :param ended_at:
-    :type ended_at: ~datetime.datetime
-    :param cancellation_requested_at:
-    :type cancellation_requested_at: ~datetime.datetime
-    :param current_state:  Possible values include: "Queued", "Scheduled", "Ended".
-    :type current_state: str or ~azure.synapse.spark.models.SchedulerCurrentState
+    :ivar submitted_at:
+    :vartype submitted_at: ~datetime.datetime
+    :ivar scheduled_at:
+    :vartype scheduled_at: ~datetime.datetime
+    :ivar ended_at:
+    :vartype ended_at: ~datetime.datetime
+    :ivar cancellation_requested_at:
+    :vartype cancellation_requested_at: ~datetime.datetime
+    :ivar current_state: Possible values include: "Queued", "Scheduled", "Ended".
+    :vartype current_state: str or ~azure.synapse.spark.models.SchedulerCurrentState
     """
 
     _attribute_map = {
@@ -449,6 +581,18 @@ class SparkScheduler(msrest.serialization.Model):
         current_state: Optional[Union[str, "SchedulerCurrentState"]] = None,
         **kwargs
     ):
+        """
+        :keyword submitted_at:
+        :paramtype submitted_at: ~datetime.datetime
+        :keyword scheduled_at:
+        :paramtype scheduled_at: ~datetime.datetime
+        :keyword ended_at:
+        :paramtype ended_at: ~datetime.datetime
+        :keyword cancellation_requested_at:
+        :paramtype cancellation_requested_at: ~datetime.datetime
+        :keyword current_state: Possible values include: "Queued", "Scheduled", "Ended".
+        :paramtype current_state: str or ~azure.synapse.spark.models.SchedulerCurrentState
+        """
         super(SparkScheduler, self).__init__(**kwargs)
         self.submitted_at = submitted_at
         self.scheduled_at = scheduled_at
@@ -460,12 +604,12 @@ class SparkScheduler(msrest.serialization.Model):
 class SparkServiceError(msrest.serialization.Model):
     """SparkServiceError.
 
-    :param message:
-    :type message: str
-    :param error_code:
-    :type error_code: str
-    :param source:  Possible values include: "System", "User", "Unknown", "Dependency".
-    :type source: str or ~azure.synapse.spark.models.SparkErrorSource
+    :ivar message:
+    :vartype message: str
+    :ivar error_code:
+    :vartype error_code: str
+    :ivar source: Possible values include: "System", "User", "Unknown", "Dependency".
+    :vartype source: str or ~azure.synapse.spark.models.SparkErrorSource
     """
 
     _attribute_map = {
@@ -482,6 +626,14 @@ class SparkServiceError(msrest.serialization.Model):
         source: Optional[Union[str, "SparkErrorSource"]] = None,
         **kwargs
     ):
+        """
+        :keyword message:
+        :paramtype message: str
+        :keyword error_code:
+        :paramtype error_code: str
+        :keyword source: Possible values include: "System", "User", "Unknown", "Dependency".
+        :paramtype source: str or ~azure.synapse.spark.models.SparkErrorSource
+        """
         super(SparkServiceError, self).__init__(**kwargs)
         self.message = message
         self.error_code = error_code
@@ -491,19 +643,19 @@ class SparkServiceError(msrest.serialization.Model):
 class SparkServicePlugin(msrest.serialization.Model):
     """SparkServicePlugin.
 
-    :param preparation_started_at:
-    :type preparation_started_at: ~datetime.datetime
-    :param resource_acquisition_started_at:
-    :type resource_acquisition_started_at: ~datetime.datetime
-    :param submission_started_at:
-    :type submission_started_at: ~datetime.datetime
-    :param monitoring_started_at:
-    :type monitoring_started_at: ~datetime.datetime
-    :param cleanup_started_at:
-    :type cleanup_started_at: ~datetime.datetime
-    :param current_state:  Possible values include: "Preparation", "ResourceAcquisition", "Queued",
+    :ivar preparation_started_at:
+    :vartype preparation_started_at: ~datetime.datetime
+    :ivar resource_acquisition_started_at:
+    :vartype resource_acquisition_started_at: ~datetime.datetime
+    :ivar submission_started_at:
+    :vartype submission_started_at: ~datetime.datetime
+    :ivar monitoring_started_at:
+    :vartype monitoring_started_at: ~datetime.datetime
+    :ivar cleanup_started_at:
+    :vartype cleanup_started_at: ~datetime.datetime
+    :ivar current_state: Possible values include: "Preparation", "ResourceAcquisition", "Queued",
      "Submission", "Monitoring", "Cleanup", "Ended".
-    :type current_state: str or ~azure.synapse.spark.models.PluginCurrentState
+    :vartype current_state: str or ~azure.synapse.spark.models.PluginCurrentState
     """
 
     _attribute_map = {
@@ -526,6 +678,21 @@ class SparkServicePlugin(msrest.serialization.Model):
         current_state: Optional[Union[str, "PluginCurrentState"]] = None,
         **kwargs
     ):
+        """
+        :keyword preparation_started_at:
+        :paramtype preparation_started_at: ~datetime.datetime
+        :keyword resource_acquisition_started_at:
+        :paramtype resource_acquisition_started_at: ~datetime.datetime
+        :keyword submission_started_at:
+        :paramtype submission_started_at: ~datetime.datetime
+        :keyword monitoring_started_at:
+        :paramtype monitoring_started_at: ~datetime.datetime
+        :keyword cleanup_started_at:
+        :paramtype cleanup_started_at: ~datetime.datetime
+        :keyword current_state: Possible values include: "Preparation", "ResourceAcquisition",
+         "Queued", "Submission", "Monitoring", "Cleanup", "Ended".
+        :paramtype current_state: str or ~azure.synapse.spark.models.PluginCurrentState
+        """
         super(SparkServicePlugin, self).__init__(**kwargs)
         self.preparation_started_at = preparation_started_at
         self.resource_acquisition_started_at = resource_acquisition_started_at
@@ -540,43 +707,43 @@ class SparkSession(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param livy_info:
-    :type livy_info: ~azure.synapse.spark.models.SparkSessionState
-    :param name:
-    :type name: str
-    :param workspace_name:
-    :type workspace_name: str
-    :param spark_pool_name:
-    :type spark_pool_name: str
-    :param submitter_name:
-    :type submitter_name: str
-    :param submitter_id:
-    :type submitter_id: str
-    :param artifact_id:
-    :type artifact_id: str
-    :param job_type: The job type. Possible values include: "SparkBatch", "SparkSession".
-    :type job_type: str or ~azure.synapse.spark.models.SparkJobType
-    :param result:  Possible values include: "Uncertain", "Succeeded", "Failed", "Cancelled".
-    :type result: str or ~azure.synapse.spark.models.SparkSessionResultType
-    :param scheduler:
-    :type scheduler: ~azure.synapse.spark.models.SparkScheduler
-    :param plugin:
-    :type plugin: ~azure.synapse.spark.models.SparkServicePlugin
-    :param errors:
-    :type errors: list[~azure.synapse.spark.models.SparkServiceError]
-    :param tags: A set of tags. Dictionary of :code:`<string>`.
-    :type tags: dict[str, str]
-    :param id: Required.
-    :type id: int
-    :param app_id:
-    :type app_id: str
-    :param app_info: Dictionary of :code:`<string>`.
-    :type app_info: dict[str, str]
-    :param state: The session state. Possible values include: "not_started", "starting", "idle",
+    :ivar livy_info:
+    :vartype livy_info: ~azure.synapse.spark.models.SparkSessionState
+    :ivar name:
+    :vartype name: str
+    :ivar workspace_name:
+    :vartype workspace_name: str
+    :ivar spark_pool_name:
+    :vartype spark_pool_name: str
+    :ivar submitter_name:
+    :vartype submitter_name: str
+    :ivar submitter_id:
+    :vartype submitter_id: str
+    :ivar artifact_id:
+    :vartype artifact_id: str
+    :ivar job_type: The job type. Possible values include: "SparkBatch", "SparkSession".
+    :vartype job_type: str or ~azure.synapse.spark.models.SparkJobType
+    :ivar result: Possible values include: "Uncertain", "Succeeded", "Failed", "Cancelled".
+    :vartype result: str or ~azure.synapse.spark.models.SparkSessionResultType
+    :ivar scheduler:
+    :vartype scheduler: ~azure.synapse.spark.models.SparkScheduler
+    :ivar plugin:
+    :vartype plugin: ~azure.synapse.spark.models.SparkServicePlugin
+    :ivar errors:
+    :vartype errors: list[~azure.synapse.spark.models.SparkServiceError]
+    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar id: Required.
+    :vartype id: int
+    :ivar app_id:
+    :vartype app_id: str
+    :ivar app_info: Dictionary of :code:`<string>`.
+    :vartype app_info: dict[str, str]
+    :ivar state: The session state. Possible values include: "not_started", "starting", "idle",
      "busy", "shutting_down", "error", "dead", "killed", "success", "running", "recovering".
-    :type state: str or ~azure.synapse.spark.models.LivyStates
-    :param log_lines:
-    :type log_lines: list[str]
+    :vartype state: str or ~azure.synapse.spark.models.LivyStates
+    :ivar log_lines:
+    :vartype log_lines: list[str]
     """
 
     _validation = {
@@ -627,6 +794,45 @@ class SparkSession(msrest.serialization.Model):
         log_lines: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword livy_info:
+        :paramtype livy_info: ~azure.synapse.spark.models.SparkSessionState
+        :keyword name:
+        :paramtype name: str
+        :keyword workspace_name:
+        :paramtype workspace_name: str
+        :keyword spark_pool_name:
+        :paramtype spark_pool_name: str
+        :keyword submitter_name:
+        :paramtype submitter_name: str
+        :keyword submitter_id:
+        :paramtype submitter_id: str
+        :keyword artifact_id:
+        :paramtype artifact_id: str
+        :keyword job_type: The job type. Possible values include: "SparkBatch", "SparkSession".
+        :paramtype job_type: str or ~azure.synapse.spark.models.SparkJobType
+        :keyword result: Possible values include: "Uncertain", "Succeeded", "Failed", "Cancelled".
+        :paramtype result: str or ~azure.synapse.spark.models.SparkSessionResultType
+        :keyword scheduler:
+        :paramtype scheduler: ~azure.synapse.spark.models.SparkScheduler
+        :keyword plugin:
+        :paramtype plugin: ~azure.synapse.spark.models.SparkServicePlugin
+        :keyword errors:
+        :paramtype errors: list[~azure.synapse.spark.models.SparkServiceError]
+        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword id: Required.
+        :paramtype id: int
+        :keyword app_id:
+        :paramtype app_id: str
+        :keyword app_info: Dictionary of :code:`<string>`.
+        :paramtype app_info: dict[str, str]
+        :keyword state: The session state. Possible values include: "not_started", "starting", "idle",
+         "busy", "shutting_down", "error", "dead", "killed", "success", "running", "recovering".
+        :paramtype state: str or ~azure.synapse.spark.models.LivyStates
+        :keyword log_lines:
+        :paramtype log_lines: list[str]
+        """
         super(SparkSession, self).__init__(**kwargs)
         self.livy_info = livy_info
         self.name = name
@@ -653,12 +859,12 @@ class SparkSessionCollection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param from_property: Required.
-    :type from_property: int
-    :param total: Required.
-    :type total: int
-    :param sessions:
-    :type sessions: list[~azure.synapse.spark.models.SparkSession]
+    :ivar from_property: Required.
+    :vartype from_property: int
+    :ivar total: Required.
+    :vartype total: int
+    :ivar sessions:
+    :vartype sessions: list[~azure.synapse.spark.models.SparkSession]
     """
 
     _validation = {
@@ -680,6 +886,14 @@ class SparkSessionCollection(msrest.serialization.Model):
         sessions: Optional[List["SparkSession"]] = None,
         **kwargs
     ):
+        """
+        :keyword from_property: Required.
+        :paramtype from_property: int
+        :keyword total: Required.
+        :paramtype total: int
+        :keyword sessions:
+        :paramtype sessions: list[~azure.synapse.spark.models.SparkSession]
+        """
         super(SparkSessionCollection, self).__init__(**kwargs)
         self.from_property = from_property
         self.total = total
@@ -691,38 +905,38 @@ class SparkSessionOptions(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param tags: A set of tags. Dictionary of :code:`<string>`.
-    :type tags: dict[str, str]
-    :param artifact_id:
-    :type artifact_id: str
-    :param name: Required.
-    :type name: str
-    :param file:
-    :type file: str
-    :param class_name:
-    :type class_name: str
-    :param arguments:
-    :type arguments: list[str]
-    :param jars:
-    :type jars: list[str]
-    :param python_files:
-    :type python_files: list[str]
-    :param files:
-    :type files: list[str]
-    :param archives:
-    :type archives: list[str]
-    :param configuration: Dictionary of :code:`<string>`.
-    :type configuration: dict[str, str]
-    :param driver_memory:
-    :type driver_memory: str
-    :param driver_cores:
-    :type driver_cores: int
-    :param executor_memory:
-    :type executor_memory: str
-    :param executor_cores:
-    :type executor_cores: int
-    :param executor_count:
-    :type executor_count: int
+    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar artifact_id:
+    :vartype artifact_id: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar file:
+    :vartype file: str
+    :ivar class_name:
+    :vartype class_name: str
+    :ivar arguments:
+    :vartype arguments: list[str]
+    :ivar jars:
+    :vartype jars: list[str]
+    :ivar python_files:
+    :vartype python_files: list[str]
+    :ivar files:
+    :vartype files: list[str]
+    :ivar archives:
+    :vartype archives: list[str]
+    :ivar configuration: Dictionary of :code:`<string>`.
+    :vartype configuration: dict[str, str]
+    :ivar driver_memory:
+    :vartype driver_memory: str
+    :ivar driver_cores:
+    :vartype driver_cores: int
+    :ivar executor_memory:
+    :vartype executor_memory: str
+    :ivar executor_cores:
+    :vartype executor_cores: int
+    :ivar executor_count:
+    :vartype executor_count: int
     """
 
     _validation = {
@@ -769,6 +983,40 @@ class SparkSessionOptions(msrest.serialization.Model):
         executor_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword artifact_id:
+        :paramtype artifact_id: str
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword file:
+        :paramtype file: str
+        :keyword class_name:
+        :paramtype class_name: str
+        :keyword arguments:
+        :paramtype arguments: list[str]
+        :keyword jars:
+        :paramtype jars: list[str]
+        :keyword python_files:
+        :paramtype python_files: list[str]
+        :keyword files:
+        :paramtype files: list[str]
+        :keyword archives:
+        :paramtype archives: list[str]
+        :keyword configuration: Dictionary of :code:`<string>`.
+        :paramtype configuration: dict[str, str]
+        :keyword driver_memory:
+        :paramtype driver_memory: str
+        :keyword driver_cores:
+        :paramtype driver_cores: int
+        :keyword executor_memory:
+        :paramtype executor_memory: str
+        :keyword executor_cores:
+        :paramtype executor_cores: int
+        :keyword executor_count:
+        :paramtype executor_count: int
+        """
         super(SparkSessionOptions, self).__init__(**kwargs)
         self.tags = tags
         self.artifact_id = artifact_id
@@ -791,28 +1039,28 @@ class SparkSessionOptions(msrest.serialization.Model):
 class SparkSessionState(msrest.serialization.Model):
     """SparkSessionState.
 
-    :param not_started_at:
-    :type not_started_at: ~datetime.datetime
-    :param starting_at:
-    :type starting_at: ~datetime.datetime
-    :param idle_at:
-    :type idle_at: ~datetime.datetime
-    :param dead_at:
-    :type dead_at: ~datetime.datetime
-    :param shutting_down_at:
-    :type shutting_down_at: ~datetime.datetime
-    :param terminated_at:
-    :type terminated_at: ~datetime.datetime
-    :param recovering_at:
-    :type recovering_at: ~datetime.datetime
-    :param busy_at:
-    :type busy_at: ~datetime.datetime
-    :param error_at:
-    :type error_at: ~datetime.datetime
-    :param current_state:
-    :type current_state: str
-    :param job_creation_request:
-    :type job_creation_request: ~azure.synapse.spark.models.SparkRequest
+    :ivar not_started_at:
+    :vartype not_started_at: ~datetime.datetime
+    :ivar starting_at:
+    :vartype starting_at: ~datetime.datetime
+    :ivar idle_at:
+    :vartype idle_at: ~datetime.datetime
+    :ivar dead_at:
+    :vartype dead_at: ~datetime.datetime
+    :ivar shutting_down_at:
+    :vartype shutting_down_at: ~datetime.datetime
+    :ivar terminated_at:
+    :vartype terminated_at: ~datetime.datetime
+    :ivar recovering_at:
+    :vartype recovering_at: ~datetime.datetime
+    :ivar busy_at:
+    :vartype busy_at: ~datetime.datetime
+    :ivar error_at:
+    :vartype error_at: ~datetime.datetime
+    :ivar current_state:
+    :vartype current_state: str
+    :ivar job_creation_request:
+    :vartype job_creation_request: ~azure.synapse.spark.models.SparkRequest
     """
 
     _attribute_map = {
@@ -845,6 +1093,30 @@ class SparkSessionState(msrest.serialization.Model):
         job_creation_request: Optional["SparkRequest"] = None,
         **kwargs
     ):
+        """
+        :keyword not_started_at:
+        :paramtype not_started_at: ~datetime.datetime
+        :keyword starting_at:
+        :paramtype starting_at: ~datetime.datetime
+        :keyword idle_at:
+        :paramtype idle_at: ~datetime.datetime
+        :keyword dead_at:
+        :paramtype dead_at: ~datetime.datetime
+        :keyword shutting_down_at:
+        :paramtype shutting_down_at: ~datetime.datetime
+        :keyword terminated_at:
+        :paramtype terminated_at: ~datetime.datetime
+        :keyword recovering_at:
+        :paramtype recovering_at: ~datetime.datetime
+        :keyword busy_at:
+        :paramtype busy_at: ~datetime.datetime
+        :keyword error_at:
+        :paramtype error_at: ~datetime.datetime
+        :keyword current_state:
+        :paramtype current_state: str
+        :keyword job_creation_request:
+        :paramtype job_creation_request: ~azure.synapse.spark.models.SparkRequest
+        """
         super(SparkSessionState, self).__init__(**kwargs)
         self.not_started_at = not_started_at
         self.starting_at = starting_at
@@ -864,15 +1136,15 @@ class SparkStatement(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required.
-    :type id: int
-    :param code:
-    :type code: str
-    :param state:  Possible values include: "waiting", "running", "available", "error",
-     "cancelling", "cancelled".
-    :type state: str or ~azure.synapse.spark.models.LivyStatementStates
-    :param output:
-    :type output: ~azure.synapse.spark.models.SparkStatementOutput
+    :ivar id: Required.
+    :vartype id: int
+    :ivar code:
+    :vartype code: str
+    :ivar state: Possible values include: "waiting", "running", "available", "error", "cancelling",
+     "cancelled".
+    :vartype state: str or ~azure.synapse.spark.models.LivyStatementStates
+    :ivar output:
+    :vartype output: ~azure.synapse.spark.models.SparkStatementOutput
     """
 
     _validation = {
@@ -895,6 +1167,17 @@ class SparkStatement(msrest.serialization.Model):
         output: Optional["SparkStatementOutput"] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required.
+        :paramtype id: int
+        :keyword code:
+        :paramtype code: str
+        :keyword state: Possible values include: "waiting", "running", "available", "error",
+         "cancelling", "cancelled".
+        :paramtype state: str or ~azure.synapse.spark.models.LivyStatementStates
+        :keyword output:
+        :paramtype output: ~azure.synapse.spark.models.SparkStatementOutput
+        """
         super(SparkStatement, self).__init__(**kwargs)
         self.id = id
         self.code = code
@@ -905,8 +1188,8 @@ class SparkStatement(msrest.serialization.Model):
 class SparkStatementCancellationResult(msrest.serialization.Model):
     """SparkStatementCancellationResult.
 
-    :param message: The msg property from the Livy API. The value is always "canceled".
-    :type message: str
+    :ivar message: The msg property from the Livy API. The value is always "canceled".
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -919,6 +1202,10 @@ class SparkStatementCancellationResult(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message: The msg property from the Livy API. The value is always "canceled".
+        :paramtype message: str
+        """
         super(SparkStatementCancellationResult, self).__init__(**kwargs)
         self.message = message
 
@@ -928,10 +1215,10 @@ class SparkStatementCollection(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param total: Required.
-    :type total: int
-    :param statements:
-    :type statements: list[~azure.synapse.spark.models.SparkStatement]
+    :ivar total: Required.
+    :vartype total: int
+    :ivar statements:
+    :vartype statements: list[~azure.synapse.spark.models.SparkStatement]
     """
 
     _validation = {
@@ -950,6 +1237,12 @@ class SparkStatementCollection(msrest.serialization.Model):
         statements: Optional[List["SparkStatement"]] = None,
         **kwargs
     ):
+        """
+        :keyword total: Required.
+        :paramtype total: int
+        :keyword statements:
+        :paramtype statements: list[~azure.synapse.spark.models.SparkStatement]
+        """
         super(SparkStatementCollection, self).__init__(**kwargs)
         self.total = total
         self.statements = statements
@@ -958,10 +1251,10 @@ class SparkStatementCollection(msrest.serialization.Model):
 class SparkStatementOptions(msrest.serialization.Model):
     """SparkStatementOptions.
 
-    :param code:
-    :type code: str
-    :param kind:  Possible values include: "spark", "pyspark", "dotnetspark", "sql".
-    :type kind: str or ~azure.synapse.spark.models.SparkStatementLanguageType
+    :ivar code:
+    :vartype code: str
+    :ivar kind: Possible values include: "spark", "pyspark", "dotnetspark", "sql".
+    :vartype kind: str or ~azure.synapse.spark.models.SparkStatementLanguageType
     """
 
     _attribute_map = {
@@ -976,6 +1269,12 @@ class SparkStatementOptions(msrest.serialization.Model):
         kind: Optional[Union[str, "SparkStatementLanguageType"]] = None,
         **kwargs
     ):
+        """
+        :keyword code:
+        :paramtype code: str
+        :keyword kind: Possible values include: "spark", "pyspark", "dotnetspark", "sql".
+        :paramtype kind: str or ~azure.synapse.spark.models.SparkStatementLanguageType
+        """
         super(SparkStatementOptions, self).__init__(**kwargs)
         self.code = code
         self.kind = kind
@@ -986,18 +1285,18 @@ class SparkStatementOutput(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status:
-    :type status: str
-    :param execution_count: Required.
-    :type execution_count: int
-    :param data: Any object.
-    :type data: any
-    :param error_name:
-    :type error_name: str
-    :param error_value:
-    :type error_value: str
-    :param traceback:
-    :type traceback: list[str]
+    :ivar status:
+    :vartype status: str
+    :ivar execution_count: Required.
+    :vartype execution_count: int
+    :ivar data: Any object.
+    :vartype data: any
+    :ivar error_name:
+    :vartype error_name: str
+    :ivar error_value:
+    :vartype error_value: str
+    :ivar traceback:
+    :vartype traceback: list[str]
     """
 
     _validation = {
@@ -1024,6 +1323,20 @@ class SparkStatementOutput(msrest.serialization.Model):
         traceback: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword status:
+        :paramtype status: str
+        :keyword execution_count: Required.
+        :paramtype execution_count: int
+        :keyword data: Any object.
+        :paramtype data: any
+        :keyword error_name:
+        :paramtype error_name: str
+        :keyword error_value:
+        :paramtype error_value: str
+        :keyword traceback:
+        :paramtype traceback: list[str]
+        """
         super(SparkStatementOutput, self).__init__(**kwargs)
         self.status = status
         self.execution_count = execution_count

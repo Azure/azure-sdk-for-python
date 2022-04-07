@@ -15,36 +15,36 @@ import msrest.serialization
 class SparkJob(msrest.serialization.Model):
     """SparkJob.
 
-    :param state:
-    :type state: str
-    :param name:
-    :type name: str
-    :param submitter:
-    :type submitter: str
-    :param compute:
-    :type compute: str
-    :param spark_application_id:
-    :type spark_application_id: str
-    :param livy_id:
-    :type livy_id: str
-    :param timing:
-    :type timing: list[str]
-    :param spark_job_definition:
-    :type spark_job_definition: str
-    :param pipeline:
-    :type pipeline: list[~azure.synapse.monitoring.models.SparkJob]
-    :param job_type:
-    :type job_type: str
-    :param submit_time:
-    :type submit_time: ~datetime.datetime
-    :param end_time:
-    :type end_time: ~datetime.datetime
-    :param queued_duration:
-    :type queued_duration: str
-    :param running_duration:
-    :type running_duration: str
-    :param total_duration:
-    :type total_duration: str
+    :ivar state:
+    :vartype state: str
+    :ivar name:
+    :vartype name: str
+    :ivar submitter:
+    :vartype submitter: str
+    :ivar compute:
+    :vartype compute: str
+    :ivar spark_application_id:
+    :vartype spark_application_id: str
+    :ivar livy_id:
+    :vartype livy_id: str
+    :ivar timing:
+    :vartype timing: list[str]
+    :ivar spark_job_definition:
+    :vartype spark_job_definition: str
+    :ivar pipeline:
+    :vartype pipeline: list[~azure.synapse.monitoring.models.SparkJob]
+    :ivar job_type:
+    :vartype job_type: str
+    :ivar submit_time:
+    :vartype submit_time: ~datetime.datetime
+    :ivar end_time:
+    :vartype end_time: ~datetime.datetime
+    :ivar queued_duration:
+    :vartype queued_duration: str
+    :ivar running_duration:
+    :vartype running_duration: str
+    :ivar total_duration:
+    :vartype total_duration: str
     """
 
     _attribute_map = {
@@ -85,6 +85,38 @@ class SparkJob(msrest.serialization.Model):
         total_duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword state:
+        :paramtype state: str
+        :keyword name:
+        :paramtype name: str
+        :keyword submitter:
+        :paramtype submitter: str
+        :keyword compute:
+        :paramtype compute: str
+        :keyword spark_application_id:
+        :paramtype spark_application_id: str
+        :keyword livy_id:
+        :paramtype livy_id: str
+        :keyword timing:
+        :paramtype timing: list[str]
+        :keyword spark_job_definition:
+        :paramtype spark_job_definition: str
+        :keyword pipeline:
+        :paramtype pipeline: list[~azure.synapse.monitoring.models.SparkJob]
+        :keyword job_type:
+        :paramtype job_type: str
+        :keyword submit_time:
+        :paramtype submit_time: ~datetime.datetime
+        :keyword end_time:
+        :paramtype end_time: ~datetime.datetime
+        :keyword queued_duration:
+        :paramtype queued_duration: str
+        :keyword running_duration:
+        :paramtype running_duration: str
+        :keyword total_duration:
+        :paramtype total_duration: str
+        """
         super(SparkJob, self).__init__(**kwargs)
         self.state = state
         self.name = name
@@ -106,10 +138,10 @@ class SparkJob(msrest.serialization.Model):
 class SparkJobListViewResponse(msrest.serialization.Model):
     """SparkJobListViewResponse.
 
-    :param n_jobs:
-    :type n_jobs: int
-    :param spark_jobs:
-    :type spark_jobs: list[~azure.synapse.monitoring.models.SparkJob]
+    :ivar n_jobs:
+    :vartype n_jobs: int
+    :ivar spark_jobs:
+    :vartype spark_jobs: list[~azure.synapse.monitoring.models.SparkJob]
     """
 
     _attribute_map = {
@@ -124,6 +156,12 @@ class SparkJobListViewResponse(msrest.serialization.Model):
         spark_jobs: Optional[List["SparkJob"]] = None,
         **kwargs
     ):
+        """
+        :keyword n_jobs:
+        :paramtype n_jobs: int
+        :keyword spark_jobs:
+        :paramtype spark_jobs: list[~azure.synapse.monitoring.models.SparkJob]
+        """
         super(SparkJobListViewResponse, self).__init__(**kwargs)
         self.n_jobs = n_jobs
         self.spark_jobs = spark_jobs
@@ -132,8 +170,8 @@ class SparkJobListViewResponse(msrest.serialization.Model):
 class SqlQueryStringDataModel(msrest.serialization.Model):
     """SqlQueryStringDataModel.
 
-    :param query:
-    :type query: str
+    :ivar query:
+    :vartype query: str
     """
 
     _attribute_map = {
@@ -146,5 +184,9 @@ class SqlQueryStringDataModel(msrest.serialization.Model):
         query: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword query:
+        :paramtype query: str
+        """
         super(SqlQueryStringDataModel, self).__init__(**kwargs)
         self.query = query

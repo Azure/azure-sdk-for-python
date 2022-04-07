@@ -6,42 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import SparkBatchJob
-    from ._models_py3 import SparkBatchJobCollection
-    from ._models_py3 import SparkBatchJobOptions
-    from ._models_py3 import SparkBatchJobState
-    from ._models_py3 import SparkRequest
-    from ._models_py3 import SparkScheduler
-    from ._models_py3 import SparkServiceError
-    from ._models_py3 import SparkServicePlugin
-    from ._models_py3 import SparkSession
-    from ._models_py3 import SparkSessionCollection
-    from ._models_py3 import SparkSessionOptions
-    from ._models_py3 import SparkSessionState
-    from ._models_py3 import SparkStatement
-    from ._models_py3 import SparkStatementCancellationResult
-    from ._models_py3 import SparkStatementCollection
-    from ._models_py3 import SparkStatementOptions
-    from ._models_py3 import SparkStatementOutput
-except (SyntaxError, ImportError):
-    from ._models import SparkBatchJob  # type: ignore
-    from ._models import SparkBatchJobCollection  # type: ignore
-    from ._models import SparkBatchJobOptions  # type: ignore
-    from ._models import SparkBatchJobState  # type: ignore
-    from ._models import SparkRequest  # type: ignore
-    from ._models import SparkScheduler  # type: ignore
-    from ._models import SparkServiceError  # type: ignore
-    from ._models import SparkServicePlugin  # type: ignore
-    from ._models import SparkSession  # type: ignore
-    from ._models import SparkSessionCollection  # type: ignore
-    from ._models import SparkSessionOptions  # type: ignore
-    from ._models import SparkSessionState  # type: ignore
-    from ._models import SparkStatement  # type: ignore
-    from ._models import SparkStatementCancellationResult  # type: ignore
-    from ._models import SparkStatementCollection  # type: ignore
-    from ._models import SparkStatementOptions  # type: ignore
-    from ._models import SparkStatementOutput  # type: ignore
+from ._models_py3 import SparkBatchJob
+from ._models_py3 import SparkBatchJobCollection
+from ._models_py3 import SparkBatchJobOptions
+from ._models_py3 import SparkBatchJobState
+from ._models_py3 import SparkRequest
+from ._models_py3 import SparkScheduler
+from ._models_py3 import SparkServiceError
+from ._models_py3 import SparkServicePlugin
+from ._models_py3 import SparkSession
+from ._models_py3 import SparkSessionCollection
+from ._models_py3 import SparkSessionOptions
+from ._models_py3 import SparkSessionState
+from ._models_py3 import SparkStatement
+from ._models_py3 import SparkStatementCancellationResult
+from ._models_py3 import SparkStatementCollection
+from ._models_py3 import SparkStatementOptions
+from ._models_py3 import SparkStatementOutput
+
 
 from ._spark_client_enums import (
     LivyStatementStates,
