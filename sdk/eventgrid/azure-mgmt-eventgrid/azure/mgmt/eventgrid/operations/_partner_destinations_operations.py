@@ -32,19 +32,17 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(
     subscription_id: str,
     resource_group_name: str,
-    system_topic_name: str,
-    event_subscription_name: str,
+    partner_destination_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "systemTopicName": _SERIALIZER.url("system_topic_name", system_topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+        "partnerDestinationName": _SERIALIZER.url("partner_destination_name", partner_destination_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -66,11 +64,10 @@ def build_get_request(
     )
 
 
-def build_create_or_update_request_initial(
+def build_create_or_update_request(
     subscription_id: str,
     resource_group_name: str,
-    system_topic_name: str,
-    event_subscription_name: str,
+    partner_destination_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -81,12 +78,11 @@ def build_create_or_update_request_initial(
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "systemTopicName": _SERIALIZER.url("system_topic_name", system_topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+        "partnerDestinationName": _SERIALIZER.url("partner_destination_name", partner_destination_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -115,18 +111,16 @@ def build_create_or_update_request_initial(
 def build_delete_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    system_topic_name: str,
-    event_subscription_name: str,
+    partner_destination_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-10-15-preview"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "systemTopicName": _SERIALIZER.url("system_topic_name", system_topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+        "partnerDestinationName": _SERIALIZER.url("partner_destination_name", partner_destination_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -143,11 +137,10 @@ def build_delete_request_initial(
     )
 
 
-def build_update_request_initial(
+def build_update_request(
     subscription_id: str,
     resource_group_name: str,
-    system_topic_name: str,
-    event_subscription_name: str,
+    partner_destination_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -158,12 +151,11 @@ def build_update_request_initial(
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "systemTopicName": _SERIALIZER.url("system_topic_name", system_topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+        "partnerDestinationName": _SERIALIZER.url("partner_destination_name", partner_destination_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -189,47 +181,8 @@ def build_update_request_initial(
     )
 
 
-def build_get_full_url_request(
+def build_list_by_subscription_request(
     subscription_id: str,
-    resource_group_name: str,
-    system_topic_name: str,
-    event_subscription_name: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-10-15-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}/getFullUrl')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "systemTopicName": _SERIALIZER.url("system_topic_name", system_topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_list_by_system_topic_request(
-    subscription_id: str,
-    resource_group_name: str,
-    system_topic_name: str,
     *,
     filter: Optional[str] = None,
     top: Optional[int] = None,
@@ -238,11 +191,9 @@ def build_list_by_system_topic_request(
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/partnerDestinations')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "systemTopicName": _SERIALIZER.url("system_topic_name", system_topic_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -268,22 +219,60 @@ def build_list_by_system_topic_request(
     )
 
 
-def build_get_delivery_attributes_request(
+def build_list_by_resource_group_request(
     subscription_id: str,
     resource_group_name: str,
-    system_topic_name: str,
-    event_subscription_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}/getDeliveryAttributes')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "systemTopicName": _SERIALIZER.url("system_topic_name", system_topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if filter is not None:
+        query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_activate_request(
+    subscription_id: str,
+    resource_group_name: str,
+    partner_destination_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}/activate')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "partnerDestinationName": _SERIALIZER.url("partner_destination_name", partner_destination_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -304,8 +293,8 @@ def build_get_delivery_attributes_request(
         **kwargs
     )
 
-class SystemTopicEventSubscriptionsOperations(object):
-    """SystemTopicEventSubscriptionsOperations operations.
+class PartnerDestinationsOperations(object):
+    """PartnerDestinationsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -330,28 +319,23 @@ class SystemTopicEventSubscriptionsOperations(object):
     def get(
         self,
         resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
+        partner_destination_name: str,
         **kwargs: Any
-    ) -> "_models.EventSubscription":
-        """Get an event subscription of a system topic.
+    ) -> "_models.PartnerDestination":
+        """Get a partner destination.
 
-        Get an event subscription.
+        Get properties of a partner destination.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param system_topic_name: Name of the system topic.
-        :type system_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only.
-        :type event_subscription_name: str
+        :param partner_destination_name: Name of the partner destination.
+        :type partner_destination_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EventSubscription, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.EventSubscription
+        :return: PartnerDestination, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.PartnerDestination
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerDestination"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -361,8 +345,7 @@ class SystemTopicEventSubscriptionsOperations(object):
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            system_topic_name=system_topic_name,
-            event_subscription_name=event_subscription_name,
+            partner_destination_name=partner_destination_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -375,25 +358,40 @@ class SystemTopicEventSubscriptionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('EventSubscription', pipeline_response)
+        deserialized = self._deserialize('PartnerDestination', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}'}  # type: ignore
 
 
-    def _create_or_update_initial(
+    @distributed_trace
+    def create_or_update(
         self,
         resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
-        event_subscription_info: "_models.EventSubscription",
+        partner_destination_name: str,
+        partner_destination: "_models.PartnerDestination",
         **kwargs: Any
-    ) -> "_models.EventSubscription":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
+    ) -> "_models.PartnerDestination":
+        """Create a partner destination.
+
+        Asynchronously creates a new partner destination with the specified parameters.
+
+        :param resource_group_name: The name of the resource group within the user's subscription.
+        :type resource_group_name: str
+        :param partner_destination_name: Name of the partner destination.
+        :type partner_destination_name: str
+        :param partner_destination: Partner destination create information.
+        :type partner_destination: ~azure.mgmt.eventgrid.models.PartnerDestination
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PartnerDestination, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.PartnerDestination
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerDestination"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -401,16 +399,15 @@ class SystemTopicEventSubscriptionsOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(event_subscription_info, 'EventSubscription')
+        _json = self._serialize.body(partner_destination, 'PartnerDestination')
 
-        request = build_create_or_update_request_initial(
+        request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            system_topic_name=system_topic_name,
-            event_subscription_name=event_subscription_name,
+            partner_destination_name=partner_destination_name,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_initial.metadata['url'],
+            template_url=self.create_or_update.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -418,106 +415,28 @@ class SystemTopicEventSubscriptionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('EventSubscription', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('PartnerDestination', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('PartnerDestination', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}'}  # type: ignore
 
-
-    @distributed_trace
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
-        event_subscription_info: "_models.EventSubscription",
-        **kwargs: Any
-    ) -> LROPoller["_models.EventSubscription"]:
-        """Create or update an event subscription for a system topic.
-
-        Asynchronously creates or updates an event subscription with the specified parameters. Existing
-        event subscriptions will be updated with this API.
-
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param system_topic_name: Name of the system topic.
-        :type system_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only.
-        :type event_subscription_name: str
-        :param event_subscription_info: Event subscription properties containing the destination and
-         filter information.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either EventSubscription or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                system_topic_name=system_topic_name,
-                event_subscription_name=event_subscription_name,
-                event_subscription_info=event_subscription_info,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('EventSubscription', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
+        partner_destination_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -530,8 +449,7 @@ class SystemTopicEventSubscriptionsOperations(object):
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            system_topic_name=system_topic_name,
-            event_subscription_name=event_subscription_name,
+            partner_destination_name=partner_destination_name,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -547,29 +465,24 @@ class SystemTopicEventSubscriptionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}'}  # type: ignore
 
 
     @distributed_trace
     def begin_delete(
         self,
         resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
+        partner_destination_name: str,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Delete an event subscription of a system topic.
+        """Delete a partner destination.
 
-        Delete an existing event subscription of a system topic.
+        Delete existing partner destination.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param system_topic_name: Name of the system topic.
-        :type system_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only.
-        :type event_subscription_name: str
+        :param partner_destination_name: Name of the partner destination.
+        :type partner_destination_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -592,8 +505,7 @@ class SystemTopicEventSubscriptionsOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
-                system_topic_name=system_topic_name,
-                event_subscription_name=event_subscription_name,
+                partner_destination_name=partner_destination_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -617,17 +529,33 @@ class SystemTopicEventSubscriptionsOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}'}  # type: ignore
 
-    def _update_initial(
+    @distributed_trace
+    def update(
         self,
         resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
-        event_subscription_update_parameters: "_models.EventSubscriptionUpdateParameters",
+        partner_destination_name: str,
+        partner_destination_update_parameters: "_models.PartnerDestinationUpdateParameters",
         **kwargs: Any
-    ) -> "_models.EventSubscription":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
+    ) -> Optional["_models.PartnerDestination"]:
+        """Update a partner destination.
+
+        Asynchronously updates a partner destination with the specified parameters.
+
+        :param resource_group_name: The name of the resource group within the user's subscription.
+        :type resource_group_name: str
+        :param partner_destination_name: Name of the partner destination.
+        :type partner_destination_name: str
+        :param partner_destination_update_parameters: Partner destination update information.
+        :type partner_destination_update_parameters:
+         ~azure.mgmt.eventgrid.models.PartnerDestinationUpdateParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PartnerDestination, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.PartnerDestination or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PartnerDestination"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -635,16 +563,15 @@ class SystemTopicEventSubscriptionsOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(event_subscription_update_parameters, 'EventSubscriptionUpdateParameters')
+        _json = self._serialize.body(partner_destination_update_parameters, 'PartnerDestinationUpdateParameters')
 
-        request = build_update_request_initial(
+        request = build_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            system_topic_name=system_topic_name,
-            event_subscription_name=event_subscription_name,
+            partner_destination_name=partner_destination_name,
             content_type=content_type,
             json=_json,
-            template_url=self._update_initial.metadata['url'],
+            template_url=self.update.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -652,176 +579,33 @@ class SystemTopicEventSubscriptionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('EventSubscription', pipeline_response)
+        deserialized = None
+        if response.status_code == 201:
+            deserialized = self._deserialize('PartnerDestination', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}'}  # type: ignore
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}'}  # type: ignore
 
 
     @distributed_trace
-    def begin_update(
+    def list_by_subscription(
         self,
-        resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
-        event_subscription_update_parameters: "_models.EventSubscriptionUpdateParameters",
-        **kwargs: Any
-    ) -> LROPoller["_models.EventSubscription"]:
-        """Update event subscription of a system topic.
-
-        Update an existing event subscription of a system topic.
-
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param system_topic_name: Name of the system topic.
-        :type system_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only.
-        :type event_subscription_name: str
-        :param event_subscription_update_parameters: Updated event subscription information.
-        :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either EventSubscription or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscription"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._update_initial(
-                resource_group_name=resource_group_name,
-                system_topic_name=system_topic_name,
-                event_subscription_name=event_subscription_name,
-                event_subscription_update_parameters=event_subscription_update_parameters,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('EventSubscription', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}'}  # type: ignore
-
-    @distributed_trace
-    def get_full_url(
-        self,
-        resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
-        **kwargs: Any
-    ) -> "_models.EventSubscriptionFullUrl":
-        """Get full URL of an event subscription of a system topic.
-
-        Get the full endpoint URL for an event subscription of a system topic.
-
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param system_topic_name: Name of the system topic.
-        :type system_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only.
-        :type event_subscription_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EventSubscriptionFullUrl, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.EventSubscriptionFullUrl
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionFullUrl"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        
-        request = build_get_full_url_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            system_topic_name=system_topic_name,
-            event_subscription_name=event_subscription_name,
-            template_url=self.get_full_url.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('EventSubscriptionFullUrl', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_full_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}/getFullUrl'}  # type: ignore
-
-
-    @distributed_trace
-    def list_by_system_topic(
-        self,
-        resource_group_name: str,
-        system_topic_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.EventSubscriptionsListResult"]:
-        """List event subscriptions of a system topic.
+    ) -> Iterable["_models.PartnerDestinationsListResult"]:
+        """List partner destinations under an Azure subscription.
 
-        List event subscriptions that belong to a specific system topic.
+        List all the partner destinations under an Azure subscription.
 
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param system_topic_name: Name of the system topic.
-        :type system_topic_name: str
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These
          operations are: the 'contains' function as well as the following logical operations: not, and,
@@ -834,12 +618,13 @@ class SystemTopicEventSubscriptionsOperations(object):
          items per page.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either EventSubscriptionsListResult or the result of
+        :return: An iterator like instance of either PartnerDestinationsListResult or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.EventSubscriptionsListResult]
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.PartnerDestinationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerDestinationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -847,23 +632,19 @@ class SystemTopicEventSubscriptionsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_system_topic_request(
+                request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    system_topic_name=system_topic_name,
                     filter=filter,
                     top=top,
-                    template_url=self.list_by_system_topic.metadata['url'],
+                    template_url=self.list_by_subscription.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_system_topic_request(
+                request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    system_topic_name=system_topic_name,
                     filter=filter,
                     top=top,
                     template_url=next_link,
@@ -874,7 +655,7 @@ class SystemTopicEventSubscriptionsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("EventSubscriptionsListResult", pipeline_response)
+            deserialized = self._deserialize("PartnerDestinationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -896,46 +677,129 @@ class SystemTopicEventSubscriptionsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_system_topic.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions'}  # type: ignore
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/partnerDestinations'}  # type: ignore
 
     @distributed_trace
-    def get_delivery_attributes(
+    def list_by_resource_group(
         self,
         resource_group_name: str,
-        system_topic_name: str,
-        event_subscription_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
         **kwargs: Any
-    ) -> "_models.DeliveryAttributeListResult":
-        """Get delivery attributes for an event subscription.
+    ) -> Iterable["_models.PartnerDestinationsListResult"]:
+        """List partner destinations under a resource group.
 
-        Get all delivery attributes for an event subscription.
+        List all the partner destinations under a resource group.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param system_topic_name: Name of the system topic.
-        :type system_topic_name: str
-        :param event_subscription_name: Name of the event subscription to be created. Event
-         subscription names must be between 3 and 100 characters in length and use alphanumeric letters
-         only.
-        :type event_subscription_name: str
+        :param filter: The query used to filter the search results using OData syntax. Filtering is
+         permitted on the 'name' property only and with limited number of OData operations. These
+         operations are: the 'contains' function as well as the following logical operations: not, and,
+         or, eq (for equal), and ne (for not equal). No arithmetic operations are supported. The
+         following is a valid filter example: $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'.
+         The following is not a valid filter example: $filter=location eq 'westus'.
+        :type filter: str
+        :param top: The number of results to return per page for the list operation. Valid range for
+         top parameter is 1 to 100. If not specified, the default number of results to be returned is 20
+         items per page.
+        :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeliveryAttributeListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.DeliveryAttributeListResult
+        :return: An iterator like instance of either PartnerDestinationsListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.PartnerDestinationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeliveryAttributeListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerDestinationsListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_by_resource_group_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    filter=filter,
+                    top=top,
+                    template_url=self.list_by_resource_group.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                
+                request = build_list_by_resource_group_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    filter=filter,
+                    top=top,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("PartnerDestinationsListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations'}  # type: ignore
+
+    @distributed_trace
+    def activate(
+        self,
+        resource_group_name: str,
+        partner_destination_name: str,
+        **kwargs: Any
+    ) -> "_models.PartnerDestination":
+        """Activate a partner destination.
+
+        Activate a newly created partner destination.
+
+        :param resource_group_name: The name of the resource group within the user's subscription.
+        :type resource_group_name: str
+        :param partner_destination_name: Name of the partner destination.
+        :type partner_destination_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PartnerDestination, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.PartnerDestination
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PartnerDestination"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         
-        request = build_get_delivery_attributes_request(
+        request = build_activate_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            system_topic_name=system_topic_name,
-            event_subscription_name=event_subscription_name,
-            template_url=self.get_delivery_attributes.metadata['url'],
+            partner_destination_name=partner_destination_name,
+            template_url=self.activate.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -947,12 +811,12 @@ class SystemTopicEventSubscriptionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DeliveryAttributeListResult', pipeline_response)
+        deserialized = self._deserialize('PartnerDestination', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_delivery_attributes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}/eventSubscriptions/{eventSubscriptionName}/getDeliveryAttributes'}  # type: ignore
+    activate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerDestinations/{partnerDestinationName}/activate'}  # type: ignore
 

@@ -26,41 +26,16 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-10-15-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/topicTypes')
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
 def build_get_request(
-    topic_type_name: str,
+    verified_partner_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}')
+    url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/verifiedPartners/{verifiedPartnerName}')
     path_format_arguments = {
-        "topicTypeName": _SERIALIZER.url("topic_type_name", topic_type_name, 'str'),
+        "verifiedPartnerName": _SERIALIZER.url("verified_partner_name", verified_partner_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -82,23 +57,24 @@ def build_get_request(
     )
 
 
-def build_list_event_types_request(
-    topic_type_name: str,
+def build_list_request(
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventTypes')
-    path_format_arguments = {
-        "topicTypeName": _SERIALIZER.url("topic_type_name", topic_type_name, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/verifiedPartners')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if filter is not None:
+        query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -112,8 +88,8 @@ def build_list_event_types_request(
         **kwargs
     )
 
-class TopicTypesOperations(object):
-    """TopicTypesOperations operations.
+class VerifiedPartnersOperations(object):
+    """VerifiedPartnersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -135,87 +111,23 @@ class TopicTypesOperations(object):
         self._config = config
 
     @distributed_trace
-    def list(
-        self,
-        **kwargs: Any
-    ) -> Iterable["_models.TopicTypesListResult"]:
-        """List topic types.
-
-        List all registered topic types.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either TopicTypesListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.TopicTypesListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicTypesListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_request(
-                    template_url=self.list.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_request(
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("TopicTypesListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/providers/Microsoft.EventGrid/topicTypes'}  # type: ignore
-
-    @distributed_trace
     def get(
         self,
-        topic_type_name: str,
+        verified_partner_name: str,
         **kwargs: Any
-    ) -> "_models.TopicTypeInfo":
-        """Get a topic type.
+    ) -> "_models.VerifiedPartner":
+        """Get a verified partner.
 
-        Get information about a topic type.
+        Get properties of a verified partner.
 
-        :param topic_type_name: Name of the topic type.
-        :type topic_type_name: str
+        :param verified_partner_name: Name of the verified partner.
+        :type verified_partner_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TopicTypeInfo, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.TopicTypeInfo
+        :return: VerifiedPartner, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.VerifiedPartner
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicTypeInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VerifiedPartner"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -223,7 +135,7 @@ class TopicTypesOperations(object):
 
         
         request = build_get_request(
-            topic_type_name=topic_type_name,
+            verified_partner_name=verified_partner_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -236,35 +148,45 @@ class TopicTypesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('TopicTypeInfo', pipeline_response)
+        deserialized = self._deserialize('VerifiedPartner', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}'}  # type: ignore
+    get.metadata = {'url': '/providers/Microsoft.EventGrid/verifiedPartners/{verifiedPartnerName}'}  # type: ignore
 
 
     @distributed_trace
-    def list_event_types(
+    def list(
         self,
-        topic_type_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.EventTypesListResult"]:
-        """List event types.
+    ) -> Iterable["_models.VerifiedPartnersListResult"]:
+        """List all verified partners.
 
-        List event types for a topic type.
+        Get a list of all verified partners.
 
-        :param topic_type_name: Name of the topic type.
-        :type topic_type_name: str
+        :param filter: The query used to filter the search results using OData syntax. Filtering is
+         permitted on the 'name' property only and with limited number of OData operations. These
+         operations are: the 'contains' function as well as the following logical operations: not, and,
+         or, eq (for equal), and ne (for not equal). No arithmetic operations are supported. The
+         following is a valid filter example: $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'.
+         The following is not a valid filter example: $filter=location eq 'westus'.
+        :type filter: str
+        :param top: The number of results to return per page for the list operation. Valid range for
+         top parameter is 1 to 100. If not specified, the default number of results to be returned is 20
+         items per page.
+        :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either EventTypesListResult or the result of
+        :return: An iterator like instance of either VerifiedPartnersListResult or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.EventTypesListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.VerifiedPartnersListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventTypesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VerifiedPartnersListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -272,17 +194,19 @@ class TopicTypesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_event_types_request(
-                    topic_type_name=topic_type_name,
-                    template_url=self.list_event_types.metadata['url'],
+                request = build_list_request(
+                    filter=filter,
+                    top=top,
+                    template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_event_types_request(
-                    topic_type_name=topic_type_name,
+                request = build_list_request(
+                    filter=filter,
+                    top=top,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -291,11 +215,11 @@ class TopicTypesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("EventTypesListResult", pipeline_response)
+            deserialized = self._deserialize("VerifiedPartnersListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -313,4 +237,4 @@ class TopicTypesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_event_types.metadata = {'url': '/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventTypes'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.EventGrid/verifiedPartners'}  # type: ignore
