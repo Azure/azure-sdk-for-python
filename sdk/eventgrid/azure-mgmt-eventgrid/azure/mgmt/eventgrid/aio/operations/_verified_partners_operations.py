@@ -20,12 +20,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._private_link_resources_operations import build_get_request, build_list_by_resource_request
+from ...operations._verified_partners_operations import build_get_request, build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PrivateLinkResourcesOperations:
-    """PrivateLinkResourcesOperations async operations.
+class VerifiedPartnersOperations:
+    """VerifiedPartnersOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,32 +49,21 @@ class PrivateLinkResourcesOperations:
     @distributed_trace_async
     async def get(
         self,
-        resource_group_name: str,
-        parent_type: str,
-        parent_name: str,
-        private_link_resource_name: str,
+        verified_partner_name: str,
         **kwargs: Any
-    ) -> "_models.PrivateLinkResource":
-        """Get a private link resource.
+    ) -> "_models.VerifiedPartner":
+        """Get a verified partner.
 
-        Get properties of a private link resource.
+        Get properties of a verified partner.
 
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\',
-         \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
-         name, or partner namespace name).
-        :type parent_name: str
-        :param private_link_resource_name: The name of private link resource.
-        :type private_link_resource_name: str
+        :param verified_partner_name: Name of the verified partner.
+        :type verified_partner_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.PrivateLinkResource
+        :return: VerifiedPartner, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.VerifiedPartner
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VerifiedPartner"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -82,11 +71,7 @@ class PrivateLinkResourcesOperations:
 
         
         request = build_get_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            parent_type=parent_type,
-            parent_name=parent_name,
-            private_link_resource_name=private_link_resource_name,
+            verified_partner_name=verified_partner_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -99,38 +84,27 @@ class PrivateLinkResourcesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkResource', pipeline_response)
+        deserialized = self._deserialize('VerifiedPartner', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateLinkResources/{privateLinkResourceName}'}  # type: ignore
+    get.metadata = {'url': '/providers/Microsoft.EventGrid/verifiedPartners/{verifiedPartnerName}'}  # type: ignore
 
 
     @distributed_trace
-    def list_by_resource(
+    def list(
         self,
-        resource_group_name: str,
-        parent_type: str,
-        parent_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateLinkResourcesListResult"]:
-        """List private link resources under specific topic, domain, or partner namespace.
+    ) -> AsyncIterable["_models.VerifiedPartnersListResult"]:
+        """List all verified partners.
 
-        List all the private link resources under a topic, domain, or partner namespace.
+        Get a list of all verified partners.
 
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\',
-         \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
-         name, or partner namespace name).
-        :type parent_name: str
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These
          operations are: the 'contains' function as well as the following logical operations: not, and,
@@ -143,13 +117,13 @@ class PrivateLinkResourcesOperations:
          items per page.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateLinkResourcesListResult or the result of
+        :return: An iterator like instance of either VerifiedPartnersListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.PrivateLinkResourcesListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.VerifiedPartnersListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourcesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VerifiedPartnersListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -157,25 +131,17 @@ class PrivateLinkResourcesOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_resource_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    parent_type=parent_type,
-                    parent_name=parent_name,
+                request = build_list_request(
                     filter=filter,
                     top=top,
-                    template_url=self.list_by_resource.metadata['url'],
+                    template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_resource_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    parent_type=parent_type,
-                    parent_name=parent_name,
+                request = build_list_request(
                     filter=filter,
                     top=top,
                     template_url=next_link,
@@ -186,7 +152,7 @@ class PrivateLinkResourcesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PrivateLinkResourcesListResult", pipeline_response)
+            deserialized = self._deserialize("VerifiedPartnersListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -208,4 +174,4 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateLinkResources'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.EventGrid/verifiedPartners'}  # type: ignore

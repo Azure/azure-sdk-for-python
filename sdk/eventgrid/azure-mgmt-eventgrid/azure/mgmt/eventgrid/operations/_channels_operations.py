@@ -32,21 +32,19 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(
     subscription_id: str,
     resource_group_name: str,
-    parent_type: Union[str, "_models.ParentType"],
-    parent_name: str,
-    private_endpoint_connection_name: str,
+    partner_namespace_name: str,
+    channel_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "parentType": _SERIALIZER.url("parent_type", parent_type, 'str'),
-        "parentName": _SERIALIZER.url("parent_name", parent_name, 'str'),
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        "partnerNamespaceName": _SERIALIZER.url("partner_namespace_name", partner_namespace_name, 'str'),
+        "channelName": _SERIALIZER.url("channel_name", channel_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -68,12 +66,11 @@ def build_get_request(
     )
 
 
-def build_update_request_initial(
+def build_create_or_update_request(
     subscription_id: str,
     resource_group_name: str,
-    parent_type: Union[str, "_models.ParentType"],
-    parent_name: str,
-    private_endpoint_connection_name: str,
+    partner_namespace_name: str,
+    channel_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -84,13 +81,12 @@ def build_update_request_initial(
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "parentType": _SERIALIZER.url("parent_type", parent_type, 'str'),
-        "parentName": _SERIALIZER.url("parent_name", parent_name, 'str'),
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        "partnerNamespaceName": _SERIALIZER.url("partner_namespace_name", partner_namespace_name, 'str'),
+        "channelName": _SERIALIZER.url("channel_name", channel_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -119,20 +115,18 @@ def build_update_request_initial(
 def build_delete_request_initial(
     subscription_id: str,
     resource_group_name: str,
-    parent_type: Union[str, "_models.ParentType"],
-    parent_name: str,
-    private_endpoint_connection_name: str,
+    partner_namespace_name: str,
+    channel_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-10-15-preview"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "parentType": _SERIALIZER.url("parent_type", parent_type, 'str'),
-        "parentName": _SERIALIZER.url("parent_name", parent_name, 'str'),
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        "partnerNamespaceName": _SERIALIZER.url("partner_namespace_name", partner_namespace_name, 'str'),
+        "channelName": _SERIALIZER.url("channel_name", channel_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -149,11 +143,54 @@ def build_delete_request_initial(
     )
 
 
-def build_list_by_resource_request(
+def build_update_request(
     subscription_id: str,
     resource_group_name: str,
-    parent_type: Union[str, "_models.ParentType"],
-    parent_name: str,
+    partner_namespace_name: str,
+    channel_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    api_version = "2021-10-15-preview"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "partnerNamespaceName": _SERIALIZER.url("partner_namespace_name", partner_namespace_name, 'str'),
+        "channelName": _SERIALIZER.url("channel_name", channel_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+
+    return HttpRequest(
+        method="PATCH",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        json=json,
+        content=content,
+        **kwargs
+    )
+
+
+def build_list_by_partner_namespace_request(
+    subscription_id: str,
+    resource_group_name: str,
+    partner_namespace_name: str,
     *,
     filter: Optional[str] = None,
     top: Optional[int] = None,
@@ -162,12 +199,11 @@ def build_list_by_resource_request(
     api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "parentType": _SERIALIZER.url("parent_type", parent_type, 'str'),
-        "parentName": _SERIALIZER.url("parent_name", parent_name, 'str'),
+        "partnerNamespaceName": _SERIALIZER.url("partner_namespace_name", partner_namespace_name, 'str'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -192,8 +228,45 @@ def build_list_by_resource_request(
         **kwargs
     )
 
-class PrivateEndpointConnectionsOperations(object):
-    """PrivateEndpointConnectionsOperations operations.
+
+def build_get_full_url_request(
+    subscription_id: str,
+    resource_group_name: str,
+    partner_namespace_name: str,
+    channel_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}/getFullUrl')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "partnerNamespaceName": _SERIALIZER.url("partner_namespace_name", partner_namespace_name, 'str'),
+        "channelName": _SERIALIZER.url("channel_name", channel_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+class ChannelsOperations(object):
+    """ChannelsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -218,32 +291,26 @@ class PrivateEndpointConnectionsOperations(object):
     def get(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
+        partner_namespace_name: str,
+        channel_name: str,
         **kwargs: Any
-    ) -> "_models.PrivateEndpointConnection":
-        """Get a specific private endpoint connection.
+    ) -> "_models.Channel":
+        """Get a channel.
 
-        Get a specific private endpoint connection under a topic, domain, or partner namespace.
+        Get properties of a channel.
 
-        :param resource_group_name: The name of the resource group within the user's subscription.
+        :param resource_group_name: The name of the resource group within the partners subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\',
-         \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
-        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
-         name, or partner namespace name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection
-         connection.
-        :type private_endpoint_connection_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param channel_name: Name of the channel.
+        :type channel_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
+        :return: Channel, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.Channel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Channel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -253,9 +320,8 @@ class PrivateEndpointConnectionsOperations(object):
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            parent_type=parent_type,
-            parent_name=parent_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            partner_namespace_name=partner_namespace_name,
+            channel_name=channel_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -268,26 +334,43 @@ class PrivateEndpointConnectionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('Channel', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}'}  # type: ignore
 
 
-    def _update_initial(
+    @distributed_trace
+    def create_or_update(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
-        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        partner_namespace_name: str,
+        channel_name: str,
+        channel_info: "_models.Channel",
         **kwargs: Any
-    ) -> "_models.PrivateEndpointConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+    ) -> "_models.Channel":
+        """Create or update a channel.
+
+        Synchronously creates or updates a new channel with the specified parameters.
+
+        :param resource_group_name: The name of the resource group within the partners subscription.
+        :type resource_group_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param channel_name: Name of the channel.
+        :type channel_name: str
+        :param channel_info: Channel information.
+        :type channel_info: ~azure.mgmt.eventgrid.models.Channel
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Channel, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.Channel
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Channel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -295,17 +378,16 @@ class PrivateEndpointConnectionsOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
+        _json = self._serialize.body(channel_info, 'Channel')
 
-        request = build_update_request_initial(
+        request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            parent_type=parent_type,
-            parent_name=parent_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            partner_namespace_name=partner_namespace_name,
+            channel_name=channel_name,
             content_type=content_type,
             json=_json,
-            template_url=self._update_initial.metadata['url'],
+            template_url=self.create_or_update.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -318,109 +400,24 @@ class PrivateEndpointConnectionsOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+            deserialized = self._deserialize('Channel', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+            deserialized = self._deserialize('Channel', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}'}  # type: ignore
 
-
-    @distributed_trace
-    def begin_update(
-        self,
-        resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
-        private_endpoint_connection: "_models.PrivateEndpointConnection",
-        **kwargs: Any
-    ) -> LROPoller["_models.PrivateEndpointConnection"]:
-        """Update a specific private endpoint connection.
-
-        Update a specific private endpoint connection under a topic, domain or partner namespace.
-
-        :param resource_group_name: The name of the resource group within the user's subscription.
-        :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\',
-         \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
-        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
-         name, or partner namespace name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection
-         connection.
-        :type private_endpoint_connection_name: str
-        :param private_endpoint_connection: The private endpoint connection object to update.
-        :type private_endpoint_connection: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PrivateEndpointConnection or the result
-         of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._update_initial(
-                resource_group_name=resource_group_name,
-                parent_type=parent_type,
-                parent_name=parent_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
-                private_endpoint_connection=private_endpoint_connection,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
+        partner_namespace_name: str,
+        channel_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -433,9 +430,8 @@ class PrivateEndpointConnectionsOperations(object):
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            parent_type=parent_type,
-            parent_name=parent_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            partner_namespace_name=partner_namespace_name,
+            channel_name=channel_name,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -444,40 +440,34 @@ class PrivateEndpointConnectionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}'}  # type: ignore
 
 
     @distributed_trace
     def begin_delete(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
-        parent_name: str,
-        private_endpoint_connection_name: str,
+        partner_namespace_name: str,
+        channel_name: str,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Delete a specific private endpoint connection.
+        """Delete a channel.
 
-        Delete a specific private endpoint connection under a topic, domain, or partner namespace.
+        Delete an existing channel.
 
-        :param resource_group_name: The name of the resource group within the user's subscription.
+        :param resource_group_name: The name of the resource group within the partners subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\',
-         \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
-        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
-         name, or partner namespace name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection
-         connection.
-        :type private_endpoint_connection_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param channel_name: Name of the channel.
+        :type channel_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -500,9 +490,8 @@ class PrivateEndpointConnectionsOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
-                parent_type=parent_type,
-                parent_name=parent_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
+                partner_namespace_name=partner_namespace_name,
+                channel_name=channel_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -526,30 +515,86 @@ class PrivateEndpointConnectionsOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}'}  # type: ignore
 
     @distributed_trace
-    def list_by_resource(
+    def update(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.ParentType"],
-        parent_name: str,
+        partner_namespace_name: str,
+        channel_name: str,
+        channel_update_parameters: "_models.ChannelUpdateParameters",
+        **kwargs: Any
+    ) -> None:
+        """Update a Channel.
+
+        Synchronously updates a channel with the specified parameters.
+
+        :param resource_group_name: The name of the resource group within the partners subscription.
+        :type resource_group_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param channel_name: Name of the channel.
+        :type channel_name: str
+        :param channel_update_parameters: Channel update information.
+        :type channel_update_parameters: ~azure.mgmt.eventgrid.models.ChannelUpdateParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(channel_update_parameters, 'ChannelUpdateParameters')
+
+        request = build_update_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            partner_namespace_name=partner_namespace_name,
+            channel_name=channel_name,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}'}  # type: ignore
+
+
+    @distributed_trace
+    def list_by_partner_namespace(
+        self,
+        resource_group_name: str,
+        partner_namespace_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.PrivateEndpointConnectionListResult"]:
-        """Lists all private endpoint connections under a resource.
+    ) -> Iterable["_models.ChannelsListResult"]:
+        """List channels.
 
-        Get all private endpoint connections under a topic, domain, or partner namespace.
+        List all the channels in a partner namespace.
 
-        :param resource_group_name: The name of the resource group within the user's subscription.
+        :param resource_group_name: The name of the resource group within the partners subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\',
-         \'domains\', or \'partnerNamespaces\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
-        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
-         name, or partner namespace name).
-        :type parent_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These
          operations are: the 'contains' function as well as the following logical operations: not, and,
@@ -562,13 +607,11 @@ class PrivateEndpointConnectionsOperations(object):
          items per page.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result
-         of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.PrivateEndpointConnectionListResult]
+        :return: An iterator like instance of either ChannelsListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.ChannelsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChannelsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -576,25 +619,23 @@ class PrivateEndpointConnectionsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_resource_request(
+                request = build_list_by_partner_namespace_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
-                    parent_type=parent_type,
-                    parent_name=parent_name,
+                    partner_namespace_name=partner_namespace_name,
                     filter=filter,
                     top=top,
-                    template_url=self.list_by_resource.metadata['url'],
+                    template_url=self.list_by_partner_namespace.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_resource_request(
+                request = build_list_by_partner_namespace_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
-                    parent_type=parent_type,
-                    parent_name=parent_name,
+                    partner_namespace_name=partner_namespace_name,
                     filter=filter,
                     top=top,
                     template_url=next_link,
@@ -605,7 +646,7 @@ class PrivateEndpointConnectionsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PrivateEndpointConnectionListResult", pipeline_response)
+            deserialized = self._deserialize("ChannelsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -627,4 +668,61 @@ class PrivateEndpointConnectionsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections'}  # type: ignore
+    list_by_partner_namespace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels'}  # type: ignore
+
+    @distributed_trace
+    def get_full_url(
+        self,
+        resource_group_name: str,
+        partner_namespace_name: str,
+        channel_name: str,
+        **kwargs: Any
+    ) -> "_models.EventSubscriptionFullUrl":
+        """Get full URL of partner destination channel.
+
+        Get the full endpoint URL of a partner destination channel.
+
+        :param resource_group_name: The name of the resource group within the partners subscription.
+        :type resource_group_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param channel_name: Name of the Channel.
+        :type channel_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: EventSubscriptionFullUrl, or the result of cls(response)
+        :rtype: ~azure.mgmt.eventgrid.models.EventSubscriptionFullUrl
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventSubscriptionFullUrl"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_get_full_url_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            partner_namespace_name=partner_namespace_name,
+            channel_name=channel_name,
+            template_url=self.get_full_url.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('EventSubscriptionFullUrl', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_full_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/channels/{channelName}/getFullUrl'}  # type: ignore
+
