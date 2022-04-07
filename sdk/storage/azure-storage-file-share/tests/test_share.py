@@ -99,32 +99,6 @@ class StorageShareTest(StorageTestCase):
         self._delete_shares(share.share_name)
 
     @FileSharePreparer()
-    def test_create_share_if_not_exists_without_existing_share(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-
-        # Act
-        created = self._create_share_if_not_exists()
-
-        # Assert
-        self.assertTrue(created)
-        self._delete_shares(share.share_name)
-
-    @FileSharePreparer()
-    def test_create_share_if_not_exists_with_existing_share(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-
-        # Act
-        self._create_share()
-        created = self._create_share_if_not_exists()
-
-        # Assert
-        self.assertIsNone(created)
-        self._delete_shares(share.share_name)
-
-
-    @FileSharePreparer()
     def test_create_share_snapshot(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         share = self._get_share_reference()
