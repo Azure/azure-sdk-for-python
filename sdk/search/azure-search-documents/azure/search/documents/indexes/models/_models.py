@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint:skip-file #(ref https://github.com/PyCQA/pylint/issues/5935)
+
 from enum import Enum
 import msrest.serialization
 from .._generated.models import (
