@@ -25,7 +25,7 @@ class AzureCommunicationRoomsService:
     :vartype rooms: azure.communication.rooms.aio.operations.RoomsOperations
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2021-04-07". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """

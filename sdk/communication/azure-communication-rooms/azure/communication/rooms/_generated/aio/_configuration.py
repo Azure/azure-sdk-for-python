@@ -21,7 +21,7 @@ class AzureCommunicationRoomsServiceConfiguration(Configuration):  # pylint: dis
 
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2021-04-07". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -32,7 +32,7 @@ class AzureCommunicationRoomsServiceConfiguration(Configuration):  # pylint: dis
         **kwargs: Any
     ) -> None:
         super(AzureCommunicationRoomsServiceConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

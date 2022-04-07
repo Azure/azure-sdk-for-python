@@ -22,15 +22,15 @@ class FakeTokenCredential(object):
         return self.token
 
 class TestRoomsClient(aiounittest.AsyncTestCase):
-        
+
     async def test_create_room(self):
         room_id = "999126454"
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
         valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
         raised = False
-        participantsList = [RoomParticipant(identifier="8:acs:abcd")]
+        participantsList = [RoomParticipant(identifier="8:acs:abcd", role_name='Attendee')]
         participants = {
-            "8:acs:abcd": {}
+            "8:acs:abcd": { "role": "Attendee"}
         }
 
 
@@ -44,12 +44,12 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                     "participants": participants
                 }
             })
-            
+
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
         response = None
         try:
-            response = await rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participantsList) 
+            response = await rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participantsList)
         except:
             raised = True
             raise
@@ -58,8 +58,8 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         self.assertEqual(room_id, response.id)
         self.assertEqual(valid_from, response.valid_from)
         self.assertEqual(valid_until, response.valid_until)
-        self.assertDictEqual(participants, response.participants)
-    
+        self.assertListEqual(participantsList, response.participants)
+
     async def test_update_room(self):
         room_id = "999126454"
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
@@ -76,7 +76,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                     "participants": {}
                 }
             })
-            
+
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
         response = None
@@ -90,8 +90,8 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         self.assertEqual(room_id, response.id)
         self.assertEqual(valid_from, response.valid_from)
         self.assertEqual(valid_until, response.valid_until)
-        self.assertDictEqual(response.participants, {})
-    
+        self.assertListEqual(response.participants, [])
+
     async def test_delete_room_raises_error(self):
         room_id = "999126454"
         raised = False
@@ -103,7 +103,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         except:
             raised = True
         assert raised == True
-        
+
     async def test_get_room(self):
         room_id = "999126454"
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
@@ -118,7 +118,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
                 "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "participants": {}
             })
-            
+
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
         response = None
@@ -132,7 +132,7 @@ class TestRoomsClient(aiounittest.AsyncTestCase):
         self.assertEqual(room_id, response.id)
         self.assertEqual(valid_from, response.valid_from)
         self.assertEqual(valid_until, response.valid_until)
-        self.assertDictEqual(response.participants, {})
+        self.assertListEqual(response.participants, [])
 
     async def test_get_room_raises_error(self):
         room_id = "999126454"

@@ -12,6 +12,7 @@ try:
     from ._models_py3 import CreateRoomRequest
     from ._models_py3 import CreateRoomResponse
     from ._models_py3 import RoomModel
+    from ._models_py3 import RoomParticipantInternal
     from ._models_py3 import UpdateRoomRequest
     from ._models_py3 import UpdateRoomResponse
 except (SyntaxError, ImportError):
@@ -20,6 +21,7 @@ except (SyntaxError, ImportError):
     from ._models import CreateRoomRequest  # type: ignore
     from ._models import CreateRoomResponse  # type: ignore
     from ._models import RoomModel  # type: ignore
+    from ._models import RoomParticipantInternal  # type: ignore
     from ._models import UpdateRoomRequest  # type: ignore
     from ._models import UpdateRoomResponse  # type: ignore
 
@@ -29,6 +31,7 @@ __all__ = [
     'CreateRoomRequest',
     'CreateRoomResponse',
     'RoomModel',
+    'RoomParticipantInternal',
     'UpdateRoomRequest',
     'UpdateRoomResponse',
 ]

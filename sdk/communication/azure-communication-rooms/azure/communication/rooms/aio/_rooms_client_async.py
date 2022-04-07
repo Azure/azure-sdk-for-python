@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from tkinter import N
 from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -10,6 +11,7 @@ from azure.communication.rooms._models import CommunicationRoom
 from .._generated.aio._azure_communication_rooms_service import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
+from .._api_versions import DEFAULT_VERSION
 from .._generated.models import (
     CreateRoomRequest,
     UpdateRoomRequest
@@ -46,9 +48,11 @@ class RoomsClient(object):
                 "invalid credential from connection string.")
 
         self._endpoint = endpoint
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
         self._rooms_service_client = AzureCommunicationRoomsService(
             self._endpoint,
+            api_version=self._api_version,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs)
@@ -102,13 +106,13 @@ class RoomsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if participants is None:
-            participantDict = {}
+            participantsDict = participants
         else:
-           participantDict = {participant.identifier: participant for participant in participants}
+            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
         create_room_request = CreateRoomRequest(
             valid_from=valid_from,
             valid_until=valid_until,
-            participants=participantDict
+            participants=participantsDict
         )
         create_room_response = await self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
@@ -200,7 +204,39 @@ class RoomsClient(object):
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        participantsDict = {participant.identifier: participant for participant in participants}
+        if participants is None:
+            participantsDict = participants
+        else:
+            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
+        update_room_request = UpdateRoomRequest(
+            participants=participantsDict
+        )
+        update_room_response = await self._rooms_service_client.rooms.update_room(
+            room_id=room_id, update_room_request=update_room_request, **kwargs)
+        return CommunicationRoom.from_update_room_response(update_room_response)
+
+    @distributed_trace_async
+    async def update_participants(
+        self,
+        room_id, # type: str
+        participants, # type: List[RoomParticipant]
+        **kwargs
+    ):
+        # type: (...) -> CommunicationRoom
+        """Update participants to a room
+        :param room_id: Required. Id of room to be updated
+        :type room_id: str
+        :param participants: Required. Collection of identities invited to the room.
+        :paramtype participants: List[RoomParticipant]
+        :returns: Updated room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if participants is None:
+            participantsDict = participants
+        else:
+            participantsDict = {participant.identifier: participant.to_room_participant_internal() for participant in participants}
+
         update_room_request = UpdateRoomRequest(
             participants=participantsDict
         )

@@ -26,9 +26,9 @@ class TestRoomsClient(unittest.TestCase):
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
         valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
         raised = False
-        participantsList = [RoomParticipant(identifier="8:acs:abcd")]
+        participantsList = [RoomParticipant(identifier="8:acs:abcd", role_name='Presenter')]
         participants = {
-            "8:acs:abcd": {}
+            "8:acs:abcd": { "role": "Presenter"}
         }
 
         def mock_send(*_, **__):
@@ -41,7 +41,7 @@ class TestRoomsClient(unittest.TestCase):
                     "participants": participants
                 }
             })
-            
+
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
         response = None
         try:
@@ -54,8 +54,8 @@ class TestRoomsClient(unittest.TestCase):
         self.assertEqual(room_id, response.id)
         self.assertEqual(valid_from, response.valid_from)
         self.assertEqual(valid_until, response.valid_until)
-        self.assertDictEqual(participants, response.participants)
-    
+        self.assertListEqual(participantsList, response.participants)
+
     def test_update_room(self):
         room_id = "999126454"
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
@@ -72,11 +72,11 @@ class TestRoomsClient(unittest.TestCase):
                     "participants": {}
                 }
             })
-            
+
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
         response = None
         try:
-            response = rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until) 
+            response = rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until)
         except:
             raised = True
             raise
@@ -85,8 +85,8 @@ class TestRoomsClient(unittest.TestCase):
         self.assertEqual(room_id, response.id)
         self.assertEqual(valid_from, response.valid_from)
         self.assertEqual(valid_until, response.valid_until)
-        self.assertDictEqual(response.participants, {})
-    
+        self.assertListEqual(response.participants, [])
+
     def test_delete_room_raises_error(self):
         room_id = "999126454"
         def mock_send(*_, **__):
@@ -94,7 +94,7 @@ class TestRoomsClient(unittest.TestCase):
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
         self.assertRaises(HttpResponseError, rooms_client.delete_room, room_id=room_id)
-    
+
     def test_get_room(self):
         room_id = "999126454"
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
@@ -109,7 +109,7 @@ class TestRoomsClient(unittest.TestCase):
                 "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 "participants": {}
             })
-            
+
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
         response = None
@@ -123,7 +123,7 @@ class TestRoomsClient(unittest.TestCase):
         self.assertEqual(room_id, response.id)
         self.assertEqual(valid_from, response.valid_from)
         self.assertEqual(valid_until, response.valid_until)
-        self.assertDictEqual(response.participants, {})
+        self.assertListEqual(response.participants, [])
 
     def test_get_room_raises_error(self):
         room_id = "999126454"

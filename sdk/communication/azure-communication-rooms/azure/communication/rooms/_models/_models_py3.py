@@ -9,6 +9,7 @@ import msrest.serialization
 
 from .._generated.models import (
     RoomModel,
+    RoomParticipantInternal,
     CreateRoomResponse,
     UpdateRoomResponse
 )
@@ -49,7 +50,7 @@ class CommunicationRoom(msrest.serialization.Model):
         created_date_time=None, # type: Optional[datetime]
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
-        participants=None, # type: Optional[Dict[str, Any]]
+        participants=None, # type: Optional[List[RoomParticipant]]
         invalid_participants=None, # type: Optional[Dict[str, Any]]
         **kwargs
     ):
@@ -87,12 +88,17 @@ class CommunicationRoom(msrest.serialization.Model):
         :returns: Instance of CommunicationRoom.
         :rtype: ~azure.communication.CommunicationRoom
         """
+        if create_room_response.room.participants is None:
+            participants = None
+        else:
+            participants = [RoomParticipant(identifier=identifier, role_name=participant.role) for identifier, participant in create_room_response.room.participants.items()]
+
         return cls(
         id=create_room_response.room.id,
         created_date_time=create_room_response.room.created_date_time,
         valid_from=create_room_response.room.valid_from,
         valid_until=create_room_response.room.valid_until,
-        participants=create_room_response.room.participants,
+        participants=participants,
         invalid_participants=create_room_response.invalid_participants,
         **kwargs
         )
@@ -108,12 +114,17 @@ class CommunicationRoom(msrest.serialization.Model):
         :returns: Instance of CommunicationRoom.
         :rtype: ~azure.communication.CommunicationRoom
         """
+        if update_room_response.room.participants is None:
+            participants = None
+        else:
+            participants = [RoomParticipant(identifier=identifier, role_name=participant.role) for identifier, participant in update_room_response.room.participants.items()]
+
         return cls(
         id=update_room_response.room.id,
         created_date_time=update_room_response.room.created_date_time,
         valid_from=update_room_response.room.valid_from,
         valid_until=update_room_response.room.valid_until,
-        participants=update_room_response.room.participants,
+        participants= participants,
         invalid_participants=update_room_response.invalid_participants,
         **kwargs
         )
@@ -129,12 +140,17 @@ class CommunicationRoom(msrest.serialization.Model):
         :returns: Instance of CommunicationRoom.
         :rtype: ~azure.communication.CommunicationRoom
         """
+        if get_room_response.participants is None:
+            participants = None
+        else:
+            participants = [RoomParticipant(identifier=identifier, role_name=participant.role) for identifier, participant in get_room_response.participants.items()]
+
         return cls(
         id=get_room_response.id,
         created_date_time=get_room_response.created_date_time,
         valid_from=get_room_response.valid_from,
         valid_until=get_room_response.valid_until,
-        participants=get_room_response.participants,
+        participants=participants,
         **kwargs
         )
 
@@ -146,13 +162,15 @@ class RoomParticipant(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identifier': {'key': 'identifier', 'type': 'str'}
+        'identifier': {'key': 'identifier', 'type': 'str'},
+        'role_name': {'key': 'role_name', 'type': 'str'}
     }
 
     def __init__(
         self,
         *,
         identifier, # type: Required[str]
+        role_name, # type:Required[str]
         **kwargs
     ):
         """
@@ -161,3 +179,9 @@ class RoomParticipant(msrest.serialization.Model):
         """
         super(RoomParticipant, self).__init__(**kwargs)
         self.identifier = identifier
+        self.role_name = role_name
+
+    def to_room_participant_internal(self):
+        return RoomParticipantInternal(
+            role=self.role_name
+        )

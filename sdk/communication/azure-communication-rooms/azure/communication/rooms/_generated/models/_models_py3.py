@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, Optional
+from typing import Dict, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -16,28 +16,23 @@ import msrest.serialization
 class CommunicationError(msrest.serialization.Model):
     """The Communication Services error.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar code: Required. The error code.
     :vartype code: str
     :ivar message: Required. The error message.
     :vartype message: str
-    :ivar target: The error target.
+    :ivar target: If applicable, would be used to indicate the property causing the error.
     :vartype target: str
     :ivar details: Further details about specific errors that led to this error.
     :vartype details: list[~azure.communication.rooms.models.CommunicationError]
-    :ivar inner_error: The inner error if any.
+    :ivar inner_error: The Communication Services error.
     :vartype inner_error: ~azure.communication.rooms.models.CommunicationError
     """
 
     _validation = {
         'code': {'required': True},
         'message': {'required': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
     }
 
     _attribute_map = {
@@ -45,7 +40,7 @@ class CommunicationError(msrest.serialization.Model):
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'details': {'key': 'details', 'type': '[CommunicationError]'},
-        'inner_error': {'key': 'innererror', 'type': 'CommunicationError'},
+        'inner_error': {'key': 'innerError', 'type': 'CommunicationError'},
     }
 
     def __init__(
@@ -53,6 +48,9 @@ class CommunicationError(msrest.serialization.Model):
         *,
         code: str,
         message: str,
+        target: Optional[str] = None,
+        details: Optional[List["CommunicationError"]] = None,
+        inner_error: Optional["CommunicationError"] = None,
         **kwargs
     ):
         """
@@ -60,13 +58,19 @@ class CommunicationError(msrest.serialization.Model):
         :paramtype code: str
         :keyword message: Required. The error message.
         :paramtype message: str
+        :keyword target: If applicable, would be used to indicate the property causing the error.
+        :paramtype target: str
+        :keyword details: Further details about specific errors that led to this error.
+        :paramtype details: list[~azure.communication.rooms.models.CommunicationError]
+        :keyword inner_error: The Communication Services error.
+        :paramtype inner_error: ~azure.communication.rooms.models.CommunicationError
         """
         super(CommunicationError, self).__init__(**kwargs)
         self.code = code
         self.message = message
-        self.target = None
-        self.details = None
-        self.inner_error = None
+        self.target = target
+        self.details = details
+        self.inner_error = inner_error
 
 
 class CommunicationErrorResponse(msrest.serialization.Model):
@@ -74,30 +78,30 @@ class CommunicationErrorResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar error: Required. The Communication Services error.
-    :vartype error: ~azure.communication.rooms.models.CommunicationError
+    :ivar communication_error: Required. The Communication Services error.
+    :vartype communication_error: ~azure.communication.rooms.models.CommunicationError
     """
 
     _validation = {
-        'error': {'required': True},
+        'communication_error': {'required': True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'CommunicationError'},
+        'communication_error': {'key': 'communicationError', 'type': 'CommunicationError'},
     }
 
     def __init__(
         self,
         *,
-        error: "CommunicationError",
+        communication_error: "CommunicationError",
         **kwargs
     ):
         """
-        :keyword error: Required. The Communication Services error.
-        :paramtype error: ~azure.communication.rooms.models.CommunicationError
+        :keyword communication_error: Required. The Communication Services error.
+        :paramtype communication_error: ~azure.communication.rooms.models.CommunicationError
         """
         super(CommunicationErrorResponse, self).__init__(**kwargs)
-        self.error = error
+        self.communication_error = communication_error
 
 
 class CreateRoomRequest(msrest.serialization.Model):
@@ -110,13 +114,13 @@ class CreateRoomRequest(msrest.serialization.Model):
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
     :ivar participants: (Optional) Collection of identities invited to the room.
-    :vartype participants: dict[str, any]
+    :vartype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
     """
 
     _attribute_map = {
         'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
         'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
-        'participants': {'key': 'participants', 'type': '{object}'},
+        'participants': {'key': 'participants', 'type': '{RoomParticipantInternal}'},
     }
 
     def __init__(
@@ -124,7 +128,7 @@ class CreateRoomRequest(msrest.serialization.Model):
         *,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        participants: Optional[Dict[str, Any]] = None,
+        participants: Optional[Dict[str, "RoomParticipantInternal"]] = None,
         **kwargs
     ):
         """
@@ -135,7 +139,7 @@ class CreateRoomRequest(msrest.serialization.Model):
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
         :keyword participants: (Optional) Collection of identities invited to the room.
-        :paramtype participants: dict[str, any]
+        :paramtype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
         """
         super(CreateRoomRequest, self).__init__(**kwargs)
         self.valid_from = valid_from
@@ -151,7 +155,8 @@ class CreateRoomResponse(msrest.serialization.Model):
     :ivar room: Required. The meeting room.
     :vartype room: ~azure.communication.rooms.models.RoomModel
     :ivar invalid_participants: Collection of participants failed to be added to the room.
-    :vartype invalid_participants: dict[str, any]
+    :vartype invalid_participants: dict[str,
+     ~azure.communication.rooms.models.RoomParticipantInternal]
     """
 
     _validation = {
@@ -160,21 +165,22 @@ class CreateRoomResponse(msrest.serialization.Model):
 
     _attribute_map = {
         'room': {'key': 'room', 'type': 'RoomModel'},
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '{object}'},
+        'invalid_participants': {'key': 'invalidParticipants', 'type': '{RoomParticipantInternal}'},
     }
 
     def __init__(
         self,
         *,
         room: "RoomModel",
-        invalid_participants: Optional[Dict[str, Any]] = None,
+        invalid_participants: Optional[Dict[str, "RoomParticipantInternal"]] = None,
         **kwargs
     ):
         """
         :keyword room: Required. The meeting room.
         :paramtype room: ~azure.communication.rooms.models.RoomModel
         :keyword invalid_participants: Collection of participants failed to be added to the room.
-        :paramtype invalid_participants: dict[str, any]
+        :paramtype invalid_participants: dict[str,
+         ~azure.communication.rooms.models.RoomParticipantInternal]
         """
         super(CreateRoomResponse, self).__init__(**kwargs)
         self.room = room
@@ -196,7 +202,7 @@ class RoomModel(msrest.serialization.Model):
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
     :ivar participants: Collection of identities invited to the room.
-    :vartype participants: dict[str, any]
+    :vartype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
     """
 
     _attribute_map = {
@@ -204,7 +210,7 @@ class RoomModel(msrest.serialization.Model):
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
         'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
-        'participants': {'key': 'participants', 'type': '{object}'},
+        'participants': {'key': 'participants', 'type': '{RoomParticipantInternal}'},
     }
 
     def __init__(
@@ -214,7 +220,7 @@ class RoomModel(msrest.serialization.Model):
         created_date_time: Optional[datetime.datetime] = None,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        participants: Optional[Dict[str, Any]] = None,
+        participants: Optional[Dict[str, "RoomParticipantInternal"]] = None,
         **kwargs
     ):
         """
@@ -230,7 +236,7 @@ class RoomModel(msrest.serialization.Model):
          is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
         :keyword participants: Collection of identities invited to the room.
-        :paramtype participants: dict[str, any]
+        :paramtype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
         """
         super(RoomModel, self).__init__(**kwargs)
         self.id = id
@@ -240,23 +246,48 @@ class RoomModel(msrest.serialization.Model):
         self.participants = participants
 
 
+class RoomParticipantInternal(msrest.serialization.Model):
+    """A participant of the room.
+
+    :ivar role: Role Name.
+    :vartype role: str
+    """
+
+    _attribute_map = {
+        'role': {'key': 'role', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        role: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword role: Role Name.
+        :paramtype role: str
+        """
+        super(RoomParticipantInternal, self).__init__(**kwargs)
+        self.role = role
+
+
 class UpdateRoomRequest(msrest.serialization.Model):
     """Request payload for updating a room.
 
-    :ivar valid_from: The timestamp from when the room is open for joining. The timestamp is in
-     RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :ivar valid_from: (Optional) The timestamp from when the room is open for joining. The
+     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_from: ~datetime.datetime
-    :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
-     in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :ivar valid_until: (Optional) The timestamp from when the room can no longer be joined. The
+     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
     :ivar participants: (Optional) Collection of identities invited to the room.
-    :vartype participants: dict[str, any]
+    :vartype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
     """
 
     _attribute_map = {
         'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
         'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
-        'participants': {'key': 'participants', 'type': '{object}'},
+        'participants': {'key': 'participants', 'type': '{RoomParticipantInternal}'},
     }
 
     def __init__(
@@ -264,18 +295,18 @@ class UpdateRoomRequest(msrest.serialization.Model):
         *,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        participants: Optional[Dict[str, Any]] = None,
+        participants: Optional[Dict[str, "RoomParticipantInternal"]] = None,
         **kwargs
     ):
         """
-        :keyword valid_from: The timestamp from when the room is open for joining. The timestamp is in
-         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :keyword valid_from: (Optional) The timestamp from when the room is open for joining. The
+         timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_from: ~datetime.datetime
-        :keyword valid_until: The timestamp from when the room can no longer be joined. The timestamp
-         is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :keyword valid_until: (Optional) The timestamp from when the room can no longer be joined. The
+         timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype valid_until: ~datetime.datetime
         :keyword participants: (Optional) Collection of identities invited to the room.
-        :paramtype participants: dict[str, any]
+        :paramtype participants: dict[str, ~azure.communication.rooms.models.RoomParticipantInternal]
         """
         super(UpdateRoomRequest, self).__init__(**kwargs)
         self.valid_from = valid_from
@@ -291,7 +322,8 @@ class UpdateRoomResponse(msrest.serialization.Model):
     :ivar room: Required. The meeting room.
     :vartype room: ~azure.communication.rooms.models.RoomModel
     :ivar invalid_participants: Collection of participants failed to be added to the room.
-    :vartype invalid_participants: dict[str, any]
+    :vartype invalid_participants: dict[str,
+     ~azure.communication.rooms.models.RoomParticipantInternal]
     """
 
     _validation = {
@@ -300,21 +332,22 @@ class UpdateRoomResponse(msrest.serialization.Model):
 
     _attribute_map = {
         'room': {'key': 'room', 'type': 'RoomModel'},
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '{object}'},
+        'invalid_participants': {'key': 'invalidParticipants', 'type': '{RoomParticipantInternal}'},
     }
 
     def __init__(
         self,
         *,
         room: "RoomModel",
-        invalid_participants: Optional[Dict[str, Any]] = None,
+        invalid_participants: Optional[Dict[str, "RoomParticipantInternal"]] = None,
         **kwargs
     ):
         """
         :keyword room: Required. The meeting room.
         :paramtype room: ~azure.communication.rooms.models.RoomModel
         :keyword invalid_participants: Collection of participants failed to be added to the room.
-        :paramtype invalid_participants: dict[str, any]
+        :paramtype invalid_participants: dict[str,
+         ~azure.communication.rooms.models.RoomParticipantInternal]
         """
         super(UpdateRoomResponse, self).__init__(**kwargs)
         self.room = room

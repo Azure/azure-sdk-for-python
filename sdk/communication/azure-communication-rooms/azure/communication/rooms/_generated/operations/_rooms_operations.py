@@ -33,7 +33,7 @@ def build_create_room_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
@@ -64,7 +64,7 @@ def build_get_room_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
@@ -97,7 +97,7 @@ def build_update_room_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
@@ -133,7 +133,7 @@ def build_delete_room_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+    api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -162,26 +162,24 @@ def build_delete_room_request(
 
 # fmt: on
 class RoomsOperations(object):
-    """RoomsOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.communication.rooms.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.communication.rooms.AzureCommunicationRoomsService`'s
+        :attr:`rooms` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def create_room(
@@ -194,7 +192,7 @@ class RoomsOperations(object):
 
         Creates a new room.
 
-        :param create_room_request: The create room request body.
+        :param create_room_request: The create room request body. Default value is None.
         :type create_room_request: ~azure.communication.rooms.models.CreateRoomRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRoomResponse, or the result of cls(response)
@@ -206,11 +204,12 @@ class RoomsOperations(object):
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         if create_room_request is not None:
@@ -274,11 +273,12 @@ class RoomsOperations(object):
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_get_room_request(
@@ -317,7 +317,7 @@ class RoomsOperations(object):
     def update_room(
         self,
         room_id,  # type: str
-        update_room_request=None,  # type: Optional["_models.UpdateRoomRequest"]
+        patch_room_request=None,  # type: Optional["_models.UpdateRoomRequest"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.UpdateRoomResponse"
@@ -327,8 +327,8 @@ class RoomsOperations(object):
 
         :param room_id: The id of the room requested.
         :type room_id: str
-        :param update_room_request: The update room request body.
-        :type update_room_request: ~azure.communication.rooms.models.UpdateRoomRequest
+        :param patch_room_request:  Default value is None.
+        :type patch_room_request: ~azure.communication.rooms.models.UpdateRoomRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: UpdateRoomResponse, or the result of cls(response)
         :rtype: ~azure.communication.rooms.models.UpdateRoomResponse
@@ -339,15 +339,16 @@ class RoomsOperations(object):
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/merge-patch+json")  # type: Optional[str]
 
-        if update_room_request is not None:
-            _json = self._serialize.body(update_room_request, 'UpdateRoomRequest')
+        if patch_room_request is not None:
+            _json = self._serialize.body(patch_room_request, 'UpdateRoomRequest')
         else:
             _json = None
 
@@ -408,11 +409,12 @@ class RoomsOperations(object):
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-04-07")  # type: str
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_delete_room_request(
