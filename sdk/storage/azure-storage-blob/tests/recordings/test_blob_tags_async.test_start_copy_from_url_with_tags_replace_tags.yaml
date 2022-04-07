@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.12.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Sat, 26 Mar 2022 21:19:04 GMT
+      - Wed, 06 Apr 2022 21:19:44 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 26 Mar 2022 21:19:04 GMT
-      etag: '"0x8DA0F6E4190B06A"'
-      last-modified: Sat, 26 Mar 2022 21:19:04 GMT
+      date: Wed, 06 Apr 2022 21:19:44 GMT
+      etag: '"0x8DA18132C2DFE17"'
+      last-modified: Wed, 06 Apr 2022 21:19:45 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-06-08'
     status:
@@ -36,11 +36,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.12.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Sat, 26 Mar 2022 21:19:04 GMT
+      - Wed, 06 Apr 2022 21:19:45 GMT
       x-ms-tags:
       - tag1=firsttag&tag2=secondtag&tag3=thirdtag
       x-ms-version:
@@ -53,9 +53,9 @@ interactions:
     headers:
       content-length: '0'
       content-md5: sQqNsWTgdUEFt6mb5y4/5Q==
-      date: Sat, 26 Mar 2022 21:19:04 GMT
-      etag: '"0x8DA0F6E419B7AD1"'
-      last-modified: Sat, 26 Mar 2022 21:19:04 GMT
+      date: Wed, 06 Apr 2022 21:19:44 GMT
+      etag: '"0x8DA18132C389E39"'
+      last-modified: Wed, 06 Apr 2022 21:19:45 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: YeJLfssylmU=
       x-ms-request-server-encrypted: 'true'
@@ -70,13 +70,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.12.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-copy-source:
-      - https://storagename.blob.core.windows.net/containerc8f11c16/blobc8f11c16?se=2022-03-26T22%3A19%3A04Z&sp=rt&sv=2021-06-08&sr=b&sig=xxx
-      x-ms-copy-source-tag-option:
-      - REPLACE
+      - https://storagename.blob.core.windows.net/containerc8f11c16/blobc8f11c16?se=2022-04-06T22%3A19%3A45Z&sp=r&sv=2021-06-08&sr=b&sig=xxx
       x-ms-date:
-      - Sat, 26 Mar 2022 21:19:04 GMT
+      - Wed, 06 Apr 2022 21:19:45 GMT
       x-ms-requires-sync:
       - 'True'
       x-ms-tags:
@@ -90,12 +88,12 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 26 Mar 2022 21:19:04 GMT
-      etag: '"0x8DA0F6E41AA7638"'
-      last-modified: Sat, 26 Mar 2022 21:19:04 GMT
+      date: Wed, 06 Apr 2022 21:19:44 GMT
+      etag: '"0x8DA18132C47C3D1"'
+      last-modified: Wed, 06 Apr 2022 21:19:45 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: YeJLfssylmU=
-      x-ms-copy-id: 3b742753-6514-4f9b-b690-e296ff52e33d
+      x-ms-copy-id: 37d1aaad-f147-429d-a144-82ab53cf2bb2
       x-ms-copy-status: success
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
@@ -109,9 +107,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-blob/12.12.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Sat, 26 Mar 2022 21:19:04 GMT
+      - Wed, 06 Apr 2022 21:19:45 GMT
       x-ms-version:
       - '2021-06-08'
     method: GET
@@ -122,7 +120,7 @@ interactions:
     headers:
       content-length: '119'
       content-type: application/xml
-      date: Sat, 26 Mar 2022 21:19:04 GMT
+      date: Wed, 06 Apr 2022 21:19:44 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary: Origin
       x-ms-version: '2021-06-08'

@@ -271,7 +271,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
             self.container_name,
             source_blob.blob_name,
             account_key=storage_account_key,
-            permission=BlobSasPermissions(read=True),
+            permission=BlobSasPermissions(read=True, tag=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         source_url = source_blob.url + '?' + source_sas
@@ -279,9 +279,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
         # Act
         with self.assertRaises(ValueError):
-            await dest_blob.start_copy_from_url(source_url, copy_source_tags="COPY")
+            await dest_blob.start_copy_from_url(source_url, tags="COPY")
 
-        copy = await dest_blob.start_copy_from_url(source_url, copy_source_tags="COPY", requires_sync=True)
+        copy = await dest_blob.start_copy_from_url(source_url, tags="COPY", requires_sync=True)
 
         # Assert
         self.assertIsNotNone(copy)
@@ -315,10 +315,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
 
         # Act
-        with self.assertRaises(ValueError):
-            await dest_blob.start_copy_from_url(source_url, copy_source_tags="REPLACE")
-
-        copy = await dest_blob.start_copy_from_url(source_url, copy_source_tags="REPLACE", tags=tags2, requires_sync=True)
+        copy = await dest_blob.start_copy_from_url(source_url, tags=tags2, requires_sync=True)
 
         # Assert
         self.assertIsNotNone(copy)
