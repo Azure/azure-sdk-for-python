@@ -15,7 +15,7 @@ from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import ArtifactsClientConfiguration
-from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkedServiceOperations, MetastoreOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
+from .operations import BigDataPoolsOperations, DataFlowDebugSessionOperations, DataFlowOperations, DatasetOperations, IntegrationRuntimesOperations, KqlScriptOperations, KqlScriptsOperations, LibraryOperations, LinkConnectionOperations, LinkedServiceOperations, MetastoreOperations, NotebookOperationResultOperations, NotebookOperations, PipelineOperations, PipelineRunOperations, SparkConfigurationOperations, SparkJobDefinitionOperations, SqlPoolsOperations, SqlScriptOperations, TriggerOperations, TriggerRunOperations, WorkspaceGitRepoManagementOperations, WorkspaceOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,6 +24,8 @@ if TYPE_CHECKING:
 class ArtifactsClient:
     """ArtifactsClient.
 
+    :ivar link_connection: LinkConnectionOperations operations
+    :vartype link_connection: azure.synapse.artifacts.operations.LinkConnectionOperations
     :ivar kql_scripts: KqlScriptsOperations operations
     :vartype kql_scripts: azure.synapse.artifacts.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
@@ -94,6 +96,7 @@ class ArtifactsClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.link_connection = LinkConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)
