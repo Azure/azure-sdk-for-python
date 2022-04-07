@@ -11,7 +11,7 @@ import logging
 import astroid
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
-from urllib3 import Retry
+
 logger = logging.getLogger(__name__)
 
 
