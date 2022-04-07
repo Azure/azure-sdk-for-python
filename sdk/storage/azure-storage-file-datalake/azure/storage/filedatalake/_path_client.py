@@ -32,7 +32,7 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     ' for this method.')
 
 
-class PathClient(StorageAccountHostsMixin):
+class PathClient(StorageAccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword
     def __init__(
             self, account_url,  # type: str
             file_system_name,  # type: str
