@@ -51,7 +51,7 @@ import certifi
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
-from .constants import TLS_HEADER_FRAME, WEBSOCKET_PORT
+from .constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, TransportType
 
 
 try:
@@ -653,34 +653,42 @@ def Transport(host, connect_timeout=None, ssl=False, **kwargs):
     Given a few parameters from the Connection constructor,
     select and create a subclass of _AbstractTransport.
     """
+    transport_type = kwargs.pop('transport_type')
+    if transport_type == TransportType.AmqpOverWebsocket:
+        transport = WebSocketTransport
     transport = SSLTransport if ssl else TCPTransport
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
 class WebSocketTransport(_AbstractTransport):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, read_timeout=None, write_timeout=None,
-        socket_settings=None, raise_on_initial_eintr=True, **kwargs
+    def __init__(self, host, port=WEBSOCKET_PORT,   connect_timeout=None, ssl=None, **kwargs
         ):
+        self.sslopts = ssl if isinstance(ssl, dict) else {}
+        self._read_buffer = BytesIO()
         super().__init__(
-            host, port, connect_timeout, read_timeout, write_timeout, socket_settings, raise_on_initial_eintr, **kwargs
+            host, port, connect_timeout, **kwargs
             )
         self.ws = None
-        http_proxy = kwargs.get('http_proxy', None)
+        self._http_proxy = kwargs.get('http_proxy', None)
+
+    def connect(self):
+
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
-        if http_proxy:
-            http_proxy_host = http_proxy['proxy_hostname']
-            http_proxy_port = http_proxy['proxy_hostname']
-            username = http_proxy.get('username', None)
-            password = http_proxy.get('password', None)
+        if self._http_proxy:
+            http_proxy_host = self._http_proxy['proxy_hostname']
+            http_proxy_port = self._http_proxy['proxy_hostname']
+            username = self._http_proxy.get('username', None)
+            password = self._http_proxy.get('password', None)
             if username or password:
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
             # TODO: transform ssl to sslopt
             self.ws = create_connection(
-                host,
-                timeout=connect_timeout,
+                url="wss://{}/$servicebus/websocket/".format("testeh.servicebus.windows.net"),
+                subprotocols=['AMQPWSB10'],
+                timeout=self.connect_timeout,
                 skip_utf8_validation=True,
-                sslopt=kwargs.pop('ssl', None),
+                sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth
@@ -688,11 +696,33 @@ class WebSocketTransport(_AbstractTransport):
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 
-
-    def _read(self, n, initial=False): # pylint: disable=unused-arguments
+    def _read(self, n, initial=False, **kwargs): # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
-        result =  self.ws.recv()
-        return result
+        length = 0
+        buffer = kwargs.get('buffer', None)
+        view = buffer or memoryview(bytearray(toread))
+        nbytes = self._read_buffer.readinto(view)
+        toread -= nbytes
+        length += nbytes
+        try:
+            while toread:
+                data = self.ws.recv()
+                if len(data) <= toread:
+                    view = memoryview(bytes(view) + data)
+                    toread = 0
+                else:
+                    view = memoryview(bytes(view) + data[:n])
+                    toread -= n
+                length += len(data)
+                if not nbytes:
+                    raise IOError('Server unexpectedly closed connection')
+
+                length += nbytes
+                toread -= nbytes
+        except:  # noqa
+            self._read_buffer = BytesIO(view[:length])
+            raise
+        return view
 
     def _shutdown_transport(self):
         """Do any preliminary work in shutting down the connection."""

@@ -246,7 +246,7 @@ class AMQPClient(object):
                 idle_timeout=self._idle_timeout,
                 properties=self._properties,
                 network_trace=self._network_trace,
-                transport=self._transport_type,
+                transport_type=self._transport_type,
                 http_proxy=self._http_proxy
             )
             self._connection.open()
