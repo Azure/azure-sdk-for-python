@@ -43,8 +43,7 @@ class _CliCredentials(object):
     :param resource: The resource to use in "msrestazure" mode (ignored otherwise)
     """
 
-    _DEFAULT_PREFIX = "/.default"
-
+    
     def __init__(self, cli_profile, resource):
         self._profile = cli_profile
         self._resource = resource
@@ -60,13 +59,7 @@ class _CliCredentials(object):
         if _AccessToken is None:  # import failed
             raise ImportError("You need to install 'azure-core' to use CLI credentials in this context")
 
-        if len(scopes) != 1:
-            raise ValueError("Multiple scopes are not supported: {}".format(scopes))
-        scope = scopes[0]
-        if scope.endswith(self._DEFAULT_PREFIX):
-            resource = scope[:-len(self._DEFAULT_PREFIX)]
-        else:
-            resource = scope
+        resource = self._profile.cli_ctx.cloud.endpoints.active_directory_resource_id
 
         credentials = self._get_cred(resource)
         _, token, fulltoken = credentials._token_retriever()  # pylint:disable=protected-access
