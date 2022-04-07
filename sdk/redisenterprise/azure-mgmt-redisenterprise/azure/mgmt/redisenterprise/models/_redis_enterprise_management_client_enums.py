@@ -6,54 +6,39 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Which access key to regenerate.
     """
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
-class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
     """
 
     INTERNAL = "Internal"
 
-class AofFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AofFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Sets the frequency at which data is written to disk.
     """
 
     ONE_S = "1s"
     ALWAYS = "always"
 
-class ClusteringPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClusteringPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Clustering policy - default is OSSCluster. Specified at create time.
     """
 
     ENTERPRISE_CLUSTER = "EnterpriseCluster"
     OSS_CLUSTER = "OSSCluster"
 
-class EvictionPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EvictionPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Redis eviction policy - default is VolatileLRU
     """
 
@@ -66,7 +51,17 @@ class EvictionPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VOLATILE_RANDOM = "VolatileRandom"
     NO_EVICTION = "NoEviction"
 
-class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LinkState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """State of the link between the database resources.
+    """
+
+    LINKED = "Linked"
+    LINKING = "Linking"
+    UNLINKING = "Unlinking"
+    LINK_FAILED = "LinkFailed"
+    UNLINK_FAILED = "UnlinkFailed"
+
+class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system"
     """
@@ -75,7 +70,7 @@ class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current provisioning state.
     """
 
@@ -84,7 +79,7 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitive
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The private endpoint connection status.
     """
 
@@ -92,7 +87,7 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnum
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
-class Protocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether redis clients can connect using TLS-encrypted or plaintext redis protocols.
     Default is TLS-encrypted.
     """
@@ -100,7 +95,7 @@ class Protocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENCRYPTED = "Encrypted"
     PLAINTEXT = "Plaintext"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current provisioning status
     """
 
@@ -111,7 +106,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     DELETING = "Deleting"
 
-class RdbFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RdbFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Sets the frequency at which a snapshot of the database is created.
     """
 
@@ -119,7 +114,7 @@ class RdbFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SIX_H = "6h"
     TWELVE_H = "12h"
 
-class ResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current resource status
     """
 
@@ -136,7 +131,7 @@ class ResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLE_FAILED = "DisableFailed"
     DISABLED = "Disabled"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10,
     EnterpriseFlash_F300 etc.)
     """
@@ -149,7 +144,7 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENTERPRISE_FLASH_F700 = "EnterpriseFlash_F700"
     ENTERPRISE_FLASH_F1500 = "EnterpriseFlash_F1500"
 
-class TlsVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TlsVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The minimum TLS version for the cluster to support, e.g. '1.2'
     """
 
