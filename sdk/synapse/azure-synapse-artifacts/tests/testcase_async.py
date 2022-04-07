@@ -4,26 +4,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-from azure.synapse.artifacts import ArtifactsClient
+from devtools_testutils import AzureTestCase
+from azure.synapse.artifacts.aio import ArtifactsClient
 
 
-class ArtifactsTest(AzureTestCase):
+class ArtifactsAsyncTest(AzureTestCase):
     def __init__(self, method_name, **kwargs):
-        super(ArtifactsTest, self).__init__(method_name, **kwargs)
+        super(ArtifactsAsyncTest, self).__init__(method_name, **kwargs)
 
     def create_client(self, endpoint):
-        credential = self.get_credential(ArtifactsClient)
+        credential = self.get_credential(ArtifactsClient, is_async=True)
         return self.create_client_from_credential(
             ArtifactsClient,
             credential=credential,
             endpoint=endpoint,
         )
-
-
-ArtifactsPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    "artifacts",
-    artifacts_endpoint="https://myservice.azure.com"
-)
