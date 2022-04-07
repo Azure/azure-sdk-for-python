@@ -265,8 +265,8 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         *,
         transaction_id: Optional[str] = None,
         sub_ledger_id: Optional[str] = None,
-        interval: float = 0.5,
-        max_tries: int = 6,
+        retry_backoff_factor: float = 0.8,
+        retry_total: int = 10,
         **kwargs: Any,
     ) -> LedgerEntry:
         """Gets an entry in the ledger.
@@ -277,11 +277,11 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         :param sub_ledger_id: Identifies the sub-ledger to fetch the ledger entry from, defaults to
             None.
         :type sub_ledger_id: Optional[str]
-        :param interval: Interval, in seconds, between retries while waiting for results.
-        :type interval: float
-        :param max_tries: Maximum number of times to try the query. Retries are attempted if the
-            result is not Ready.
-        :type max_tries: int
+        :param retry_backoff_factor: Amount of time, in seconds, to sleep between attempts, defaults
+            to 0.8.
+        :type retry_backoff_factor: float
+        :param retry_total: Total number of retries to allow. Default value is 10.
+        :type retry_total: int
         :return: The corresponding ledger entry.
         :rtype: ~azure.confidentialledger.LedgerEntry
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -306,20 +306,20 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         ready = False
         result = None
         state = None
-        for _ in range(max_tries):
+        for _ in range(retry_total):
             result = await self._client.confidential_ledger.get_ledger_entry(
                 transaction_id=transaction_id, sub_ledger_id=sub_ledger_id, **kwargs
             )
             ready = result.state == ConfidentialLedgerQueryState.READY
             if not ready:
                 state = result.state
-                await asyncio.sleep(interval)
+                await asyncio.sleep(retry_backoff_factor)
             else:
                 break
         if not ready:
             raise TimeoutError(
                 "After {} attempts, the query still had state {}, not {}".format(
-                    max_tries, state, ConfidentialLedgerQueryState.READY
+                    retry_total, state, ConfidentialLedgerQueryState.READY
                 )
             )
 
