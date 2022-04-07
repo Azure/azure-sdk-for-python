@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LogAnalyticsManagementClientConfiguration(Configuration):
-    """Configuration for LogAnalyticsManagementClient.
+class OperationalInsightsManagementClientConfiguration(Configuration):
+    """Configuration for OperationalInsightsManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -37,7 +37,7 @@ class LogAnalyticsManagementClientConfiguration(Configuration):
         subscription_id: str,
         **kwargs: Any
     ) -> None:
-        super(LogAnalyticsManagementClientConfiguration, self).__init__(**kwargs)
+        super(OperationalInsightsManagementClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
