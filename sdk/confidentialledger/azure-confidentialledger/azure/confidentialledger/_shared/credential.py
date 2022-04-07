@@ -10,7 +10,8 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    pass
+    import os
+    from typing import Union
 
 
 class ConfidentialLedgerCertificateCredential(object):
@@ -20,11 +21,8 @@ class ConfidentialLedgerCertificateCredential(object):
     """
 
     def __init__(self, certificate_path):
-        # type: (str) -> None
+        # type: (Union[str, bytes, os.PathLike]) -> None
         if not certificate_path:
             raise ValueError("certificate_path must be a non-empty string")
-
-        if not certificate_path.endswith(".pem"):
-            raise ValueError("certificate_path must point to a .pem file")
 
         self.certificate_path = certificate_path
