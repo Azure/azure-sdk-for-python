@@ -8,6 +8,7 @@ from ._version import VERSIONS_SUPPORTED
 
 
 def check_for_unsupported_actions_types(*args, **kwargs):
+
     client = args[0]
     # this assumes the client has an _api_version attribute
     selected_api_version = client._api_version
@@ -17,8 +18,11 @@ def check_for_unsupported_actions_types(*args, **kwargs):
     else:
         actions = kwargs.get("actions")
 
+    if actions is None:
+        return
+
     actions_version_mapping = {
-        "2022-03-01-preview":
+        "v3.2-preview.2":  # TODO fix to language API version once v3.2-preview.2 is removed
         [
             "ExtractSummaryAction",
             "RecognizeCustomEntitiesAction",
@@ -69,7 +73,7 @@ def inspect_args(versions_supported, **kwargs):
 
             if args_mapping:
                 unsupported = {
-                    version: arg
+                    arg: version
                     for version, args in args_mapping.items()
                     for arg in args
                     if arg in kwargs.keys()
@@ -79,7 +83,7 @@ def inspect_args(versions_supported, **kwargs):
                 if unsupported:
                     error_strings = [
                         f"'{param}' is only available for API version {version} and up.\n"
-                        for version, param in unsupported.items()
+                        for param, version in unsupported.items()
                     ]
                     raise ValueError("".join(error_strings))
 

@@ -1552,8 +1552,8 @@ class TestAnalyze(TextAnalyticsTest):
                 ],
                 polling_interval=self._interval(),
             ).result()
-        assert str(e.value) == "'ExtractSummaryAction' is only available for API version 2022-03-01-preview and " \
+        assert str(e.value) == "'ExtractSummaryAction' is only available for API version v3.2-preview.2 and " \
                                "up.\n'RecognizeCustomEntitiesAction' is only available for API version " \
-                               "2022-03-01-preview and up.\n'SingleCategoryClassifyAction' is only available " \
-                               "for API version 2022-03-01-preview and up.\n'MultiCategoryClassifyAction' is " \
-                               "only available for API version 2022-03-01-preview and up.\n"
+                               "v3.2-preview.2 and up.\n'SingleCategoryClassifyAction' is only available " \
+                               "for API version v3.2-preview.2 and up.\n'MultiCategoryClassifyAction' is " \
+                               "only available for API version v3.2-preview.2 and up.\n"
