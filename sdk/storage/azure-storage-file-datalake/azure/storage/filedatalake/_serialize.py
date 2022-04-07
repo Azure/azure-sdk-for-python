@@ -51,6 +51,8 @@ def convert_datetime_to_rfc1123(date):
 
 def add_metadata_headers(metadata=None):
     # type: (Optional[Dict[str, str]]) -> str
+    if not metadata:
+        return None
     headers = list()
     if metadata:
         for key, value in metadata.items():

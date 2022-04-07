@@ -103,8 +103,8 @@ def get_smb_properties(kwargs):
     file_permission = kwargs.pop('file_permission', None)
     file_permission_key = kwargs.pop('permission_key', None)
     file_attributes = kwargs.pop('file_attributes', None)
-    file_creation_time = kwargs.pop('file_creation_time', None) or ""
-    file_last_write_time = kwargs.pop('file_last_write_time', None) or ""
+    file_creation_time = kwargs.pop('file_creation_time', None)
+    file_last_write_time = kwargs.pop('file_last_write_time', None)
 
     file_permission_copy_mode = None
     file_permission = _get_file_permission(file_permission, file_permission_key, None)

@@ -74,32 +74,17 @@ class FileSystemTest(StorageTestCase):
         self.assertTrue(created)
 
     @DataLakePreparer()
-    def test_create_file_system_if_not_exists_without_existing_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
+    def test_create_file_system_extra_backslash(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = self._get_file_system_reference()
 
         # Act
-        file_system_client = self.dsc.get_file_system_client(file_system_name)
-        created = file_system_client.create_file_system_if_not_exists()
+        file_system_client = self.dsc.get_file_system_client(file_system_name + '/')
+        created = file_system_client.create_file_system()
 
         # Assert
         self.assertTrue(created)
-
-    @DataLakePreparer()
-    def test_create_file_system_if_not_exists_with_existing_file_system(self, datalake_storage_account_name,
-                                                                           datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # Arrange
-        file_system_name = self._get_file_system_reference()
-
-        # Act
-        file_system_client = self.dsc.get_file_system_client(file_system_name)
-        file_system_client.create_file_system()
-        created = file_system_client.create_file_system_if_not_exists()
-
-        # Assert
-        self.assertIsNone(created)
 
     @DataLakePreparer()
     def test_file_system_exists(self, datalake_storage_account_name, datalake_storage_account_key):
