@@ -23,7 +23,8 @@ USAGE:
     7) COMMUNICATION_M365_AAD_TENANT - the tenant ID of M365 application
     8) COMMUNICATION_M365_SCOPE - the scope of M365 application
     9) COMMUNICATION_MSAL_USERNAME - the username for authenticating via MSAL library
-    10) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via MSAL library 
+    10) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via MSAL library
+    11) COMMUNICATION_OBJECT_ID - an object ID of your Azure AD user (Teams User)
 """
 import os
 from azure.communication.identity._shared.utils import parse_connection_str
@@ -40,7 +41,8 @@ class CommunicationIdentityClientSamples(object):
         self.m365_aad_tenant = os.getenv('COMMUNICATION_M365_AAD_TENANT')
         self.m365_scope = os.getenv('COMMUNICATION_M365_SCOPE') 
         self.msal_username = os.getenv('COMMUNICATION_MSAL_USERNAME') 
-        self.msal_password = os.getenv('COMMUNICATION_MSAL_PASSWORD') 
+        self.msal_password = os.getenv('COMMUNICATION_MSAL_PASSWORD')
+        self.user_id = os.getenv('COMMUNICATION_OBJECT_ID') 
 
     def get_token(self):
         from azure.communication.identity import (
@@ -141,7 +143,7 @@ class CommunicationIdentityClientSamples(object):
         add_token =  result["access_token"]
         print("AAD access token of a Teams User: " + add_token)
 
-        tokenresponse = identity_client.get_token_for_teams_user(add_token)
+        tokenresponse = identity_client.get_token_for_teams_user(add_token, self.client_id, self.user_id)
         print("Token issued with value: " + tokenresponse.token)
 
 

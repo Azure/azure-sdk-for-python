@@ -193,9 +193,11 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
 
         :param aad_token: an AAD access token of a Teams User
         :type aad_token: str
-        :param app_id: a Client ID of an Azure AD application to be verified against the appId claim in the Azure AD access token.
+        :param app_id: a Client ID of an Azure AD application to be verified against
+            the appId claim in the Azure AD access token.
         :type app_id: str
-        :param user_id: an Object ID of an Azure AD user (Teams User) to be verified against the OID claim in the Azure AD access token.
+        :param user_id: an Object ID of an Azure AD user (Teams User) to be verified against
+            the OID claim in the Azure AD access token.
         :type user_id: str
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken

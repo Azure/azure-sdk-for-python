@@ -25,6 +25,8 @@ class CommunicationIdentityTestCase(CommunicationTestCase):
             self.m365_scope = "sanitized" 
             self.msal_username = "sanitized" 
             self.msal_password = "sanitized"
+            self.app_id = "sanitized"
+            self.user_id = "sanitized"
             self.expired_teams_token = "sanitized"
             self.skip_get_token_for_teams_user_tests = "false"
         else:
@@ -35,6 +37,8 @@ class CommunicationIdentityTestCase(CommunicationTestCase):
             self.m365_scope = os.getenv('COMMUNICATION_M365_SCOPE') 
             self.msal_username = os.getenv('COMMUNICATION_MSAL_USERNAME') 
             self.msal_password = os.getenv('COMMUNICATION_MSAL_PASSWORD')
+            self.app_id = os.getenv('COMMUNICATION_CLIENT_ID')
+            self.user_id = os.getenv('COMMUNICATION_OBJECT_ID')
             self.expired_teams_token = os.getenv('COMMUNICATION_EXPIRED_TEAMS_TOKEN')  
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
