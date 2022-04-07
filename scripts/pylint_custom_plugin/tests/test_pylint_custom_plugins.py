@@ -1865,10 +1865,18 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         node = astroid.parse(file.read())
         file.close()
 
-        function_node = node.body[2].body[0]
+        function_node = node.body[4].body[0]
+        function_node_a = node.body[4].body[1]
+        function_node_b = node.body[4].body[2]
        
-        with self.assertNoMessages():
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-list-methods-use-paging", node=function_node_b
+            )
+        ):
             self.checker.visit_functiondef(function_node)
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
      
 
     def test_list_return_type_file_custom_class_violation(self):
@@ -1877,6 +1885,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         file.close()
 
         function_node = node.body[2].body[0]
+
    
         with self.assertAddsMessages(
             pylint.testutils.Message(
@@ -1884,6 +1893,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
             )
         ):
             self.checker.visit_functiondef(function_node)
+          
 
     def test_ignores_private_methods(self):
         class_node, function_node = astroid.extract_node("""
