@@ -12,7 +12,6 @@ trigger:
     - sdk/core/
     - eng/
     - tools/
-    - scripts/pylint-custom-plugin/
     exclude:
     - eng/common/
 
@@ -29,7 +28,6 @@ pr:
     - sdk/core/
     - eng/
     - tools/
-    - scripts/pylint-custom-plugin/
     exclude:
     - eng/common/
 
