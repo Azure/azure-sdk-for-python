@@ -1873,18 +1873,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 headers['x-ms-source-lease-id'] = source_lease
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
+        tags = kwargs.pop('tags', None)
 
         # Options only available for sync copy
         requires_sync = kwargs.pop('requires_sync', None)
         encryption_scope_str = kwargs.pop('encryption_scope', None)
         source_authorization = kwargs.pop('source_authorization', None)
-        copy_source_tags = kwargs.pop('copy_source_tags', None)
+        # If tags is a str, interpret that as copy_source_tags
+        copy_source_tags = isinstance(tags, str)
 
         if incremental_copy:
             if source_authorization:
                 raise ValueError("Source authorization tokens are not applicable for incremental copying.")
             if copy_source_tags:
-                raise ValueError("The copy_source_tags options is not applicable for incremental copying.")
+                raise ValueError("Copying source tags is not applicable for incremental copying.")
 
         # TODO: refactor start_copy_from_url api in _blob_client.py. Call _generated/_blob_operations.py copy_from_url
         #  when requires_sync=True is set.
@@ -1897,7 +1899,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if source_authorization:
                 headers['x-ms-copy-source-authorization'] = source_authorization
             if copy_source_tags:
-                headers['x-ms-copy-source-tag-option'] = copy_source_tags
+                headers['x-ms-copy-source-tag-option'] = tags
         else:
             if encryption_scope_str:
                 raise ValueError(
@@ -1907,11 +1909,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                     "Source authorization tokens are only supported for sync copy, please specify requires_sync=True")
             if copy_source_tags:
                 raise ValueError(
-                    "The copy_source_tags option is only supported for sync copy, please specify requires_sync=True")
+                    "Copying source tags is only supported for sync copy, please specify requires_sync=True")
 
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
-        blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
+        blob_tags_string = serialize_blob_tags_header(tags) if not copy_source_tags else None
 
         immutability_policy = kwargs.pop('immutability_policy', None)
         if immutability_policy:
@@ -2000,11 +2002,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_).
+
+            The (case-sensitive) literal "COPY" can instead be passed to copy tags from the source blob.
+            This option is only available when `incremental_copy=False` and `requires_sync=True`.
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: dict(str, str) or Literal["COPY"]
         :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
             Specifies the immutability policy of a blob, blob snapshot or blob version.
 
@@ -2096,12 +2101,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             container-level scope is configured to allow overrides. Otherwise an error will be raised.
 
             .. versionadded:: 12.10.0
-        :keyword str copy_source_tags:
-            Indicates if source tags should be copied or replaced with the tags specified by the `tags` parameter.
-            Possible string values are "REPLACE" or "COPY". If not specified the, default behavior is to replace.
-            This option is only available when `incremental_copy` is set to False and `requires_sync` is set to True.
-
-            .. versionadded:: 12.12.0
 
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, Union[str, ~datetime.datetime]]
