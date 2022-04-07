@@ -23,9 +23,9 @@ def readme_comparison(rest_repo, link_dict, labels):
 
 
 # parse owner's comment and get links
-def get_links(readme_link):
+def get_links(readme_link, issue_object_rg_body):
     link_dict = {}
-    comment_body = issue_object_rg.body
+    comment_body = issue_object_rg_body
     pattern_readme = re.compile(r'/specification/([\w-]+/)+readme.md')
     pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
     pattern_tag = re.compile(r'package-[\w+-.]+')
@@ -57,7 +57,7 @@ def get_latest_pr_from_readme(rest_repo, link_dict):
 def begin_reply_generate(item, rest_repo, readme_link, pipeline_url):
     global issue_object_rg
     issue_object_rg = item.issue_object
-    link_dict = get_links(readme_link)
+    link_dict = get_links(readme_link, issue_object_rg.body)
     labels = item.labels
     whether_change_readme = readme_comparison(rest_repo, link_dict, labels)
 
