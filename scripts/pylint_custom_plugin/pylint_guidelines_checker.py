@@ -897,11 +897,10 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                     for inner_node in node.body:
                         # If this is a return node
                         if isinstance(inner_node, astroid.Return):
-                
                             try:
                                 # Checking that what we are returning is a function call
                                 if isinstance(inner_node.value, astroid.Call):
-                                    if "def by_page(" in next(inner_node.value.infer()).as_string():
+                                    if "def by_page" in next(inner_node.value.infer()).as_string():
                                         paging_class = True
                             
                             except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
