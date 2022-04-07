@@ -1,0 +1,94 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+import functools
+from ._version import VERSIONS_SUPPORTED
+
+
+def check_for_unsupported_actions_types(*args, **kwargs):
+    client = args[0]
+    # this assumes the client has an _api_version attribute
+    selected_api_version = client._api_version
+
+    if "actions" not in kwargs:
+        actions = args[2]
+    else:
+        actions = kwargs.get("actions")
+
+    actions_version_mapping = {
+        "2022-03-01-preview":
+        [
+            "ExtractSummaryAction",
+            "RecognizeCustomEntitiesAction",
+            "SingleCategoryClassifyAction",
+            "MultiCategoryClassifyAction"
+        ]
+    }
+
+    unsupported = {
+        version: arg
+        for version, args in actions_version_mapping.items()
+        for arg in args
+        if arg in [action.__class__.__name__ for action in actions]
+           and selected_api_version != version
+           and VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version)
+    }
+
+    if unsupported:
+        error_strings = [
+            f"'{param}' is only available for API version {version} and up.\n"
+            for version, param in unsupported.items()
+        ]
+        raise ValueError("".join(error_strings))
+
+
+def inspect_args(versions_supported, **kwargs):
+    args_mapping = kwargs.pop("args_mapping", None)
+    version_method_added = kwargs.pop("version_method_added", None)
+    custom_wrapper = kwargs.pop("custom_wrapper", None)
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+
+            if custom_wrapper:
+                custom_wrapper(*args, **kwargs)
+
+            try:
+                # this assumes the client has an _api_version attribute
+                client = args[0]
+                selected_api_version = client._api_version
+            except AttributeError:
+                return func(*args, **kwargs)
+
+            # the latest version is selected, we assume all features supported
+            if selected_api_version == versions_supported[-1]:
+                return func(*args, **kwargs)
+
+            if version_method_added and version_method_added != selected_api_version and \
+                    versions_supported.index(selected_api_version) < versions_supported.index(version_method_added):
+                raise ValueError(f"'{func.__name__}' is only available for API version {version_method_added} and up.")
+
+            if args_mapping:
+                unsupported = {
+                    version: arg
+                    for version, args in args_mapping.items()
+                    for arg in args
+                    if arg in kwargs.keys()
+                    and selected_api_version != version
+                    and versions_supported.index(selected_api_version) < versions_supported.index(version)
+                }
+                if unsupported:
+                    error_strings = [
+                        f"'{param}' is only available for API version {version} and up.\n"
+                        for version, param in unsupported.items()
+                    ]
+                    raise ValueError("".join(error_strings))
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator

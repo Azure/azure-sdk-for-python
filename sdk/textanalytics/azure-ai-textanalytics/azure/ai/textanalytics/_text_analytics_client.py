@@ -23,7 +23,8 @@ from ._request_handlers import (
     _determine_action_type,
     _check_string_index_type_arg,
 )
-from ._version import DEFAULT_API_VERSION
+from ._validate import inspect_args, check_for_unsupported_actions_types
+from ._version import DEFAULT_API_VERSION, VERSIONS_SUPPORTED
 from ._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -132,6 +133,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
+    @inspect_args(
+        versions_supported=VERSIONS_SUPPORTED,
+        args_mapping={"v3.1": ["disable_service_logs"]}
+    )
     def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
@@ -212,6 +217,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace
+    @inspect_args(
+        versions_supported=VERSIONS_SUPPORTED,
+        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+    )
     def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -301,6 +310,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace
+    @inspect_args(
+        versions_supported=VERSIONS_SUPPORTED,
+        version_method_added="v3.1"
+    )
     def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -412,6 +425,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace
+    @inspect_args(
+        versions_supported=VERSIONS_SUPPORTED,
+        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+    )
     def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -518,6 +535,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
+    @inspect_args(
+        versions_supported=VERSIONS_SUPPORTED,
+        version_method_added="v3.1"
+    )
     def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -660,6 +681,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace
+    @inspect_args(
+        versions_supported=VERSIONS_SUPPORTED,
+        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs"]}
+    )
     def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -739,6 +764,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace
+    @inspect_args(
+        versions_supported=VERSIONS_SUPPORTED,
+        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs", "string_index_type"]}
+    )
     def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -862,6 +891,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
+    @inspect_args(
+        versions_supported=VERSIONS_SUPPORTED,
+        version_method_added="v3.1",
+        custom_wrapper=check_for_unsupported_actions_types
+    )
     def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
