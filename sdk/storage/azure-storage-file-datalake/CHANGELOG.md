@@ -10,6 +10,7 @@
 
 ### Bugs Fixed
 - Updated `create_file_system()` docstring to have the correct return-type of `None`
+- Fixed a bug where `get_paths()` would fail if a path did not contain `last_modified` from the service.
 
 ## 12.6.0 (2022-03-08)
 
