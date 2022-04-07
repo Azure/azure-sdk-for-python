@@ -6,7 +6,7 @@
 from collections import namedtuple
 from typing import Dict, List
 
-from ._enums import LedgerUserRole, TransactionState
+from ._enums import LedgerUserRole
 
 
 class AppendResult(namedtuple("AppendResult", ["sub_ledger_id", "transaction_id"])):
@@ -298,33 +298,3 @@ class TransactionReceipt(object):
         # type: () -> str
         """Identifier for the transaction certified by this receipt."""
         return self._transaction_id
-
-
-class TransactionStatus(object):
-    """Represents the status of a transaction.
-
-    :param transaction_id: Identifier for the transaction.
-    :type transaction_id: str
-    :param state: State of the transation.
-    :type state: ~azure.confidentialledger.TransactionState
-    """
-
-    def __init__(
-        self,
-        transaction_id,  # type: str
-        state,  # type: TransactionState
-    ):
-        self._transaction_id = transaction_id
-        self._state = state
-
-    @property
-    def transaction_id(self):
-        # type: () -> str
-        """The identifier for this transaction."""
-        return self._transaction_id
-
-    @property
-    def state(self):
-        # type: () -> TransactionState
-        """The state of the transaction."""
-        return self._state

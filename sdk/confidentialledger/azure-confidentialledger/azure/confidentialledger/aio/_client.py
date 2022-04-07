@@ -23,7 +23,6 @@ from .._models import (
     LedgerEntry,
     LedgerUser,
     TransactionReceipt,
-    TransactionStatus,
 )
 from .._shared import (
     ConfidentialLedgerCertificateCredential,
@@ -379,13 +378,13 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
     @distributed_trace_async
     async def get_transaction_status(
         self, transaction_id: str, **kwargs: Any
-    ) -> TransactionStatus:
-        """Gets the status of a transaction.
+    ) -> TransactionState:
+        """Gets the state of a transaction.
 
         :param transaction_id: Identifier for the transaction to get the status of.
         :type transaction_id: str
-        :return: Status object describing the transaction status.
-        :rtype: ~azure.confidentialledger.TransactionStatus
+        :return: Status object describing the transaction state.
+        :rtype: ~azure.confidentialledger.TransactionState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -395,9 +394,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         result = await self._client.confidential_ledger.get_transaction_status(
             transaction_id=transaction_id, **kwargs
         )
-        return TransactionStatus(
-            transaction_id=result.transaction_id, state=TransactionState(result.state)
-        )
+        return TransactionState(result.state)
 
     @distributed_trace_async
     async def get_user(self, user_id: str, **kwargs: Any) -> LedgerUser:
@@ -445,10 +442,10 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         """
 
         for attempt_num in range(max_queries):
-            transaction_status = await self.get_transaction_status(
+            transaction_state = await self.get_transaction_status(
                 transaction_id=transaction_id, **kwargs
             )
-            if transaction_status.state is TransactionState.COMMITTED:
+            if transaction_state is TransactionState.COMMITTED:
                 return
 
             if attempt_num < max_queries - 1:

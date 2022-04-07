@@ -20,7 +20,6 @@ from ._models import (
     LedgerEntry,
     LedgerUser,
     TransactionReceipt,
-    TransactionStatus,
 )
 from ._shared import (
     ConfidentialLedgerCertificateCredential,
@@ -389,13 +388,13 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         transaction_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> TransactionStatus
+        # type: (...) -> TransactionState
         """Gets the status of a transaction.
 
         :param transaction_id: Identifier for the transaction to get the status of.
         :type transaction_id: str
-        :return: Status object describing the transaction status.
-        :rtype: ~azure.confidentialledger.TransactionStatus
+        :return: Status object describing the transaction state.
+        :rtype: ~azure.confidentialledger.TransactionState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -405,9 +404,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         result = self._client.confidential_ledger.get_transaction_status(
             transaction_id=transaction_id, **kwargs
         )
-        return TransactionStatus(
-            transaction_id=result.transaction_id, state=TransactionState(result.state)
-        )
+        return TransactionState(result.state)
 
     @distributed_trace
     def get_user(
@@ -460,10 +457,10 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         max_queries = kwargs.pop("max_queries", 3)
 
         for attempt_num in range(max_queries):
-            transaction_status = self.get_transaction_status(
+            transaction_state = self.get_transaction_status(
                 transaction_id=transaction_id, **kwargs
             )
-            if transaction_status.state is TransactionState.COMMITTED:
+            if transaction_state is TransactionState.COMMITTED:
                 return
 
             if attempt_num < max_queries - 1:
