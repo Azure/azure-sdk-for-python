@@ -287,11 +287,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_index_type_default,
+        string_index_type = kwargs.pop(
+            "string_index_type", self._string_index_type_default
         )
+
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
         disable_service_logs = kwargs.pop("disable_service_logs", None)
@@ -390,11 +389,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         domain_filter = kwargs.pop("domain_filter", None)
         categories_filter = kwargs.pop("categories_filter", None)
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_index_type_default,
+        string_index_type = kwargs.pop(
+            "string_index_type", self._string_index_type_default
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -412,15 +408,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
-        except ValueError as error:
-            if (
-                "API version v3.0 does not have operation 'entities_recognition_pii'"
-                in str(error)
-            ):
-                raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
         except HttpResponseError as error:
             return process_http_response_error(error)
 
@@ -500,10 +487,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
 
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_index_type_default,
+        string_index_type = kwargs.pop(
+            "string_index_type", self._string_index_type_default
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -668,15 +653,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_health'" in str(error):
-                raise ValueError(
-                    "'begin_analyze_healthcare_entities' method is only available for API version \
-                    V3_1 and up."
-                ) from error
-            raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)
 
@@ -845,22 +821,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
 
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_index_type_default,
+        string_index_type = kwargs.pop(
+            "string_index_type", self._string_index_type_default
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
 
         if show_opinion_mining is not None:
-            if (
-                self._api_version == TextAnalyticsApiVersion.V3_0
-                and show_opinion_mining
-            ):
-                raise ValueError(
-                    "'show_opinion_mining' is only available for API version v3.1 and up"
-                )
             kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
@@ -1117,13 +1084,5 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
-                raise ValueError(
-                    "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)
