@@ -13,9 +13,7 @@ from datetime import datetime, timedelta
 
 from math import ceil
 
-from azure.storage.blob.changefeed import (
-    ChangeFeedClient,
-)
+from changefeed import ChangeFeedClient
 from devtools_testutils.storage import StorageTestCase
 from settings.testcase import ChangeFeedPreparer
 
