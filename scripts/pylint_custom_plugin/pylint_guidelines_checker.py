@@ -890,7 +890,6 @@ class ClientListMethodsUseCorePaging(BaseChecker):
 
                 # TODO: Flag functions that return an ItemPaged but don't start with "list"
 
-
                 if node.name.startswith("list"):
                     try:
                         
@@ -900,7 +899,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                         # Check the inferred type of the return
                         type_of_return = next(node.infer_call_result()).pytype()
                     
-                        print(type_of_return,returns)
+                        print(returns)
 
                         if type_of_return is not astroid.Uninferable:
                             # Get the type of what is being returned
@@ -915,6 +914,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                             # for inner_node in node.body:
                             #     # If this is a return node
                             #     if isinstance(inner_node, astroid.Return):
+                            #         print(inner_node.get_children())
                             #         print(inner_node.value)
                             #         # Check if it is returning a function
                             #         try:
