@@ -22,13 +22,13 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     msgs = {
         "C4717": (
             "Client constructor is missing a credential parameter. See details:"
-            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#client-configuration",
             "missing-client-constructor-parameter-credential",
             "All client types should accept a credential parameter.",
         ),
         "C4718": (
             "Client constructor is missing a **kwargs parameter. See details:"
-            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#client-configuration",
             "missing-client-constructor-parameter-kwargs",
             "All client types should accept a **kwargs parameter.",
         )
@@ -91,7 +91,7 @@ class ClientHasKwargsInPoliciesForCreateConfigurationMethod(BaseChecker):
     msgs = {
         "C4719": (
             "A policy in the create_configuration() function is missing a **kwargs argument. See details:"
-            " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            " https://azure.github.io/azure-sdk/python_design.html#client-configuration",
             "config-missing-kwargs-in-policy",
             "All policies should take a **kwargs parameter.",
         )
@@ -260,7 +260,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
         "C4722": (
             "Client method is missing type annotations/comments, return type annotations/comments, or "
             "mixing type annotations and comments. See details: "
-            " https://azure.github.io/azure-sdk/python_introduction.html#types-or-not",
+            " https://azure.github.io/azure-sdk/python_implementation.html#types-or-not",
             "client-method-missing-type-annotations",
             "Client method should use type annotations.",
         )
@@ -463,7 +463,7 @@ class FileHasCopyrightHeader(BaseChecker):
     msgs = {
         "C4726": (
             "File is missing a copyright header. See details:"
-            " https://azure.github.io/azure-sdk/policies_opensource.html",
+            " https://azure.github.io/azure-sdk/policies_opensource.html#",
             "file-needs-copyright-header",
             "Every source file should have a copyright header.",
         ),
@@ -510,7 +510,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
     msgs = {
         "C4727": (
             "Client is using an incorrect naming convention. See details:"
-            " https://azure.github.io/azure-sdk/python_introduction.html#naming-conventions",
+            " https://azure.github.io/azure-sdk/python_implementation.html#naming-conventions",
             "client-incorrect-naming-convention",
             "Client method should use correct naming conventions.",
         )
@@ -636,7 +636,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
     msgs = {
         "C4729": (
             "Client method name should not use a double underscore prefix. See details:"
-            " https://azure.github.io/azure-sdk/python_introduction.html#public-vs-private",
+            " https://azure.github.io/azure-sdk/python_implementation.html#public-vs-private",
             "client-method-name-no-double-underscore",
             "Client method names should not use a leading double underscore prefix.",
         ),
@@ -804,7 +804,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
     msgs = {
         "C4732": (
             "Specify the parameter names when calling methods with more than 2 required positional parameters."
-            " See details: https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
+            " See details: https://azure.github.io/azure-sdk/python_implementation.html#python-codestyle-positional-params",
             "specify-parameter-names-in-call",
             "You should specify the parameter names when the method has more than two positional arguments.",
         )
@@ -1023,7 +1023,7 @@ class ClientConstructorDoesNotHaveConnectionStringParam(BaseChecker):
     msgs = {
         "C4736": (
             "The constructor must not take a connection string. See details: "
-            "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
+            "https://azure.github.io/azure-sdk/python_design.html#python-client-connection-string",
             "connection-string-should-not-be-constructor-param",
             "Client should have a method to create the client with a connection string.",
         ),
@@ -1074,7 +1074,7 @@ class PackageNameDoesNotUseUnderscoreOrPeriod(BaseChecker):
     msgs = {
         "C4737": (
             "Package name should not use an underscore or period. Replace with dash (-). See details: "
-            "https://azure.github.io/azure-sdk/python_implementation.html#packaging",
+            "https://azure.github.io/azure-sdk/python_design.html#packaging",
             "package-name-incorrect",
             "Package name should use dashes instead of underscore or period.",
         ),
@@ -1124,7 +1124,7 @@ class ServiceClientUsesNameWithClientSuffix(BaseChecker):
     msgs = {
         "C4738": (
             "Service client types should use a `Client` suffix. See details: "
-            "https://azure.github.io/azure-sdk/python_design.html#clients",
+            "https://azure.github.io/azure-sdk/python_design.html#service-client",
             "client-suffix-needed",
             "Client should use the correct suffix.",
         ),
