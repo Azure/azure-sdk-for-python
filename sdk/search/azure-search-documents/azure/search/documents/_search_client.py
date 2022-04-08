@@ -53,6 +53,15 @@ def odata(statement, **kwargs):
     return statement.format(**kw)
 
 
+class FakeSearchClient(HeadersMixin):
+    
+    def __init__(self, endpoint):
+        self._endpoint = endpoint
+
+    def my_method(self, a, b, c, d, e, f, g):
+        pass
+
+
 class SearchClient(HeadersMixin):
     """A client to interact with an existing Azure search index.
 
