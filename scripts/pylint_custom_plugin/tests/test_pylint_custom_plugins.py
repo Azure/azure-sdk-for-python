@@ -398,7 +398,7 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
             self.checker.visit_asyncfunctiondef(func_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_introduction.html#method-signatures"
+        url = "https://azure.github.io/azure-sdk/python_implementation.html#method-signatures"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -687,7 +687,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
             self.checker.visit_functiondef(function_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods"
+        url = "https://azure.github.io/azure-sdk/python_design.html#client-configuration"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -922,7 +922,7 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
             self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_introduction.html#method-signatures"
+        url = "https://azure.github.io/azure-sdk/python_implementation.html#method-signatures"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1199,7 +1199,7 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
             self.checker.visit_functiondef(function_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_introduction.html#types-or-not"
+        url = "https://azure.github.io/azure-sdk/python_implementation.html#types-or-not"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1302,7 +1302,7 @@ class TestClientHasKwargsInPoliciesForCreateConfigurationMethod(pylint.testutils
             self.checker.visit_functiondef(function_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods"
+        url = "https://azure.github.io/azure-sdk/python_design.html#client-configuration"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1527,7 +1527,7 @@ class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_introduction.html#naming-conventions"
+        url = "https://azure.github.io/azure-sdk/python_implementation.html#naming-conventions"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -1831,7 +1831,7 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
             self.checker.visit_call(call_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_introduction.html#method-signatures"
+        url = "https://azure.github.io/azure-sdk/python_implementation.html#python-codestyle-positional-params"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -2151,7 +2151,7 @@ class TestClientConstructorDoesNotHaveConnectionStringParam(pylint.testutils.Che
             self.checker.visit_classdef(class_node)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods"
+        url = "https://azure.github.io/azure-sdk/python_design.html#python-client-connection-string"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
@@ -2335,7 +2335,7 @@ class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.Check
             self.checker.visit_asyncfunctiondef(func_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_introduction.html#public-vs-private"
+        url = "https://azure.github.io/azure-sdk/python_implementation.html#public-vs-private"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
