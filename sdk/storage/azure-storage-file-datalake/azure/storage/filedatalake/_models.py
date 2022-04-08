@@ -21,7 +21,6 @@ from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
-from six import with_metaclass
 
 from ._shared.models import DictMixin
 

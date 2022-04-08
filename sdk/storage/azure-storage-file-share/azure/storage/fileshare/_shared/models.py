@@ -8,7 +8,6 @@
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
-from six import with_metaclass
 
 def get_enum_value(value):
     if value is None or value in ["None", ""]:

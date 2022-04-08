@@ -11,7 +11,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
-from six import with_metaclass
 
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
