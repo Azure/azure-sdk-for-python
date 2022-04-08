@@ -165,7 +165,7 @@ class RoomsClient(object):
             valid_until=valid_until
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
-            room_id=room_id, update_room_request=update_room_request, **kwargs)
+            room_id=room_id, patch_room_request=update_room_request, **kwargs)
         return CommunicationRoom.from_update_room_response(update_room_response)
 
     @distributed_trace
@@ -209,7 +209,7 @@ class RoomsClient(object):
             participants=participantsDict
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
-            room_id=room_id, update_room_request=update_room_request, **kwargs)
+            room_id=room_id, patch_room_request=update_room_request, **kwargs)
         return CommunicationRoom.from_update_room_response(update_room_response)
 
     @distributed_trace
@@ -234,7 +234,7 @@ class RoomsClient(object):
             participants=participantsDict
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
-            room_id=room_id, update_room_request=update_room_request, **kwargs)
+            room_id=room_id, patch_room_request=update_room_request, **kwargs)
         return CommunicationRoom.from_update_room_response(update_room_response)
 
     @distributed_trace
@@ -262,7 +262,7 @@ class RoomsClient(object):
             participants=participantDict
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
-            room_id=room_id, update_room_request=update_room_request, **kwargs)
+            room_id=room_id, patch_room_request=update_room_request, **kwargs)
         return CommunicationRoom.from_update_room_response(update_room_response)
 
     @distributed_trace
@@ -283,5 +283,5 @@ class RoomsClient(object):
             participants={}
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
-            room_id=room_id, update_room_request=update_room_request, **kwargs)
+            room_id=room_id, patch_room_request=update_room_request, **kwargs)
         return CommunicationRoom.from_update_room_response(update_room_response)

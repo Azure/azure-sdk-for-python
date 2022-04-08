@@ -83,7 +83,7 @@ class CommunicationTestCase(AzureTestCase):
         super(CommunicationTestCase, self).setUp()
 
         if self.is_playback():
-            self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
+            self.connection_str = "endpoint=https://rooms-ppe-us.ppe.communication.azure.net/;accesskey=J9gcDYLfopqKzHIKg7BI7+Qt/ZKTg0jeO/xvUF1JWxr8sHeA9Wq3DT+bjEIo3kRfjuj84CNm3s7B/zDrqkeLnA=="
         else:
             self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)

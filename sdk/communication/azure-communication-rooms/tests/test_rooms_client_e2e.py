@@ -27,6 +27,7 @@ from azure.communication.rooms import (
 )
 
 from _shared.utils import get_http_logging_policy
+from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 
 
 class FakeTokenCredential(object):
@@ -68,7 +69,7 @@ class RoomsClientTest(CommunicationTestCase):
         # delete created users and chat threads
         if not self.is_playback():
             for user in self.users.values():
-                self.identity_client.delete_user(user)
+                self.identity_client.delete_user(CommunicationUserIdentifier(id=user.identifier))
 
     def test_create_room_no_attributes(self):
         response = self.rooms_client.create_room()
@@ -140,20 +141,6 @@ class RoomsClientTest(CommunicationTestCase):
         self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
-
-    @pytest.mark.live_test_only
-    def test_create_room_none_participant(self):
-        # add john and chris to room
-        participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
-
-        with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.create_room(participants=participants)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
 
     def test_create_room_incorretMri(self):
         # room attributes
@@ -341,6 +328,35 @@ class RoomsClientTest(CommunicationTestCase):
             participants=participants)
 
     @pytest.mark.live_test_only
+    def test_update_room_update_participant(self):
+        # add john and chris to room
+        create_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
+        create_response = self.rooms_client.create_room(participants=create_participants)
+
+        # participants to be updated
+        self.users["john"].role_name = "Consumer"
+        self.users["chris"].role_name = "Consumer"
+
+        update_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
+
+        update_response = self.rooms_client.update_participants(room_id=create_response.id, participants=update_participants)
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+        self.verify_successful_room_response(
+            response=update_response,
+            valid_from=create_response.valid_from,
+            valid_until=create_response.valid_until,
+            room_id=create_response.id,
+            participants=update_participants)
+
+    @pytest.mark.live_test_only
     def test_update_room_remove_participant(self):
         # add john and chris to room
         create_participants = [
@@ -384,6 +400,21 @@ class RoomsClientTest(CommunicationTestCase):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
+    def test_update_room_wrongRoleName(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        participants = [
+            RoomParticipant(identifier=self.users["john"].identifier, role_name='Kafka'),
+        ]
+
+        # update room attributes
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.add_participants(room_id=create_response.id, participants=participants)
+
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+
     @pytest.mark.live_test_only
     def test_update_room_clear_participant_dict(self):
         # add john and chris to the room
@@ -403,7 +434,7 @@ class RoomsClientTest(CommunicationTestCase):
             valid_from=create_response.valid_from,
             valid_until=create_response.valid_until,
             room_id=create_response.id,
-            participants={})
+            participants=[])
 
     def test_update_room_incorrect_roomId(self):
         # try to update room with random room_id
@@ -435,4 +466,4 @@ class RoomsClientTest(CommunicationTestCase):
         if valid_until is not None:
             self.assertEqual(valid_until.replace(tzinfo=None), response.valid_until.replace(tzinfo=None))
         if participants is not None:
-            self.assertDictEqual(participants, response.participants)
+            self.assertListEqual(participants, response.participants)
