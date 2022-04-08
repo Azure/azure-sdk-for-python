@@ -412,7 +412,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
     msgs = {
         "C4725": (
             "Client should not use static methods (staticmethod). See details:"
-            " https://azure.github.io/azure-sdk/python_introduction.html#method-signatures",
+            " https://azure.github.io/azure-sdk/python_implementation.html#method-signatures",
             "client-method-should-not-use-static-method",
             "Client method should not use staticmethod.",
         ),
