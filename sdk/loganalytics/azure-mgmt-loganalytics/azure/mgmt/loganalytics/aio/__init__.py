@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._log_analytics_management_client import LogAnalyticsManagementClient
-__all__ = ['LogAnalyticsManagementClient']
+from ._operational_insights_management_client import OperationalInsightsManagementClient
+__all__ = ['OperationalInsightsManagementClient']
 
 # `._patch.py` is used for handwritten extensions to the generated code
 # Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
