@@ -197,6 +197,48 @@ class AzureEntityResource(Resource):
         self.etag = None
 
 
+class AzureResourceProperties(msrest.serialization.Model):
+    """An Azure resource QueryPack-Query object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.loganalytics.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(AzureResourceProperties, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
 class CapacityReservationProperties(msrest.serialization.Model):
     """The Capacity Reservation properties.
 
@@ -1094,8 +1136,8 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: Required. Type of managed service identity. Possible values include:
-     "SystemAssigned", "UserAssigned", "None".
+    :ivar type: Required. Type of managed service identity. Possible values include: "user",
+     "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", "None".
     :vartype type: str or ~azure.mgmt.loganalytics.models.IdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
@@ -1125,8 +1167,8 @@ class Identity(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. Type of managed service identity. Possible values include:
-         "SystemAssigned", "UserAssigned", "None".
+        :keyword type: Required. Type of managed service identity. Possible values include: "user",
+         "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", "None".
         :paramtype type: str or ~azure.mgmt.loganalytics.models.IdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
@@ -1397,6 +1439,426 @@ class LinkedStorageAccountsResource(ProxyResource):
         super(LinkedStorageAccountsResource, self).__init__(**kwargs)
         self.data_source_type = None
         self.storage_account_ids = storage_account_ids
+
+
+class QueryPacksResource(msrest.serialization.Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super(QueryPacksResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags
+
+
+class LogAnalyticsQueryPack(QueryPacksResource):
+    """An Log Analytics QueryPack definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar query_pack_id: The unique ID of your application. This field cannot be changed.
+    :vartype query_pack_id: str
+    :ivar time_created: Creation Date for the Log Analytics QueryPack, in ISO 8601 format.
+    :vartype time_created: ~datetime.datetime
+    :ivar time_modified: Last modified date of the Log Analytics QueryPack, in ISO 8601 format.
+    :vartype time_modified: ~datetime.datetime
+    :ivar provisioning_state: Current state of this QueryPack: whether or not is has been
+     provisioned within the resource group it is defined. Users cannot change this value but are
+     able to read from it. Values will include Succeeded, Deploying, Canceled, and Failed.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'query_pack_id': {'readonly': True},
+        'time_created': {'readonly': True},
+        'time_modified': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'query_pack_id': {'key': 'properties.queryPackId', 'type': 'str'},
+        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
+        'time_modified': {'key': 'properties.timeModified', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super(LogAnalyticsQueryPack, self).__init__(location=location, tags=tags, **kwargs)
+        self.query_pack_id = None
+        self.time_created = None
+        self.time_modified = None
+        self.provisioning_state = None
+
+
+class LogAnalyticsQueryPackListResult(msrest.serialization.Model):
+    """Describes the list of Log Analytics QueryPack resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. List of Log Analytics QueryPack definitions.
+    :vartype value: list[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack]
+    :ivar next_link: The URI to get the next set of Log Analytics QueryPack definitions if too many
+     QueryPacks where returned in the result set.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LogAnalyticsQueryPack]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["LogAnalyticsQueryPack"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. List of Log Analytics QueryPack definitions.
+        :paramtype value: list[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack]
+        :keyword next_link: The URI to get the next set of Log Analytics QueryPack definitions if too
+         many QueryPacks where returned in the result set.
+        :paramtype next_link: str
+        """
+        super(LogAnalyticsQueryPackListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class LogAnalyticsQueryPackQuery(AzureResourceProperties):
+    """A Log Analytics QueryPack-Query definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar system_data: Read only system data.
+    :vartype system_data: ~azure.mgmt.loganalytics.models.SystemData
+    :ivar id_properties_id: The unique ID of your application. This field cannot be changed.
+    :vartype id_properties_id: str
+    :ivar display_name: Unique display name for your query within the Query Pack.
+    :vartype display_name: str
+    :ivar time_created: Creation Date for the Log Analytics Query, in ISO 8601 format.
+    :vartype time_created: ~datetime.datetime
+    :ivar time_modified: Last modified date of the Log Analytics Query, in ISO 8601 format.
+    :vartype time_modified: ~datetime.datetime
+    :ivar author: Object Id of user creating the query.
+    :vartype author: str
+    :ivar description: Description of the query.
+    :vartype description: str
+    :ivar body: Body of the query.
+    :vartype body: str
+    :ivar related: The related metadata items for the function.
+    :vartype related: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQueryPropertiesRelated
+    :ivar tags: A set of tags. Tags associated with the query.
+    :vartype tags: dict[str, list[str]]
+    :ivar properties: Additional properties that can be set for the query.
+    :vartype properties: any
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'id_properties_id': {'readonly': True},
+        'time_created': {'readonly': True},
+        'time_modified': {'readonly': True},
+        'author': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
+        'time_modified': {'key': 'properties.timeModified', 'type': 'iso-8601'},
+        'author': {'key': 'properties.author', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'body': {'key': 'properties.body', 'type': 'str'},
+        'related': {'key': 'properties.related', 'type': 'LogAnalyticsQueryPackQueryPropertiesRelated'},
+        'tags': {'key': 'properties.tags', 'type': '{[str]}'},
+        'properties': {'key': 'properties.properties', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        body: Optional[str] = None,
+        related: Optional["LogAnalyticsQueryPackQueryPropertiesRelated"] = None,
+        tags: Optional[Dict[str, List[str]]] = None,
+        properties: Optional[Any] = None,
+        **kwargs
+    ):
+        """
+        :keyword display_name: Unique display name for your query within the Query Pack.
+        :paramtype display_name: str
+        :keyword description: Description of the query.
+        :paramtype description: str
+        :keyword body: Body of the query.
+        :paramtype body: str
+        :keyword related: The related metadata items for the function.
+        :paramtype related: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQueryPropertiesRelated
+        :keyword tags: A set of tags. Tags associated with the query.
+        :paramtype tags: dict[str, list[str]]
+        :keyword properties: Additional properties that can be set for the query.
+        :paramtype properties: any
+        """
+        super(LogAnalyticsQueryPackQuery, self).__init__(**kwargs)
+        self.id_properties_id = None
+        self.display_name = display_name
+        self.time_created = None
+        self.time_modified = None
+        self.author = None
+        self.description = description
+        self.body = body
+        self.related = related
+        self.tags = tags
+        self.properties = properties
+
+
+class LogAnalyticsQueryPackQueryListResult(msrest.serialization.Model):
+    """Describes the list of Log Analytics QueryPack-Query resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. List of Log Analytics QueryPack Query definitions.
+    :vartype value: list[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery]
+    :ivar next_link: The URI to get the next set of Log Analytics QueryPack definitions if too many
+     QueryPack-Queries where returned in the result set.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[LogAnalyticsQueryPackQuery]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["LogAnalyticsQueryPackQuery"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. List of Log Analytics QueryPack Query definitions.
+        :paramtype value: list[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery]
+        :keyword next_link: The URI to get the next set of Log Analytics QueryPack definitions if too
+         many QueryPack-Queries where returned in the result set.
+        :paramtype next_link: str
+        """
+        super(LogAnalyticsQueryPackQueryListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class LogAnalyticsQueryPackQueryPropertiesRelated(msrest.serialization.Model):
+    """The related metadata items for the function.
+
+    :ivar categories: The related categories for the function.
+    :vartype categories: list[str]
+    :ivar resource_types: The related resource types for the function.
+    :vartype resource_types: list[str]
+    :ivar solutions: The related Log Analytics solutions for the function.
+    :vartype solutions: list[str]
+    """
+
+    _attribute_map = {
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'resource_types': {'key': 'resourceTypes', 'type': '[str]'},
+        'solutions': {'key': 'solutions', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        categories: Optional[List[str]] = None,
+        resource_types: Optional[List[str]] = None,
+        solutions: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword categories: The related categories for the function.
+        :paramtype categories: list[str]
+        :keyword resource_types: The related resource types for the function.
+        :paramtype resource_types: list[str]
+        :keyword solutions: The related Log Analytics solutions for the function.
+        :paramtype solutions: list[str]
+        """
+        super(LogAnalyticsQueryPackQueryPropertiesRelated, self).__init__(**kwargs)
+        self.categories = categories
+        self.resource_types = resource_types
+        self.solutions = solutions
+
+
+class LogAnalyticsQueryPackQuerySearchProperties(msrest.serialization.Model):
+    """Properties that define an Log Analytics QueryPack-Query search properties.
+
+    :ivar related: The related metadata items for the function.
+    :vartype related:
+     ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuerySearchPropertiesRelated
+    :ivar tags: A set of tags. Tags associated with the query.
+    :vartype tags: dict[str, list[str]]
+    """
+
+    _attribute_map = {
+        'related': {'key': 'related', 'type': 'LogAnalyticsQueryPackQuerySearchPropertiesRelated'},
+        'tags': {'key': 'tags', 'type': '{[str]}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        related: Optional["LogAnalyticsQueryPackQuerySearchPropertiesRelated"] = None,
+        tags: Optional[Dict[str, List[str]]] = None,
+        **kwargs
+    ):
+        """
+        :keyword related: The related metadata items for the function.
+        :paramtype related:
+         ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuerySearchPropertiesRelated
+        :keyword tags: A set of tags. Tags associated with the query.
+        :paramtype tags: dict[str, list[str]]
+        """
+        super(LogAnalyticsQueryPackQuerySearchProperties, self).__init__(**kwargs)
+        self.related = related
+        self.tags = tags
+
+
+class LogAnalyticsQueryPackQuerySearchPropertiesRelated(msrest.serialization.Model):
+    """The related metadata items for the function.
+
+    :ivar categories: The related categories for the function.
+    :vartype categories: list[str]
+    :ivar resource_types: The related resource types for the function.
+    :vartype resource_types: list[str]
+    :ivar solutions: The related Log Analytics solutions for the function.
+    :vartype solutions: list[str]
+    """
+
+    _attribute_map = {
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'resource_types': {'key': 'resourceTypes', 'type': '[str]'},
+        'solutions': {'key': 'solutions', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        categories: Optional[List[str]] = None,
+        resource_types: Optional[List[str]] = None,
+        solutions: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword categories: The related categories for the function.
+        :paramtype categories: list[str]
+        :keyword resource_types: The related resource types for the function.
+        :paramtype resource_types: list[str]
+        :keyword solutions: The related Log Analytics solutions for the function.
+        :paramtype solutions: list[str]
+        """
+        super(LogAnalyticsQueryPackQuerySearchPropertiesRelated, self).__init__(**kwargs)
+        self.categories = categories
+        self.resource_types = resource_types
+        self.solutions = solutions
 
 
 class ManagementGroup(msrest.serialization.Model):
@@ -2609,6 +3071,73 @@ class StorageInsightStatus(msrest.serialization.Model):
 
 
 class SystemData(msrest.serialization.Model):
+    """Read only system data.
+
+    :ivar created_by: An identifier for the identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", "None".
+    :vartype created_by_type: str or ~azure.mgmt.loganalytics.models.IdentityType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: An identifier for the identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "user", "application", "managedIdentity", "key", "SystemAssigned",
+     "UserAssigned", "None".
+    :vartype last_modified_by_type: str or ~azure.mgmt.loganalytics.models.IdentityType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "IdentityType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "IdentityType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword created_by: An identifier for the identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned",
+         "None".
+        :paramtype created_by_type: str or ~azure.mgmt.loganalytics.models.IdentityType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: An identifier for the identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "user", "application", "managedIdentity", "key", "SystemAssigned",
+         "UserAssigned", "None".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.loganalytics.models.IdentityType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class SystemDataAutoGenerated(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2663,7 +3192,7 @@ class SystemData(msrest.serialization.Model):
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super(SystemDataAutoGenerated, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -2686,7 +3215,7 @@ class Table(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.loganalytics.models.SystemData
+    :vartype system_data: ~azure.mgmt.loganalytics.models.SystemDataAutoGenerated
     :ivar retention_in_days: The table retention in days, between 4 and 730. Setting this property
      to -1 will default to the workspace retention.
     :vartype retention_in_days: int
@@ -2731,7 +3260,7 @@ class Table(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'system_data': {'key': 'systemData', 'type': 'SystemDataAutoGenerated'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
         'total_retention_in_days': {'key': 'properties.totalRetentionInDays', 'type': 'int'},
         'archive_retention_in_days': {'key': 'properties.archiveRetentionInDays', 'type': 'int'},
@@ -2853,6 +3382,31 @@ class Tag(msrest.serialization.Model):
         self.value = value
 
 
+class TagsResource(msrest.serialization.Model):
+    """A container holding only the Tags for a resource, allowing the user to update the tags on a QueryPack instance.
+
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super(TagsResource, self).__init__(**kwargs)
+        self.tags = tags
+
+
 class UsageMetric(msrest.serialization.Model):
     """A metric describing the usage of a resource.
 
@@ -2966,7 +3520,7 @@ class Workspace(TrackedResource):
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.loganalytics.models.SystemData
+    :vartype system_data: ~azure.mgmt.loganalytics.models.SystemDataAutoGenerated
     :ivar e_tag: The ETag of the workspace.
     :vartype e_tag: str
     :ivar provisioning_state: The provisioning state of the workspace. Possible values include:
@@ -3027,7 +3581,7 @@ class Workspace(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'system_data': {'key': 'systemData', 'type': 'SystemDataAutoGenerated'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'customer_id': {'key': 'properties.customerId', 'type': 'str'},
