@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     ShareClient = TypeVar("ShareClient")
 
 
-class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class ShareLeaseClient(object):
     """Creates a new ShareLeaseClient.
 
     This client provides lease operations on a ShareClient or ShareFileClient.

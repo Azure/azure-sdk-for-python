@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     DataLakeFileClient = TypeVar("DataLakeFileClient")
 
 
-class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class DataLakeLeaseClient(object):
     """Creates a new DataLakeLeaseClient.
 
     This client provides lease operations on a FileSystemClient, DataLakeDirectoryClient or DataLakeFileClient.
