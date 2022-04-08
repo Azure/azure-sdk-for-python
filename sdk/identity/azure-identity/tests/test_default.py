@@ -405,3 +405,8 @@ def test_interactive_browser_client_id():
 def test_unexpected_kwarg():
     """the credential shouldn't raise when given an unexpected keyword argument"""
     DefaultAzureCredential(foo=42)
+
+
+def test_error_tenant_id():
+    with pytest.raises(TypeError):
+        DefaultAzureCredential(tenant_id="foo")

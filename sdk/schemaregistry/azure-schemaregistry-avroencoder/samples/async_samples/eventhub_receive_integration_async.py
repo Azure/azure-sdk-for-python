@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Examples to show receiving events from EventHub with AvroEncoder integrated for data decoding.
+Examples to show receiving events from EventHub with AvroEncoder integrated for content decoding.
 """
 
 # pylint: disable=C0111
@@ -38,7 +38,7 @@ avro_encoder = AvroEncoder(
         credential=azure_credential
     ),
     group_name=GROUP_NAME,
-    auto_register_schemas=True
+    auto_register=True
 )
 
 async def on_event(partition_context, event):
@@ -50,8 +50,8 @@ async def on_event(partition_context, event):
     # Use the decode method to decode the payload of the event.
     # The decode method will extract the schema id from the content_type, and automatically retrieve the Avro Schema
     # from the Schema Registry Service. The schema will be cached locally for future usage.
-    decoded_data = await avro_encoder.decode(event)
-    print(f'The dict data after decoding is {decoded_data}')
+    decoded_content= await avro_encoder.decode(event)
+    print(f'The dict content after decoding is {decoded_content}')
 
 
 async def main():

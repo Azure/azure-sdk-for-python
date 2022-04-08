@@ -18,6 +18,7 @@ import subprocess
 
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
+from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
 
 if TYPE_CHECKING:
     from typing import Optional
@@ -38,19 +39,14 @@ TOOL_ENV_VAR = "PROXY_PID"
 
 def get_image_tag():
     # type: () -> str
-    """Gets the test proxy Docker image tag from the docker-start-proxy.ps1 script in /eng/common"""
-    pwsh_script_location = os.path.relpath("eng/common/testproxy/docker-start-proxy.ps1")
-    pwsh_script_location_from_root = os.path.abspath(os.path.join(REPO_ROOT, pwsh_script_location))
-
-    def parse_tag(file):
-        for line in file:
-            if line.startswith("$SELECTED_IMAGE_TAG"):
-                image_tag_with_quotes = line.split()[-1]
-                return image_tag_with_quotes.strip('"')
+    """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
+    version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
+    version_file_location_from_root = os.path.abspath(os.path.join(REPO_ROOT, version_file_location))
 
     try:
-        with open(pwsh_script_location_from_root, "r") as f:
-            image_tag = parse_tag(f)
+        with open(version_file_location_from_root, "r") as f:
+            image_tag = f.read().strip()
+
     # In live pipeline tests the root of the repo is in a different location relative to this file
     except FileNotFoundError:
         # REPO_ROOT only gets us to /sdk/{service}/{package}/.tox/whl on Windows
@@ -59,9 +55,9 @@ def get_image_tag():
         while tail != "sdk":
             head, tail = os.path.split(head)
 
-        pwsh_script_location_from_root = os.path.abspath(os.path.join(head, pwsh_script_location))
-        with open(pwsh_script_location_from_root, "r") as f:
-            image_tag = parse_tag(f)
+        version_file_location_from_root = os.path.abspath(os.path.join(head, version_file_location))
+        with open(version_file_location_from_root, "r") as f:
+            image_tag = f.read().strip()
 
     return image_tag
 
@@ -73,7 +69,7 @@ def get_container_info():
         shlex.split("docker container ls -a --format '{{json .}}' --filter name=" + CONTAINER_NAME),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        stdin=subprocess.DEVNULL
+        stdin=subprocess.DEVNULL,
     )
 
     output, stderr = proc.communicate()
@@ -151,7 +147,7 @@ def start_test_proxy():
                 _LOGGER.debug("Tool is responding, exiting...")
             else:
                 envname = os.getenv("TOX_ENV_NAME", "default")
-                root = os.getenv('BUILD_SOURCESDIRECTORY', REPO_ROOT)
+                root = os.getenv("BUILD_SOURCESDIRECTORY", REPO_ROOT)
                 log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
 
                 _LOGGER.info("{} is calculated repo root".format(root))
@@ -183,6 +179,11 @@ def start_test_proxy():
 
         # Wait for the proxy server to become available
         check_proxy_availability()
+        # remove headers from recordings if we don't need them, and ignore them if present
+        # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
+        headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+        add_remove_header_sanitizer(headers=headers_to_ignore)
+        set_custom_default_matcher(excluded_headers=headers_to_ignore)
 
 
 def stop_test_proxy():

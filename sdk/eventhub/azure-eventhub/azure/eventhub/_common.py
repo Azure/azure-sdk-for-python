@@ -18,6 +18,7 @@ from typing import (
     TYPE_CHECKING,
     cast,
 )
+from typing_extensions import TypedDict
 
 import six
 
@@ -60,6 +61,7 @@ from .amqp import (
 if TYPE_CHECKING:
     import datetime
 
+MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
 PrimitiveTypes = Optional[Union[
     int,
     float,
@@ -182,24 +184,25 @@ class EventData(object):
         event_str += " }"
         return event_str
 
-    def __message_data__(self) -> Dict:
+    def __message_content__(self) -> MessageContent:
         if self.body_type != AmqpMessageBodyType.DATA:
             raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
-        data = bytearray()
-        for d in self.body: # type: ignore
-            data += d   # type: ignore
-        return {"data": bytes(data), "content_type": self.content_type}
+        content = bytearray()
+        for c in self.body: # type: ignore
+            content += c   # type: ignore
+        content_type = cast(str, self.content_type)
+        return {"content": bytes(content), "content_type": content_type}
 
     @classmethod
-    def from_message_data(cls, data: bytes, content_type: str) -> "EventData":
+    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> "EventData": # pylint: disable=unused-argument
         """
-        Creates an EventData object given content type and a data value to be set as body.
+        Creates an EventData object given content type and a content value to be set as body.
 
-        :param bytes data: The data value to be set as the body of the message.
+        :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
         :rtype: ~azure.eventhub.EventData
         """
-        event_data = cls(data)
+        event_data = cls(content)
         event_data.content_type = content_type
         return event_data
 

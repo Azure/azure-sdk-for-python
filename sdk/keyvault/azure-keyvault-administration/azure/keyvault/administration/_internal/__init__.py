@@ -9,8 +9,9 @@ from six.moves.urllib_parse import urlparse
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .client_base import KeyVaultClientBase
 from .http_challenge import HttpChallenge
-from . import http_challenge_cache as HttpChallengeCache
+from . import http_challenge_cache
 
+HttpChallengeCache = http_challenge_cache  # to avoid aliasing pylint error (C4745)
 
 __all__ = [
     "ChallengeAuthPolicy",
@@ -26,14 +27,14 @@ def parse_vault_id(url):
     try:
         parsed_uri = urlparse(url)
     except Exception:  # pylint: disable=broad-except
-        raise ValueError("'{}' is not not a valid url".format(url))
+        raise ValueError("'{}' is not a valid url".format(url))
     if not (parsed_uri.scheme and parsed_uri.hostname):
-        raise ValueError("'{}' is not not a valid url".format(url))
+        raise ValueError("'{}' is not a valid url".format(url))
 
     path = list(filter(None, parsed_uri.path.split("/")))
 
     if len(path) < 2 or len(path) > 3:
-        raise ValueError("'{}' is not not a valid vault url".format(url))
+        raise ValueError("'{}' is not a valid vault url".format(url))
 
     return _VaultId(
         vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),

@@ -1,12 +1,19 @@
 # Release History
 
+## 12.7.0b1 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- Updated `create_file_system()` docstring to have the correct return-type of `None`
+- Fixed parsing of extra `/` symbols not being stripped properly in `async` clients
+
 ## 12.6.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Stable release of preview features
 - Added support for service version 2021-02-12.
-- Added support for batch deleting files using the `delete_files()` method from a `FileSystemClient`.
 - Account level SAS tokens now supports two new permissions:
     - `permanent_delete`
     - `set_immutability_policy`
@@ -15,6 +22,10 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
 - Added all missing Service SAS permissions.
+
+### Other Changes
+- Temporarily removed the preview `delete_files()` method on `FileSystemClient`. This feature will be added back
+in a future release.
 
 ## 12.6.0b2 (2021-12-13)
 

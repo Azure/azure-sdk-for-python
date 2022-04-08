@@ -56,21 +56,21 @@ token_credential = ClientSecretCredential(
 
 
 def encode_to_event_data_message(encoder):
-    dict_data_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
-    dict_data_alice = {"name": "Alice", "favorite_number": 15, "favorite_color": "green"}
+    dict_content_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
+    dict_content_alice = {"name": "Alice", "favorite_number": 15, "favorite_color": "green"}
 
     # Schema would be automatically registered into Schema Registry and cached locally.
     event_data_ben = encoder.encode(
-        dict_data_ben, schema=SCHEMA_STRING, message_type=EventData
+        dict_content_ben, schema=SCHEMA_STRING, message_type=EventData
     )
 
     # The second call won't trigger a service call.
     event_data_alice = encoder.encode(
-        dict_data_alice, schema=SCHEMA_STRING, message_type=EventData
+        dict_content_alice, schema=SCHEMA_STRING, message_type=EventData
     )
 
-    print("Encoded data is: ", next(event_data_ben.body))
-    print("Encoded data is: ", next(event_data_alice.body))
+    print("Encoded content is: ", next(event_data_ben.body))
+    print("Encoded content is: ", next(event_data_alice.body))
 
     print("Encoded content type is: ", event_data_ben.content_type)
     print("Encoded content type is: ", event_data_alice.content_type)
@@ -81,10 +81,10 @@ def decode_event_data_message(encoder, event_data):
     # encoder.decode would extract the schema id from the content_type,
     # retrieve schema from Schema Registry and cache the schema locally.
     # If the schema id is in the local cache, the call won't trigger a service call.
-    decoded_data = encoder.decode(event_data)
+    decoded_content = encoder.decode(event_data)
 
-    print("Decoded data is: ", decoded_data)
-    return decoded_data
+    print("Decoded data is: ", decoded_content)
+    return decoded_content
 
 
 if __name__ == "__main__":
@@ -93,9 +93,9 @@ if __name__ == "__main__":
         credential=token_credential,
     )
     encoder = AvroEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True
+        client=schema_registry, group_name=GROUP_NAME, auto_register=True
     )
     event_data_ben, event_data_alice = encode_to_event_data_message(encoder)
-    decoded_data_ben = decode_event_data_message(encoder, event_data_ben)
-    decoded_data_alice = decode_event_data_message(encoder, event_data_alice)
+    decoded_content_ben = decode_event_data_message(encoder, event_data_ben)
+    decoded_content_alice = decode_event_data_message(encoder, event_data_alice)
     encoder.close()

@@ -1839,7 +1839,7 @@ class StorageCommonBlobTest(StorageTestCase):
             account_key=container.credential.account_key,
             permission=ContainerSasPermissions(
                 read=True, write=True, delete=True, list=True, delete_previous_version=True,
-                tag=True, add=True, create=True, permanent_delete=True, find=True, move=True,
+                tag=True, add=True, create=True, permanent_delete=True, filter_by_tags=True, move=True,
                 execute=True, set_immutability_policy=True
             ),
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1853,7 +1853,7 @@ class StorageCommonBlobTest(StorageTestCase):
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(
                 read=True, add=True, create=True, write=True, delete=True, delete_previous_version=True,
-                permanent_delete=True, tag=True, find=True, move=True, execute=True, set_immutability_policy=True
+                permanent_delete=True, tag=True, move=True, execute=True, set_immutability_policy=True
             ),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )

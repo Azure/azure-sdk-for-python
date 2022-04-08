@@ -1,5 +1,16 @@
 # Release History
 
+## 21.0.0 (2022-03-22)
+
+**Features**
+
+  - Added operation PrivateLinkAssociationOperations.list
+  - Added operation ResourceManagementPrivateLinkOperations.list_by_resource_group
+
+**Breaking changes**
+
+  - Operation PrivateLinkAssociationOperations.get has a new signature
+
 ## 20.1.0 (2022-01-25)
 
 **Features**

@@ -3,6 +3,12 @@
 ## 1.0.0b6 (Unreleased)
 
 ### Features Added
+- Implement log exporter using experimental OT logging sdk
+    ([#23486](https://github.com/Azure/azure-sdk-for-python/pull/23486))
+- Implement sending of exception telemetry via log exporter
+    ([#23633](https://github.com/Azure/azure-sdk-for-python/pull/23633))
+- Implement exporting span events as message/exception telemetry
+    ([#23708](https://github.com/Azure/azure-sdk-for-python/pull/23708))
 
 ### Breaking Changes
 

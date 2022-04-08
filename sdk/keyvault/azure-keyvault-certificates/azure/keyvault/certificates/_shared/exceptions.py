@@ -23,7 +23,7 @@ def _get_exception_for_key_vault_error(cls, response):
         body = ContentDecodePolicy.deserialize_from_http_generics(response)
         message = "({}) {}".format(body["error"]["code"], body["error"]["message"])  # type: Optional[str]
     except (DecodeError, KeyError):
-        # Key Vault error response bodies should have the expected shape and be deserializable.
+        # Key Vault error response bodies should have the expected shape and be de-serializable.
         # If we somehow land here, we'll take HttpResponse's default message.
         message = None
 
