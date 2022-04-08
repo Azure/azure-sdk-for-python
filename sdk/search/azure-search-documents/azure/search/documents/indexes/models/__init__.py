@@ -155,7 +155,10 @@ from .._generated.models import (
 )
 from ._models import (
     AnalyzeTextOptions,
+    CognitiveServicesAccount,
+    CognitiveServicesAccountKey,
     CustomAnalyzer,
+    DefaultCognitiveServicesAccount,
     PatternAnalyzer,
     PatternTokenizer,
     SearchIndexerDataSourceConnection,
@@ -174,6 +177,9 @@ __all__ = (
     "CjkBigramTokenFilter",
     "ClassicSimilarityAlgorithm",
     "ClassicTokenizer",
+    "CognitiveServicesAccount",
+    "DefaultCognitiveServicesAccount",
+    "CognitiveServicesAccountKey",
     "CommonGramTokenFilter",
     "ComplexField",
     "ConditionalSkill",
