@@ -7,72 +7,72 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
-from .. import models
-from ._configuration import OperationalInsightsManagementClientConfiguration
+from . import models
+from ._configuration import LogAnalyticsManagementClientConfiguration
 from .operations import AvailableServiceTiersOperations, ClustersOperations, DataExportsOperations, DataSourcesOperations, DeletedWorkspacesOperations, GatewaysOperations, IntelligencePacksOperations, LinkedServicesOperations, LinkedStorageAccountsOperations, ManagementGroupsOperations, OperationStatusesOperations, Operations, QueriesOperations, QueryPacksOperations, SavedSearchesOperations, SchemaOperations, SharedKeysOperations, StorageInsightConfigsOperations, TablesOperations, UsagesOperations, WorkspacePurgeOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
-class OperationalInsightsManagementClient:
+class LogAnalyticsManagementClient:
     """Operational Insights Client.
 
     :ivar query_packs: QueryPacksOperations operations
-    :vartype query_packs: azure.mgmt.loganalytics.aio.operations.QueryPacksOperations
+    :vartype query_packs: azure.mgmt.loganalytics.operations.QueryPacksOperations
     :ivar queries: QueriesOperations operations
-    :vartype queries: azure.mgmt.loganalytics.aio.operations.QueriesOperations
+    :vartype queries: azure.mgmt.loganalytics.operations.QueriesOperations
     :ivar data_exports: DataExportsOperations operations
-    :vartype data_exports: azure.mgmt.loganalytics.aio.operations.DataExportsOperations
+    :vartype data_exports: azure.mgmt.loganalytics.operations.DataExportsOperations
     :ivar data_sources: DataSourcesOperations operations
-    :vartype data_sources: azure.mgmt.loganalytics.aio.operations.DataSourcesOperations
+    :vartype data_sources: azure.mgmt.loganalytics.operations.DataSourcesOperations
     :ivar intelligence_packs: IntelligencePacksOperations operations
-    :vartype intelligence_packs: azure.mgmt.loganalytics.aio.operations.IntelligencePacksOperations
+    :vartype intelligence_packs: azure.mgmt.loganalytics.operations.IntelligencePacksOperations
     :ivar linked_services: LinkedServicesOperations operations
-    :vartype linked_services: azure.mgmt.loganalytics.aio.operations.LinkedServicesOperations
+    :vartype linked_services: azure.mgmt.loganalytics.operations.LinkedServicesOperations
     :ivar linked_storage_accounts: LinkedStorageAccountsOperations operations
     :vartype linked_storage_accounts:
-     azure.mgmt.loganalytics.aio.operations.LinkedStorageAccountsOperations
+     azure.mgmt.loganalytics.operations.LinkedStorageAccountsOperations
     :ivar management_groups: ManagementGroupsOperations operations
-    :vartype management_groups: azure.mgmt.loganalytics.aio.operations.ManagementGroupsOperations
+    :vartype management_groups: azure.mgmt.loganalytics.operations.ManagementGroupsOperations
     :ivar operation_statuses: OperationStatusesOperations operations
-    :vartype operation_statuses: azure.mgmt.loganalytics.aio.operations.OperationStatusesOperations
+    :vartype operation_statuses: azure.mgmt.loganalytics.operations.OperationStatusesOperations
     :ivar shared_keys: SharedKeysOperations operations
-    :vartype shared_keys: azure.mgmt.loganalytics.aio.operations.SharedKeysOperations
+    :vartype shared_keys: azure.mgmt.loganalytics.operations.SharedKeysOperations
     :ivar usages: UsagesOperations operations
-    :vartype usages: azure.mgmt.loganalytics.aio.operations.UsagesOperations
+    :vartype usages: azure.mgmt.loganalytics.operations.UsagesOperations
     :ivar storage_insight_configs: StorageInsightConfigsOperations operations
     :vartype storage_insight_configs:
-     azure.mgmt.loganalytics.aio.operations.StorageInsightConfigsOperations
+     azure.mgmt.loganalytics.operations.StorageInsightConfigsOperations
     :ivar saved_searches: SavedSearchesOperations operations
-    :vartype saved_searches: azure.mgmt.loganalytics.aio.operations.SavedSearchesOperations
+    :vartype saved_searches: azure.mgmt.loganalytics.operations.SavedSearchesOperations
     :ivar available_service_tiers: AvailableServiceTiersOperations operations
     :vartype available_service_tiers:
-     azure.mgmt.loganalytics.aio.operations.AvailableServiceTiersOperations
+     azure.mgmt.loganalytics.operations.AvailableServiceTiersOperations
     :ivar gateways: GatewaysOperations operations
-    :vartype gateways: azure.mgmt.loganalytics.aio.operations.GatewaysOperations
+    :vartype gateways: azure.mgmt.loganalytics.operations.GatewaysOperations
     :ivar schema: SchemaOperations operations
-    :vartype schema: azure.mgmt.loganalytics.aio.operations.SchemaOperations
+    :vartype schema: azure.mgmt.loganalytics.operations.SchemaOperations
     :ivar workspace_purge: WorkspacePurgeOperations operations
-    :vartype workspace_purge: azure.mgmt.loganalytics.aio.operations.WorkspacePurgeOperations
+    :vartype workspace_purge: azure.mgmt.loganalytics.operations.WorkspacePurgeOperations
     :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure.mgmt.loganalytics.aio.operations.ClustersOperations
+    :vartype clusters: azure.mgmt.loganalytics.operations.ClustersOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.loganalytics.aio.operations.Operations
+    :vartype operations: azure.mgmt.loganalytics.operations.Operations
     :ivar workspaces: WorkspacesOperations operations
-    :vartype workspaces: azure.mgmt.loganalytics.aio.operations.WorkspacesOperations
+    :vartype workspaces: azure.mgmt.loganalytics.operations.WorkspacesOperations
     :ivar deleted_workspaces: DeletedWorkspacesOperations operations
-    :vartype deleted_workspaces: azure.mgmt.loganalytics.aio.operations.DeletedWorkspacesOperations
+    :vartype deleted_workspaces: azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations
     :ivar tables: TablesOperations operations
-    :vartype tables: azure.mgmt.loganalytics.aio.operations.TablesOperations
+    :vartype tables: azure.mgmt.loganalytics.operations.TablesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
@@ -83,13 +83,13 @@ class OperationalInsightsManagementClient:
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
+        credential: "TokenCredential",
         subscription_id: str,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = OperationalInsightsManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = LogAnalyticsManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -121,16 +121,16 @@ class OperationalInsightsManagementClient:
 
     def _send_request(
         self,
-        request: HttpRequest,
+        request,  # type: HttpRequest
         **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client._send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
@@ -138,19 +138,22 @@ class OperationalInsightsManagementClient:
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "OperationalInsightsManagementClient":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> LogAnalyticsManagementClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)

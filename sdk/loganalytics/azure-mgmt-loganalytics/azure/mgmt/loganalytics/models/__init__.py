@@ -88,7 +88,7 @@ from ._models_py3 import WorkspacePurgeStatusResponse
 from ._models_py3 import WorkspaceSku
 
 
-from ._operational_insights_management_client_enums import (
+from ._log_analytics_management_client_enums import (
     BillingType,
     Capacity,
     CapacityReservationLevel,
