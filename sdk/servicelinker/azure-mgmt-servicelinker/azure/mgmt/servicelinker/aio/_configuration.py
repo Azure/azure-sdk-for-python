@@ -39,7 +39,7 @@ class MicrosoftServiceLinkerConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
-        self.api_version = "2021-11-01-preview"
+        self.api_version = "2022-05-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-servicelinker/{}'.format(VERSION))
         self._configure(**kwargs)

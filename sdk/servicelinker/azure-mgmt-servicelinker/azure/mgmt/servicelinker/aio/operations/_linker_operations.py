@@ -33,7 +33,7 @@ class LinkerOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~microsoft_service_linker.models
+    :type models: ~azure.mgmt.servicelinker.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -61,7 +61,7 @@ class LinkerOperations:
         :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LinkerList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~microsoft_service_linker.models.LinkerList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicelinker.models.LinkerList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkerList"]
@@ -132,7 +132,7 @@ class LinkerOperations:
         :type linker_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkerResource, or the result of cls(response)
-        :rtype: ~microsoft_service_linker.models.LinkerResource
+        :rtype: ~azure.mgmt.servicelinker.models.LinkerResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkerResource"]
@@ -232,7 +232,7 @@ class LinkerOperations:
         :param linker_name: The name Linker resource.
         :type linker_name: str
         :param parameters: Linker details.
-        :type parameters: ~microsoft_service_linker.models.LinkerResource
+        :type parameters: ~azure.mgmt.servicelinker.models.LinkerResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -243,7 +243,7 @@ class LinkerOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LinkerResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~microsoft_service_linker.models.LinkerResource]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -448,7 +448,7 @@ class LinkerOperations:
         :param linker_name: The name Linker resource.
         :type linker_name: str
         :param parameters: Linker details.
-        :type parameters: ~microsoft_service_linker.models.LinkerPatch
+        :type parameters: ~azure.mgmt.servicelinker.models.LinkerPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -459,7 +459,7 @@ class LinkerOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LinkerResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~microsoft_service_linker.models.LinkerResource]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -568,7 +568,7 @@ class LinkerOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ValidateResult or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~microsoft_service_linker.models.ValidateResult]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.ValidateResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
@@ -626,7 +626,7 @@ class LinkerOperations:
         :type linker_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SourceConfigurationResult, or the result of cls(response)
-        :rtype: ~microsoft_service_linker.models.SourceConfigurationResult
+        :rtype: ~azure.mgmt.servicelinker.models.SourceConfigurationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceConfigurationResult"]

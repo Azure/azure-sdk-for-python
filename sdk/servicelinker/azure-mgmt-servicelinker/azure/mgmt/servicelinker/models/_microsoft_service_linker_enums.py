@@ -51,13 +51,6 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class LinkerStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies if the linker is healthy.
-    """
-
-    HEALTHY = "Healthy"
-    NOT_HEALTHY = "Not healthy"
-
 class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system"
@@ -66,6 +59,31 @@ class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
+
+class SecretType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The secret type.
+    """
+
+    RAW_VALUE = "rawValue"
+    KEY_VAULT_SECRET_URI = "keyVaultSecretUri"
+    KEY_VAULT_SECRET_REFERENCE = "keyVaultSecretReference"
+
+class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The target service type.
+    """
+
+    AZURE_RESOURCE = "AzureResource"
+    CONFLUENT_BOOTSTRAP_SERVER = "ConfluentBootstrapServer"
+    CONFLUENT_SCHEMA_REGISTRY = "ConfluentSchemaRegistry"
+    KEY_VAULT = "KeyVault"
+
+class ValidationItemResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The result of validation
+    """
+
+    SUCCESS = "success"
+    FAILED = "failed"
+    WARNING = "warning"
 
 class VNetSolutionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of VNet solution.

@@ -25,9 +25,9 @@ class MicrosoftServiceLinker:
     """Microsoft.ServiceLinker provider.
 
     :ivar linker: LinkerOperations operations
-    :vartype linker: microsoft_service_linker.operations.LinkerOperations
+    :vartype linker: azure.mgmt.servicelinker.operations.LinkerOperations
     :ivar operations: Operations operations
-    :vartype operations: microsoft_service_linker.operations.Operations
+    :vartype operations: azure.mgmt.servicelinker.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
