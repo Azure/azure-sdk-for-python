@@ -29,7 +29,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_by_instance_request(
+def build_list_by_managed_instance_request(
     resource_group_name: str,
     managed_instance_name: str,
     subscription_id: str,
@@ -38,7 +38,7 @@ def build_list_by_instance_request(
     api_version = "2021-11-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases')
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "managedInstanceName": _SERIALIZER.url("managed_instance_name", managed_instance_name, 'str'),
@@ -67,18 +67,18 @@ def build_list_by_instance_request(
 def build_get_request(
     resource_group_name: str,
     managed_instance_name: str,
-    distributed_availability_group_name: str,
+    dns_alias_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-11-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}')
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "managedInstanceName": _SERIALIZER.url("managed_instance_name", managed_instance_name, 'str'),
-        "distributedAvailabilityGroupName": _SERIALIZER.url("distributed_availability_group_name", distributed_availability_group_name, 'str'),
+        "dnsAliasName": _SERIALIZER.url("dns_alias_name", dns_alias_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
     }
 
@@ -104,7 +104,7 @@ def build_get_request(
 def build_create_or_update_request_initial(
     resource_group_name: str,
     managed_instance_name: str,
-    distributed_availability_group_name: str,
+    dns_alias_name: str,
     subscription_id: str,
     *,
     json: JSONType = None,
@@ -116,11 +116,11 @@ def build_create_or_update_request_initial(
     api_version = "2021-11-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}')
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "managedInstanceName": _SERIALIZER.url("managed_instance_name", managed_instance_name, 'str'),
-        "distributedAvailabilityGroupName": _SERIALIZER.url("distributed_availability_group_name", distributed_availability_group_name, 'str'),
+        "dnsAliasName": _SERIALIZER.url("dns_alias_name", dns_alias_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
     }
 
@@ -150,17 +150,17 @@ def build_create_or_update_request_initial(
 def build_delete_request_initial(
     resource_group_name: str,
     managed_instance_name: str,
-    distributed_availability_group_name: str,
+    dns_alias_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-11-01-preview"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}')
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "managedInstanceName": _SERIALIZER.url("managed_instance_name", managed_instance_name, 'str'),
-        "distributedAvailabilityGroupName": _SERIALIZER.url("distributed_availability_group_name", distributed_availability_group_name, 'str'),
+        "dnsAliasName": _SERIALIZER.url("dns_alias_name", dns_alias_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
     }
 
@@ -178,10 +178,10 @@ def build_delete_request_initial(
     )
 
 
-def build_update_request_initial(
+def build_acquire_request_initial(
     resource_group_name: str,
     managed_instance_name: str,
-    distributed_availability_group_name: str,
+    dns_alias_name: str,
     subscription_id: str,
     *,
     json: JSONType = None,
@@ -193,11 +193,11 @@ def build_update_request_initial(
     api_version = "2021-11-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}/acquire')
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "managedInstanceName": _SERIALIZER.url("managed_instance_name", managed_instance_name, 'str'),
-        "distributedAvailabilityGroupName": _SERIALIZER.url("distributed_availability_group_name", distributed_availability_group_name, 'str'),
+        "dnsAliasName": _SERIALIZER.url("dns_alias_name", dns_alias_name, 'str'),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
     }
 
@@ -214,7 +214,7 @@ def build_update_request_initial(
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
-        method="PATCH",
+        method="POST",
         url=url,
         params=query_parameters,
         headers=header_parameters,
@@ -223,8 +223,8 @@ def build_update_request_initial(
         **kwargs
     )
 
-class DistributedAvailabilityGroupsOperations(object):
-    """DistributedAvailabilityGroupsOperations operations.
+class ManagedServerDnsAliasesOperations(object):
+    """ManagedServerDnsAliasesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -246,13 +246,13 @@ class DistributedAvailabilityGroupsOperations(object):
         self._config = config
 
     @distributed_trace
-    def list_by_instance(
+    def list_by_managed_instance(
         self,
         resource_group_name: str,
         managed_instance_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.DistributedAvailabilityGroupsListResult"]:
-        """Gets a list of a distributed availability groups in instance.
+    ) -> Iterable["_models.ManagedServerDnsAliasListResult"]:
+        """Gets a list of managed server DNS aliases for a managed server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
@@ -260,13 +260,12 @@ class DistributedAvailabilityGroupsOperations(object):
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DistributedAvailabilityGroupsListResult or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.DistributedAvailabilityGroupsListResult]
+        :return: An iterator like instance of either ManagedServerDnsAliasListResult or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.ManagedServerDnsAliasListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DistributedAvailabilityGroupsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedServerDnsAliasListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -274,18 +273,18 @@ class DistributedAvailabilityGroupsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_instance_request(
+                request = build_list_by_managed_instance_request(
                     resource_group_name=resource_group_name,
                     managed_instance_name=managed_instance_name,
                     subscription_id=self._config.subscription_id,
-                    template_url=self.list_by_instance.metadata['url'],
+                    template_url=self.list_by_managed_instance.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_instance_request(
+                request = build_list_by_managed_instance_request(
                     resource_group_name=resource_group_name,
                     managed_instance_name=managed_instance_name,
                     subscription_id=self._config.subscription_id,
@@ -297,7 +296,7 @@ class DistributedAvailabilityGroupsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("DistributedAvailabilityGroupsListResult", pipeline_response)
+            deserialized = self._deserialize("ManagedServerDnsAliasListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -319,31 +318,31 @@ class DistributedAvailabilityGroupsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_instance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups'}  # type: ignore
+    list_by_managed_instance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases'}  # type: ignore
 
     @distributed_trace
     def get(
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        distributed_availability_group_name: str,
+        dns_alias_name: str,
         **kwargs: Any
-    ) -> "_models.DistributedAvailabilityGroup":
-        """Gets a distributed availability group info.
+    ) -> "_models.ManagedServerDnsAlias":
+        """Gets a server DNS alias.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param distributed_availability_group_name: The distributed availability group name.
-        :type distributed_availability_group_name: str
+        :param dns_alias_name:
+        :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DistributedAvailabilityGroup, or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.DistributedAvailabilityGroup
+        :return: ManagedServerDnsAlias, or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.ManagedServerDnsAlias
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DistributedAvailabilityGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedServerDnsAlias"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -353,7 +352,7 @@ class DistributedAvailabilityGroupsOperations(object):
         request = build_get_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            distributed_availability_group_name=distributed_availability_group_name,
+            dns_alias_name=dns_alias_name,
             subscription_id=self._config.subscription_id,
             template_url=self.get.metadata['url'],
         )
@@ -367,25 +366,25 @@ class DistributedAvailabilityGroupsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DistributedAvailabilityGroup', pipeline_response)
+        deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        distributed_availability_group_name: str,
-        parameters: "_models.DistributedAvailabilityGroup",
+        dns_alias_name: str,
+        parameters: "_models.ManagedServerDnsAliasCreation",
         **kwargs: Any
-    ) -> Optional["_models.DistributedAvailabilityGroup"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DistributedAvailabilityGroup"]]
+    ) -> Optional["_models.ManagedServerDnsAlias"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedServerDnsAlias"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -393,12 +392,12 @@ class DistributedAvailabilityGroupsOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'DistributedAvailabilityGroup')
+        _json = self._serialize.body(parameters, 'ManagedServerDnsAliasCreation')
 
         request = build_create_or_update_request_initial(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            distributed_availability_group_name=distributed_availability_group_name,
+            dns_alias_name=dns_alias_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             json=_json,
@@ -416,17 +415,17 @@ class DistributedAvailabilityGroupsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DistributedAvailabilityGroup', pipeline_response)
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('DistributedAvailabilityGroup', pipeline_response)
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
 
     @distributed_trace
@@ -434,21 +433,21 @@ class DistributedAvailabilityGroupsOperations(object):
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        distributed_availability_group_name: str,
-        parameters: "_models.DistributedAvailabilityGroup",
+        dns_alias_name: str,
+        parameters: "_models.ManagedServerDnsAliasCreation",
         **kwargs: Any
-    ) -> LROPoller["_models.DistributedAvailabilityGroup"]:
-        """Creates a distributed availability group between Sql On-Prem and Sql Managed Instance.
+    ) -> LROPoller["_models.ManagedServerDnsAlias"]:
+        """Creates a managed server DNS alias.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param distributed_availability_group_name: The distributed availability group name.
-        :type distributed_availability_group_name: str
-        :param parameters: The distributed availability group info.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup
+        :param dns_alias_name:
+        :type dns_alias_name: str
+        :param parameters:
+        :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasCreation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -457,14 +456,14 @@ class DistributedAvailabilityGroupsOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
-         result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+        :return: An instance of LROPoller that returns either ManagedServerDnsAlias or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.ManagedServerDnsAlias]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DistributedAvailabilityGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedServerDnsAlias"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -474,7 +473,7 @@ class DistributedAvailabilityGroupsOperations(object):
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 managed_instance_name=managed_instance_name,
-                distributed_availability_group_name=distributed_availability_group_name,
+                dns_alias_name=dns_alias_name,
                 parameters=parameters,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -484,7 +483,7 @@ class DistributedAvailabilityGroupsOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('DistributedAvailabilityGroup', pipeline_response)
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -503,13 +502,13 @@ class DistributedAvailabilityGroupsOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        distributed_availability_group_name: str,
+        dns_alias_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -522,7 +521,7 @@ class DistributedAvailabilityGroupsOperations(object):
         request = build_delete_request_initial(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            distributed_availability_group_name=distributed_availability_group_name,
+            dns_alias_name=dns_alias_name,
             subscription_id=self._config.subscription_id,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -539,7 +538,7 @@ class DistributedAvailabilityGroupsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
 
     @distributed_trace
@@ -547,18 +546,18 @@ class DistributedAvailabilityGroupsOperations(object):
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        distributed_availability_group_name: str,
+        dns_alias_name: str,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Drops a distributed availability group between Sql On-Prem and Sql Managed Instance.
+        """Deletes the managed server DNS alias with the given name.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param distributed_availability_group_name: The distributed availability group name.
-        :type distributed_availability_group_name: str
+        :param dns_alias_name:
+        :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -582,7 +581,7 @@ class DistributedAvailabilityGroupsOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 managed_instance_name=managed_instance_name,
-                distributed_availability_group_name=distributed_availability_group_name,
+                dns_alias_name=dns_alias_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -606,17 +605,17 @@ class DistributedAvailabilityGroupsOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
-    def _update_initial(
+    def _acquire_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        distributed_availability_group_name: str,
-        parameters: "_models.DistributedAvailabilityGroup",
+        dns_alias_name: str,
+        parameters: "_models.ManagedServerDnsAliasAcquisition",
         **kwargs: Any
-    ) -> Optional["_models.DistributedAvailabilityGroup"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DistributedAvailabilityGroup"]]
+    ) -> Optional["_models.ManagedServerDnsAlias"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedServerDnsAlias"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -624,16 +623,16 @@ class DistributedAvailabilityGroupsOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'DistributedAvailabilityGroup')
+        _json = self._serialize.body(parameters, 'ManagedServerDnsAliasAcquisition')
 
-        request = build_update_request_initial(
+        request = build_acquire_request_initial(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            distributed_availability_group_name=distributed_availability_group_name,
+            dns_alias_name=dns_alias_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             json=_json,
-            template_url=self._update_initial.metadata['url'],
+            template_url=self._acquire_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -647,36 +646,36 @@ class DistributedAvailabilityGroupsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DistributedAvailabilityGroup', pipeline_response)
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}'}  # type: ignore
+    _acquire_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}/acquire'}  # type: ignore
 
 
     @distributed_trace
-    def begin_update(
+    def begin_acquire(
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        distributed_availability_group_name: str,
-        parameters: "_models.DistributedAvailabilityGroup",
+        dns_alias_name: str,
+        parameters: "_models.ManagedServerDnsAliasAcquisition",
         **kwargs: Any
-    ) -> LROPoller["_models.DistributedAvailabilityGroup"]:
-        """Updates a distributed availability group replication mode.
+    ) -> LROPoller["_models.ManagedServerDnsAlias"]:
+        """Acquires managed server DNS alias from another managed server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param distributed_availability_group_name: The distributed availability group name.
-        :type distributed_availability_group_name: str
-        :param parameters: The distributed availability group info.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup
+        :param dns_alias_name:
+        :type dns_alias_name: str
+        :param parameters:
+        :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasAcquisition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -685,24 +684,24 @@ class DistributedAvailabilityGroupsOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either DistributedAvailabilityGroup or the
-         result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+        :return: An instance of LROPoller that returns either ManagedServerDnsAlias or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.ManagedServerDnsAlias]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DistributedAvailabilityGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedServerDnsAlias"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._update_initial(
+            raw_result = self._acquire_initial(
                 resource_group_name=resource_group_name,
                 managed_instance_name=managed_instance_name,
-                distributed_availability_group_name=distributed_availability_group_name,
+                dns_alias_name=dns_alias_name,
                 parameters=parameters,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -712,7 +711,7 @@ class DistributedAvailabilityGroupsOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('DistributedAvailabilityGroup', pipeline_response)
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -731,4 +730,4 @@ class DistributedAvailabilityGroupsOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/distributedAvailabilityGroups/{distributedAvailabilityGroupName}'}  # type: ignore
+    begin_acquire.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}/acquire'}  # type: ignore

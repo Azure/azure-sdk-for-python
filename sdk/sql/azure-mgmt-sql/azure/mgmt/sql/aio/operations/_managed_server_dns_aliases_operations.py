@@ -22,12 +22,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._server_trust_certificates_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_instance_request
+from ...operations._managed_server_dns_aliases_operations import build_acquire_request_initial, build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_managed_instance_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ServerTrustCertificatesOperations:
-    """ServerTrustCertificatesOperations async operations.
+class ManagedServerDnsAliasesOperations:
+    """ManagedServerDnsAliasesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,14 +49,13 @@ class ServerTrustCertificatesOperations:
         self._config = config
 
     @distributed_trace
-    def list_by_instance(
+    def list_by_managed_instance(
         self,
         resource_group_name: str,
         managed_instance_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ServerTrustCertificatesListResult"]:
-        """Gets a list of server trust certificates that were uploaded from box to the given Sql Managed
-        Instance.
+    ) -> AsyncIterable["_models.ManagedServerDnsAliasListResult"]:
+        """Gets a list of managed server DNS aliases for a managed server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
@@ -64,13 +63,13 @@ class ServerTrustCertificatesOperations:
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ServerTrustCertificatesListResult or the result of
+        :return: An iterator like instance of either ManagedServerDnsAliasListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ServerTrustCertificatesListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ManagedServerDnsAliasListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerTrustCertificatesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedServerDnsAliasListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -78,18 +77,18 @@ class ServerTrustCertificatesOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_instance_request(
+                request = build_list_by_managed_instance_request(
                     resource_group_name=resource_group_name,
                     managed_instance_name=managed_instance_name,
                     subscription_id=self._config.subscription_id,
-                    template_url=self.list_by_instance.metadata['url'],
+                    template_url=self.list_by_managed_instance.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_instance_request(
+                request = build_list_by_managed_instance_request(
                     resource_group_name=resource_group_name,
                     managed_instance_name=managed_instance_name,
                     subscription_id=self._config.subscription_id,
@@ -101,7 +100,7 @@ class ServerTrustCertificatesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ServerTrustCertificatesListResult", pipeline_response)
+            deserialized = self._deserialize("ManagedServerDnsAliasListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -123,31 +122,31 @@ class ServerTrustCertificatesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_instance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/serverTrustCertificates'}  # type: ignore
+    list_by_managed_instance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases'}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        certificate_name: str,
+        dns_alias_name: str,
         **kwargs: Any
-    ) -> "_models.ServerTrustCertificate":
-        """Gets a server trust certificate that was uploaded from box to Sql Managed Instance.
+    ) -> "_models.ManagedServerDnsAlias":
+        """Gets a server DNS alias.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param certificate_name: Name of of the certificate to get.
-        :type certificate_name: str
+        :param dns_alias_name:
+        :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ServerTrustCertificate, or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.ServerTrustCertificate
+        :return: ManagedServerDnsAlias, or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.ManagedServerDnsAlias
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerTrustCertificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedServerDnsAlias"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -157,7 +156,7 @@ class ServerTrustCertificatesOperations:
         request = build_get_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            certificate_name=certificate_name,
+            dns_alias_name=dns_alias_name,
             subscription_id=self._config.subscription_id,
             template_url=self.get.metadata['url'],
         )
@@ -171,25 +170,25 @@ class ServerTrustCertificatesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ServerTrustCertificate', pipeline_response)
+        deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/serverTrustCertificates/{certificateName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        certificate_name: str,
-        parameters: "_models.ServerTrustCertificate",
+        dns_alias_name: str,
+        parameters: "_models.ManagedServerDnsAliasCreation",
         **kwargs: Any
-    ) -> Optional["_models.ServerTrustCertificate"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerTrustCertificate"]]
+    ) -> Optional["_models.ManagedServerDnsAlias"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedServerDnsAlias"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -197,12 +196,12 @@ class ServerTrustCertificatesOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'ServerTrustCertificate')
+        _json = self._serialize.body(parameters, 'ManagedServerDnsAliasCreation')
 
         request = build_create_or_update_request_initial(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            certificate_name=certificate_name,
+            dns_alias_name=dns_alias_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             json=_json,
@@ -220,17 +219,17 @@ class ServerTrustCertificatesOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServerTrustCertificate', pipeline_response)
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('ServerTrustCertificate', pipeline_response)
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/serverTrustCertificates/{certificateName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -238,21 +237,21 @@ class ServerTrustCertificatesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        certificate_name: str,
-        parameters: "_models.ServerTrustCertificate",
+        dns_alias_name: str,
+        parameters: "_models.ManagedServerDnsAliasCreation",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.ServerTrustCertificate"]:
-        """Uploads a server trust certificate from box to Sql Managed Instance.
+    ) -> AsyncLROPoller["_models.ManagedServerDnsAlias"]:
+        """Creates a managed server DNS alias.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param certificate_name: Name of of the certificate to upload.
-        :type certificate_name: str
-        :param parameters: The server trust certificate info.
-        :type parameters: ~azure.mgmt.sql.models.ServerTrustCertificate
+        :param dns_alias_name:
+        :type dns_alias_name: str
+        :param parameters:
+        :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasCreation
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -261,14 +260,14 @@ class ServerTrustCertificatesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ServerTrustCertificate or the result
+        :return: An instance of AsyncLROPoller that returns either ManagedServerDnsAlias or the result
          of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerTrustCertificate]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedServerDnsAlias]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerTrustCertificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedServerDnsAlias"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -278,7 +277,7 @@ class ServerTrustCertificatesOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 managed_instance_name=managed_instance_name,
-                certificate_name=certificate_name,
+                dns_alias_name=dns_alias_name,
                 parameters=parameters,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -288,7 +287,7 @@ class ServerTrustCertificatesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('ServerTrustCertificate', pipeline_response)
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -307,13 +306,13 @@ class ServerTrustCertificatesOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/serverTrustCertificates/{certificateName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
     async def _delete_initial(
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        certificate_name: str,
+        dns_alias_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -326,7 +325,7 @@ class ServerTrustCertificatesOperations:
         request = build_delete_request_initial(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            certificate_name=certificate_name,
+            dns_alias_name=dns_alias_name,
             subscription_id=self._config.subscription_id,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -343,7 +342,7 @@ class ServerTrustCertificatesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/serverTrustCertificates/{certificateName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -351,18 +350,18 @@ class ServerTrustCertificatesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        certificate_name: str,
+        dns_alias_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a server trust certificate that was uploaded from box to Sql Managed Instance.
+        """Deletes the managed server DNS alias with the given name.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param certificate_name: Name of of the certificate to delete.
-        :type certificate_name: str
+        :param dns_alias_name:
+        :type dns_alias_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -386,7 +385,7 @@ class ServerTrustCertificatesOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 managed_instance_name=managed_instance_name,
-                certificate_name=certificate_name,
+                dns_alias_name=dns_alias_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -410,4 +409,129 @@ class ServerTrustCertificatesOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/serverTrustCertificates/{certificateName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}'}  # type: ignore
+
+    async def _acquire_initial(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        dns_alias_name: str,
+        parameters: "_models.ManagedServerDnsAliasAcquisition",
+        **kwargs: Any
+    ) -> Optional["_models.ManagedServerDnsAlias"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedServerDnsAlias"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(parameters, 'ManagedServerDnsAliasAcquisition')
+
+        request = build_acquire_request_initial(
+            resource_group_name=resource_group_name,
+            managed_instance_name=managed_instance_name,
+            dns_alias_name=dns_alias_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            json=_json,
+            template_url=self._acquire_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _acquire_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}/acquire'}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_acquire(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        dns_alias_name: str,
+        parameters: "_models.ManagedServerDnsAliasAcquisition",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ManagedServerDnsAlias"]:
+        """Acquires managed server DNS alias from another managed server.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance.
+        :type managed_instance_name: str
+        :param dns_alias_name:
+        :type dns_alias_name: str
+        :param parameters:
+        :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasAcquisition
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either ManagedServerDnsAlias or the result
+         of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedServerDnsAlias]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedServerDnsAlias"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._acquire_initial(
+                resource_group_name=resource_group_name,
+                managed_instance_name=managed_instance_name,
+                dns_alias_name=dns_alias_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('ManagedServerDnsAlias', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_acquire.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/dnsAliases/{dnsAliasName}/acquire'}  # type: ignore

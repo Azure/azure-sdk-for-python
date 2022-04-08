@@ -20,7 +20,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._sensitivity_labels_operations import build_create_or_update_request, build_delete_request, build_disable_recommendation_request, build_enable_recommendation_request, build_get_request, build_list_current_by_database_request, build_list_recommended_by_database_request, build_update_request
+from ...operations._sensitivity_labels_operations import build_create_or_update_request, build_delete_request, build_disable_recommendation_request, build_enable_recommendation_request, build_get_request, build_list_by_database_request, build_list_current_by_database_request, build_list_recommended_by_database_request, build_update_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -300,135 +300,6 @@ class SensitivityLabelsOperations:
     list_recommended_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/recommendedSensitivityLabels'}  # type: ignore
 
     @distributed_trace_async
-    async def enable_recommendation(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        database_name: str,
-        schema_name: str,
-        table_name: str,
-        column_name: str,
-        **kwargs: Any
-    ) -> None:
-        """Enables sensitivity recommendations on a given column (recommendations are enabled by default
-        on all columns).
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database.
-        :type database_name: str
-        :param schema_name: The name of the schema.
-        :type schema_name: str
-        :param table_name: The name of the table.
-        :type table_name: str
-        :param column_name: The name of the column.
-        :type column_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        
-        request = build_enable_recommendation_request(
-            resource_group_name=resource_group_name,
-            server_name=server_name,
-            database_name=database_name,
-            schema_name=schema_name,
-            table_name=table_name,
-            column_name=column_name,
-            subscription_id=self._config.subscription_id,
-            template_url=self.enable_recommendation.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    enable_recommendation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}/enable'}  # type: ignore
-
-
-    @distributed_trace_async
-    async def disable_recommendation(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        database_name: str,
-        schema_name: str,
-        table_name: str,
-        column_name: str,
-        **kwargs: Any
-    ) -> None:
-        """Disables sensitivity recommendations on a given column.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database.
-        :type database_name: str
-        :param schema_name: The name of the schema.
-        :type schema_name: str
-        :param table_name: The name of the table.
-        :type table_name: str
-        :param column_name: The name of the column.
-        :type column_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        
-        request = build_disable_recommendation_request(
-            resource_group_name=resource_group_name,
-            server_name=server_name,
-            database_name=database_name,
-            schema_name=schema_name,
-            table_name=table_name,
-            column_name=column_name,
-            subscription_id=self._config.subscription_id,
-            template_url=self.disable_recommendation.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    disable_recommendation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}/disable'}  # type: ignore
-
-
-    @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
@@ -643,3 +514,218 @@ class SensitivityLabelsOperations:
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}'}  # type: ignore
 
+
+    @distributed_trace_async
+    async def disable_recommendation(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        schema_name: str,
+        table_name: str,
+        column_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Disables sensitivity recommendations on a given column.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param schema_name: The name of the schema.
+        :type schema_name: str
+        :param table_name: The name of the table.
+        :type table_name: str
+        :param column_name: The name of the column.
+        :type column_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_disable_recommendation_request(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            database_name=database_name,
+            schema_name=schema_name,
+            table_name=table_name,
+            column_name=column_name,
+            subscription_id=self._config.subscription_id,
+            template_url=self.disable_recommendation.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    disable_recommendation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}/disable'}  # type: ignore
+
+
+    @distributed_trace_async
+    async def enable_recommendation(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        schema_name: str,
+        table_name: str,
+        column_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Enables sensitivity recommendations on a given column (recommendations are enabled by default
+        on all columns).
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param schema_name: The name of the schema.
+        :type schema_name: str
+        :param table_name: The name of the table.
+        :type table_name: str
+        :param column_name: The name of the column.
+        :type column_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_enable_recommendation_request(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            database_name=database_name,
+            schema_name=schema_name,
+            table_name=table_name,
+            column_name=column_name,
+            subscription_id=self._config.subscription_id,
+            template_url=self.enable_recommendation.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    enable_recommendation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}/enable'}  # type: ignore
+
+
+    @distributed_trace
+    def list_by_database(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SensitivityLabelListResult"]:
+        """Gets the sensitivity labels of a given database.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param filter: An OData filter expression that filters elements in the collection.
+        :type filter: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either SensitivityLabelListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.SensitivityLabelListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SensitivityLabelListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_by_database_request(
+                    resource_group_name=resource_group_name,
+                    server_name=server_name,
+                    database_name=database_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    template_url=self.list_by_database.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                
+                request = build_list_by_database_request(
+                    resource_group_name=resource_group_name,
+                    server_name=server_name,
+                    database_name=database_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("SensitivityLabelListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/sensitivityLabels'}  # type: ignore

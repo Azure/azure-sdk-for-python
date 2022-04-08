@@ -1,6 +1,6 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2014-04-01", "2020-11-01-preview", "2021-02-01-preview", "2021-05-01-preview", "2021-08-01-preview"],
+    "total_api_version_list": ["2014-04-01", "2020-11-01-preview", "2021-02-01-preview", "2021-05-01-preview", "2021-08-01-preview", "2021-11-01-preview"],
     "client": {
         "name": "SqlManagementClient",
         "filename": "_sql_management_client",
@@ -103,7 +103,6 @@
         "geo_backup_policies": "GeoBackupPoliciesOperations",
         "databases": "DatabasesOperations",
         "elastic_pools": "ElasticPoolsOperations",
-        "replication_links": "ReplicationLinksOperations",
         "server_communication_links": "ServerCommunicationLinksOperations",
         "service_objectives": "ServiceObjectivesOperations",
         "elastic_pool_activities": "ElasticPoolActivitiesOperations",
@@ -152,8 +151,6 @@
         "managed_database_schemas": "ManagedDatabaseSchemasOperations",
         "managed_database_security_alert_policies": "ManagedDatabaseSecurityAlertPoliciesOperations",
         "managed_database_security_events": "ManagedDatabaseSecurityEventsOperations",
-        "managed_database_sensitivity_labels": "ManagedDatabaseSensitivityLabelsOperations",
-        "managed_database_recommended_sensitivity_labels": "ManagedDatabaseRecommendedSensitivityLabelsOperations",
         "managed_database_tables": "ManagedDatabaseTablesOperations",
         "managed_database_transparent_data_encryption": "ManagedDatabaseTransparentDataEncryptionOperations",
         "managed_database_vulnerability_assessment_rule_baselines": "ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations",
@@ -176,8 +173,6 @@
         "private_link_resources": "PrivateLinkResourcesOperations",
         "recoverable_managed_databases": "RecoverableManagedDatabasesOperations",
         "restore_points": "RestorePointsOperations",
-        "sensitivity_labels": "SensitivityLabelsOperations",
-        "recommended_sensitivity_labels": "RecommendedSensitivityLabelsOperations",
         "server_advisors": "ServerAdvisorsOperations",
         "server_automatic_tuning": "ServerAutomaticTuningOperations",
         "server_azure_ad_administrators": "ServerAzureADAdministratorsOperations",
@@ -217,6 +212,13 @@
         "server_connection_policies": "ServerConnectionPoliciesOperations",
         "distributed_availability_groups": "DistributedAvailabilityGroupsOperations",
         "server_trust_certificates": "ServerTrustCertificatesOperations",
-        "ipv6_firewall_rules": "IPv6FirewallRulesOperations"
+        "ipv6_firewall_rules": "IPv6FirewallRulesOperations",
+        "replication_links": "ReplicationLinksOperations",
+        "managed_database_sensitivity_labels": "ManagedDatabaseSensitivityLabelsOperations",
+        "managed_database_recommended_sensitivity_labels": "ManagedDatabaseRecommendedSensitivityLabelsOperations",
+        "managed_server_dns_aliases": "ManagedServerDnsAliasesOperations",
+        "sensitivity_labels": "SensitivityLabelsOperations",
+        "recommended_sensitivity_labels": "RecommendedSensitivityLabelsOperations",
+        "endpoint_certificates": "EndpointCertificatesOperations"
     }
 }

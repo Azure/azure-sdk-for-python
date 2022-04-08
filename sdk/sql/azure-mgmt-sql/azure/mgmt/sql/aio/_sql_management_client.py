@@ -15,7 +15,7 @@ from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import SqlManagementClientConfiguration
-from .operations import BackupShortTermRetentionPoliciesOperations, CapabilitiesOperations, DataMaskingPoliciesOperations, DataMaskingRulesOperations, DataWarehouseUserActivitiesOperations, DatabaseAdvisorsOperations, DatabaseAutomaticTuningOperations, DatabaseBlobAuditingPoliciesOperations, DatabaseColumnsOperations, DatabaseExtensionsOperations, DatabaseOperationsOperations, DatabaseRecommendedActionsOperations, DatabaseSchemasOperations, DatabaseSecurityAlertPoliciesOperations, DatabaseTablesOperations, DatabaseUsagesOperations, DatabaseVulnerabilityAssessmentRuleBaselinesOperations, DatabaseVulnerabilityAssessmentScansOperations, DatabaseVulnerabilityAssessmentsOperations, DatabasesOperations, DeletedServersOperations, DistributedAvailabilityGroupsOperations, ElasticPoolActivitiesOperations, ElasticPoolDatabaseActivitiesOperations, ElasticPoolOperationsOperations, ElasticPoolsOperations, EncryptionProtectorsOperations, ExtendedDatabaseBlobAuditingPoliciesOperations, ExtendedServerBlobAuditingPoliciesOperations, FailoverGroupsOperations, FirewallRulesOperations, GeoBackupPoliciesOperations, IPv6FirewallRulesOperations, InstanceFailoverGroupsOperations, InstancePoolsOperations, JobAgentsOperations, JobCredentialsOperations, JobExecutionsOperations, JobStepExecutionsOperations, JobStepsOperations, JobTargetExecutionsOperations, JobTargetGroupsOperations, JobVersionsOperations, JobsOperations, LedgerDigestUploadsOperations, LongTermRetentionBackupsOperations, LongTermRetentionManagedInstanceBackupsOperations, LongTermRetentionPoliciesOperations, MaintenanceWindowOptionsOperations, MaintenanceWindowsOperations, ManagedBackupShortTermRetentionPoliciesOperations, ManagedDatabaseColumnsOperations, ManagedDatabaseQueriesOperations, ManagedDatabaseRecommendedSensitivityLabelsOperations, ManagedDatabaseRestoreDetailsOperations, ManagedDatabaseSchemasOperations, ManagedDatabaseSecurityAlertPoliciesOperations, ManagedDatabaseSecurityEventsOperations, ManagedDatabaseSensitivityLabelsOperations, ManagedDatabaseTablesOperations, ManagedDatabaseTransparentDataEncryptionOperations, ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations, ManagedDatabaseVulnerabilityAssessmentScansOperations, ManagedDatabaseVulnerabilityAssessmentsOperations, ManagedDatabasesOperations, ManagedInstanceAdministratorsOperations, ManagedInstanceAzureADOnlyAuthenticationsOperations, ManagedInstanceEncryptionProtectorsOperations, ManagedInstanceKeysOperations, ManagedInstanceLongTermRetentionPoliciesOperations, ManagedInstanceOperationsOperations, ManagedInstancePrivateEndpointConnectionsOperations, ManagedInstancePrivateLinkResourcesOperations, ManagedInstanceTdeCertificatesOperations, ManagedInstanceVulnerabilityAssessmentsOperations, ManagedInstancesOperations, ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations, ManagedServerSecurityAlertPoliciesOperations, Operations, OutboundFirewallRulesOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, RecommendedSensitivityLabelsOperations, RecoverableDatabasesOperations, RecoverableManagedDatabasesOperations, ReplicationLinksOperations, RestorableDroppedDatabasesOperations, RestorableDroppedManagedDatabasesOperations, RestorePointsOperations, SensitivityLabelsOperations, ServerAdvisorsOperations, ServerAutomaticTuningOperations, ServerAzureADAdministratorsOperations, ServerAzureADOnlyAuthenticationsOperations, ServerBlobAuditingPoliciesOperations, ServerCommunicationLinksOperations, ServerConnectionPoliciesOperations, ServerDevOpsAuditSettingsOperations, ServerDnsAliasesOperations, ServerKeysOperations, ServerOperationsOperations, ServerSecurityAlertPoliciesOperations, ServerTrustCertificatesOperations, ServerTrustGroupsOperations, ServerUsagesOperations, ServerVulnerabilityAssessmentsOperations, ServersOperations, ServiceObjectivesOperations, SqlAgentOperations, SubscriptionUsagesOperations, SyncAgentsOperations, SyncGroupsOperations, SyncMembersOperations, TdeCertificatesOperations, TimeZonesOperations, TransparentDataEncryptionsOperations, UsagesOperations, VirtualClustersOperations, VirtualNetworkRulesOperations, WorkloadClassifiersOperations, WorkloadGroupsOperations
+from .operations import BackupShortTermRetentionPoliciesOperations, CapabilitiesOperations, DataMaskingPoliciesOperations, DataMaskingRulesOperations, DataWarehouseUserActivitiesOperations, DatabaseAdvisorsOperations, DatabaseAutomaticTuningOperations, DatabaseBlobAuditingPoliciesOperations, DatabaseColumnsOperations, DatabaseExtensionsOperations, DatabaseOperationsOperations, DatabaseRecommendedActionsOperations, DatabaseSchemasOperations, DatabaseSecurityAlertPoliciesOperations, DatabaseTablesOperations, DatabaseUsagesOperations, DatabaseVulnerabilityAssessmentRuleBaselinesOperations, DatabaseVulnerabilityAssessmentScansOperations, DatabaseVulnerabilityAssessmentsOperations, DatabasesOperations, DeletedServersOperations, DistributedAvailabilityGroupsOperations, ElasticPoolActivitiesOperations, ElasticPoolDatabaseActivitiesOperations, ElasticPoolOperationsOperations, ElasticPoolsOperations, EncryptionProtectorsOperations, EndpointCertificatesOperations, ExtendedDatabaseBlobAuditingPoliciesOperations, ExtendedServerBlobAuditingPoliciesOperations, FailoverGroupsOperations, FirewallRulesOperations, GeoBackupPoliciesOperations, IPv6FirewallRulesOperations, InstanceFailoverGroupsOperations, InstancePoolsOperations, JobAgentsOperations, JobCredentialsOperations, JobExecutionsOperations, JobStepExecutionsOperations, JobStepsOperations, JobTargetExecutionsOperations, JobTargetGroupsOperations, JobVersionsOperations, JobsOperations, LedgerDigestUploadsOperations, LongTermRetentionBackupsOperations, LongTermRetentionManagedInstanceBackupsOperations, LongTermRetentionPoliciesOperations, MaintenanceWindowOptionsOperations, MaintenanceWindowsOperations, ManagedBackupShortTermRetentionPoliciesOperations, ManagedDatabaseColumnsOperations, ManagedDatabaseQueriesOperations, ManagedDatabaseRecommendedSensitivityLabelsOperations, ManagedDatabaseRestoreDetailsOperations, ManagedDatabaseSchemasOperations, ManagedDatabaseSecurityAlertPoliciesOperations, ManagedDatabaseSecurityEventsOperations, ManagedDatabaseSensitivityLabelsOperations, ManagedDatabaseTablesOperations, ManagedDatabaseTransparentDataEncryptionOperations, ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations, ManagedDatabaseVulnerabilityAssessmentScansOperations, ManagedDatabaseVulnerabilityAssessmentsOperations, ManagedDatabasesOperations, ManagedInstanceAdministratorsOperations, ManagedInstanceAzureADOnlyAuthenticationsOperations, ManagedInstanceEncryptionProtectorsOperations, ManagedInstanceKeysOperations, ManagedInstanceLongTermRetentionPoliciesOperations, ManagedInstanceOperationsOperations, ManagedInstancePrivateEndpointConnectionsOperations, ManagedInstancePrivateLinkResourcesOperations, ManagedInstanceTdeCertificatesOperations, ManagedInstanceVulnerabilityAssessmentsOperations, ManagedInstancesOperations, ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations, ManagedServerDnsAliasesOperations, ManagedServerSecurityAlertPoliciesOperations, Operations, OutboundFirewallRulesOperations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, RecommendedSensitivityLabelsOperations, RecoverableDatabasesOperations, RecoverableManagedDatabasesOperations, ReplicationLinksOperations, RestorableDroppedDatabasesOperations, RestorableDroppedManagedDatabasesOperations, RestorePointsOperations, SensitivityLabelsOperations, ServerAdvisorsOperations, ServerAutomaticTuningOperations, ServerAzureADAdministratorsOperations, ServerAzureADOnlyAuthenticationsOperations, ServerBlobAuditingPoliciesOperations, ServerCommunicationLinksOperations, ServerConnectionPoliciesOperations, ServerDevOpsAuditSettingsOperations, ServerDnsAliasesOperations, ServerKeysOperations, ServerOperationsOperations, ServerSecurityAlertPoliciesOperations, ServerTrustCertificatesOperations, ServerTrustGroupsOperations, ServerUsagesOperations, ServerVulnerabilityAssessmentsOperations, ServersOperations, ServiceObjectivesOperations, SqlAgentOperations, SubscriptionUsagesOperations, SyncAgentsOperations, SyncGroupsOperations, SyncMembersOperations, TdeCertificatesOperations, TimeZonesOperations, TransparentDataEncryptionsOperations, UsagesOperations, VirtualClustersOperations, VirtualNetworkRulesOperations, WorkloadClassifiersOperations, WorkloadGroupsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,8 +36,6 @@ class SqlManagementClient:
     :vartype databases: azure.mgmt.sql.aio.operations.DatabasesOperations
     :ivar elastic_pools: ElasticPoolsOperations operations
     :vartype elastic_pools: azure.mgmt.sql.aio.operations.ElasticPoolsOperations
-    :ivar replication_links: ReplicationLinksOperations operations
-    :vartype replication_links: azure.mgmt.sql.aio.operations.ReplicationLinksOperations
     :ivar server_communication_links: ServerCommunicationLinksOperations operations
     :vartype server_communication_links:
      azure.mgmt.sql.aio.operations.ServerCommunicationLinksOperations
@@ -163,14 +161,6 @@ class SqlManagementClient:
     :ivar managed_database_security_events: ManagedDatabaseSecurityEventsOperations operations
     :vartype managed_database_security_events:
      azure.mgmt.sql.aio.operations.ManagedDatabaseSecurityEventsOperations
-    :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabelsOperations
-     operations
-    :vartype managed_database_sensitivity_labels:
-     azure.mgmt.sql.aio.operations.ManagedDatabaseSensitivityLabelsOperations
-    :ivar managed_database_recommended_sensitivity_labels:
-     ManagedDatabaseRecommendedSensitivityLabelsOperations operations
-    :vartype managed_database_recommended_sensitivity_labels:
-     azure.mgmt.sql.aio.operations.ManagedDatabaseRecommendedSensitivityLabelsOperations
     :ivar managed_database_tables: ManagedDatabaseTablesOperations operations
     :vartype managed_database_tables: azure.mgmt.sql.aio.operations.ManagedDatabaseTablesOperations
     :ivar managed_database_transparent_data_encryption:
@@ -244,11 +234,6 @@ class SqlManagementClient:
      azure.mgmt.sql.aio.operations.RecoverableManagedDatabasesOperations
     :ivar restore_points: RestorePointsOperations operations
     :vartype restore_points: azure.mgmt.sql.aio.operations.RestorePointsOperations
-    :ivar sensitivity_labels: SensitivityLabelsOperations operations
-    :vartype sensitivity_labels: azure.mgmt.sql.aio.operations.SensitivityLabelsOperations
-    :ivar recommended_sensitivity_labels: RecommendedSensitivityLabelsOperations operations
-    :vartype recommended_sensitivity_labels:
-     azure.mgmt.sql.aio.operations.RecommendedSensitivityLabelsOperations
     :ivar server_advisors: ServerAdvisorsOperations operations
     :vartype server_advisors: azure.mgmt.sql.aio.operations.ServerAdvisorsOperations
     :ivar server_automatic_tuning: ServerAutomaticTuningOperations operations
@@ -347,6 +332,26 @@ class SqlManagementClient:
      azure.mgmt.sql.aio.operations.ServerTrustCertificatesOperations
     :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
     :vartype ipv6_firewall_rules: azure.mgmt.sql.aio.operations.IPv6FirewallRulesOperations
+    :ivar replication_links: ReplicationLinksOperations operations
+    :vartype replication_links: azure.mgmt.sql.aio.operations.ReplicationLinksOperations
+    :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabelsOperations
+     operations
+    :vartype managed_database_sensitivity_labels:
+     azure.mgmt.sql.aio.operations.ManagedDatabaseSensitivityLabelsOperations
+    :ivar managed_database_recommended_sensitivity_labels:
+     ManagedDatabaseRecommendedSensitivityLabelsOperations operations
+    :vartype managed_database_recommended_sensitivity_labels:
+     azure.mgmt.sql.aio.operations.ManagedDatabaseRecommendedSensitivityLabelsOperations
+    :ivar managed_server_dns_aliases: ManagedServerDnsAliasesOperations operations
+    :vartype managed_server_dns_aliases:
+     azure.mgmt.sql.aio.operations.ManagedServerDnsAliasesOperations
+    :ivar sensitivity_labels: SensitivityLabelsOperations operations
+    :vartype sensitivity_labels: azure.mgmt.sql.aio.operations.SensitivityLabelsOperations
+    :ivar recommended_sensitivity_labels: RecommendedSensitivityLabelsOperations operations
+    :vartype recommended_sensitivity_labels:
+     azure.mgmt.sql.aio.operations.RecommendedSensitivityLabelsOperations
+    :ivar endpoint_certificates: EndpointCertificatesOperations operations
+    :vartype endpoint_certificates: azure.mgmt.sql.aio.operations.EndpointCertificatesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription.
@@ -377,7 +382,6 @@ class SqlManagementClient:
         self.geo_backup_policies = GeoBackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.elastic_pools = ElasticPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.replication_links = ReplicationLinksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.server_communication_links = ServerCommunicationLinksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_objectives = ServiceObjectivesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.elastic_pool_activities = ElasticPoolActivitiesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -426,8 +430,6 @@ class SqlManagementClient:
         self.managed_database_schemas = ManagedDatabaseSchemasOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_database_security_alert_policies = ManagedDatabaseSecurityAlertPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_database_security_events = ManagedDatabaseSecurityEventsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_sensitivity_labels = ManagedDatabaseSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_database_recommended_sensitivity_labels = ManagedDatabaseRecommendedSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_database_tables = ManagedDatabaseTablesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_database_transparent_data_encryption = ManagedDatabaseTransparentDataEncryptionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_database_vulnerability_assessment_rule_baselines = ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -450,8 +452,6 @@ class SqlManagementClient:
         self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.recoverable_managed_databases = RecoverableManagedDatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.restore_points = RestorePointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sensitivity_labels = SensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recommended_sensitivity_labels = RecommendedSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.server_advisors = ServerAdvisorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(self._client, self._config, self._serialize, self._deserialize)
         self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -492,6 +492,13 @@ class SqlManagementClient:
         self.distributed_availability_groups = DistributedAvailabilityGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.server_trust_certificates = ServerTrustCertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ipv6_firewall_rules = IPv6FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replication_links = ReplicationLinksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_sensitivity_labels = ManagedDatabaseSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_database_recommended_sensitivity_labels = ManagedDatabaseRecommendedSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_server_dns_aliases = ManagedServerDnsAliasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sensitivity_labels = SensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.recommended_sensitivity_labels = RecommendedSensitivityLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.endpoint_certificates = EndpointCertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
