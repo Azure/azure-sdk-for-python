@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._operational_insights_management_client_enums import *
+from ._log_analytics_management_client_enums import *
 
 
 class AssociatedWorkspace(msrest.serialization.Model):
