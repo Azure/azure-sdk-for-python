@@ -1861,7 +1861,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientListMethodsUseCorePaging
 
     def test_list_return_type_file_custom_class_acceptable(self):
-        file = open("./test_files/list_return_type_custom_class_acceptable.py")
+        file = open("./test_files/list_return_type_custom_class_acceptable_and_violation.py")
         node = astroid.parse(file.read())
         file.close()
 
