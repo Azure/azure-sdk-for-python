@@ -11,7 +11,6 @@ import logging
 import astroid
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
-
 logger = logging.getLogger(__name__)
 
 
@@ -887,11 +886,8 @@ class ClientListMethodsUseCorePaging(BaseChecker):
         """
         try:
             if node.parent.name.endswith("Client") and node.parent.name not in self.ignore_clients and node.is_method():
-                
-
-                # TODO: Flag functions that return an ItemPaged but don't start with "list"
-
                 if node.name.startswith("list"):
+                 
                     paging_class = False
 
                     for inner_node in node.body:
@@ -902,11 +898,11 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                                 if isinstance(inner_node.value, astroid.Call):
                                     if "def by_page" in next(inner_node.value.infer()).as_string():
                                         paging_class = True
-                            
+
                             except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
                                 logger.debug("Pylint custom checker failed to check if client list method uses core paging.")
                                 pass
-                                
+
                     if not paging_class:
                         self.add_message(
                             msgid="client-list-methods-use-paging", node=node, confidence=None
@@ -1952,8 +1948,6 @@ def register(linter):
     linter.register_checker(CheckEnum(linter))
     linter.register_checker(ClientListMethodsUseCorePaging(linter))
 
-    
-
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
@@ -1963,6 +1957,7 @@ def register(linter):
     # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     # linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     # linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
+    
     # linter.register_checker(ClientLROMethodsUseCorePolling(linter))
     # linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
 
