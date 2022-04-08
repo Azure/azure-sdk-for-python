@@ -15,7 +15,7 @@ except ImportError:
 import six
 
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
@@ -264,28 +264,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         return self._container_client.create_container(metadata=metadata,
                                                        public_access=public_access,
                                                        **kwargs)
-
-    def create_if_not_exists(self, **kwargs):
-        # type: (Any) -> None
-        """Creates a new file system under the specified account.
-
-        If the file system with the same name already exists, it is not changed.
-
-        :keyword Dict(str,str) metadata:
-            A dict with name-value pairs to associate with the
-            file system as metadata. Example: `{'Category':'test'}`
-        :keyword public_access:
-            To specify whether data in the file system may be accessed publicly and the level of access.
-        :type public_access: ~azure.storage.filedatalake.PublicAccess
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :rtype: None
-        """
-        try:
-            return self.create_file_system(**kwargs)
-        except ResourceExistsError:
-            return None
-
 
     def exists(self, **kwargs):
         # type: (**Any) -> bool

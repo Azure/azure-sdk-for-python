@@ -4,27 +4,26 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any
-try:
-    from typing import Protocol, TypedDict
-except ImportError:
-    from typing_extensions import Protocol, TypedDict
+from typing_extensions import Protocol, TypedDict  # type: ignore
 
 
 class MessageContent(TypedDict):
     """A dict with required keys:
-        - `content`: bytes
-        - `content_type`: str
+    - `content`: bytes
+    - `content_type`: str
     """
 
     content: bytes
     content_type: str
 
+
 class MessageType(Protocol):
-    """Message Types that set and get content and content type values internally.
-    """
+    """Message Types that set and get content and content type values internally."""
 
     @classmethod
-    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> "MessageType":
+    def from_message_content(
+        cls, content: bytes, content_type: str, **kwargs: Any
+    ) -> "MessageType":
         """
         Creates an object that is a subtype of MessageType given content type and
          a content value to be set as body.
