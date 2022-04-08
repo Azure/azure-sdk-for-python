@@ -1916,6 +1916,44 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
                 logger.debug("Pylint custom checker failed to check if model is aliased.")
                 pass
 
+class TypingOverloadReturnNone(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-overload-typing"
+    priority = -1
+    msgs = {
+        "C4749": (
+            "BALH. ",
+            "overloaded-function-returns-none",
+            "BLAH.",
+        ),
+    }
+    options = (
+        (
+            "ignore-overloaded-function-returns-none",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "blah.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(TypingOverloadReturnNone, self).__init__(linter)
+    
+    #Test on tables
+    def visit_classdef(self,node):
+        if node.name.endswith("Client"):
+            for i in node.body:
+                if isinstance(i, astroid.FunctionDef):
+                    if 'typing.overload' in i.decoratornames():
+                        # print(i)
+                        c = next(i.decorators.scope().bases[0].infer()).as_string()
+                # if isinstance(i, astroid.AsyncFunctionDef):
+                #     if 'typing.overload' in i.decoratornames():
+                #         print("overloaded_function")
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
@@ -1937,6 +1975,7 @@ def register(linter):
     linter.register_checker(CheckNamingMismatchGeneratedCode(linter))
     linter.register_checker(CheckAPIVersion(linter))
     linter.register_checker(CheckEnum(linter))
+    linter.register_checker(TypingOverloadReturnNone(linter))
 
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
