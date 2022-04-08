@@ -62,7 +62,7 @@ class EventHubProducerClient(ClientBaseAsync):
         - `events`: The list of events that have been successfully published
         - `partition_id`: The partition id that the events in the list have been published to.
      The callback function should be defined like: `on_success(events, partition_id)`.
-     It is required when buffered_mode is True while optional if buffered mode is False.
+     It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
     :paramtype on_success: Optional[Callable[[SendEventTypes, Optional[str]], Awaitable[None]]]
     :keyword on_error: The callback to be called once a batch has failed to be published.
      The callback takes three parameters:
@@ -70,8 +70,8 @@ class EventHubProducerClient(ClientBaseAsync):
         - `partition_id`: The partition id that the events in the list have been tried to be published to and
         - `error`: The exception related to the sending failure.
      The callback function should be defined like: `on_error(events, partition_id, error)`.
-     It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
-     If `on_error is` passed when `buffered_mode`, instead of error being raised from the send methods,
+     It is required when in `buffered_mode` is True while optional if `buffered_mode` is False.
+     If `on_error` is passed when in non-buffered mode, instead of error being raised from the send methods,
      the `on_error` callback will be called with the error information related to sending.
     :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]]
     :keyword int max_buffer_length: Buffered mode only.
@@ -401,7 +401,7 @@ class EventHubProducerClient(ClientBaseAsync):
             - `events`: The list of events that have been successfully published
             - `partition_id`: The partition id that the events in the list have been published to.
          The callback function should be defined like: `on_success(events, partition_id)`.
-         It is required when buffered_mode is True while optional if buffered mode is False.
+         It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
         :paramtype on_success: Optional[Callable[[SendEventTypes, Optional[str]], Awaitable[None]]]
         :keyword on_error: The callback to be called once a batch has failed to be published.
          The callback takes three parameters:
@@ -409,8 +409,8 @@ class EventHubProducerClient(ClientBaseAsync):
             - `partition_id`: The partition id that the events in the list have been tried to be published to and
             - `error`: The exception related to the sending failure.
          The callback function should be defined like: `on_error(events, partition_id, error)`.
-         It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
-         If `on_error is` passed when `buffered_mode`, instead of error being raised from the send methods,
+         It is required when `buffered mode` is True while optional if `buffered_mode` is False.
+         If `on_error` is passed in non-buffered mode, instead of error being raised from the send methods,
          the `on_error` callback will be called with the error information related to sending.
         :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]]
         :keyword int max_buffer_length: Buffered mode only.
@@ -516,24 +516,25 @@ class EventHubProducerClient(ClientBaseAsync):
          to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
          partition_key to only be string type, they might fail to parse the non-string value.**
         """
-        partition_id = kwargs.get("partition_id") or ALL_PARTITIONS
+        input_pid = kwargs.get("partition_id")
+        pid = input_pid or ALL_PARTITIONS
         partition_key = kwargs.get("partition_key")
         timeout = kwargs.get("timeout")
         try:
             try:
-                await cast(EventHubProducer, self._producers[partition_id]).send(
+                await cast(EventHubProducer, self._producers[pid]).send(
                     event_data, partition_key=partition_key, timeout=timeout
                 )
             except (KeyError, AttributeError, EventHubError):
-                await self._start_producer(partition_id, timeout)
-                await cast(EventHubProducer, self._producers[partition_id]).send(
+                await self._start_producer(pid, timeout)
+                await cast(EventHubProducer, self._producers[pid]).send(
                     event_data, partition_key=partition_key, timeout=timeout
                 )
             if self._on_success:
-                await self._on_success([event_data], partition_id)
+                await self._on_success([event_data], input_pid)
         except Exception as exc:  # pylint: disable=broad-except
             if self._on_error:
-                await self._on_error([event_data], partition_id, exc)
+                await self._on_error([event_data], input_pid, exc)
             else:
                 raise
 

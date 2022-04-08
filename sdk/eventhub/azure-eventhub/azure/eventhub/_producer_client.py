@@ -57,7 +57,7 @@ class EventHubProducerClient(ClientBase):
         - `events`: The list of events that have been successfully published
         - `partition_id`: The partition id that the events in the list have been published to.
      The callback function should be defined like: `on_success(events, partition_id)`.
-     It is required when buffered_mode is True while optional if buffered mode is False.
+     It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
     :paramtype on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]]
     :keyword on_error: The callback to be called once a batch has failed to be published.
      The callback takes three parameters:
@@ -66,7 +66,7 @@ class EventHubProducerClient(ClientBase):
         - `error`: The exception related to the sending failure.
      The callback function should be defined like: `on_error(events, partition_id, error)`.
      It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
-     If `on_error is` passed when `buffered_mode`, instead of error being raised from the send methods,
+     If `on_error` is passed when in non-buffered mode, instead of error being raised from the send methods,
      the `on_error` callback will be called with the error information related to sending.
     :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], None]]
     :keyword int max_buffer_length: Buffered mode only.
@@ -152,12 +152,17 @@ class EventHubProducerClient(ClientBase):
 
     def __init__(
         self,
-        fully_qualified_namespace,  # type: str
-        eventhub_name,  # type: str
-        credential,  # type: CredentialTypes
-        **kwargs  # type: Any
-    ):
-        # type:(...) -> None
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        credential: "CredentialTypes",
+        *,
+        buffered_mode: bool = False,
+        on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], None]] = None,
+        on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]] = None,
+        max_buffer_length: Optional[int] = None,
+        max_wait_time: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
@@ -171,12 +176,12 @@ class EventHubProducerClient(ClientBase):
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
         self._lock = threading.Lock()
-        self._buffered_mode = kwargs.get("buffered_mode", False)
-        self._on_success = kwargs.get("on_success")
-        self._on_error = kwargs.get("on_error")
+        self._buffered_mode = buffered_mode
+        self._on_success = on_success
+        self._on_error = on_error
         self._buffered_producer_dispatcher = None
-        self._max_wait_time = kwargs.get("max_wait_time", None)
-        self._max_buffer_length = kwargs.get("max_buffer_length")
+        self._max_wait_time = max_wait_time
+        self._max_buffer_length = max_buffer_length
         self._executor = kwargs.get("executor")
         self._max_worker = kwargs.get("max_worker")
 
@@ -367,6 +372,11 @@ class EventHubProducerClient(ClientBase):
         conn_str: str,
         *,
         eventhub_name: Optional[str] = None,
+        buffered_mode: bool = False,
+        on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], None]] = None,
+        on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]] = None,
+        max_buffer_length: Optional[int] = None,
+        max_wait_time: Optional[float] = None,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -380,7 +390,7 @@ class EventHubProducerClient(ClientBase):
             - `events`: The list of events that have been successfully published
             - `partition_id`: The partition id that the events in the list have been published to.
          The callback function should be defined like: `on_success(events, partition_id)`.
-         It is required when buffered_mode is True while optional if buffered mode is False.
+         It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
         :paramtype on_success: Optional[Callable[[SendEventTypes, Optional[str]], None]]
         :keyword on_error: The callback to be called once a batch has failed to be published.
          The callback takes three parameters:
@@ -388,8 +398,8 @@ class EventHubProducerClient(ClientBase):
             - `partition_id`: The partition id that the events in the list have been tried to be published to and
             - `error`: The exception related to the sending failure.
          The callback function should be defined like: `on_error(events, partition_id, error)`.
-         It is required when `buffered_mode` is True while optional if `buffered_mode` is False.
-         If `on_error is` passed when `buffered_mode`, instead of error being raised from the send methods,
+         It is required when in `buffered_mode` is True while optional if `buffered_mode` is False.
+         If `on_error` is passed in non-buffered mode, instead of error being raised from the send methods,
          the `on_error` callback will be called with the error information related to sending.
         :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], None]]
         :keyword int max_buffer_length: Buffered mode only.
@@ -444,7 +454,16 @@ class EventHubProducerClient(ClientBase):
                 :dedent: 4
                 :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
-        constructor_args = cls._from_connection_string(conn_str, eventhub_name=eventhub_name, **kwargs)
+        constructor_args = cls._from_connection_string(
+            conn_str,
+            eventhub_name=eventhub_name,
+            buffered_mode=buffered_mode,
+            on_success=on_success,
+            on_error=on_error,
+            max_buffer_length=max_buffer_length,
+            max_wait_time=max_wait_time,
+            **kwargs
+        )
         return cls(**constructor_args)
 
     def send_event(self, event_data, **kwargs):
@@ -477,24 +496,25 @@ class EventHubProducerClient(ClientBase):
          to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
          partition_key to only be string type, they might fail to parse the non-string value.**
         """
-        partition_id = kwargs.get("partition_id") or ALL_PARTITIONS
+        input_pid = kwargs.get("partition_id")
+        pid = input_pid or ALL_PARTITIONS
         partition_key = kwargs.get("partition_key")
         send_timeout = kwargs.get("timeout")
         try:
             try:
-                cast(EventHubProducer, self._producers[partition_id]).send(
+                cast(EventHubProducer, self._producers[pid]).send(
                     event_data, partition_key=partition_key, timeout=send_timeout
                 )
             except (KeyError, AttributeError, EventHubError):
-                self._start_producer(partition_id, send_timeout)
-                cast(EventHubProducer, self._producers[partition_id]).send(
+                self._start_producer(pid, send_timeout)
+                cast(EventHubProducer, self._producers[pid]).send(
                     event_data, partition_key=partition_key, timeout=send_timeout
                 )
             if self._on_success:
-                self._on_success([event_data], partition_id)
+                self._on_success([event_data], input_pid)
         except Exception as exc:  # pylint: disable=broad-except
             if self._on_error:
-                self._on_error([event_data], partition_id, exc)
+                self._on_error([event_data], input_pid, exc)
             else:
                 raise
 
