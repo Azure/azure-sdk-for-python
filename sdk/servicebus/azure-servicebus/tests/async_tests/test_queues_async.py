@@ -123,62 +123,91 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 await receiver.peek_messages()
 
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
+    def test_async_queue_by_queue_client_conn_str_receive_handler_release_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
             async def sub_test_releasing_messages():
                 # test releasing messages when prefetch is 1 and link credits are issue dynamically
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
                 async with sender, receiver:
                     # send 10 msgs to queue first
-                    await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
 
-                    # issue 30 link credits, client should consume 10 msgs from the service
-                    # leaving 20 credits on the wire
-                    received_msgs = await receiver.receive_messages(max_message_count=30, max_wait_time=5)
-                    for msg in received_msgs:
-                        await receiver.complete_message(msg)
-                    assert len(received_msgs) == 10
+                    received_msgs = []
+                    # the amount of messages returned by receive call is not stable, especially in live tests
+                    # of different os platforms, this is why a while loop is used here to receive the specific
+                    # amount of message we want to receive
+                    while len(received_msgs) < 5:
+                        # issue link credits more than 5, client should consume 5 msgs from the service in total,
+                        # leaving the extra credits on the wire
+                        for msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=5)):
+                            await receiver.complete_message(msg)
+                            received_msgs.append(received_msgs)
+                    assert len(received_msgs) == 5
 
-                    # send 20 more messages, those messages would arrive at the client while the program is sleeping
-                    await sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                    # send 5 more messages, those messages would arrive at the client while the program is sleeping
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
                     await asyncio.sleep(15)  # sleep > message expiration time
 
-                    # issue 20 link credits, client should consume 20 msgs from the service, leaving no link credits
-                    received_msgs = await receiver.receive_messages(max_message_count=30, max_wait_time=5)
-                    for msg in received_msgs:
-                        assert msg.delivery_count == 0  # release would not increase delivery count
-                        await receiver.complete_message(msg)
-                    assert len(received_msgs) == 20
+                    target_msgs_count = 5
+                    received_msgs = []
+                    while len(received_msgs) < target_msgs_count:
+                        # issue 10 link credits, client should consume 5 msgs from the service, leaving no link credits
+                        for msg in (await receiver.receive_messages(max_message_count=target_msgs_count - len(received_msgs),
+                                                             max_wait_time=5)):
+                            assert msg.delivery_count == 0  # release would not increase delivery count
+                            await receiver.complete_message(msg)
+                            received_msgs.append(msg)
+                    assert len(received_msgs) == 5
 
             async def sub_test_releasing_messages_iterator():
                 # test nested iterator scenario
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
                 async with sender, receiver:
-                    # send 10 msgs to queue first
-                    await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    # send 5 msgs to queue first
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
                     first_time = True
                     iterator_recv_cnt = 0
-                    # iterator + receive batch
+
+                    # case: iterator + receive batch
                     async for msg in receiver:
                         assert msg.delivery_count == 0  # release would not increase delivery count
                         await receiver.complete_message(msg)
                         iterator_recv_cnt += 1
-                        if first_time:
-                            received_msgs = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
-                            for sub_msg in received_msgs:
-                                assert sub_msg.delivery_count == 0
-                                await receiver.complete_message(sub_msg)
-                            assert len(received_msgs) == 9
-                            await sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                        if first_time:  # for the first time, we call nested receive message call
+                            received_msgs = []
+
+                            while len(received_msgs) < 4:  # there supposed to be 5 msgs in the queue
+                                # we issue 10 link credits, leaving more credits on the wire
+                                for sub_msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=5)):
+                                    assert sub_msg.delivery_count == 0
+                                    await receiver.complete_message(sub_msg)
+                                    received_msgs.append(sub_msg)
+                            assert len(received_msgs) == 4
+                            await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
                             await asyncio.sleep(15)  # sleep > message expiration time
-                            received_msgs = await receiver.receive_messages(max_message_count=5, max_wait_time=5)
-                            for sub_msg in received_msgs:
-                                assert sub_msg.delivery_count == 0  # release would not increase delivery count
-                                await receiver.complete_message(sub_msg)
-                            assert len(received_msgs) == 5
+
+                            received_msgs = []
+                            target_msgs_count = 5  # we want to receive 5 with the receive message call
+                            while len(received_msgs) < target_msgs_count:
+                                for sub_msg in (await receiver.receive_messages(
+                                        max_message_count=target_msgs_count - len(received_msgs), max_wait_time=5)):
+                                    assert sub_msg.delivery_count == 0  # release would not increase delivery count
+                                    await receiver.complete_message(sub_msg)
+                                    received_msgs.append(sub_msg)
+                            assert len(received_msgs) == target_msgs_count
                             first_time = False
-                    assert iterator_recv_cnt == 16  # 1 + 15
-                    # iterator + iterator
+                    assert iterator_recv_cnt == 6  # 1 before nested receive message call + 5 after nested receive message call
+
+                    # case: iterator + iterator case
                     await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
                     outter_recv_cnt = 0
                     inner_recv_cnt = 0
@@ -191,7 +220,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                             inner_recv_cnt += 1
                             await receiver.complete_message(sub_msg)
                             if inner_recv_cnt == 5:
-                                time.sleep(15)
+                                await asyncio.sleep(15)  # innner finish receiving first 5 messages then sleep until lock expiration
                                 break
                     assert outter_recv_cnt == 1
                     outter_recv_cnt = 0
@@ -212,34 +241,43 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     self._handler._received_messages.put(message)
 
                 async with sender, receiver:
-                    # send 10 msgs to queue first
-                    await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    # send 5 msgs to queue first
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
                     receiver._handler.message_handler.on_message_received = types.MethodType(
                         _hack_disable_receive_context_message_received, receiver)
-                    # issue 30 link credits, client should consume 10 msgs from the service
-                    # leaving 20 credits on the wire
-                    received_msgs = await receiver.receive_messages(max_message_count=30, max_wait_time=5)
-                    for msg in received_msgs:
-                        await receiver.complete_message(msg)
+                    received_msgs = []
+                    while len(received_msgs) < 5:
+                        # issue 10 link credits, client should consume 5 msgs from the service
+                        # leaving 5 credits on the wire
+                        for msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=5)):
+                            await receiver.complete_message(msg)
+                            received_msgs.append(msg)
+                    assert len(received_msgs) == 5
 
-                    # send 20 more messages, those messages would arrive at the client while the program is sleeping
-                    await sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                    # send 5 more messages, those messages would arrive at the client while the program is sleeping
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
                     await asyncio.sleep(15)  # sleep > message expiration time
 
-                    # issue 20 link credits, client should consume 20 msgs from the service, leaving no link credits
-                    received_msgs = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
-                    assert len(received_msgs) == 20
+                    # issue 5 link credits, client should consume 5 msgs from the internal buffer which is already lock expired
+                    target_msgs_count = 5
+                    received_msgs = []
+                    while len(received_msgs) < target_msgs_count:
+                        received_msgs.extend((await receiver.receive_messages(max_message_count=5, max_wait_time=5)))
+                    assert len(received_msgs) == 5
                     for msg in received_msgs:
                         assert msg.delivery_count == 0
                         with pytest.raises(ServiceBusError):
                             await receiver.complete_message(msg)
 
                     # re-received message with delivery count increased
-                    received_msgs = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    target_msgs_count = 5
+                    received_msgs = []
+                    while len(received_msgs) < target_msgs_count:
+                        received_msgs.extend((await receiver.receive_messages(max_message_count=5, max_wait_time=5)))
+                    assert len(received_msgs) == 5
                     for msg in received_msgs:
-                        assert msg.delivery_count == 1
+                        assert msg.delivery_count > 0
                         await receiver.complete_message(msg)
-                    assert len(received_msgs) == 20
 
             await sub_test_releasing_messages()
             await sub_test_releasing_messages_iterator()
