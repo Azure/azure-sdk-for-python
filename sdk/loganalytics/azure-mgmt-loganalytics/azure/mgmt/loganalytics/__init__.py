@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operational_insights_management_client import OperationalInsightsManagementClient
+from ._log_analytics_management_client import LogAnalyticsManagementClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['OperationalInsightsManagementClient']
+__all__ = ['LogAnalyticsManagementClient']
 
 # `._patch.py` is used for handwritten extensions to the generated code
 # Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
