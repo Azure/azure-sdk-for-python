@@ -32,7 +32,7 @@ def build_list_request(
     env_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages')
@@ -68,7 +68,7 @@ def build_get_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}')
@@ -110,7 +110,7 @@ def build_create_or_update_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}')
@@ -151,7 +151,7 @@ def build_delete_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}')
@@ -187,7 +187,7 @@ class ManagedEnvironmentsStoragesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -219,7 +219,7 @@ class ManagedEnvironmentsStoragesOperations(object):
         :type env_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedEnvironmentStoragesCollection, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.ManagedEnvironmentStoragesCollection
+        :rtype: ~azure.mgmt.app.models.ManagedEnvironmentStoragesCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironmentStoragesCollection"]
@@ -276,7 +276,7 @@ class ManagedEnvironmentsStoragesOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedEnvironmentStorage, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.ManagedEnvironmentStorage
+        :rtype: ~azure.mgmt.app.models.ManagedEnvironmentStorage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironmentStorage"]
@@ -334,10 +334,10 @@ class ManagedEnvironmentsStoragesOperations(object):
         :param name: Name of the storage.
         :type name: str
         :param storage_envelope: Configuration details of storage.
-        :type storage_envelope: ~container_apps_api_client.models.ManagedEnvironmentStorage
+        :type storage_envelope: ~azure.mgmt.app.models.ManagedEnvironmentStorage
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedEnvironmentStorage, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.ManagedEnvironmentStorage
+        :rtype: ~azure.mgmt.app.models.ManagedEnvironmentStorage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironmentStorage"]

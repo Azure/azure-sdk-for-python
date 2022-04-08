@@ -33,7 +33,7 @@ def build_list_request(
     managed_environment_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}/certificates')
@@ -69,7 +69,7 @@ def build_get_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}/certificates/{name}')
@@ -111,7 +111,7 @@ def build_create_or_update_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}/certificates/{name}')
@@ -152,7 +152,7 @@ def build_delete_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}/certificates/{name}')
@@ -194,7 +194,7 @@ def build_update_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}/certificates/{name}')
@@ -234,7 +234,7 @@ class CertificatesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -267,7 +267,7 @@ class CertificatesOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateCollection or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~container_apps_api_client.models.CertificateCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.app.models.CertificateCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateCollection"]
@@ -346,7 +346,7 @@ class CertificatesOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Certificate, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Certificate
+        :rtype: ~azure.mgmt.app.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
@@ -404,10 +404,10 @@ class CertificatesOperations(object):
         :param name: Name of the Certificate.
         :type name: str
         :param certificate_envelope: Certificate to be created or updated.
-        :type certificate_envelope: ~container_apps_api_client.models.Certificate
+        :type certificate_envelope: ~azure.mgmt.app.models.Certificate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Certificate, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Certificate
+        :rtype: ~azure.mgmt.app.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
@@ -527,10 +527,10 @@ class CertificatesOperations(object):
         :param name: Name of the Certificate.
         :type name: str
         :param certificate_envelope: Properties of a certificate that need to be updated.
-        :type certificate_envelope: ~container_apps_api_client.models.CertificatePatch
+        :type certificate_envelope: ~azure.mgmt.app.models.CertificatePatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Certificate, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Certificate
+        :rtype: ~azure.mgmt.app.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]

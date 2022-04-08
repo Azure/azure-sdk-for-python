@@ -35,7 +35,7 @@ def build_list_by_container_app_request(
     container_app_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols')
@@ -71,7 +71,7 @@ def build_get_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{name}')
@@ -113,7 +113,7 @@ def build_create_or_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{name}')
@@ -154,7 +154,7 @@ def build_delete_request_initial(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/sourcecontrols/{name}')
@@ -190,7 +190,7 @@ class ContainerAppsSourceControlsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -223,7 +223,7 @@ class ContainerAppsSourceControlsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SourceControlCollection or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~container_apps_api_client.models.SourceControlCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.app.models.SourceControlCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControlCollection"]
@@ -302,7 +302,7 @@ class ContainerAppsSourceControlsOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SourceControl, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.SourceControl
+        :rtype: ~azure.mgmt.app.models.SourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControl"]
@@ -411,7 +411,7 @@ class ContainerAppsSourceControlsOperations(object):
         :param name: Name of the Container App SourceControl.
         :type name: str
         :param source_control_envelope: Properties used to create a Container App SourceControl.
-        :type source_control_envelope: ~container_apps_api_client.models.SourceControl
+        :type source_control_envelope: ~azure.mgmt.app.models.SourceControl
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -422,7 +422,7 @@ class ContainerAppsSourceControlsOperations(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either SourceControl or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~container_apps_api_client.models.SourceControl]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.app.models.SourceControl]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]

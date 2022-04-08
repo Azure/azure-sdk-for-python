@@ -28,12 +28,13 @@ from ._models_py3 import Certificate
 from ._models_py3 import CertificateCollection
 from ._models_py3 import CertificatePatch
 from ._models_py3 import CertificateProperties
+from ._models_py3 import CheckNameAvailabilityRequest
+from ._models_py3 import CheckNameAvailabilityResponse
 from ._models_py3 import ClientRegistration
 from ._models_py3 import Configuration
 from ._models_py3 import Container
 from ._models_py3 import ContainerApp
 from ._models_py3 import ContainerAppCollection
-from ._models_py3 import ContainerAppPatch
 from ._models_py3 import ContainerAppProbe
 from ._models_py3 import ContainerAppProbeHttpGet
 from ._models_py3 import ContainerAppProbeHttpGetHttpHeadersItem
@@ -49,6 +50,7 @@ from ._models_py3 import Dapr
 from ._models_py3 import DaprComponent
 from ._models_py3 import DaprComponentsCollection
 from ._models_py3 import DaprMetadata
+from ._models_py3 import DaprSecretsCollection
 from ._models_py3 import DefaultAuthorizationPolicy
 from ._models_py3 import DefaultErrorResponse
 from ._models_py3 import DefaultErrorResponseError
@@ -71,7 +73,6 @@ from ._models_py3 import Login
 from ._models_py3 import LoginRoutes
 from ._models_py3 import LoginScopes
 from ._models_py3 import ManagedEnvironment
-from ._models_py3 import ManagedEnvironmentPatch
 from ._models_py3 import ManagedEnvironmentStorage
 from ._models_py3 import ManagedEnvironmentStorageProperties
 from ._models_py3 import ManagedEnvironmentStoragesCollection
@@ -119,6 +120,7 @@ from ._container_apps_api_client_enums import (
     AppProtocol,
     BindingType,
     CertificateProvisioningState,
+    CheckNameAvailabilityReason,
     ContainerAppProvisioningState,
     CookieExpirationConvention,
     CreatedByType,
@@ -158,12 +160,13 @@ __all__ = [
     'CertificateCollection',
     'CertificatePatch',
     'CertificateProperties',
+    'CheckNameAvailabilityRequest',
+    'CheckNameAvailabilityResponse',
     'ClientRegistration',
     'Configuration',
     'Container',
     'ContainerApp',
     'ContainerAppCollection',
-    'ContainerAppPatch',
     'ContainerAppProbe',
     'ContainerAppProbeHttpGet',
     'ContainerAppProbeHttpGetHttpHeadersItem',
@@ -179,6 +182,7 @@ __all__ = [
     'DaprComponent',
     'DaprComponentsCollection',
     'DaprMetadata',
+    'DaprSecretsCollection',
     'DefaultAuthorizationPolicy',
     'DefaultErrorResponse',
     'DefaultErrorResponseError',
@@ -201,7 +205,6 @@ __all__ = [
     'LoginRoutes',
     'LoginScopes',
     'ManagedEnvironment',
-    'ManagedEnvironmentPatch',
     'ManagedEnvironmentStorage',
     'ManagedEnvironmentStorageProperties',
     'ManagedEnvironmentStoragesCollection',
@@ -246,6 +249,7 @@ __all__ = [
     'AppProtocol',
     'BindingType',
     'CertificateProvisioningState',
+    'CheckNameAvailabilityReason',
     'ContainerAppProvisioningState',
     'CookieExpirationConvention',
     'CreatedByType',

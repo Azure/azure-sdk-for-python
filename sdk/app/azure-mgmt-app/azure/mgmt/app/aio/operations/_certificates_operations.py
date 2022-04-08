@@ -31,7 +31,7 @@ class CertificatesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -64,8 +64,7 @@ class CertificatesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateCollection or the result of
          cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~container_apps_api_client.models.CertificateCollection]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.app.models.CertificateCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateCollection"]
@@ -144,7 +143,7 @@ class CertificatesOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Certificate, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Certificate
+        :rtype: ~azure.mgmt.app.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
@@ -202,10 +201,10 @@ class CertificatesOperations:
         :param name: Name of the Certificate.
         :type name: str
         :param certificate_envelope: Certificate to be created or updated.
-        :type certificate_envelope: ~container_apps_api_client.models.Certificate
+        :type certificate_envelope: ~azure.mgmt.app.models.Certificate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Certificate, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Certificate
+        :rtype: ~azure.mgmt.app.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
@@ -325,10 +324,10 @@ class CertificatesOperations:
         :param name: Name of the Certificate.
         :type name: str
         :param certificate_envelope: Properties of a certificate that need to be updated.
-        :type certificate_envelope: ~container_apps_api_client.models.CertificatePatch
+        :type certificate_envelope: ~azure.mgmt.app.models.CertificatePatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Certificate, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Certificate
+        :rtype: ~azure.mgmt.app.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]

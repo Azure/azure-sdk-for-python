@@ -31,7 +31,7 @@ class ContainerAppsRevisionsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -51,6 +51,7 @@ class ContainerAppsRevisionsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.RevisionCollection"]:
         """Get the Revisions for a given Container App.
@@ -61,10 +62,11 @@ class ContainerAppsRevisionsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App for which Revisions are needed.
         :type container_app_name: str
+        :param filter: The filter to apply on the operation.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RevisionCollection or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~container_apps_api_client.models.RevisionCollection]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.app.models.RevisionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RevisionCollection"]
@@ -79,6 +81,7 @@ class ContainerAppsRevisionsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     container_app_name=container_app_name,
+                    filter=filter,
                     template_url=self.list_revisions.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -90,6 +93,7 @@ class ContainerAppsRevisionsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     container_app_name=container_app_name,
+                    filter=filter,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -143,7 +147,7 @@ class ContainerAppsRevisionsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Revision, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Revision
+        :rtype: ~azure.mgmt.app.models.Revision
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Revision"]

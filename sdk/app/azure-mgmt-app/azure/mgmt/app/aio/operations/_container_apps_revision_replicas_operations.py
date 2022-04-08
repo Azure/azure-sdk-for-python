@@ -29,7 +29,7 @@ class ContainerAppsRevisionReplicasOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -67,7 +67,7 @@ class ContainerAppsRevisionReplicasOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Replica, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Replica
+        :rtype: ~azure.mgmt.app.models.Replica
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replica"]
@@ -126,7 +126,7 @@ class ContainerAppsRevisionReplicasOperations:
         :type revision_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ReplicaCollection, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.ReplicaCollection
+        :rtype: ~azure.mgmt.app.models.ReplicaCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicaCollection"]

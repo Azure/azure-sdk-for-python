@@ -33,7 +33,7 @@ def build_list_by_container_app_request(
     container_app_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs')
@@ -69,7 +69,7 @@ def build_get_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}')
@@ -111,7 +111,7 @@ def build_create_or_update_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}')
@@ -152,7 +152,7 @@ def build_delete_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}')
@@ -188,7 +188,7 @@ class ContainerAppsAuthConfigsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -221,7 +221,7 @@ class ContainerAppsAuthConfigsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AuthConfigCollection or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~container_apps_api_client.models.AuthConfigCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.app.models.AuthConfigCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthConfigCollection"]
@@ -300,7 +300,7 @@ class ContainerAppsAuthConfigsOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AuthConfig, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.AuthConfig
+        :rtype: ~azure.mgmt.app.models.AuthConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthConfig"]
@@ -358,10 +358,10 @@ class ContainerAppsAuthConfigsOperations(object):
         :param name: Name of the Container App AuthConfig.
         :type name: str
         :param auth_config_envelope: Properties used to create a Container App AuthConfig.
-        :type auth_config_envelope: ~container_apps_api_client.models.AuthConfig
+        :type auth_config_envelope: ~azure.mgmt.app.models.AuthConfig
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AuthConfig, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.AuthConfig
+        :rtype: ~azure.mgmt.app.models.AuthConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthConfig"]

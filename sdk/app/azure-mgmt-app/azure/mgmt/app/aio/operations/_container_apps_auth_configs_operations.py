@@ -31,7 +31,7 @@ class ContainerAppsAuthConfigsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -64,8 +64,7 @@ class ContainerAppsAuthConfigsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AuthConfigCollection or the result of
          cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~container_apps_api_client.models.AuthConfigCollection]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.app.models.AuthConfigCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthConfigCollection"]
@@ -144,7 +143,7 @@ class ContainerAppsAuthConfigsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AuthConfig, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.AuthConfig
+        :rtype: ~azure.mgmt.app.models.AuthConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthConfig"]
@@ -202,10 +201,10 @@ class ContainerAppsAuthConfigsOperations:
         :param name: Name of the Container App AuthConfig.
         :type name: str
         :param auth_config_envelope: Properties used to create a Container App AuthConfig.
-        :type auth_config_envelope: ~container_apps_api_client.models.AuthConfig
+        :type auth_config_envelope: ~azure.mgmt.app.models.AuthConfig
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AuthConfig, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.AuthConfig
+        :rtype: ~azure.mgmt.app.models.AuthConfig
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthConfig"]

@@ -20,7 +20,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._dapr_components_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_request
+from ...operations._dapr_components_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_request, build_list_secrets_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -31,7 +31,7 @@ class DaprComponentsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -65,7 +65,7 @@ class DaprComponentsOperations:
         :return: An iterator like instance of either DaprComponentsCollection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~container_apps_api_client.models.DaprComponentsCollection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.app.models.DaprComponentsCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DaprComponentsCollection"]
@@ -144,7 +144,7 @@ class DaprComponentsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DaprComponent, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.DaprComponent
+        :rtype: ~azure.mgmt.app.models.DaprComponent
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DaprComponent"]
@@ -202,10 +202,10 @@ class DaprComponentsOperations:
         :param name: Name of the Dapr Component.
         :type name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component.
-        :type dapr_component_envelope: ~container_apps_api_client.models.DaprComponent
+        :type dapr_component_envelope: ~azure.mgmt.app.models.DaprComponent
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DaprComponent, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.DaprComponent
+        :rtype: ~azure.mgmt.app.models.DaprComponent
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DaprComponent"]
@@ -300,4 +300,62 @@ class DaprComponentsOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}'}  # type: ignore
+
+
+    @distributed_trace_async
+    async def list_secrets(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        **kwargs: Any
+    ) -> "_models.DaprSecretsCollection":
+        """List secrets for a dapr component.
+
+        List secrets for a dapr component.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param environment_name: Name of the Managed Environment.
+        :type environment_name: str
+        :param name: Name of the Dapr Component.
+        :type name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DaprSecretsCollection, or the result of cls(response)
+        :rtype: ~azure.mgmt.app.models.DaprSecretsCollection
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DaprSecretsCollection"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_list_secrets_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            name=name,
+            template_url=self.list_secrets.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('DaprSecretsCollection', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_secrets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}/listSecrets'}  # type: ignore
 

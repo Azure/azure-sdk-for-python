@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2022-01-01-preview",
-    "total_api_version_list": ["2022-01-01-preview"],
+    "chosen_version": "2022-03-01",
+    "total_api_version_list": ["2022-03-01"],
     "client": {
         "name": "ContainerAppsAPIClient",
         "filename": "_container_apps_api_client",
@@ -97,15 +97,16 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
+        "container_apps_auth_configs": "ContainerAppsAuthConfigsOperations",
         "container_apps": "ContainerAppsOperations",
         "container_apps_revisions": "ContainerAppsRevisionsOperations",
         "container_apps_revision_replicas": "ContainerAppsRevisionReplicasOperations",
+        "dapr_components": "DaprComponentsOperations",
+        "operations": "Operations",
         "managed_environments": "ManagedEnvironmentsOperations",
         "certificates": "CertificatesOperations",
-        "operations": "Operations",
-        "container_apps_source_controls": "ContainerAppsSourceControlsOperations",
-        "dapr_components": "DaprComponentsOperations",
-        "container_apps_auth_configs": "ContainerAppsAuthConfigsOperations",
-        "managed_environments_storages": "ManagedEnvironmentsStoragesOperations"
+        "namespaces": "NamespacesOperations",
+        "managed_environments_storages": "ManagedEnvironmentsStoragesOperations",
+        "container_apps_source_controls": "ContainerAppsSourceControlsOperations"
     }
 }

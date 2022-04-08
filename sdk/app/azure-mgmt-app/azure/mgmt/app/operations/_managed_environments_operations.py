@@ -33,7 +33,7 @@ def build_list_by_subscription_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.App/managedEnvironments')
@@ -65,7 +65,7 @@ def build_list_by_resource_group_request(
     resource_group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments')
@@ -99,7 +99,7 @@ def build_get_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}')
@@ -139,7 +139,7 @@ def build_create_or_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}')
@@ -178,7 +178,7 @@ def build_delete_request_initial(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}')
@@ -207,7 +207,7 @@ def build_delete_request_initial(
     )
 
 
-def build_update_request(
+def build_update_request_initial(
     subscription_id: str,
     resource_group_name: str,
     name: str,
@@ -218,7 +218,7 @@ def build_update_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}')
@@ -257,7 +257,7 @@ class ManagedEnvironmentsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -284,8 +284,7 @@ class ManagedEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedEnvironmentsCollection or the result of
          cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~container_apps_api_client.models.ManagedEnvironmentsCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.app.models.ManagedEnvironmentsCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironmentsCollection"]
@@ -355,8 +354,7 @@ class ManagedEnvironmentsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedEnvironmentsCollection or the result of
          cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~container_apps_api_client.models.ManagedEnvironmentsCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.app.models.ManagedEnvironmentsCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironmentsCollection"]
@@ -430,7 +428,7 @@ class ManagedEnvironmentsOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedEnvironment, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.ManagedEnvironment
+        :rtype: ~azure.mgmt.app.models.ManagedEnvironment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironment"]
@@ -533,7 +531,7 @@ class ManagedEnvironmentsOperations(object):
         :param name: Name of the Environment.
         :type name: str
         :param environment_envelope: Configuration details of the Environment.
-        :type environment_envelope: ~container_apps_api_client.models.ManagedEnvironment
+        :type environment_envelope: ~azure.mgmt.app.models.ManagedEnvironment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -544,7 +542,7 @@ class ManagedEnvironmentsOperations(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either ManagedEnvironment or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~container_apps_api_client.models.ManagedEnvironment]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.app.models.ManagedEnvironment]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -687,30 +685,14 @@ class ManagedEnvironmentsOperations(object):
 
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}'}  # type: ignore
 
-    @distributed_trace
-    def update(
+    def _update_initial(
         self,
         resource_group_name: str,
         name: str,
-        environment_envelope: "_models.ManagedEnvironmentPatch",
+        environment_envelope: "_models.ManagedEnvironment",
         **kwargs: Any
-    ) -> "_models.ManagedEnvironment":
-        """Update Managed Environment's properties.
-
-        Patches a Managed Environment. Only patching of tags is supported currently.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param name: Name of the Environment.
-        :type name: str
-        :param environment_envelope: Configuration details of the Environment.
-        :type environment_envelope: ~container_apps_api_client.models.ManagedEnvironmentPatch
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagedEnvironment, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.ManagedEnvironment
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironment"]
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -718,15 +700,15 @@ class ManagedEnvironmentsOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(environment_envelope, 'ManagedEnvironmentPatch')
+        _json = self._serialize.body(environment_envelope, 'ManagedEnvironment')
 
-        request = build_update_request(
+        request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             name=name,
             content_type=content_type,
             json=_json,
-            template_url=self.update.metadata['url'],
+            template_url=self._update_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -734,17 +716,81 @@ class ManagedEnvironmentsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('ManagedEnvironment', pipeline_response)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, None, {})
 
-        return deserialized
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}'}  # type: ignore
 
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}'}  # type: ignore
 
+    @distributed_trace
+    def begin_update(
+        self,
+        resource_group_name: str,
+        name: str,
+        environment_envelope: "_models.ManagedEnvironment",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Update Managed Environment's properties.
+
+        Patches a Managed Environment using JSON Merge Patch.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param name: Name of the Environment.
+        :type name: str
+        :param environment_envelope: Configuration details of the Environment.
+        :type environment_envelope: ~azure.mgmt.app.models.ManagedEnvironment
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                name=name,
+                environment_envelope=environment_envelope,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+
+        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}'}  # type: ignore

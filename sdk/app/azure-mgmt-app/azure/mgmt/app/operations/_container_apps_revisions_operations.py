@@ -30,9 +30,11 @@ def build_list_revisions_request(
     subscription_id: str,
     resource_group_name: str,
     container_app_name: str,
+    *,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions')
@@ -47,6 +49,8 @@ def build_list_revisions_request(
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if filter is not None:
+        query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -68,7 +72,7 @@ def build_get_revision_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}')
@@ -105,7 +109,7 @@ def build_activate_revision_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate')
@@ -142,7 +146,7 @@ def build_deactivate_revision_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate')
@@ -179,7 +183,7 @@ def build_restart_revision_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart')
@@ -215,7 +219,7 @@ class ContainerAppsRevisionsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -235,6 +239,7 @@ class ContainerAppsRevisionsOperations(object):
         self,
         resource_group_name: str,
         container_app_name: str,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable["_models.RevisionCollection"]:
         """Get the Revisions for a given Container App.
@@ -245,9 +250,11 @@ class ContainerAppsRevisionsOperations(object):
         :type resource_group_name: str
         :param container_app_name: Name of the Container App for which Revisions are needed.
         :type container_app_name: str
+        :param filter: The filter to apply on the operation.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RevisionCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~container_apps_api_client.models.RevisionCollection]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.app.models.RevisionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RevisionCollection"]
@@ -262,6 +269,7 @@ class ContainerAppsRevisionsOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     container_app_name=container_app_name,
+                    filter=filter,
                     template_url=self.list_revisions.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -273,6 +281,7 @@ class ContainerAppsRevisionsOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     container_app_name=container_app_name,
+                    filter=filter,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -326,7 +335,7 @@ class ContainerAppsRevisionsOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Revision, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Revision
+        :rtype: ~azure.mgmt.app.models.Revision
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Revision"]

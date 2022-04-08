@@ -33,7 +33,7 @@ def build_get_replica_request(
     name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{name}')
@@ -71,7 +71,7 @@ def build_list_replicas_request(
     revision_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas')
@@ -107,7 +107,7 @@ class ContainerAppsRevisionReplicasOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~container_apps_api_client.models
+    :type models: ~azure.mgmt.app.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -145,7 +145,7 @@ class ContainerAppsRevisionReplicasOperations(object):
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Replica, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.Replica
+        :rtype: ~azure.mgmt.app.models.Replica
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replica"]
@@ -204,7 +204,7 @@ class ContainerAppsRevisionReplicasOperations(object):
         :type revision_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ReplicaCollection, or the result of cls(response)
-        :rtype: ~container_apps_api_client.models.ReplicaCollection
+        :rtype: ~azure.mgmt.app.models.ReplicaCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicaCollection"]
