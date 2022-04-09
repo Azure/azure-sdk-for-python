@@ -3075,26 +3075,4 @@ __all__ = [
 
 
 def patch_sdk():
-    models_to_remove = [
-        "AlertResultList",
-        "AnomalyAlertingConfigurationList",
-        "MetricDimensionList",
-        "MetricFeedbackList",
-        "MetricSeriesList",
-        "RootCauseList",
-        "SeriesResultList",
-        "AnomalyDetectionConfigurationList",
-        "AnomalyDimensionList",
-        "AnomalyResultList",
-        "DataFeedList",
-        "DataSourceCredentialList",
-        "EnrichmentStatusList",
-        "HookList",
-        "IncidentResultList",
-        "IngestionStatusList",
-        "MetricDataList",
-    ]
-    models_module = sys.modules["azure.ai.metricsadvisor.models"]
-    for m in models_to_remove:
-        delattr(models_module, m)
-    models_module.__all__ = [m for m in models_module.__all__ if m not in models_to_remove]
+    pass

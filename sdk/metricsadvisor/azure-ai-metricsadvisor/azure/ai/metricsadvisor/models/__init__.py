@@ -6,16 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AlertResultList
 from ._models import AnomalyAlert
 from ._models import AnomalyAlertConfiguration
-from ._models import AnomalyAlertingConfigurationList
 from ._models import AnomalyDetectionConfiguration
-from ._models import AnomalyDetectionConfigurationList
-from ._models import AnomalyDimensionList
 from ._models import AnomalyFeedback
 from ._models import AnomalyIncident
-from ._models import AnomalyResultList
 from ._models import AzureApplicationInsightsDataFeedSource
 from ._models import AzureBlobDataFeedSource
 from ._models import AzureCosmosDbDataFeedSource
@@ -31,10 +26,8 @@ from ._models import DataFeed
 from ._models import DataFeedDimension
 from ._models import DataFeedIngestionProgress
 from ._models import DataFeedIngestionStatus
-from ._models import DataFeedList
 from ._models import DataFeedMetric
 from ._models import DataPointAnomaly
-from ._models import DataSourceCredentialList
 from ._models import DatasourceCredential
 from ._models import DatasourceDataLakeGen2SharedKey
 from ._models import DatasourceServicePrincipal
@@ -45,33 +38,23 @@ from ._models import DetectionIncidentFilterCondition
 from ._models import DimensionGroupIdentity
 from ._models import EmailNotificationHook
 from ._models import EnrichmentStatus
-from ._models import EnrichmentStatusList
 from ._models import HardThresholdCondition
-from ._models import HookList
-from ._models import IncidentResultList
 from ._models import IncidentRootCause
 from ._models import InfluxDbDataFeedSource
-from ._models import IngestionStatusList
 from ._models import MetricAlertConfiguration
 from ._models import MetricAnomalyAlertSnoozeCondition
 from ._models import MetricBoundaryCondition
-from ._models import MetricDataList
 from ._models import MetricDetectionCondition
-from ._models import MetricDimensionList
 from ._models import MetricEnrichedSeriesData
 from ._models import MetricFeedback
-from ._models import MetricFeedbackList
 from ._models import MetricSeriesData
 from ._models import MetricSeriesDefinition
 from ._models import MetricSeriesGroupDetectionCondition
-from ._models import MetricSeriesList
 from ._models import MetricSingleSeriesDetectionCondition
 from ._models import MongoDbDataFeedSource
 from ._models import NotificationHook
 from ._models import PeriodFeedback
-from ._models import RootCauseList
 from ._models import SeriesIdentity
-from ._models import SeriesResultList
 from ._models import SeverityCondition
 from ._models import SeverityFilterCondition
 from ._models import SmartDetectionCondition
@@ -107,16 +90,11 @@ from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AlertResultList",
     "AnomalyAlert",
     "AnomalyAlertConfiguration",
-    "AnomalyAlertingConfigurationList",
     "AnomalyDetectionConfiguration",
-    "AnomalyDetectionConfigurationList",
-    "AnomalyDimensionList",
     "AnomalyFeedback",
     "AnomalyIncident",
-    "AnomalyResultList",
     "AzureApplicationInsightsDataFeedSource",
     "AzureBlobDataFeedSource",
     "AzureCosmosDbDataFeedSource",
@@ -132,10 +110,8 @@ __all__ = [
     "DataFeedDimension",
     "DataFeedIngestionProgress",
     "DataFeedIngestionStatus",
-    "DataFeedList",
     "DataFeedMetric",
     "DataPointAnomaly",
-    "DataSourceCredentialList",
     "DatasourceCredential",
     "DatasourceDataLakeGen2SharedKey",
     "DatasourceServicePrincipal",
@@ -146,33 +122,23 @@ __all__ = [
     "DimensionGroupIdentity",
     "EmailNotificationHook",
     "EnrichmentStatus",
-    "EnrichmentStatusList",
     "HardThresholdCondition",
-    "HookList",
-    "IncidentResultList",
     "IncidentRootCause",
     "InfluxDbDataFeedSource",
-    "IngestionStatusList",
     "MetricAlertConfiguration",
     "MetricAnomalyAlertSnoozeCondition",
     "MetricBoundaryCondition",
-    "MetricDataList",
     "MetricDetectionCondition",
-    "MetricDimensionList",
     "MetricEnrichedSeriesData",
     "MetricFeedback",
-    "MetricFeedbackList",
     "MetricSeriesData",
     "MetricSeriesDefinition",
     "MetricSeriesGroupDetectionCondition",
-    "MetricSeriesList",
     "MetricSingleSeriesDetectionCondition",
     "MongoDbDataFeedSource",
     "NotificationHook",
     "PeriodFeedback",
-    "RootCauseList",
     "SeriesIdentity",
-    "SeriesResultList",
     "SeverityCondition",
     "SeverityFilterCondition",
     "SmartDetectionCondition",

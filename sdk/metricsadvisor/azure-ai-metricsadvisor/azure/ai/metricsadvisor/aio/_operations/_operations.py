@@ -70,10 +70,28 @@ from ..._operations._operations import (
     build_update_detection_configuration_request,
     build_update_hook_request,
 )
+from ...models._models import (
+    _AlertResultList,
+    _AnomalyAlertingConfigurationList,
+    _AnomalyDetectionConfigurationList,
+    _AnomalyDimensionList,
+    _AnomalyResultList,
+    _DataFeedList,
+    _DataSourceCredentialList,
+    _EnrichmentStatusList,
+    _HookList,
+    _IncidentResultList,
+    _IngestionStatusList,
+    _MetricDataList,
+    _MetricDimensionList,
+    _MetricFeedbackList,
+    _MetricSeriesList,
+    _RootCauseList,
+    _SeriesResultList,
+)
 from .._vendor import MixinABC
 
 T = TypeVar("T")
-JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
@@ -291,7 +309,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.AlertResultList]:
+    ) -> AsyncIterable[_AlertResultList]:
         """Query alerts under anomaly alerting configuration.
 
         Query alerts under anomaly alerting configuration.
@@ -304,9 +322,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of AlertResultList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AlertResultList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -315,7 +332,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AlertResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_AlertResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -366,7 +383,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AlertResultList", pipeline_response)
+            deserialized = self._deserialize("_AlertResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -398,7 +415,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.AnomalyResultList]:
+    ) -> AsyncIterable[_AnomalyResultList]:
         """Query anomalies under a specific alert.
 
         Query anomalies under a specific alert.
@@ -411,15 +428,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of AnomalyResultList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_AnomalyResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -466,7 +482,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyResultList", pipeline_response)
+            deserialized = self._deserialize("_AnomalyResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -498,7 +514,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.IncidentResultList]:
+    ) -> AsyncIterable[_IncidentResultList]:
         """Query incidents under a specific alert.
 
         Query incidents under a specific alert.
@@ -511,15 +527,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of IncidentResultList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IncidentResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_IncidentResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -566,7 +581,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IncidentResultList", pipeline_response)
+            deserialized = self._deserialize("_IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -798,7 +813,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_alert_configurations(
         self, configuration_id: str, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.AnomalyAlertingConfigurationList]:
+    ) -> AsyncIterable[_AnomalyAlertingConfigurationList]:
         """List all anomaly alerting configurations for specific anomaly detection configuration.
 
         List all anomaly alerting configurations for specific anomaly detection configuration.
@@ -809,15 +824,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of AnomalyAlertingConfigurationList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyAlertingConfigurationList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_AnomalyAlertingConfigurationList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -862,7 +876,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyAlertingConfigurationList", pipeline_response)
+            deserialized = self._deserialize("_AnomalyAlertingConfigurationList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -888,7 +902,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_metric_enriched_series_data(
         self, configuration_id: str, body: Any, **kwargs: Any
-    ) -> AsyncIterable[_models.SeriesResultList]:
+    ) -> AsyncIterable[_SeriesResultList]:
         """Query series enriched by anomaly detection.
 
         Query series enriched by anomaly detection.
@@ -897,9 +911,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type configuration_id: str
         :param body: query series detection result request.
         :type body: any
-        :return: An iterator like instance of SeriesResultList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.SeriesResultList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -908,7 +921,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SeriesResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_SeriesResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -957,7 +970,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("SeriesResultList", pipeline_response)
+            deserialized = self._deserialize("_SeriesResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -989,7 +1002,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.AnomalyResultList]:
+    ) -> AsyncIterable[_AnomalyResultList]:
         """Query anomalies under anomaly detection configuration.
 
         Query anomalies under anomaly detection configuration.
@@ -1002,9 +1015,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of AnomalyResultList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1013,7 +1025,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_AnomalyResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1064,7 +1076,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyResultList", pipeline_response)
+            deserialized = self._deserialize("_AnomalyResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1096,7 +1108,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.AnomalyDimensionList]:
+    ) -> AsyncIterable[_AnomalyDimensionList]:
         """Query dimension values of anomalies.
 
         Query dimension values of anomalies.
@@ -1109,9 +1121,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of AnomalyDimensionList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyDimensionList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1120,7 +1131,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyDimensionList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_AnomalyDimensionList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1171,7 +1182,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyDimensionList", pipeline_response)
+            deserialized = self._deserialize("_AnomalyDimensionList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1197,7 +1208,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration(
         self, configuration_id: str, body: Any, *, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.IncidentResultList]:
+    ) -> AsyncIterable[_IncidentResultList]:
         """Query incidents under anomaly detection configuration.
 
         Query incidents under anomaly detection configuration.
@@ -1208,9 +1219,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type body: any
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of IncidentResultList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1219,7 +1229,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IncidentResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_IncidentResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1269,7 +1279,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IncidentResultList", pipeline_response)
+            deserialized = self._deserialize("_IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1295,7 +1305,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration_next_pages(
         self, configuration_id: str, *, maxpagesize: Optional[int] = None, token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.IncidentResultList]:
+    ) -> AsyncIterable[_IncidentResultList]:
         """Query incidents under anomaly detection configuration.
 
         Query incidents under anomaly detection configuration.
@@ -1306,15 +1316,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype maxpagesize: int
         :keyword token: the token for getting the next page. Default value is None.
         :paramtype token: str
-        :return: An iterator like instance of IncidentResultList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IncidentResultList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_IncidentResultList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1359,7 +1368,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IncidentResultList", pipeline_response)
+            deserialized = self._deserialize("_IncidentResultList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1385,7 +1394,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_incident_root_causes(
         self, detection_configuration_id: str, incident_id: str, **kwargs: Any
-    ) -> AsyncIterable[_models.RootCauseList]:
+    ) -> AsyncIterable[_RootCauseList]:
         """Query root cause for incident.
 
         Query root cause for incident.
@@ -1394,14 +1403,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type detection_configuration_id: str
         :param incident_id: incident id.
         :type incident_id: str
-        :return: An iterator like instance of RootCauseList
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.RootCauseList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RootCauseList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_RootCauseList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1446,7 +1455,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("RootCauseList", pipeline_response)
+            deserialized = self._deserialize("_RootCauseList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1526,7 +1535,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_datasource_credentials(
         self, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.DataSourceCredentialList]:
+    ) -> AsyncIterable[_DataSourceCredentialList]:
         """List all credentials.
 
         List all credentials.
@@ -1535,15 +1544,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of DataSourceCredentialList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataSourceCredentialList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataSourceCredentialList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_DataSourceCredentialList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1586,7 +1594,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DataSourceCredentialList", pipeline_response)
+            deserialized = self._deserialize("_DataSourceCredentialList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1769,7 +1777,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.DataFeedList]:
+    ) -> AsyncIterable[_DataFeedList]:
         """List all data feeds.
 
         List all data feeds.
@@ -1788,14 +1796,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of DataFeedList
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataFeedList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataFeedList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_DataFeedList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1843,7 +1851,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DataFeedList", pipeline_response)
+            deserialized = self._deserialize("_DataFeedList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2118,7 +2126,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_feedback(
         self, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.MetricFeedbackList]:
+    ) -> AsyncIterable[_MetricFeedbackList]:
         """List feedback on the given metric.
 
         List feedback on the given metric.
@@ -2129,9 +2137,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of MetricFeedbackList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricFeedbackList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2140,7 +2147,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricFeedbackList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_MetricFeedbackList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2189,7 +2196,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MetricFeedbackList", pipeline_response)
+            deserialized = self._deserialize("_MetricFeedbackList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2274,7 +2281,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.HookList]:
+    ) -> AsyncIterable[_HookList]:
         """List all hooks.
 
         List all hooks.
@@ -2285,14 +2292,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of HookList
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.HookList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.HookList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_HookList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2336,7 +2343,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("HookList", pipeline_response)
+            deserialized = self._deserialize("_HookList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2568,7 +2575,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.IngestionStatusList]:
+    ) -> AsyncIterable[_IngestionStatusList]:
         """Get data ingestion status by data feed.
 
         Get data ingestion status by data feed.
@@ -2581,9 +2588,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of IngestionStatusList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IngestionStatusList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2592,7 +2598,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IngestionStatusList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_IngestionStatusList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2643,7 +2649,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("IngestionStatusList", pipeline_response)
+            deserialized = self._deserialize("_IngestionStatusList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2770,9 +2776,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         return deserialized
 
     @distributed_trace
-    def list_metric_series_data(
-        self, metric_id: str, body: Any, **kwargs: Any
-    ) -> AsyncIterable[_models.MetricDataList]:
+    def list_metric_series_data(self, metric_id: str, body: Any, **kwargs: Any) -> AsyncIterable[_MetricDataList]:
         """Get time series data from metric.
 
         Get time series data from metric.
@@ -2781,8 +2785,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :type metric_id: str
         :param body: query time series data condition.
         :type body: any
-        :return: An iterator like instance of MetricDataList
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricDataList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2791,7 +2795,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricDataList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_MetricDataList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2840,7 +2844,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MetricDataList", pipeline_response)
+            deserialized = self._deserialize("_MetricDataList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2866,7 +2870,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_metric_series_definitions(
         self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.MetricSeriesList]:
+    ) -> AsyncIterable[_MetricSeriesList]:
         """List series (dimension combinations) from metric.
 
         List series (dimension combinations) from metric.
@@ -2879,9 +2883,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of MetricSeriesList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2890,7 +2893,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricSeriesList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_MetricSeriesList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2941,7 +2944,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MetricSeriesList", pipeline_response)
+            deserialized = self._deserialize("_MetricSeriesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2967,7 +2970,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_metric_dimension_values(
         self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.MetricDimensionList]:
+    ) -> AsyncIterable[_MetricDimensionList]:
         """List dimension from certain metric.
 
         List dimension from certain metric.
@@ -2980,9 +2983,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of MetricDimensionList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricDimensionList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2991,7 +2993,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricDimensionList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_MetricDimensionList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3042,7 +3044,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("MetricDimensionList", pipeline_response)
+            deserialized = self._deserialize("_MetricDimensionList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -3068,7 +3070,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_detection_configurations(
         self, metric_id: str, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.AnomalyDetectionConfigurationList]:
+    ) -> AsyncIterable[_AnomalyDetectionConfigurationList]:
         """List all anomaly detection configurations for specific metric.
 
         List all anomaly detection configurations for specific metric.
@@ -3079,15 +3081,14 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of AnomalyDetectionConfigurationList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnomalyDetectionConfigurationList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_AnomalyDetectionConfigurationList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3132,7 +3133,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AnomalyDetectionConfigurationList", pipeline_response)
+            deserialized = self._deserialize("_AnomalyDetectionConfigurationList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -3158,7 +3159,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
     @distributed_trace
     def list_metric_enrichment_status(
         self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable[_models.EnrichmentStatusList]:
+    ) -> AsyncIterable[_EnrichmentStatusList]:
         """Query anomaly detection status.
 
         Query anomaly detection status.
@@ -3171,9 +3172,8 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :paramtype skip: int
         :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :return: An iterator like instance of EnrichmentStatusList
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatusList]
+        :return: An iterator like instance of JSON
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3182,7 +3182,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json")
         )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnrichmentStatusList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_EnrichmentStatusList]
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -3233,7 +3233,7 @@ class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("EnrichmentStatusList", pipeline_response)
+            deserialized = self._deserialize("_EnrichmentStatusList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)

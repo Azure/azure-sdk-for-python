@@ -90,7 +90,7 @@ FeedbackUnion = Union[
     models.PeriodFeedback,
 ]
 
-UpdateHelperRetval = Tuple[str, Union[operations.JSONType, models.DataFeed], Any]
+UpdateHelperRetval = Tuple[str, Union[Any, models.DataFeed], Any]
 
 ########################### HELPERS ###########################
 
@@ -157,7 +157,7 @@ class OperationMixinHelpers:
     @staticmethod
     def _update_detection_configuration_helper(
         detection_configuration, **kwargs
-    ) -> Tuple[str, Union[operations.JSONType, models.AnomalyDetectionConfiguration], Any]:
+    ) -> Tuple[str, Union[Any, models.AnomalyDetectionConfiguration], Any]:
 
         unset = object()
         update_kwargs = {}
@@ -680,7 +680,7 @@ class OperationMixinHelpers:
     @staticmethod
     def _update_hook_helper(
         hook: Union[str, models.EmailNotificationHook, models.WebNotificationHook], **kwargs: Any
-    ) -> Tuple[str, Union[operations.JSONType, models.NotificationHook], Any]:
+    ) -> Tuple[str, Union[Any, models.NotificationHook], Any]:
         hook_patch = {}
         hook_type = kwargs.pop("hook_type", None)
         hook_kwarg_names = [
