@@ -23,11 +23,13 @@ import platform
 import sys
 import pytest
 from devtools_testutils import test_proxy
-from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_general_regex_sanitizer, set_bodiless_matcher
+from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_general_regex_sanitizer, set_custom_default_matcher
 
 @pytest.fixture(scope="session", autouse=True)
 def add_aeg_sanitizer(test_proxy):
-    set_bodiless_matcher()
+    set_custom_default_matcher(
+        compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+    )
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
     add_general_regex_sanitizer(
         value="fakeresource",

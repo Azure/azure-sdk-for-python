@@ -51,9 +51,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         queues = list(mgmt_service.list_queues())
         assert len(queues) == 0
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace,
+            servicebus_fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
         )
         queues = list(mgmt_service.list_queues())
@@ -111,9 +110,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         # with pytest.raises(ServiceRequestError):
         #     list(mgmt_service.list_queues())
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace,
+            servicebus_fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential("invalid", "invalid")
         )
         with pytest.raises(HttpResponseError):
@@ -805,9 +803,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         with pytest.raises(HttpResponseError):
             mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
         mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace,
+            servicebus_fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key),
             api_version=ApiVersion.V2017_04
         )
