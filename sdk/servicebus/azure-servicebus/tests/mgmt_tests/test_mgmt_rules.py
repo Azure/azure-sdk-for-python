@@ -13,21 +13,20 @@ from azure.servicebus.management._constants import INT32_MAX_VALUE
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
-from servicebus_preparer import (
-    CachedServiceBusNamespacePreparer,
-    ServiceBusNamespacePreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
+from sb_new_preparer import (
+    ServiceBusPreparer
 )
 
 from mgmt_test_utilities import clear_topics
 
 _logger = get_logger(logging.DEBUG)
 
-class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_rule_create(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
+    @ServiceBusPreparer()
+    @recorded_by_proxy
+    def test_mgmt_rule_create(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -115,10 +114,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
                 pass
 
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_rule_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    @ServiceBusPreparer()
+    @recorded_by_proxy
+    def test_mgmt_rule_create_duplicate(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
@@ -135,10 +134,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_rule_update_success(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    @ServiceBusPreparer()
+    @recorded_by_proxy
+    def test_mgmt_rule_update_success(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -186,10 +185,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.delete_topic(topic_name)
             mgmt_service.close()
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_rule_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    @ServiceBusPreparer()
+    @recorded_by_proxy
+    def test_mgmt_rule_update_invalid(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -228,10 +227,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_rule_list_and_delete(self, servicebus_namespace_connection_string):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    @ServiceBusPreparer()
+    @recorded_by_proxy
+    def test_mgmt_rule_list_and_delete(self, servicebus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -282,10 +281,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
         with pytest.raises(TypeError):
             RuleProperties("randomname")
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_rule_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    @ServiceBusPreparer()
+    @recorded_by_proxy
+    def test_mgmt_rule_update_dict_success(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjruid"
         subscription_name = "eqkovcd"
@@ -334,10 +333,10 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.delete_topic(topic_name)
             mgmt_service.close()
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_rule_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    @ServiceBusPreparer()
+    @recorded_by_proxy
+    def test_mgmt_rule_update_dict_error(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjruid"
         subscription_name = "eqkovcd"
