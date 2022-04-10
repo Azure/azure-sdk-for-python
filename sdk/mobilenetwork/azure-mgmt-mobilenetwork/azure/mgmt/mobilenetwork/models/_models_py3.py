@@ -63,10 +63,10 @@ class Arp(msrest.serialization.Model):
     :vartype priority_level: int
     :ivar preempt_cap: Required. ARP preemption capability. Possible values include: "NotPreempt",
      "MayPreempt".
-    :vartype preempt_cap: str or ~mobile_network_management_client.models.PreemptionCapability
+    :vartype preempt_cap: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
     :ivar preempt_vuln: Required. ARP preemption vulnerability. Possible values include:
      "NotPreemptable", "Preemptable".
-    :vartype preempt_vuln: str or ~mobile_network_management_client.models.PreemptionVulnerability
+    :vartype preempt_vuln: str or ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
     """
 
     _validation = {
@@ -94,11 +94,10 @@ class Arp(msrest.serialization.Model):
         :paramtype priority_level: int
         :keyword preempt_cap: Required. ARP preemption capability. Possible values include:
          "NotPreempt", "MayPreempt".
-        :paramtype preempt_cap: str or ~mobile_network_management_client.models.PreemptionCapability
+        :paramtype preempt_cap: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
         :keyword preempt_vuln: Required. ARP preemption vulnerability. Possible values include:
          "NotPreemptable", "Preemptable".
-        :paramtype preempt_vuln: str or
-         ~mobile_network_management_client.models.PreemptionVulnerability
+        :paramtype preempt_vuln: str or ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
         """
         super(Arp, self).__init__(**kwargs)
         self.priority_level = priority_level
@@ -119,18 +118,23 @@ class Resource(msrest.serialization.Model):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
@@ -143,6 +147,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class TrackedResource(Resource):
@@ -160,6 +165,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
@@ -170,6 +178,7 @@ class TrackedResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -177,6 +186,7 @@ class TrackedResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
     }
@@ -214,36 +224,24 @@ class AttachedDataNetwork(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the attached data network resource.
      Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
      "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar user_plane_data_interface: Required. The user plane interface on the data network. In 5G
      networks this is called as N6 interface whereas in 4G networks this is called as SGi interface.
-    :vartype user_plane_data_interface:
-     ~mobile_network_management_client.models.InterfaceProperties
+    :vartype user_plane_data_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
     :ivar napt_configuration: The Network Address and Port Translation configuration.
      If not specified the attached data network uses a default NAPT configuration with NAPT
      enabled.
-    :vartype napt_configuration: ~mobile_network_management_client.models.NaptConfiguration
+    :vartype napt_configuration: ~azure.mgmt.mobilenetwork.models.NaptConfiguration
     :ivar user_equipment_address_pool_prefix: The user equipment address pool prefixes for the
      attached data network that are dynamically assigned by the core to UEs when they set up a PDU
      session.
@@ -263,6 +261,7 @@ class AttachedDataNetwork(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'user_plane_data_interface': {'required': True},
@@ -274,14 +273,9 @@ class AttachedDataNetwork(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'user_plane_data_interface': {'key': 'properties.userPlaneDataInterface', 'type': 'InterfaceProperties'},
         'napt_configuration': {'key': 'properties.naptConfiguration', 'type': 'NaptConfiguration'},
@@ -295,12 +289,6 @@ class AttachedDataNetwork(TrackedResource):
         location: str,
         user_plane_data_interface: "InterfaceProperties",
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         napt_configuration: Optional["NaptConfiguration"] = None,
         user_equipment_address_pool_prefix: Optional[List[str]] = None,
         user_equipment_static_address_pool_prefix: Optional[List[str]] = None,
@@ -311,29 +299,14 @@ class AttachedDataNetwork(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword user_plane_data_interface: Required. The user plane interface on the data network. In
          5G networks this is called as N6 interface whereas in 4G networks this is called as SGi
          interface.
-        :paramtype user_plane_data_interface:
-         ~mobile_network_management_client.models.InterfaceProperties
+        :paramtype user_plane_data_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
         :keyword napt_configuration: The Network Address and Port Translation configuration.
          If not specified the attached data network uses a default NAPT configuration with NAPT
          enabled.
-        :paramtype napt_configuration: ~mobile_network_management_client.models.NaptConfiguration
+        :paramtype napt_configuration: ~azure.mgmt.mobilenetwork.models.NaptConfiguration
         :keyword user_equipment_address_pool_prefix: The user equipment address pool prefixes for the
          attached data network that are dynamically assigned by the core to UEs when they set up a PDU
          session.
@@ -349,12 +322,6 @@ class AttachedDataNetwork(TrackedResource):
         :paramtype user_equipment_static_address_pool_prefix: list[str]
         """
         super(AttachedDataNetwork, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.user_plane_data_interface = user_plane_data_interface
         self.napt_configuration = napt_configuration
@@ -368,7 +335,7 @@ class AttachedDataNetworkListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of data networks in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.AttachedDataNetwork]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.AttachedDataNetwork]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -390,7 +357,7 @@ class AttachedDataNetworkListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of data networks in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.AttachedDataNetwork]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.AttachedDataNetwork]
         """
         super(AttachedDataNetworkListResult, self).__init__(**kwargs)
         self.value = value
@@ -474,27 +441,16 @@ class DataNetwork(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the data network resource. Possible values
      include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar description: An optional description for this data network.
     :vartype description: str
     """
@@ -503,6 +459,7 @@ class DataNetwork(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -511,14 +468,9 @@ class DataNetwork(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
@@ -528,12 +480,6 @@ class DataNetwork(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -542,30 +488,10 @@ class DataNetwork(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword description: An optional description for this data network.
         :paramtype description: str
         """
         super(DataNetwork, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.description = description
 
@@ -576,11 +502,11 @@ class DataNetworkConfiguration(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar data_network: Required. A reference to the Data Network that these settings apply to.
-    :vartype data_network: ~mobile_network_management_client.models.DataNetworkResourceId
+    :vartype data_network: ~azure.mgmt.mobilenetwork.models.DataNetworkResourceId
     :ivar session_ambr: Required. Aggregate maximum bit rate across all non-GBR QoS flows of a
      given PDU session. See 3GPP TS23.501 section 5.7.2.6 for a full description of the
      Session-AMBR.
-    :vartype session_ambr: ~mobile_network_management_client.models.Ambr
+    :vartype session_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
     :ivar five_qi: Default QoS Flow 5G QoS Indicator value.  The 5QI identifies a specific QoS
      forwarding treatment to be provided to a flow. This must not be a standardized 5QI value
      selecting a GBR (Guaranteed Bit Rate) QoS.  The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66,
@@ -598,24 +524,23 @@ class DataNetworkConfiguration(msrest.serialization.Model):
      of a QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See
      3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values
      include: "NotPreempt", "MayPreempt".
-    :vartype preemption_capability: str or
-     ~mobile_network_management_client.models.PreemptionCapability
+    :vartype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
     :ivar preemption_vulnerability: Default QoS Flow preemption vulnerability.  The Preemption
      Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
      priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
      Possible values include: "NotPreemptable", "Preemptable".
     :vartype preemption_vulnerability: str or
-     ~mobile_network_management_client.models.PreemptionVulnerability
+     ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
     :ivar default_session_type: The default PDU session type, which is used if the UE does not
      request a specific session type. Possible values include: "IPv4", "IPv6".
-    :vartype default_session_type: str or ~mobile_network_management_client.models.PduSessionType
+    :vartype default_session_type: str or ~azure.mgmt.mobilenetwork.models.PduSessionType
     :ivar additional_allowed_session_types: Allowed session types in addition to the default
      session type.  Must not duplicate the default session type.
     :vartype additional_allowed_session_types: list[str or
-     ~mobile_network_management_client.models.PduSessionType]
+     ~azure.mgmt.mobilenetwork.models.PduSessionType]
     :ivar allowed_services: Required. List of Services that can be used as part of this Sim Policy.
      The list must not contain duplicate items and must contain at least one item.
-    :vartype allowed_services: list[~mobile_network_management_client.models.ServiceResourceId]
+    :vartype allowed_services: list[~azure.mgmt.mobilenetwork.models.ServiceResourceId]
     """
 
     _validation = {
@@ -655,11 +580,11 @@ class DataNetworkConfiguration(msrest.serialization.Model):
     ):
         """
         :keyword data_network: Required. A reference to the Data Network that these settings apply to.
-        :paramtype data_network: ~mobile_network_management_client.models.DataNetworkResourceId
+        :paramtype data_network: ~azure.mgmt.mobilenetwork.models.DataNetworkResourceId
         :keyword session_ambr: Required. Aggregate maximum bit rate across all non-GBR QoS flows of a
          given PDU session. See 3GPP TS23.501 section 5.7.2.6 for a full description of the
          Session-AMBR.
-        :paramtype session_ambr: ~mobile_network_management_client.models.Ambr
+        :paramtype session_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
         :keyword five_qi: Default QoS Flow 5G QoS Indicator value.  The 5QI identifies a specific QoS
          forwarding treatment to be provided to a flow. This must not be a standardized 5QI value
          selecting a GBR (Guaranteed Bit Rate) QoS.  The illegal GBR 5QI values are: 1, 2, 3, 4, 65, 66,
@@ -677,24 +602,23 @@ class DataNetworkConfiguration(msrest.serialization.Model):
          Capability of a QoS Flow controls whether it can preempt another QoS Flow with a lower priority
          level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible
          values include: "NotPreempt", "MayPreempt".
-        :paramtype preemption_capability: str or
-         ~mobile_network_management_client.models.PreemptionCapability
+        :paramtype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
         :keyword preemption_vulnerability: Default QoS Flow preemption vulnerability.  The Preemption
          Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
          priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
          Possible values include: "NotPreemptable", "Preemptable".
         :paramtype preemption_vulnerability: str or
-         ~mobile_network_management_client.models.PreemptionVulnerability
+         ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
         :keyword default_session_type: The default PDU session type, which is used if the UE does not
          request a specific session type. Possible values include: "IPv4", "IPv6".
-        :paramtype default_session_type: str or ~mobile_network_management_client.models.PduSessionType
+        :paramtype default_session_type: str or ~azure.mgmt.mobilenetwork.models.PduSessionType
         :keyword additional_allowed_session_types: Allowed session types in addition to the default
          session type.  Must not duplicate the default session type.
         :paramtype additional_allowed_session_types: list[str or
-         ~mobile_network_management_client.models.PduSessionType]
+         ~azure.mgmt.mobilenetwork.models.PduSessionType]
         :keyword allowed_services: Required. List of Services that can be used as part of this Sim
          Policy. The list must not contain duplicate items and must contain at least one item.
-        :paramtype allowed_services: list[~mobile_network_management_client.models.ServiceResourceId]
+        :paramtype allowed_services: list[~azure.mgmt.mobilenetwork.models.ServiceResourceId]
         """
         super(DataNetworkConfiguration, self).__init__(**kwargs)
         self.data_network = data_network
@@ -714,7 +638,7 @@ class DataNetworkListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of data networks in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.DataNetwork]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.DataNetwork]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -736,7 +660,7 @@ class DataNetworkListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of data networks in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.DataNetwork]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.DataNetwork]
         """
         super(DataNetworkListResult, self).__init__(**kwargs)
         self.value = value
@@ -818,9 +742,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~mobile_network_management_client.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.mobilenetwork.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~mobile_network_management_client.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.mobilenetwork.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -857,7 +781,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~mobile_network_management_client.models.ErrorDetail
+    :vartype error: ~azure.mgmt.mobilenetwork.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -872,7 +796,7 @@ class ErrorResponse(msrest.serialization.Model):
     ):
         """
         :keyword error: The error object.
-        :paramtype error: ~mobile_network_management_client.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.mobilenetwork.models.ErrorDetail
         """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
@@ -886,29 +810,53 @@ class InterfaceProperties(msrest.serialization.Model):
     :ivar name: Required. The logical name for this interface. This should match one of the
      interfaces configured on your Azure Stack Edge machine.
     :vartype name: str
+    :ivar ipv4_address: The IPv4 address.
+    :vartype ipv4_address: str
+    :ivar ipv4_subnet: The IPv4 subnet.
+    :vartype ipv4_subnet: str
+    :ivar ipv4_gateway: The default IPv4 gateway (router).
+    :vartype ipv4_gateway: str
     """
 
     _validation = {
         'name': {'required': True},
+        'ipv4_address': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'},
+        'ipv4_subnet': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$'},
+        'ipv4_gateway': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'ipv4_address': {'key': 'ipv4Address', 'type': 'str'},
+        'ipv4_subnet': {'key': 'ipv4Subnet', 'type': 'str'},
+        'ipv4_gateway': {'key': 'ipv4Gateway', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         name: str,
+        ipv4_address: Optional[str] = None,
+        ipv4_subnet: Optional[str] = None,
+        ipv4_gateway: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword name: Required. The logical name for this interface. This should match one of the
          interfaces configured on your Azure Stack Edge machine.
         :paramtype name: str
+        :keyword ipv4_address: The IPv4 address.
+        :paramtype ipv4_address: str
+        :keyword ipv4_subnet: The IPv4 subnet.
+        :paramtype ipv4_subnet: str
+        :keyword ipv4_gateway: The default IPv4 gateway (router).
+        :paramtype ipv4_gateway: str
         """
         super(InterfaceProperties, self).__init__(**kwargs)
         self.name = name
+        self.ipv4_address = ipv4_address
+        self.ipv4_subnet = ipv4_subnet
+        self.ipv4_gateway = ipv4_gateway
 
 
 class MobileNetwork(TrackedResource):
@@ -926,33 +874,22 @@ class MobileNetwork(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the mobile network resource. Possible
      values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
      "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar public_land_mobile_network_identifier: Required. The unique public land mobile network
      identifier for the network. This is made up of the Mobile Country Code and Mobile Network Code,
      as defined in https://www.itu.int/rec/T-REC-E.212. The values 001-01 and 001-001 can be used
      for testing and the values 999-99 and 999-999 can be used on internal private networks.
-    :vartype public_land_mobile_network_identifier: ~mobile_network_management_client.models.PlmnId
+    :vartype public_land_mobile_network_identifier: ~azure.mgmt.mobilenetwork.models.PlmnId
     :ivar service_key: The mobile network resource identifier.
     :vartype service_key: str
     """
@@ -961,6 +898,7 @@ class MobileNetwork(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'public_land_mobile_network_identifier': {'required': True},
@@ -971,14 +909,9 @@ class MobileNetwork(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'public_land_mobile_network_identifier': {'key': 'properties.publicLandMobileNetworkIdentifier', 'type': 'PlmnId'},
         'service_key': {'key': 'properties.serviceKey', 'type': 'str'},
@@ -990,12 +923,6 @@ class MobileNetwork(TrackedResource):
         location: str,
         public_land_mobile_network_identifier: "PlmnId",
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
@@ -1003,34 +930,13 @@ class MobileNetwork(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword public_land_mobile_network_identifier: Required. The unique public land mobile network
          identifier for the network. This is made up of the Mobile Country Code and Mobile Network Code,
          as defined in https://www.itu.int/rec/T-REC-E.212. The values 001-01 and 001-001 can be used
          for testing and the values 999-99 and 999-999 can be used on internal private networks.
-        :paramtype public_land_mobile_network_identifier:
-         ~mobile_network_management_client.models.PlmnId
+        :paramtype public_land_mobile_network_identifier: ~azure.mgmt.mobilenetwork.models.PlmnId
         """
         super(MobileNetwork, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.public_land_mobile_network_identifier = public_land_mobile_network_identifier
         self.service_key = None
@@ -1042,7 +948,7 @@ class MobileNetworkListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of mobile networks in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.MobileNetwork]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.MobileNetwork]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -1064,7 +970,7 @@ class MobileNetworkListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of mobile networks in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.MobileNetwork]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.MobileNetwork]
         """
         super(MobileNetworkListResult, self).__init__(**kwargs)
         self.value = value
@@ -1107,21 +1013,21 @@ class NaptConfiguration(msrest.serialization.Model):
 
     :ivar enabled: Whether NAPT is enabled for connections to this attachedDataNetwork. Possible
      values include: "Enabled", "Disabled". Default value: "Enabled".
-    :vartype enabled: str or ~mobile_network_management_client.models.NaptEnabled
+    :vartype enabled: str or ~azure.mgmt.mobilenetwork.models.NaptEnabled
     :ivar port_range: Range of port numbers to use as translated ports on each translated address.
      If not specified and NAPT is enabled, this range defaults to 1,024 - 65,535. (Ports under
      1,024 should not be used because these are special purpose ports reserved by IANA.).
-    :vartype port_range: ~mobile_network_management_client.models.PortRange
+    :vartype port_range: ~azure.mgmt.mobilenetwork.models.PortRange
     :ivar port_reuse_hold_time: The minimum time (in seconds) that will pass before a port that was
      used by a closed pinhole can be recycled for use by another pinhole. All hold times must be
      minimum 1 second.
-    :vartype port_reuse_hold_time: ~mobile_network_management_client.models.PortReuseHoldTimes
+    :vartype port_reuse_hold_time: ~azure.mgmt.mobilenetwork.models.PortReuseHoldTimes
     :ivar pinhole_limits: Maximum number of UDP and TCP pinholes that can be open simultaneously on
      the core interface.
     :vartype pinhole_limits: int
     :ivar pinhole_timeouts: Expiry times of inactive NAPT pinholes, in seconds. All timers must be
      at least 1 second.
-    :vartype pinhole_timeouts: ~mobile_network_management_client.models.PinholeTimeouts
+    :vartype pinhole_timeouts: ~azure.mgmt.mobilenetwork.models.PinholeTimeouts
     """
 
     _validation = {
@@ -1149,22 +1055,22 @@ class NaptConfiguration(msrest.serialization.Model):
         """
         :keyword enabled: Whether NAPT is enabled for connections to this attachedDataNetwork. Possible
          values include: "Enabled", "Disabled". Default value: "Enabled".
-        :paramtype enabled: str or ~mobile_network_management_client.models.NaptEnabled
+        :paramtype enabled: str or ~azure.mgmt.mobilenetwork.models.NaptEnabled
         :keyword port_range: Range of port numbers to use as translated ports on each translated
          address.
          If not specified and NAPT is enabled, this range defaults to 1,024 - 65,535. (Ports under
          1,024 should not be used because these are special purpose ports reserved by IANA.).
-        :paramtype port_range: ~mobile_network_management_client.models.PortRange
+        :paramtype port_range: ~azure.mgmt.mobilenetwork.models.PortRange
         :keyword port_reuse_hold_time: The minimum time (in seconds) that will pass before a port that
          was used by a closed pinhole can be recycled for use by another pinhole. All hold times must be
          minimum 1 second.
-        :paramtype port_reuse_hold_time: ~mobile_network_management_client.models.PortReuseHoldTimes
+        :paramtype port_reuse_hold_time: ~azure.mgmt.mobilenetwork.models.PortReuseHoldTimes
         :keyword pinhole_limits: Maximum number of UDP and TCP pinholes that can be open simultaneously
          on the core interface.
         :paramtype pinhole_limits: int
         :keyword pinhole_timeouts: Expiry times of inactive NAPT pinholes, in seconds. All timers must
          be at least 1 second.
-        :paramtype pinhole_timeouts: ~mobile_network_management_client.models.PinholeTimeouts
+        :paramtype pinhole_timeouts: ~azure.mgmt.mobilenetwork.models.PinholeTimeouts
         """
         super(NaptConfiguration, self).__init__(**kwargs)
         self.enabled = enabled
@@ -1184,7 +1090,7 @@ class Operation(msrest.serialization.Model):
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :ivar display: The object that represents the operation.
-    :vartype display: ~mobile_network_management_client.models.OperationDisplay
+    :vartype display: ~azure.mgmt.mobilenetwork.models.OperationDisplay
     """
 
     _validation = {
@@ -1268,7 +1174,7 @@ class OperationList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of Microsoft.MobileNetwork operations.
-    :vartype value: list[~mobile_network_management_client.models.Operation]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.Operation]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -1309,49 +1215,37 @@ class PacketCoreControlPlane(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the packet core control plane resource.
      Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
      "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar mobile_network: Required. Mobile network that this packet core control plane belongs to.
-    :vartype mobile_network: ~mobile_network_management_client.models.MobileNetworkResourceId
+    :vartype mobile_network: ~azure.mgmt.mobilenetwork.models.MobileNetworkResourceId
     :ivar custom_location: Azure ARC custom location where the packet core is deployed.
-    :vartype custom_location: ~mobile_network_management_client.models.CustomLocationResourceId
+    :vartype custom_location: ~azure.mgmt.mobilenetwork.models.CustomLocationResourceId
     :ivar core_network_technology: The core network technology generation. Possible values include:
      "5GC", "EPC".
-    :vartype core_network_technology: str or
-     ~mobile_network_management_client.models.CoreNetworkType
+    :vartype core_network_technology: str or ~azure.mgmt.mobilenetwork.models.CoreNetworkType
     :ivar version: The version of the packet core software that is deployed.
     :vartype version: str
     :ivar control_plane_access_interface: Required. The control plane interface on the access
      network. In 5G networks this is called as N2 interface whereas in 4G networks this is called as
      S1-MME interface.
-    :vartype control_plane_access_interface:
-     ~mobile_network_management_client.models.InterfaceProperties
+    :vartype control_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'mobile_network': {'required': True},
@@ -1362,14 +1256,9 @@ class PacketCoreControlPlane(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'mobile_network': {'key': 'properties.mobileNetwork', 'type': 'MobileNetworkResourceId'},
         'custom_location': {'key': 'properties.customLocation', 'type': 'CustomLocationResourceId'},
@@ -1385,12 +1274,6 @@ class PacketCoreControlPlane(TrackedResource):
         mobile_network: "MobileNetworkResourceId",
         control_plane_access_interface: "InterfaceProperties",
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         custom_location: Optional["CustomLocationResourceId"] = None,
         core_network_technology: Optional[Union[str, "CoreNetworkType"]] = None,
         version: Optional[str] = None,
@@ -1401,44 +1284,22 @@ class PacketCoreControlPlane(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword mobile_network: Required. Mobile network that this packet core control plane belongs
          to.
-        :paramtype mobile_network: ~mobile_network_management_client.models.MobileNetworkResourceId
+        :paramtype mobile_network: ~azure.mgmt.mobilenetwork.models.MobileNetworkResourceId
         :keyword custom_location: Azure ARC custom location where the packet core is deployed.
-        :paramtype custom_location: ~mobile_network_management_client.models.CustomLocationResourceId
+        :paramtype custom_location: ~azure.mgmt.mobilenetwork.models.CustomLocationResourceId
         :keyword core_network_technology: The core network technology generation. Possible values
          include: "5GC", "EPC".
-        :paramtype core_network_technology: str or
-         ~mobile_network_management_client.models.CoreNetworkType
+        :paramtype core_network_technology: str or ~azure.mgmt.mobilenetwork.models.CoreNetworkType
         :keyword version: The version of the packet core software that is deployed.
         :paramtype version: str
         :keyword control_plane_access_interface: Required. The control plane interface on the access
          network. In 5G networks this is called as N2 interface whereas in 4G networks this is called as
          S1-MME interface.
-        :paramtype control_plane_access_interface:
-         ~mobile_network_management_client.models.InterfaceProperties
+        :paramtype control_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
         """
         super(PacketCoreControlPlane, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.mobile_network = mobile_network
         self.custom_location = custom_location
@@ -1453,7 +1314,7 @@ class PacketCoreControlPlaneListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of packet core control planes in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.PacketCoreControlPlane]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlane]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -1475,7 +1336,7 @@ class PacketCoreControlPlaneListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of packet core control planes in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.PacketCoreControlPlane]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreControlPlane]
         """
         super(PacketCoreControlPlaneListResult, self).__init__(**kwargs)
         self.value = value
@@ -1497,39 +1358,28 @@ class PacketCoreDataPlane(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the packet core data plane resource.
      Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
      "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar user_plane_access_interface: Required. The user plane interface on the access network. In
      5G networks this is called as N3 interface whereas in 4G networks this is called the S1-U
      interface.
-    :vartype user_plane_access_interface:
-     ~mobile_network_management_client.models.InterfaceProperties
+    :vartype user_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'user_plane_access_interface': {'required': True},
@@ -1539,14 +1389,9 @@ class PacketCoreDataPlane(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'user_plane_access_interface': {'key': 'properties.userPlaneAccessInterface', 'type': 'InterfaceProperties'},
     }
@@ -1557,12 +1402,6 @@ class PacketCoreDataPlane(TrackedResource):
         location: str,
         user_plane_access_interface: "InterfaceProperties",
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
@@ -1570,33 +1409,12 @@ class PacketCoreDataPlane(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword user_plane_access_interface: Required. The user plane interface on the access network.
          In 5G networks this is called as N3 interface whereas in 4G networks this is called the S1-U
          interface.
-        :paramtype user_plane_access_interface:
-         ~mobile_network_management_client.models.InterfaceProperties
+        :paramtype user_plane_access_interface: ~azure.mgmt.mobilenetwork.models.InterfaceProperties
         """
         super(PacketCoreDataPlane, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.user_plane_access_interface = user_plane_access_interface
 
@@ -1607,7 +1425,7 @@ class PacketCoreDataPlaneListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of packet core data planes in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.PacketCoreDataPlane]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreDataPlane]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -1629,7 +1447,7 @@ class PacketCoreDataPlaneListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of packet core data planes in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.PacketCoreDataPlane]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.PacketCoreDataPlane]
         """
         super(PacketCoreDataPlaneListResult, self).__init__(**kwargs)
         self.value = value
@@ -1651,15 +1469,14 @@ class PccRuleConfiguration(msrest.serialization.Model):
     :vartype rule_precedence: int
     :ivar rule_qos_policy: The QoS policy to use for packets matching this rule. If this field is
      null then the Service will define the QoS settings.
-    :vartype rule_qos_policy: ~mobile_network_management_client.models.PccRuleQosPolicy
+    :vartype rule_qos_policy: ~azure.mgmt.mobilenetwork.models.PccRuleQosPolicy
     :ivar traffic_control: Determines whether flows that match this PCC Rule are permitted.
      Possible values include: "Enabled", "Blocked".
-    :vartype traffic_control: str or
-     ~mobile_network_management_client.models.TrafficControlPermission
+    :vartype traffic_control: str or ~azure.mgmt.mobilenetwork.models.TrafficControlPermission
     :ivar service_data_flow_templates: Required. The set of service data flow templates to use for
      this PCC Rule.
     :vartype service_data_flow_templates:
-     list[~mobile_network_management_client.models.ServiceDataFlowTemplate]
+     list[~azure.mgmt.mobilenetwork.models.ServiceDataFlowTemplate]
     """
 
     _validation = {
@@ -1697,15 +1514,14 @@ class PccRuleConfiguration(msrest.serialization.Model):
         :paramtype rule_precedence: int
         :keyword rule_qos_policy: The QoS policy to use for packets matching this rule. If this field
          is null then the Service will define the QoS settings.
-        :paramtype rule_qos_policy: ~mobile_network_management_client.models.PccRuleQosPolicy
+        :paramtype rule_qos_policy: ~azure.mgmt.mobilenetwork.models.PccRuleQosPolicy
         :keyword traffic_control: Determines whether flows that match this PCC Rule are permitted.
          Possible values include: "Enabled", "Blocked".
-        :paramtype traffic_control: str or
-         ~mobile_network_management_client.models.TrafficControlPermission
+        :paramtype traffic_control: str or ~azure.mgmt.mobilenetwork.models.TrafficControlPermission
         :keyword service_data_flow_templates: Required. The set of service data flow templates to use
          for this PCC Rule.
         :paramtype service_data_flow_templates:
-         list[~mobile_network_management_client.models.ServiceDataFlowTemplate]
+         list[~azure.mgmt.mobilenetwork.models.ServiceDataFlowTemplate]
         """
         super(PccRuleConfiguration, self).__init__(**kwargs)
         self.rule_name = rule_name
@@ -1736,17 +1552,16 @@ class QosPolicy(msrest.serialization.Model):
      QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
      TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values include:
      "NotPreempt", "MayPreempt".
-    :vartype preemption_capability: str or
-     ~mobile_network_management_client.models.PreemptionCapability
+    :vartype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
     :ivar preemption_vulnerability: QoS Flow preemption vulnerability.  The Preemption
      Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
      priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
      Possible values include: "NotPreemptable", "Preemptable".
     :vartype preemption_vulnerability: str or
-     ~mobile_network_management_client.models.PreemptionVulnerability
+     ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
     :ivar maximum_bit_rate: Required. The Maximum Bit Rate (MBR) for all service data flows that
      use this PCC Rule or Service.
-    :vartype maximum_bit_rate: ~mobile_network_management_client.models.Ambr
+    :vartype maximum_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
     """
 
     _validation = {
@@ -1791,17 +1606,16 @@ class QosPolicy(msrest.serialization.Model):
          QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
          TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values include:
          "NotPreempt", "MayPreempt".
-        :paramtype preemption_capability: str or
-         ~mobile_network_management_client.models.PreemptionCapability
+        :paramtype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
         :keyword preemption_vulnerability: QoS Flow preemption vulnerability.  The Preemption
          Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
          priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
          Possible values include: "NotPreemptable", "Preemptable".
         :paramtype preemption_vulnerability: str or
-         ~mobile_network_management_client.models.PreemptionVulnerability
+         ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
         :keyword maximum_bit_rate: Required. The Maximum Bit Rate (MBR) for all service data flows that
          use this PCC Rule or Service.
-        :paramtype maximum_bit_rate: ~mobile_network_management_client.models.Ambr
+        :paramtype maximum_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
         """
         super(QosPolicy, self).__init__(**kwargs)
         self.five_qi = five_qi
@@ -1832,21 +1646,20 @@ class PccRuleQosPolicy(QosPolicy):
      QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
      TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values include:
      "NotPreempt", "MayPreempt".
-    :vartype preemption_capability: str or
-     ~mobile_network_management_client.models.PreemptionCapability
+    :vartype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
     :ivar preemption_vulnerability: QoS Flow preemption vulnerability.  The Preemption
      Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
      priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
      Possible values include: "NotPreemptable", "Preemptable".
     :vartype preemption_vulnerability: str or
-     ~mobile_network_management_client.models.PreemptionVulnerability
+     ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
     :ivar maximum_bit_rate: Required. The Maximum Bit Rate (MBR) for all service data flows that
      use this PCC Rule or Service.
-    :vartype maximum_bit_rate: ~mobile_network_management_client.models.Ambr
+    :vartype maximum_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
     :ivar guaranteed_bit_rate: The Guaranteed Bit Rate (GBR) for all service data flows that use
      this PCC Rule. This is an optional setting. If you do not provide a value, there will be no GBR
      set for the PCC Rule that uses this QoS definition.
-    :vartype guaranteed_bit_rate: ~mobile_network_management_client.models.Ambr
+    :vartype guaranteed_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
     """
 
     _validation = {
@@ -1893,21 +1706,20 @@ class PccRuleQosPolicy(QosPolicy):
          QoS Flow controls whether it can preempt another QoS Flow with a lower priority level. See 3GPP
          TS23.501 section 5.7.2.2 for a full description of the ARP parameters. Possible values include:
          "NotPreempt", "MayPreempt".
-        :paramtype preemption_capability: str or
-         ~mobile_network_management_client.models.PreemptionCapability
+        :paramtype preemption_capability: str or ~azure.mgmt.mobilenetwork.models.PreemptionCapability
         :keyword preemption_vulnerability: QoS Flow preemption vulnerability.  The Preemption
          Vulnerability of a QoS Flow controls whether it can be preempted by QoS Flow with a higher
          priority level. See 3GPP TS23.501 section 5.7.2.2 for a full description of the ARP parameters.
          Possible values include: "NotPreemptable", "Preemptable".
         :paramtype preemption_vulnerability: str or
-         ~mobile_network_management_client.models.PreemptionVulnerability
+         ~azure.mgmt.mobilenetwork.models.PreemptionVulnerability
         :keyword maximum_bit_rate: Required. The Maximum Bit Rate (MBR) for all service data flows that
          use this PCC Rule or Service.
-        :paramtype maximum_bit_rate: ~mobile_network_management_client.models.Ambr
+        :paramtype maximum_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
         :keyword guaranteed_bit_rate: The Guaranteed Bit Rate (GBR) for all service data flows that use
          this PCC Rule. This is an optional setting. If you do not provide a value, there will be no GBR
          set for the PCC Rule that uses this QoS definition.
-        :paramtype guaranteed_bit_rate: ~mobile_network_management_client.models.Ambr
+        :paramtype guaranteed_bit_rate: ~azure.mgmt.mobilenetwork.models.Ambr
         """
         super(PccRuleQosPolicy, self).__init__(five_qi=five_qi, allocation_and_retention_priority_level=allocation_and_retention_priority_level, preemption_capability=preemption_capability, preemption_vulnerability=preemption_vulnerability, maximum_bit_rate=maximum_bit_rate, **kwargs)
         self.guaranteed_bit_rate = guaranteed_bit_rate
@@ -2097,27 +1909,16 @@ class Service(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the service resource. Possible values
      include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar service_precedence: Required. A precedence value that is used to decide between services
      when identifying the QoS values to use for a particular Sim. A lower value means a higher
      priority. This value should be unique among all services configured in the Mobile Network.
@@ -2125,15 +1926,16 @@ class Service(TrackedResource):
     :ivar service_qos_policy: The QoS policy to use for packets matching this service. This can be
      overridden for particular flows using the ruleQosPolicy field in a PccRuleConfiguration. If
      this field is null then the UE's simPolicy will define the QoS settings.
-    :vartype service_qos_policy: ~mobile_network_management_client.models.QosPolicy
+    :vartype service_qos_policy: ~azure.mgmt.mobilenetwork.models.QosPolicy
     :ivar pcc_rules: Required. The set of PCC Rules that make up this service.
-    :vartype pcc_rules: list[~mobile_network_management_client.models.PccRuleConfiguration]
+    :vartype pcc_rules: list[~azure.mgmt.mobilenetwork.models.PccRuleConfiguration]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'service_precedence': {'required': True, 'maximum': 255, 'minimum': 0},
@@ -2144,14 +1946,9 @@ class Service(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'service_precedence': {'key': 'properties.servicePrecedence', 'type': 'int'},
         'service_qos_policy': {'key': 'properties.serviceQosPolicy', 'type': 'QosPolicy'},
@@ -2165,12 +1962,6 @@ class Service(TrackedResource):
         service_precedence: int,
         pcc_rules: List["PccRuleConfiguration"],
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         service_qos_policy: Optional["QosPolicy"] = None,
         **kwargs
     ):
@@ -2179,20 +1970,6 @@ class Service(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword service_precedence: Required. A precedence value that is used to decide between
          services when identifying the QoS values to use for a particular Sim. A lower value means a
          higher priority. This value should be unique among all services configured in the Mobile
@@ -2201,17 +1978,11 @@ class Service(TrackedResource):
         :keyword service_qos_policy: The QoS policy to use for packets matching this service. This can
          be overridden for particular flows using the ruleQosPolicy field in a PccRuleConfiguration. If
          this field is null then the UE's simPolicy will define the QoS settings.
-        :paramtype service_qos_policy: ~mobile_network_management_client.models.QosPolicy
+        :paramtype service_qos_policy: ~azure.mgmt.mobilenetwork.models.QosPolicy
         :keyword pcc_rules: Required. The set of PCC Rules that make up this service.
-        :paramtype pcc_rules: list[~mobile_network_management_client.models.PccRuleConfiguration]
+        :paramtype pcc_rules: list[~azure.mgmt.mobilenetwork.models.PccRuleConfiguration]
         """
         super(Service, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.service_precedence = service_precedence
         self.service_qos_policy = service_qos_policy
@@ -2229,7 +2000,7 @@ class ServiceDataFlowTemplate(msrest.serialization.Model):
     :vartype template_name: str
     :ivar direction: Required. The direction of this flow. Possible values include: "Uplink",
      "Downlink", "Bidirectional".
-    :vartype direction: str or ~mobile_network_management_client.models.SdfDirection
+    :vartype direction: str or ~azure.mgmt.mobilenetwork.models.SdfDirection
     :ivar protocol: Required. A list of the allowed protocol(s) for this flow. If you want this
      flow to be able to use any protocol within the internet protocol suite, use the value ``ip``.
      If you only want to allow a selection of protocols, you must use the corresponding IANA
@@ -2285,7 +2056,7 @@ class ServiceDataFlowTemplate(msrest.serialization.Model):
         :paramtype template_name: str
         :keyword direction: Required. The direction of this flow. Possible values include: "Uplink",
          "Downlink", "Bidirectional".
-        :paramtype direction: str or ~mobile_network_management_client.models.SdfDirection
+        :paramtype direction: str or ~azure.mgmt.mobilenetwork.models.SdfDirection
         :keyword protocol: Required. A list of the allowed protocol(s) for this flow. If you want this
          flow to be able to use any protocol within the internet protocol suite, use the value ``ip``.
          If you only want to allow a selection of protocols, you must use the corresponding IANA
@@ -2322,7 +2093,7 @@ class ServiceListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of Services.
-    :vartype value: list[~mobile_network_management_client.models.Service]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.Service]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -2344,7 +2115,7 @@ class ServiceListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of Services.
-        :paramtype value: list[~mobile_network_management_client.models.Service]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.Service]
         """
         super(ServiceListResult, self).__init__(**kwargs)
         self.value = value
@@ -2397,31 +2168,19 @@ class Sim(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the sim resource. Possible values include:
      "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
-    :ivar configuration_state: The configuration state of the sim resource - complete or
-     incomplete. Possible values include: "Incomplete", "Complete".
-    :vartype configuration_state: str or
-     ~mobile_network_management_client.models.ConfigurationState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
+    :ivar sim_state: The state of the sim resource. Possible values include: "Disabled", "Enabled",
+     "Invalid".
+    :vartype sim_state: str or ~azure.mgmt.mobilenetwork.models.SimState
     :ivar international_mobile_subscriber_identity: Required. The International Mobile Subscriber
      Identity (IMSI) for the sim.
     :vartype international_mobile_subscriber_identity: str
@@ -2432,26 +2191,26 @@ class Sim(TrackedResource):
     :ivar operator_key_code: The Opc value for the sim.
     :vartype operator_key_code: str
     :ivar mobile_network: Mobile network that this sim belongs to.
-    :vartype mobile_network: ~mobile_network_management_client.models.MobileNetworkResourceId
+    :vartype mobile_network: ~azure.mgmt.mobilenetwork.models.MobileNetworkResourceId
     :ivar device_type: An optional free-form text field that can be used to record the device type
      this sim is associated with, for example 'Video camera'. The Azure portal allows Sims to be
      grouped and filtered based on this value.
     :vartype device_type: str
     :ivar sim_policy: The simPolicy used by this sim.
-    :vartype sim_policy: ~mobile_network_management_client.models.SimPolicyResourceId
+    :vartype sim_policy: ~azure.mgmt.mobilenetwork.models.SimPolicyResourceId
     :ivar static_ip_configuration: A list of static IP addresses assigned to this sim. Each address
      is assigned at a defined network scope, made up of {attached data network, slice}.
-    :vartype static_ip_configuration:
-     list[~mobile_network_management_client.models.SimStaticIpProperties]
+    :vartype static_ip_configuration: list[~azure.mgmt.mobilenetwork.models.SimStaticIpProperties]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
-        'configuration_state': {'readonly': True},
+        'sim_state': {'readonly': True},
         'international_mobile_subscriber_identity': {'required': True, 'pattern': r'^[0-9]{5,15}$'},
         'integrated_circuit_card_identifier': {'pattern': r'^89[0-9]{17,18}$'},
         'authentication_key': {'pattern': r'^[0-9a-fA-F]{32}$'},
@@ -2463,16 +2222,11 @@ class Sim(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'configuration_state': {'key': 'properties.configurationState', 'type': 'str'},
+        'sim_state': {'key': 'properties.simState', 'type': 'str'},
         'international_mobile_subscriber_identity': {'key': 'properties.internationalMobileSubscriberIdentity', 'type': 'str'},
         'integrated_circuit_card_identifier': {'key': 'properties.integratedCircuitCardIdentifier', 'type': 'str'},
         'authentication_key': {'key': 'properties.authenticationKey', 'type': 'str'},
@@ -2489,12 +2243,6 @@ class Sim(TrackedResource):
         location: str,
         international_mobile_subscriber_identity: str,
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         integrated_circuit_card_identifier: Optional[str] = None,
         authentication_key: Optional[str] = None,
         operator_key_code: Optional[str] = None,
@@ -2509,20 +2257,6 @@ class Sim(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword international_mobile_subscriber_identity: Required. The International Mobile
          Subscriber Identity (IMSI) for the sim.
         :paramtype international_mobile_subscriber_identity: str
@@ -2534,27 +2268,21 @@ class Sim(TrackedResource):
         :keyword operator_key_code: The Opc value for the sim.
         :paramtype operator_key_code: str
         :keyword mobile_network: Mobile network that this sim belongs to.
-        :paramtype mobile_network: ~mobile_network_management_client.models.MobileNetworkResourceId
+        :paramtype mobile_network: ~azure.mgmt.mobilenetwork.models.MobileNetworkResourceId
         :keyword device_type: An optional free-form text field that can be used to record the device
          type this sim is associated with, for example 'Video camera'. The Azure portal allows Sims to
          be grouped and filtered based on this value.
         :paramtype device_type: str
         :keyword sim_policy: The simPolicy used by this sim.
-        :paramtype sim_policy: ~mobile_network_management_client.models.SimPolicyResourceId
+        :paramtype sim_policy: ~azure.mgmt.mobilenetwork.models.SimPolicyResourceId
         :keyword static_ip_configuration: A list of static IP addresses assigned to this sim. Each
          address is assigned at a defined network scope, made up of {attached data network, slice}.
         :paramtype static_ip_configuration:
-         list[~mobile_network_management_client.models.SimStaticIpProperties]
+         list[~azure.mgmt.mobilenetwork.models.SimStaticIpProperties]
         """
         super(Sim, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
-        self.configuration_state = None
+        self.sim_state = None
         self.international_mobile_subscriber_identity = international_mobile_subscriber_identity
         self.integrated_circuit_card_identifier = integrated_circuit_card_identifier
         self.authentication_key = authentication_key
@@ -2571,7 +2299,7 @@ class SimIdListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of sim profile ids in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.SubResource]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.SubResource]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -2593,7 +2321,7 @@ class SimIdListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of sim profile ids in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.SubResource]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.SubResource]
         """
         super(SimIdListResult, self).__init__(**kwargs)
         self.value = value
@@ -2606,7 +2334,7 @@ class SimListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of Sims in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.Sim]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.Sim]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -2628,7 +2356,7 @@ class SimListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of Sims in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.Sim]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.Sim]
         """
         super(SimListResult, self).__init__(**kwargs)
         self.value = value
@@ -2650,34 +2378,23 @@ class SimPolicy(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the sim policy resource. Possible values
      include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar ue_ambr: Required. Aggregate maximum bit rate across all non-GBR QoS flows of all PDU
      sessions of a given UE. See 3GPP TS23.501 section 5.7.2.6 for a full description of the
      UE-AMBR.
-    :vartype ue_ambr: ~mobile_network_management_client.models.Ambr
+    :vartype ue_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
     :ivar default_slice: Required. The default slice to use if the UE does not explicitly specify
      it.  This slice must exist in the ``sliceConfigurations`` map.
-    :vartype default_slice: ~mobile_network_management_client.models.SliceResourceId
+    :vartype default_slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
     :ivar rfsp_index: RAT/Frequency Selection Priority Index, defined in 3GPP TS 36.413.  This is
      an optional setting and by default is unspecified.
     :vartype rfsp_index: int
@@ -2686,14 +2403,14 @@ class SimPolicy(TrackedResource):
     :vartype registration_timer: int
     :ivar slice_configurations: Required. The allowed slices and the settings to use for them. The
      list must not contain duplicate items and must contain at least one item.
-    :vartype slice_configurations:
-     list[~mobile_network_management_client.models.SliceConfiguration]
+    :vartype slice_configurations: list[~azure.mgmt.mobilenetwork.models.SliceConfiguration]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'ue_ambr': {'required': True},
@@ -2707,14 +2424,9 @@ class SimPolicy(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'ue_ambr': {'key': 'properties.ueAmbr', 'type': 'Ambr'},
         'default_slice': {'key': 'properties.defaultSlice', 'type': 'SliceResourceId'},
@@ -2731,12 +2443,6 @@ class SimPolicy(TrackedResource):
         default_slice: "SliceResourceId",
         slice_configurations: List["SliceConfiguration"],
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         rfsp_index: Optional[int] = None,
         registration_timer: Optional[int] = 3240,
         **kwargs
@@ -2746,27 +2452,13 @@ class SimPolicy(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword ue_ambr: Required. Aggregate maximum bit rate across all non-GBR QoS flows of all PDU
          sessions of a given UE. See 3GPP TS23.501 section 5.7.2.6 for a full description of the
          UE-AMBR.
-        :paramtype ue_ambr: ~mobile_network_management_client.models.Ambr
+        :paramtype ue_ambr: ~azure.mgmt.mobilenetwork.models.Ambr
         :keyword default_slice: Required. The default slice to use if the UE does not explicitly
          specify it.  This slice must exist in the ``sliceConfigurations`` map.
-        :paramtype default_slice: ~mobile_network_management_client.models.SliceResourceId
+        :paramtype default_slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
         :keyword rfsp_index: RAT/Frequency Selection Priority Index, defined in 3GPP TS 36.413.  This
          is an optional setting and by default is unspecified.
         :paramtype rfsp_index: int
@@ -2775,16 +2467,9 @@ class SimPolicy(TrackedResource):
         :paramtype registration_timer: int
         :keyword slice_configurations: Required. The allowed slices and the settings to use for them.
          The list must not contain duplicate items and must contain at least one item.
-        :paramtype slice_configurations:
-         list[~mobile_network_management_client.models.SliceConfiguration]
+        :paramtype slice_configurations: list[~azure.mgmt.mobilenetwork.models.SliceConfiguration]
         """
         super(SimPolicy, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.ue_ambr = ue_ambr
         self.default_slice = default_slice
@@ -2799,7 +2484,7 @@ class SimPolicyListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of SimPolicies.
-    :vartype value: list[~mobile_network_management_client.models.SimPolicy]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.SimPolicy]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -2821,7 +2506,7 @@ class SimPolicyListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of SimPolicies.
-        :paramtype value: list[~mobile_network_management_client.models.SimPolicy]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.SimPolicy]
         """
         super(SimPolicyListResult, self).__init__(**kwargs)
         self.value = value
@@ -2865,13 +2550,12 @@ class SimStaticIpProperties(msrest.serialization.Model):
     :ivar attached_data_network: The attached data network on which the static IP address will be
      used. The combination of attachedDataNetwork and slice defines the network scope of the IP
      address.
-    :vartype attached_data_network:
-     ~mobile_network_management_client.models.AttachedDataNetworkResourceId
+    :vartype attached_data_network: ~azure.mgmt.mobilenetwork.models.AttachedDataNetworkResourceId
     :ivar slice: The network slice on which the static IP address will be used. The combination of
      attachedDataNetwork and slice defines the network scope of the IP address.
-    :vartype slice: ~mobile_network_management_client.models.SliceResourceId
+    :vartype slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
     :ivar static_ip: The static IP configuration for the sim to use at the defined network scope.
-    :vartype static_ip: ~mobile_network_management_client.models.SimStaticIpPropertiesStaticIp
+    :vartype static_ip: ~azure.mgmt.mobilenetwork.models.SimStaticIpPropertiesStaticIp
     """
 
     _attribute_map = {
@@ -2893,13 +2577,13 @@ class SimStaticIpProperties(msrest.serialization.Model):
          be used. The combination of attachedDataNetwork and slice defines the network scope of the IP
          address.
         :paramtype attached_data_network:
-         ~mobile_network_management_client.models.AttachedDataNetworkResourceId
+         ~azure.mgmt.mobilenetwork.models.AttachedDataNetworkResourceId
         :keyword slice: The network slice on which the static IP address will be used. The combination
          of attachedDataNetwork and slice defines the network scope of the IP address.
-        :paramtype slice: ~mobile_network_management_client.models.SliceResourceId
+        :paramtype slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
         :keyword static_ip: The static IP configuration for the sim to use at the defined network
          scope.
-        :paramtype static_ip: ~mobile_network_management_client.models.SimStaticIpPropertiesStaticIp
+        :paramtype static_ip: ~azure.mgmt.mobilenetwork.models.SimStaticIpPropertiesStaticIp
         """
         super(SimStaticIpProperties, self).__init__(**kwargs)
         self.attached_data_network = attached_data_network
@@ -2953,37 +2637,27 @@ class Site(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the site resource. **TODO**\ : Confirm if
      this is needed. Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting",
      "Failed", "Canceled", "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar network_functions: An array of ids of the network functions deployed on the site,
      maintained by the user.
-    :vartype network_functions: list[~mobile_network_management_client.models.SubResource]
+    :vartype network_functions: list[~azure.mgmt.mobilenetwork.models.SubResource]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -2992,14 +2666,9 @@ class Site(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'network_functions': {'key': 'properties.networkFunctions', 'type': '[SubResource]'},
     }
@@ -3009,12 +2678,6 @@ class Site(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         network_functions: Optional[List["SubResource"]] = None,
         **kwargs
     ):
@@ -3023,31 +2686,11 @@ class Site(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword network_functions: An array of ids of the network functions deployed on the site,
          maintained by the user.
-        :paramtype network_functions: list[~mobile_network_management_client.models.SubResource]
+        :paramtype network_functions: list[~azure.mgmt.mobilenetwork.models.SubResource]
         """
         super(Site, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.network_functions = network_functions
 
@@ -3058,7 +2701,7 @@ class SiteListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of sites in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.Site]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.Site]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -3080,7 +2723,7 @@ class SiteListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of sites in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.Site]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.Site]
         """
         super(SiteListResult, self).__init__(**kwargs)
         self.value = value
@@ -3102,30 +2745,19 @@ class Slice(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mobilenetwork.models.SystemData
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: Required. The geo-location where the resource lives.
     :vartype location: str
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the network slice resource. Possible values
      include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
-    :vartype provisioning_state: str or ~mobile_network_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.mobilenetwork.models.ProvisioningState
     :ivar snssai: Required. The S-NSSAI (single network slice selection assistance information).
      Unique at the scope of a MobileNetwork.
-    :vartype snssai: ~mobile_network_management_client.models.Snssai
+    :vartype snssai: ~azure.mgmt.mobilenetwork.models.Snssai
     :ivar description: An optional description for this network slice.
     :vartype description: str
     """
@@ -3134,6 +2766,7 @@ class Slice(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'snssai': {'required': True},
@@ -3143,14 +2776,9 @@ class Slice(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
-        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'snssai': {'key': 'properties.snssai', 'type': 'Snssai'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -3162,12 +2790,6 @@ class Slice(TrackedResource):
         location: str,
         snssai: "Snssai",
         tags: Optional[Dict[str, str]] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -3176,33 +2798,13 @@ class Slice(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: Required. The geo-location where the resource lives.
         :paramtype location: str
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~mobile_network_management_client.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
         :keyword snssai: Required. The S-NSSAI (single network slice selection assistance information).
          Unique at the scope of a MobileNetwork.
-        :paramtype snssai: ~mobile_network_management_client.models.Snssai
+        :paramtype snssai: ~azure.mgmt.mobilenetwork.models.Snssai
         :keyword description: An optional description for this network slice.
         :paramtype description: str
         """
         super(Slice, self).__init__(tags=tags, location=location, **kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
         self.provisioning_state = None
         self.snssai = snssai
         self.description = description
@@ -3214,15 +2816,15 @@ class SliceConfiguration(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar slice: Required. A reference to the Slice that these settings apply to.
-    :vartype slice: ~mobile_network_management_client.models.SliceResourceId
+    :vartype slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
     :ivar default_data_network: Required. The default data network to use if the UE does not
      explicitly specify it.  Configuration for this object must exist in the
      ``dataNetworkConfigurations`` map.
-    :vartype default_data_network: ~mobile_network_management_client.models.DataNetworkResourceId
+    :vartype default_data_network: ~azure.mgmt.mobilenetwork.models.DataNetworkResourceId
     :ivar data_network_configurations: Required. The allowed data networks and the settings to use
      for them. The list must not contain duplicate items and must contain at least one item.
     :vartype data_network_configurations:
-     list[~mobile_network_management_client.models.DataNetworkConfiguration]
+     list[~azure.mgmt.mobilenetwork.models.DataNetworkConfiguration]
     """
 
     _validation = {
@@ -3247,15 +2849,15 @@ class SliceConfiguration(msrest.serialization.Model):
     ):
         """
         :keyword slice: Required. A reference to the Slice that these settings apply to.
-        :paramtype slice: ~mobile_network_management_client.models.SliceResourceId
+        :paramtype slice: ~azure.mgmt.mobilenetwork.models.SliceResourceId
         :keyword default_data_network: Required. The default data network to use if the UE does not
          explicitly specify it.  Configuration for this object must exist in the
          ``dataNetworkConfigurations`` map.
-        :paramtype default_data_network: ~mobile_network_management_client.models.DataNetworkResourceId
+        :paramtype default_data_network: ~azure.mgmt.mobilenetwork.models.DataNetworkResourceId
         :keyword data_network_configurations: Required. The allowed data networks and the settings to
          use for them. The list must not contain duplicate items and must contain at least one item.
         :paramtype data_network_configurations:
-         list[~mobile_network_management_client.models.DataNetworkConfiguration]
+         list[~azure.mgmt.mobilenetwork.models.DataNetworkConfiguration]
         """
         super(SliceConfiguration, self).__init__(**kwargs)
         self.slice = slice
@@ -3269,7 +2871,7 @@ class SliceListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of data networks in a resource group.
-    :vartype value: list[~mobile_network_management_client.models.Slice]
+    :vartype value: list[~azure.mgmt.mobilenetwork.models.Slice]
     :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
@@ -3291,7 +2893,7 @@ class SliceListResult(msrest.serialization.Model):
     ):
         """
         :keyword value: A list of data networks in a resource group.
-        :paramtype value: list[~mobile_network_management_client.models.Slice]
+        :paramtype value: list[~azure.mgmt.mobilenetwork.models.Slice]
         """
         super(SliceListResult, self).__init__(**kwargs)
         self.value = value
@@ -3397,6 +2999,70 @@ class SubResource(msrest.serialization.Model):
         """
         super(SubResource, self).__init__(**kwargs)
         self.id = id
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.mobilenetwork.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.mobilenetwork.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.mobilenetwork.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.mobilenetwork.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class TagsObject(msrest.serialization.Model):

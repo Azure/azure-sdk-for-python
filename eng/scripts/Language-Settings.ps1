@@ -5,6 +5,8 @@ $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 
+."$PSScriptRoot/docs/Docs-ToC.ps1"
+
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()
@@ -297,6 +299,8 @@ $PackageExclusions = @{
   'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+
+  'azure-keyvault' = 'Metapackages should not be documented';
 }
 
 function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {

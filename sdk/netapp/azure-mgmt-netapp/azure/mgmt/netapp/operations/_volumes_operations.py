@@ -36,7 +36,7 @@ def build_list_request(
     pool_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes')
@@ -74,7 +74,7 @@ def build_get_request(
     volume_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}')
@@ -118,7 +118,7 @@ def build_create_or_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}')
@@ -166,7 +166,7 @@ def build_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}')
@@ -207,9 +207,11 @@ def build_delete_request_initial(
     account_name: str,
     pool_name: str,
     volume_name: str,
+    *,
+    force_delete: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}')
     path_format_arguments = {
@@ -224,6 +226,8 @@ def build_delete_request_initial(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if force_delete is not None:
+        query_parameters['forceDelete'] = _SERIALIZER.query("force_delete", force_delete, 'bool')
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     return HttpRequest(
@@ -247,7 +251,7 @@ def build_revert_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/revert')
     path_format_arguments = {
@@ -293,7 +297,7 @@ def build_break_replication_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/breakReplication')
     path_format_arguments = {
@@ -334,7 +338,7 @@ def build_replication_status_request(
     volume_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/replicationStatus')
@@ -373,7 +377,7 @@ def build_resync_replication_request_initial(
     volume_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/resyncReplication')
     path_format_arguments = {
@@ -406,7 +410,7 @@ def build_delete_replication_request_initial(
     volume_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/deleteReplication')
     path_format_arguments = {
@@ -444,7 +448,7 @@ def build_authorize_replication_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/authorizeReplication')
     path_format_arguments = {
@@ -485,7 +489,7 @@ def build_re_initialize_replication_request_initial(
     volume_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/reinitializeReplication')
     path_format_arguments = {
@@ -523,7 +527,7 @@ def build_pool_change_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/poolChange')
     path_format_arguments = {
@@ -989,6 +993,7 @@ class VolumesOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
+        force_delete: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1004,6 +1009,7 @@ class VolumesOperations(object):
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
+            force_delete=force_delete,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -1029,6 +1035,7 @@ class VolumesOperations(object):
         account_name: str,
         pool_name: str,
         volume_name: str,
+        force_delete: Optional[bool] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a volume.
@@ -1043,6 +1050,9 @@ class VolumesOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
+        :param force_delete: An option to force delete the volume. Will cleanup resources connected to
+         the particular volume.
+        :type force_delete: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1068,6 +1078,7 @@ class VolumesOperations(object):
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
+                force_delete=force_delete,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

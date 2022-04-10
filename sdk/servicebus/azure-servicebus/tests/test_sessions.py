@@ -1039,6 +1039,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     assert current_sessions == sessions
 
 
+    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)

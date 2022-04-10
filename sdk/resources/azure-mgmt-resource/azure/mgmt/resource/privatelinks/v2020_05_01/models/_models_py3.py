@@ -10,7 +10,7 @@ from typing import List, Optional, Union
 
 import msrest.serialization
 
-from ._policy_client_enums import *
+from ._resource_private_link_client_enums import *
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -165,6 +165,33 @@ class PrivateLinkAssociationGetResult(msrest.serialization.Model):
         """
         super(PrivateLinkAssociationGetResult, self).__init__(**kwargs)
         self.value = value
+
+
+class PrivateLinkAssociationObject(msrest.serialization.Model):
+    """PrivateLinkAssociationObject.
+
+    :ivar properties: The properties of the PrivateLinkAssociation.
+    :vartype properties:
+     ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociationProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'PrivateLinkAssociationProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["PrivateLinkAssociationProperties"] = None,
+        **kwargs
+    ):
+        """
+        :keyword properties: The properties of the PrivateLinkAssociation.
+        :paramtype properties:
+         ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociationProperties
+        """
+        super(PrivateLinkAssociationObject, self).__init__(**kwargs)
+        self.properties = properties
 
 
 class PrivateLinkAssociationProperties(msrest.serialization.Model):
