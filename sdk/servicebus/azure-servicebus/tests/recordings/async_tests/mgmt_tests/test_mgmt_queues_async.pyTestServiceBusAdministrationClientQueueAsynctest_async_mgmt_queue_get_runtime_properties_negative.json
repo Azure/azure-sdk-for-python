@@ -1,4 +1,26 @@
 {
-  "Entries": [],
+  "Entries": [
+    {
+      "RequestUri": "https://sb-administratorservicebus.servicebus.windows.net/non_existing_queue?enrich=false\u0026api-version=2021-05",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e37f26da-b89a-11ec-8b6e-2816a845e8c6"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/atom\u002Bxml; type=feed; charset=utf-8",
+        "Date": "Sun, 10 Apr 2022 06:53:13 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": "\u003Cfeed xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Ctitle type=\u0022text\u0022\u003EPublicly Listed Services\u003C/title\u003E\u003Csubtitle type=\u0022text\u0022\u003EThis is the list of publicly-listed services currently available.\u003C/subtitle\u003E\u003Cid\u003Euuid:26a0d5aa-e0e8-4593-b97e-421f8efddd72;id=14241\u003C/id\u003E\u003Cupdated\u003E2022-04-10T06:53:12Z\u003C/updated\u003E\u003Cgenerator\u003EService Bus 1.1\u003C/generator\u003E\u003C/feed\u003E"
+    }
+  ],
   "Variables": {}
 }

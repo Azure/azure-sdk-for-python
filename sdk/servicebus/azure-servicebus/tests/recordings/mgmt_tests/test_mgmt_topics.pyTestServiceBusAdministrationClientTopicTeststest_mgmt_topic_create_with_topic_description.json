@@ -6,20 +6,18 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d1ba8dc0-7896-11ec-bef8-2816a845e8c6"
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=feed; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:48 GMT",
+        "Date": "Sun, 10 Apr 2022 06:44:28 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Cfeed xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Ctitle type=\u0022text\u0022\u003ETopics\u003C/title\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u003C/id\u003E\u003Cupdated\u003E2022-01-18T19:42:49Z\u003C/updated\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u0022/\u003E\u003C/feed\u003E"
+      "ResponseBody": "\u003Cfeed xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Ctitle type=\u0022text\u0022\u003ETopics\u003C/title\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u003C/id\u003E\u003Cupdated\u003E2022-04-10T06:44:28Z\u003C/updated\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u0022/\u003E\u003C/feed\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05",
@@ -27,12 +25,10 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "625",
         "Content-Type": "application/atom\u002Bxml",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d1ff64ba-7896-11ec-8618-2816a845e8c6"
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": [
         "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
@@ -41,12 +37,12 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:50 GMT",
+        "Date": "Sun, 10 Apr 2022 06:44:29 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Eiweidk\u003C/title\u003E\u003Cpublished\u003E2022-01-18T19:42:49Z\u003C/published\u003E\u003Cupdated\u003E2022-01-18T19:42:50Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-01-18T19:42:49.787Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-01-18T19:42:50.467Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
+      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Eiweidk\u003C/title\u003E\u003Cpublished\u003E2022-04-10T06:44:29Z\u003C/published\u003E\u003Cupdated\u003E2022-04-10T06:44:29Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-04-10T06:44:29.17Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-04-10T06:44:29.367Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/iweidk?enrich=false\u0026api-version=2021-05",
@@ -54,22 +50,20 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d2d77864-7896-11ec-b4f2-2816a845e8c6"
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:51 GMT",
-        "ETag": "637781317704670000",
+        "Date": "Sun, 10 Apr 2022 06:44:29 GMT",
+        "ETag": "637851698693670000",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/iweidk?enrich=false\u0026amp;api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Eiweidk\u003C/title\u003E\u003Cpublished\u003E2022-01-18T19:42:49Z\u003C/published\u003E\u003Cupdated\u003E2022-01-18T19:42:50Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/iweidk?enrich=false\u0026amp;api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-01-18T19:42:49.787Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-01-18T19:42:50.467Z\u003C/UpdatedAt\u003E\u003CAccessedAt\u003E0001-01-01T00:00:00Z\u003C/AccessedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CCountDetails xmlns:d2p1=\u0022http://schemas.microsoft.com/netservices/2011/06/servicebus\u0022\u003E\u003Cd2p1:ActiveMessageCount\u003E0\u003C/d2p1:ActiveMessageCount\u003E\u003Cd2p1:DeadLetterMessageCount\u003E0\u003C/d2p1:DeadLetterMessageCount\u003E\u003Cd2p1:ScheduledMessageCount\u003E0\u003C/d2p1:ScheduledMessageCount\u003E\u003Cd2p1:TransferMessageCount\u003E0\u003C/d2p1:TransferMessageCount\u003E\u003Cd2p1:TransferDeadLetterMessageCount\u003E0\u003C/d2p1:TransferDeadLetterMessageCount\u003E\u003C/CountDetails\u003E\u003CSubscriptionCount\u003E0\u003C/SubscriptionCount\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
+      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/iweidk?enrich=false\u0026amp;api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Eiweidk\u003C/title\u003E\u003Cpublished\u003E2022-04-10T06:44:29Z\u003C/published\u003E\u003Cupdated\u003E2022-04-10T06:44:29Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/iweidk?enrich=false\u0026amp;api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-04-10T06:44:29.17Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-04-10T06:44:29.367Z\u003C/UpdatedAt\u003E\u003CAccessedAt\u003E0001-01-01T00:00:00Z\u003C/AccessedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CCountDetails xmlns:d2p1=\u0022http://schemas.microsoft.com/netservices/2011/06/servicebus\u0022\u003E\u003Cd2p1:ActiveMessageCount\u003E0\u003C/d2p1:ActiveMessageCount\u003E\u003Cd2p1:DeadLetterMessageCount\u003E0\u003C/d2p1:DeadLetterMessageCount\u003E\u003Cd2p1:ScheduledMessageCount\u003E0\u003C/d2p1:ScheduledMessageCount\u003E\u003Cd2p1:TransferMessageCount\u003E0\u003C/d2p1:TransferMessageCount\u003E\u003Cd2p1:TransferDeadLetterMessageCount\u003E0\u003C/d2p1:TransferDeadLetterMessageCount\u003E\u003C/CountDetails\u003E\u003CSubscriptionCount\u003E0\u003C/SubscriptionCount\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05",
@@ -77,12 +71,10 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "625",
         "Content-Type": "application/atom\u002Bxml",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d2df231e-7896-11ec-a46a-2816a845e8c6"
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": [
         "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
@@ -91,12 +83,12 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:51 GMT",
+        "Date": "Sun, 10 Apr 2022 06:44:30 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Edjsadq\u003C/title\u003E\u003Cpublished\u003E2022-01-18T19:42:51Z\u003C/published\u003E\u003Cupdated\u003E2022-01-18T19:42:51Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-01-18T19:42:51.29Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-01-18T19:42:51.463Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
+      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Edjsadq\u003C/title\u003E\u003Cpublished\u003E2022-04-10T06:44:30Z\u003C/published\u003E\u003Cupdated\u003E2022-04-10T06:44:30Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-04-10T06:44:30.263Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-04-10T06:44:30.353Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/djsadq?enrich=false\u0026api-version=2021-05",
@@ -104,22 +96,20 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d378ad5c-7896-11ec-b414-2816a845e8c6"
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:52 GMT",
-        "ETag": "637781317714630000",
+        "Date": "Sun, 10 Apr 2022 06:44:30 GMT",
+        "ETag": "637851698703530000",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/djsadq?enrich=false\u0026amp;api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Edjsadq\u003C/title\u003E\u003Cpublished\u003E2022-01-18T19:42:51Z\u003C/published\u003E\u003Cupdated\u003E2022-01-18T19:42:51Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/djsadq?enrich=false\u0026amp;api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-01-18T19:42:51.29Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-01-18T19:42:51.463Z\u003C/UpdatedAt\u003E\u003CAccessedAt\u003E0001-01-01T00:00:00Z\u003C/AccessedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CCountDetails xmlns:d2p1=\u0022http://schemas.microsoft.com/netservices/2011/06/servicebus\u0022\u003E\u003Cd2p1:ActiveMessageCount\u003E0\u003C/d2p1:ActiveMessageCount\u003E\u003Cd2p1:DeadLetterMessageCount\u003E0\u003C/d2p1:DeadLetterMessageCount\u003E\u003Cd2p1:ScheduledMessageCount\u003E0\u003C/d2p1:ScheduledMessageCount\u003E\u003Cd2p1:TransferMessageCount\u003E0\u003C/d2p1:TransferMessageCount\u003E\u003Cd2p1:TransferDeadLetterMessageCount\u003E0\u003C/d2p1:TransferDeadLetterMessageCount\u003E\u003C/CountDetails\u003E\u003CSubscriptionCount\u003E0\u003C/SubscriptionCount\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
+      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/djsadq?enrich=false\u0026amp;api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Edjsadq\u003C/title\u003E\u003Cpublished\u003E2022-04-10T06:44:30Z\u003C/published\u003E\u003Cupdated\u003E2022-04-10T06:44:30Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/djsadq?enrich=false\u0026amp;api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-04-10T06:44:30.263Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-04-10T06:44:30.353Z\u003C/UpdatedAt\u003E\u003CAccessedAt\u003E0001-01-01T00:00:00Z\u003C/AccessedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CCountDetails xmlns:d2p1=\u0022http://schemas.microsoft.com/netservices/2011/06/servicebus\u0022\u003E\u003Cd2p1:ActiveMessageCount\u003E0\u003C/d2p1:ActiveMessageCount\u003E\u003Cd2p1:DeadLetterMessageCount\u003E0\u003C/d2p1:DeadLetterMessageCount\u003E\u003Cd2p1:ScheduledMessageCount\u003E0\u003C/d2p1:ScheduledMessageCount\u003E\u003Cd2p1:TransferMessageCount\u003E0\u003C/d2p1:TransferMessageCount\u003E\u003Cd2p1:TransferDeadLetterMessageCount\u003E0\u003C/d2p1:TransferDeadLetterMessageCount\u003E\u003C/CountDetails\u003E\u003CSubscriptionCount\u003E0\u003C/SubscriptionCount\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/famviq?api-version=2021-05",
@@ -127,12 +117,10 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "324",
         "Content-Type": "application/atom\u002Bxml",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d388322e-7896-11ec-b015-2816a845e8c6"
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": [
         "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
@@ -141,12 +129,12 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/xml; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:52 GMT",
+        "Date": "Sun, 10 Apr 2022 06:44:30 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
-      "ResponseBody": "\u003CError\u003E\u003CCode\u003E400\u003C/Code\u003E\u003CDetail\u003ESubCode=40000. Bad Request. To know more visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:8512ded4-bf64-4e1b-8e57-c945f8e48f4a_G58, SystemTracker:sb-administratorservicebus.servicebus.windows.net:famviq, Timestamp:2022-01-18T19:42:52\u003C/Detail\u003E\u003C/Error\u003E"
+      "ResponseBody": "\u003CError\u003E\u003CCode\u003E400\u003C/Code\u003E\u003CDetail\u003ESubCode=40000. Bad Request. To know more visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:7f8e14b8-7e00-42cb-8493-5a6bb7abb927_G37, SystemTracker:sb-administratorservicebus.servicebus.windows.net:famviq, Timestamp:2022-04-10T06:44:31\u003C/Detail\u003E\u003C/Error\u003E"
     },
     {
       "RequestUri": "https://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05",
@@ -154,18 +142,16 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d3dff4f6-7896-11ec-ae7b-2816a845e8c6"
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 18 Jan 2022 19:42:53 GMT",
-        "ETag": "637781317704670000",
+        "Date": "Sun, 10 Apr 2022 06:44:31 GMT",
+        "ETag": "637851698693670000",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
@@ -177,212 +163,16 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d44a224c-7896-11ec-b479-2816a845e8c6"
+        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 18 Jan 2022 19:42:55 GMT",
-        "ETag": "637781317714630000",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000"
-      },
-      "ResponseBody": null
-    },
-    {
-      "RequestUri": "https://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026$top=100\u0026api-version=2021-05",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d58a3fa2-7896-11ec-b2ad-2816a845e8c6"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Content-Type": "application/atom\u002Bxml; type=feed; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:55 GMT",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Transfer-Encoding": "chunked"
-      },
-      "ResponseBody": "\u003Cfeed xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Ctitle type=\u0022text\u0022\u003ETopics\u003C/title\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u003C/id\u003E\u003Cupdated\u003E2022-01-18T19:42:56Z\u003C/updated\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/$Resources/topics?$skip=0\u0026amp;$top=100\u0026amp;api-version=2021-05\u0022/\u003E\u003C/feed\u003E"
-    },
-    {
-      "RequestUri": "https://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "Content-Length": "625",
-        "Content-Type": "application/atom\u002Bxml",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d5e94fee-7896-11ec-8097-2816a845e8c6"
-      },
-      "RequestBody": [
-        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
-        "\u003Cns0:entry xmlns:ns0=\u0022http://www.w3.org/2005/Atom\u0022 xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022\u003E\u003Cns0:content type=\u0022application/xml\u0022\u003E\u003CTopicDescription\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E3072\u003C/MaxSizeInMegabytes\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003C/TopicDescription\u003E\u003C/ns0:content\u003E\u003C/ns0:entry\u003E"
-      ],
-      "StatusCode": 201,
-      "ResponseHeaders": {
-        "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:57 GMT",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked"
-      },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Eiweidk\u003C/title\u003E\u003Cpublished\u003E2022-01-18T19:42:56Z\u003C/published\u003E\u003Cupdated\u003E2022-01-18T19:42:56Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-01-18T19:42:56.453Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-01-18T19:42:56.66Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
-    },
-    {
-      "RequestUri": "https://fakeresource.servicebus.windows.net/iweidk?enrich=false\u0026api-version=2021-05",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d6a62438-7896-11ec-95d0-2816a845e8c6"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:58 GMT",
-        "ETag": "637781317766600000",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked"
-      },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/iweidk?enrich=false\u0026amp;api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Eiweidk\u003C/title\u003E\u003Cpublished\u003E2022-01-18T19:42:56Z\u003C/published\u003E\u003Cupdated\u003E2022-01-18T19:42:56Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/iweidk?enrich=false\u0026amp;api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-01-18T19:42:56.453Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-01-18T19:42:56.66Z\u003C/UpdatedAt\u003E\u003CAccessedAt\u003E0001-01-01T00:00:00Z\u003C/AccessedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CCountDetails xmlns:d2p1=\u0022http://schemas.microsoft.com/netservices/2011/06/servicebus\u0022\u003E\u003Cd2p1:ActiveMessageCount\u003E0\u003C/d2p1:ActiveMessageCount\u003E\u003Cd2p1:DeadLetterMessageCount\u003E0\u003C/d2p1:DeadLetterMessageCount\u003E\u003Cd2p1:ScheduledMessageCount\u003E0\u003C/d2p1:ScheduledMessageCount\u003E\u003Cd2p1:TransferMessageCount\u003E0\u003C/d2p1:TransferMessageCount\u003E\u003Cd2p1:TransferDeadLetterMessageCount\u003E0\u003C/d2p1:TransferDeadLetterMessageCount\u003E\u003C/CountDetails\u003E\u003CSubscriptionCount\u003E0\u003C/SubscriptionCount\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
-    },
-    {
-      "RequestUri": "https://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "Content-Length": "625",
-        "Content-Type": "application/atom\u002Bxml",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d7616828-7896-11ec-94d7-2816a845e8c6"
-      },
-      "RequestBody": [
-        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
-        "\u003Cns0:entry xmlns:ns0=\u0022http://www.w3.org/2005/Atom\u0022 xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022\u003E\u003Cns0:content type=\u0022application/xml\u0022\u003E\u003CTopicDescription\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E3072\u003C/MaxSizeInMegabytes\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003C/TopicDescription\u003E\u003C/ns0:content\u003E\u003C/ns0:entry\u003E"
-      ],
-      "StatusCode": 201,
-      "ResponseHeaders": {
-        "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:59 GMT",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked"
-      },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Edjsadq\u003C/title\u003E\u003Cpublished\u003E2022-01-18T19:42:59Z\u003C/published\u003E\u003Cupdated\u003E2022-01-18T19:42:59Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-01-18T19:42:59.077Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-01-18T19:42:59.19Z\u003C/UpdatedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
-    },
-    {
-      "RequestUri": "https://fakeresource.servicebus.windows.net/djsadq?enrich=false\u0026api-version=2021-05",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d8097d90-7896-11ec-ad9e-2816a845e8c6"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Content-Type": "application/atom\u002Bxml; type=entry; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:42:59 GMT",
-        "ETag": "637781317791900000",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked"
-      },
-      "ResponseBody": "\u003Centry xmlns=\u0022http://www.w3.org/2005/Atom\u0022\u003E\u003Cid\u003Ehttps://fakeresource.servicebus.windows.net/djsadq?enrich=false\u0026amp;api-version=2021-05\u003C/id\u003E\u003Ctitle type=\u0022text\u0022\u003Edjsadq\u003C/title\u003E\u003Cpublished\u003E2022-01-18T19:42:59Z\u003C/published\u003E\u003Cupdated\u003E2022-01-18T19:42:59Z\u003C/updated\u003E\u003Cauthor\u003E\u003Cname\u003Esb-administratorservicebus\u003C/name\u003E\u003C/author\u003E\u003Clink rel=\u0022self\u0022 href=\u0022https://fakeresource.servicebus.windows.net/djsadq?enrich=false\u0026amp;api-version=2021-05\u0022/\u003E\u003Ccontent type=\u0022application/xml\u0022\u003E\u003CTopicDescription xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022 xmlns:i=\u0022http://www.w3.org/2001/XMLSchema-instance\u0022\u003E\u003CDefaultMessageTimeToLive\u003EPT11M\u003C/DefaultMessageTimeToLive\u003E\u003CMaxSizeInMegabytes\u003E49152\u003C/MaxSizeInMegabytes\u003E\u003CRequiresDuplicateDetection\u003Efalse\u003C/RequiresDuplicateDetection\u003E\u003CDuplicateDetectionHistoryTimeWindow\u003EPT12M\u003C/DuplicateDetectionHistoryTimeWindow\u003E\u003CEnableBatchedOperations\u003Etrue\u003C/EnableBatchedOperations\u003E\u003CSizeInBytes\u003E0\u003C/SizeInBytes\u003E\u003CFilteringMessagesBeforePublishing\u003Efalse\u003C/FilteringMessagesBeforePublishing\u003E\u003CIsAnonymousAccessible\u003Efalse\u003C/IsAnonymousAccessible\u003E\u003CAuthorizationRules\u003E\u003C/AuthorizationRules\u003E\u003CStatus\u003EActive\u003C/Status\u003E\u003CCreatedAt\u003E2022-01-18T19:42:59.077Z\u003C/CreatedAt\u003E\u003CUpdatedAt\u003E2022-01-18T19:42:59.19Z\u003C/UpdatedAt\u003E\u003CAccessedAt\u003E0001-01-01T00:00:00Z\u003C/AccessedAt\u003E\u003CSupportOrdering\u003Efalse\u003C/SupportOrdering\u003E\u003CCountDetails xmlns:d2p1=\u0022http://schemas.microsoft.com/netservices/2011/06/servicebus\u0022\u003E\u003Cd2p1:ActiveMessageCount\u003E0\u003C/d2p1:ActiveMessageCount\u003E\u003Cd2p1:DeadLetterMessageCount\u003E0\u003C/d2p1:DeadLetterMessageCount\u003E\u003Cd2p1:ScheduledMessageCount\u003E0\u003C/d2p1:ScheduledMessageCount\u003E\u003Cd2p1:TransferMessageCount\u003E0\u003C/d2p1:TransferMessageCount\u003E\u003Cd2p1:TransferDeadLetterMessageCount\u003E0\u003C/d2p1:TransferDeadLetterMessageCount\u003E\u003C/CountDetails\u003E\u003CSubscriptionCount\u003E0\u003C/SubscriptionCount\u003E\u003CAutoDeleteOnIdle\u003EPT10M\u003C/AutoDeleteOnIdle\u003E\u003CEnablePartitioning\u003Etrue\u003C/EnablePartitioning\u003E\u003CEntityAvailabilityStatus\u003EAvailable\u003C/EntityAvailabilityStatus\u003E\u003CEnableSubscriptionPartitioning\u003Efalse\u003C/EnableSubscriptionPartitioning\u003E\u003CEnableExpress\u003Etrue\u003C/EnableExpress\u003E\u003CMaxMessageSizeInKilobytes\u003E256\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/content\u003E\u003C/entry\u003E"
-    },
-    {
-      "RequestUri": "https://fakeresource.servicebus.windows.net/famviq?api-version=2021-05",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "Content-Length": "324",
-        "Content-Type": "application/atom\u002Bxml",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d8122c74-7896-11ec-8f0b-2816a845e8c6"
-      },
-      "RequestBody": [
-        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
-        "\u003Cns0:entry xmlns:ns0=\u0022http://www.w3.org/2005/Atom\u0022 xmlns=\u0022http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\u0022\u003E\u003Cns0:content type=\u0022application/xml\u0022\u003E\u003CTopicDescription\u003E\u003CMaxMessageSizeInKilobytes\u003E1024\u003C/MaxMessageSizeInKilobytes\u003E\u003C/TopicDescription\u003E\u003C/ns0:content\u003E\u003C/ns0:entry\u003E"
-      ],
-      "StatusCode": 400,
-      "ResponseHeaders": {
-        "Content-Type": "application/xml; charset=utf-8",
-        "Date": "Tue, 18 Jan 2022 19:43:00 GMT",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked"
-      },
-      "ResponseBody": "\u003CError\u003E\u003CCode\u003E400\u003C/Code\u003E\u003CDetail\u003ESubCode=40000. Bad Request. To know more visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:6c2193f9-be08-4f7f-9a56-fb3332910bb8_G58, SystemTracker:sb-administratorservicebus.servicebus.windows.net:famviq, Timestamp:2022-01-18T19:43:00\u003C/Detail\u003E\u003C/Error\u003E"
-    },
-    {
-      "RequestUri": "https://fakeresource.servicebus.windows.net/iweidk?api-version=2021-05",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d85a183e-7896-11ec-97ba-2816a845e8c6"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Content-Length": "0",
-        "Date": "Tue, 18 Jan 2022 19:43:00 GMT",
-        "ETag": "637781317766600000",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000"
-      },
-      "ResponseBody": null
-    },
-    {
-      "RequestUri": "https://fakeresource.servicebus.windows.net/djsadq?api-version=2021-05",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
-        "x-ms-client-request-id": "d8d6f0d2-7896-11ec-8700-2816a845e8c6"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Content-Length": "0",
-        "Date": "Tue, 18 Jan 2022 19:43:01 GMT",
-        "ETag": "637781317791900000",
+        "Date": "Sun, 10 Apr 2022 06:44:31 GMT",
+        "ETag": "637851698703530000",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
