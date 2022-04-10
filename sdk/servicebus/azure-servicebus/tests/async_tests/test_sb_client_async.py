@@ -35,9 +35,9 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @ServiceBusPreparer()
-    async def test_sb_client_bad_credentials_async(self, servicebus_namespace, servicebus_queue_name, **kwargs):
+    async def test_sb_client_bad_credentials_async(self, servicebus_fully_qualified_namespace, servicebus_queue_name, **kwargs):
         client = ServiceBusClient(
-            fully_qualified_namespace=servicebus_namespace.name + '.servicebus.windows.net',
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential('invalid', 'invalid'),
             logging_enable=False)
         async with client:
@@ -266,19 +266,17 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @ServiceBusPreparer()
     async def test_client_sas_credential_async(self,
                                    servicebus_queue_name,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
-                                   servicebus_connection_str,
+                                   servicebus_fully_qualified_namespace,
+                                   servicebus_sas_policy,
+                                   servicebus_sas_key,
                                    **kwargs):
         # This should "just work" to validate known-good.
-        credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
-        auth_uri = "sb://{}/{}".format(hostname, servicebus_queue_name)
+        credential = ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
+        auth_uri = "sb://{}/{}".format(servicebus_fully_qualified_namespace, servicebus_queue_name)
         token = (await credential.get_token(auth_uri)).token
 
         # Finally let's do it with SAS token + conn str
-        token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
+        token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(servicebus_fully_qualified_namespace, token.decode())
 
         client = ServiceBusClient.from_connection_string(token_conn_str)
         async with client:
@@ -291,33 +289,27 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @ServiceBusPreparer()
     async def test_client_credential_async(self,
                                    servicebus_queue_name,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
+                                   servicebus_fully_qualified_namespace,
+                                   servicebus_sas_policy,
+                                   servicebus_sas_key,
                                    servicebus_connection_str,
                                    **kwargs):
         # This should "just work" to validate known-good.
-        credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        credential = ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
 
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(servicebus_fully_qualified_namespace, credential)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue_name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
-        hostname = "sb://{}.servicebus.windows.net".format(servicebus_namespace.name)
-
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(servicebus_fully_qualified_namespace, credential)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue_name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
-        hostname = "https://{}.servicebus.windows.net \
-        ".format(servicebus_namespace.name)
-
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(servicebus_fully_qualified_namespace, credential)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue_name) as sender:
@@ -328,20 +320,19 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @ServiceBusPreparer()
     async def test_client_azure_sas_credential_async(self,
                                    servicebus_queue_name,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
+                                   servicebus_fully_qualified_namespace,
+                                   servicebus_sas_policy,
+                                   servicebus_sas_key,
                                    servicebus_connection_str,
                                    **kwargs):
         # This should "just work" to validate known-good.
-        credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
-        auth_uri = "sb://{}/{}".format(hostname, servicebus_queue_name)
+        credential = ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
+        auth_uri = "sb://{}/{}".format(servicebus_fully_qualified_namespace, servicebus_queue_name)
         token = (await credential.get_token(auth_uri)).token.decode()
 
         credential = AzureSasCredential(token)
 
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(servicebus_fully_qualified_namespace, credential)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue_name) as sender:
@@ -352,15 +343,14 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @ServiceBusPreparer()
     async def test_client_named_key_credential_async(self,
                                    servicebus_queue_name,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
+                                   servicebus_fully_qualified_namespace,
+                                   servicebus_sas_policy,
+                                   servicebus_sas_key,
                                    servicebus_connection_str,
                                    **kwargs):
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
-        credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+        credential = AzureNamedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
 
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(servicebus_fully_qualified_namespace, credential)
         async with client:
             async with client.get_queue_sender(servicebus_queue_name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
@@ -372,7 +362,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
                     await sender.send_messages(ServiceBusMessage("foo"))
 
         # update back to the right key again
-        credential.update(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+        credential.update(servicebus_sas_policy, servicebus_sas_key)
         async with client:
             async with client.get_queue_sender(servicebus_queue_name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))

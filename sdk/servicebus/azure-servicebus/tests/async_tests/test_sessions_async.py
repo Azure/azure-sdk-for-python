@@ -919,18 +919,18 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @ServiceBusPreparer()
-    async def test_async_session_basic_topic_subscription_send_and_receive(self, servicebus_connection_str, servicebus_topic, servicebus_subscription, **kwargs):
+    async def test_async_session_basic_topic_subscription_send_and_receive(self, servicebus_connection_str, servicebus_topic_name, servicebus_subscription_name, **kwargs):
         async with ServiceBusClient.from_connection_string(
                 servicebus_connection_str,
                 logging_enable=False
         ) as sb_client:
-            async with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
+            async with sb_client.get_topic_sender(topic_name=servicebus_topic_name) as sender:
                 message = ServiceBusMessage(b"Sample topic message", session_id='test_session')
                 await sender.send_messages(message)
 
             async with sb_client.get_subscription_receiver(
-                topic_name=servicebus_topic.name,
-                subscription_name=servicebus_subscription.name,
+                topic_name=servicebus_topic_name,
+                subscription_name=servicebus_subscription_name,
                 session_id='test_session',
                 max_wait_time=5
             ) as receiver:

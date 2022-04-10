@@ -66,13 +66,12 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @ServiceBusPreparer()
-    async def test_subscription_by_sas_token_credential_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic_name, servicebus_subscription_name, **kwargs):
-        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+    async def test_subscription_by_sas_token_credential_conn_str_send_basic(self, servicebus_fully_qualified_namespace, servicebus_sas_policy, servicebus_sas_key, servicebus_topic_name, servicebus_subscription_name, **kwargs):
         async with ServiceBusClient(
-            fully_qualified_namespace=fully_qualified_namespace,
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(
-                policy=servicebus_namespace_key_name,
-                key=servicebus_namespace_primary_key
+                policy=servicebus_sas_policy,
+                key=servicebus_sas_key
             ),
             logging_enable=False
         ) as sb_client:

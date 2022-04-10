@@ -65,10 +65,9 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @ServiceBusPreparer()
-    def test_subscription_by_sas_token_credential_conn_str_send_basic(self, servicebus_namespace, servicebus_sas_policy, servicebus_sas_key, servicebus_topic_name, servicebus_subscription_name, **kwargs):
-        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+    def test_subscription_by_sas_token_credential_conn_str_send_basic(self, servicebus_fully_qualified_namespace, servicebus_sas_policy, servicebus_sas_key, servicebus_topic_name, servicebus_subscription_name, **kwargs):
         with ServiceBusClient(
-            fully_qualified_namespace=fully_qualified_namespace,
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(
                 policy=servicebus_sas_policy,
                 key=servicebus_sas_key
@@ -95,10 +94,10 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @ServiceBusPreparer()
-    def test_subscription_by_servicebus_client_list_subscriptions(self, servicebus_namespace, servicebus_sas_policy, servicebus_sas_key, servicebus_topic_name, servicebus_subscription_name, **kwargs):
+    def test_subscription_by_servicebus_client_list_subscriptions(self, servicebus_fully_qualified_namespace, servicebus_sas_policy, servicebus_sas_key, servicebus_topic_name, servicebus_subscription_name, **kwargs):
 
         client = ServiceBusClient(
-            service_namespace=servicebus_namespace.name,
+            service_namespace=servicebus_fully_qualified_namespace,
             shared_access_key_name=servicebus_sas_policy,
             shared_access_key_value=servicebus_sas_key,
             debug=False)

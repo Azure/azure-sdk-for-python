@@ -34,7 +34,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
     @ServiceBusPreparer()
     def test_sb_client_bad_credentials(self, servicebus_fully_qualified_namespace, servicebus_queue_name, **kwargs):
         client = ServiceBusClient(
-            fully_qualified_namespace=servicebus_fully_qualified_namespace + '.servicebus.windows.net',
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential('invalid', 'invalid'),
             logging_enable=False)
         with client:
@@ -132,6 +132,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @ServiceBusPreparer()
+    @ServiceBusNamespaceAuthorizationRulePreparer()
     def test_sb_client_incorrect_queue_conn_str(self, servicebus_queue_authorization_rule_connection_string, servicebus_queue_name, wrong_queue, **kwargs):
         
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
@@ -181,9 +182,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer()
     @ServiceBusPreparer()
-    def test_sb_client_close_spawned_handlers(self, servicebus_connection_str, servicebus_queue_name, servicebus_topic, servicebus_subscription, **kwargs):
+    def test_sb_client_close_spawned_handlers(self, servicebus_connection_str, servicebus_queue_name, servicebus_topic_name, servicebus_subscription_name, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_connection_str)
 
         client.close()
@@ -238,8 +238,8 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         assert len(client._handlers) < 2
 
         client.close()
-        topic_sender = client.get_topic_sender(servicebus_topic.name)
-        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        topic_sender = client.get_topic_sender(servicebus_topic_name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic_name, servicebus_subscription_name)
         assert len(client._handlers) == 2
         topic_sender = None
         subscription_receiver = None
@@ -247,11 +247,11 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         assert len(client._handlers) < 4
 
         client.close()
-        topic_sender = client.get_topic_sender(servicebus_topic.name)
-        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        topic_sender = client.get_topic_sender(servicebus_topic_name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic_name, servicebus_subscription_name)
         assert len(client._handlers) == 2
-        topic_sender = client.get_topic_sender(servicebus_topic.name)
-        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        topic_sender = client.get_topic_sender(servicebus_topic_name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic_name, servicebus_subscription_name)
         # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
         assert len(client._handlers) < 4
 
@@ -259,9 +259,9 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         for _ in range(5):
             queue_sender = client.get_queue_sender(servicebus_queue_name)
             queue_receiver = client.get_queue_receiver(servicebus_queue_name)
-            topic_sender = client.get_topic_sender(servicebus_topic.name)
-            subscription_receiver = client.get_subscription_receiver(servicebus_topic.name,
-                                                                     servicebus_subscription.name)
+            topic_sender = client.get_topic_sender(servicebus_topic_name)
+            subscription_receiver = client.get_subscription_receiver(servicebus_topic_name,
+                                                                     servicebus_subscription_name)
         assert len(client._handlers) < 15
         client.close()
 
