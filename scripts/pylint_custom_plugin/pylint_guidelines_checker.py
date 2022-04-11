@@ -1916,6 +1916,55 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
                 logger.debug("Pylint custom checker failed to check if model is aliased.")
                 pass
 
+class ReturnTypeMismatch(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "return-type-mismatch"
+    priority = -1
+    msgs = {
+        "C4750": (
+            "BLAH",
+            "return-type-mismatch",
+            "BLAH",
+        ),
+    }
+    options = (
+        (
+            "ignore-return-type-mismatch",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "BLAH.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(ReturnTypeMismatch, self).__init__(linter)
+    
+    def visit_functiondef(self, node):
+        if node.type_comment_returns:
+            try:
+                # not every method will have a docstring so don't crash here, just return
+                docstring = node.doc.split(":")
+            except AttributeError:
+                return
+            
+            for line in docstring:
+                if line.startswith("rtype"):
+                   
+                    #The only thing about this is params can be different
+                    rtype = node.type_comment_returns.as_string().split("[")[0]
+
+                  
+                    if rtype not in docstring[docstring.index(line)+1]:
+                        self.add_message(
+                            msgid="return-type-mismatch", node=node, confidence=None
+                        )
+            
+
+
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
@@ -1937,6 +1986,7 @@ def register(linter):
     linter.register_checker(CheckNamingMismatchGeneratedCode(linter))
     linter.register_checker(CheckAPIVersion(linter))
     linter.register_checker(CheckEnum(linter))
+    linter.register_checker(ReturnTypeMismatch(linter))
 
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
