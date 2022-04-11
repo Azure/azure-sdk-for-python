@@ -81,6 +81,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         parallel=None,
         validate_content=None,
         encryption_options=None,
+        progress_callback=None,
         **kwargs
     ):
         self.client = client
@@ -103,6 +104,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
         # Download progress so far
         self.progress_total = current_progress
+        self.progress_callback = progress_callback
 
         # Encryption
         self.encryption_options = encryption_options
@@ -142,6 +144,10 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 self.progress_total += length
         else:
             self.progress_total += length
+
+        # TODO Should this be inside the lock?
+        if self.progress_callback:
+            self.progress_callback(self.progress_total, self.total_size)
 
     def _write_to_stream(self, chunk_data, chunk_start):
         if self.stream_lock:
@@ -307,6 +313,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         name=None,
         container=None,
         encoding=None,
+        progress_callback=None,
         **kwargs
     ):
         self.name = name
@@ -322,6 +329,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._encoding = encoding
         self._validate_content = validate_content
         self._encryption_options = encryption_options or {}
+        self.progress_callback = progress_callback
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -583,6 +591,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # Write the content to the user stream
         stream.write(self._current_content)
+        if self.progress_callback:
+            self.progress_callback(len(self._current_content), self.size)
+
         if self._download_complete:
             return self.size
 
@@ -603,6 +614,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             parallel=parallel,
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
+            progress_callback=self.progress_callback,
             use_location=self._location_mode,
             **self._request_options
         )
