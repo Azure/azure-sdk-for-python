@@ -20,18 +20,18 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._clusters_operations import build_create_request, build_delete_request, build_get_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_update_request
+from ...operations._queries_operations import build_delete_request, build_get_request, build_list_request, build_put_request, build_search_request, build_update_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ClustersOperations:
-    """ClustersOperations async operations.
+class QueriesOperations:
+    """QueriesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure_stack_hci_client.models
+    :type models: ~azure.mgmt.loganalytics.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -47,85 +47,36 @@ class ClustersOperations:
         self._config = config
 
     @distributed_trace
-    def list_by_subscription(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.ClusterList"]:
-        """List all HCI clusters in a subscription.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ClusterList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure_stack_hci_client.models.ClusterList]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    template_url=self.list_by_subscription.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ClusterList", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/clusters'}  # type: ignore
-
-    @distributed_trace
-    def list_by_resource_group(
+    def list(
         self,
         resource_group_name: str,
+        query_pack_name: str,
+        top: Optional[int] = None,
+        include_body: Optional[bool] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ClusterList"]:
-        """List all HCI clusters in a resource group.
+    ) -> AsyncIterable["_models.LogAnalyticsQueryPackQueryListResult"]:
+        """Gets a list of Queries defined within a Log Analytics QueryPack.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
+        :param query_pack_name: The name of the Log Analytics QueryPack resource.
+        :type query_pack_name: str
+        :param top: Maximum items returned in page.
+        :type top: long
+        :param include_body: Flag indicating whether or not to return the body of each applicable
+         query. If false, only return the query information.
+        :type include_body: bool
+        :param skip_token: Base64 encoded token used to fetch the next page of items. Default is null.
+        :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ClusterList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure_stack_hci_client.models.ClusterList]
+        :return: An iterator like instance of either LogAnalyticsQueryPackQueryListResult or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQueryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsQueryPackQueryListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -133,19 +84,27 @@ class ClustersOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_resource_group_request(
+                request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
-                    template_url=self.list_by_resource_group.metadata['url'],
+                    query_pack_name=query_pack_name,
+                    top=top,
+                    include_body=include_body,
+                    skip_token=skip_token,
+                    template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_resource_group_request(
+                request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
+                    query_pack_name=query_pack_name,
+                    top=top,
+                    include_body=include_body,
+                    skip_token=skip_token,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -154,7 +113,7 @@ class ClustersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ClusterList", pipeline_response)
+            deserialized = self._deserialize("LogAnalyticsQueryPackQueryListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -177,27 +136,136 @@ class ClustersOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}/queries'}  # type: ignore
+
+    @distributed_trace
+    def search(
+        self,
+        resource_group_name: str,
+        query_pack_name: str,
+        query_search_properties: "_models.LogAnalyticsQueryPackQuerySearchProperties",
+        top: Optional[int] = None,
+        include_body: Optional[bool] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.LogAnalyticsQueryPackQueryListResult"]:
+        """Search a list of Queries defined within a Log Analytics QueryPack according to given search
+        properties.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param query_pack_name: The name of the Log Analytics QueryPack resource.
+        :type query_pack_name: str
+        :param query_search_properties: Properties by which to search queries in the given Log
+         Analytics QueryPack.
+        :type query_search_properties:
+         ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuerySearchProperties
+        :param top: Maximum items returned in page.
+        :type top: long
+        :param include_body: Flag indicating whether or not to return the body of each applicable
+         query. If false, only return the query information.
+        :type include_body: bool
+        :param skip_token: Base64 encoded token used to fetch the next page of items. Default is null.
+        :type skip_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either LogAnalyticsQueryPackQueryListResult or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQueryListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsQueryPackQueryListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                _json = self._serialize.body(query_search_properties, 'LogAnalyticsQueryPackQuerySearchProperties')
+                
+                request = build_search_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    query_pack_name=query_pack_name,
+                    content_type=content_type,
+                    json=_json,
+                    top=top,
+                    include_body=include_body,
+                    skip_token=skip_token,
+                    template_url=self.search.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                _json = self._serialize.body(query_search_properties, 'LogAnalyticsQueryPackQuerySearchProperties')
+                
+                request = build_search_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    query_pack_name=query_pack_name,
+                    content_type=content_type,
+                    json=_json,
+                    top=top,
+                    include_body=include_body,
+                    skip_token=skip_token,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("LogAnalyticsQueryPackQueryListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    search.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}/queries/search'}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
-        cluster_name: str,
+        query_pack_name: str,
+        id: str,
         **kwargs: Any
-    ) -> "_models.Cluster":
-        """Get HCI cluster.
+    ) -> "_models.LogAnalyticsQueryPackQuery":
+        """Gets a specific Log Analytics Query defined within a Log Analytics QueryPack.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
+        :param query_pack_name: The name of the Log Analytics QueryPack resource.
+        :type query_pack_name: str
+        :param id: The id of a specific query defined in the Log Analytics QueryPack.
+        :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Cluster, or the result of cls(response)
-        :rtype: ~azure_stack_hci_client.models.Cluster
+        :return: LogAnalyticsQueryPackQuery, or the result of cls(response)
+        :rtype: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsQueryPackQuery"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -207,7 +275,8 @@ class ClustersOperations:
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
+            query_pack_name=query_pack_name,
+            id=id,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -221,38 +290,42 @@ class ClustersOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Cluster', pipeline_response)
+        deserialized = self._deserialize('LogAnalyticsQueryPackQuery', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}/queries/{id}'}  # type: ignore
 
 
     @distributed_trace_async
-    async def create(
+    async def put(
         self,
         resource_group_name: str,
-        cluster_name: str,
-        cluster: "_models.Cluster",
+        query_pack_name: str,
+        id: str,
+        query_payload: "_models.LogAnalyticsQueryPackQuery",
         **kwargs: Any
-    ) -> "_models.Cluster":
-        """Create an HCI cluster.
+    ) -> "_models.LogAnalyticsQueryPackQuery":
+        """Adds or Updates a specific Query within a Log Analytics QueryPack.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
-        :param cluster: Details of the HCI cluster.
-        :type cluster: ~azure_stack_hci_client.models.Cluster
+        :param query_pack_name: The name of the Log Analytics QueryPack resource.
+        :type query_pack_name: str
+        :param id: The id of a specific query defined in the Log Analytics QueryPack.
+        :type id: str
+        :param query_payload: Properties that need to be specified to create a new query and add it to
+         a Log Analytics QueryPack.
+        :type query_payload: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Cluster, or the result of cls(response)
-        :rtype: ~azure_stack_hci_client.models.Cluster
+        :return: LogAnalyticsQueryPackQuery, or the result of cls(response)
+        :rtype: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsQueryPackQuery"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -260,15 +333,16 @@ class ClustersOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(cluster, 'Cluster')
+        _json = self._serialize.body(query_payload, 'LogAnalyticsQueryPackQuery')
 
-        request = build_create_request(
+        request = build_put_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
+            query_pack_name=query_pack_name,
+            id=id,
             content_type=content_type,
             json=_json,
-            template_url=self.create.metadata['url'],
+            template_url=self.put.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -281,38 +355,42 @@ class ClustersOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Cluster', pipeline_response)
+        deserialized = self._deserialize('LogAnalyticsQueryPackQuery', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}'}  # type: ignore
+    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}/queries/{id}'}  # type: ignore
 
 
     @distributed_trace_async
     async def update(
         self,
         resource_group_name: str,
-        cluster_name: str,
-        cluster: "_models.ClusterPatch",
+        query_pack_name: str,
+        id: str,
+        query_payload: "_models.LogAnalyticsQueryPackQuery",
         **kwargs: Any
-    ) -> "_models.Cluster":
-        """Update an HCI cluster.
+    ) -> "_models.LogAnalyticsQueryPackQuery":
+        """Adds or Updates a specific Query within a Log Analytics QueryPack.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
-        :param cluster: Details of the HCI cluster.
-        :type cluster: ~azure_stack_hci_client.models.ClusterPatch
+        :param query_pack_name: The name of the Log Analytics QueryPack resource.
+        :type query_pack_name: str
+        :param id: The id of a specific query defined in the Log Analytics QueryPack.
+        :type id: str
+        :param query_payload: Properties that need to be specified to create a new query and add it to
+         a Log Analytics QueryPack.
+        :type query_payload: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Cluster, or the result of cls(response)
-        :rtype: ~azure_stack_hci_client.models.Cluster
+        :return: LogAnalyticsQueryPackQuery, or the result of cls(response)
+        :rtype: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsQueryPackQuery"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -320,12 +398,13 @@ class ClustersOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(cluster, 'ClusterPatch')
+        _json = self._serialize.body(query_payload, 'LogAnalyticsQueryPackQuery')
 
         request = build_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
+            query_pack_name=query_pack_name,
+            id=id,
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
@@ -341,29 +420,32 @@ class ClustersOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Cluster', pipeline_response)
+        deserialized = self._deserialize('LogAnalyticsQueryPackQuery', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}'}  # type: ignore
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}/queries/{id}'}  # type: ignore
 
 
     @distributed_trace_async
     async def delete(
         self,
         resource_group_name: str,
-        cluster_name: str,
+        query_pack_name: str,
+        id: str,
         **kwargs: Any
     ) -> None:
-        """Delete an HCI cluster.
+        """Deletes a specific Query defined within an Log Analytics QueryPack.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
+        :param query_pack_name: The name of the Log Analytics QueryPack resource.
+        :type query_pack_name: str
+        :param id: The id of a specific query defined in the Log Analytics QueryPack.
+        :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -379,7 +461,8 @@ class ClustersOperations:
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
+            query_pack_name=query_pack_name,
+            id=id,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -396,5 +479,5 @@ class ClustersOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}/queries/{id}'}  # type: ignore
 
