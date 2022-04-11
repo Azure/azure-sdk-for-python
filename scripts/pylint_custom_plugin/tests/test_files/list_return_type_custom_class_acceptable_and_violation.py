@@ -31,4 +31,4 @@ class SearchClient(): #@
         return azure.core.paging.ItemPaged()
     
     def list_something(self):
-        return [1,2,3,4,5]
+        return None

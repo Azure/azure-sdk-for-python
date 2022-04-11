@@ -1860,7 +1860,7 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
 class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientListMethodsUseCorePaging
 
-    def test_list_return_type_file_custom_class_acceptable(self):
+    def test_list_return_type_file_custom_class_acceptable_and_violation(self):
         file = open("./test_files/list_return_type_custom_class_acceptable_and_violation.py")
         node = astroid.parse(file.read())
         file.close()
@@ -1943,6 +1943,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
       
     def test_ignores_methods_return_AsyncItemPaged(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
+        import azure
         from azure.core.async_paging import AsyncItemPaged
         
         class SomeClient(): #@
@@ -1950,7 +1951,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
                 '''
                 :rtype: AsyncItemPaged()
                 '''
-                return AsyncItemPaged()
+                return azure.core.async_paging.AsyncItemPaged()
 
             @distributed_trace
             def list_thing2(self): #@
