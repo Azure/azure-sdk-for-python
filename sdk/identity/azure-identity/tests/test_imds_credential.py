@@ -223,7 +223,6 @@ class TestImds(RecordedTestCase):
         token = credential.get_token(self.scope)
         assert token.token
         assert isinstance(token.expires_on, int)
-        return {}
 
     def test_system_assigned_tenant_id(self):
         credential = ImdsCredential()
@@ -238,7 +237,6 @@ class TestImds(RecordedTestCase):
         token = credential.get_token(self.scope)
         assert token.token
         assert isinstance(token.expires_on, int)
-        return {}
 
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     def test_user_assigned_tenant_id(self):

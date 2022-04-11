@@ -259,7 +259,6 @@ class TestImdsAsync(RecordedTestCase):
         token = await credential.get_token(self.scope)
         assert token.token
         assert isinstance(token.expires_on, int)
-        return {}
 
     @await_test
     async def test_system_assigned_tenant_id(self):
@@ -276,7 +275,6 @@ class TestImdsAsync(RecordedTestCase):
         token = await credential.get_token(self.scope)
         assert token.token
         assert isinstance(token.expires_on, int)
-        return {}
 
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     @await_test
