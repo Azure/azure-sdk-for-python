@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of possible authentication types when connecting
     """
 
@@ -36,7 +21,7 @@ class AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACTIVE_DIRECTORY_INTEGRATED = "ActiveDirectoryIntegrated"
     ACTIVE_DIRECTORY_PASSWORD = "ActiveDirectoryPassword"
 
-class BackupFileStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BackupFileStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of Status of the log backup file.
     """
 
@@ -48,14 +33,14 @@ class BackupFileStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESTORED = "Restored"
     CANCELLED = "Cancelled"
 
-class BackupMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BackupMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of backup modes
     """
 
     CREATE_BACKUP = "CreateBackup"
     EXISTING_BACKUP = "ExistingBackup"
 
-class BackupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BackupType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum of the different backup types.
     """
 
@@ -67,7 +52,7 @@ class BackupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARTIAL = "Partial"
     DIFFERENTIAL_PARTIAL = "DifferentialPartial"
 
-class CommandState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CommandState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the command. This is ignored if submitted.
     """
 
@@ -77,16 +62,24 @@ class CommandState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
+class CommandType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Command type.
     """
+
+    MIGRATE_SYNC_COMPLETE_DATABASE = "Migrate.Sync.Complete.Database"
+    MIGRATE_SQL_SERVER_AZURE_DB_SQL_MI_COMPLETE = "Migrate.SqlServer.AzureDbSqlMi.Complete"
+    CANCEL = "cancel"
+    FINISH = "finish"
+    RESTART = "restart"
+
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DatabaseCompatLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DatabaseCompatLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of SQL Server database compatibility levels
     """
 
@@ -98,7 +91,7 @@ class DatabaseCompatLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COMPAT_LEVEL130 = "CompatLevel130"
     COMPAT_LEVEL140 = "CompatLevel140"
 
-class DatabaseFileType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DatabaseFileType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of SQL Server database file types
     """
 
@@ -108,7 +101,7 @@ class DatabaseFileType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NOT_SUPPORTED = "NotSupported"
     FULLTEXT = "Fulltext"
 
-class DatabaseMigrationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DatabaseMigrationStage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current stage of migration
     """
 
@@ -119,7 +112,7 @@ class DatabaseMigrationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     RESTORE = "Restore"
     COMPLETED = "Completed"
 
-class DatabaseMigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DatabaseMigrationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Database level migration state.
     """
 
@@ -134,7 +127,7 @@ class DatabaseMigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     CANCELLED = "CANCELLED"
     FAILED = "FAILED"
 
-class DatabaseState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DatabaseState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of SQL Server Database states
     """
 
@@ -148,7 +141,7 @@ class DatabaseState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COPYING = "Copying"
     OFFLINE_SECONDARY = "OfflineSecondary"
 
-class DataMigrationResultCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataMigrationResultCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Result code of the data migration
     """
 
@@ -159,7 +152,7 @@ class DataMigrationResultCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     TARGET_OBJECT_IS_INACCESSIBLE = "TargetObjectIsInaccessible"
     FATAL_ERROR = "FatalError"
 
-class ErrorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ErrorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Error type
     """
 
@@ -167,7 +160,7 @@ class ErrorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     ERROR = "Error"
 
-class LoginMigrationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LoginMigrationStage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum of the different stage of login migration.
     """
 
@@ -181,7 +174,7 @@ class LoginMigrationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ESTABLISH_OBJECT_PERMISSIONS = "EstablishObjectPermissions"
     COMPLETED = "Completed"
 
-class LoginType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LoginType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum mapping of SMO LoginType.
     """
 
@@ -193,7 +186,7 @@ class LoginType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     EXTERNAL_USER = "ExternalUser"
     EXTERNAL_GROUP = "ExternalGroup"
 
-class MigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MigrationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current state of migration
     """
 
@@ -205,7 +198,7 @@ class MigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SKIPPED = "Skipped"
     STOPPED = "Stopped"
 
-class MigrationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MigrationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current status of migration
     """
 
@@ -220,7 +213,7 @@ class MigrationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COMPLETED = "Completed"
     COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
 
-class MongoDbClusterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MongoDbClusterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of data source
     """
 
@@ -228,7 +221,7 @@ class MongoDbClusterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COSMOS_DB = "CosmosDb"
     MONGO_DB = "MongoDb"
 
-class MongoDbErrorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MongoDbErrorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of error or warning
     """
 
@@ -236,7 +229,7 @@ class MongoDbErrorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VALIDATION_ERROR = "ValidationError"
     WARNING = "Warning"
 
-class MongoDbMigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MongoDbMigrationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NOT_STARTED = "NotStarted"
     VALIDATING_INPUT = "ValidatingInput"
@@ -250,7 +243,7 @@ class MongoDbMigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     CANCELED = "Canceled"
     FAILED = "Failed"
 
-class MongoDbProgressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MongoDbProgressResultType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of progress object
     """
 
@@ -258,7 +251,7 @@ class MongoDbProgressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     DATABASE = "Database"
     COLLECTION = "Collection"
 
-class MongoDbReplication(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MongoDbReplication(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes how changes will be replicated from the source to the target. The default is OneTime.
     """
 
@@ -266,7 +259,7 @@ class MongoDbReplication(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONE_TIME = "OneTime"
     CONTINUOUS = "Continuous"
 
-class MongoDbShardKeyOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MongoDbShardKeyOrder(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The field ordering
     """
 
@@ -274,21 +267,21 @@ class MongoDbShardKeyOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REVERSE = "Reverse"
     HASHED = "Hashed"
 
-class MySqlTargetPlatformType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MySqlTargetPlatformType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of possible target types when migrating from MySQL
     """
 
     SQL_SERVER = "SqlServer"
     AZURE_DB_FOR_MY_SQL = "AzureDbForMySQL"
 
-class NameCheckFailureReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NameCheckFailureReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reason why the name is not available, if nameAvailable is false
     """
 
     ALREADY_EXISTS = "AlreadyExists"
     INVALID = "Invalid"
 
-class ObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ObjectType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of type of objects
     """
 
@@ -298,14 +291,19 @@ class ObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VIEW = "View"
     FUNCTION = "Function"
 
-class ProjectProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationOrigin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    USER = "user"
+    SYSTEM = "system"
+
+class ProjectProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The project's provisioning state
     """
 
     DELETING = "Deleting"
     SUCCEEDED = "Succeeded"
 
-class ProjectSourcePlatform(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProjectSourcePlatform(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Source platform of the project
     """
 
@@ -315,7 +313,7 @@ class ProjectSourcePlatform(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     MONGO_DB = "MongoDb"
     UNKNOWN = "Unknown"
 
-class ProjectTargetPlatform(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProjectTargetPlatform(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Target platform of the project
     """
 
@@ -326,7 +324,7 @@ class ProjectTargetPlatform(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     MONGO_DB = "MongoDb"
     UNKNOWN = "Unknown"
 
-class ReplicateMigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ReplicateMigrationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Wrapper for replicate reported migration states.
     """
 
@@ -337,7 +335,7 @@ class ReplicateMigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     ACTION_REQUIRED = "ACTION_REQUIRED"
     FAILED = "FAILED"
 
-class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuCapacityScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The scale type applicable to the SKU.
     """
 
@@ -345,20 +343,26 @@ class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str,
     MANUAL = "Manual"
     NONE = "None"
 
-class ResourceSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuRestrictionsReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reason code for restriction.
     """
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class ResourceSkuRestrictionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuRestrictionsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of restrictions.
     """
 
     LOCATION = "location"
 
-class ScenarioSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    SQL_MI = "SqlMi"
+    SQL_VM = "SqlVm"
+    SQL_DB = "SqlDb"
+
+class ScenarioSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of source type
     """
 
@@ -374,7 +378,7 @@ class ScenarioSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MY_SQLRDS = "MySQLRDS"
     POSTGRE_SQLRDS = "PostgreSQLRDS"
 
-class ScenarioTarget(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScenarioTarget(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of target type
     """
 
@@ -386,7 +390,7 @@ class ScenarioTarget(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_DB_FOR_POSTGRES_SQL = "AzureDBForPostgresSQL"
     MONGO_DB = "MongoDB"
 
-class SchemaMigrationOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SchemaMigrationOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Option for how schema is extracted and applied to target
     """
 
@@ -394,7 +398,7 @@ class SchemaMigrationOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     EXTRACT_FROM_SOURCE = "ExtractFromSource"
     USE_STORAGE_FILE = "UseStorageFile"
 
-class SchemaMigrationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SchemaMigrationStage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current stage of schema migration
     """
 
@@ -409,7 +413,7 @@ class SchemaMigrationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
     FAILED = "Failed"
 
-class ServerLevelPermissionsGroup(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerLevelPermissionsGroup(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Permission group for validations. These groups will run a set of permissions for validating
     user activity. Select the permission group for the activity that you are performing.
     """
@@ -418,8 +422,9 @@ class ServerLevelPermissionsGroup(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     MIGRATION_FROM_SQL_SERVER_TO_AZURE_DB = "MigrationFromSqlServerToAzureDB"
     MIGRATION_FROM_SQL_SERVER_TO_AZURE_MI = "MigrationFromSqlServerToAzureMI"
     MIGRATION_FROM_MY_SQL_TO_AZURE_DB_FOR_MY_SQL = "MigrationFromMySQLToAzureDBForMySQL"
+    MIGRATION_FROM_SQL_SERVER_TO_AZURE_VM = "MigrationFromSqlServerToAzureVM"
 
-class ServiceProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The resource's provisioning state
     """
 
@@ -434,7 +439,7 @@ class ServiceProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class ServiceScalability(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceScalability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The scalability approach
     """
 
@@ -442,7 +447,7 @@ class ServiceScalability(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANUAL = "manual"
     AUTOMATIC = "automatic"
 
-class Severity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Severity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Severity of the validation error
     """
 
@@ -450,13 +455,13 @@ class Severity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     ERROR = "Error"
 
-class SqlSourcePlatform(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SqlSourcePlatform(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of source platform types
     """
 
     SQL_ON_PREM = "SqlOnPrem"
 
-class SsisMigrationOverwriteOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SsisMigrationOverwriteOption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The overwrite option for SSIS object migration, only ignore and overwrite are supported in DMS
     now and future may add Reuse option for container object
     """
@@ -464,7 +469,7 @@ class SsisMigrationOverwriteOption(with_metaclass(_CaseInsensitiveEnumMeta, str,
     IGNORE = "Ignore"
     OVERWRITE = "Overwrite"
 
-class SsisMigrationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SsisMigrationStage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current stage of SSIS migration
     """
 
@@ -473,13 +478,13 @@ class SsisMigrationStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     IN_PROGRESS = "InProgress"
     COMPLETED = "Completed"
 
-class SsisStoreType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SsisStoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enumeration of supported source SSIS store type in DMS
     """
 
     SSIS_CATALOG = "SsisCatalog"
 
-class SyncDatabaseMigrationReportingState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SyncDatabaseMigrationReportingState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum of the different state of database level online migration.
     """
 
@@ -502,7 +507,7 @@ class SyncDatabaseMigrationReportingState(with_metaclass(_CaseInsensitiveEnumMet
     BACKUP_IN_PROGRESS = "BACKUP_IN_PROGRESS"
     BACKUP_COMPLETED = "BACKUP_COMPLETED"
 
-class SyncTableMigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SyncTableMigrationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum of the different state of table level online migration.
     """
 
@@ -513,7 +518,7 @@ class SyncTableMigrationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     ERROR = "ERROR"
     FAILED = "FAILED"
 
-class TaskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TaskState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the task. This is ignored if submitted.
     """
 
@@ -526,7 +531,50 @@ class TaskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED_INPUT_VALIDATION = "FailedInputValidation"
     FAULTED = "Faulted"
 
-class UpdateActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TaskType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Task type.
+    """
+
+    CONNECT_MONGO_DB = "Connect.MongoDb"
+    CONNECT_TO_SOURCE_SQL_SERVER = "ConnectToSource.SqlServer"
+    CONNECT_TO_SOURCE_SQL_SERVER_SYNC = "ConnectToSource.SqlServer.Sync"
+    CONNECT_TO_SOURCE_POSTGRE_SQL_SYNC = "ConnectToSource.PostgreSql.Sync"
+    CONNECT_TO_SOURCE_MY_SQL = "ConnectToSource.MySql"
+    CONNECT_TO_SOURCE_ORACLE_SYNC = "ConnectToSource.Oracle.Sync"
+    CONNECT_TO_TARGET_SQL_DB = "ConnectToTarget.SqlDb"
+    CONNECT_TO_TARGET_SQL_DB_SYNC = "ConnectToTarget.SqlDb.Sync"
+    CONNECT_TO_TARGET_AZURE_DB_FOR_POSTGRE_SQL_SYNC = "ConnectToTarget.AzureDbForPostgreSql.Sync"
+    CONNECT_TO_TARGET_ORACLE_AZURE_DB_FOR_POSTGRE_SQL_SYNC = "ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync"
+    CONNECT_TO_TARGET_AZURE_SQL_DB_MI = "ConnectToTarget.AzureSqlDbMI"
+    CONNECT_TO_TARGET_AZURE_SQL_DB_MI_SYNC_LRS = "ConnectToTarget.AzureSqlDbMI.Sync.LRS"
+    CONNECT_TO_TARGET_AZURE_DB_FOR_MY_SQL = "ConnectToTarget.AzureDbForMySql"
+    GET_USER_TABLES_SQL = "GetUserTables.Sql"
+    GET_USER_TABLES_AZURE_SQL_DB_SYNC = "GetUserTables.AzureSqlDb.Sync"
+    GET_USER_TABLES_ORACLE = "GetUserTablesOracle"
+    GET_USER_TABLES_POSTGRE_SQL = "GetUserTablesPostgreSql"
+    GET_USER_TABLES_MY_SQL = "GetUserTablesMySql"
+    MIGRATE_MONGO_DB = "Migrate.MongoDb"
+    MIGRATE_SQL_SERVER_AZURE_SQL_DB_MI = "Migrate.SqlServer.AzureSqlDbMI"
+    MIGRATE_SQL_SERVER_AZURE_SQL_DB_MI_SYNC_LRS = "Migrate.SqlServer.AzureSqlDbMI.Sync.LRS"
+    MIGRATE_SQL_SERVER_SQL_DB = "Migrate.SqlServer.SqlDb"
+    MIGRATE_SQL_SERVER_AZURE_SQL_DB_SYNC = "Migrate.SqlServer.AzureSqlDb.Sync"
+    MIGRATE_MY_SQL_AZURE_DB_FOR_MY_SQL_SYNC = "Migrate.MySql.AzureDbForMySql.Sync"
+    MIGRATE_MY_SQL_AZURE_DB_FOR_MY_SQL = "Migrate.MySql.AzureDbForMySql"
+    MIGRATE_POSTGRE_SQL_AZURE_DB_FOR_POSTGRE_SQL_SYNC_V2 = "Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2"
+    MIGRATE_ORACLE_AZURE_DB_FOR_POSTGRE_SQL_SYNC = "Migrate.Oracle.AzureDbForPostgreSql.Sync"
+    VALIDATE_MIGRATION_INPUT_SQL_SERVER_SQL_DB_SYNC = "ValidateMigrationInput.SqlServer.SqlDb.Sync"
+    VALIDATE_MIGRATION_INPUT_SQL_SERVER_AZURE_SQL_DB_MI = "ValidateMigrationInput.SqlServer.AzureSqlDbMI"
+    VALIDATE_MIGRATION_INPUT_SQL_SERVER_AZURE_SQL_DB_MI_SYNC_LRS = "ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS"
+    VALIDATE_MONGO_DB = "Validate.MongoDb"
+    VALIDATE_ORACLE_AZURE_DB_POSTGRE_SQL_SYNC = "Validate.Oracle.AzureDbPostgreSql.Sync"
+    GET_TDE_CERTIFICATES_SQL = "GetTDECertificates.Sql"
+    MIGRATE_SSIS = "Migrate.Ssis"
+    SERVICE_CHECK_OCI = "Service.Check.OCI"
+    SERVICE_UPLOAD_OCI = "Service.Upload.OCI"
+    SERVICE_INSTALL_OCI = "Service.Install.OCI"
+    MIGRATE_SCHEMA_SQL_SERVER_SQL_DB = "MigrateSchemaSqlServerSqlDb"
+
+class UpdateActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the actual difference for the compared object, while performing schema comparison
     """
 
@@ -534,7 +582,7 @@ class UpdateActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CHANGED_ON_TARGET = "ChangedOnTarget"
     ADDED_ON_TARGET = "AddedOnTarget"
 
-class ValidationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ValidationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current status of the validation
     """
 
