@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, List
+from typing import Any, Dict, Optional, Union, cast, List, TypeVar
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -36,24 +36,25 @@ from .database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
+ClassType = TypeVar("ClassType")
+
 __all__ = ("CosmosClient",)
 
 
-def _build_connection_policy(kwargs):
-    # type: (Dict[str, Any]) -> ConnectionPolicy
+def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     # pylint: disable=protected-access
     policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
 
     # Connection config
     policy.RequestTimeout = kwargs.pop('request_timeout', None) or \
-        kwargs.pop('connection_timeout', None) or \
-        policy.RequestTimeout
+                            kwargs.pop('connection_timeout', None) or \
+                            policy.RequestTimeout
     policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
     policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', None) or policy.EnableEndpointDiscovery
     policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
     policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', None) or \
-        policy.UseMultipleWriteLocations
+                                       policy.UseMultipleWriteLocations
 
     # SSL config
     verify = kwargs.pop('connection_verify', None)
@@ -69,7 +70,7 @@ def _build_connection_policy(kwargs):
     total_retries = kwargs.pop('retry_total', None)
     retry._max_retry_attempt_count = total_retries or retry._max_retry_attempt_count
     retry._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
-        retry._fixed_retry_interval_in_milliseconds
+                                                  retry._fixed_retry_interval_in_milliseconds
     max_backoff = kwargs.pop('retry_backoff_max', None)
     retry._max_wait_time_in_seconds = max_backoff or retry._max_wait_time_in_seconds
     policy.RetryOptions = retry
@@ -88,15 +89,18 @@ def _build_connection_policy(kwargs):
 
     return policy
 
+
 class CosmosClient(object):
     """A client-side logical representation of an Azure Cosmos DB account.
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
 
-    :param str url: The URL of the Cosmos DB account.
+    :param url: The URL of the Cosmos DB account.
+    :type url: str
     :param credential: Can be the account key, or a dictionary of resource tokens.
-    :type credential: str or dict[str, str]
-    :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
+    :type credential: str or Dict[str, str]
+    :param consistency_level: Consistency level to use for the session. The default value is None (account-level).
+    :type consistency_level: Optional[str]
 
     .. admonition:: Example:
 
@@ -109,8 +113,13 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level=None, **kwargs):
-        # type: (str, Any, Optional[str], Any) -> None
+    def __init__(
+            self,
+            url: str,
+            credential: Any,
+            consistency_level: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
@@ -122,8 +131,7 @@ class CosmosClient(object):
             **kwargs
         )
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
     async def __aenter__(self):
@@ -134,14 +142,18 @@ class CosmosClient(object):
     async def __aexit__(self, *args):
         return await self.client_connection.pipeline_client.__aexit__(*args)
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close this instance of CosmosClient."""
         await self.__aexit__()
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
-        # type: (str, Optional[Union[str, Dict[str, str]]], Optional[str], Any) -> CosmosClient
+    def from_connection_string(
+            cls: ClassType,
+            conn_str: str,
+            credential: Union[str, Dict[str, Any]] = None,
+            consistency_level: Optional[str] = None,
+            **kwargs: Any
+    ) -> ClassType:
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
@@ -151,11 +163,13 @@ class CosmosClient(object):
         :type conn_str: str
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
-        :type credential: str or Dict[str, str]
+        :type credential: str or Dict[str, Any]
         :param conn_str: The connection string.
         :type conn_str: str
-        :param consistency_level: Consistency level to use for the session. The default value is None (Account level).
-        :type consistency_level: Optional[str]
+        :param consistency_level: Consistency level to use for the session. The default value is "Session".
+        :type consistency_level: str
+        :returns: a CosmosClient instance
+        :rtype: ~azure.cosmos.aio.CosmosClient
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
@@ -166,8 +180,7 @@ class CosmosClient(object):
         )
 
     @staticmethod
-    def _get_database_link(database_or_id):
-        # type: (Union[DatabaseProxy, str, Dict[str, str]]) -> str
+    def _get_database_link(database_or_id: Union[DatabaseProxy, str, Dict[str, str]]) -> str:
         if isinstance(database_or_id, str):
             return "dbs/{}".format(database_or_id)
         try:
@@ -179,26 +192,32 @@ class CosmosClient(object):
 
     @distributed_trace_async
     async def create_database(  # pylint: disable=redefined-builtin
-        self,
-        id,  # type: str
-        offer_throughput=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatabaseProxy
+            self,
+            id: str,
+            offer_throughput: Optional[int] = None,
+            **kwargs: Any
+    ) -> DatabaseProxy:
         """
         Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
-        :param int offer_throughput: The provisioned throughput for this offer.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+        :type id: str
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Optional[int]
+        :keyword session_token: Token for use with Session consistency.
+        :paramtype session_token: str
+        :keyword initial_headers: Initial headers to be sent as part of the request.
+        :paramtype initial_headers: Dict[str,str]
+        :keyword etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A DatabaseProxy instance representing the new database.
-        :rtype: ~azure.cosmos.DatabaseProxy
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
+        :returns: A DatabaseProxy instance representing the new database.
+        :rtype: ~azure.cosmos.aio.DatabaseProxy
 
         .. admonition:: Example:
 
@@ -223,12 +242,11 @@ class CosmosClient(object):
 
     @distributed_trace_async
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
-        self,
-        id,  # type: str
-        offer_throughput=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatabaseProxy
+            self,
+            id: str,
+            offer_throughput: Optional[int] = None,
+            **kwargs: Any
+    ) -> DatabaseProxy:
         """
         Create the database if it does not exist already.
 
@@ -239,16 +257,23 @@ class CosmosClient(object):
             offer throughput if they differ from what is passed in.
 
         :param id: ID (name) of the database to read or create.
-        :param int offer_throughput: The provisioned throughput for this offer.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+        :type id: str
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Optional[int]
+        :keyword session_token: Token for use with Session consistency.
+        :paramtype session_token: str
+        :keyword initial_headers: Initial headers to be sent as part of the request.
+        :paramtype initial_headers: Dict[str, str]
+        :keyword etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
         try:
             database_proxy = self.get_database_client(id)
@@ -261,12 +286,11 @@ class CosmosClient(object):
                 **kwargs
             )
 
-    def get_database_client(self, database):
-        # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy
+    def get_database_client(self, database: Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy:
         """Retrieve an existing database with the ID (name) `id`.
 
         :param database: The ID (name) representing the properties of the database to read.
-        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
+        :type database: str or Dict[str, Any] or ~azure.cosmos.DatabaseProxy
         :returns: A `DatabaseProxy` instance representing the retrieved database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
@@ -282,19 +306,22 @@ class CosmosClient(object):
 
     @distributed_trace
     def list_databases(
-        self,
-        max_item_count=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
+            self,
+            max_item_count: Optional[int] = None,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
 
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :type max_item_count: Optional[int]
+        :keyword session_token: Token for use with Session consistency.
+        :paramtype session_token: str
+        :keyword initial_headers: Initial headers to be sent as part of the request.
+        :paramtype initial_headers: Dict[str, str]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable
         :returns: An AsyncItemPaged of database properties (dicts).
-        :rtype: AsyncItemPaged[dict[str, str]]
+        :rtype: AsyncItemPaged[Dict[str, str]]
         """
         feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -308,25 +335,30 @@ class CosmosClient(object):
 
     @distributed_trace
     def query_databases(
-        self,
-        query,  # type: str
-        parameters=None,  # type: Optional[List[Dict[str, Any]]]
-        max_item_count=None,  # type:  Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[Dict[str, Any]]
+            self,
+            query: str,
+            parameters: Optional[List[Dict[str, Any]]] = None,
+            max_item_count: Optional[int] = None,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
-        :param list[dict[str, any]] parameters: Optional array of parameters to the query.
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :type query: str
+        :param parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :type parameters: Optional[List[Dict[str, Any]]]
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :type max_item_count: Optional[int]
+        :keyword session_token: Token for use with Session consistency.
+        :paramtype session_token: str
+        :keyword initial_headers: Initial headers to be sent as part of the request.
+        :paramtype initial_headers: Dict[str, str]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable
         :returns: An AsyncItemPaged of database properties (dicts).
-        :rtype: AsyncItemPaged[dict[str, str]]
+        :rtype: AsyncItemPaged[Dict[str, str]]
         """
         feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -343,22 +375,26 @@ class CosmosClient(object):
 
     @distributed_trace_async
     async def delete_database(
-        self,
-        database,  # type: Union[str, DatabaseProxy, Dict[str, Any]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            self,
+            database: Union[str, DatabaseProxy, Dict[str, Any]],
+            **kwargs: Any
+    ) -> None:
         """Delete the database with the given ID (name).
 
         :param database: The ID (name), dict representing the properties, or :class:`DatabaseProxy`
             instance of the database to delete.
-        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+        :type database: str or Dict[str, str] or ~azure.cosmos.DatabaseProxy
+        :keyword session_token: Token for use with Session consistency.
+        :paramtype session_token: str
+        :keyword initial_headers: Initial headers to be sent as part of the request.
+        :paramtype initial_headers: Dict[str,str]
+        :keyword etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
@@ -371,11 +407,11 @@ class CosmosClient(object):
             response_hook(self.client_connection.last_response_headers)
 
     @distributed_trace_async
-    async def _get_database_account(self, **kwargs):
-        # type: (Any) -> DatabaseAccount
+    async def _get_database_account(self, **kwargs: Any) -> DatabaseAccount:
         """Retrieve the database account information.
 
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
