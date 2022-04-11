@@ -2,6 +2,7 @@
 
 * [Target a specific package](#targeting-a-specific-package-at-build-time)
 * [Skip a tox test environment](#skipping-a-tox-test-environment-at-queue-time)
+* [Skip a part of your build](#skipping-build-sections)
 * [Analyze Checks](#analyze-checks)
 * [PR Validation Checks](#pr-validation-checks)
 * [Nightly CI Checks](#nightly-ci-checks)
@@ -45,6 +46,36 @@ This is an example setting of that narrows the default set from `whl, sdist, dep
 ![res/queue_time_variable.png](res/queue_time_variable.png)
 
 Any combination of valid valid tox environments will work. Reference either this document or the file present at `eng/tox/tox.ini` to find what options are available.
+
+## Skipping entire sections of builds
+
+In certain cases,release engineers may want to disable `APIView` checks prior to releasing. Engineers who need this capability should first clear it with their lead, then set the following build time variable.
+
+* Create variable named `Skip.CreateApiReview`
+  * Set variable valuable to `true`
+
+This is the most useful skip, but the following skip variables are also supported. Setting the variable value to `true` should be used for all of the below.
+
+* `Skip.Analyze`
+  * Skip the `analyze` job entirely.
+* `Skip.Test`
+  * Skip the `test` jobs entirely.
+* `Skip.Test`
+  * Skip the `conda test` jobs entirely.
+* `Skip.ApiStubGen`
+  * Entirely omits API stub generation within `build` job.
+* `Skip.VerifySdist`
+  * Omit `twine check` of source distributions in `build` job.
+* `Skip.VerifyWhl`
+  * Omit `twine check` of wheels in `build` job.
+* `Skip.Bandit`
+  * Omit `bandit` checks in `analyze` job.
+* `Skip.Pylint`
+  * Omit linting checks in `analyze` job.
+* `Skip.BreakingChanges`
+  * Don't verify if a changeset includes breaking changes.
+* `Skip.MyPy`
+  * Omit `mypy` checks in `analyze` job.
 
 ## Environment variables important to CI
 
