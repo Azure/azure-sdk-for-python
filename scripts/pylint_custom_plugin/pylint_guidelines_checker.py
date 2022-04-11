@@ -1956,10 +1956,11 @@ class TypingOverloadReturnNone(BaseChecker):
                         all_functions.update({i.name:i})
             for func in overloaded_functions:
                 if func.name in all_functions.keys():
-                    pass
-                    # print("CAUGHT")
-                    # print(func)
-                    # print(all_functions.get(func.name))
+                    if (isinstance(func, astroid.AsyncFunctionDef) and not isinstance(all_functions.get(func.name), astroid.AsyncFunctionDef)) \
+                        or (not isinstance(func, astroid.AsyncFunctionDef) and isinstance(all_functions.get(func.name), astroid.AsyncFunctionDef)):
+                                self.add_message(
+                                    msgid="overloaded-function-returns-none", node=func, confidence=None
+                                )
 
             
 # if a linter is registered in this function then it will be checked with pylint
