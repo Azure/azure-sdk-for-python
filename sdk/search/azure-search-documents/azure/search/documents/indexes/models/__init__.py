@@ -42,6 +42,9 @@ from .._generated.models import (
     CjkBigramTokenFilter,
     ClassicSimilarity as ClassicSimilarityAlgorithm,
     ClassicTokenizer,
+    CognitiveServicesAccount,
+    DefaultCognitiveServicesAccount,
+    CognitiveServicesAccountKey,
     CommonGramTokenFilter,
     ConditionalSkill,
     CorsOptions,
@@ -155,10 +158,7 @@ from .._generated.models import (
 )
 from ._models import (
     AnalyzeTextOptions,
-    CognitiveServicesAccount,
-    CognitiveServicesAccountKey,
     CustomAnalyzer,
-    DefaultCognitiveServicesAccount,
     PatternAnalyzer,
     PatternTokenizer,
     SearchIndexerDataSourceConnection,

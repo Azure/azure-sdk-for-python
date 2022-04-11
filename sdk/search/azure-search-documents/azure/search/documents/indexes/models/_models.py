@@ -11,7 +11,6 @@ from .._generated.models import (
     CustomAnalyzer as _CustomAnalyzer,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
-    CognitiveServicesAccount,
     DefaultCognitiveServicesAccount as _DefaultCognitiveServicesAccount,
     CognitiveServicesAccountKey as _CognitiveServicesAccountKey,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
@@ -549,7 +548,7 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
         )
 
 
-class DefaultCognitiveServicesAccount(CognitiveServicesAccount):
+class DefaultCognitiveServicesAccount(_DefaultCognitiveServicesAccount):
     """An empty object that represents the default cognitive service resource for a skillset.
 
     :param description: Description of the cognitive service resource attached to a skillset.
@@ -565,22 +564,22 @@ class DefaultCognitiveServicesAccount(CognitiveServicesAccount):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, description, **kwargs):
         super(DefaultCognitiveServicesAccount, self).__init__(**kwargs)
         self.odata_type = "#Microsoft.Azure.Search.DefaultCognitiveServices"  # type: str
-        self.description = kwargs.get("description", None)
+        self.description = description
 
     def _to_generated(self):
         return _DefaultCognitiveServicesAccount(odata_type=self.odata_type, description=self.description)
 
     @classmethod
-    def _from_generated(cls, cognitive_services_account): #pylint: disable=too-many-arguments
+    def _from_generated(cls, cognitive_services_account):
         if not cognitive_services_account:
             return None
-        return cls(cognitive_services_account.description) #pylint: disable=too-many-arguments
+        return cls(cognitive_services_account.description)
 
 
-class CognitiveServicesAccountKey(CognitiveServicesAccount):
+class CognitiveServicesAccountKey(_CognitiveServicesAccountKey):
     """A cognitive service resource provisioned with a key that is attached to a skillset.
 
     All required parameters must be populated in order to send to Azure.
@@ -603,11 +602,11 @@ class CognitiveServicesAccountKey(CognitiveServicesAccount):
         "key": {"key": "key", "type": "str"},
     }
 
-    def __init__(self, key, **kwargs):
+    def __init__(self, key, description, **kwargs):
         super(CognitiveServicesAccountKey, self).__init__(**kwargs)
         self.odata_type = "#Microsoft.Azure.Search.CognitiveServicesByKey"  # type: str
         self.key = key
-        self.description = kwargs.get("description", None)
+        self.description = description
 
     def _to_generated(self):
         return _CognitiveServicesAccountKey(odata_type=self.odata_type, key=self.key, description=self.description)
@@ -616,7 +615,7 @@ class CognitiveServicesAccountKey(CognitiveServicesAccount):
     def _from_generated(cls, cognitive_services_account):
         if not cognitive_services_account:
             return None
-        return cls(cognitive_services_account.key, cognitive_services_account.description) # pylint: disable=too-many-arguments
+        return cls(cognitive_services_account.key, cognitive_services_account.description)
 
 
 def pack_analyzer(analyzer):
