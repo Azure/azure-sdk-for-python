@@ -18,10 +18,13 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestGetChildren(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_line_get_words(self, client):
+    def test_document_line_get_words(self, client, **kwargs):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -35,7 +38,7 @@ class TestGetChildren(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_line_get_words_error(self, client):
+    def test_document_line_get_words_error(self, client, **kwargs):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 

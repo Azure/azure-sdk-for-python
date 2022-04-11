@@ -60,10 +60,13 @@ def _build_auth(credential):
         auth['resourceTokens'] = credential  # type: ignore
     elif hasattr(credential, '__iter__'):
         auth['permissionFeed'] = credential
+    elif hasattr(credential, 'get_token'):
+        auth['clientSecretCredential'] = credential
     else:
         raise TypeError(
-            "Unrecognized credential type. Please supply the master key as str, "
-            "or a dictionary or resource tokens, or a list of permissions.")
+            "Unrecognized credential type. Please supply the master key as a string "
+            "or a dictionary, or resource tokens, or a list of permissions, or any instance of a class implementing"
+            " TokenCredential (see azure.identity module for specific implementations such as ClientSecretCredential).")
     return auth
 
 
@@ -126,7 +129,7 @@ class CosmosClient(object):
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: str or dict[str, str]
-    :param str consistency_level: Consistency level to use for the session. The default value is "Session".
+    :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in milliseconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
@@ -159,8 +162,8 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level="Session", **kwargs):
-        # type: (str, Any, str, Any) -> None
+    def __init__(self, url, credential, consistency_level=None, **kwargs):
+        # type: (str, Any, Optional[str], Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
@@ -180,8 +183,8 @@ class CosmosClient(object):
         return self.client_connection.pipeline_client.__exit__(*args)
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
-        # type: (str, Optional[Any], str, Any) -> CosmosClient
+    def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
+        # type: (str, Optional[Any], Optional[str], Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
@@ -191,8 +194,8 @@ class CosmosClient(object):
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
         :type credential: str or dict(str, str)
-        :param str consistency_level:
-            Consistency level to use for the session. The default value is "Session".
+        :param Optional[str] consistency_level:
+            Consistency level to use for the session. The default value is None (Account level).
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(

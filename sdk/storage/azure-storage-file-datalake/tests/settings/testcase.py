@@ -9,7 +9,8 @@ from __future__ import division
 import functools
 import os.path
 
-from devtools_testutils import PowerShellPreparer, ACCOUNT_FAKE_KEY
+from devtools_testutils import PowerShellPreparer
+from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
 try:
     from cStringIO import StringIO      # Python 2
@@ -41,5 +42,5 @@ os.environ['STORAGE_CLIENT_SECRET'] = os.environ.get('STORAGE_CLIENT_SECRET', No
 DataLakePreparer = functools.partial(
     PowerShellPreparer, "storage",
     datalake_storage_account_name="storagename",
-    datalake_storage_account_key=ACCOUNT_FAKE_KEY
+    datalake_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY
 )

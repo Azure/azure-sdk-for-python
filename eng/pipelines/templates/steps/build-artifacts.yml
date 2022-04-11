@@ -114,6 +114,7 @@ steps:
 
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'Generate BOM'
+    condition: succeededOrFailed()
     inputs:
       BuildDropPath: $(Build.ArtifactStagingDirectory)
 

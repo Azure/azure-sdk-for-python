@@ -1,14 +1,17 @@
 # Release History
 
-## 7.5.1 (Unreleased)
+## 7.6.1 (2022-04-11)
+
+### Other Changes
+
+- Improved receiving by releasing messages from internal buffer when the `prefetch_count` of `ServiceBusReceiver`  is set 0 and there is no active receive call, this helps avoid receiving expired messages and incrementing delivery count of a message.
+
+## 7.6.0 (2022-02-10)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
+- Add `state` property in `ServiceBusReceivedMessage`.
 
 ## 7.5.0 (2022-01-12)
 

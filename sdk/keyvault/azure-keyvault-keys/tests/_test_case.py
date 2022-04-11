@@ -54,7 +54,7 @@ def get_decorator(only_hsm=False, only_vault=False, api_versions=None, **kwargs)
     return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
 
 
-def get_release_policy(attestation_uri):
+def get_release_policy(attestation_uri, **kwargs):
     release_policy_json = {
         "anyOf": [
             {
@@ -70,14 +70,14 @@ def get_release_policy(attestation_uri):
         "version": "1.0.0"
     }
     policy_string = json.dumps(release_policy_json).encode()
-    return KeyReleasePolicy(policy_string)
+    return KeyReleasePolicy(policy_string, **kwargs)
 
 
 def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
     versions = api_versions or ApiVersion
-    hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3_PREVIEW}
+    hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3}
 
     for api_version in versions:
         if not only_vault and api_version in hsm_supported_versions:

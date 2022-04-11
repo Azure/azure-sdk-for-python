@@ -14,7 +14,8 @@ class SystemEventNames(str, Enum):
     Azure Event Grid. To check the list of recognizable system topics,
     visit https://docs.microsoft.com/azure/event-grid/system-topics.
     """
-    # these names below are for backward compat only - refrain from using them.
+    # These names at the top are 'corrected' aliases of duplicate values that appear below, which are
+    # deprecated but maintained for backwards compatibility.
     AcsChatMemberAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatMemberAddedToThreadWithUser'
 
     ResourceWriteFailureEventName = 'Microsoft.Resources.ResourceWriteFailure'
@@ -53,17 +54,7 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
-    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
-
-    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
-
-    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
-
-    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
-
-    # backward compat names end here.
+    # Aliases end here
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
@@ -149,6 +140,12 @@ class SystemEventNames(str, Enum):
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
+
+    HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
+
+    HealthcareFhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
+
+    HealthcareFhirResourceUpdatedEventName = 'Microsoft.HealthcareApis.FhirResourceUpdated'
 
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
 
@@ -310,6 +307,10 @@ class SystemEventNames(str, Enum):
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
 
+    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
+
+    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
+
     WebAppServicePlanUpdatedEventName = 'Microsoft.Web.AppServicePlanUpdated'
 
     WebAppUpdatedEventName = 'Microsoft.Web.AppUpdated'
@@ -336,5 +337,10 @@ class SystemEventNames(str, Enum):
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
 
-    # servicebus alias
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
+
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'

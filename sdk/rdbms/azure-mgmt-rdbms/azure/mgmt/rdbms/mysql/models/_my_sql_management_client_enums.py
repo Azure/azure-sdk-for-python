@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreateMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The mode to create a new server.
     """
 
@@ -35,21 +20,21 @@ class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GEO_RESTORE = "GeoRestore"
     REPLICA = "Replica"
 
-class GeoRedundantBackup(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GeoRedundantBackup(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enable Geo-redundant or not for server backup.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The identity type. Set this to 'SystemAssigned' in order to automatically create and assign an
     Azure Active Directory principal for the resource.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class InfrastructureEncryption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InfrastructureEncryption(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Add a second layer of encryption for your data using new encryption algorithm which gives
     additional data protection. Value is optional but if passed in, must be 'Disabled' or
     'Enabled'.
@@ -60,7 +45,7 @@ class InfrastructureEncryption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     #: Additional (2nd) layer of encryption for data at rest.
     DISABLED = "Disabled"
 
-class MinimalTlsVersionEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MinimalTlsVersionEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enforce a minimal Tls version for the server.
     """
 
@@ -69,7 +54,7 @@ class MinimalTlsVersionEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     TLS1_2 = "TLS1_2"
     TLS_ENFORCEMENT_DISABLED = "TLSEnforcementDisabled"
 
-class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationOrigin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation.
     """
 
@@ -77,7 +62,7 @@ class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     USER = "user"
     SYSTEM = "system"
 
-class PrivateEndpointProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State of the private endpoint connection.
     """
 
@@ -87,13 +72,13 @@ class PrivateEndpointProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, 
     FAILED = "Failed"
     REJECTING = "Rejecting"
 
-class PrivateLinkServiceConnectionStateActionsRequire(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateLinkServiceConnectionStateActionsRequire(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The actions required for private link service connection.
     """
 
     NONE = "None"
 
-class PrivateLinkServiceConnectionStateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateLinkServiceConnectionStateStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The private link service connection status.
     """
 
@@ -102,7 +87,7 @@ class PrivateLinkServiceConnectionStateStatus(with_metaclass(_CaseInsensitiveEnu
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class PublicNetworkAccessEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccessEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether or not public network access is allowed for this server. Value is optional but if
     passed in, must be 'Enabled' or 'Disabled'
     """
@@ -110,31 +95,31 @@ class PublicNetworkAccessEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class QueryPerformanceInsightResetDataResultState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class QueryPerformanceInsightResetDataResultState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates result of the operation.
     """
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class SecurityAlertPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SecurityAlertPolicyName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "Default"
 
-class ServerKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The key type like 'AzureKeyVault'.
     """
 
     AZURE_KEY_VAULT = "AzureKeyVault"
 
-class ServerSecurityAlertPolicyState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerSecurityAlertPolicyState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the state of the policy, whether it is enabled or disabled.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class ServerState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A state of a server that is visible to user.
     """
 
@@ -143,7 +128,7 @@ class ServerState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
     INACCESSIBLE = "Inaccessible"
 
-class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The version of a server.
     """
 
@@ -151,7 +136,7 @@ class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FIVE7 = "5.7"
     EIGHT0 = "8.0"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The tier of the particular SKU, e.g. Basic.
     """
 
@@ -159,21 +144,21 @@ class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GENERAL_PURPOSE = "GeneralPurpose"
     MEMORY_OPTIMIZED = "MemoryOptimized"
 
-class SslEnforcementEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SslEnforcementEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enable ssl enforcement or not when connect to server.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class StorageAutogrow(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StorageAutogrow(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enable Storage Auto Grow.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class VirtualNetworkRuleState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VirtualNetworkRuleState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Virtual Network Rule State
     """
 

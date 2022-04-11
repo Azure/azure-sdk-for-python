@@ -10,7 +10,8 @@
 FILE: sample_hello_world.py
 
 DESCRIPTION:
-    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepository
+    This sample demonstrate creating a ContainerRegistryClient and iterating
+    through the collection of tags in the repository with anonymous access.
 
 USAGE:
     python sample_hello_world.py
@@ -31,11 +32,13 @@ class HelloWorld(object):
         load_dotenv(find_dotenv())
 
     def basic_sample(self):
-        # Instantiate the ContainerRegistryClient
+        # Instantiate an instance of ContainerRegistryClient
+        # [START create_registry_client]
         audience = "https://management.azure.com"
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]    
         
         with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+        # [END create_registry_client]
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":

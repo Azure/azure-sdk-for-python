@@ -1,60 +1,13 @@
 import argparse
 import json
-import glob
 import logging
 import os
 from pathlib import Path
-import re
-from subprocess import check_call
 
 from azure_devtools.ci_tools.git_tools import get_diff_file_list
-from .change_log import main as change_log_main
+from .package_utils import create_package, change_log_generate, extract_breaking_change
 
 _LOGGER = logging.getLogger(__name__)
-_SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
-
-DEFAULT_DEST_FOLDER = "./dist"
-
-
-def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
-    # a package will exist in either one, or the other folder. this is why we can resolve both at the same time.
-    absdirs = [
-        os.path.dirname(package)
-        for package in (glob.glob("{}/setup.py".format(name)) + glob.glob("sdk/*/{}/setup.py".format(name)))
-    ]
-
-    absdirpath = os.path.abspath(absdirs[0])
-    check_call(["python", "setup.py", "bdist_wheel", "-d", dest_folder], cwd=absdirpath)
-    check_call(["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder], cwd=absdirpath)
-
-
-def get_package_names(sdk_folder):
-    files = get_diff_file_list(sdk_folder)
-    matches = {_SDK_FOLDER_RE.search(f) for f in files}
-    package_names = {match.groups() for match in matches if match is not None}
-    return package_names
-
-
-def change_log_generate(package_name, last_version):
-    from pypi_tools.pypi import PyPIClient
-
-    client = PyPIClient()
-    try:
-        last_version[-1] = str(client.get_ordered_versions(package_name)[-1])
-    except:
-        return "  - Initial Release"
-    else:
-        return change_log_main(f"{package_name}:pypi", f"{package_name}:latest")
-
-
-def _extract_breaking_change(changelog):
-    log = changelog.split("\n")
-    breaking_change = []
-    for i in range(0, len(log)):
-        if log[i].find("Breaking changes") > -1:
-            breaking_change = log[min(i + 2, len(log) - 1) :]
-            break
-    return sorted([x.replace("  - ", "") for x in breaking_change])
 
 
 def main(generate_input, generate_output):
@@ -74,7 +27,7 @@ def main(generate_input, generate_output):
         package["changelog"] = {
             "content": md_output,
             "hasBreakingChange": "Breaking changes" in md_output,
-            "breakingChangeItems": _extract_breaking_change(md_output),
+            "breakingChangeItems": extract_breaking_change(md_output),
         }
         package["version"] = last_version[-1]
 
@@ -89,7 +42,6 @@ def main(generate_input, generate_output):
             "full": "You can install the use using pip install of the artificats.",
             "lite": f"pip install {package_name}",
         }
-        package["result"]: "success"
         # to distinguish with track1
         package["packageName"] = "track2_" + package["packageName"]
         result["packages"].append(package)

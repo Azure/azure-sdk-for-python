@@ -9,8 +9,6 @@
 Example to show sending message(s) to and receiving messages from a Service Bus Queue with session enabled asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.servicebus import ServiceBusMessage

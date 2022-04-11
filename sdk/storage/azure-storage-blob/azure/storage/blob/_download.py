@@ -510,6 +510,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             chunk_size=self._config.max_chunk_get_size)
 
     def readall(self):
+        # type: () -> Union[bytes, str]
         """Download the contents of this blob.
 
         This operation is blocking until all data is downloaded.

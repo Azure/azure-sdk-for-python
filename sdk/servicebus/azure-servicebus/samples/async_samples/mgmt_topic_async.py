@@ -14,8 +14,6 @@ Example to show managing topic entities under a ServiceBus Namespace, including
     - List topics under the given ServiceBus Namespace
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 import uuid

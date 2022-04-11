@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -20,28 +20,26 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_list_request(
-    azure_region,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    azure_region: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    filter: Optional[str] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
 
-    api_version = "2018-12-20"
+    api_version = "2021-11-15"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrrJobs')
@@ -71,10 +69,11 @@ def build_list_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class BackupCrrJobsOperations(object):
     """BackupCrrJobsOperations operations.
 
@@ -100,13 +99,12 @@ class BackupCrrJobsOperations(object):
     @distributed_trace
     def list(
         self,
-        azure_region,  # type: str
-        parameters,  # type: "_models.CrrJobRequest"
-        filter=None,  # type: Optional[str]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.JobResourceList"]
+        azure_region: str,
+        parameters: "_models.CrrJobRequest",
+        filter: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.JobResourceList"]:
         """Gets the list of CRR jobs from the target region.
 
         Gets the list of CRR jobs from the target region.

@@ -26,7 +26,7 @@
 """
 # https://github.com/PyCQA/pylint/issues/3112
 # Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
-from typing import Dict, Any, Optional # pylint: disable=unused-import
+from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
 from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
@@ -58,8 +58,11 @@ from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
 from ..partition_key import _Undefined, _Empty
+from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 
+ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
+
 
 class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Represents a document client.
@@ -90,7 +93,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         url_connection,  # type: str
         auth,  # type: Dict[str, Any]
         connection_policy=None,  # type: Optional[ConnectionPolicy]
-        consistency_level=documents.ConsistencyLevel.Session,  # type: str
+        consistency_level=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -112,9 +115,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self.master_key = None
         self.resource_tokens = None
+        self.aad_credentials = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
             self.resource_tokens = auth.get("resourceTokens")
+            self.aad_credentials = auth.get("clientSecretCredential")
 
             if auth.get("permissionFeed"):
                 self.resource_tokens = {}
@@ -140,16 +145,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
-        # Keeps the latest response headers from server.
+        # Keeps the latest response headers from the server.
         self.last_response_headers = None
-
-        if consistency_level == documents.ConsistencyLevel.Session:
-            # create a session - this is maintained only if the default consistency level
-            # on the client is set to session, or if the user explicitly sets it as a property
-            # via setter
-            self.session = _session.Session(self.url_connection)
-        else:
-            self.session = None  # type: ignore
 
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager_async._GlobalEndpointManager(self)
@@ -171,21 +168,30 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
         else:
-            TypeError("Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
+            raise TypeError(
+                "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = self.connection_policy.ProxyConfiguration.Host
             url = urlparse(host)
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
-            proxies.update({url.scheme : proxy})
+            proxies.update({url.scheme: proxy})
+
+        self._user_agent = _utils.get_user_agent_async()
+
+        credentials_policy = None
+        if self.aad_credentials:
+            scopes = base.create_scope_from_url(self.url_connection)
+            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes)
 
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
+            UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
+            credentials_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
@@ -230,10 +236,49 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self):
+
         if 'database_account' not in self._setup_kwargs:
-            self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(
+            database_account = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs)
+            self._setup_kwargs['database_account'] = database_account
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+        else:
+            database_account = self._setup_kwargs.get('database_account')
+
+        # Save the choice that was made (either None or some value) and branch to set or get the consistency
+        if self.default_headers.get(http_constants.HttpHeaders.ConsistencyLevel):
+            user_defined_consistency = self.default_headers[http_constants.HttpHeaders.ConsistencyLevel]
+        else:
+            # Use database_account if no consistency passed in to verify consistency level to be used
+            user_defined_consistency = self._check_if_account_session_consistency(database_account)
+
+        if user_defined_consistency == documents.ConsistencyLevel.Session:
+            # create a Session if the user wants Session consistency
+            self.session = _session.Session(self.url_connection)
+        else:
+            self.session = None  # type: ignore
+
+    def _check_if_account_session_consistency(
+            self,
+            database_account: ClassType,
+    ) -> str:
+        """Checks account consistency level to set header if needed.
+        :param database_account: The database account to be used to check consistency levels
+        :type database_account: ~azure.cosmos.documents.DatabaseAccount
+        :returns consistency_level: the account consistency level
+        :rtype: str
+        """
+        # Set to default level present in account
+        user_consistency_policy = database_account.ConsistencyPolicy
+        consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
+
+        if consistency_level == documents.ConsistencyLevel.Session:
+            # We only set the header if we're using session consistency in the account in order to keep
+            # the current update_session logic which uses the header
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+
+        return consistency_level
+
 
     def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(user)
@@ -1042,7 +1087,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get("serverScript"):
-            udf["body"] = str(udf["serverScript"])
+            udf["body"] = str(udf.pop("serverScript", ""))
         elif udf.get("body"):
             udf["body"] = str(udf["body"])
 
@@ -1071,7 +1116,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get("serverScript"):
-            trigger["body"] = str(trigger["serverScript"])
+            trigger["body"] = str(trigger.pop("serverScript", ""))
         elif trigger.get("body"):
             trigger["body"] = str(trigger["body"])
 
@@ -1153,7 +1198,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get("serverScript"):
-            sproc["body"] = str(sproc["serverScript"])
+            sproc["body"] = str(sproc.pop("serverScript", ""))
         elif sproc.get("body"):
             sproc["body"] = str(sproc["body"])
 
@@ -2442,6 +2487,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             return self._return_undefined_or_empty_partition_key(is_system_key)
 
         return partitionKey
+
+    def refresh_routing_map_provider(self):
+        # re-initializes the routing map provider, effectively refreshing the current partition key range cache
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
     async def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
         supported_query_features = (documents._QueryFeature.Aggregate + "," +

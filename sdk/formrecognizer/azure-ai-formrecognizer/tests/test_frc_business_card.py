@@ -7,7 +7,7 @@
 import pytest
 import functools
 from io import BytesIO
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -19,16 +19,22 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestBusinessCard(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_passing_enum_content_type(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         with open(self.business_card_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         poller = client.begin_recognize_business_cards(
-            myfile,
+            my_file,
             content_type=FormContentType.IMAGE_PNG
         )
         result = poller.result()
@@ -36,7 +42,8 @@ class TestBusinessCard(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
+    def test_damaged_file_bytes_fails_autodetect_content_type(self, **kwargs):
+        client = kwargs.pop("client")
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
@@ -45,7 +52,8 @@ class TestBusinessCard(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_damaged_file_bytes_io_fails_autodetect(self, client):
+    def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
+        client = kwargs.pop("client")
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
@@ -54,12 +62,13 @@ class TestBusinessCard(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_passing_bad_content_type_param_passed(self, client):
+    def test_passing_bad_content_type_param_passed(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.business_card_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
-                myfile,
+                my_file,
                 content_type="application/jpeg"
             )
 
@@ -67,7 +76,10 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_business_card_multipage_pdf(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         with open(self.business_card_multipage_pdf, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_recognize_business_cards(receipt, include_field_elements=True)
@@ -130,7 +142,10 @@ class TestBusinessCard(FormRecognizerTest):
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_business_card_jpg_include_field_elements(self, client):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         poller = client.begin_recognize_business_cards(business_card, include_field_elements=True)
@@ -181,7 +196,8 @@ class TestBusinessCard(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_business_card_v2(self, client):
+    def test_business_card_v2(self, **kwargs):
+        client = kwargs.pop("client")
         
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
