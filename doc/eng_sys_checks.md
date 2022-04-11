@@ -74,7 +74,7 @@ Any combination of valid valid tox environments will work. Reference either this
 In certain cases,release engineers may want to disable `APIView` checks prior to releasing. Engineers who need this capability should first clear it with their lead, then set the following build time variable.
 
 - Create variable named `Skip.CreateApiReview`
-  - Set variable valuable to `true`
+  - Set variable value to `true`
 
 This is the most useful skip, but the following skip variables are also supported. Setting the variable value to `true` should be used for all of the below.
 
