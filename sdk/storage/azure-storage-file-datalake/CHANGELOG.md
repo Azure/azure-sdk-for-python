@@ -3,10 +3,10 @@
 ## 12.7.0b1 (Unreleased)
 
 ### Features Added
-- Added support for `create_file_system_if_not_exists()` for `FileSystemClient`
 
 ### Bugs Fixed
 - Updated `create_file_system()` docstring to have the correct return-type of `None`
+- Fixed parsing of extra `/` symbols not being stripped properly in `async` clients
 
 ## 12.6.0 (2022-03-08)
 

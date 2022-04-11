@@ -61,8 +61,6 @@ from .partition_key import _Undefined, _Empty
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 
 ClassType = TypeVar("ClassType")
-
-
 # pylint: disable=protected-access
 
 

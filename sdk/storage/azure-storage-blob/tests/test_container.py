@@ -81,31 +81,6 @@ class StorageContainerTest(StorageTestCase):
         self.assertTrue(created)
 
     @BlobPreparer()
-    def test_create_container_if_not_exists_without_existing_container(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container_name = self._get_container_reference()
-
-        # Act
-        container = bsc.get_container_client(container_name)
-        created = container.create_container_if_not_exists()
-
-        # Assert
-        self.assertTrue(created)
-
-    @BlobPreparer()
-    def test_create_container_if_not_exists_with_existing_container(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container_name = self._get_container_reference()
-
-        # Act
-        container = bsc.get_container_client(container_name)
-        container.create_container()
-        created = container.create_container_if_not_exists()
-
-        # Assert
-        self.assertIsNone(created)
-
-    @BlobPreparer()
     def test_create_container_with_public_access_container(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
