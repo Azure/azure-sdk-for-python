@@ -186,8 +186,8 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
             # assert topic_description.requires_session == True
 
             # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
-            subscription_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace.name, topic_name)
-            subscription_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace.name, topic_name)
+            subscription_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
             await mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
@@ -452,8 +452,8 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
             # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
             subscription_description_dict = dict(subscription_description)
-            subscription_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace.name, topic_name)
-            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace.name, topic_name)
+            subscription_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
             await mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
             subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.

@@ -495,7 +495,7 @@ class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
         with pytest.raises(HttpResponseError):
             await mgmt_service.create_topic("topic_can_not_be_created", max_message_size_in_kilobytes=1024)
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(servicebus_fully_qualified_namespace_key_name, servicebus_fully_qualified_namespace_primary_key),

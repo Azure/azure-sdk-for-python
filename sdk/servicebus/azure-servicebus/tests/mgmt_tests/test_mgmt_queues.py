@@ -318,6 +318,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             mgmt_service.delete_topic(topic_name)
             mgmt_service.close()
 
+    @pytest.mark.skip("Unkip after creating premium account in arm template")
     @ServiceBusPreparer()
     @recorded_by_proxy
     def test_mgmt_queue_premium_create_with_queue_description(self, servicebus_connection_str, **kwargs):

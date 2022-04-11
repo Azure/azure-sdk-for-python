@@ -505,21 +505,21 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
         with pytest.raises(HttpResponseError):
             mgmt_service.create_topic("topic_can_not_be_created", max_message_size_in_kilobytes=1024)
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace.name + '.servicebus.windows.net'
-        mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace,
-            credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key),
-            api_version=ApiVersion.V2017_04
-        )
+        # fully_qualified_namespace = servicebus_fully_qualified_namespace
+        # mgmt_service = ServiceBusAdministrationClient(
+        #     fully_qualified_namespace,
+        #     credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key),
+        #     api_version=ApiVersion.V2017_04
+        # )
 
-        mgmt_service.create_topic("test_topic")
-        topics = list(mgmt_service.list_topics())
-        assert len(topics) == 1 and topics[0].name == "test_topic"
-        topic = mgmt_service.get_topic("test_topic")
-        assert topic.name == "test_topic"
-        mgmt_service.delete_topic("test_topic")
-        topics = list(mgmt_service.list_topics())
-        assert len(topics) == 0
+        # mgmt_service.create_topic("test_topic")
+        # topics = list(mgmt_service.list_topics())
+        # assert len(topics) == 1 and topics[0].name == "test_topic"
+        # topic = mgmt_service.get_topic("test_topic")
+        # assert topic.name == "test_topic"
+        # mgmt_service.delete_topic("test_topic")
+        # topics = list(mgmt_service.list_topics())
+        # assert len(topics) == 0
 
-        with pytest.raises(HttpResponseError):
-            mgmt_service.create_topic("topic_can_not_be_created", max_message_size_in_kilobytes=1024)
+        # with pytest.raises(HttpResponseError):
+        #     mgmt_service.create_topic("topic_can_not_be_created", max_message_size_in_kilobytes=1024)

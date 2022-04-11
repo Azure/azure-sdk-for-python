@@ -47,7 +47,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         assert len(queues) == 0
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(servicebus_fully_qualified_namespace_key_name, servicebus_fully_qualified_namespace_primary_key)
@@ -93,7 +93,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         # with pytest.raises(ServiceRequestError):
         #     await async_pageable_to_list(mgmt_service.list_queues())
 
-        invalid_conn_str = 'Endpoint=sb://{}.servicebus.windows.net/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'.format(servicebus_fully_qualified_namespace.name)
+        invalid_conn_str = 'Endpoint=sb://{}.servicebus.windows.net/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'.format(servicebus_fully_qualified_namespace)
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(invalid_conn_str)
         with pytest.raises(HttpResponseError):
             await async_pageable_to_list(mgmt_service.list_queues())
@@ -106,7 +106,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         # with pytest.raises(ServiceRequestError):
         #     await async_pageable_to_list(mgmt_service.list_queues())
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential("invalid", "invalid")
@@ -307,7 +307,9 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             await mgmt_service.delete_topic(topic_name)
             await mgmt_service.close()
 
+    @pytest.mark.skip("Unkip after creating premium account in arm template")
     @ServiceBusPreparer()
+    @recorded_by_proxy_async
     async def test_async_mgmt_queue_premium_create_with_queue_description(self, servicebus_connection_str,
                                                                   **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
@@ -458,8 +460,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             queue_description.lock_duration = datetime.timedelta(seconds=13)
             queue_description.max_delivery_count = 14
             queue_description.max_size_in_megabytes = 3072
-            queue_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace.name, queue_name)
-            queue_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace.name, queue_name)
+            queue_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, queue_name)
+            queue_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, queue_name)
             #queue_description.requires_duplicate_detection = True # Read only
             #queue_description.requires_session = True # Cannot be changed after creation
 
@@ -685,8 +687,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             queue_description_dict["lock_duration"] = datetime.timedelta(seconds=13)
             queue_description_dict["max_delivery_count"] = 14
             queue_description_dict["max_size_in_megabytes"] = 3072
-            queue_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace.name, queue_name)
-            queue_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace.name, queue_name)
+            queue_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, queue_name)
+            queue_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, queue_name)
             #queue_description_dict["requires_duplicate_detection"] = True # Read only
             #queue_description_dict["requires_session"] = True # Cannot be changed after creation
 
@@ -780,7 +782,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         with pytest.raises(HttpResponseError):
             await mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(servicebus_fully_qualified_namespace_key_name, servicebus_fully_qualified_namespace_primary_key),
