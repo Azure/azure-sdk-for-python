@@ -1,0 +1,49 @@
+# ------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+import os
+import pytest
+from unittest import mock
+from devtools_testutils import is_live, test_proxy, add_oauth_response_sanitizer, add_general_regex_sanitizer
+
+os.environ['PYTHONHASHSEED'] = '0'
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    azure_keyvault_url = os.getenv("azure_keyvault_url", "https://vaultname.vault.azure.net")
+    azure_keyvault_url = azure_keyvault_url.rstrip("/")
+    keyvault_tenant_id = os.getenv("keyvault_tenant_id", "keyvault_tenant_id")
+    keyvault_subscription_id = os.getenv("keyvault_subscription_id", "keyvault_subscription_id")
+
+    add_general_regex_sanitizer(regex=azure_keyvault_url, value="https://vaultname.vault.azure.net")
+    add_general_regex_sanitizer(regex=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_oauth_response_sanitizer()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def patch_async_sleep():
+    async def immediate_return(_):
+        return
+
+    if not is_live():
+        with mock.patch("asyncio.sleep", immediate_return):
+            yield
+
+    else:
+        yield
+
+
+@pytest.fixture(scope="session", autouse=True)
+def patch_sleep():
+    def immediate_return(_):
+        return
+
+    if not is_live():
+        with mock.patch("time.sleep", immediate_return):
+            yield
+
+    else:
+        yield
