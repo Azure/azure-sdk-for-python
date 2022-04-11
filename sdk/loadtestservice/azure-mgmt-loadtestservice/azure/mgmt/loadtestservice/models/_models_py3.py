@@ -15,6 +15,82 @@ import msrest.serialization
 from ._load_test_client_enums import *
 
 
+class EncryptionProperties(msrest.serialization.Model):
+    """Key and identity details for Customer Managed Key encryption of load test resource.
+
+    :ivar identity: All identity configuration for Customer-managed key settings defining which
+     identity should be used to auth to Key Vault.
+    :vartype identity: ~azure.mgmt.loadtestservice.models.EncryptionPropertiesIdentity
+    :ivar key_url: key encryption key Url, versioned. Ex:
+     https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78 or
+     https://contosovault.vault.azure.net/keys/contosokek.
+    :vartype key_url: str
+    """
+
+    _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'EncryptionPropertiesIdentity'},
+        'key_url': {'key': 'keyUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity: Optional["EncryptionPropertiesIdentity"] = None,
+        key_url: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword identity: All identity configuration for Customer-managed key settings defining which
+         identity should be used to auth to Key Vault.
+        :paramtype identity: ~azure.mgmt.loadtestservice.models.EncryptionPropertiesIdentity
+        :keyword key_url: key encryption key Url, versioned. Ex:
+         https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78 or
+         https://contosovault.vault.azure.net/keys/contosokek.
+        :paramtype key_url: str
+        """
+        super(EncryptionProperties, self).__init__(**kwargs)
+        self.identity = identity
+        self.key_url = key_url
+
+
+class EncryptionPropertiesIdentity(msrest.serialization.Model):
+    """All identity configuration for Customer-managed key settings defining which identity should be used to auth to Key Vault.
+
+    :ivar type: Managed identity type to use for accessing encryption key Url. Possible values
+     include: "SystemAssigned", "UserAssigned".
+    :vartype type: str or ~azure.mgmt.loadtestservice.models.Type
+    :ivar resource_id: user assigned identity to use for accessing key encryption key Url. Ex:
+     /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/:code:`<resource
+     group>`/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId.
+    :vartype resource_id: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "Type"]] = None,
+        resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword type: Managed identity type to use for accessing encryption key Url. Possible values
+         include: "SystemAssigned", "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.loadtestservice.models.Type
+        :keyword resource_id: user assigned identity to use for accessing key encryption key Url. Ex:
+         /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/:code:`<resource
+         group>`/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId.
+        :paramtype resource_id: str
+        """
+        super(EncryptionPropertiesIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.resource_id = resource_id
+
+
 class ErrorAdditionalInfo(msrest.serialization.Model):
     """The resource management error additional info.
 
@@ -40,6 +116,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -57,9 +135,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~load_test_client.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.loadtestservice.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~load_test_client.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.loadtestservice.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -82,6 +160,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -93,8 +173,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~load_test_client.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.loadtestservice.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -107,6 +187,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.loadtestservice.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -126,7 +210,7 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~load_test_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.loadtestservice.models.SystemData
     """
 
     _validation = {
@@ -147,6 +231,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -171,11 +257,11 @@ class TrackedResource(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~load_test_client.models.SystemData
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :vartype system_data: ~azure.mgmt.loadtestservice.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -202,6 +288,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -224,20 +316,22 @@ class LoadTestResource(TrackedResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~load_test_client.models.SystemData
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: The type of identity used for the resource.
-    :type identity: ~load_test_client.models.SystemAssignedServiceIdentity
-    :param description: Description of the resource.
-    :type description: str
+    :vartype system_data: ~azure.mgmt.loadtestservice.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: The type of identity used for the resource.
+    :vartype identity: ~azure.mgmt.loadtestservice.models.ManagedServiceIdentity
+    :ivar description: Description of the resource.
+    :vartype description: str
     :ivar provisioning_state: Resource provisioning state. Possible values include: "Succeeded",
      "Failed", "Canceled", "Deleted".
-    :vartype provisioning_state: str or ~load_test_client.models.ResourceState
+    :vartype provisioning_state: str or ~azure.mgmt.loadtestservice.models.ResourceState
     :ivar data_plane_uri: Resource data plane URI.
     :vartype data_plane_uri: str
+    :ivar encryption: CMK Encryption property.
+    :vartype encryption: ~azure.mgmt.loadtestservice.models.EncryptionProperties
     """
 
     _validation = {
@@ -258,10 +352,11 @@ class LoadTestResource(TrackedResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'SystemAssignedServiceIdentity'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'data_plane_uri': {'key': 'properties.dataPlaneURI', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
     }
 
     def __init__(
@@ -269,24 +364,38 @@ class LoadTestResource(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["SystemAssignedServiceIdentity"] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
         description: Optional[str] = None,
+        encryption: Optional["EncryptionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The type of identity used for the resource.
+        :paramtype identity: ~azure.mgmt.loadtestservice.models.ManagedServiceIdentity
+        :keyword description: Description of the resource.
+        :paramtype description: str
+        :keyword encryption: CMK Encryption property.
+        :paramtype encryption: ~azure.mgmt.loadtestservice.models.EncryptionProperties
+        """
         super(LoadTestResource, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.description = description
         self.provisioning_state = None
         self.data_plane_uri = None
+        self.encryption = encryption
 
 
 class LoadTestResourcePageList(msrest.serialization.Model):
     """List of resources page result.
 
-    :param value: List of resources in current page.
-    :type value: list[~load_test_client.models.LoadTestResource]
-    :param next_link: Link to next page of resources.
-    :type next_link: str
+    :ivar value: List of resources in current page.
+    :vartype value: list[~azure.mgmt.loadtestservice.models.LoadTestResource]
+    :ivar next_link: Link to next page of resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -301,6 +410,12 @@ class LoadTestResourcePageList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of resources in current page.
+        :paramtype value: list[~azure.mgmt.loadtestservice.models.LoadTestResource]
+        :keyword next_link: Link to next page of resources.
+        :paramtype next_link: str
+        """
         super(LoadTestResourcePageList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -309,39 +424,14 @@ class LoadTestResourcePageList(msrest.serialization.Model):
 class LoadTestResourcePatchRequestBody(msrest.serialization.Model):
     """LoadTest resource patch request body.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: any
-    :param identity: The type of identity used for the resource.
-    :type identity: ~load_test_client.models.SystemAssignedServiceIdentity
-    :param properties: Load Test resource properties.
-    :type properties: ~load_test_client.models.LoadTestResourcePatchRequestBodyProperties
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': 'object'},
-        'identity': {'key': 'identity', 'type': 'SystemAssignedServiceIdentity'},
-        'properties': {'key': 'properties', 'type': 'LoadTestResourcePatchRequestBodyProperties'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Any] = None,
-        identity: Optional["SystemAssignedServiceIdentity"] = None,
-        properties: Optional["LoadTestResourcePatchRequestBodyProperties"] = None,
-        **kwargs
-    ):
-        super(LoadTestResourcePatchRequestBody, self).__init__(**kwargs)
-        self.tags = tags
-        self.identity = identity
-        self.properties = properties
-
-
-class LoadTestResourcePatchRequestBodyProperties(msrest.serialization.Model):
-    """Load Test resource properties.
-
-    :param description: Description of the resource.
-    :type description: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: any
+    :ivar identity: The type of identity used for the resource.
+    :vartype identity: ~azure.mgmt.loadtestservice.models.ManagedServiceIdentity
+    :ivar description: Description of the resource.
+    :vartype description: str
+    :ivar encryption: CMK Encryption property.
+    :vartype encryption: ~azure.mgmt.loadtestservice.models.EncryptionProperties
     """
 
     _validation = {
@@ -349,17 +439,100 @@ class LoadTestResourcePatchRequestBodyProperties(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': 'object'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
     }
 
     def __init__(
         self,
         *,
+        tags: Optional[Any] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
         description: Optional[str] = None,
+        encryption: Optional["EncryptionProperties"] = None,
         **kwargs
     ):
-        super(LoadTestResourcePatchRequestBodyProperties, self).__init__(**kwargs)
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: any
+        :keyword identity: The type of identity used for the resource.
+        :paramtype identity: ~azure.mgmt.loadtestservice.models.ManagedServiceIdentity
+        :keyword description: Description of the resource.
+        :paramtype description: str
+        :keyword encryption: CMK Encryption property.
+        :paramtype encryption: ~azure.mgmt.loadtestservice.models.EncryptionProperties
+        """
+        super(LoadTestResourcePatchRequestBody, self).__init__(**kwargs)
+        self.tags = tags
+        self.identity = identity
         self.description = description
+        self.encryption = encryption
+
+
+class ManagedServiceIdentity(msrest.serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Required. Type of managed service identity (where both SystemAssigned and
+     UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
+     "UserAssigned", "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.loadtestservice.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.loadtestservice.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword type: Required. Type of managed service identity (where both SystemAssigned and
+         UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
+         "UserAssigned", "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.loadtestservice.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.loadtestservice.models.UserAssignedIdentity]
+        """
+        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class Operation(msrest.serialization.Model):
@@ -373,15 +546,15 @@ class Operation(msrest.serialization.Model):
     :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
-    :param display: Localized display information for this particular operation.
-    :type display: ~load_test_client.models.OperationDisplay
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.loadtestservice.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
      "system", "user,system".
-    :vartype origin: str or ~load_test_client.models.Origin
+    :vartype origin: str or ~azure.mgmt.loadtestservice.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
      internal only APIs. Possible values include: "Internal".
-    :vartype action_type: str or ~load_test_client.models.ActionType
+    :vartype action_type: str or ~azure.mgmt.loadtestservice.models.ActionType
     """
 
     _validation = {
@@ -405,6 +578,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.loadtestservice.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.is_data_action = None
@@ -450,6 +627,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -463,7 +642,7 @@ class OperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~load_test_client.models.Operation]
+    :vartype value: list[~azure.mgmt.loadtestservice.models.Operation]
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
@@ -482,70 +661,30 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SystemAssignedServiceIdentity(msrest.serialization.Model):
-    """Managed service identity (either system assigned, or none).
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenant_id: str
-    :param type: Required. Type of managed service identity (either system assigned, or none).
-     Possible values include: "None", "SystemAssigned".
-    :type type: str or ~load_test_client.models.SystemAssignedServiceIdentityType
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Union[str, "SystemAssignedServiceIdentityType"],
-        **kwargs
-    ):
-        super(SystemAssignedServiceIdentity, self).__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
-        self.type = type
-
-
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~load_test_client.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.loadtestservice.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~load_test_client.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.loadtestservice.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -568,6 +707,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.loadtestservice.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.loadtestservice.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -575,3 +730,35 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class UserAssignedIdentity(msrest.serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
