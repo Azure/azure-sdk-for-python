@@ -43,6 +43,8 @@ class ARMBaseModel(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ARMBaseModel, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -65,9 +67,9 @@ class Addon(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param kind: Required. Addon type.Constant filled by server.  Possible values include:
-     "IotEdge", "ArcForKubernetes".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AddonType
+    :ivar kind: Required. Addon type.Constant filled by server. Possible values include: "IotEdge",
+     "ArcForKubernetes".
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AddonType
     :ivar system_data: Addon type.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
     """
@@ -96,6 +98,8 @@ class Addon(ARMBaseModel):
         self,
         **kwargs
     ):
+        """
+        """
         super(Addon, self).__init__(**kwargs)
         self.kind = 'Addon'  # type: str
         self.system_data = None
@@ -126,6 +130,8 @@ class AddonList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AddonList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -136,20 +142,20 @@ class Address(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param address_line1: The address line1.
-    :type address_line1: str
-    :param address_line2: The address line2.
-    :type address_line2: str
-    :param address_line3: The address line3.
-    :type address_line3: str
-    :param postal_code: The postal code.
-    :type postal_code: str
-    :param city: The city name.
-    :type city: str
-    :param state: The state name.
-    :type state: str
-    :param country: Required. The country name.
-    :type country: str
+    :ivar address_line1: The address line1.
+    :vartype address_line1: str
+    :ivar address_line2: The address line2.
+    :vartype address_line2: str
+    :ivar address_line3: The address line3.
+    :vartype address_line3: str
+    :ivar postal_code: The postal code.
+    :vartype postal_code: str
+    :ivar city: The city name.
+    :vartype city: str
+    :ivar state: The state name.
+    :vartype state: str
+    :ivar country: Required. The country name.
+    :vartype country: str
     """
 
     _validation = {
@@ -178,6 +184,22 @@ class Address(msrest.serialization.Model):
         state: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword address_line1: The address line1.
+        :paramtype address_line1: str
+        :keyword address_line2: The address line2.
+        :paramtype address_line2: str
+        :keyword address_line3: The address line3.
+        :paramtype address_line3: str
+        :keyword postal_code: The postal code.
+        :paramtype postal_code: str
+        :keyword city: The city name.
+        :paramtype city: str
+        :keyword state: The state name.
+        :paramtype state: str
+        :keyword country: Required. The country name.
+        :paramtype country: str
+        """
         super(Address, self).__init__(**kwargs)
         self.address_line1 = address_line1
         self.address_line2 = address_line2
@@ -250,6 +272,8 @@ class Alert(ARMBaseModel):
         self,
         **kwargs
     ):
+        """
+        """
         super(Alert, self).__init__(**kwargs)
         self.system_data = None
         self.title = None
@@ -290,6 +314,8 @@ class AlertErrorDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AlertErrorDetails, self).__init__(**kwargs)
         self.error_code = None
         self.error_message = None
@@ -321,6 +347,8 @@ class AlertList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AlertList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -339,19 +367,19 @@ class ArcAddon(Addon):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param kind: Required. Addon type.Constant filled by server.  Possible values include:
-     "IotEdge", "ArcForKubernetes".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AddonType
+    :ivar kind: Required. Addon type.Constant filled by server. Possible values include: "IotEdge",
+     "ArcForKubernetes".
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AddonType
     :ivar system_data: Addon type.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param subscription_id: Required. Arc resource subscription Id.
-    :type subscription_id: str
-    :param resource_group_name: Required. Arc resource group name.
-    :type resource_group_name: str
-    :param resource_name: Required. Arc resource Name.
-    :type resource_name: str
-    :param resource_location: Required. Arc resource location.
-    :type resource_location: str
+    :ivar subscription_id: Required. Arc resource subscription Id.
+    :vartype subscription_id: str
+    :ivar resource_group_name: Required. Arc resource group name.
+    :vartype resource_group_name: str
+    :ivar resource_name: Required. Arc resource Name.
+    :vartype resource_name: str
+    :ivar resource_location: Required. Arc resource location.
+    :vartype resource_location: str
     :ivar version: Arc resource version.
     :vartype version: str
     :ivar host_platform: Host OS supported by the Arc addon. Possible values include: "Windows",
@@ -408,6 +436,16 @@ class ArcAddon(Addon):
         resource_location: str,
         **kwargs
     ):
+        """
+        :keyword subscription_id: Required. Arc resource subscription Id.
+        :paramtype subscription_id: str
+        :keyword resource_group_name: Required. Arc resource group name.
+        :paramtype resource_group_name: str
+        :keyword resource_name: Required. Arc resource Name.
+        :paramtype resource_name: str
+        :keyword resource_location: Required. Arc resource location.
+        :paramtype resource_location: str
+        """
         super(ArcAddon, self).__init__(**kwargs)
         self.kind = 'ArcForKubernetes'  # type: str
         self.subscription_id = subscription_id
@@ -425,14 +463,14 @@ class AsymmetricEncryptedSecret(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The value of the secret.
-    :type value: str
-    :param encryption_cert_thumbprint: Thumbprint certificate used to encrypt \"Value\". If the
+    :ivar value: Required. The value of the secret.
+    :vartype value: str
+    :ivar encryption_cert_thumbprint: Thumbprint certificate used to encrypt \"Value\". If the
      value is unencrypted, it will be null.
-    :type encryption_cert_thumbprint: str
-    :param encryption_algorithm: Required. The algorithm used to encrypt "Value". Possible values
+    :vartype encryption_cert_thumbprint: str
+    :ivar encryption_algorithm: Required. The algorithm used to encrypt "Value". Possible values
      include: "None", "AES256", "RSAES_PKCS1_v_1_5".
-    :type encryption_algorithm: str or
+    :vartype encryption_algorithm: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EncryptionAlgorithm
     """
 
@@ -455,6 +493,17 @@ class AsymmetricEncryptedSecret(msrest.serialization.Model):
         encryption_cert_thumbprint: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. The value of the secret.
+        :paramtype value: str
+        :keyword encryption_cert_thumbprint: Thumbprint certificate used to encrypt \"Value\". If the
+         value is unencrypted, it will be null.
+        :paramtype encryption_cert_thumbprint: str
+        :keyword encryption_algorithm: Required. The algorithm used to encrypt "Value". Possible values
+         include: "None", "AES256", "RSAES_PKCS1_v_1_5".
+        :paramtype encryption_algorithm: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EncryptionAlgorithm
+        """
         super(AsymmetricEncryptedSecret, self).__init__(**kwargs)
         self.value = value
         self.encryption_cert_thumbprint = encryption_cert_thumbprint
@@ -464,8 +513,8 @@ class AsymmetricEncryptedSecret(msrest.serialization.Model):
 class Authentication(msrest.serialization.Model):
     """Authentication mechanism for IoT devices.
 
-    :param symmetric_key: Symmetric key for authentication.
-    :type symmetric_key: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SymmetricKey
+    :ivar symmetric_key: Symmetric key for authentication.
+    :vartype symmetric_key: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SymmetricKey
     """
 
     _attribute_map = {
@@ -478,6 +527,10 @@ class Authentication(msrest.serialization.Model):
         symmetric_key: Optional["SymmetricKey"] = None,
         **kwargs
     ):
+        """
+        :keyword symmetric_key: Symmetric key for authentication.
+        :paramtype symmetric_key: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SymmetricKey
+        """
         super(Authentication, self).__init__(**kwargs)
         self.symmetric_key = symmetric_key
 
@@ -487,15 +540,15 @@ class AzureContainerInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_account_credential_id: Required. ID of the storage account credential used to
+    :ivar storage_account_credential_id: Required. ID of the storage account credential used to
      access storage.
-    :type storage_account_credential_id: str
-    :param container_name: Required. Container name (Based on the data format specified, this
+    :vartype storage_account_credential_id: str
+    :ivar container_name: Required. Container name (Based on the data format specified, this
      represents the name of Azure Files/Page blob/Block blob).
-    :type container_name: str
-    :param data_format: Required. Storage format used for the file represented by the share.
+    :vartype container_name: str
+    :ivar data_format: Required. Storage format used for the file represented by the share.
      Possible values include: "BlockBlob", "PageBlob", "AzureFile".
-    :type data_format: str or
+    :vartype data_format: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AzureContainerDataFormat
     """
 
@@ -519,6 +572,18 @@ class AzureContainerInfo(msrest.serialization.Model):
         data_format: Union[str, "AzureContainerDataFormat"],
         **kwargs
     ):
+        """
+        :keyword storage_account_credential_id: Required. ID of the storage account credential used to
+         access storage.
+        :paramtype storage_account_credential_id: str
+        :keyword container_name: Required. Container name (Based on the data format specified, this
+         represents the name of Azure Files/Page blob/Block blob).
+        :paramtype container_name: str
+        :keyword data_format: Required. Storage format used for the file represented by the share.
+         Possible values include: "BlockBlob", "PageBlob", "AzureFile".
+        :paramtype data_format: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AzureContainerDataFormat
+        """
         super(AzureContainerInfo, self).__init__(**kwargs)
         self.storage_account_credential_id = storage_account_credential_id
         self.container_name = container_name
@@ -540,14 +605,14 @@ class BandwidthSchedule(ARMBaseModel):
     :vartype type: str
     :ivar system_data: Bandwidth object related to ASE resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param start: Required. The start time of the schedule in UTC.
-    :type start: str
-    :param stop: Required. The stop time of the schedule in UTC.
-    :type stop: str
-    :param rate_in_mbps: Required. The bandwidth rate in Mbps.
-    :type rate_in_mbps: int
-    :param days: Required. The days of the week when this schedule is applicable.
-    :type days: list[str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DayOfWeek]
+    :ivar start: Required. The start time of the schedule in UTC.
+    :vartype start: str
+    :ivar stop: Required. The stop time of the schedule in UTC.
+    :vartype stop: str
+    :ivar rate_in_mbps: Required. The bandwidth rate in Mbps.
+    :vartype rate_in_mbps: int
+    :ivar days: Required. The days of the week when this schedule is applicable.
+    :vartype days: list[str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DayOfWeek]
     """
 
     _validation = {
@@ -581,6 +646,16 @@ class BandwidthSchedule(ARMBaseModel):
         days: List[Union[str, "DayOfWeek"]],
         **kwargs
     ):
+        """
+        :keyword start: Required. The start time of the schedule in UTC.
+        :paramtype start: str
+        :keyword stop: Required. The stop time of the schedule in UTC.
+        :paramtype stop: str
+        :keyword rate_in_mbps: Required. The bandwidth rate in Mbps.
+        :paramtype rate_in_mbps: int
+        :keyword days: Required. The days of the week when this schedule is applicable.
+        :paramtype days: list[str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DayOfWeek]
+        """
         super(BandwidthSchedule, self).__init__(**kwargs)
         self.system_data = None
         self.start = start
@@ -614,6 +689,8 @@ class BandwidthSchedulesList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BandwidthSchedulesList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -624,11 +701,11 @@ class ClientAccessRight(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param client: Required. IP of the client.
-    :type client: str
-    :param access_permission: Required. Type of access to be allowed for the client. Possible
-     values include: "NoAccess", "ReadOnly", "ReadWrite".
-    :type access_permission: str or
+    :ivar client: Required. IP of the client.
+    :vartype client: str
+    :ivar access_permission: Required. Type of access to be allowed for the client. Possible values
+     include: "NoAccess", "ReadOnly", "ReadWrite".
+    :vartype access_permission: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ClientPermissionType
     """
 
@@ -649,6 +726,14 @@ class ClientAccessRight(msrest.serialization.Model):
         access_permission: Union[str, "ClientPermissionType"],
         **kwargs
     ):
+        """
+        :keyword client: Required. IP of the client.
+        :paramtype client: str
+        :keyword access_permission: Required. Type of access to be allowed for the client. Possible
+         values include: "NoAccess", "ReadOnly", "ReadWrite".
+        :paramtype access_permission: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ClientPermissionType
+        """
         super(ClientAccessRight, self).__init__(**kwargs)
         self.client = client
         self.access_permission = access_permission
@@ -670,9 +755,9 @@ class Role(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param kind: Required. Role type.Constant filled by server.  Possible values include: "IOT",
+    :ivar kind: Required. Role type.Constant filled by server. Possible values include: "IOT",
      "ASA", "Functions", "Cognitive", "MEC", "CloudEdgeManagement", "Kubernetes".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
     :ivar system_data: Role configured on ASE resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
     """
@@ -701,6 +786,8 @@ class Role(ARMBaseModel):
         self,
         **kwargs
     ):
+        """
+        """
         super(Role, self).__init__(**kwargs)
         self.kind = 'Role'  # type: str
         self.system_data = None
@@ -719,9 +806,9 @@ class CloudEdgeManagementRole(Role):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param kind: Required. Role type.Constant filled by server.  Possible values include: "IOT",
+    :ivar kind: Required. Role type.Constant filled by server. Possible values include: "IOT",
      "ASA", "Functions", "Cognitive", "MEC", "CloudEdgeManagement", "Kubernetes".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
     :ivar system_data: Role configured on ASE resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
     :ivar local_management_status: Local Edge Management Status. Possible values include:
@@ -730,8 +817,8 @@ class CloudEdgeManagementRole(Role):
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
     :ivar edge_profile: Edge Profile of the resource.
     :vartype edge_profile: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfile
-    :param role_status: Role status. Possible values include: "Enabled", "Disabled".
-    :type role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
+    :ivar role_status: Role status. Possible values include: "Enabled", "Disabled".
+    :vartype role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
     """
 
     _validation = {
@@ -761,6 +848,10 @@ class CloudEdgeManagementRole(Role):
         role_status: Optional[Union[str, "RoleStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword role_status: Role status. Possible values include: "Enabled", "Disabled".
+        :paramtype role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
+        """
         super(CloudEdgeManagementRole, self).__init__(**kwargs)
         self.kind = 'CloudEdgeManagement'  # type: str
         self.local_management_status = None
@@ -771,14 +862,14 @@ class CloudEdgeManagementRole(Role):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from the service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.CloudErrorBody]
+    :vartype message: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -795,6 +886,16 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -834,6 +935,8 @@ class CniConfig(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CniConfig, self).__init__(**kwargs)
         self.type = None
         self.version = None
@@ -846,10 +949,10 @@ class ComputeResource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param processor_count: Required. Processor count.
-    :type processor_count: int
-    :param memory_in_gb: Required. Memory in GB.
-    :type memory_in_gb: long
+    :ivar processor_count: Required. Processor count.
+    :vartype processor_count: int
+    :ivar memory_in_gb: Required. Memory in GB.
+    :vartype memory_in_gb: long
     """
 
     _validation = {
@@ -869,6 +972,12 @@ class ComputeResource(msrest.serialization.Model):
         memory_in_gb: int,
         **kwargs
     ):
+        """
+        :keyword processor_count: Required. Processor count.
+        :paramtype processor_count: int
+        :keyword memory_in_gb: Required. Memory in GB.
+        :paramtype memory_in_gb: long
+        """
         super(ComputeResource, self).__init__(**kwargs)
         self.processor_count = processor_count
         self.memory_in_gb = memory_in_gb
@@ -879,14 +988,14 @@ class ContactDetails(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param contact_person: Required. The contact person name.
-    :type contact_person: str
-    :param company_name: Required. The name of the company.
-    :type company_name: str
-    :param phone: Required. The phone number.
-    :type phone: str
-    :param email_list: Required. The email list.
-    :type email_list: list[str]
+    :ivar contact_person: Required. The contact person name.
+    :vartype contact_person: str
+    :ivar company_name: Required. The name of the company.
+    :vartype company_name: str
+    :ivar phone: Required. The phone number.
+    :vartype phone: str
+    :ivar email_list: Required. The email list.
+    :vartype email_list: list[str]
     """
 
     _validation = {
@@ -912,6 +1021,16 @@ class ContactDetails(msrest.serialization.Model):
         email_list: List[str],
         **kwargs
     ):
+        """
+        :keyword contact_person: Required. The contact person name.
+        :paramtype contact_person: str
+        :keyword company_name: Required. The name of the company.
+        :paramtype company_name: str
+        :keyword phone: Required. The phone number.
+        :paramtype phone: str
+        :keyword email_list: Required. The email list.
+        :paramtype email_list: list[str]
+        """
         super(ContactDetails, self).__init__(**kwargs)
         self.contact_person = contact_person
         self.company_name = company_name
@@ -938,9 +1057,9 @@ class Container(ARMBaseModel):
      "Offline", "Unknown", "Updating", "NeedsAttention".
     :vartype container_status: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ContainerStatus
-    :param data_format: Required. DataFormat for Container. Possible values include: "BlockBlob",
+    :ivar data_format: Required. DataFormat for Container. Possible values include: "BlockBlob",
      "PageBlob", "AzureFile".
-    :type data_format: str or
+    :vartype data_format: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AzureContainerDataFormat
     :ivar refresh_details: Details of the refresh job on this container.
     :vartype refresh_details: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RefreshDetails
@@ -976,6 +1095,12 @@ class Container(ARMBaseModel):
         data_format: Union[str, "AzureContainerDataFormat"],
         **kwargs
     ):
+        """
+        :keyword data_format: Required. DataFormat for Container. Possible values include: "BlockBlob",
+         "PageBlob", "AzureFile".
+        :paramtype data_format: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AzureContainerDataFormat
+        """
         super(Container, self).__init__(**kwargs)
         self.system_data = None
         self.container_status = None
@@ -1009,6 +1134,8 @@ class ContainerList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ContainerList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1027,29 +1154,29 @@ class DataBoxEdgeDevice(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param location: Required. The location of the device. This is a supported and registered Azure
+    :ivar location: Required. The location of the device. This is a supported and registered Azure
      geographical region (for example, West US, East US, or Southeast Asia). The geographical region
      of a device cannot be changed once it is created, but if an identical geographical region is
      specified on update, the request will succeed.
-    :type location: str
-    :param tags: A set of tags. The list of tags that describe the device. These tags can be used
-     to view and group this device (across resource groups).
-    :type tags: dict[str, str]
-    :param sku: The SKU type.
-    :type sku: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Sku
-    :param etag: The etag for the devices.
-    :type etag: str
-    :param identity: Msi identity of the resource.
-    :type identity: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ResourceIdentity
+    :vartype location: str
+    :ivar tags: A set of tags. The list of tags that describe the device. These tags can be used to
+     view and group this device (across resource groups).
+    :vartype tags: dict[str, str]
+    :ivar sku: The SKU type.
+    :vartype sku: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Sku
+    :ivar etag: The etag for the devices.
+    :vartype etag: str
+    :ivar identity: Msi identity of the resource.
+    :vartype identity: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ResourceIdentity
     :ivar kind: The etag for the devices. Possible values include: "AzureDataBoxGateway",
      "AzureStackEdge", "AzureStackHub", "AzureModularDataCentre".
     :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataBoxEdgeDeviceKind
     :ivar system_data: DataBoxEdge Resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param data_box_edge_device_status: The status of the Data Box Edge/Gateway device. Possible
+    :ivar data_box_edge_device_status: The status of the Data Box Edge/Gateway device. Possible
      values include: "ReadyToSetup", "Online", "Offline", "NeedsAttention", "Disconnected",
      "PartiallyDisconnected", "Maintenance".
-    :type data_box_edge_device_status: str or
+    :vartype data_box_edge_device_status: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataBoxEdgeDeviceStatus
     :ivar serial_number: The Serial Number of Data Box Edge/Gateway device.
     :vartype serial_number: str
@@ -1150,6 +1277,27 @@ class DataBoxEdgeDevice(ARMBaseModel):
         data_box_edge_device_status: Optional[Union[str, "DataBoxEdgeDeviceStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the device. This is a supported and registered
+         Azure geographical region (for example, West US, East US, or Southeast Asia). The geographical
+         region of a device cannot be changed once it is created, but if an identical geographical
+         region is specified on update, the request will succeed.
+        :paramtype location: str
+        :keyword tags: A set of tags. The list of tags that describe the device. These tags can be used
+         to view and group this device (across resource groups).
+        :paramtype tags: dict[str, str]
+        :keyword sku: The SKU type.
+        :paramtype sku: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Sku
+        :keyword etag: The etag for the devices.
+        :paramtype etag: str
+        :keyword identity: Msi identity of the resource.
+        :paramtype identity: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ResourceIdentity
+        :keyword data_box_edge_device_status: The status of the Data Box Edge/Gateway device. Possible
+         values include: "ReadyToSetup", "Online", "Offline", "NeedsAttention", "Disconnected",
+         "PartiallyDisconnected", "Maintenance".
+        :paramtype data_box_edge_device_status: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataBoxEdgeDeviceStatus
+        """
         super(DataBoxEdgeDevice, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -1187,27 +1335,27 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param encryption_key_thumbprint: The digital signature of encrypted certificate.
-    :type encryption_key_thumbprint: str
-    :param encryption_key: The public part of the encryption certificate. Client uses this to
+    :ivar encryption_key_thumbprint: The digital signature of encrypted certificate.
+    :vartype encryption_key_thumbprint: str
+    :ivar encryption_key: The public part of the encryption certificate. Client uses this to
      encrypt any secret.
-    :type encryption_key: str
+    :vartype encryption_key: str
     :ivar resource_key: The Resource ID of the Resource.
     :vartype resource_key: str
-    :param client_secret_store_id: The Key Vault ARM Id for client secrets.
-    :type client_secret_store_id: str
-    :param client_secret_store_url: The url to access the Client Key Vault.
-    :type client_secret_store_url: str
-    :param channel_integrity_key_name: The name of Channel Integrity Key stored in the Client Key
+    :ivar client_secret_store_id: The Key Vault ARM Id for client secrets.
+    :vartype client_secret_store_id: str
+    :ivar client_secret_store_url: The url to access the Client Key Vault.
+    :vartype client_secret_store_url: str
+    :ivar channel_integrity_key_name: The name of Channel Integrity Key stored in the Client Key
      Vault.
-    :type channel_integrity_key_name: str
-    :param channel_integrity_key_version: The version of Channel Integrity Key stored in the Client
+    :vartype channel_integrity_key_name: str
+    :ivar channel_integrity_key_version: The version of Channel Integrity Key stored in the Client
      Key Vault.
-    :type channel_integrity_key_version: str
-    :param key_vault_sync_status: Key vault sync status. Possible values include: "KeyVaultSynced",
+    :vartype channel_integrity_key_version: str
+    :ivar key_vault_sync_status: Key vault sync status. Possible values include: "KeyVaultSynced",
      "KeyVaultSyncFailed", "KeyVaultNotConfigured", "KeyVaultSyncPending", "KeyVaultSyncing",
      "KeyVaultNotSynced".
-    :type key_vault_sync_status: str or
+    :vartype key_vault_sync_status: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KeyVaultSyncStatus
     :ivar device_secrets: Device secrets, will be returned only with ODataFilter
      $expand=deviceSecrets.
@@ -1249,6 +1397,28 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
         key_vault_sync_status: Optional[Union[str, "KeyVaultSyncStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword encryption_key_thumbprint: The digital signature of encrypted certificate.
+        :paramtype encryption_key_thumbprint: str
+        :keyword encryption_key: The public part of the encryption certificate. Client uses this to
+         encrypt any secret.
+        :paramtype encryption_key: str
+        :keyword client_secret_store_id: The Key Vault ARM Id for client secrets.
+        :paramtype client_secret_store_id: str
+        :keyword client_secret_store_url: The url to access the Client Key Vault.
+        :paramtype client_secret_store_url: str
+        :keyword channel_integrity_key_name: The name of Channel Integrity Key stored in the Client Key
+         Vault.
+        :paramtype channel_integrity_key_name: str
+        :keyword channel_integrity_key_version: The version of Channel Integrity Key stored in the
+         Client Key Vault.
+        :paramtype channel_integrity_key_version: str
+        :keyword key_vault_sync_status: Key vault sync status. Possible values include:
+         "KeyVaultSynced", "KeyVaultSyncFailed", "KeyVaultNotConfigured", "KeyVaultSyncPending",
+         "KeyVaultSyncing", "KeyVaultNotSynced".
+        :paramtype key_vault_sync_status: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KeyVaultSyncStatus
+        """
         super(DataBoxEdgeDeviceExtendedInfo, self).__init__(**kwargs)
         self.encryption_key_thumbprint = encryption_key_thumbprint
         self.encryption_key = encryption_key
@@ -1264,21 +1434,22 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
 class DataBoxEdgeDeviceExtendedInfoPatch(msrest.serialization.Model):
     """The Data Box Edge/Gateway device extended info patch.
 
-    :param client_secret_store_id: The Key Vault ARM Id for client secrets.
-    :type client_secret_store_id: str
-    :param client_secret_store_url: The url to access the Client Key Vault.
-    :type client_secret_store_url: str
-    :param channel_integrity_key_name: The name for Channel Integrity Key stored in the Client Key
+    :ivar client_secret_store_id: The Key Vault ARM Id for client secrets.
+    :vartype client_secret_store_id: str
+    :ivar client_secret_store_url: The url to access the Client Key Vault.
+    :vartype client_secret_store_url: str
+    :ivar channel_integrity_key_name: The name for Channel Integrity Key stored in the Client Key
      Vault.
-    :type channel_integrity_key_name: str
-    :param channel_integrity_key_version: The version of Channel Integrity Key stored in the Client
+    :vartype channel_integrity_key_name: str
+    :ivar channel_integrity_key_version: The version of Channel Integrity Key stored in the Client
      Key Vault.
-    :type channel_integrity_key_version: str
-    :param sync_status: For changing or to initiate the resync to key-vault set the status to
+    :vartype channel_integrity_key_version: str
+    :ivar sync_status: For changing or to initiate the resync to key-vault set the status to
      KeyVaultSyncPending, rest of the status will not be applicable. Possible values include:
      "KeyVaultSynced", "KeyVaultSyncFailed", "KeyVaultNotConfigured", "KeyVaultSyncPending",
      "KeyVaultSyncing", "KeyVaultNotSynced".
-    :type sync_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KeyVaultSyncStatus
+    :vartype sync_status: str or
+     ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KeyVaultSyncStatus
     """
 
     _attribute_map = {
@@ -1299,6 +1470,24 @@ class DataBoxEdgeDeviceExtendedInfoPatch(msrest.serialization.Model):
         sync_status: Optional[Union[str, "KeyVaultSyncStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword client_secret_store_id: The Key Vault ARM Id for client secrets.
+        :paramtype client_secret_store_id: str
+        :keyword client_secret_store_url: The url to access the Client Key Vault.
+        :paramtype client_secret_store_url: str
+        :keyword channel_integrity_key_name: The name for Channel Integrity Key stored in the Client
+         Key Vault.
+        :paramtype channel_integrity_key_name: str
+        :keyword channel_integrity_key_version: The version of Channel Integrity Key stored in the
+         Client Key Vault.
+        :paramtype channel_integrity_key_version: str
+        :keyword sync_status: For changing or to initiate the resync to key-vault set the status to
+         KeyVaultSyncPending, rest of the status will not be applicable. Possible values include:
+         "KeyVaultSynced", "KeyVaultSyncFailed", "KeyVaultNotConfigured", "KeyVaultSyncPending",
+         "KeyVaultSyncing", "KeyVaultNotSynced".
+        :paramtype sync_status: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KeyVaultSyncStatus
+        """
         super(DataBoxEdgeDeviceExtendedInfoPatch, self).__init__(**kwargs)
         self.client_secret_store_id = client_secret_store_id
         self.client_secret_store_url = client_secret_store_url
@@ -1332,6 +1521,8 @@ class DataBoxEdgeDeviceList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DataBoxEdgeDeviceList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1340,12 +1531,12 @@ class DataBoxEdgeDeviceList(msrest.serialization.Model):
 class DataBoxEdgeDevicePatch(msrest.serialization.Model):
     """The Data Box Edge/Gateway device patch.
 
-    :param tags: A set of tags. The tags attached to the Data Box Edge/Gateway resource.
-    :type tags: dict[str, str]
-    :param identity: Msi identity of the resource.
-    :type identity: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ResourceIdentity
-    :param edge_profile: Edge Profile property of the Data Box Edge/Gateway device.
-    :type edge_profile: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfilePatch
+    :ivar tags: A set of tags. The tags attached to the Data Box Edge/Gateway resource.
+    :vartype tags: dict[str, str]
+    :ivar identity: Msi identity of the resource.
+    :vartype identity: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ResourceIdentity
+    :ivar edge_profile: Edge Profile property of the Data Box Edge/Gateway device.
+    :vartype edge_profile: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfilePatch
     """
 
     _attribute_map = {
@@ -1362,6 +1553,14 @@ class DataBoxEdgeDevicePatch(msrest.serialization.Model):
         edge_profile: Optional["EdgeProfilePatch"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. The tags attached to the Data Box Edge/Gateway resource.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Msi identity of the resource.
+        :paramtype identity: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ResourceIdentity
+        :keyword edge_profile: Edge Profile property of the Data Box Edge/Gateway device.
+        :paramtype edge_profile: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfilePatch
+        """
         super(DataBoxEdgeDevicePatch, self).__init__(**kwargs)
         self.tags = tags
         self.identity = identity
@@ -1373,10 +1572,10 @@ class DataBoxEdgeMoveRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_resource_group: Required. Target resource group ARMId.
-    :type target_resource_group: str
-    :param resources: Required. List of resources to be moved.
-    :type resources: list[str]
+    :ivar target_resource_group: Required. Target resource group ARMId.
+    :vartype target_resource_group: str
+    :ivar resources: Required. List of resources to be moved.
+    :vartype resources: list[str]
     """
 
     _validation = {
@@ -1396,6 +1595,12 @@ class DataBoxEdgeMoveRequest(msrest.serialization.Model):
         resources: List[str],
         **kwargs
     ):
+        """
+        :keyword target_resource_group: Required. Target resource group ARMId.
+        :paramtype target_resource_group: str
+        :keyword resources: Required. List of resources to be moved.
+        :paramtype resources: list[str]
+        """
         super(DataBoxEdgeMoveRequest, self).__init__(**kwargs)
         self.target_resource_group = target_resource_group
         self.resources = resources
@@ -1445,6 +1650,8 @@ class DataBoxEdgeSku(msrest.serialization.Model):
     :ivar shipment_types: List of Shipment Types supported by this SKU.
     :vartype shipment_types: list[str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShipmentType]
+    :ivar capabilities: The capability info of the SKU.
+    :vartype capabilities: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.SkuCapability]
     """
 
     _validation = {
@@ -1462,6 +1669,7 @@ class DataBoxEdgeSku(msrest.serialization.Model):
         'version': {'readonly': True},
         'availability': {'readonly': True},
         'shipment_types': {'readonly': True},
+        'capabilities': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1479,12 +1687,15 @@ class DataBoxEdgeSku(msrest.serialization.Model):
         'version': {'key': 'version', 'type': 'str'},
         'availability': {'key': 'availability', 'type': 'str'},
         'shipment_types': {'key': 'shipmentTypes', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[SkuCapability]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(DataBoxEdgeSku, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
@@ -1500,6 +1711,7 @@ class DataBoxEdgeSku(msrest.serialization.Model):
         self.version = None
         self.availability = None
         self.shipment_types = None
+        self.capabilities = None
 
 
 class DataBoxEdgeSkuList(msrest.serialization.Model):
@@ -1527,6 +1739,8 @@ class DataBoxEdgeSkuList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DataBoxEdgeSkuList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1535,8 +1749,8 @@ class DataBoxEdgeSkuList(msrest.serialization.Model):
 class DCAccessCode(msrest.serialization.Model):
     """DC Access code in the case of Self Managed Shipping.
 
-    :param auth_code: DCAccess Code for the Self Managed shipment.
-    :type auth_code: str
+    :ivar auth_code: DCAccess Code for the Self Managed shipment.
+    :vartype auth_code: str
     """
 
     _attribute_map = {
@@ -1549,6 +1763,10 @@ class DCAccessCode(msrest.serialization.Model):
         auth_code: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword auth_code: DCAccess Code for the Self Managed shipment.
+        :paramtype auth_code: str
+        """
         super(DCAccessCode, self).__init__(**kwargs)
         self.auth_code = auth_code
 
@@ -1556,8 +1774,9 @@ class DCAccessCode(msrest.serialization.Model):
 class EdgeProfile(msrest.serialization.Model):
     """Details about Edge Profile for the resource.
 
-    :param subscription: Edge Profile Subscription.
-    :type subscription: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfileSubscription
+    :ivar subscription: Edge Profile Subscription.
+    :vartype subscription:
+     ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfileSubscription
     """
 
     _attribute_map = {
@@ -1570,6 +1789,11 @@ class EdgeProfile(msrest.serialization.Model):
         subscription: Optional["EdgeProfileSubscription"] = None,
         **kwargs
     ):
+        """
+        :keyword subscription: Edge Profile Subscription.
+        :paramtype subscription:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfileSubscription
+        """
         super(EdgeProfile, self).__init__(**kwargs)
         self.subscription = subscription
 
@@ -1577,8 +1801,8 @@ class EdgeProfile(msrest.serialization.Model):
 class EdgeProfilePatch(msrest.serialization.Model):
     """The Data Box Edge/Gateway Edge Profile patch.
 
-    :param subscription: The Data Box Edge/Gateway Edge Profile Subscription patch.
-    :type subscription:
+    :ivar subscription: The Data Box Edge/Gateway Edge Profile Subscription patch.
+    :vartype subscription:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfileSubscriptionPatch
     """
 
@@ -1592,6 +1816,11 @@ class EdgeProfilePatch(msrest.serialization.Model):
         subscription: Optional["EdgeProfileSubscriptionPatch"] = None,
         **kwargs
     ):
+        """
+        :keyword subscription: The Data Box Edge/Gateway Edge Profile Subscription patch.
+        :paramtype subscription:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EdgeProfileSubscriptionPatch
+        """
         super(EdgeProfilePatch, self).__init__(**kwargs)
         self.subscription = subscription
 
@@ -1599,27 +1828,27 @@ class EdgeProfilePatch(msrest.serialization.Model):
 class EdgeProfileSubscription(msrest.serialization.Model):
     """Subscription details for the Edge Profile.
 
-    :param registration_id: Edge Subscription Registration ID.
-    :type registration_id: str
-    :param id: ARM ID of the subscription.
-    :type id: str
-    :param state:  Possible values include: "Registered", "Warned", "Suspended", "Deleted",
+    :ivar registration_id: Edge Subscription Registration ID.
+    :vartype registration_id: str
+    :ivar id: ARM ID of the subscription.
+    :vartype id: str
+    :ivar state: Possible values include: "Registered", "Warned", "Suspended", "Deleted",
      "Unregistered".
-    :type state: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SubscriptionState
-    :param registration_date:
-    :type registration_date: str
-    :param subscription_id:
-    :type subscription_id: str
-    :param tenant_id:
-    :type tenant_id: str
-    :param location_placement_id:
-    :type location_placement_id: str
-    :param quota_id:
-    :type quota_id: str
-    :param serialized_details:
-    :type serialized_details: str
-    :param registered_features:
-    :type registered_features:
+    :vartype state: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SubscriptionState
+    :ivar registration_date:
+    :vartype registration_date: str
+    :ivar subscription_id:
+    :vartype subscription_id: str
+    :ivar tenant_id:
+    :vartype tenant_id: str
+    :ivar location_placement_id:
+    :vartype location_placement_id: str
+    :ivar quota_id:
+    :vartype quota_id: str
+    :ivar serialized_details:
+    :vartype serialized_details: str
+    :ivar registered_features:
+    :vartype registered_features:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.SubscriptionRegisteredFeatures]
     """
 
@@ -1651,6 +1880,30 @@ class EdgeProfileSubscription(msrest.serialization.Model):
         registered_features: Optional[List["SubscriptionRegisteredFeatures"]] = None,
         **kwargs
     ):
+        """
+        :keyword registration_id: Edge Subscription Registration ID.
+        :paramtype registration_id: str
+        :keyword id: ARM ID of the subscription.
+        :paramtype id: str
+        :keyword state: Possible values include: "Registered", "Warned", "Suspended", "Deleted",
+         "Unregistered".
+        :paramtype state: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SubscriptionState
+        :keyword registration_date:
+        :paramtype registration_date: str
+        :keyword subscription_id:
+        :paramtype subscription_id: str
+        :keyword tenant_id:
+        :paramtype tenant_id: str
+        :keyword location_placement_id:
+        :paramtype location_placement_id: str
+        :keyword quota_id:
+        :paramtype quota_id: str
+        :keyword serialized_details:
+        :paramtype serialized_details: str
+        :keyword registered_features:
+        :paramtype registered_features:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.SubscriptionRegisteredFeatures]
+        """
         super(EdgeProfileSubscription, self).__init__(**kwargs)
         self.registration_id = registration_id
         self.id = id
@@ -1667,8 +1920,8 @@ class EdgeProfileSubscription(msrest.serialization.Model):
 class EdgeProfileSubscriptionPatch(msrest.serialization.Model):
     """The Data Box Edge/Gateway Edge Profile Subscription patch.
 
-    :param id: The path ID that uniquely identifies the subscription of the edge profile.
-    :type id: str
+    :ivar id: The path ID that uniquely identifies the subscription of the edge profile.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -1681,6 +1934,10 @@ class EdgeProfileSubscriptionPatch(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The path ID that uniquely identifies the subscription of the edge profile.
+        :paramtype id: str
+        """
         super(EdgeProfileSubscriptionPatch, self).__init__(**kwargs)
         self.id = id
 
@@ -1710,6 +1967,8 @@ class EtcdInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(EtcdInfo, self).__init__(**kwargs)
         self.type = None
         self.version = None
@@ -1733,9 +1992,9 @@ class Trigger(ARMBaseModel):
     :vartype type: str
     :ivar system_data: Trigger in DataBoxEdge Resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param kind: Required. Trigger Kind.Constant filled by server.  Possible values include:
+    :ivar kind: Required. Trigger Kind.Constant filled by server. Possible values include:
      "FileEvent", "PeriodicTimerEvent".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TriggerEventType
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TriggerEventType
     """
 
     _validation = {
@@ -1762,6 +2021,8 @@ class Trigger(ARMBaseModel):
         self,
         **kwargs
     ):
+        """
+        """
         super(Trigger, self).__init__(**kwargs)
         self.system_data = None
         self.kind = 'Trigger'  # type: str
@@ -1782,17 +2043,17 @@ class FileEventTrigger(Trigger):
     :vartype type: str
     :ivar system_data: Trigger in DataBoxEdge Resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param kind: Required. Trigger Kind.Constant filled by server.  Possible values include:
+    :ivar kind: Required. Trigger Kind.Constant filled by server. Possible values include:
      "FileEvent", "PeriodicTimerEvent".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TriggerEventType
-    :param source_info: Required. File event source details.
-    :type source_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.FileSourceInfo
-    :param sink_info: Required. Role sink info.
-    :type sink_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleSinkInfo
-    :param custom_context_tag: A custom context tag typically used to correlate the trigger against
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TriggerEventType
+    :ivar source_info: Required. File event source details.
+    :vartype source_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.FileSourceInfo
+    :ivar sink_info: Required. Role sink info.
+    :vartype sink_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleSinkInfo
+    :ivar custom_context_tag: A custom context tag typically used to correlate the trigger against
      its usage. For example, if a periodic timer trigger is intended for certain specific IoT
      modules in the device, the tag can be the name or the image URL of the module.
-    :type custom_context_tag: str
+    :vartype custom_context_tag: str
     """
 
     _validation = {
@@ -1825,6 +2086,16 @@ class FileEventTrigger(Trigger):
         custom_context_tag: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword source_info: Required. File event source details.
+        :paramtype source_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.FileSourceInfo
+        :keyword sink_info: Required. Role sink info.
+        :paramtype sink_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleSinkInfo
+        :keyword custom_context_tag: A custom context tag typically used to correlate the trigger
+         against its usage. For example, if a periodic timer trigger is intended for certain specific
+         IoT modules in the device, the tag can be the name or the image URL of the module.
+        :paramtype custom_context_tag: str
+        """
         super(FileEventTrigger, self).__init__(**kwargs)
         self.kind = 'FileEvent'  # type: str
         self.source_info = source_info
@@ -1837,8 +2108,8 @@ class FileSourceInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param share_id: Required. File share ID.
-    :type share_id: str
+    :ivar share_id: Required. File share ID.
+    :vartype share_id: str
     """
 
     _validation = {
@@ -1855,6 +2126,10 @@ class FileSourceInfo(msrest.serialization.Model):
         share_id: str,
         **kwargs
     ):
+        """
+        :keyword share_id: Required. File share ID.
+        :paramtype share_id: str
+        """
         super(FileSourceInfo, self).__init__(**kwargs)
         self.share_id = share_id
 
@@ -1862,14 +2137,14 @@ class FileSourceInfo(msrest.serialization.Model):
 class GenerateCertResponse(msrest.serialization.Model):
     """Used in activation key generation flow.
 
-    :param public_key: Gets or sets base64 encoded certificate raw data,
+    :ivar public_key: Gets or sets base64 encoded certificate raw data,
      this is the public part needed to be uploaded to cert vault.
-    :type public_key: str
-    :param private_key: Gets or sets base64 encoded private part of the certificate,
+    :vartype public_key: str
+    :ivar private_key: Gets or sets base64 encoded private part of the certificate,
      needed to form the activation key.
-    :type private_key: str
-    :param expiry_time_in_utc: Gets or sets expiry time in UTC.
-    :type expiry_time_in_utc: str
+    :vartype private_key: str
+    :ivar expiry_time_in_utc: Gets or sets expiry time in UTC.
+    :vartype expiry_time_in_utc: str
     """
 
     _attribute_map = {
@@ -1886,6 +2161,16 @@ class GenerateCertResponse(msrest.serialization.Model):
         expiry_time_in_utc: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword public_key: Gets or sets base64 encoded certificate raw data,
+         this is the public part needed to be uploaded to cert vault.
+        :paramtype public_key: str
+        :keyword private_key: Gets or sets base64 encoded private part of the certificate,
+         needed to form the activation key.
+        :paramtype private_key: str
+        :keyword expiry_time_in_utc: Gets or sets expiry time in UTC.
+        :paramtype expiry_time_in_utc: str
+        """
         super(GenerateCertResponse, self).__init__(**kwargs)
         self.public_key = public_key
         self.private_key = private_key
@@ -1897,12 +2182,12 @@ class ImageRepositoryCredential(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param image_repository_url: Required. Image repository url (e.g.: mcr.microsoft.com).
-    :type image_repository_url: str
-    :param user_name: Required. Repository user name.
-    :type user_name: str
-    :param password: Repository user password.
-    :type password: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+    :ivar image_repository_url: Required. Image repository url (e.g.: mcr.microsoft.com).
+    :vartype image_repository_url: str
+    :ivar user_name: Required. Repository user name.
+    :vartype user_name: str
+    :ivar password: Repository user password.
+    :vartype password: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
     """
 
     _validation = {
@@ -1924,6 +2209,15 @@ class ImageRepositoryCredential(msrest.serialization.Model):
         password: Optional["AsymmetricEncryptedSecret"] = None,
         **kwargs
     ):
+        """
+        :keyword image_repository_url: Required. Image repository url (e.g.: mcr.microsoft.com).
+        :paramtype image_repository_url: str
+        :keyword user_name: Required. Repository user name.
+        :paramtype user_name: str
+        :keyword password: Repository user password.
+        :paramtype password:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+        """
         super(ImageRepositoryCredential, self).__init__(**kwargs)
         self.image_repository_url = image_repository_url
         self.user_name = user_name
@@ -1943,17 +2237,17 @@ class IoTAddon(Addon):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param kind: Required. Addon type.Constant filled by server.  Possible values include:
-     "IotEdge", "ArcForKubernetes".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AddonType
+    :ivar kind: Required. Addon type.Constant filled by server. Possible values include: "IotEdge",
+     "ArcForKubernetes".
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AddonType
     :ivar system_data: Addon type.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param io_t_device_details: Required. IoT device metadata to which appliance needs to be
+    :ivar io_t_device_details: Required. IoT device metadata to which appliance needs to be
      connected.
-    :type io_t_device_details: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
-    :param io_t_edge_device_details: Required. IoT edge device to which the IoT Addon needs to be
+    :vartype io_t_device_details: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
+    :ivar io_t_edge_device_details: Required. IoT edge device to which the IoT Addon needs to be
      configured.
-    :type io_t_edge_device_details:
+    :vartype io_t_edge_device_details:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
     :ivar version: Version of IoT running on the appliance.
     :vartype version: str
@@ -2005,6 +2299,16 @@ class IoTAddon(Addon):
         io_t_edge_device_details: "IoTDeviceInfo",
         **kwargs
     ):
+        """
+        :keyword io_t_device_details: Required. IoT device metadata to which appliance needs to be
+         connected.
+        :paramtype io_t_device_details:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
+        :keyword io_t_edge_device_details: Required. IoT edge device to which the IoT Addon needs to be
+         configured.
+        :paramtype io_t_edge_device_details:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
+        """
         super(IoTAddon, self).__init__(**kwargs)
         self.kind = 'IotEdge'  # type: str
         self.io_t_device_details = io_t_device_details
@@ -2020,14 +2324,14 @@ class IoTDeviceInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param device_id: Required. ID of the IoT device/edge device.
-    :type device_id: str
-    :param io_t_host_hub: Required. Host name for the IoT hub associated to the device.
-    :type io_t_host_hub: str
-    :param io_t_host_hub_id: Id for the IoT hub associated to the device.
-    :type io_t_host_hub_id: str
-    :param authentication: Encrypted IoT device/IoT edge device connection string.
-    :type authentication: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Authentication
+    :ivar device_id: Required. ID of the IoT device/edge device.
+    :vartype device_id: str
+    :ivar io_t_host_hub: Required. Host name for the IoT hub associated to the device.
+    :vartype io_t_host_hub: str
+    :ivar io_t_host_hub_id: Id for the IoT hub associated to the device.
+    :vartype io_t_host_hub_id: str
+    :ivar authentication: Encrypted IoT device/IoT edge device connection string.
+    :vartype authentication: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Authentication
     """
 
     _validation = {
@@ -2051,6 +2355,16 @@ class IoTDeviceInfo(msrest.serialization.Model):
         authentication: Optional["Authentication"] = None,
         **kwargs
     ):
+        """
+        :keyword device_id: Required. ID of the IoT device/edge device.
+        :paramtype device_id: str
+        :keyword io_t_host_hub: Required. Host name for the IoT hub associated to the device.
+        :paramtype io_t_host_hub: str
+        :keyword io_t_host_hub_id: Id for the IoT hub associated to the device.
+        :paramtype io_t_host_hub_id: str
+        :keyword authentication: Encrypted IoT device/IoT edge device connection string.
+        :paramtype authentication: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Authentication
+        """
         super(IoTDeviceInfo, self).__init__(**kwargs)
         self.device_id = device_id
         self.io_t_host_hub = io_t_host_hub
@@ -2063,12 +2377,12 @@ class IoTEdgeAgentInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param image_name: Required. Name of the IoT edge agent image.
-    :type image_name: str
-    :param tag: Required. Image Tag.
-    :type tag: str
-    :param image_repository: Image repository details.
-    :type image_repository:
+    :ivar image_name: Required. Name of the IoT edge agent image.
+    :vartype image_name: str
+    :ivar tag: Required. Image Tag.
+    :vartype tag: str
+    :ivar image_repository: Image repository details.
+    :vartype image_repository:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ImageRepositoryCredential
     """
 
@@ -2091,6 +2405,15 @@ class IoTEdgeAgentInfo(msrest.serialization.Model):
         image_repository: Optional["ImageRepositoryCredential"] = None,
         **kwargs
     ):
+        """
+        :keyword image_name: Required. Name of the IoT edge agent image.
+        :paramtype image_name: str
+        :keyword tag: Required. Image Tag.
+        :paramtype tag: str
+        :keyword image_repository: Image repository details.
+        :paramtype image_repository:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ImageRepositoryCredential
+        """
         super(IoTEdgeAgentInfo, self).__init__(**kwargs)
         self.image_name = image_name
         self.tag = tag
@@ -2110,33 +2433,34 @@ class IoTRole(Role):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param kind: Required. Role type.Constant filled by server.  Possible values include: "IOT",
+    :ivar kind: Required. Role type.Constant filled by server. Possible values include: "IOT",
      "ASA", "Functions", "Cognitive", "MEC", "CloudEdgeManagement", "Kubernetes".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
     :ivar system_data: Role configured on ASE resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param host_platform: Host OS supported by the IoT role. Possible values include: "Windows",
+    :ivar host_platform: Host OS supported by the IoT role. Possible values include: "Windows",
      "Linux".
-    :type host_platform: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PlatformType
-    :param io_t_device_details: IoT device metadata to which data box edge device needs to be
+    :vartype host_platform: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PlatformType
+    :ivar io_t_device_details: IoT device metadata to which data box edge device needs to be
      connected.
-    :type io_t_device_details: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
-    :param io_t_edge_device_details: IoT edge device to which the IoT role needs to be configured.
-    :type io_t_edge_device_details:
+    :vartype io_t_device_details: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
+    :ivar io_t_edge_device_details: IoT edge device to which the IoT role needs to be configured.
+    :vartype io_t_edge_device_details:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
-    :param share_mappings: Mount points of shares in role(s).
-    :type share_mappings: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MountPointMap]
-    :param io_t_edge_agent_info: Iot edge agent details to download the agent and bootstrap iot
+    :ivar share_mappings: Mount points of shares in role(s).
+    :vartype share_mappings: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MountPointMap]
+    :ivar io_t_edge_agent_info: Iot edge agent details to download the agent and bootstrap iot
      runtime.
-    :type io_t_edge_agent_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTEdgeAgentInfo
+    :vartype io_t_edge_agent_info:
+     ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTEdgeAgentInfo
     :ivar host_platform_type: Platform where the Iot runtime is hosted. Possible values include:
      "KubernetesCluster", "LinuxVM".
     :vartype host_platform_type: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.HostPlatformType
-    :param compute_resource: Resource allocation.
-    :type compute_resource: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ComputeResource
-    :param role_status: Role status. Possible values include: "Enabled", "Disabled".
-    :type role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
+    :ivar compute_resource: Resource allocation.
+    :vartype compute_resource: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ComputeResource
+    :ivar role_status: Role status. Possible values include: "Enabled", "Disabled".
+    :vartype role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
     """
 
     _validation = {
@@ -2176,6 +2500,31 @@ class IoTRole(Role):
         role_status: Optional[Union[str, "RoleStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword host_platform: Host OS supported by the IoT role. Possible values include: "Windows",
+         "Linux".
+        :paramtype host_platform: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PlatformType
+        :keyword io_t_device_details: IoT device metadata to which data box edge device needs to be
+         connected.
+        :paramtype io_t_device_details:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
+        :keyword io_t_edge_device_details: IoT edge device to which the IoT role needs to be
+         configured.
+        :paramtype io_t_edge_device_details:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTDeviceInfo
+        :keyword share_mappings: Mount points of shares in role(s).
+        :paramtype share_mappings:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MountPointMap]
+        :keyword io_t_edge_agent_info: Iot edge agent details to download the agent and bootstrap iot
+         runtime.
+        :paramtype io_t_edge_agent_info:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.IoTEdgeAgentInfo
+        :keyword compute_resource: Resource allocation.
+        :paramtype compute_resource: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ComputeResource
+        :keyword role_status: Role status. Possible values include: "Enabled", "Disabled".
+        :paramtype role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
+        """
         super(IoTRole, self).__init__(**kwargs)
         self.kind = 'IOT'  # type: str
         self.host_platform = host_platform
@@ -2217,6 +2566,8 @@ class Ipv4Config(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Ipv4Config, self).__init__(**kwargs)
         self.ip_address = None
         self.subnet = None
@@ -2252,6 +2603,8 @@ class Ipv6Config(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Ipv6Config, self).__init__(**kwargs)
         self.ip_address = None
         self.prefix_length = None
@@ -2303,9 +2656,9 @@ class Job(msrest.serialization.Model):
     :vartype error_manifest_file: str
     :ivar refreshed_entity_id: ARM ID of the entity that was refreshed.
     :vartype refreshed_entity_id: str
-    :param folder: If only subfolders need to be refreshed, then the subfolder path inside the
-     share or container. (The path is empty if there are no subfolders.).
-    :type folder: str
+    :ivar folder: If only subfolders need to be refreshed, then the subfolder path inside the share
+     or container. (The path is empty if there are no subfolders.).
+    :vartype folder: str
     """
 
     _validation = {
@@ -2351,6 +2704,11 @@ class Job(msrest.serialization.Model):
         folder: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword folder: If only subfolders need to be refreshed, then the subfolder path inside the
+         share or container. (The path is empty if there are no subfolders.).
+        :paramtype folder: str
+        """
         super(Job, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -2399,6 +2757,8 @@ class JobErrorDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobErrorDetails, self).__init__(**kwargs)
         self.error_details = None
         self.code = None
@@ -2434,6 +2794,8 @@ class JobErrorItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(JobErrorItem, self).__init__(**kwargs)
         self.recommendations = None
         self.code = None
@@ -2451,8 +2813,8 @@ class KubernetesClusterInfo(msrest.serialization.Model):
     :vartype etcd_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.EtcdInfo
     :ivar nodes: Kubernetes cluster nodes.
     :vartype nodes: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.NodeInfo]
-    :param version: Required. Kubernetes cluster version.
-    :type version: str
+    :ivar version: Required. Kubernetes cluster version.
+    :vartype version: str
     """
 
     _validation = {
@@ -2473,6 +2835,10 @@ class KubernetesClusterInfo(msrest.serialization.Model):
         version: str,
         **kwargs
     ):
+        """
+        :keyword version: Required. Kubernetes cluster version.
+        :paramtype version: str
+        """
         super(KubernetesClusterInfo, self).__init__(**kwargs)
         self.etcd_info = None
         self.nodes = None
@@ -2486,8 +2852,8 @@ class KubernetesIPConfiguration(msrest.serialization.Model):
 
     :ivar port: Port of the Kubernetes node.
     :vartype port: str
-    :param ip_address: IP address of the Kubernetes node.
-    :type ip_address: str
+    :ivar ip_address: IP address of the Kubernetes node.
+    :vartype ip_address: str
     """
 
     _validation = {
@@ -2505,6 +2871,10 @@ class KubernetesIPConfiguration(msrest.serialization.Model):
         ip_address: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ip_address: IP address of the Kubernetes node.
+        :paramtype ip_address: str
+        """
         super(KubernetesIPConfiguration, self).__init__(**kwargs)
         self.port = None
         self.ip_address = ip_address
@@ -2523,14 +2893,14 @@ class KubernetesRole(Role):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param kind: Required. Role type.Constant filled by server.  Possible values include: "IOT",
+    :ivar kind: Required. Role type.Constant filled by server. Possible values include: "IOT",
      "ASA", "Functions", "Cognitive", "MEC", "CloudEdgeManagement", "Kubernetes".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
     :ivar system_data: Role configured on ASE resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param host_platform: Host OS supported by the Kubernetes role. Possible values include:
+    :ivar host_platform: Host OS supported by the Kubernetes role. Possible values include:
      "Windows", "Linux".
-    :type host_platform: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PlatformType
+    :vartype host_platform: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PlatformType
     :ivar provisioning_state: State of Kubernetes deployment. Possible values include: "Invalid",
      "Creating", "Created", "Updating", "Reconfiguring", "Failed", "Deleting".
     :vartype provisioning_state: str or
@@ -2539,14 +2909,14 @@ class KubernetesRole(Role):
      "KubernetesCluster", "LinuxVM".
     :vartype host_platform_type: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.HostPlatformType
-    :param kubernetes_cluster_info: Kubernetes cluster configuration.
-    :type kubernetes_cluster_info:
+    :ivar kubernetes_cluster_info: Kubernetes cluster configuration.
+    :vartype kubernetes_cluster_info:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesClusterInfo
-    :param kubernetes_role_resources: Kubernetes role resources.
-    :type kubernetes_role_resources:
+    :ivar kubernetes_role_resources: Kubernetes role resources.
+    :vartype kubernetes_role_resources:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleResources
-    :param role_status: Role status. Possible values include: "Enabled", "Disabled".
-    :type role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
+    :ivar role_status: Role status. Possible values include: "Enabled", "Disabled".
+    :vartype role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
     """
 
     _validation = {
@@ -2582,6 +2952,20 @@ class KubernetesRole(Role):
         role_status: Optional[Union[str, "RoleStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword host_platform: Host OS supported by the Kubernetes role. Possible values include:
+         "Windows", "Linux".
+        :paramtype host_platform: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PlatformType
+        :keyword kubernetes_cluster_info: Kubernetes cluster configuration.
+        :paramtype kubernetes_cluster_info:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesClusterInfo
+        :keyword kubernetes_role_resources: Kubernetes role resources.
+        :paramtype kubernetes_role_resources:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleResources
+        :keyword role_status: Role status. Possible values include: "Enabled", "Disabled".
+        :paramtype role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
+        """
         super(KubernetesRole, self).__init__(**kwargs)
         self.kind = 'Kubernetes'  # type: str
         self.host_platform = host_platform
@@ -2599,8 +2983,8 @@ class KubernetesRoleCompute(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param vm_profile: Required. VM profile.
-    :type vm_profile: str
+    :ivar vm_profile: Required. VM profile.
+    :vartype vm_profile: str
     :ivar memory_in_bytes: Memory in bytes.
     :vartype memory_in_bytes: long
     :ivar processor_count: Processor count.
@@ -2625,6 +3009,10 @@ class KubernetesRoleCompute(msrest.serialization.Model):
         vm_profile: str,
         **kwargs
     ):
+        """
+        :keyword vm_profile: Required. VM profile.
+        :paramtype vm_profile: str
+        """
         super(KubernetesRoleCompute, self).__init__(**kwargs)
         self.vm_profile = vm_profile
         self.memory_in_bytes = None
@@ -2657,6 +3045,8 @@ class KubernetesRoleNetwork(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KubernetesRoleNetwork, self).__init__(**kwargs)
         self.cni_config = None
         self.load_balancer_config = None
@@ -2669,10 +3059,10 @@ class KubernetesRoleResources(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage: Kubernetes role storage resource.
-    :type storage: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleStorage
-    :param compute: Required. Kubernetes role compute resource.
-    :type compute: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleCompute
+    :ivar storage: Kubernetes role storage resource.
+    :vartype storage: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleStorage
+    :ivar compute: Required. Kubernetes role compute resource.
+    :vartype compute: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleCompute
     :ivar network: Kubernetes role network resource.
     :vartype network: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleNetwork
     """
@@ -2695,6 +3085,12 @@ class KubernetesRoleResources(msrest.serialization.Model):
         storage: Optional["KubernetesRoleStorage"] = None,
         **kwargs
     ):
+        """
+        :keyword storage: Kubernetes role storage resource.
+        :paramtype storage: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleStorage
+        :keyword compute: Required. Kubernetes role compute resource.
+        :paramtype compute: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleCompute
+        """
         super(KubernetesRoleResources, self).__init__(**kwargs)
         self.storage = storage
         self.compute = compute
@@ -2709,8 +3105,8 @@ class KubernetesRoleStorage(msrest.serialization.Model):
     :ivar storage_classes: Kubernetes storage class info.
     :vartype storage_classes:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesRoleStorageClassInfo]
-    :param endpoints: Mount points of shares in role(s).
-    :type endpoints: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MountPointMap]
+    :ivar endpoints: Mount points of shares in role(s).
+    :vartype endpoints: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MountPointMap]
     """
 
     _validation = {
@@ -2728,6 +3124,10 @@ class KubernetesRoleStorage(msrest.serialization.Model):
         endpoints: Optional[List["MountPointMap"]] = None,
         **kwargs
     ):
+        """
+        :keyword endpoints: Mount points of shares in role(s).
+        :paramtype endpoints: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MountPointMap]
+        """
         super(KubernetesRoleStorage, self).__init__(**kwargs)
         self.storage_classes = None
         self.endpoints = endpoints
@@ -2764,6 +3164,8 @@ class KubernetesRoleStorageClassInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KubernetesRoleStorageClassInfo, self).__init__(**kwargs)
         self.name = None
         self.type = None
@@ -2795,6 +3197,8 @@ class LoadBalancerConfig(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LoadBalancerConfig, self).__init__(**kwargs)
         self.type = None
         self.version = None
@@ -2813,20 +3217,20 @@ class MECRole(Role):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param kind: Required. Role type.Constant filled by server.  Possible values include: "IOT",
+    :ivar kind: Required. Role type.Constant filled by server. Possible values include: "IOT",
      "ASA", "Functions", "Cognitive", "MEC", "CloudEdgeManagement", "Kubernetes".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleTypes
     :ivar system_data: Role configured on ASE resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param connection_string: Activation key of the MEC.
-    :type connection_string:
+    :ivar connection_string: Activation key of the MEC.
+    :vartype connection_string:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
-    :param controller_endpoint: Controller Endpoint.
-    :type controller_endpoint: str
-    :param resource_unique_id: Unique Id of the Resource.
-    :type resource_unique_id: str
-    :param role_status: Role status. Possible values include: "Enabled", "Disabled".
-    :type role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
+    :ivar controller_endpoint: Controller Endpoint.
+    :vartype controller_endpoint: str
+    :ivar resource_unique_id: Unique Id of the Resource.
+    :vartype resource_unique_id: str
+    :ivar role_status: Role status. Possible values include: "Enabled", "Disabled".
+    :vartype role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
     """
 
     _validation = {
@@ -2858,6 +3262,17 @@ class MECRole(Role):
         role_status: Optional[Union[str, "RoleStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword connection_string: Activation key of the MEC.
+        :paramtype connection_string:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+        :keyword controller_endpoint: Controller Endpoint.
+        :paramtype controller_endpoint: str
+        :keyword resource_unique_id: Unique Id of the Resource.
+        :paramtype resource_unique_id: str
+        :keyword role_status: Role status. Possible values include: "Enabled", "Disabled".
+        :paramtype role_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleStatus
+        """
         super(MECRole, self).__init__(**kwargs)
         self.kind = 'MEC'  # type: str
         self.connection_string = connection_string
@@ -2871,15 +3286,16 @@ class MetricConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param resource_id: Required. The Resource ID on which the metrics should be pushed.
-    :type resource_id: str
-    :param mdm_account: The MDM account to which the counters should be pushed.
-    :type mdm_account: str
-    :param metric_name_space: The MDM namespace to which the counters should be pushed. This is
+    :ivar resource_id: Required. The Resource ID on which the metrics should be pushed.
+    :vartype resource_id: str
+    :ivar mdm_account: The MDM account to which the counters should be pushed.
+    :vartype mdm_account: str
+    :ivar metric_name_space: The MDM namespace to which the counters should be pushed. This is
      required if MDMAccount is specified.
-    :type metric_name_space: str
-    :param counter_sets: Required. Host name for the IoT hub associated to the device.
-    :type counter_sets: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCounterSet]
+    :vartype metric_name_space: str
+    :ivar counter_sets: Required. Host name for the IoT hub associated to the device.
+    :vartype counter_sets:
+     list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCounterSet]
     """
 
     _validation = {
@@ -2903,6 +3319,18 @@ class MetricConfiguration(msrest.serialization.Model):
         metric_name_space: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword resource_id: Required. The Resource ID on which the metrics should be pushed.
+        :paramtype resource_id: str
+        :keyword mdm_account: The MDM account to which the counters should be pushed.
+        :paramtype mdm_account: str
+        :keyword metric_name_space: The MDM namespace to which the counters should be pushed. This is
+         required if MDMAccount is specified.
+        :paramtype metric_name_space: str
+        :keyword counter_sets: Required. Host name for the IoT hub associated to the device.
+        :paramtype counter_sets:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCounterSet]
+        """
         super(MetricConfiguration, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.mdm_account = mdm_account
@@ -2915,15 +3343,15 @@ class MetricCounter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The counter name.
-    :type name: str
-    :param instance: The instance from which counter should be collected.
-    :type instance: str
-    :param dimension_filter: The dimension filter.
-    :type dimension_filter:
+    :ivar name: Required. The counter name.
+    :vartype name: str
+    :ivar instance: The instance from which counter should be collected.
+    :vartype instance: str
+    :ivar dimension_filter: The dimension filter.
+    :vartype dimension_filter:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricDimension]
-    :param additional_dimensions: The additional dimensions to be added to metric.
-    :type additional_dimensions:
+    :ivar additional_dimensions: The additional dimensions to be added to metric.
+    :vartype additional_dimensions:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricDimension]
     """
 
@@ -2947,6 +3375,18 @@ class MetricCounter(msrest.serialization.Model):
         additional_dimensions: Optional[List["MetricDimension"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The counter name.
+        :paramtype name: str
+        :keyword instance: The instance from which counter should be collected.
+        :paramtype instance: str
+        :keyword dimension_filter: The dimension filter.
+        :paramtype dimension_filter:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricDimension]
+        :keyword additional_dimensions: The additional dimensions to be added to metric.
+        :paramtype additional_dimensions:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricDimension]
+        """
         super(MetricCounter, self).__init__(**kwargs)
         self.name = name
         self.instance = instance
@@ -2959,8 +3399,8 @@ class MetricCounterSet(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param counters: Required. The counters that should be collected in this set.
-    :type counters: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCounter]
+    :ivar counters: Required. The counters that should be collected in this set.
+    :vartype counters: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCounter]
     """
 
     _validation = {
@@ -2977,6 +3417,10 @@ class MetricCounterSet(msrest.serialization.Model):
         counters: List["MetricCounter"],
         **kwargs
     ):
+        """
+        :keyword counters: Required. The counters that should be collected in this set.
+        :paramtype counters: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCounter]
+        """
         super(MetricCounterSet, self).__init__(**kwargs)
         self.counters = counters
 
@@ -2986,10 +3430,10 @@ class MetricDimension(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_type: Required. The dimension type.
-    :type source_type: str
-    :param source_name: Required. The dimension value.
-    :type source_name: str
+    :ivar source_type: Required. The dimension type.
+    :vartype source_type: str
+    :ivar source_name: Required. The dimension value.
+    :vartype source_name: str
     """
 
     _validation = {
@@ -3009,6 +3453,12 @@ class MetricDimension(msrest.serialization.Model):
         source_name: str,
         **kwargs
     ):
+        """
+        :keyword source_type: Required. The dimension type.
+        :paramtype source_type: str
+        :keyword source_name: Required. The dimension value.
+        :paramtype source_name: str
+        """
         super(MetricDimension, self).__init__(**kwargs)
         self.source_type = source_type
         self.source_name = source_name
@@ -3017,12 +3467,12 @@ class MetricDimension(msrest.serialization.Model):
 class MetricDimensionV1(msrest.serialization.Model):
     """Metric Dimension v1.
 
-    :param name: Name of the metrics dimension.
-    :type name: str
-    :param display_name: Display name of the metrics dimension.
-    :type display_name: str
-    :param to_be_exported_for_shoebox: To be exported to shoe box.
-    :type to_be_exported_for_shoebox: bool
+    :ivar name: Name of the metrics dimension.
+    :vartype name: str
+    :ivar display_name: Display name of the metrics dimension.
+    :vartype display_name: str
+    :ivar to_be_exported_for_shoebox: To be exported to shoe box.
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
@@ -3039,6 +3489,14 @@ class MetricDimensionV1(msrest.serialization.Model):
         to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the metrics dimension.
+        :paramtype name: str
+        :keyword display_name: Display name of the metrics dimension.
+        :paramtype display_name: str
+        :keyword to_be_exported_for_shoebox: To be exported to shoe box.
+        :paramtype to_be_exported_for_shoebox: bool
+        """
         super(MetricDimensionV1, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -3048,32 +3506,32 @@ class MetricDimensionV1(msrest.serialization.Model):
 class MetricSpecificationV1(msrest.serialization.Model):
     """Metric specification version 1.
 
-    :param name: Name of the metric.
-    :type name: str
-    :param display_name: Display name of the metric.
-    :type display_name: str
-    :param display_description: Description of the metric to be displayed.
-    :type display_description: str
-    :param unit: Metric units. Possible values include: "NotSpecified", "Percent", "Count",
+    :ivar name: Name of the metric.
+    :vartype name: str
+    :ivar display_name: Display name of the metric.
+    :vartype display_name: str
+    :ivar display_description: Description of the metric to be displayed.
+    :vartype display_description: str
+    :ivar unit: Metric units. Possible values include: "NotSpecified", "Percent", "Count",
      "Seconds", "Milliseconds", "Bytes", "BytesPerSecond", "CountPerSecond".
-    :type unit: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricUnit
-    :param aggregation_type: Metric aggregation type. Possible values include: "NotSpecified",
+    :vartype unit: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricUnit
+    :ivar aggregation_type: Metric aggregation type. Possible values include: "NotSpecified",
      "None", "Average", "Minimum", "Maximum", "Total", "Count".
-    :type aggregation_type: str or
+    :vartype aggregation_type: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricAggregationType
-    :param dimensions: Metric dimensions, other than default dimension which is resource.
-    :type dimensions: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricDimensionV1]
-    :param fill_gap_with_zero: Set true to fill the gaps with zero.
-    :type fill_gap_with_zero: bool
-    :param category: Metric category. Possible values include: "Capacity", "Transaction".
-    :type category: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCategory
-    :param resource_id_dimension_name_override: Resource name override.
-    :type resource_id_dimension_name_override: str
-    :param supported_time_grain_types: Support granularity of metrics.
-    :type supported_time_grain_types: list[str or
+    :ivar dimensions: Metric dimensions, other than default dimension which is resource.
+    :vartype dimensions: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricDimensionV1]
+    :ivar fill_gap_with_zero: Set true to fill the gaps with zero.
+    :vartype fill_gap_with_zero: bool
+    :ivar category: Metric category. Possible values include: "Capacity", "Transaction".
+    :vartype category: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCategory
+    :ivar resource_id_dimension_name_override: Resource name override.
+    :vartype resource_id_dimension_name_override: str
+    :ivar supported_time_grain_types: Support granularity of metrics.
+    :vartype supported_time_grain_types: list[str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TimeGrain]
-    :param supported_aggregation_types: Support metric aggregation type.
-    :type supported_aggregation_types: list[str or
+    :ivar supported_aggregation_types: Support metric aggregation type.
+    :vartype supported_aggregation_types: list[str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricAggregationType]
     """
 
@@ -3107,6 +3565,36 @@ class MetricSpecificationV1(msrest.serialization.Model):
         supported_aggregation_types: Optional[List[Union[str, "MetricAggregationType"]]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the metric.
+        :paramtype name: str
+        :keyword display_name: Display name of the metric.
+        :paramtype display_name: str
+        :keyword display_description: Description of the metric to be displayed.
+        :paramtype display_description: str
+        :keyword unit: Metric units. Possible values include: "NotSpecified", "Percent", "Count",
+         "Seconds", "Milliseconds", "Bytes", "BytesPerSecond", "CountPerSecond".
+        :paramtype unit: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricUnit
+        :keyword aggregation_type: Metric aggregation type. Possible values include: "NotSpecified",
+         "None", "Average", "Minimum", "Maximum", "Total", "Count".
+        :paramtype aggregation_type: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricAggregationType
+        :keyword dimensions: Metric dimensions, other than default dimension which is resource.
+        :paramtype dimensions:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricDimensionV1]
+        :keyword fill_gap_with_zero: Set true to fill the gaps with zero.
+        :paramtype fill_gap_with_zero: bool
+        :keyword category: Metric category. Possible values include: "Capacity", "Transaction".
+        :paramtype category: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricCategory
+        :keyword resource_id_dimension_name_override: Resource name override.
+        :paramtype resource_id_dimension_name_override: str
+        :keyword supported_time_grain_types: Support granularity of metrics.
+        :paramtype supported_time_grain_types: list[str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TimeGrain]
+        :keyword supported_aggregation_types: Support metric aggregation type.
+        :paramtype supported_aggregation_types: list[str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricAggregationType]
+        """
         super(MetricSpecificationV1, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -3136,8 +3624,8 @@ class MonitoringMetricConfiguration(ARMBaseModel):
     :vartype type: str
     :ivar system_data: MonitoringConfiguration on ASE device.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param metric_configurations: Required. The metrics configuration details.
-    :type metric_configurations:
+    :ivar metric_configurations: Required. The metrics configuration details.
+    :vartype metric_configurations:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricConfiguration]
     """
 
@@ -3163,6 +3651,11 @@ class MonitoringMetricConfiguration(ARMBaseModel):
         metric_configurations: List["MetricConfiguration"],
         **kwargs
     ):
+        """
+        :keyword metric_configurations: Required. The metrics configuration details.
+        :paramtype metric_configurations:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricConfiguration]
+        """
         super(MonitoringMetricConfiguration, self).__init__(**kwargs)
         self.system_data = None
         self.metric_configurations = metric_configurations
@@ -3194,6 +3687,8 @@ class MonitoringMetricConfigurationList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(MonitoringMetricConfigurationList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3206,8 +3701,8 @@ class MountPointMap(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param share_id: Required. ID of the share mounted to the role VM.
-    :type share_id: str
+    :ivar share_id: Required. ID of the share mounted to the role VM.
+    :vartype share_id: str
     :ivar role_id: ID of the role to which share is mounted.
     :vartype role_id: str
     :ivar mount_point: Mount point for the share.
@@ -3241,6 +3736,10 @@ class MountPointMap(msrest.serialization.Model):
         share_id: str,
         **kwargs
     ):
+        """
+        :keyword share_id: Required. ID of the share mounted to the role VM.
+        :paramtype share_id: str
+        """
         super(MountPointMap, self).__init__(**kwargs)
         self.share_id = share_id
         self.role_id = None
@@ -3274,13 +3773,13 @@ class NetworkAdapter(msrest.serialization.Model):
     :ivar status: Value indicating whether this adapter is valid. Possible values include:
      "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.NetworkAdapterStatus
-    :param rdma_status: Value indicating whether this adapter is RDMA capable. Possible values
+    :ivar rdma_status: Value indicating whether this adapter is RDMA capable. Possible values
      include: "Incapable", "Capable".
-    :type rdma_status: str or
+    :vartype rdma_status: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.NetworkAdapterRDMAStatus
-    :param dhcp_status: Value indicating whether this adapter has DHCP enabled. Possible values
+    :ivar dhcp_status: Value indicating whether this adapter has DHCP enabled. Possible values
      include: "Disabled", "Enabled".
-    :type dhcp_status: str or
+    :vartype dhcp_status: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.NetworkAdapterDHCPStatus
     :ivar ipv4_configuration: The IPv4 configuration of the network adapter.
     :vartype ipv4_configuration: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Ipv4Config
@@ -3333,6 +3832,16 @@ class NetworkAdapter(msrest.serialization.Model):
         dhcp_status: Optional[Union[str, "NetworkAdapterDHCPStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword rdma_status: Value indicating whether this adapter is RDMA capable. Possible values
+         include: "Incapable", "Capable".
+        :paramtype rdma_status: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.NetworkAdapterRDMAStatus
+        :keyword dhcp_status: Value indicating whether this adapter has DHCP enabled. Possible values
+         include: "Disabled", "Enabled".
+        :paramtype dhcp_status: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.NetworkAdapterDHCPStatus
+        """
         super(NetworkAdapter, self).__init__(**kwargs)
         self.adapter_id = None
         self.adapter_position = None
@@ -3376,6 +3885,8 @@ class NetworkAdapterPosition(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(NetworkAdapterPosition, self).__init__(**kwargs)
         self.network_group = None
         self.port = None
@@ -3419,6 +3930,8 @@ class NetworkSettings(ARMBaseModel):
         self,
         **kwargs
     ):
+        """
+        """
         super(NetworkSettings, self).__init__(**kwargs)
         self.system_data = None
         self.network_adapters = None
@@ -3485,6 +3998,8 @@ Multi-node Edge devices will have more than 1 nodes.
         self,
         **kwargs
     ):
+        """
+        """
         super(Node, self).__init__(**kwargs)
         self.node_status = None
         self.node_chassis_serial_number = None
@@ -3504,8 +4019,8 @@ class NodeInfo(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Node type - Master/Worker. Possible values include: "Invalid", "Master", "Worker".
     :vartype type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesNodeType
-    :param ip_configuration: IP Configuration of the Kubernetes node.
-    :type ip_configuration:
+    :ivar ip_configuration: IP Configuration of the Kubernetes node.
+    :vartype ip_configuration:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesIPConfiguration]
     """
 
@@ -3526,6 +4041,11 @@ class NodeInfo(msrest.serialization.Model):
         ip_configuration: Optional[List["KubernetesIPConfiguration"]] = None,
         **kwargs
     ):
+        """
+        :keyword ip_configuration: IP Configuration of the Kubernetes node.
+        :paramtype ip_configuration:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.KubernetesIPConfiguration]
+        """
         super(NodeInfo, self).__init__(**kwargs)
         self.name = None
         self.type = None
@@ -3539,8 +4059,8 @@ class NodeList(msrest.serialization.Model):
 
     :ivar value: The list of Nodes.
     :vartype value: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.Node]
-    :param next_link: Link to the next set of results.
-    :type next_link: str
+    :ivar next_link: Link to the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -3558,6 +4078,10 @@ class NodeList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword next_link: Link to the next set of results.
+        :paramtype next_link: str
+        """
         super(NodeList, self).__init__(**kwargs)
         self.value = None
         self.next_link = next_link
@@ -3566,16 +4090,16 @@ class NodeList(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Operations.
 
-    :param name: Name of the operation.
-    :type name: str
-    :param display: Properties displayed for the operation.
-    :type display: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.OperationDisplay
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param service_specification: Service specification.
-    :type service_specification:
+    :ivar name: Name of the operation.
+    :vartype name: str
+    :ivar display: Properties displayed for the operation.
+    :vartype display: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.OperationDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar service_specification: Service specification.
+    :vartype service_specification:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ServiceSpecification
     """
 
@@ -3597,6 +4121,19 @@ class Operation(msrest.serialization.Model):
         service_specification: Optional["ServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the operation.
+        :paramtype name: str
+        :keyword display: Properties displayed for the operation.
+        :paramtype display: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.OperationDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword service_specification: Service specification.
+        :paramtype service_specification:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ServiceSpecification
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -3608,14 +4145,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """Operation display properties.
 
-    :param provider: Provider name.
-    :type provider: str
-    :param resource: The type of resource in which the operation is performed.
-    :type resource: str
-    :param operation: Operation to be performed on the resource.
-    :type operation: str
-    :param description: Description of the operation to be performed.
-    :type description: str
+    :ivar provider: Provider name.
+    :vartype provider: str
+    :ivar resource: The type of resource in which the operation is performed.
+    :vartype resource: str
+    :ivar operation: Operation to be performed on the resource.
+    :vartype operation: str
+    :ivar description: Description of the operation to be performed.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -3634,6 +4171,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Provider name.
+        :paramtype provider: str
+        :keyword resource: The type of resource in which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: Operation to be performed on the resource.
+        :paramtype operation: str
+        :keyword description: Description of the operation to be performed.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -3646,10 +4193,10 @@ class OperationsList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The value.
-    :type value: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.Operation]
-    :param next_link: Link to the next set of results.
-    :type next_link: str
+    :ivar value: Required. The value.
+    :vartype value: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.Operation]
+    :ivar next_link: Link to the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -3668,6 +4215,12 @@ class OperationsList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. The value.
+        :paramtype value: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.Operation]
+        :keyword next_link: Link to the next set of results.
+        :paramtype next_link: str
+        """
         super(OperationsList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -3686,10 +4239,10 @@ class Order(ARMBaseModel):
     :vartype type: str
     :ivar system_data: Order configured on ASE resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param contact_information: The contact details.
-    :type contact_information: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ContactDetails
-    :param shipping_address: The shipping address.
-    :type shipping_address: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Address
+    :ivar contact_information: The contact details.
+    :vartype contact_information: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ContactDetails
+    :ivar shipping_address: The shipping address.
+    :vartype shipping_address: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Address
     :ivar current_status: Current status of the order.
     :vartype current_status: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.OrderStatus
     :ivar order_history: List of status changes in the order.
@@ -3704,9 +4257,9 @@ class Order(ARMBaseModel):
      whether it has an original or a replacement device.
     :vartype return_tracking_info:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.TrackingInfo]
-    :param shipment_type: ShipmentType of the order. Possible values include: "NotApplicable",
+    :ivar shipment_type: ShipmentType of the order. Possible values include: "NotApplicable",
      "ShippedToCustomer", "SelfPickup".
-    :type shipment_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShipmentType
+    :vartype shipment_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShipmentType
     """
 
     _validation = {
@@ -3744,6 +4297,17 @@ class Order(ARMBaseModel):
         shipment_type: Optional[Union[str, "ShipmentType"]] = None,
         **kwargs
     ):
+        """
+        :keyword contact_information: The contact details.
+        :paramtype contact_information:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ContactDetails
+        :keyword shipping_address: The shipping address.
+        :paramtype shipping_address: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.Address
+        :keyword shipment_type: ShipmentType of the order. Possible values include: "NotApplicable",
+         "ShippedToCustomer", "SelfPickup".
+        :paramtype shipment_type: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShipmentType
+        """
         super(Order, self).__init__(**kwargs)
         self.system_data = None
         self.contact_information = contact_information
@@ -3781,6 +4345,8 @@ class OrderList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OrderList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3793,16 +4359,16 @@ class OrderStatus(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. Status of the order as per the allowed status types. Possible values
+    :ivar status: Required. Status of the order as per the allowed status types. Possible values
      include: "Untracked", "AwaitingFulfillment", "AwaitingPreparation", "AwaitingShipment",
      "Shipped", "Arriving", "Delivered", "ReplacementRequested", "LostDevice", "Declined",
      "ReturnInitiated", "AwaitingReturnShipment", "ShippedBack", "CollectedAtMicrosoft",
      "AwaitingPickup", "PickupCompleted", "AwaitingDrop".
-    :type status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.OrderState
+    :vartype status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.OrderState
     :ivar update_date_time: Time of status update.
     :vartype update_date_time: ~datetime.datetime
-    :param comments: Comments related to this status change.
-    :type comments: str
+    :ivar comments: Comments related to this status change.
+    :vartype comments: str
     :ivar tracking_information: Tracking information related to the state in the ordering flow.
     :vartype tracking_information: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TrackingInfo
     :ivar additional_order_details: Dictionary to hold generic information which is not stored
@@ -3832,6 +4398,16 @@ class OrderStatus(msrest.serialization.Model):
         comments: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword status: Required. Status of the order as per the allowed status types. Possible values
+         include: "Untracked", "AwaitingFulfillment", "AwaitingPreparation", "AwaitingShipment",
+         "Shipped", "Arriving", "Delivered", "ReplacementRequested", "LostDevice", "Declined",
+         "ReturnInitiated", "AwaitingReturnShipment", "ShippedBack", "CollectedAtMicrosoft",
+         "AwaitingPickup", "PickupCompleted", "AwaitingDrop".
+        :paramtype status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.OrderState
+        :keyword comments: Comments related to this status change.
+        :paramtype comments: str
+        """
         super(OrderStatus, self).__init__(**kwargs)
         self.status = status
         self.update_date_time = None
@@ -3855,17 +4431,18 @@ class PeriodicTimerEventTrigger(Trigger):
     :vartype type: str
     :ivar system_data: Trigger in DataBoxEdge Resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param kind: Required. Trigger Kind.Constant filled by server.  Possible values include:
+    :ivar kind: Required. Trigger Kind.Constant filled by server. Possible values include:
      "FileEvent", "PeriodicTimerEvent".
-    :type kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TriggerEventType
-    :param source_info: Required. Periodic timer details.
-    :type source_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PeriodicTimerSourceInfo
-    :param sink_info: Required. Role Sink information.
-    :type sink_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleSinkInfo
-    :param custom_context_tag: A custom context tag typically used to correlate the trigger against
+    :vartype kind: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.TriggerEventType
+    :ivar source_info: Required. Periodic timer details.
+    :vartype source_info:
+     ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PeriodicTimerSourceInfo
+    :ivar sink_info: Required. Role Sink information.
+    :vartype sink_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleSinkInfo
+    :ivar custom_context_tag: A custom context tag typically used to correlate the trigger against
      its usage. For example, if a periodic timer trigger is intended for certain specific IoT
      modules in the device, the tag can be the name or the image URL of the module.
-    :type custom_context_tag: str
+    :vartype custom_context_tag: str
     """
 
     _validation = {
@@ -3898,6 +4475,17 @@ class PeriodicTimerEventTrigger(Trigger):
         custom_context_tag: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword source_info: Required. Periodic timer details.
+        :paramtype source_info:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.PeriodicTimerSourceInfo
+        :keyword sink_info: Required. Role Sink information.
+        :paramtype sink_info: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RoleSinkInfo
+        :keyword custom_context_tag: A custom context tag typically used to correlate the trigger
+         against its usage. For example, if a periodic timer trigger is intended for certain specific
+         IoT modules in the device, the tag can be the name or the image URL of the module.
+        :paramtype custom_context_tag: str
+        """
         super(PeriodicTimerEventTrigger, self).__init__(**kwargs)
         self.kind = 'PeriodicTimerEvent'  # type: str
         self.source_info = source_info
@@ -3910,15 +4498,15 @@ class PeriodicTimerSourceInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. The time of the day that results in a valid trigger. Schedule is
+    :ivar start_time: Required. The time of the day that results in a valid trigger. Schedule is
      computed with reference to the time specified upto seconds. If timezone is not specified the
      time will considered to be in device timezone. The value will always be returned as UTC time.
-    :type start_time: ~datetime.datetime
-    :param schedule: Required. Periodic frequency at which timer event needs to be raised. Supports
+    :vartype start_time: ~datetime.datetime
+    :ivar schedule: Required. Periodic frequency at which timer event needs to be raised. Supports
      daily, hourly, minutes, and seconds.
-    :type schedule: str
-    :param topic: Topic where periodic events are published to IoT device.
-    :type topic: str
+    :vartype schedule: str
+    :ivar topic: Topic where periodic events are published to IoT device.
+    :vartype topic: str
     """
 
     _validation = {
@@ -3940,6 +4528,17 @@ class PeriodicTimerSourceInfo(msrest.serialization.Model):
         topic: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword start_time: Required. The time of the day that results in a valid trigger. Schedule is
+         computed with reference to the time specified upto seconds. If timezone is not specified the
+         time will considered to be in device timezone. The value will always be returned as UTC time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword schedule: Required. Periodic frequency at which timer event needs to be raised.
+         Supports daily, hourly, minutes, and seconds.
+        :paramtype schedule: str
+        :keyword topic: Topic where periodic events are published to IoT device.
+        :paramtype topic: str
+        """
         super(PeriodicTimerSourceInfo, self).__init__(**kwargs)
         self.start_time = start_time
         self.schedule = schedule
@@ -3949,21 +4548,21 @@ class PeriodicTimerSourceInfo(msrest.serialization.Model):
 class RefreshDetails(msrest.serialization.Model):
     """Fields for tracking refresh job on the share or container.
 
-    :param in_progress_refresh_job_id: If a refresh job is currently in progress on this share or
+    :ivar in_progress_refresh_job_id: If a refresh job is currently in progress on this share or
      container, this field indicates the ARM resource ID of that job. The field is empty if no job
      is in progress.
-    :type in_progress_refresh_job_id: str
-    :param last_completed_refresh_job_time_in_utc: Indicates the completed time for the last
-     refresh job on this particular share or container, if any.This could be a failed job or a
-     successful job.
-    :type last_completed_refresh_job_time_in_utc: ~datetime.datetime
-    :param error_manifest_file: Indicates the relative path of the error xml for the last refresh
+    :vartype in_progress_refresh_job_id: str
+    :ivar last_completed_refresh_job_time_in_utc: Indicates the completed time for the last refresh
+     job on this particular share or container, if any.This could be a failed job or a successful
+     job.
+    :vartype last_completed_refresh_job_time_in_utc: ~datetime.datetime
+    :ivar error_manifest_file: Indicates the relative path of the error xml for the last refresh
      job on this particular share or container, if any. This could be a failed job or a successful
      job.
-    :type error_manifest_file: str
-    :param last_job: Indicates the id of the last refresh job on this particular share or
+    :vartype error_manifest_file: str
+    :ivar last_job: Indicates the id of the last refresh job on this particular share or
      container,if any. This could be a failed job or a successful job.
-    :type last_job: str
+    :vartype last_job: str
     """
 
     _attribute_map = {
@@ -3982,6 +4581,23 @@ class RefreshDetails(msrest.serialization.Model):
         last_job: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword in_progress_refresh_job_id: If a refresh job is currently in progress on this share or
+         container, this field indicates the ARM resource ID of that job. The field is empty if no job
+         is in progress.
+        :paramtype in_progress_refresh_job_id: str
+        :keyword last_completed_refresh_job_time_in_utc: Indicates the completed time for the last
+         refresh job on this particular share or container, if any.This could be a failed job or a
+         successful job.
+        :paramtype last_completed_refresh_job_time_in_utc: ~datetime.datetime
+        :keyword error_manifest_file: Indicates the relative path of the error xml for the last refresh
+         job on this particular share or container, if any. This could be a failed job or a successful
+         job.
+        :paramtype error_manifest_file: str
+        :keyword last_job: Indicates the id of the last refresh job on this particular share or
+         container,if any. This could be a failed job or a successful job.
+        :paramtype last_job: str
+        """
         super(RefreshDetails, self).__init__(**kwargs)
         self.in_progress_refresh_job_id = in_progress_refresh_job_id
         self.last_completed_refresh_job_time_in_utc = last_completed_refresh_job_time_in_utc
@@ -3994,8 +4610,8 @@ class ResourceIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type: Identity type. Possible values include: "None", "SystemAssigned", "UserAssigned".
-    :type type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MsiIdentityType
+    :ivar type: Identity type. Possible values include: "None", "SystemAssigned", "UserAssigned".
+    :vartype type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MsiIdentityType
     :ivar principal_id: Service Principal Id backing the Msi.
     :vartype principal_id: str
     :ivar tenant_id: Home Tenant Id.
@@ -4019,6 +4635,11 @@ class ResourceIdentity(msrest.serialization.Model):
         type: Optional[Union[str, "MsiIdentityType"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Identity type. Possible values include: "None", "SystemAssigned",
+         "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MsiIdentityType
+        """
         super(ResourceIdentity, self).__init__(**kwargs)
         self.type = type
         self.principal_id = None
@@ -4028,13 +4649,13 @@ class ResourceIdentity(msrest.serialization.Model):
 class ResourceMoveDetails(msrest.serialization.Model):
     """Fields for tracking resource move.
 
-    :param operation_in_progress: Denotes whether move operation is in progress. Possible values
+    :ivar operation_in_progress: Denotes whether move operation is in progress. Possible values
      include: "None", "ResourceMoveInProgress", "ResourceMoveFailed".
-    :type operation_in_progress: str or
+    :vartype operation_in_progress: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ResourceMoveStatus
-    :param operation_in_progress_lock_timeout_in_utc: Denotes the timeout of the operation to
+    :ivar operation_in_progress_lock_timeout_in_utc: Denotes the timeout of the operation to
      finish.
-    :type operation_in_progress_lock_timeout_in_utc: ~datetime.datetime
+    :vartype operation_in_progress_lock_timeout_in_utc: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -4049,6 +4670,15 @@ class ResourceMoveDetails(msrest.serialization.Model):
         operation_in_progress_lock_timeout_in_utc: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword operation_in_progress: Denotes whether move operation is in progress. Possible values
+         include: "None", "ResourceMoveInProgress", "ResourceMoveFailed".
+        :paramtype operation_in_progress: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ResourceMoveStatus
+        :keyword operation_in_progress_lock_timeout_in_utc: Denotes the timeout of the operation to
+         finish.
+        :paramtype operation_in_progress_lock_timeout_in_utc: ~datetime.datetime
+        """
         super(ResourceMoveDetails, self).__init__(**kwargs)
         self.operation_in_progress = operation_in_progress
         self.operation_in_progress_lock_timeout_in_utc = operation_in_progress_lock_timeout_in_utc
@@ -4079,6 +4709,8 @@ class ResourceTypeSku(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceTypeSku, self).__init__(**kwargs)
         self.resource_type = None
         self.skus = None
@@ -4109,6 +4741,8 @@ class RoleList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(RoleList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4119,8 +4753,8 @@ class RoleSinkInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param role_id: Required. Compute role ID.
-    :type role_id: str
+    :ivar role_id: Required. Compute role ID.
+    :vartype role_id: str
     """
 
     _validation = {
@@ -4137,6 +4771,10 @@ class RoleSinkInfo(msrest.serialization.Model):
         role_id: str,
         **kwargs
     ):
+        """
+        :keyword role_id: Required. Compute role ID.
+        :paramtype role_id: str
+        """
         super(RoleSinkInfo, self).__init__(**kwargs)
         self.role_id = role_id
 
@@ -4144,12 +4782,12 @@ class RoleSinkInfo(msrest.serialization.Model):
 class Secret(msrest.serialization.Model):
     """Holds device secret either as a KeyVault reference or as an encrypted value.
 
-    :param encrypted_secret: Encrypted (using device public key) secret value.
-    :type encrypted_secret:
+    :ivar encrypted_secret: Encrypted (using device public key) secret value.
+    :vartype encrypted_secret:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
-    :param key_vault_id: Id of the Key-Vault where secret is stored (ex:
+    :ivar key_vault_id: Id of the Key-Vault where secret is stored (ex:
      secrets/AuthClientSecret/82ef4346187a4033a10d629cde07d740).
-    :type key_vault_id: str
+    :vartype key_vault_id: str
     """
 
     _attribute_map = {
@@ -4164,6 +4802,14 @@ class Secret(msrest.serialization.Model):
         key_vault_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword encrypted_secret: Encrypted (using device public key) secret value.
+        :paramtype encrypted_secret:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+        :keyword key_vault_id: Id of the Key-Vault where secret is stored (ex:
+         secrets/AuthClientSecret/82ef4346187a4033a10d629cde07d740).
+        :paramtype key_vault_id: str
+        """
         super(Secret, self).__init__(**kwargs)
         self.encrypted_secret = encrypted_secret
         self.key_vault_id = key_vault_id
@@ -4182,11 +4828,11 @@ class SecuritySettings(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param device_admin_password: Required. Device administrator password as an encrypted string
+    :ivar device_admin_password: Required. Device administrator password as an encrypted string
      (encrypted using RSA PKCS #1) is used to sign into the  local web UI of the device. The Actual
      password should have at least 8 characters that are a combination of  uppercase, lowercase,
      numeric, and special characters.
-    :type device_admin_password:
+    :vartype device_admin_password:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
     """
 
@@ -4210,6 +4856,14 @@ class SecuritySettings(ARMBaseModel):
         device_admin_password: "AsymmetricEncryptedSecret",
         **kwargs
     ):
+        """
+        :keyword device_admin_password: Required. Device administrator password as an encrypted string
+         (encrypted using RSA PKCS #1) is used to sign into the  local web UI of the device. The Actual
+         password should have at least 8 characters that are a combination of  uppercase, lowercase,
+         numeric, and special characters.
+        :paramtype device_admin_password:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+        """
         super(SecuritySettings, self).__init__(**kwargs)
         self.device_admin_password = device_admin_password
 
@@ -4217,8 +4871,8 @@ class SecuritySettings(ARMBaseModel):
 class ServiceSpecification(msrest.serialization.Model):
     """Service specification.
 
-    :param metric_specifications: Metric specification as defined by shoebox.
-    :type metric_specifications:
+    :ivar metric_specifications: Metric specification as defined by shoebox.
+    :vartype metric_specifications:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricSpecificationV1]
     """
 
@@ -4232,6 +4886,11 @@ class ServiceSpecification(msrest.serialization.Model):
         metric_specifications: Optional[List["MetricSpecificationV1"]] = None,
         **kwargs
     ):
+        """
+        :keyword metric_specifications: Metric specification as defined by shoebox.
+        :paramtype metric_specifications:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MetricSpecificationV1]
+        """
         super(ServiceSpecification, self).__init__(**kwargs)
         self.metric_specifications = metric_specifications
 
@@ -4251,36 +4910,36 @@ class Share(ARMBaseModel):
     :vartype type: str
     :ivar system_data: Share on ASE device.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param description: Description for the share.
-    :type description: str
-    :param share_status: Required. Current status of the share. Possible values include: "Offline",
+    :ivar description: Description for the share.
+    :vartype description: str
+    :ivar share_status: Required. Current status of the share. Possible values include: "Offline",
      "Unknown", "OK", "Updating", "NeedsAttention".
-    :type share_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareStatus
-    :param monitoring_status: Required. Current monitoring status of the share. Possible values
+    :vartype share_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareStatus
+    :ivar monitoring_status: Required. Current monitoring status of the share. Possible values
      include: "Enabled", "Disabled".
-    :type monitoring_status: str or
+    :vartype monitoring_status: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MonitoringStatus
-    :param azure_container_info: Azure container mapping for the share.
-    :type azure_container_info:
+    :ivar azure_container_info: Azure container mapping for the share.
+    :vartype azure_container_info:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AzureContainerInfo
-    :param access_protocol: Required. Access protocol to be used by the share. Possible values
+    :ivar access_protocol: Required. Access protocol to be used by the share. Possible values
      include: "SMB", "NFS".
-    :type access_protocol: str or
+    :vartype access_protocol: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessProtocol
-    :param user_access_rights: Mapping of users and corresponding access rights on the share
+    :ivar user_access_rights: Mapping of users and corresponding access rights on the share
      (required for SMB protocol).
-    :type user_access_rights:
+    :vartype user_access_rights:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.UserAccessRight]
-    :param client_access_rights: List of IP addresses and corresponding access rights on the
+    :ivar client_access_rights: List of IP addresses and corresponding access rights on the
      share(required for NFS protocol).
-    :type client_access_rights:
+    :vartype client_access_rights:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.ClientAccessRight]
-    :param refresh_details: Details of the refresh job on this share.
-    :type refresh_details: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RefreshDetails
+    :ivar refresh_details: Details of the refresh job on this share.
+    :vartype refresh_details: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RefreshDetails
     :ivar share_mappings: Share mount point to the role.
     :vartype share_mappings: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.MountPointMap]
-    :param data_policy: Data policy of the share. Possible values include: "Cloud", "Local".
-    :type data_policy: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataPolicy
+    :ivar data_policy: Data policy of the share. Possible values include: "Cloud", "Local".
+    :vartype data_policy: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataPolicy
     """
 
     _validation = {
@@ -4325,6 +4984,36 @@ class Share(ARMBaseModel):
         data_policy: Optional[Union[str, "DataPolicy"]] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description for the share.
+        :paramtype description: str
+        :keyword share_status: Required. Current status of the share. Possible values include:
+         "Offline", "Unknown", "OK", "Updating", "NeedsAttention".
+        :paramtype share_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareStatus
+        :keyword monitoring_status: Required. Current monitoring status of the share. Possible values
+         include: "Enabled", "Disabled".
+        :paramtype monitoring_status: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.MonitoringStatus
+        :keyword azure_container_info: Azure container mapping for the share.
+        :paramtype azure_container_info:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AzureContainerInfo
+        :keyword access_protocol: Required. Access protocol to be used by the share. Possible values
+         include: "SMB", "NFS".
+        :paramtype access_protocol: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessProtocol
+        :keyword user_access_rights: Mapping of users and corresponding access rights on the share
+         (required for SMB protocol).
+        :paramtype user_access_rights:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.UserAccessRight]
+        :keyword client_access_rights: List of IP addresses and corresponding access rights on the
+         share(required for NFS protocol).
+        :paramtype client_access_rights:
+         list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.ClientAccessRight]
+        :keyword refresh_details: Details of the refresh job on this share.
+        :paramtype refresh_details: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.RefreshDetails
+        :keyword data_policy: Data policy of the share. Possible values include: "Cloud", "Local".
+        :paramtype data_policy: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataPolicy
+        """
         super(Share, self).__init__(**kwargs)
         self.system_data = None
         self.description = description
@@ -4344,11 +5033,11 @@ class ShareAccessRight(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param share_id: Required. The share ID.
-    :type share_id: str
-    :param access_type: Required. Type of access to be allowed on the share for this user. Possible
+    :ivar share_id: Required. The share ID.
+    :vartype share_id: str
+    :ivar access_type: Required. Type of access to be allowed on the share for this user. Possible
      values include: "Change", "Read", "Custom".
-    :type access_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessType
+    :vartype access_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessType
     """
 
     _validation = {
@@ -4368,6 +5057,14 @@ class ShareAccessRight(msrest.serialization.Model):
         access_type: Union[str, "ShareAccessType"],
         **kwargs
     ):
+        """
+        :keyword share_id: Required. The share ID.
+        :paramtype share_id: str
+        :keyword access_type: Required. Type of access to be allowed on the share for this user.
+         Possible values include: "Change", "Read", "Custom".
+        :paramtype access_type: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessType
+        """
         super(ShareAccessRight, self).__init__(**kwargs)
         self.share_id = share_id
         self.access_type = access_type
@@ -4398,6 +5095,8 @@ class ShareList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ShareList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4406,14 +5105,14 @@ class ShareList(msrest.serialization.Model):
 class Sku(msrest.serialization.Model):
     """The SKU type.
 
-    :param name: SKU name. Possible values include: "Gateway", "Edge", "TEA_1Node",
-     "TEA_1Node_UPS", "TEA_1Node_Heater", "TEA_1Node_UPS_Heater", "TEA_4Node_Heater",
-     "TEA_4Node_UPS_Heater", "TMA", "TDC", "TCA_Small", "GPU", "TCA_Large", "EdgeP_Base",
-     "EdgeP_High", "EdgePR_Base", "EdgePR_Base_UPS", "EP2_64_1VPU_W", "EP2_128_1T4_Mx1_W",
-     "EP2_256_2T4_W", "EdgeMR_Mini", "RCA_Small", "RCA_Large", "RDC", "Management".
-    :type name: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SkuName
-    :param tier: The SKU tier. This is based on the SKU name. Possible values include: "Standard".
-    :type tier: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SkuTier
+    :ivar name: SKU name. Possible values include: "Gateway", "Edge", "TEA_1Node", "TEA_1Node_UPS",
+     "TEA_1Node_Heater", "TEA_1Node_UPS_Heater", "TEA_4Node_Heater", "TEA_4Node_UPS_Heater", "TMA",
+     "TDC", "TCA_Small", "GPU", "TCA_Large", "EdgeP_Base", "EdgeP_High", "EdgePR_Base",
+     "EdgePR_Base_UPS", "EP2_64_1VPU_W", "EP2_128_1T4_Mx1_W", "EP2_256_2T4_W", "EdgeMR_Mini",
+     "RCA_Small", "RCA_Large", "RDC", "Management".
+    :vartype name: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SkuName
+    :ivar tier: The SKU tier. This is based on the SKU name. Possible values include: "Standard".
+    :vartype tier: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SkuTier
     """
 
     _attribute_map = {
@@ -4428,9 +5127,52 @@ class Sku(msrest.serialization.Model):
         tier: Optional[Union[str, "SkuTier"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: SKU name. Possible values include: "Gateway", "Edge", "TEA_1Node",
+         "TEA_1Node_UPS", "TEA_1Node_Heater", "TEA_1Node_UPS_Heater", "TEA_4Node_Heater",
+         "TEA_4Node_UPS_Heater", "TMA", "TDC", "TCA_Small", "GPU", "TCA_Large", "EdgeP_Base",
+         "EdgeP_High", "EdgePR_Base", "EdgePR_Base_UPS", "EP2_64_1VPU_W", "EP2_128_1T4_Mx1_W",
+         "EP2_256_2T4_W", "EdgeMR_Mini", "RCA_Small", "RCA_Large", "RDC", "Management".
+        :paramtype name: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SkuName
+        :keyword tier: The SKU tier. This is based on the SKU name. Possible values include:
+         "Standard".
+        :paramtype tier: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SkuTier
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
+
+
+class SkuCapability(msrest.serialization.Model):
+    """The metadata to describe the capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: An invariant to describe the feature.
+    :vartype name: str
+    :ivar value: An invariant if the feature is measured by quantity.
+    :vartype value: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(SkuCapability, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
 
 
 class SkuCost(msrest.serialization.Model):
@@ -4462,6 +5204,8 @@ class SkuCost(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuCost, self).__init__(**kwargs)
         self.meter_id = None
         self.quantity = None
@@ -4522,6 +5266,8 @@ class SkuInformation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuInformation, self).__init__(**kwargs)
         self.name = None
         self.tier = None
@@ -4559,6 +5305,8 @@ class SkuInformationList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuInformationList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4593,6 +5341,8 @@ class SkuLocationInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuLocationInfo, self).__init__(**kwargs)
         self.location = None
         self.zones = None
@@ -4614,17 +5364,17 @@ class StorageAccount(ARMBaseModel):
     :vartype type: str
     :ivar system_data: StorageAccount object on ASE device.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param description: Description for the storage Account.
-    :type description: str
-    :param storage_account_status: Current status of the storage account. Possible values include:
+    :ivar description: Description for the storage Account.
+    :vartype description: str
+    :ivar storage_account_status: Current status of the storage account. Possible values include:
      "OK", "Offline", "Unknown", "Updating", "NeedsAttention".
-    :type storage_account_status: str or
+    :vartype storage_account_status: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.StorageAccountStatus
-    :param data_policy: Required. Data policy of the storage Account. Possible values include:
+    :ivar data_policy: Required. Data policy of the storage Account. Possible values include:
      "Cloud", "Local".
-    :type data_policy: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataPolicy
-    :param storage_account_credential_id: Storage Account Credential Id.
-    :type storage_account_credential_id: str
+    :vartype data_policy: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataPolicy
+    :ivar storage_account_credential_id: Storage Account Credential Id.
+    :vartype storage_account_credential_id: str
     :ivar blob_endpoint: BlobEndpoint of Storage Account.
     :vartype blob_endpoint: str
     :ivar container_count: The Container Count. Present only for Storage Accounts with DataPolicy
@@ -4664,6 +5414,19 @@ class StorageAccount(ARMBaseModel):
         storage_account_credential_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description for the storage Account.
+        :paramtype description: str
+        :keyword storage_account_status: Current status of the storage account. Possible values
+         include: "OK", "Offline", "Unknown", "Updating", "NeedsAttention".
+        :paramtype storage_account_status: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.StorageAccountStatus
+        :keyword data_policy: Required. Data policy of the storage Account. Possible values include:
+         "Cloud", "Local".
+        :paramtype data_policy: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.DataPolicy
+        :keyword storage_account_credential_id: Storage Account Credential Id.
+        :paramtype storage_account_credential_id: str
+        """
         super(StorageAccount, self).__init__(**kwargs)
         self.system_data = None
         self.description = description
@@ -4689,25 +5452,26 @@ class StorageAccountCredential(ARMBaseModel):
     :vartype type: str
     :ivar system_data: StorageAccountCredential object.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param alias: Required. Alias for the storage account.
-    :type alias: str
-    :param user_name: Username for the storage account.
-    :type user_name: str
-    :param account_key: Encrypted storage key.
-    :type account_key: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
-    :param connection_string: Connection string for the storage account. Use this string if
-     username and account key are not specified.
-    :type connection_string: str
-    :param ssl_status: Required. Signifies whether SSL needs to be enabled or not. Possible values
+    :ivar alias: Required. Alias for the storage account.
+    :vartype alias: str
+    :ivar user_name: Username for the storage account.
+    :vartype user_name: str
+    :ivar account_key: Encrypted storage key.
+    :vartype account_key:
+     ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+    :ivar connection_string: Connection string for the storage account. Use this string if username
+     and account key are not specified.
+    :vartype connection_string: str
+    :ivar ssl_status: Required. Signifies whether SSL needs to be enabled or not. Possible values
      include: "Enabled", "Disabled".
-    :type ssl_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SSLStatus
-    :param blob_domain_name: Blob end point for private clouds.
-    :type blob_domain_name: str
-    :param account_type: Required. Type of storage accessed on the storage account. Possible values
+    :vartype ssl_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SSLStatus
+    :ivar blob_domain_name: Blob end point for private clouds.
+    :vartype blob_domain_name: str
+    :ivar account_type: Required. Type of storage accessed on the storage account. Possible values
      include: "GeneralPurposeStorage", "BlobStorage".
-    :type account_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AccountType
-    :param storage_account_id: Id of the storage account.
-    :type storage_account_id: str
+    :vartype account_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AccountType
+    :ivar storage_account_id: Id of the storage account.
+    :vartype storage_account_id: str
     """
 
     _validation = {
@@ -4748,6 +5512,28 @@ class StorageAccountCredential(ARMBaseModel):
         storage_account_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword alias: Required. Alias for the storage account.
+        :paramtype alias: str
+        :keyword user_name: Username for the storage account.
+        :paramtype user_name: str
+        :keyword account_key: Encrypted storage key.
+        :paramtype account_key:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+        :keyword connection_string: Connection string for the storage account. Use this string if
+         username and account key are not specified.
+        :paramtype connection_string: str
+        :keyword ssl_status: Required. Signifies whether SSL needs to be enabled or not. Possible
+         values include: "Enabled", "Disabled".
+        :paramtype ssl_status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SSLStatus
+        :keyword blob_domain_name: Blob end point for private clouds.
+        :paramtype blob_domain_name: str
+        :keyword account_type: Required. Type of storage accessed on the storage account. Possible
+         values include: "GeneralPurposeStorage", "BlobStorage".
+        :paramtype account_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AccountType
+        :keyword storage_account_id: Id of the storage account.
+        :paramtype storage_account_id: str
+        """
         super(StorageAccountCredential, self).__init__(**kwargs)
         self.system_data = None
         self.alias = alias
@@ -4786,6 +5572,8 @@ class StorageAccountCredentialList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageAccountCredentialList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4816,6 +5604,8 @@ class StorageAccountList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageAccountList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4824,10 +5614,10 @@ class StorageAccountList(msrest.serialization.Model):
 class SubscriptionRegisteredFeatures(msrest.serialization.Model):
     """SubscriptionRegisteredFeatures.
 
-    :param name:
-    :type name: str
-    :param state:
-    :type state: str
+    :ivar name:
+    :vartype name: str
+    :ivar state:
+    :vartype state: str
     """
 
     _attribute_map = {
@@ -4842,6 +5632,12 @@ class SubscriptionRegisteredFeatures(msrest.serialization.Model):
         state: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword state:
+        :paramtype state: str
+        """
         super(SubscriptionRegisteredFeatures, self).__init__(**kwargs)
         self.name = name
         self.state = state
@@ -4850,8 +5646,8 @@ class SubscriptionRegisteredFeatures(msrest.serialization.Model):
 class SymmetricKey(msrest.serialization.Model):
     """Symmetric key for authentication.
 
-    :param connection_string: Connection string based on the symmetric key.
-    :type connection_string:
+    :ivar connection_string: Connection string based on the symmetric key.
+    :vartype connection_string:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
     """
 
@@ -4865,6 +5661,11 @@ class SymmetricKey(msrest.serialization.Model):
         connection_string: Optional["AsymmetricEncryptedSecret"] = None,
         **kwargs
     ):
+        """
+        :keyword connection_string: Connection string based on the symmetric key.
+        :paramtype connection_string:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+        """
         super(SymmetricKey, self).__init__(**kwargs)
         self.connection_string = connection_string
 
@@ -4872,21 +5673,22 @@ class SymmetricKey(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the resource.
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or
+     ~azure.mgmt.databoxedge.v2021_02_01_preview.models.CreatedByType
+    :ivar last_modified_at: The type of identity that last modified the resource.
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -4909,6 +5711,24 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.CreatedByType
+        :keyword last_modified_at: The type of identity that last modified the resource.
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -4921,14 +5741,14 @@ class SystemData(msrest.serialization.Model):
 class TrackingInfo(msrest.serialization.Model):
     """Tracking courier information.
 
-    :param serial_number: Serial number of the device being tracked.
-    :type serial_number: str
-    :param carrier_name: Name of the carrier used in the delivery.
-    :type carrier_name: str
-    :param tracking_id: Tracking ID of the shipment.
-    :type tracking_id: str
-    :param tracking_url: Tracking URL of the shipment.
-    :type tracking_url: str
+    :ivar serial_number: Serial number of the device being tracked.
+    :vartype serial_number: str
+    :ivar carrier_name: Name of the carrier used in the delivery.
+    :vartype carrier_name: str
+    :ivar tracking_id: Tracking ID of the shipment.
+    :vartype tracking_id: str
+    :ivar tracking_url: Tracking URL of the shipment.
+    :vartype tracking_url: str
     """
 
     _attribute_map = {
@@ -4947,6 +5767,16 @@ class TrackingInfo(msrest.serialization.Model):
         tracking_url: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword serial_number: Serial number of the device being tracked.
+        :paramtype serial_number: str
+        :keyword carrier_name: Name of the carrier used in the delivery.
+        :paramtype carrier_name: str
+        :keyword tracking_id: Tracking ID of the shipment.
+        :paramtype tracking_id: str
+        :keyword tracking_url: Tracking URL of the shipment.
+        :paramtype tracking_url: str
+        """
         super(TrackingInfo, self).__init__(**kwargs)
         self.serial_number = serial_number
         self.carrier_name = carrier_name
@@ -4979,6 +5809,8 @@ class TriggerList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TriggerList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4987,24 +5819,24 @@ class TriggerList(msrest.serialization.Model):
 class UpdateDetails(msrest.serialization.Model):
     """Update Specific attributes.
 
-    :param update_title: Title of the Update.
-    :type update_title: str
-    :param update_size: Size of the update(In Bytes).
-    :type update_size: float
-    :param update_type: Type of the Update. Possible values include: "Software", "Kubernetes",
+    :ivar update_title: Title of the Update.
+    :vartype update_title: str
+    :ivar update_size: Size of the update(In Bytes).
+    :vartype update_size: float
+    :ivar update_type: Type of the Update. Possible values include: "Software", "Kubernetes",
      "Firmware".
-    :type update_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UpdateType
-    :param target_version: Target Version number.
-    :type target_version: str
-    :param estimated_install_time_in_mins: Estimated Install Time for the update.
-    :type estimated_install_time_in_mins: int
-    :param reboot_behavior: Indicates if updates are available and at least one of the updates
-     needs a reboot. Possible values include: "NeverReboots", "RequiresReboot", "RequestReboot".
-    :type reboot_behavior: str or
+    :vartype update_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UpdateType
+    :ivar target_version: Target Version number.
+    :vartype target_version: str
+    :ivar estimated_install_time_in_mins: Estimated Install Time for the update.
+    :vartype estimated_install_time_in_mins: int
+    :ivar reboot_behavior: Indicates if updates are available and at least one of the updates needs
+     a reboot. Possible values include: "NeverReboots", "RequiresReboot", "RequestReboot".
+    :vartype reboot_behavior: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.InstallRebootBehavior
-    :param status: Status of the update. Possible values include: "DownloadPending",
+    :ivar status: Status of the update. Possible values include: "DownloadPending",
      "DownloadStarted", "DownloadCompleted", "InstallStarted", "InstallCompleted".
-    :type status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UpdateStatus
+    :vartype status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UpdateStatus
     """
 
     _attribute_map = {
@@ -5029,6 +5861,26 @@ class UpdateDetails(msrest.serialization.Model):
         status: Optional[Union[str, "UpdateStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword update_title: Title of the Update.
+        :paramtype update_title: str
+        :keyword update_size: Size of the update(In Bytes).
+        :paramtype update_size: float
+        :keyword update_type: Type of the Update. Possible values include: "Software", "Kubernetes",
+         "Firmware".
+        :paramtype update_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UpdateType
+        :keyword target_version: Target Version number.
+        :paramtype target_version: str
+        :keyword estimated_install_time_in_mins: Estimated Install Time for the update.
+        :paramtype estimated_install_time_in_mins: int
+        :keyword reboot_behavior: Indicates if updates are available and at least one of the updates
+         needs a reboot. Possible values include: "NeverReboots", "RequiresReboot", "RequestReboot".
+        :paramtype reboot_behavior: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.InstallRebootBehavior
+        :keyword status: Status of the update. Possible values include: "DownloadPending",
+         "DownloadStarted", "DownloadCompleted", "InstallStarted", "InstallCompleted".
+        :paramtype status: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UpdateStatus
+        """
         super(UpdateDetails, self).__init__(**kwargs)
         self.update_title = update_title
         self.update_size = update_size
@@ -5082,6 +5934,8 @@ class UpdateDownloadProgress(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UpdateDownloadProgress, self).__init__(**kwargs)
         self.download_phase = None
         self.percent_complete = None
@@ -5120,6 +5974,8 @@ class UpdateInstallProgress(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UpdateInstallProgress, self).__init__(**kwargs)
         self.percent_complete = None
         self.number_of_updates_to_install = None
@@ -5139,15 +5995,15 @@ class UpdateSummary(ARMBaseModel):
     :vartype type: str
     :ivar system_data: UpdateSummary Result.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param device_version_number: The current version of the device in format: 1.2.17312.13.",.
-    :type device_version_number: str
-    :param friendly_device_version_name: The current version of the device in text format.
-    :type friendly_device_version_name: str
-    :param device_last_scanned_date_time: The last time when a scan was done on the device.
-    :type device_last_scanned_date_time: ~datetime.datetime
-    :param last_completed_scan_job_date_time: The time when the last scan job was completed
+    :ivar device_version_number: The current version of the device in format: 1.2.17312.13.",.
+    :vartype device_version_number: str
+    :ivar friendly_device_version_name: The current version of the device in text format.
+    :vartype friendly_device_version_name: str
+    :ivar device_last_scanned_date_time: The last time when a scan was done on the device.
+    :vartype device_last_scanned_date_time: ~datetime.datetime
+    :ivar last_completed_scan_job_date_time: The time when the last scan job was completed
      (success/cancelled/failed) on the appliance.
-    :type last_completed_scan_job_date_time: ~datetime.datetime
+    :vartype last_completed_scan_job_date_time: ~datetime.datetime
     :ivar last_completed_download_job_date_time: The time when the last Download job was completed
      (success/cancelled/failed) on the appliance.
     :vartype last_completed_download_job_date_time: ~datetime.datetime
@@ -5268,6 +6124,17 @@ class UpdateSummary(ARMBaseModel):
         last_completed_scan_job_date_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword device_version_number: The current version of the device in format: 1.2.17312.13.",.
+        :paramtype device_version_number: str
+        :keyword friendly_device_version_name: The current version of the device in text format.
+        :paramtype friendly_device_version_name: str
+        :keyword device_last_scanned_date_time: The last time when a scan was done on the device.
+        :paramtype device_last_scanned_date_time: ~datetime.datetime
+        :keyword last_completed_scan_job_date_time: The time when the last scan job was completed
+         (success/cancelled/failed) on the appliance.
+        :paramtype last_completed_scan_job_date_time: ~datetime.datetime
+        """
         super(UpdateSummary, self).__init__(**kwargs)
         self.system_data = None
         self.device_version_number = device_version_number
@@ -5300,12 +6167,12 @@ class UploadCertificateRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param authentication_type: The authentication type. Possible values include: "Invalid",
+    :ivar authentication_type: The authentication type. Possible values include: "Invalid",
      "AzureActiveDirectory".
-    :type authentication_type: str or
+    :vartype authentication_type: str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AuthenticationType
-    :param certificate: Required. The base64 encoded certificate raw data.
-    :type certificate: str
+    :ivar certificate: Required. The base64 encoded certificate raw data.
+    :vartype certificate: str
     """
 
     _validation = {
@@ -5324,6 +6191,14 @@ class UploadCertificateRequest(msrest.serialization.Model):
         authentication_type: Optional[Union[str, "AuthenticationType"]] = None,
         **kwargs
     ):
+        """
+        :keyword authentication_type: The authentication type. Possible values include: "Invalid",
+         "AzureActiveDirectory".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AuthenticationType
+        :keyword certificate: Required. The base64 encoded certificate raw data.
+        :paramtype certificate: str
+        """
         super(UploadCertificateRequest, self).__init__(**kwargs)
         self.authentication_type = authentication_type
         self.certificate = certificate
@@ -5334,9 +6209,10 @@ class UploadCertificateResponse(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param auth_type: Specifies authentication type. Possible values include: "Invalid",
+    :ivar auth_type: Specifies authentication type. Possible values include: "Invalid",
      "AzureActiveDirectory".
-    :type auth_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AuthenticationType
+    :vartype auth_type: str or
+     ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AuthenticationType
     :ivar resource_id: The resource ID of the Data Box Edge/Gateway device.
     :vartype resource_id: str
     :ivar aad_authority: Azure Active Directory tenant authority.
@@ -5381,6 +6257,12 @@ class UploadCertificateResponse(msrest.serialization.Model):
         auth_type: Optional[Union[str, "AuthenticationType"]] = None,
         **kwargs
     ):
+        """
+        :keyword auth_type: Specifies authentication type. Possible values include: "Invalid",
+         "AzureActiveDirectory".
+        :paramtype auth_type: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AuthenticationType
+        """
         super(UploadCertificateResponse, self).__init__(**kwargs)
         self.auth_type = auth_type
         self.resource_id = None
@@ -5405,15 +6287,15 @@ class User(ARMBaseModel):
     :vartype type: str
     :ivar system_data: User in DataBoxEdge Resource.
     :vartype system_data: ~azure.mgmt.databoxedge.v2021_02_01_preview.models.SystemData
-    :param encrypted_password: The password details.
-    :type encrypted_password:
+    :ivar encrypted_password: The password details.
+    :vartype encrypted_password:
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
     :ivar share_access_rights: List of shares that the user has rights on. This field should not be
      specified during user creation.
     :vartype share_access_rights:
      list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessRight]
-    :param user_type: Type of the user. Possible values include: "Share", "LocalManagement", "ARM".
-    :type user_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UserType
+    :ivar user_type: Type of the user. Possible values include: "Share", "LocalManagement", "ARM".
+    :vartype user_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UserType
     """
 
     _validation = {
@@ -5441,6 +6323,14 @@ class User(ARMBaseModel):
         user_type: Optional[Union[str, "UserType"]] = None,
         **kwargs
     ):
+        """
+        :keyword encrypted_password: The password details.
+        :paramtype encrypted_password:
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.AsymmetricEncryptedSecret
+        :keyword user_type: Type of the user. Possible values include: "Share", "LocalManagement",
+         "ARM".
+        :paramtype user_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.UserType
+        """
         super(User, self).__init__(**kwargs)
         self.system_data = None
         self.encrypted_password = encrypted_password
@@ -5453,11 +6343,11 @@ class UserAccessRight(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param user_id: Required. User ID (already existing in the device).
-    :type user_id: str
-    :param access_type: Required. Type of access to be allowed for the user. Possible values
+    :ivar user_id: Required. User ID (already existing in the device).
+    :vartype user_id: str
+    :ivar access_type: Required. Type of access to be allowed for the user. Possible values
      include: "Change", "Read", "Custom".
-    :type access_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessType
+    :vartype access_type: str or ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessType
     """
 
     _validation = {
@@ -5477,6 +6367,14 @@ class UserAccessRight(msrest.serialization.Model):
         access_type: Union[str, "ShareAccessType"],
         **kwargs
     ):
+        """
+        :keyword user_id: Required. User ID (already existing in the device).
+        :paramtype user_id: str
+        :keyword access_type: Required. Type of access to be allowed for the user. Possible values
+         include: "Change", "Read", "Custom".
+        :paramtype access_type: str or
+         ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShareAccessType
+        """
         super(UserAccessRight, self).__init__(**kwargs)
         self.user_id = user_id
         self.access_type = access_type
@@ -5507,6 +6405,8 @@ class UserList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
