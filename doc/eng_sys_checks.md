@@ -82,7 +82,7 @@ This is the most useful skip, but the following skip variables are also supporte
   - Skip the `analyze` job entirely.
 - `Skip.Test`
   - Skip the `test` jobs entirely.
-- `Skip.Test`
+- `Skip.TestConda`
   - Skip the `conda test` jobs entirely.
 - `Skip.ApiStubGen`
   - Entirely omits API stub generation within `build` job.
