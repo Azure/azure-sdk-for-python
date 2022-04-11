@@ -38,6 +38,8 @@ class TestAppService(RecordedTestCase):
         assert token.token
         assert isinstance(token.expires_on, int)
 
+    @pytest.mark.manual
+    @recorded_by_proxy
     def test_system_assigned_tenant_id(self):
         with self.patch:
             credential = AppServiceCredential()
@@ -56,6 +58,8 @@ class TestAppService(RecordedTestCase):
         assert token.token
         assert isinstance(token.expires_on, int)
 
+    @pytest.mark.manual
+    @recorded_by_proxy
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     def test_user_assigned_tenant_id(self):
         with self.patch:

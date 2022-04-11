@@ -40,7 +40,9 @@ class TestAppServiceAsync(RecordedTestCase):
         assert token.token
         assert isinstance(token.expires_on, int)
 
+    @pytest.mark.manual
     @await_test
+    @recorded_by_proxy_async
     async def test_system_assigned_tenant_id(self):
         with self.patch:
             credential = AppServiceCredential()
@@ -60,8 +62,10 @@ class TestAppServiceAsync(RecordedTestCase):
         assert token.token
         assert isinstance(token.expires_on, int)
 
+    @pytest.mark.manual
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     @await_test
+    @recorded_by_proxy_async
     async def test_user_assigned_tenant_id(self):
         with self.patch:
             credential = AppServiceCredential(client_id=self.user_assigned_identity_client_id)
