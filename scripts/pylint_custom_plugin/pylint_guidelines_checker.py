@@ -1946,15 +1946,22 @@ class TypingOverloadReturnNone(BaseChecker):
     #Test on tables
     def visit_classdef(self,node):
         if node.name.endswith("Client"):
+            overloaded_functions = []
+            all_functions = {}
             for i in node.body:
                 if isinstance(i, astroid.FunctionDef):
                     if 'typing.overload' in i.decoratornames():
-                        # print(i)
-                        c = next(i.decorators.scope().bases[0].infer()).as_string()
-                # if isinstance(i, astroid.AsyncFunctionDef):
-                #     if 'typing.overload' in i.decoratornames():
-                #         print("overloaded_function")
+                        overloaded_functions.append(i)
+                    else:
+                        all_functions.update({i.name:i})
+            for func in overloaded_functions:
+                if func.name in all_functions.keys():
+                    pass
+                    # print("CAUGHT")
+                    # print(func)
+                    # print(all_functions.get(func.name))
 
+            
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
