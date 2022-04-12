@@ -1962,12 +1962,15 @@ class ReturnTypeMismatch(BaseChecker):
             for line in docstring:
                 if "rtype" in line:
                     return_type = docstring.index(line)
+            # If there is no rtype -- return, nothing to compare
+            if return_type==-1:
+                return
             # print(return_type)
             # Breaking up type 
             
             # if override_type in node.type_comment_returns.as_string():
             rtype = node.type_comment_returns.as_string()
-            inner_type= ""
+            # inner_type= ""
             # else:
             #     split_rtype = node.type_comment_returns.as_string().split("[")
             #     rtype = split_rtype[0]
