@@ -10,6 +10,7 @@ from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCred
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
+    AuthorizationChallengeParser,
     BearerTokenCredentialPolicy,
     SansIOHTTPPolicy,
     AzureKeyCredentialPolicy,
@@ -389,3 +390,60 @@ def test_azure_named_key_credential_raises():
 
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred.update(1234, "newkey")
+
+def test_authorization_challenge_parser():
+    endpoint = f"https://authority.net/tenant-id/oauth2/authorize"
+    resource = "https://challenge.resource"
+    scope = f"{resource}/.default"
+
+    # this challenge separates the authorization server and resource with commas in the WWW-Authenticate header
+    challenge_with_commas = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource="{resource}"'},
+    )
+    response_with_commas = Mock(http_response=challenge_with_commas)
+
+    challenge_authorization = AuthorizationChallengeParser.get_challenge_parameter(
+        response_with_commas, "Bearer", "authorization"
+    )
+    challenge_resource = AuthorizationChallengeParser.get_challenge_parameter(
+        response_with_commas, "Bearer", "resource"
+    )
+    challenge_scope = AuthorizationChallengeParser.get_challenge_parameter(response_with_commas, "Bearer", "scope")
+    assert challenge_authorization == endpoint
+    assert challenge_resource == resource
+    assert challenge_scope is None
+
+    # this challenge separates the authorization server and resource with only spaces in the WWW-Authenticate header
+    challenge_without_commas = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": f'Bearer authorization={endpoint} resource={resource}'},
+    )
+    response_without_commas = Mock(http_response=challenge_without_commas)
+
+    challenge_authorization = AuthorizationChallengeParser.get_challenge_parameter(
+        response_without_commas, "BEARER", "AUTHORIZATION"  # scheme and parameter should each be case-insensitive
+    )
+    challenge_resource = AuthorizationChallengeParser.get_challenge_parameter(
+        response_without_commas, "Bearer", "resource"
+    )
+    challenge_scope = AuthorizationChallengeParser.get_challenge_parameter(response_without_commas, "Bearer", "scope")
+    assert challenge_authorization == endpoint
+    assert challenge_resource == resource
+    assert challenge_scope is None
+
+    # this challenge gives an AADv2 scope, ending with "/.default", instead of an AADv1 resource
+    challenge_with_scope = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": f'Bearer authorization={endpoint} scope={scope}'},
+    )
+    response_with_scope = Mock(http_response=challenge_with_scope)
+
+    challenge_authorization = AuthorizationChallengeParser.get_challenge_parameter(
+        response_with_scope, "Bearer", "authorization"
+    )
+    challenge_resource = AuthorizationChallengeParser.get_challenge_parameter(response_with_scope, "Bearer", "resource")
+    challenge_scope = AuthorizationChallengeParser.get_challenge_parameter(response_with_scope, "Bearer", "scope")
+    assert challenge_authorization == endpoint
+    assert challenge_resource is None
+    assert challenge_scope == scope

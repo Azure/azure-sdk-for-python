@@ -21,6 +21,52 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
+class AuthorizationChallengeParser(object):  # pylint:disable=too-few-public-methods
+    """A helper class for parsing Authorization challenge headers."""
+
+    @staticmethod
+    def get_challenge_parameter(response: "PipelineResponse", scheme: str, parameter: str) -> "Optional[str]":
+        """Parses the specified challenge parameter from the WWW-Authenticate header of the provided response.
+
+        :param response: The challenge response.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :param str scheme: The challenge scheme containing the challenge parameter. For example, "Bearer".
+        :param str parameter: The parameter key name containing the value to return. For example, "resource".
+
+        :returns: The string value of the challenge parameter if it's present, and None otherwise.
+        :rtype: str or None
+        :raises: ValueError if the challenge is improperly formatted.
+        """
+
+        challenge_header = response.http_response.headers.get("WWW-Authenticate")
+        if not challenge_header:
+            raise ValueError("No WWW-Authenticate header found in the response; challenge cannot be empty.")
+
+        # Split the scheme (e.g. "Bearer") from the challenge parameters
+        trimmed_challenge = challenge_header.strip()
+        split_challenge = trimmed_challenge.split(" ", 1)
+        challenge_scheme = split_challenge[0]
+        # Return early if the challenge scheme doesn't match the queried scheme
+        if challenge_scheme.lower() != scheme.lower():
+            return None
+
+        # Split trimmed challenge into name=value pairs; these pairs are expected to be split by either commas or spaces
+        # Values may be surrounded by quotes, which are stripped here
+        trimmed_challenge = split_challenge[1]
+        parameters = {}
+        separator = "," if "," in trimmed_challenge else " "
+        for item in trimmed_challenge.split(separator):
+            # Process 'name=value' pairs
+            comps = item.split("=")
+            if len(comps) == 2:
+                key = comps[0].strip(' "')
+                value = comps[1].strip(' "')
+                if key:
+                    parameters[key.lower()] = value
+
+        return parameters.get(parameter.lower())
+
+
 # pylint:disable=too-few-public-methods
 class _BearerTokenCredentialPolicyBase(object):
     """Base class for a Bearer Token Credential Policy.
@@ -180,6 +226,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     :param str name: The name of the key header used for the credential.
     :raises: ValueError or TypeError
     """
+
     def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
         # type: (AzureKeyCredential, str, **Any) -> None
         super(AzureKeyCredentialPolicy, self).__init__()
@@ -201,6 +248,7 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
     :type credential: ~azure.core.credentials.AzureSasCredential
     :raises: ValueError or TypeError
     """
+
     def __init__(self, credential, **kwargs):  # pylint: disable=unused-argument
         # type: (AzureSasCredential, **Any) -> None
         super(AzureSasCredentialPolicy, self).__init__()
