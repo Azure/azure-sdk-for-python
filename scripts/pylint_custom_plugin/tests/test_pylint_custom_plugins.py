@@ -3045,3 +3045,24 @@ class TestCheckExceptionLogging(pylint.testutils.CheckerTestCase):
     
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node)
+
+    def test_violation_2(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            import logging
+            logger = logging.getLogger(__name__)
+            class SomeClient(object): #@
+                def __init__(self, something, **kwargs): #@
+                    try:
+                        pass
+                    except (Exception, AttributeError):
+                        logger.Warning("this is not okay"+ repr(Exception))
+            """
+        )
+    
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="exception-logging", node=function_node
+                )
+        ):
+            self.checker.visit_functiondef(function_node)

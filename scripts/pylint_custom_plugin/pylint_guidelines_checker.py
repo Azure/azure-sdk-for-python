@@ -1946,9 +1946,21 @@ class CheckExceptionLogging(BaseChecker):
     def visit_functiondef(self, node):
         for i in node.body:
             if isinstance(i, astroid.TryExcept):
+                print(i.handlers[0])
                 if isinstance(i.handlers[0], astroid.ExceptHandler):
+                    # The type of exception can be a tuple first
+                    print(i.handlers[0].type)
+                    
+                    # Find the elements in the tuple
+                    # if i.handlers[0].type.get("name"):
+                    #     print("yes")
+                    # else:
+                    #     print("no")
                     if i.handlers[0].type.name=="Exception":
                         # Check that it is a call to logger etc. 
+
+
+                        # This might cause issues here if we assume that an exception can have more than one exception
                         for body in i.handlers[0].body:
                             if i.handlers[0].name:
                                 handler_name = i.handlers[0].name.name
