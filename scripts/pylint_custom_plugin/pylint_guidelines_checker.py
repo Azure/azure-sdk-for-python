@@ -9,6 +9,7 @@ Pylint custom checkers for SDK guidelines: C4717 - C4744
 
 import logging
 import astroid
+import re
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 logger = logging.getLogger(__name__)
@@ -1944,24 +1945,67 @@ class ReturnTypeMismatch(BaseChecker):
         super(ReturnTypeMismatch, self).__init__(linter)
     
     def visit_functiondef(self, node):
+
+        generic_and_legacy_types = ["list","List","tuple","Tuple","dict","Dict","Iterable","Sequence","Mapping"]
+        override_type = "Union"
+        # bracket_sets = "\\[(.*?)\\]"
+
         if node.type_comment_returns:
             try:
-                # not every method will have a docstring so don't crash here, just return
-                docstring = node.doc.split(":")
+                # Not every method will have a docstring so don't crash here, just return
+                docstring = node.doc.split("\n")
             except AttributeError:
                 return
             
+            return_type = -1
             for line in docstring:
-                if line.startswith("rtype"):
-                   
-                    #The only thing about this is params can be different
-                    rtype = node.type_comment_returns.as_string().split("[")[0]
+                if "rtype" in line:
+                    return_type = docstring.index(line)
+            
+            # Breaking up type 
+            
+            if override_type in node.type_comment_returns.as_string():
+                rtype = node.type_comment_returns.as_string()
+                inner_type= ""
+            else:
+                split_rtype = node.type_comment_returns.as_string().split("[")
+                # print(split_rtype)
+                rtype = split_rtype[0]
+                inner_type = " ".join(split_rtype[1:]).split("]")
 
-                  
-                    if rtype not in docstring[docstring.index(line)+1]:
-                        self.add_message(
-                            msgid="return-type-mismatch", node=node, confidence=None
-                        )
+            # re_type = re.findall(bracket_sets, node.type_comment_returns.as_string())
+            # print(re_type)
+
+            doc_type = docstring[return_type].split(":rtype:")[1].strip()
+
+            # print("RTYPE", rtype)
+            # print("DOC TYPE", doc_type)
+            # print("INNER TYPE", inner_type)
+
+
+            if rtype not in doc_type:
+                self.add_message(
+                    msgid="return-type-mismatch", node=node, confidence=None
+                )
+            # if override_type in node.type_comment_returns.as_string():
+            #     # Treat differently
+            #     # inner_union = "".join(inner_type).split(override_type)
+            #     # print("INNER UNION", inner_union)
+            #     # if "".join(inner_union) not in doc_type:
+            #     if rtype != doc_type:
+            #         self.add_message(
+            #             msgid="return-type-mismatch", node=node, confidence=None
+            #         )
+            if rtype in (" ".join(generic_and_legacy_types)):
+                # Check if innards match
+                if "".join(inner_type) not in doc_type:
+                    self.add_message(
+                        msgid="return-type-mismatch", node=node, confidence=None
+                    )
+
+   
+
+            
             
 
 

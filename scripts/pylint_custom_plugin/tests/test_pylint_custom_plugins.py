@@ -2968,3 +2968,125 @@ class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
         request = client.get(url)
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
+
+
+class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ReturnTypeMismatch
+
+    def test_violation(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            import azure
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                    # type: () -> ItemPaged[Something]
+                    '''
+                    :return: A table client
+                    :rtype: None
+                    '''
+                    return azure.core.paging.ItemPaged()
+
+            """
+        )
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="return-type-mismatch", node=function_node
+                )
+        ):
+            self.checker.visit_functiondef(function_node)
+
+    def test_acceptable(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                    # type: () -> str
+                    '''
+                    :return: Some str
+                    :rtype: str
+                    '''
+                    return "hi"
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+
+    def test_acceptable_2(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                    # type: () -> list[int]
+                    '''
+                    :return: List of ints
+                    :rtype: list(int)
+                    '''
+                    return [1,2,3]
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+    
+    def test_violation_2(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                    # type: () -> Dict[str,str]
+                    '''
+                    :return: List of ints
+                    :rtype: Dict[str, int]
+                    '''
+                    return {"one":1,"two":2,"three": 3}
+            """
+        )
+    
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="return-type-mismatch", node=function_node
+                )
+        ):
+            self.checker.visit_functiondef(function_node)
+
+    def test_acceptable_3(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                    # type: () -> List[Union[int, float, str, bool]]
+                    '''
+                    :return: List of ints, floats, strings, or booleans
+                    :rtype: List[Union[int, float, str, bool]]
+                    '''
+                    return [1, 2.3, "hi", True]
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+
+    def test_acceptable_4(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                    # type: () -> Union[str, bytes, Tuple[int, Union[str, bytes]]]
+                    '''
+                    :return: A string, bytes, or a tuple
+                    :rtype: Union[str, str, Tuple[int, Union[str, bytes]]]
+                    '''
+                    return "hi"
+            """
+        )
+    
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="return-type-mismatch", node=function_node
+                )
+        ):
+            self.checker.visit_functiondef(function_node)
+
+
