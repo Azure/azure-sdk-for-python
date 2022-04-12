@@ -28,7 +28,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/providers/Microsoft.AzureStackHCI/operations')
@@ -56,7 +56,7 @@ class Operations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure_stack_hci_client.models
+    :type models: ~azure.mgmt.azurestackhci.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -80,7 +80,7 @@ class Operations(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationListResult, or the result of cls(response)
-        :rtype: ~azure_stack_hci_client.models.OperationListResult
+        :rtype: ~azure.mgmt.azurestackhci.models.OperationListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]

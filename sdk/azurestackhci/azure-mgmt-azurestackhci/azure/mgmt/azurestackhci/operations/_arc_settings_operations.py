@@ -35,7 +35,7 @@ def build_list_by_cluster_request(
     cluster_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings')
@@ -71,7 +71,7 @@ def build_get_request(
     arc_setting_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}')
@@ -113,7 +113,7 @@ def build_create_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}')
@@ -154,7 +154,7 @@ def build_delete_request_initial(
     arc_setting_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}')
@@ -183,6 +183,80 @@ def build_delete_request_initial(
         **kwargs
     )
 
+
+def build_generate_password_request(
+    subscription_id: str,
+    resource_group_name: str,
+    cluster_name: str,
+    arc_setting_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2022-03-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/generatePassword')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, 'str'),
+        "arcSettingName": _SERIALIZER.url("arc_setting_name", arc_setting_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_create_identity_request_initial(
+    subscription_id: str,
+    resource_group_name: str,
+    cluster_name: str,
+    arc_setting_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2022-03-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/createArcIdentity')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, 'str'),
+        "arcSettingName": _SERIALIZER.url("arc_setting_name", arc_setting_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
 class ArcSettingsOperations(object):
     """ArcSettingsOperations operations.
 
@@ -190,7 +264,7 @@ class ArcSettingsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure_stack_hci_client.models
+    :type models: ~azure.mgmt.azurestackhci.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -220,7 +294,7 @@ class ArcSettingsOperations(object):
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ArcSettingList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure_stack_hci_client.models.ArcSettingList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.azurestackhci.models.ArcSettingList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArcSettingList"]
@@ -298,7 +372,7 @@ class ArcSettingsOperations(object):
         :type arc_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ArcSetting, or the result of cls(response)
-        :rtype: ~azure_stack_hci_client.models.ArcSetting
+        :rtype: ~azure.mgmt.azurestackhci.models.ArcSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArcSetting"]
@@ -355,10 +429,10 @@ class ArcSettingsOperations(object):
          information.
         :type arc_setting_name: str
         :param arc_setting: Parameters supplied to the Create ArcSetting resource for this HCI cluster.
-        :type arc_setting: ~azure_stack_hci_client.models.ArcSetting
+        :type arc_setting: ~azure.mgmt.azurestackhci.models.ArcSetting
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ArcSetting, or the result of cls(response)
-        :rtype: ~azure_stack_hci_client.models.ArcSetting
+        :rtype: ~azure.mgmt.azurestackhci.models.ArcSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArcSetting"]
@@ -503,3 +577,173 @@ class ArcSettingsOperations(object):
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}'}  # type: ignore
+
+    @distributed_trace
+    def generate_password(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        arc_setting_name: str,
+        **kwargs: Any
+    ) -> "_models.PasswordCredential":
+        """Generate password for arc settings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster.
+        :type cluster_name: str
+        :param arc_setting_name: The name of the proxy resource holding details of HCI ArcSetting
+         information.
+        :type arc_setting_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PasswordCredential, or the result of cls(response)
+        :rtype: ~azure.mgmt.azurestackhci.models.PasswordCredential
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PasswordCredential"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_generate_password_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            arc_setting_name=arc_setting_name,
+            template_url=self.generate_password.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PasswordCredential', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    generate_password.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/generatePassword'}  # type: ignore
+
+
+    def _create_identity_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        arc_setting_name: str,
+        **kwargs: Any
+    ) -> Optional["_models.ArcIdentityResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ArcIdentityResponse"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_create_identity_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            arc_setting_name=arc_setting_name,
+            template_url=self._create_identity_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ArcIdentityResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _create_identity_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/createArcIdentity'}  # type: ignore
+
+
+    @distributed_trace
+    def begin_create_identity(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        arc_setting_name: str,
+        **kwargs: Any
+    ) -> LROPoller["_models.ArcIdentityResponse"]:
+        """Create Aad identity for arc settings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster.
+        :type cluster_name: str
+        :param arc_setting_name: The name of the proxy resource holding details of HCI ArcSetting
+         information.
+        :type arc_setting_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either ArcIdentityResponse or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.azurestackhci.models.ArcIdentityResponse]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArcIdentityResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_identity_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                arc_setting_name=arc_setting_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('ArcIdentityResponse', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_create_identity.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/createArcIdentity'}  # type: ignore

@@ -36,7 +36,7 @@ def build_list_by_arc_setting_request(
     arc_setting_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/extensions')
@@ -74,7 +74,7 @@ def build_get_request(
     extension_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/extensions/{extensionName}')
@@ -118,7 +118,7 @@ def build_create_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/extensions/{extensionName}')
@@ -166,7 +166,7 @@ def build_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/extensions/{extensionName}')
@@ -209,7 +209,7 @@ def build_delete_request_initial(
     extension_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01"
+    api_version = "2022-03-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureStackHCI/clusters/{clusterName}/arcSettings/{arcSettingName}/extensions/{extensionName}')
@@ -246,7 +246,7 @@ class ExtensionsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure_stack_hci_client.models
+    :type models: ~azure.mgmt.azurestackhci.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -280,7 +280,7 @@ class ExtensionsOperations(object):
         :type arc_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExtensionList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure_stack_hci_client.models.ExtensionList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.azurestackhci.models.ExtensionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtensionList"]
@@ -363,7 +363,7 @@ class ExtensionsOperations(object):
         :type extension_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Extension, or the result of cls(response)
-        :rtype: ~azure_stack_hci_client.models.Extension
+        :rtype: ~azure.mgmt.azurestackhci.models.Extension
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Extension"]
@@ -477,7 +477,7 @@ class ExtensionsOperations(object):
         :param extension_name: The name of the machine extension.
         :type extension_name: str
         :param extension: Details of the Machine Extension to be created.
-        :type extension: ~azure_stack_hci_client.models.Extension
+        :type extension: ~azure.mgmt.azurestackhci.models.Extension
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -487,7 +487,7 @@ class ExtensionsOperations(object):
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Extension or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure_stack_hci_client.models.Extension]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.azurestackhci.models.Extension]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -605,7 +605,7 @@ class ExtensionsOperations(object):
         :param extension_name: The name of the machine extension.
         :type extension_name: str
         :param extension: Details of the Machine Extension to be created.
-        :type extension: ~azure_stack_hci_client.models.Extension
+        :type extension: ~azure.mgmt.azurestackhci.models.Extension
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -615,7 +615,7 @@ class ExtensionsOperations(object):
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns either Extension or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure_stack_hci_client.models.Extension]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.azurestackhci.models.Extension]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]

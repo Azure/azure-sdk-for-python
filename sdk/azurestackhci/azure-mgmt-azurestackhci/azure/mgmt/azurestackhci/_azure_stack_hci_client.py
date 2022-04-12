@@ -25,13 +25,13 @@ class AzureStackHCIClient:
     """Azure Stack HCI management service.
 
     :ivar arc_settings: ArcSettingsOperations operations
-    :vartype arc_settings: azure_stack_hci_client.operations.ArcSettingsOperations
+    :vartype arc_settings: azure.mgmt.azurestackhci.operations.ArcSettingsOperations
     :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure_stack_hci_client.operations.ClustersOperations
+    :vartype clusters: azure.mgmt.azurestackhci.operations.ClustersOperations
     :ivar extensions: ExtensionsOperations operations
-    :vartype extensions: azure_stack_hci_client.operations.ExtensionsOperations
+    :vartype extensions: azure.mgmt.azurestackhci.operations.ExtensionsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure_stack_hci_client.operations.Operations
+    :vartype operations: azure.mgmt.azurestackhci.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.

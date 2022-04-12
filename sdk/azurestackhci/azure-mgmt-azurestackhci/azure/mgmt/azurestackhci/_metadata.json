@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2022-01-01",
-    "total_api_version_list": ["2022-01-01"],
+    "chosen_version": "2022-03-01",
+    "total_api_version_list": ["2022-03-01"],
     "client": {
         "name": "AzureStackHCIClient",
         "filename": "_azure_stack_hci_client",
