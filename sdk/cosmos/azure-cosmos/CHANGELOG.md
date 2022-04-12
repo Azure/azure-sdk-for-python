@@ -9,7 +9,8 @@
 #### Bugs Fixed
 
 #### Other Changes
-
+ - Added sample for retry config for the async client
+ - Added sample for retry config for the sync client
 ### 4.3.0b4 (2022-04-07)
 
 #### Features Added
