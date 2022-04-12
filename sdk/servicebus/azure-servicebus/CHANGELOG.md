@@ -1,5 +1,15 @@
 # Release History
 
+## 7.6.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 7.6.1 (2022-04-11)
 
 ### Other Changes
