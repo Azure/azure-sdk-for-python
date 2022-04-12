@@ -73,9 +73,6 @@ stages:
               strategy:
                 runOnce:
                   deploy:
-                    variables:
-                      - template: /eng/pipelines/templates/variables/globals.yml
-
                     steps:
                       - checkout: self
                       - download: current
@@ -84,7 +81,7 @@ stages:
 
                       - task: UsePythonVersion@0
                         inputs:
-                          versionSpec: $(PythonVersion)
+                          versionSpec: '3.9'
 
                       - script: |
                           set -e
