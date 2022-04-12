@@ -2968,3 +2968,66 @@ class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
         request = client.get(url)
         response = client._pipeline.run(request)
         assert response.http_response.status_code == 200
+
+
+class TestCheckExceptionLogging(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckExceptionLogging
+
+    def test_violation(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            import logging
+            logger = logging.getLogger(__name__)
+            class SomeClient(object): #@
+                def __init__(self, something, **kwargs): #@
+                    try:
+                        pass
+                    except Exception as e:
+                        logger.Warning("something went wrong"+ str(e))
+            """
+        )
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="exception-logging", node=function_node
+                )
+        ):
+            self.checker.visit_functiondef(function_node)
+
+    def test_acceptable(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            import logging
+            logger = logging.getLogger(__name__)
+            class SomeClient(object): #@
+                def __init__(self, something, **kwargs): #@
+                    try:
+                        pass
+                    except Exception as e:
+                        logger.Debug("this is okay"+ str(e))
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+    
+    def test_violation_2(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            import logging
+            logger = logging.getLogger(__name__)
+            class SomeClient(object): #@
+                def __init__(self, something, **kwargs): #@
+                    try:
+                        pass
+                    except AttributeError as e:
+                        logger.Warning("this is not okay"+ str(e))
+            """
+        )
+    
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="exception-logging", node=function_node
+                )
+        ):
+            self.checker.visit_functiondef(function_node)

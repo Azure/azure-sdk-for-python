@@ -1916,6 +1916,49 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
                 logger.debug("Pylint custom checker failed to check if model is aliased.")
                 pass
 
+class CheckExceptionLogging(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-exception-logging"
+    priority = -1
+    msgs = {
+        "C4751": (
+            "BLAH",
+            "exception-logging",
+            "BALH.",
+        ),
+    }
+    options = (
+        (
+            "ignore-exception-logging",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "blah",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(CheckExceptionLogging, self).__init__(linter)
+
+    def visit_functiondef(self, node):
+        print(node)
+        for i in node.body:
+            print(i)
+            if isinstance(i, astroid.TryExcept):
+                if isinstance(i.handlers[0], astroid.ExceptHandler):
+                    # Check that it is a call to logger etc. 
+                    for body in i.handlers[0].body:
+                        if isinstance(body, astroid.Expr) and isinstance(body.value, astroid.Call):
+                            if body.value.func.expr.name=="logger" and  body.value.func.attrname!="Debug":
+                                self.add_message(
+                                    msgid="exception-logging", node=node, confidence=None
+                                )
+
+                    
+       
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
@@ -1937,6 +1980,8 @@ def register(linter):
     linter.register_checker(CheckNamingMismatchGeneratedCode(linter))
     linter.register_checker(CheckAPIVersion(linter))
     linter.register_checker(CheckEnum(linter))
+    linter.register_checker(CheckExceptionLogging(linter))
+
 
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
