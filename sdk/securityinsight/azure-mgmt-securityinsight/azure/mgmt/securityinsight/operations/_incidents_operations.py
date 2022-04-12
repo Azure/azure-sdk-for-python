@@ -39,7 +39,7 @@ def build_run_playbook_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentIdentifier}/runPlaybook')
@@ -84,7 +84,7 @@ def build_list_request(
     skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents')
@@ -128,7 +128,7 @@ def build_get_request(
     incident_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}')
@@ -170,7 +170,7 @@ def build_create_or_update_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}')
@@ -211,7 +211,7 @@ def build_delete_request(
     incident_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}')
@@ -253,7 +253,7 @@ def build_create_team_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/createTeam')
@@ -294,7 +294,7 @@ def build_list_alerts_request(
     incident_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/alerts')
@@ -331,7 +331,7 @@ def build_list_bookmarks_request(
     incident_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/bookmarks')
@@ -368,7 +368,7 @@ def build_list_entities_request(
     incident_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/entities')

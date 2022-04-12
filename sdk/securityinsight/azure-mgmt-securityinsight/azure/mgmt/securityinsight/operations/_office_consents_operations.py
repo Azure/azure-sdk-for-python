@@ -32,7 +32,7 @@ def build_list_request(
     workspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/officeConsents')
@@ -68,7 +68,7 @@ def build_get_request(
     consent_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/officeConsents/{consentId}')
@@ -105,7 +105,7 @@ def build_delete_request(
     consent_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/officeConsents/{consentId}')

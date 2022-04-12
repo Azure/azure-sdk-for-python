@@ -516,6 +516,13 @@ class EntityMappingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Submission mail entity type.
     SUBMISSION_MAIL = "SubmissionMail"
 
+class EntityProviders(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The entity provider that is synced.
+    """
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+    AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
+
 class EntityQueryKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of the entity query
     """

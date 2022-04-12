@@ -29,7 +29,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-04-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/providers/Microsoft.SecurityInsights/operations')
