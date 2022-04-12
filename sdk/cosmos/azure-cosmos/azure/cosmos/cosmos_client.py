@@ -110,7 +110,7 @@ def _build_connection_policy(kwargs):
     retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
     policy.RetryOptions = retry_options
     connection_retry = kwargs.pop('connection_retry_policy', None)
-     if connection_retry is not None:
+    if connection_retry is not None:
         warnings.warn("This option has been deprecated and will be removed from the SDK in a future release.",
                       DeprecationWarning)
     connection_retry = policy.ConnectionRetryConfiguration 
