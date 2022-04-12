@@ -6,32 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AvailabilityStatus
-    from ._models_py3 import AvailabilityStatusListResult
-    from ._models_py3 import AvailabilityStatusProperties
-    from ._models_py3 import AvailabilityStatusPropertiesRecentlyResolvedState
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import RecommendedAction
-    from ._models_py3 import ServiceImpactingEvent
-    from ._models_py3 import ServiceImpactingEventIncidentProperties
-    from ._models_py3 import ServiceImpactingEventStatus
-except (SyntaxError, ImportError):
-    from ._models import AvailabilityStatus  # type: ignore
-    from ._models import AvailabilityStatusListResult  # type: ignore
-    from ._models import AvailabilityStatusProperties  # type: ignore
-    from ._models import AvailabilityStatusPropertiesRecentlyResolvedState  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import RecommendedAction  # type: ignore
-    from ._models import ServiceImpactingEvent  # type: ignore
-    from ._models import ServiceImpactingEventIncidentProperties  # type: ignore
-    from ._models import ServiceImpactingEventStatus  # type: ignore
+from ._models_py3 import AvailabilityStatus
+from ._models_py3 import AvailabilityStatusListResult
+from ._models_py3 import AvailabilityStatusProperties
+from ._models_py3 import AvailabilityStatusPropertiesRecentlyResolvedState
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import RecommendedAction
+from ._models_py3 import ServiceImpactingEvent
+from ._models_py3 import ServiceImpactingEventIncidentProperties
+from ._models_py3 import ServiceImpactingEventStatus
+
 
 from ._microsoft_resource_health_enums import (
     AvailabilityStateValues,
