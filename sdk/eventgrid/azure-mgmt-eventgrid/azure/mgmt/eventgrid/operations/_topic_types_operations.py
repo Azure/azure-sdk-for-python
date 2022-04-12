@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -20,22 +20,16 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_list_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/topicTypes')
@@ -58,11 +52,10 @@ def build_list_request(
 
 
 def build_get_request(
-    topic_type_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    topic_type_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}')
@@ -90,11 +83,10 @@ def build_get_request(
 
 
 def build_list_event_types_request(
-    topic_type_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    topic_type_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventTypes')
@@ -120,7 +112,6 @@ def build_list_event_types_request(
         **kwargs
     )
 
-# fmt: on
 class TopicTypesOperations(object):
     """TopicTypesOperations operations.
 
@@ -146,9 +137,8 @@ class TopicTypesOperations(object):
     @distributed_trace
     def list(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.TopicTypesListResult"]
+        **kwargs: Any
+    ) -> Iterable["_models.TopicTypesListResult"]:
         """List topic types.
 
         List all registered topic types.
@@ -211,10 +201,9 @@ class TopicTypesOperations(object):
     @distributed_trace
     def get(
         self,
-        topic_type_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.TopicTypeInfo"
+        topic_type_name: str,
+        **kwargs: Any
+    ) -> "_models.TopicTypeInfo":
         """Get a topic type.
 
         Get information about a topic type.
@@ -260,10 +249,9 @@ class TopicTypesOperations(object):
     @distributed_trace
     def list_event_types(
         self,
-        topic_type_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EventTypesListResult"]
+        topic_type_name: str,
+        **kwargs: Any
+    ) -> Iterable["_models.EventTypesListResult"]:
         """List event types.
 
         List event types for a topic type.

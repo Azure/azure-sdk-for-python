@@ -208,7 +208,7 @@ class TestAzureLogExporter(unittest.TestCase):
     def test_log_to_envelope_exception(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
-        self.assertEqual(envelope.data.base_type, 'TelemetryExceptionData')
+        self.assertEqual(envelope.data.base_type, 'ExceptionData')
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)

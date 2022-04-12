@@ -5,7 +5,7 @@
 #### Other Changes
  - Deprecated offer-named methods in favor of their new throughput-named counterparts (`read_offer` -> `read_throughput`).
 
-### 4.3.0b4 (Unreleased)
+### 4.3.0b4 (2022-04-07)
 
 #### Features Added
 - Added support for AAD authentication for the async client.
