@@ -151,15 +151,12 @@ if __name__ == '__main__':
             output_buffer.append(line.rstrip())
         info.wait()
         info_output = "\n".join(output_buffer)
-        print(last_info_output)
-        print(info_output)
-
+        
         last_info=last_info_output.split('\n')
         info=info_output.split('\n')
         last_route=findReportName(last_info)
         route=findReportName(info)
-        print(last_route)
-        print(route)
+
         result_text=sp.getoutput(fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route} {last_route}"')
         print(result_text)
 
