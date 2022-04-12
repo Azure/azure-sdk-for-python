@@ -1,5 +1,10 @@
 ## Release History
 
+### 4.3.0b5 (Unreleased)
+
+#### Other Changes
+ - Deprecated offer-named methods in favor of their new throughput-named counterparts (`read_offer` -> `read_throughput`).
+
 ### 4.3.0b4 (Unreleased)
 
 #### Features Added
@@ -24,7 +29,7 @@
 - Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
   to make use of the **preview** CosmosDB integrated cache functionality.
   Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
-- Added support for split-proof queries for the async client
+- Added support for split-proof queries for the async client.
 
 ### Bugs fixed
 - Default consistency level for the sync and async clients is no longer `Session` and will instead be set to the 
