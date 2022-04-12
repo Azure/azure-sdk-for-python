@@ -8,13 +8,14 @@
 
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
-from ._generated.models import ArrowField
 
 from ._shared import decode_base64_to_bytes
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
+from ._generated.models import ArrowField
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
@@ -23,33 +24,33 @@ from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
 
 
-class BlobType(str, Enum):
+class BlobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
-    BlockBlob = "BlockBlob"
-    PageBlob = "PageBlob"
-    AppendBlob = "AppendBlob"
+    BLOCKBLOB = "BlockBlob"
+    PAGEBLOB = "PageBlob"
+    APPENDBLOB = "AppendBlob"
 
 
-class BlockState(str, Enum):
+class BlockState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Block blob block types."""
 
-    Committed = 'Committed'  #: Committed blocks.
-    Latest = 'Latest'  #: Latest blocks.
-    Uncommitted = 'Uncommitted'  #: Uncommitted blocks.
+    COMMITTED = 'Committed'  #: Committed blocks.
+    LATEST = 'Latest'  #: Latest blocks.
+    UNCOMMITTED = 'Uncommitted'  #: Uncommitted blocks.
 
 
-class StandardBlobTier(str, Enum):
+class StandardBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the blob tier to set the blob to. This is only applicable for
     block blobs on standard storage accounts.
     """
 
-    Archive = 'Archive'  #: Archive
-    Cool = 'Cool'  #: Cool
-    Hot = 'Hot'  #: Hot
+    ARCHIVE = 'Archive'  #: Archive
+    COOL = 'Cool'  #: Cool
+    HOT = 'Hot'  #: Hot
 
 
-class PremiumPageBlobTier(str, Enum):
+class PremiumPageBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the page blob tier to set the blob to. This is only applicable to page
     blobs on premium storage accounts. Please take a look at:
@@ -67,34 +68,34 @@ class PremiumPageBlobTier(str, Enum):
     P60 = 'P60'  #: P60 Tier
 
 
-class QuickQueryDialect(str, Enum):
+class QuickQueryDialect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the quick query input/output dialect."""
 
-    DelimitedText = 'DelimitedTextDialect'
-    DelimitedJson = 'DelimitedJsonDialect'
-    Parquet = 'ParquetDialect'
+    DELIMITEDTEXT = 'DelimitedTextDialect'
+    DELIMITEDJSON = 'DelimitedJsonDialect'
+    PARQUET = 'ParquetDialect'
 
 
-class SequenceNumberAction(str, Enum):
+class SequenceNumberAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sequence number actions."""
 
-    Increment = 'increment'
+    INCREMENT = 'increment'
     """
     Increments the value of the sequence number by 1. If specifying this option,
     do not include the x-ms-blob-sequence-number header.
     """
 
-    Max = 'max'
+    MAX = 'max'
     """
     Sets the sequence number to be the higher of the value included with the
     request and the value currently stored for the blob.
     """
 
-    Update = 'update'
+    UPDATE = 'update'
     """Sets the sequence number to the value included with the request."""
 
 
-class PublicAccess(str, Enum):
+class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies whether data in the container may be accessed publicly and the level of access.
     """
@@ -105,14 +106,14 @@ class PublicAccess(str, Enum):
     Clients cannot enumerate the containers within the storage account as well as the blobs within the container.
     """
 
-    Blob = 'blob'
+    BLOB = 'blob'
     """
     Specifies public read access for blobs. Blob data within this container can be read
     via anonymous request, but container data is not available. Clients cannot enumerate
     blobs within the container via anonymous request.
     """
 
-    Container = 'container'
+    CONTAINER = 'container'
     """
     Specifies full public read access for container and blob data. Clients can enumerate
     blobs within the container via anonymous request, but cannot enumerate containers
@@ -120,15 +121,15 @@ class PublicAccess(str, Enum):
     """
 
 
-class BlobImmutabilityPolicyMode(str, Enum):
+class BlobImmutabilityPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the immutability policy mode to set on the blob.
     "Mutable" can only be returned by service, don't set to "Mutable".
     """
 
-    Unlocked = "Unlocked"
-    Locked = "Locked"
-    Mutable = "Mutable"
+    UNLOCKED = "Unlocked"
+    LOCKED = "Locked"
+    MUTABLE = "Mutable"
 
 
 class BlobAnalyticsLogging(GeneratedLogging):
@@ -1199,7 +1200,7 @@ class ArrowDialect(ArrowField):
         super(ArrowDialect, self).__init__(type=type, **kwargs)
 
 
-class ArrowType(str, Enum):
+class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INT64 = "int64"
     BOOL = "bool"
