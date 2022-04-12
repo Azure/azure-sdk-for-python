@@ -65,7 +65,7 @@ def _build_connection_policy(kwargs):
         policy.SSLConfiguration = ssl
 
     # Retry config
-    retry_options = kwargs.pop('retry_options', None) or policy.RetryOptions
+    retry_options = policy.RetryOptions
     total_retries = kwargs.pop('retry_total', None)
     retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
     retry_options._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
