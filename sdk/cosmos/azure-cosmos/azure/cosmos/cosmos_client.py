@@ -32,6 +32,7 @@ from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
+import warnings
 
 __all__ = ("CosmosClient",)
 
@@ -97,6 +98,10 @@ def _build_connection_policy(kwargs):
         policy.SSLConfiguration = ssl
 
     # Retry config
+    retry_options = kwargs.pop('retry_options', None)
+    if retry_options is not None:
+        warnings.warn("This option has been deprecated and will be removed from the SDK in a future release.",
+                      DeprecationWarning)
     retry_options = policy.RetryOptions
     total_retries = kwargs.pop('retry_total', None)
     retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
