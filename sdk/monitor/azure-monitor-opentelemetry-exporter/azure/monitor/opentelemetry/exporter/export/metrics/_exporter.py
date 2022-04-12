@@ -94,20 +94,22 @@ def _convert_metric_to_envelope(metric: Metric) -> TelemetryItem:
     properties = metric.attributes
     value = 0
     # TODO
-    # count = 1
+    count = 1
     # min = None
     # max = None
     # std_dev = None
 
-    if isinstance(point, Sum) or isinstance(point, Gauge):
+    if isinstance(point, (Gauge, Sum)):
         value = point.value
     elif isinstance(point, Histogram):
-        value = point.sum
+        value = sum(point.bucket_counts)
+        count = sum(point.bucket_counts)
 
     data_point = MetricDataPoint(
         name=metric.name,
         value=value,
         data_point_type="Aggregation",
+        count=count,
     )
     data = MetricsData(
         properties=properties,

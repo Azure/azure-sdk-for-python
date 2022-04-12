@@ -233,6 +233,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].data_point_type, "Aggregation")
+        self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
     def test_metric_to_envelope_gauge(self):
         exporter = self._exporter
@@ -260,6 +261,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 100)
         self.assertEqual(envelope.data.base_data.metrics[0].data_point_type, "Aggregation")
+        self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
     def test_metric_to_envelope_histogram(self):
         exporter = self._exporter
@@ -278,7 +280,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                 explicit_bounds=[0,5,10,0],
                 start_time_unix_nano=1646865018558419456,
                 time_unix_nano=1646865018558419457,
-                sum=31,
+                # sum=31,
             )
         )
         envelope = exporter._metric_to_envelope(_metric)
@@ -289,8 +291,9 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
-        self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
+        self.assertEqual(envelope.data.base_data.metrics[0].value, 7)
         self.assertEqual(envelope.data.base_data.metrics[0].data_point_type, "Aggregation")
+        self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
 
 class TestAzureMetricExporterUtils(unittest.TestCase):
     def test_get_metric_export_result(self):
