@@ -20,6 +20,7 @@
 # SOFTWARE.
 
 from ._version import VERSION
+from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
 from .database import DatabaseProxy
@@ -60,5 +61,6 @@ __all__ = (
     "SSLConfiguration",
     "TriggerOperation",
     "TriggerType",
+    "ConnectionRetryPolicy",
 )
 __version__ = VERSION
