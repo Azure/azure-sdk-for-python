@@ -15,13 +15,551 @@ import msrest.serialization
 from ._azure_arc_data_management_client_enums import *
 
 
+class ActiveDirectoryConnectorDNSDetails(msrest.serialization.Model):
+    """DNS server details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar domain_name: DNS domain name for which DNS lookups should be forwarded to the Active
+     Directory DNS servers.
+    :vartype domain_name: str
+    :ivar nameserver_ip_addresses: Required. List of Active Directory DNS server IP addresses.
+    :vartype nameserver_ip_addresses: list[str]
+    :ivar replicas: Replica count for DNS proxy service. Default value is 1.
+    :vartype replicas: long
+    :ivar prefer_k8_s_dns_for_ptr_lookups: Flag indicating whether to prefer Kubernetes DNS server
+     response over AD DNS server response for IP address lookups.
+    :vartype prefer_k8_s_dns_for_ptr_lookups: bool
+    """
+
+    _validation = {
+        'nameserver_ip_addresses': {'required': True},
+    }
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'nameserver_ip_addresses': {'key': 'nameserverIPAddresses', 'type': '[str]'},
+        'replicas': {'key': 'replicas', 'type': 'long'},
+        'prefer_k8_s_dns_for_ptr_lookups': {'key': 'preferK8sDnsForPtrLookups', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        nameserver_ip_addresses: List[str],
+        domain_name: Optional[str] = None,
+        replicas: Optional[int] = 1,
+        prefer_k8_s_dns_for_ptr_lookups: Optional[bool] = True,
+        **kwargs
+    ):
+        """
+        :keyword domain_name: DNS domain name for which DNS lookups should be forwarded to the Active
+         Directory DNS servers.
+        :paramtype domain_name: str
+        :keyword nameserver_ip_addresses: Required. List of Active Directory DNS server IP addresses.
+        :paramtype nameserver_ip_addresses: list[str]
+        :keyword replicas: Replica count for DNS proxy service. Default value is 1.
+        :paramtype replicas: long
+        :keyword prefer_k8_s_dns_for_ptr_lookups: Flag indicating whether to prefer Kubernetes DNS
+         server response over AD DNS server response for IP address lookups.
+        :paramtype prefer_k8_s_dns_for_ptr_lookups: bool
+        """
+        super(ActiveDirectoryConnectorDNSDetails, self).__init__(**kwargs)
+        self.domain_name = domain_name
+        self.nameserver_ip_addresses = nameserver_ip_addresses
+        self.replicas = replicas
+        self.prefer_k8_s_dns_for_ptr_lookups = prefer_k8_s_dns_for_ptr_lookups
+
+
+class ActiveDirectoryConnectorDomainDetails(msrest.serialization.Model):
+    """Active Directory domain details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar realm: Required. Name (uppercase) of the Active Directory domain that this AD connector
+     will be associated with.
+    :vartype realm: str
+    :ivar netbios_domain_name: NETBIOS name of the Active Directory domain.
+    :vartype netbios_domain_name: str
+    :ivar service_account_provisioning: The service account provisioning mode for this Active
+     Directory connector. Possible values include: "automatic", "manual". Default value: "manual".
+    :vartype service_account_provisioning: str or
+     ~azure.mgmt.azurearcdata.models.AccountProvisioningMode
+    :ivar ou_distinguished_name: The distinguished name of the Active Directory Organizational
+     Unit.
+    :vartype ou_distinguished_name: str
+    :ivar domain_controllers: Required. null.
+    :vartype domain_controllers: ~azure.mgmt.azurearcdata.models.ActiveDirectoryDomainControllers
+    """
+
+    _validation = {
+        'realm': {'required': True},
+        'domain_controllers': {'required': True},
+    }
+
+    _attribute_map = {
+        'realm': {'key': 'realm', 'type': 'str'},
+        'netbios_domain_name': {'key': 'netbiosDomainName', 'type': 'str'},
+        'service_account_provisioning': {'key': 'serviceAccountProvisioning', 'type': 'str'},
+        'ou_distinguished_name': {'key': 'ouDistinguishedName', 'type': 'str'},
+        'domain_controllers': {'key': 'domainControllers', 'type': 'ActiveDirectoryDomainControllers'},
+    }
+
+    def __init__(
+        self,
+        *,
+        realm: str,
+        domain_controllers: "ActiveDirectoryDomainControllers",
+        netbios_domain_name: Optional[str] = None,
+        service_account_provisioning: Optional[Union[str, "AccountProvisioningMode"]] = "manual",
+        ou_distinguished_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword realm: Required. Name (uppercase) of the Active Directory domain that this AD
+         connector will be associated with.
+        :paramtype realm: str
+        :keyword netbios_domain_name: NETBIOS name of the Active Directory domain.
+        :paramtype netbios_domain_name: str
+        :keyword service_account_provisioning: The service account provisioning mode for this Active
+         Directory connector. Possible values include: "automatic", "manual". Default value: "manual".
+        :paramtype service_account_provisioning: str or
+         ~azure.mgmt.azurearcdata.models.AccountProvisioningMode
+        :keyword ou_distinguished_name: The distinguished name of the Active Directory Organizational
+         Unit.
+        :paramtype ou_distinguished_name: str
+        :keyword domain_controllers: Required. null.
+        :paramtype domain_controllers: ~azure.mgmt.azurearcdata.models.ActiveDirectoryDomainControllers
+        """
+        super(ActiveDirectoryConnectorDomainDetails, self).__init__(**kwargs)
+        self.realm = realm
+        self.netbios_domain_name = netbios_domain_name
+        self.service_account_provisioning = service_account_provisioning
+        self.ou_distinguished_name = ou_distinguished_name
+        self.domain_controllers = domain_controllers
+
+
+class ActiveDirectoryConnectorListResult(msrest.serialization.Model):
+    """A list of active directory connectors.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorResource]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ActiveDirectoryConnectorResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ActiveDirectoryConnectorListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ActiveDirectoryConnectorProperties(msrest.serialization.Model):
+    """The properties of an Active Directory connector resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar domain_service_account_login_information: Username and password for domain service
+     account authentication.
+    :vartype domain_service_account_login_information:
+     ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+    :ivar provisioning_state: The provisioning state of the Active Directory connector resource.
+    :vartype provisioning_state: str
+    :ivar spec: Required. null.
+    :vartype spec: ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorSpec
+    :ivar status: null.
+    :vartype status: ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorStatus
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'spec': {'required': True},
+    }
+
+    _attribute_map = {
+        'domain_service_account_login_information': {'key': 'domainServiceAccountLoginInformation', 'type': 'BasicLoginInformation'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'spec': {'key': 'spec', 'type': 'ActiveDirectoryConnectorSpec'},
+        'status': {'key': 'status', 'type': 'ActiveDirectoryConnectorStatus'},
+    }
+
+    def __init__(
+        self,
+        *,
+        spec: "ActiveDirectoryConnectorSpec",
+        domain_service_account_login_information: Optional["BasicLoginInformation"] = None,
+        status: Optional["ActiveDirectoryConnectorStatus"] = None,
+        **kwargs
+    ):
+        """
+        :keyword domain_service_account_login_information: Username and password for domain service
+         account authentication.
+        :paramtype domain_service_account_login_information:
+         ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+        :keyword spec: Required. null.
+        :paramtype spec: ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorSpec
+        :keyword status: null.
+        :paramtype status: ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorStatus
+        """
+        super(ActiveDirectoryConnectorProperties, self).__init__(**kwargs)
+        self.domain_service_account_login_information = domain_service_account_login_information
+        self.provisioning_state = None
+        self.spec = spec
+        self.status = status
+
+
+class Resource(msrest.serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurearcdata.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurearcdata.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class ActiveDirectoryConnectorResource(ProxyResource):
+    """Active directory connector resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurearcdata.models.SystemData
+    :ivar properties: Required. null.
+    :vartype properties: ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'ActiveDirectoryConnectorProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: "ActiveDirectoryConnectorProperties",
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. null.
+        :paramtype properties: ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorProperties
+        """
+        super(ActiveDirectoryConnectorResource, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class ActiveDirectoryConnectorSpec(msrest.serialization.Model):
+    """The specifications of the AD Kubernetes resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar active_directory: Required. null.
+    :vartype active_directory:
+     ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorDomainDetails
+    :ivar dns: Required. null.
+    :vartype dns: ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorDNSDetails
+    """
+
+    _validation = {
+        'active_directory': {'required': True},
+        'dns': {'required': True},
+    }
+
+    _attribute_map = {
+        'active_directory': {'key': 'activeDirectory', 'type': 'ActiveDirectoryConnectorDomainDetails'},
+        'dns': {'key': 'dns', 'type': 'ActiveDirectoryConnectorDNSDetails'},
+    }
+
+    def __init__(
+        self,
+        *,
+        active_directory: "ActiveDirectoryConnectorDomainDetails",
+        dns: "ActiveDirectoryConnectorDNSDetails",
+        **kwargs
+    ):
+        """
+        :keyword active_directory: Required. null.
+        :paramtype active_directory:
+         ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorDomainDetails
+        :keyword dns: Required. null.
+        :paramtype dns: ~azure.mgmt.azurearcdata.models.ActiveDirectoryConnectorDNSDetails
+        """
+        super(ActiveDirectoryConnectorSpec, self).__init__(**kwargs)
+        self.active_directory = active_directory
+        self.dns = dns
+
+
+class ActiveDirectoryConnectorStatus(msrest.serialization.Model):
+    """The status of the Kubernetes custom resource.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar last_update_time: The time that the custom resource was last updated.
+    :vartype last_update_time: str
+    :ivar observed_generation: The version of the replicaSet associated with the AD connector
+     custom resource.
+    :vartype observed_generation: long
+    :ivar state: The state of the AD connector custom resource.
+    :vartype state: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'last_update_time': {'key': 'lastUpdateTime', 'type': 'str'},
+        'observed_generation': {'key': 'observedGeneration', 'type': 'long'},
+        'state': {'key': 'state', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        last_update_time: Optional[str] = None,
+        observed_generation: Optional[int] = None,
+        state: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword last_update_time: The time that the custom resource was last updated.
+        :paramtype last_update_time: str
+        :keyword observed_generation: The version of the replicaSet associated with the AD connector
+         custom resource.
+        :paramtype observed_generation: long
+        :keyword state: The state of the AD connector custom resource.
+        :paramtype state: str
+        """
+        super(ActiveDirectoryConnectorStatus, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.last_update_time = last_update_time
+        self.observed_generation = observed_generation
+        self.state = state
+
+
+class ActiveDirectoryDomainController(msrest.serialization.Model):
+    """Information about a domain controller in the AD domain.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar hostname: Required. Fully-qualified domain name of a domain controller in the AD domain.
+    :vartype hostname: str
+    """
+
+    _validation = {
+        'hostname': {'required': True},
+    }
+
+    _attribute_map = {
+        'hostname': {'key': 'hostname', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        hostname: str,
+        **kwargs
+    ):
+        """
+        :keyword hostname: Required. Fully-qualified domain name of a domain controller in the AD
+         domain.
+        :paramtype hostname: str
+        """
+        super(ActiveDirectoryDomainController, self).__init__(**kwargs)
+        self.hostname = hostname
+
+
+class ActiveDirectoryDomainControllers(msrest.serialization.Model):
+    """Details about the Active Directory domain controllers associated with this AD connector instance.
+
+    :ivar primary_domain_controller: Information about the Primary Domain Controller (PDC) in the
+     AD domain.
+    :vartype primary_domain_controller:
+     ~azure.mgmt.azurearcdata.models.ActiveDirectoryDomainController
+    :ivar secondary_domain_controllers: null.
+    :vartype secondary_domain_controllers:
+     list[~azure.mgmt.azurearcdata.models.ActiveDirectoryDomainController]
+    """
+
+    _attribute_map = {
+        'primary_domain_controller': {'key': 'primaryDomainController', 'type': 'ActiveDirectoryDomainController'},
+        'secondary_domain_controllers': {'key': 'secondaryDomainControllers', 'type': '[ActiveDirectoryDomainController]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        primary_domain_controller: Optional["ActiveDirectoryDomainController"] = None,
+        secondary_domain_controllers: Optional[List["ActiveDirectoryDomainController"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword primary_domain_controller: Information about the Primary Domain Controller (PDC) in
+         the AD domain.
+        :paramtype primary_domain_controller:
+         ~azure.mgmt.azurearcdata.models.ActiveDirectoryDomainController
+        :keyword secondary_domain_controllers: null.
+        :paramtype secondary_domain_controllers:
+         list[~azure.mgmt.azurearcdata.models.ActiveDirectoryDomainController]
+        """
+        super(ActiveDirectoryDomainControllers, self).__init__(**kwargs)
+        self.primary_domain_controller = primary_domain_controller
+        self.secondary_domain_controllers = secondary_domain_controllers
+
+
+class ActiveDirectoryInformation(msrest.serialization.Model):
+    """Active Directory information that related to the resource.
+
+    :ivar keytab_information: Keytab information that is used for the Sql Managed Instance when
+     Active Directory authentication is used.
+    :vartype keytab_information: ~azure.mgmt.azurearcdata.models.KeytabInformation
+    """
+
+    _attribute_map = {
+        'keytab_information': {'key': 'keytabInformation', 'type': 'KeytabInformation'},
+    }
+
+    def __init__(
+        self,
+        *,
+        keytab_information: Optional["KeytabInformation"] = None,
+        **kwargs
+    ):
+        """
+        :keyword keytab_information: Keytab information that is used for the Sql Managed Instance when
+         Active Directory authentication is used.
+        :paramtype keytab_information: ~azure.mgmt.azurearcdata.models.KeytabInformation
+        """
+        super(ActiveDirectoryInformation, self).__init__(**kwargs)
+        self.keytab_information = keytab_information
+
+
 class BasicLoginInformation(msrest.serialization.Model):
     """Username and password for basic login authentication.
 
-    :param username: Login username.
-    :type username: str
-    :param password: Login password.
-    :type password: str
+    :ivar username: Login username.
+    :vartype username: str
+    :ivar password: Login password.
+    :vartype password: str
     """
 
     _attribute_map = {
@@ -36,6 +574,12 @@ class BasicLoginInformation(msrest.serialization.Model):
         password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword username: Login username.
+        :paramtype username: str
+        :keyword password: Login password.
+        :paramtype password: str
+        """
         super(BasicLoginInformation, self).__init__(**kwargs)
         self.username = username
         self.password = password
@@ -46,20 +590,20 @@ class CommonSku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU.  It is typically a letter+number code.
-    :type name: str
-    :param dev: Whether dev/test is enabled. When the dev field is set to true, the resource is
-     used for dev/test purpose.
-    :type dev: bool
-    :param size: The SKU size. When the name field is the combination of tier and some other value,
+    :ivar name: Required. The name of the SKU.  It is typically a letter+number code.
+    :vartype name: str
+    :ivar dev: Whether dev/test is enabled. When the dev field is set to true, the resource is used
+     for dev/test purpose.
+    :vartype dev: bool
+    :ivar size: The SKU size. When the name field is the combination of tier and some other value,
      this would be the standalone code.
-    :type size: str
-    :param family: If the service has different generations of hardware, for the same SKU, then
-     that can be captured here.
-    :type family: str
-    :param capacity: If the SKU supports scale out/in then the capacity integer should be included.
+    :vartype size: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
+    :ivar capacity: If the SKU supports scale out/in then the capacity integer should be included.
      If scale out/in is not possible for the resource this may be omitted.
-    :type capacity: int
+    :vartype capacity: int
     """
 
     _validation = {
@@ -84,6 +628,22 @@ class CommonSku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the SKU.  It is typically a letter+number code.
+        :paramtype name: str
+        :keyword dev: Whether dev/test is enabled. When the dev field is set to true, the resource is
+         used for dev/test purpose.
+        :paramtype dev: bool
+        :keyword size: The SKU size. When the name field is the combination of tier and some other
+         value, this would be the standalone code.
+        :paramtype size: str
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword capacity: If the SKU supports scale out/in then the capacity integer should be
+         included. If scale out/in is not possible for the resource this may be omitted.
+        :paramtype capacity: int
+        """
         super(CommonSku, self).__init__(**kwargs)
         self.name = name
         self.dev = dev
@@ -97,43 +657,41 @@ class DataControllerProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param infrastructure: The infrastructure the data controller is running on. Possible values
+    :ivar infrastructure: The infrastructure the data controller is running on. Possible values
      include: "azure", "gcp", "aws", "alibaba", "onpremises", "other". Default value: "other".
-    :type infrastructure: str or ~azure_arc_data_management_client.models.Infrastructure
-    :param on_premise_property: Properties from the Kubernetes data controller.
-    :type on_premise_property: ~azure_arc_data_management_client.models.OnPremiseProperty
-    :param k8_s_raw: The raw kubernetes information.
-    :type k8_s_raw: any
-    :param upload_watermark: Properties on upload watermark.  Mostly timestamp for each upload data
+    :vartype infrastructure: str or ~azure.mgmt.azurearcdata.models.Infrastructure
+    :ivar on_premise_property: Properties from the Kubernetes data controller.
+    :vartype on_premise_property: ~azure.mgmt.azurearcdata.models.OnPremiseProperty
+    :ivar k8_s_raw: The raw kubernetes information.
+    :vartype k8_s_raw: any
+    :ivar upload_watermark: Properties on upload watermark.  Mostly timestamp for each upload data
      type.
-    :type upload_watermark: ~azure_arc_data_management_client.models.UploadWatermark
-    :param last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current date
+    :vartype upload_watermark: ~azure.mgmt.azurearcdata.models.UploadWatermark
+    :ivar last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current date
      time.
-    :type last_uploaded_date: ~datetime.datetime
-    :param basic_login_information: Deprecated. Azure Arc Data Services data controller no longer
+    :vartype last_uploaded_date: ~datetime.datetime
+    :ivar basic_login_information: Deprecated. Azure Arc Data Services data controller no longer
      expose any endpoint. All traffic are exposed through Kubernetes native API.
-    :type basic_login_information: ~azure_arc_data_management_client.models.BasicLoginInformation
-    :param metrics_dashboard_credential: Login credential for metrics dashboard on the Kubernetes
+    :vartype basic_login_information: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+    :ivar metrics_dashboard_credential: Login credential for metrics dashboard on the Kubernetes
      cluster.
-    :type metrics_dashboard_credential:
-     ~azure_arc_data_management_client.models.BasicLoginInformation
-    :param logs_dashboard_credential: Login credential for logs dashboard on the Kubernetes
-     cluster.
-    :type logs_dashboard_credential: ~azure_arc_data_management_client.models.BasicLoginInformation
-    :param log_analytics_workspace_config: Log analytics workspace id and primary key.
-    :type log_analytics_workspace_config:
-     ~azure_arc_data_management_client.models.LogAnalyticsWorkspaceConfig
-    :param upload_service_principal: Deprecated. Service principal is deprecated in favor of Arc
+    :vartype metrics_dashboard_credential: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+    :ivar logs_dashboard_credential: Login credential for logs dashboard on the Kubernetes cluster.
+    :vartype logs_dashboard_credential: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+    :ivar log_analytics_workspace_config: Log analytics workspace id and primary key.
+    :vartype log_analytics_workspace_config:
+     ~azure.mgmt.azurearcdata.models.LogAnalyticsWorkspaceConfig
+    :ivar upload_service_principal: Deprecated. Service principal is deprecated in favor of Arc
      Kubernetes service extension managed identity.
-    :type upload_service_principal: ~azure_arc_data_management_client.models.UploadServicePrincipal
-    :ivar provisioning_state:
+    :vartype upload_service_principal: ~azure.mgmt.azurearcdata.models.UploadServicePrincipal
+    :ivar provisioning_state: The provisioning state of the Arc Data Controller resource.
     :vartype provisioning_state: str
-    :param cluster_id: If a CustomLocation is provided, this contains the ARM id of the connected
+    :ivar cluster_id: If a CustomLocation is provided, this contains the ARM id of the connected
      cluster the custom location belongs to.
-    :type cluster_id: str
-    :param extension_id: If a CustomLocation is provided, this contains the ARM id of the extension
+    :vartype cluster_id: str
+    :ivar extension_id: If a CustomLocation is provided, this contains the ARM id of the extension
      the custom location belongs to.
-    :type extension_id: str
+    :vartype extension_id: str
     """
 
     _validation = {
@@ -173,6 +731,42 @@ class DataControllerProperties(msrest.serialization.Model):
         extension_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword infrastructure: The infrastructure the data controller is running on. Possible values
+         include: "azure", "gcp", "aws", "alibaba", "onpremises", "other". Default value: "other".
+        :paramtype infrastructure: str or ~azure.mgmt.azurearcdata.models.Infrastructure
+        :keyword on_premise_property: Properties from the Kubernetes data controller.
+        :paramtype on_premise_property: ~azure.mgmt.azurearcdata.models.OnPremiseProperty
+        :keyword k8_s_raw: The raw kubernetes information.
+        :paramtype k8_s_raw: any
+        :keyword upload_watermark: Properties on upload watermark.  Mostly timestamp for each upload
+         data type.
+        :paramtype upload_watermark: ~azure.mgmt.azurearcdata.models.UploadWatermark
+        :keyword last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current
+         date time.
+        :paramtype last_uploaded_date: ~datetime.datetime
+        :keyword basic_login_information: Deprecated. Azure Arc Data Services data controller no longer
+         expose any endpoint. All traffic are exposed through Kubernetes native API.
+        :paramtype basic_login_information: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+        :keyword metrics_dashboard_credential: Login credential for metrics dashboard on the Kubernetes
+         cluster.
+        :paramtype metrics_dashboard_credential: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+        :keyword logs_dashboard_credential: Login credential for logs dashboard on the Kubernetes
+         cluster.
+        :paramtype logs_dashboard_credential: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+        :keyword log_analytics_workspace_config: Log analytics workspace id and primary key.
+        :paramtype log_analytics_workspace_config:
+         ~azure.mgmt.azurearcdata.models.LogAnalyticsWorkspaceConfig
+        :keyword upload_service_principal: Deprecated. Service principal is deprecated in favor of Arc
+         Kubernetes service extension managed identity.
+        :paramtype upload_service_principal: ~azure.mgmt.azurearcdata.models.UploadServicePrincipal
+        :keyword cluster_id: If a CustomLocation is provided, this contains the ARM id of the connected
+         cluster the custom location belongs to.
+        :paramtype cluster_id: str
+        :keyword extension_id: If a CustomLocation is provided, this contains the ARM id of the
+         extension the custom location belongs to.
+        :paramtype extension_id: str
+        """
         super(DataControllerProperties, self).__init__(**kwargs)
         self.infrastructure = infrastructure
         self.on_premise_property = on_premise_property
@@ -189,81 +783,45 @@ class DataControllerProperties(msrest.serialization.Model):
         self.extension_id = extension_id
 
 
-class Resource(msrest.serialization.Model):
-    """Resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure_arc_data_management_client.models.SystemData
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurearcdata.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
@@ -273,10 +831,15 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
-        self.system_data = None
 
 
 class DataControllerResource(TrackedResource):
@@ -286,32 +849,33 @@ class DataControllerResource(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure_arc_data_management_client.models.SystemData
-    :param extended_location: The extendedLocation of the resource.
-    :type extended_location: ~azure_arc_data_management_client.models.ExtendedLocation
-    :param properties: Required. The data controller's properties.
-    :type properties: ~azure_arc_data_management_client.models.DataControllerProperties
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurearcdata.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurearcdata.models.ExtendedLocation
+    :ivar properties: Required. The data controller's properties.
+    :vartype properties: ~azure.mgmt.azurearcdata.models.DataControllerProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
         'properties': {'required': True},
     }
 
@@ -319,9 +883,9 @@ class DataControllerResource(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
         'properties': {'key': 'properties', 'type': 'DataControllerProperties'},
     }
@@ -335,6 +899,16 @@ class DataControllerResource(TrackedResource):
         extended_location: Optional["ExtendedLocation"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurearcdata.models.ExtendedLocation
+        :keyword properties: Required. The data controller's properties.
+        :paramtype properties: ~azure.mgmt.azurearcdata.models.DataControllerProperties
+        """
         super(DataControllerResource, self).__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
         self.properties = properties
@@ -343,29 +917,40 @@ class DataControllerResource(TrackedResource):
 class DataControllerUpdate(msrest.serialization.Model):
     """Used for updating a data controller resource.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The data controller's properties.
+    :vartype properties: ~azure.mgmt.azurearcdata.models.DataControllerProperties
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'DataControllerProperties'},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
+        properties: Optional["DataControllerProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The data controller's properties.
+        :paramtype properties: ~azure.mgmt.azurearcdata.models.DataControllerProperties
+        """
         super(DataControllerUpdate, self).__init__(**kwargs)
         self.tags = tags
+        self.properties = properties
 
 
 class ErrorResponse(msrest.serialization.Model):
     """An error response from the Azure Data on Azure Arc service.
 
-    :param error: null.
-    :type error: ~azure_arc_data_management_client.models.ErrorResponseBody
+    :ivar error: null.
+    :vartype error: ~azure.mgmt.azurearcdata.models.ErrorResponseBody
     """
 
     _attribute_map = {
@@ -378,6 +963,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorResponseBody"] = None,
         **kwargs
     ):
+        """
+        :keyword error: null.
+        :paramtype error: ~azure.mgmt.azurearcdata.models.ErrorResponseBody
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -385,17 +974,17 @@ class ErrorResponse(msrest.serialization.Model):
 class ErrorResponseBody(msrest.serialization.Model):
     """An error response from the Batch service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure_arc_data_management_client.models.ErrorResponseBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.azurearcdata.models.ErrorResponseBody]
     """
 
     _attribute_map = {
@@ -414,6 +1003,19 @@ class ErrorResponseBody(msrest.serialization.Model):
         details: Optional[List["ErrorResponseBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.azurearcdata.models.ErrorResponseBody]
+        """
         super(ErrorResponseBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -424,10 +1026,10 @@ class ErrorResponseBody(msrest.serialization.Model):
 class ExtendedLocation(msrest.serialization.Model):
     """The complex type of the extended location.
 
-    :param name: The name of the extended location.
-    :type name: str
-    :param type: The type of the extended location. Possible values include: "CustomLocation".
-    :type type: str or ~azure_arc_data_management_client.models.ExtendedLocationTypes
+    :ivar name: The name of the extended location.
+    :vartype name: str
+    :ivar type: The type of the extended location. Possible values include: "CustomLocation".
+    :vartype type: str or ~azure.mgmt.azurearcdata.models.ExtendedLocationTypes
     """
 
     _attribute_map = {
@@ -442,64 +1044,33 @@ class ExtendedLocation(msrest.serialization.Model):
         type: Optional[Union[str, "ExtendedLocationTypes"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the extended location.
+        :paramtype name: str
+        :keyword type: The type of the extended location. Possible values include: "CustomLocation".
+        :paramtype type: str or ~azure.mgmt.azurearcdata.models.ExtendedLocationTypes
+        """
         super(ExtendedLocation, self).__init__(**kwargs)
         self.name = name
-        self.type = type
-
-
-class Identity(msrest.serialization.Model):
-    """Identity for the resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
-    :param type: The identity type. The only acceptable values to pass in are None and
-     "SystemAssigned". The default value is None.
-    :type type: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(Identity, self).__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
         self.type = type
 
 
 class K8SResourceRequirements(msrest.serialization.Model):
     """The kubernetes resource limits and requests used to restrict or reserve resource usage.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param requests: Requests for a kubernetes resource type (e.g 'cpu', 'memory'). The 'cpu'
+    :vartype additional_properties: dict[str, any]
+    :ivar requests: Requests for a kubernetes resource type (e.g 'cpu', 'memory'). The 'cpu'
      request must be less than or equal to 'cpu' limit. Default 'cpu' is 2, minimum is 1. Default
      'memory' is '4Gi', minimum is '2Gi. If sku.tier is GeneralPurpose, maximum 'cpu' is 24 and
      maximum 'memory' is '128Gi'.
-    :type requests: dict[str, str]
-    :param limits: Limits for a kubernetes resource type (e.g 'cpu', 'memory'). The 'cpu' request
+    :vartype requests: dict[str, str]
+    :ivar limits: Limits for a kubernetes resource type (e.g 'cpu', 'memory'). The 'cpu' request
      must be less than or equal to 'cpu' limit. Default 'cpu' is 2, minimum is 1. Default 'memory'
      is '4Gi', minimum is '2Gi. If sku.tier is GeneralPurpose, maximum 'cpu' is 24 and maximum
      'memory' is '128Gi'.
-    :type limits: dict[str, str]
+    :vartype limits: dict[str, str]
     """
 
     _attribute_map = {
@@ -516,6 +1087,21 @@ class K8SResourceRequirements(msrest.serialization.Model):
         limits: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword requests: Requests for a kubernetes resource type (e.g 'cpu', 'memory'). The 'cpu'
+         request must be less than or equal to 'cpu' limit. Default 'cpu' is 2, minimum is 1. Default
+         'memory' is '4Gi', minimum is '2Gi. If sku.tier is GeneralPurpose, maximum 'cpu' is 24 and
+         maximum 'memory' is '128Gi'.
+        :paramtype requests: dict[str, str]
+        :keyword limits: Limits for a kubernetes resource type (e.g 'cpu', 'memory'). The 'cpu' request
+         must be less than or equal to 'cpu' limit. Default 'cpu' is 2, minimum is 1. Default 'memory'
+         is '4Gi', minimum is '2Gi. If sku.tier is GeneralPurpose, maximum 'cpu' is 24 and maximum
+         'memory' is '128Gi'.
+        :paramtype limits: dict[str, str]
+        """
         super(K8SResourceRequirements, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.requests = requests
@@ -525,12 +1111,12 @@ class K8SResourceRequirements(msrest.serialization.Model):
 class K8SScheduling(msrest.serialization.Model):
     """The kubernetes scheduling information.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param default: The kubernetes scheduling options. It describes restrictions used to help
+    :vartype additional_properties: dict[str, any]
+    :ivar default: The kubernetes scheduling options. It describes restrictions used to help
      Kubernetes select appropriate nodes to host the database service.
-    :type default: ~azure_arc_data_management_client.models.K8SSchedulingOptions
+    :vartype default: ~azure.mgmt.azurearcdata.models.K8SSchedulingOptions
     """
 
     _attribute_map = {
@@ -545,6 +1131,14 @@ class K8SScheduling(msrest.serialization.Model):
         default: Optional["K8SSchedulingOptions"] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword default: The kubernetes scheduling options. It describes restrictions used to help
+         Kubernetes select appropriate nodes to host the database service.
+        :paramtype default: ~azure.mgmt.azurearcdata.models.K8SSchedulingOptions
+        """
         super(K8SScheduling, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.default = default
@@ -553,12 +1147,12 @@ class K8SScheduling(msrest.serialization.Model):
 class K8SSchedulingOptions(msrest.serialization.Model):
     """The kubernetes scheduling options. It describes restrictions used to help Kubernetes select appropriate nodes to host the database service.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param resources: The kubernetes resource limits and requests used to restrict or reserve
+    :vartype additional_properties: dict[str, any]
+    :ivar resources: The kubernetes resource limits and requests used to restrict or reserve
      resource usage.
-    :type resources: ~azure_arc_data_management_client.models.K8SResourceRequirements
+    :vartype resources: ~azure.mgmt.azurearcdata.models.K8SResourceRequirements
     """
 
     _attribute_map = {
@@ -573,18 +1167,51 @@ class K8SSchedulingOptions(msrest.serialization.Model):
         resources: Optional["K8SResourceRequirements"] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword resources: The kubernetes resource limits and requests used to restrict or reserve
+         resource usage.
+        :paramtype resources: ~azure.mgmt.azurearcdata.models.K8SResourceRequirements
+        """
         super(K8SSchedulingOptions, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.resources = resources
 
 
+class KeytabInformation(msrest.serialization.Model):
+    """Keytab used for authenticate with Active Directory.
+
+    :ivar keytab: A base64-encoded keytab.
+    :vartype keytab: str
+    """
+
+    _attribute_map = {
+        'keytab': {'key': 'keytab', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        keytab: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword keytab: A base64-encoded keytab.
+        :paramtype keytab: str
+        """
+        super(KeytabInformation, self).__init__(**kwargs)
+        self.keytab = keytab
+
+
 class LogAnalyticsWorkspaceConfig(msrest.serialization.Model):
     """Log analytics workspace id and primary key.
 
-    :param workspace_id: Azure Log Analytics workspace ID.
-    :type workspace_id: str
-    :param primary_key: Primary key of the workspace.
-    :type primary_key: str
+    :ivar workspace_id: Azure Log Analytics workspace ID.
+    :vartype workspace_id: str
+    :ivar primary_key: Primary key of the workspace.
+    :vartype primary_key: str
     """
 
     _attribute_map = {
@@ -599,45 +1226,15 @@ class LogAnalyticsWorkspaceConfig(msrest.serialization.Model):
         primary_key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword workspace_id: Azure Log Analytics workspace ID.
+        :paramtype workspace_id: str
+        :keyword primary_key: Primary key of the workspace.
+        :paramtype primary_key: str
+        """
         super(LogAnalyticsWorkspaceConfig, self).__init__(**kwargs)
         self.workspace_id = workspace_id
         self.primary_key = primary_key
-
-
-class ODataError(msrest.serialization.Model):
-    """Information about an error.
-
-    :param code: A language-independent error name.
-    :type code: str
-    :param message: The error message.
-    :type message: str
-    :param target: The target of the error (for example, the name of the property in error).
-    :type target: str
-    :param details: The error details.
-    :type details: list[~azure_arc_data_management_client.models.ODataError]
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ODataError]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[List["ODataError"]] = None,
-        **kwargs
-    ):
-        super(ODataError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
 
 
 class OnPremiseProperty(msrest.serialization.Model):
@@ -645,14 +1242,14 @@ class OnPremiseProperty(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A globally unique ID identifying the associated Kubernetes cluster.
-    :type id: str
-    :param public_signing_key: Required. Certificate that contains the Kubernetes cluster public
-     key used to verify signing.
-    :type public_signing_key: str
-    :param signing_certificate_thumbprint: Unique thumbprint returned to customer to verify the
+    :ivar id: Required. A globally unique ID identifying the associated Kubernetes cluster.
+    :vartype id: str
+    :ivar public_signing_key: Required. Certificate that contains the Kubernetes cluster public key
+     used to verify signing.
+    :vartype public_signing_key: str
+    :ivar signing_certificate_thumbprint: Unique thumbprint returned to customer to verify the
      certificate being uploaded.
-    :type signing_certificate_thumbprint: str
+    :vartype signing_certificate_thumbprint: str
     """
 
     _validation = {
@@ -674,6 +1271,16 @@ class OnPremiseProperty(msrest.serialization.Model):
         signing_certificate_thumbprint: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. A globally unique ID identifying the associated Kubernetes cluster.
+        :paramtype id: str
+        :keyword public_signing_key: Required. Certificate that contains the Kubernetes cluster public
+         key used to verify signing.
+        :paramtype public_signing_key: str
+        :keyword signing_certificate_thumbprint: Unique thumbprint returned to customer to verify the
+         certificate being uploaded.
+        :paramtype signing_certificate_thumbprint: str
+        """
         super(OnPremiseProperty, self).__init__(**kwargs)
         self.id = id
         self.public_signing_key = public_signing_key
@@ -687,16 +1294,16 @@ class Operation(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the operation being performed on this particular object.
-    :type name: str
-    :param display: Required. The localized display information for this particular operation /
+    :ivar name: Required. The name of the operation being performed on this particular object.
+    :vartype name: str
+    :ivar display: Required. The localized display information for this particular operation /
      action.
-    :type display: ~azure_arc_data_management_client.models.OperationDisplay
+    :vartype display: ~azure.mgmt.azurearcdata.models.OperationDisplay
     :ivar origin: The intended executor of the operation. Possible values include: "user",
      "system".
-    :vartype origin: str or ~azure_arc_data_management_client.models.OperationOrigin
-    :param is_data_action: Required. Indicates whether the operation is a data action.
-    :type is_data_action: bool
+    :vartype origin: str or ~azure.mgmt.azurearcdata.models.OperationOrigin
+    :ivar is_data_action: Required. Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
     :ivar properties: Additional descriptions for the operation.
     :vartype properties: dict[str, any]
     """
@@ -725,6 +1332,15 @@ class Operation(msrest.serialization.Model):
         is_data_action: bool,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the operation being performed on this particular object.
+        :paramtype name: str
+        :keyword display: Required. The localized display information for this particular operation /
+         action.
+        :paramtype display: ~azure.mgmt.azurearcdata.models.OperationDisplay
+        :keyword is_data_action: Required. Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -738,15 +1354,15 @@ class OperationDisplay(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param provider: Required. The localized friendly form of the resource provider name.
-    :type provider: str
-    :param resource: Required. The localized friendly form of the resource type related to this
+    :ivar provider: Required. The localized friendly form of the resource provider name.
+    :vartype provider: str
+    :ivar resource: Required. The localized friendly form of the resource type related to this
      action/operation.
-    :type resource: str
-    :param operation: Required. The localized friendly name for the operation.
-    :type operation: str
-    :param description: Required. The localized friendly description for the operation.
-    :type description: str
+    :vartype resource: str
+    :ivar operation: Required. The localized friendly name for the operation.
+    :vartype operation: str
+    :ivar description: Required. The localized friendly description for the operation.
+    :vartype description: str
     """
 
     _validation = {
@@ -772,6 +1388,17 @@ class OperationDisplay(msrest.serialization.Model):
         description: str,
         **kwargs
     ):
+        """
+        :keyword provider: Required. The localized friendly form of the resource provider name.
+        :paramtype provider: str
+        :keyword resource: Required. The localized friendly form of the resource type related to this
+         action/operation.
+        :paramtype resource: str
+        :keyword operation: Required. The localized friendly name for the operation.
+        :paramtype operation: str
+        :keyword description: Required. The localized friendly description for the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -785,7 +1412,7 @@ class OperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~azure_arc_data_management_client.models.Operation]
+    :vartype value: list[~azure.mgmt.azurearcdata.models.Operation]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -804,18 +1431,20 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
 class PageOfDataControllerResource(msrest.serialization.Model):
-    """PageOfDataControllerResource.
+    """A list of data controllers.
 
-    :param value:
-    :type value: list[~azure_arc_data_management_client.models.DataControllerResource]
-    :param next_link: Link to retrieve next page of results.
-    :type next_link: str
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.azurearcdata.models.DataControllerResource]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -830,136 +1459,296 @@ class PageOfDataControllerResource(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Array of results.
+        :paramtype value: list[~azure.mgmt.azurearcdata.models.DataControllerResource]
+        :keyword next_link: Link to retrieve next page of results.
+        :paramtype next_link: str
+        """
         super(PageOfDataControllerResource, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Plan(msrest.serialization.Model):
-    """Plan for the resource.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. A user defined name of the 3rd Party Artifact that is being procured.
-    :type name: str
-    :param publisher: Required. The publisher of the 3rd Party Artifact that is being bought. E.g.
-     NewRelic.
-    :type publisher: str
-    :param product: Required. The 3rd Party artifact that is being procured. E.g. NewRelic. Product
-     maps to the OfferID specified for the artifact at the time of Data Market onboarding.
-    :type product: str
-    :param promotion_code: A publisher provided promotion code as provisioned in Data Market for
-     the said product/artifact.
-    :type promotion_code: str
-    :param version: The version of the desired product/artifact.
-    :type version: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'product': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        publisher: str,
-        product: str,
-        promotion_code: Optional[str] = None,
-        version: Optional[str] = None,
-        **kwargs
-    ):
-        super(Plan, self).__init__(**kwargs)
-        self.name = name
-        self.publisher = publisher
-        self.product = product
-        self.promotion_code = promotion_code
-        self.version = version
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+class PostgresInstance(TrackedResource):
+    """A Postgres Instance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurearcdata.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurearcdata.models.ExtendedLocation
+    :ivar properties: Required. null.
+    :vartype properties: ~azure.mgmt.azurearcdata.models.PostgresInstanceProperties
+    :ivar sku: Resource sku.
+    :vartype sku: ~azure.mgmt.azurearcdata.models.PostgresInstanceSku
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'location': {'required': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
+        'properties': {'key': 'properties', 'type': 'PostgresInstanceProperties'},
+        'sku': {'key': 'sku', 'type': 'PostgresInstanceSku'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "PostgresInstanceProperties",
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["ExtendedLocation"] = None,
+        sku: Optional["PostgresInstanceSku"] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurearcdata.models.ExtendedLocation
+        :keyword properties: Required. null.
+        :paramtype properties: ~azure.mgmt.azurearcdata.models.PostgresInstanceProperties
+        :keyword sku: Resource sku.
+        :paramtype sku: ~azure.mgmt.azurearcdata.models.PostgresInstanceSku
+        """
+        super(PostgresInstance, self).__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.properties = properties
+        self.sku = sku
+
+
+class PostgresInstanceListResult(msrest.serialization.Model):
+    """A list of PostgresInstance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.azurearcdata.models.PostgresInstance]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PostgresInstance]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ProxyResource, self).__init__(**kwargs)
+        """
+        """
+        super(PostgresInstanceListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
-class ResourceSku(msrest.serialization.Model):
-    """ResourceSku.
+class PostgresInstanceProperties(msrest.serialization.Model):
+    """Postgres Instance properties.
 
-    :param capacity:
-    :type capacity: int
-    :param family:
-    :type family: str
-    :param name:
-    :type name: str
-    :param size:
-    :type size: str
-    :param tier:
-    :type tier: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar data_controller_id: The data controller id.
+    :vartype data_controller_id: str
+    :ivar admin: The instance admin.
+    :vartype admin: str
+    :ivar basic_login_information: Username and password for basic authentication.
+    :vartype basic_login_information: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+    :ivar k8_s_raw: The raw kubernetes information.
+    :vartype k8_s_raw: any
+    :ivar last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current date
+     time.
+    :vartype last_uploaded_date: ~datetime.datetime
+    :ivar provisioning_state: The provisioning state of the Azure Arc-enabled PostgreSQL instance.
+    :vartype provisioning_state: str
     """
 
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
     _attribute_map = {
-        'capacity': {'key': 'capacity', 'type': 'int'},
-        'family': {'key': 'family', 'type': 'str'},
+        'data_controller_id': {'key': 'dataControllerId', 'type': 'str'},
+        'admin': {'key': 'admin', 'type': 'str'},
+        'basic_login_information': {'key': 'basicLoginInformation', 'type': 'BasicLoginInformation'},
+        'k8_s_raw': {'key': 'k8sRaw', 'type': 'object'},
+        'last_uploaded_date': {'key': 'lastUploadedDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        data_controller_id: Optional[str] = None,
+        admin: Optional[str] = None,
+        basic_login_information: Optional["BasicLoginInformation"] = None,
+        k8_s_raw: Optional[Any] = None,
+        last_uploaded_date: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword data_controller_id: The data controller id.
+        :paramtype data_controller_id: str
+        :keyword admin: The instance admin.
+        :paramtype admin: str
+        :keyword basic_login_information: Username and password for basic authentication.
+        :paramtype basic_login_information: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+        :keyword k8_s_raw: The raw kubernetes information.
+        :paramtype k8_s_raw: any
+        :keyword last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current
+         date time.
+        :paramtype last_uploaded_date: ~datetime.datetime
+        """
+        super(PostgresInstanceProperties, self).__init__(**kwargs)
+        self.data_controller_id = data_controller_id
+        self.admin = admin
+        self.basic_login_information = basic_login_information
+        self.k8_s_raw = k8_s_raw
+        self.last_uploaded_date = last_uploaded_date
+        self.provisioning_state = None
+
+
+class PostgresInstanceSku(CommonSku):
+    """The resource model definition representing SKU for Azure Database for PostgresSQL - Azure Arc.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. The name of the SKU.  It is typically a letter+number code.
+    :vartype name: str
+    :ivar dev: Whether dev/test is enabled. When the dev field is set to true, the resource is used
+     for dev/test purpose.
+    :vartype dev: bool
+    :ivar size: The SKU size. When the name field is the combination of tier and some other value,
+     this would be the standalone code.
+    :vartype size: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
+    :ivar capacity: If the SKU supports scale out/in then the capacity integer should be included.
+     If scale out/in is not possible for the resource this may be omitted.
+    :vartype capacity: int
+    :ivar tier: This field is required to be implemented by the Resource Provider if the service
+     has more than one tier. The only acceptable values to pass in are None and "Hyperscale". The
+     default value is "Hyperscale".
+    :vartype tier: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'dev': {'key': 'dev', 'type': 'bool'},
         'size': {'key': 'size', 'type': 'str'},
+        'family': {'key': 'family', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        capacity: Optional[int] = None,
-        family: Optional[str] = None,
-        name: Optional[str] = None,
+        name: str,
+        dev: Optional[bool] = True,
         size: Optional[str] = None,
-        tier: Optional[str] = None,
+        family: Optional[str] = None,
+        capacity: Optional[int] = None,
+        tier: Optional[str] = "Hyperscale",
         **kwargs
     ):
-        super(ResourceSku, self).__init__(**kwargs)
-        self.capacity = capacity
-        self.family = family
-        self.name = name
-        self.size = size
+        """
+        :keyword name: Required. The name of the SKU.  It is typically a letter+number code.
+        :paramtype name: str
+        :keyword dev: Whether dev/test is enabled. When the dev field is set to true, the resource is
+         used for dev/test purpose.
+        :paramtype dev: bool
+        :keyword size: The SKU size. When the name field is the combination of tier and some other
+         value, this would be the standalone code.
+        :paramtype size: str
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword capacity: If the SKU supports scale out/in then the capacity integer should be
+         included. If scale out/in is not possible for the resource this may be omitted.
+        :paramtype capacity: int
+        :keyword tier: This field is required to be implemented by the Resource Provider if the service
+         has more than one tier. The only acceptable values to pass in are None and "Hyperscale". The
+         default value is "Hyperscale".
+        :paramtype tier: str
+        """
+        super(PostgresInstanceSku, self).__init__(name=name, dev=dev, size=size, family=family, capacity=capacity, **kwargs)
         self.tier = tier
+
+
+class PostgresInstanceUpdate(msrest.serialization.Model):
+    """An update to a Postgres Instance.
+
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Postgres Instance properties.
+    :vartype properties: ~azure.mgmt.azurearcdata.models.PostgresInstanceProperties
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'PostgresInstanceProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["PostgresInstanceProperties"] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Postgres Instance properties.
+        :paramtype properties: ~azure.mgmt.azurearcdata.models.PostgresInstanceProperties
+        """
+        super(PostgresInstanceUpdate, self).__init__(**kwargs)
+        self.tags = tags
+        self.properties = properties
 
 
 class SqlManagedInstance(TrackedResource):
@@ -969,34 +1758,35 @@ class SqlManagedInstance(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure_arc_data_management_client.models.SystemData
-    :param properties: Required. null.
-    :type properties: ~azure_arc_data_management_client.models.SqlManagedInstanceProperties
-    :param extended_location: The extendedLocation of the resource.
-    :type extended_location: ~azure_arc_data_management_client.models.ExtendedLocation
-    :param sku: Resource sku.
-    :type sku: ~azure_arc_data_management_client.models.SqlManagedInstanceSku
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurearcdata.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar properties: Required. null.
+    :vartype properties: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceProperties
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurearcdata.models.ExtendedLocation
+    :ivar sku: Resource sku.
+    :vartype sku: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceSku
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
         'properties': {'required': True},
     }
 
@@ -1004,9 +1794,9 @@ class SqlManagedInstance(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'properties': {'key': 'properties', 'type': 'SqlManagedInstanceProperties'},
         'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
         'sku': {'key': 'sku', 'type': 'SqlManagedInstanceSku'},
@@ -1022,6 +1812,18 @@ class SqlManagedInstance(TrackedResource):
         sku: Optional["SqlManagedInstanceSku"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword properties: Required. null.
+        :paramtype properties: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceProperties
+        :keyword extended_location: The extendedLocation of the resource.
+        :paramtype extended_location: ~azure.mgmt.azurearcdata.models.ExtendedLocation
+        :keyword sku: Resource sku.
+        :paramtype sku: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceSku
+        """
         super(SqlManagedInstance, self).__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
         self.extended_location = extended_location
@@ -1031,11 +1833,11 @@ class SqlManagedInstance(TrackedResource):
 class SqlManagedInstanceK8SRaw(msrest.serialization.Model):
     """The raw kubernetes information.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param spec: The kubernetes spec information.
-    :type spec: ~azure_arc_data_management_client.models.SqlManagedInstanceK8SSpec
+    :vartype additional_properties: dict[str, any]
+    :ivar spec: The kubernetes spec information.
+    :vartype spec: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceK8SSpec
     """
 
     _attribute_map = {
@@ -1050,6 +1852,13 @@ class SqlManagedInstanceK8SRaw(msrest.serialization.Model):
         spec: Optional["SqlManagedInstanceK8SSpec"] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword spec: The kubernetes spec information.
+        :paramtype spec: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceK8SSpec
+        """
         super(SqlManagedInstanceK8SRaw, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.spec = spec
@@ -1058,16 +1867,16 @@ class SqlManagedInstanceK8SRaw(msrest.serialization.Model):
 class SqlManagedInstanceK8SSpec(msrest.serialization.Model):
     """The kubernetes spec information.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param scheduling: The kubernetes scheduling information.
-    :type scheduling: ~azure_arc_data_management_client.models.K8SScheduling
-    :param replicas: This option specifies the number of SQL Managed Instance replicas that will be
+    :vartype additional_properties: dict[str, any]
+    :ivar scheduling: The kubernetes scheduling information.
+    :vartype scheduling: ~azure.mgmt.azurearcdata.models.K8SScheduling
+    :ivar replicas: This option specifies the number of SQL Managed Instance replicas that will be
      deployed in your Kubernetes cluster for high availability purposes. If sku.tier is
      BusinessCritical, allowed values are '2' or '3' with default of '3'. If sku.tier is
      GeneralPurpose, replicas must be '1'.
-    :type replicas: int
+    :vartype replicas: int
     """
 
     _attribute_map = {
@@ -1084,6 +1893,18 @@ class SqlManagedInstanceK8SSpec(msrest.serialization.Model):
         replicas: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword scheduling: The kubernetes scheduling information.
+        :paramtype scheduling: ~azure.mgmt.azurearcdata.models.K8SScheduling
+        :keyword replicas: This option specifies the number of SQL Managed Instance replicas that will
+         be deployed in your Kubernetes cluster for high availability purposes. If sku.tier is
+         BusinessCritical, allowed values are '2' or '3' with default of '3'. If sku.tier is
+         GeneralPurpose, replicas must be '1'.
+        :paramtype replicas: int
+        """
         super(SqlManagedInstanceK8SSpec, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.scheduling = scheduling
@@ -1096,7 +1917,7 @@ class SqlManagedInstanceListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~azure_arc_data_management_client.models.SqlManagedInstance]
+    :vartype value: list[~azure.mgmt.azurearcdata.models.SqlManagedInstance]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -1115,6 +1936,8 @@ class SqlManagedInstanceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlManagedInstanceListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1125,33 +1948,37 @@ class SqlManagedInstanceProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param data_controller_id: null.
-    :type data_controller_id: str
-    :param admin: The instance admin user.
-    :type admin: str
-    :param start_time: The instance start time.
-    :type start_time: str
-    :param end_time: The instance end time.
-    :type end_time: str
-    :param k8_s_raw: The raw kubernetes information.
-    :type k8_s_raw: ~azure_arc_data_management_client.models.SqlManagedInstanceK8SRaw
-    :param basic_login_information: Username and password for basic authentication.
-    :type basic_login_information: ~azure_arc_data_management_client.models.BasicLoginInformation
-    :param last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current date
+    :ivar data_controller_id: null.
+    :vartype data_controller_id: str
+    :ivar admin: The instance admin user.
+    :vartype admin: str
+    :ivar start_time: The instance start time.
+    :vartype start_time: str
+    :ivar end_time: The instance end time.
+    :vartype end_time: str
+    :ivar k8_s_raw: The raw kubernetes information.
+    :vartype k8_s_raw: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceK8SRaw
+    :ivar basic_login_information: Username and password for basic authentication.
+    :vartype basic_login_information: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+    :ivar last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current date
      time.
-    :type last_uploaded_date: ~datetime.datetime
-    :ivar provisioning_state:
+    :vartype last_uploaded_date: ~datetime.datetime
+    :ivar provisioning_state: The provisioning state of the Arc-enabled SQL Managed Instance
+     resource.
     :vartype provisioning_state: str
-    :param license_type: The license type to apply for this managed instance. Possible values
-     include: "BasePrice", "LicenseIncluded". Default value: "BasePrice".
-    :type license_type: str or
-     ~azure_arc_data_management_client.models.ArcSqlManagedInstanceLicenseType
-    :param cluster_id: If a CustomLocation is provided, this contains the ARM id of the connected
+    :ivar active_directory_information: Active Directory information related to this SQL Managed
+     Instance.
+    :vartype active_directory_information:
+     ~azure.mgmt.azurearcdata.models.ActiveDirectoryInformation
+    :ivar license_type: The license type to apply for this managed instance. Possible values
+     include: "BasePrice", "LicenseIncluded", "DisasterRecovery". Default value: "BasePrice".
+    :vartype license_type: str or ~azure.mgmt.azurearcdata.models.ArcSqlManagedInstanceLicenseType
+    :ivar cluster_id: If a CustomLocation is provided, this contains the ARM id of the connected
      cluster the custom location belongs to.
-    :type cluster_id: str
-    :param extension_id: If a CustomLocation is provided, this contains the ARM id of the extension
+    :vartype cluster_id: str
+    :ivar extension_id: If a CustomLocation is provided, this contains the ARM id of the extension
      the custom location belongs to.
-    :type extension_id: str
+    :vartype extension_id: str
     """
 
     _validation = {
@@ -1167,6 +1994,7 @@ class SqlManagedInstanceProperties(msrest.serialization.Model):
         'basic_login_information': {'key': 'basicLoginInformation', 'type': 'BasicLoginInformation'},
         'last_uploaded_date': {'key': 'lastUploadedDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'active_directory_information': {'key': 'activeDirectoryInformation', 'type': 'ActiveDirectoryInformation'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'cluster_id': {'key': 'clusterId', 'type': 'str'},
         'extension_id': {'key': 'extensionId', 'type': 'str'},
@@ -1182,11 +2010,43 @@ class SqlManagedInstanceProperties(msrest.serialization.Model):
         k8_s_raw: Optional["SqlManagedInstanceK8SRaw"] = None,
         basic_login_information: Optional["BasicLoginInformation"] = None,
         last_uploaded_date: Optional[datetime.datetime] = None,
+        active_directory_information: Optional["ActiveDirectoryInformation"] = None,
         license_type: Optional[Union[str, "ArcSqlManagedInstanceLicenseType"]] = "BasePrice",
         cluster_id: Optional[str] = None,
         extension_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword data_controller_id: null.
+        :paramtype data_controller_id: str
+        :keyword admin: The instance admin user.
+        :paramtype admin: str
+        :keyword start_time: The instance start time.
+        :paramtype start_time: str
+        :keyword end_time: The instance end time.
+        :paramtype end_time: str
+        :keyword k8_s_raw: The raw kubernetes information.
+        :paramtype k8_s_raw: ~azure.mgmt.azurearcdata.models.SqlManagedInstanceK8SRaw
+        :keyword basic_login_information: Username and password for basic authentication.
+        :paramtype basic_login_information: ~azure.mgmt.azurearcdata.models.BasicLoginInformation
+        :keyword last_uploaded_date: Last uploaded date from Kubernetes cluster. Defaults to current
+         date time.
+        :paramtype last_uploaded_date: ~datetime.datetime
+        :keyword active_directory_information: Active Directory information related to this SQL Managed
+         Instance.
+        :paramtype active_directory_information:
+         ~azure.mgmt.azurearcdata.models.ActiveDirectoryInformation
+        :keyword license_type: The license type to apply for this managed instance. Possible values
+         include: "BasePrice", "LicenseIncluded", "DisasterRecovery". Default value: "BasePrice".
+        :paramtype license_type: str or
+         ~azure.mgmt.azurearcdata.models.ArcSqlManagedInstanceLicenseType
+        :keyword cluster_id: If a CustomLocation is provided, this contains the ARM id of the connected
+         cluster the custom location belongs to.
+        :paramtype cluster_id: str
+        :keyword extension_id: If a CustomLocation is provided, this contains the ARM id of the
+         extension the custom location belongs to.
+        :paramtype extension_id: str
+        """
         super(SqlManagedInstanceProperties, self).__init__(**kwargs)
         self.data_controller_id = data_controller_id
         self.admin = admin
@@ -1196,6 +2056,7 @@ class SqlManagedInstanceProperties(msrest.serialization.Model):
         self.basic_login_information = basic_login_information
         self.last_uploaded_date = last_uploaded_date
         self.provisioning_state = None
+        self.active_directory_information = active_directory_information
         self.license_type = license_type
         self.cluster_id = cluster_id
         self.extension_id = extension_id
@@ -1210,19 +2071,19 @@ class SqlManagedInstanceSku(msrest.serialization.Model):
 
     :ivar name: The name of the SKU. Has constant value: "vCore".
     :vartype name: str
-    :param tier: The pricing tier for the instance. Possible values include: "GeneralPurpose",
+    :ivar tier: The pricing tier for the instance. Possible values include: "GeneralPurpose",
      "BusinessCritical". Default value: "GeneralPurpose".
-    :type tier: str or ~azure_arc_data_management_client.models.SqlManagedInstanceSkuTier
-    :param dev: Whether dev/test is enabled. When the dev field is set to true, the resource is
-     used for dev/test purpose.
-    :type dev: bool
-    :param size: The SKU size. When the name field is the combination of tier and some other value,
+    :vartype tier: str or ~azure.mgmt.azurearcdata.models.SqlManagedInstanceSkuTier
+    :ivar dev: Whether dev/test is enabled. When the dev field is set to true, the resource is used
+     for dev/test purpose.
+    :vartype dev: bool
+    :ivar size: The SKU size. When the name field is the combination of tier and some other value,
      this would be the standalone code.
-    :type size: str
-    :param family:
-    :type family: str
-    :param capacity:
-    :type capacity: int
+    :vartype size: str
+    :ivar family: The SKU family.
+    :vartype family: str
+    :ivar capacity: The SKU capacity.
+    :vartype capacity: int
     """
 
     _validation = {
@@ -1250,6 +2111,21 @@ class SqlManagedInstanceSku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword tier: The pricing tier for the instance. Possible values include: "GeneralPurpose",
+         "BusinessCritical". Default value: "GeneralPurpose".
+        :paramtype tier: str or ~azure.mgmt.azurearcdata.models.SqlManagedInstanceSkuTier
+        :keyword dev: Whether dev/test is enabled. When the dev field is set to true, the resource is
+         used for dev/test purpose.
+        :paramtype dev: bool
+        :keyword size: The SKU size. When the name field is the combination of tier and some other
+         value, this would be the standalone code.
+        :paramtype size: str
+        :keyword family: The SKU family.
+        :paramtype family: str
+        :keyword capacity: The SKU capacity.
+        :paramtype capacity: int
+        """
         super(SqlManagedInstanceSku, self).__init__(**kwargs)
         self.tier = tier
         self.dev = dev
@@ -1261,8 +2137,8 @@ class SqlManagedInstanceSku(msrest.serialization.Model):
 class SqlManagedInstanceUpdate(msrest.serialization.Model):
     """An update to a SQL Managed Instance.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -1275,6 +2151,10 @@ class SqlManagedInstanceUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(SqlManagedInstanceUpdate, self).__init__(**kwargs)
         self.tags = tags
 
@@ -1286,39 +2166,40 @@ class SqlServerInstance(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :ivar system_data: Read only system data.
-    :vartype system_data: ~azure_arc_data_management_client.models.SystemData
-    :param properties: null.
-    :type properties: ~azure_arc_data_management_client.models.SqlServerInstanceProperties
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurearcdata.models.SystemData
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar properties: null.
+    :vartype properties: ~azure.mgmt.azurearcdata.models.SqlServerInstanceProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'system_data': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'properties': {'key': 'properties', 'type': 'SqlServerInstanceProperties'},
     }
 
@@ -1330,6 +2211,14 @@ class SqlServerInstance(TrackedResource):
         properties: Optional["SqlServerInstanceProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword properties: null.
+        :paramtype properties: ~azure.mgmt.azurearcdata.models.SqlServerInstanceProperties
+        """
         super(SqlServerInstance, self).__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
 
@@ -1340,7 +2229,7 @@ class SqlServerInstanceListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
-    :vartype value: list[~azure_arc_data_management_client.models.SqlServerInstance]
+    :vartype value: list[~azure.mgmt.azurearcdata.models.SqlServerInstance]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -1359,6 +2248,8 @@ class SqlServerInstanceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlServerInstanceListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1371,46 +2262,49 @@ class SqlServerInstanceProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: SQL Server version. Possible values include: "SQL Server 2019", "SQL Server
-     2017", "SQL Server 2016".
-    :type version: str or ~azure_arc_data_management_client.models.SqlVersion
-    :param edition: SQL Server edition. Possible values include: "Evaluation", "Enterprise",
+    :ivar version: SQL Server version. Possible values include: "SQL Server 2012", "SQL Server
+     2014", "SQL Server 2016", "SQL Server 2017", "SQL Server 2019", "SQL Server 2022", "Unknown".
+    :vartype version: str or ~azure.mgmt.azurearcdata.models.SqlVersion
+    :ivar edition: SQL Server edition. Possible values include: "Evaluation", "Enterprise",
      "Standard", "Web", "Developer", "Express".
-    :type edition: str or ~azure_arc_data_management_client.models.EditionType
-    :param container_resource_id: Required. ARM Resource id of the container resource (Azure Arc
-     for Servers).
-    :type container_resource_id: str
+    :vartype edition: str or ~azure.mgmt.azurearcdata.models.EditionType
+    :ivar container_resource_id: Required. ARM Resource id of the container resource (Azure Arc for
+     Servers).
+    :vartype container_resource_id: str
     :ivar create_time: The time when the resource was created.
     :vartype create_time: str
-    :param v_core: The number of logical processors used by the SQL Server instance.
-    :type v_core: str
-    :param status: Required. The cloud connectivity status. Possible values include: "Connected",
-     "Disconnected", "Unknown".
-    :type status: str or ~azure_arc_data_management_client.models.ConnectionStatus
-    :param patch_level: SQL Server update level.
-    :type patch_level: str
-    :param collation: SQL Server collation.
-    :type collation: str
-    :param current_version: SQL Server current version.
-    :type current_version: str
-    :param instance_name: SQL Server instance name.
-    :type instance_name: str
-    :param tcp_dynamic_ports: Dynamic TCP ports used by SQL Server.
-    :type tcp_dynamic_ports: str
-    :param tcp_static_ports: Static TCP ports used by SQL Server.
-    :type tcp_static_ports: str
-    :param product_id: SQL Server product ID.
-    :type product_id: str
-    :param license_type: SQL Server license type. Possible values include: "Paid", "Free", "HADR",
+    :ivar v_core: The number of logical processors used by the SQL Server instance.
+    :vartype v_core: str
+    :ivar status: Required. The cloud connectivity status. Possible values include: "Connected",
+     "Disconnected", "Registered", "Unknown".
+    :vartype status: str or ~azure.mgmt.azurearcdata.models.ConnectionStatus
+    :ivar patch_level: SQL Server update level.
+    :vartype patch_level: str
+    :ivar collation: SQL Server collation.
+    :vartype collation: str
+    :ivar current_version: SQL Server current version.
+    :vartype current_version: str
+    :ivar instance_name: SQL Server instance name.
+    :vartype instance_name: str
+    :ivar tcp_dynamic_ports: Dynamic TCP ports used by SQL Server.
+    :vartype tcp_dynamic_ports: str
+    :ivar tcp_static_ports: Static TCP ports used by SQL Server.
+    :vartype tcp_static_ports: str
+    :ivar product_id: SQL Server product ID.
+    :vartype product_id: str
+    :ivar license_type: SQL Server license type. Possible values include: "Paid", "Free", "HADR",
      "Undefined".
-    :type license_type: str or ~azure_arc_data_management_client.models.ArcSqlServerLicenseType
-    :param azure_defender_status_last_updated: Timestamp of last Azure Defender status update.
-    :type azure_defender_status_last_updated: ~datetime.datetime
-    :param azure_defender_status: Status of Azure Defender. Possible values include: "Protected",
+    :vartype license_type: str or ~azure.mgmt.azurearcdata.models.ArcSqlServerLicenseType
+    :ivar azure_defender_status_last_updated: Timestamp of last Azure Defender status update.
+    :vartype azure_defender_status_last_updated: ~datetime.datetime
+    :ivar azure_defender_status: Status of Azure Defender. Possible values include: "Protected",
      "Unprotected", "Unknown".
-    :type azure_defender_status: str or ~azure_arc_data_management_client.models.DefenderStatus
-    :ivar provisioning_state:
+    :vartype azure_defender_status: str or ~azure.mgmt.azurearcdata.models.DefenderStatus
+    :ivar provisioning_state: The provisioning state of the Arc-enabled SQL Server resource.
     :vartype provisioning_state: str
+    :ivar host_type: Type of host for Azure Arc SQL Server. Possible values include: "Virtual
+     Machine", "Physical Server", "AWS Virtual Machine", "GCP Virtual Machine", "Other".
+    :vartype host_type: str or ~azure.mgmt.azurearcdata.models.HostType
     """
 
     _validation = {
@@ -1438,6 +2332,7 @@ class SqlServerInstanceProperties(msrest.serialization.Model):
         'azure_defender_status_last_updated': {'key': 'azureDefenderStatusLastUpdated', 'type': 'iso-8601'},
         'azure_defender_status': {'key': 'azureDefenderStatus', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'host_type': {'key': 'hostType', 'type': 'str'},
     }
 
     def __init__(
@@ -1458,8 +2353,50 @@ class SqlServerInstanceProperties(msrest.serialization.Model):
         license_type: Optional[Union[str, "ArcSqlServerLicenseType"]] = None,
         azure_defender_status_last_updated: Optional[datetime.datetime] = None,
         azure_defender_status: Optional[Union[str, "DefenderStatus"]] = None,
+        host_type: Optional[Union[str, "HostType"]] = None,
         **kwargs
     ):
+        """
+        :keyword version: SQL Server version. Possible values include: "SQL Server 2012", "SQL Server
+         2014", "SQL Server 2016", "SQL Server 2017", "SQL Server 2019", "SQL Server 2022", "Unknown".
+        :paramtype version: str or ~azure.mgmt.azurearcdata.models.SqlVersion
+        :keyword edition: SQL Server edition. Possible values include: "Evaluation", "Enterprise",
+         "Standard", "Web", "Developer", "Express".
+        :paramtype edition: str or ~azure.mgmt.azurearcdata.models.EditionType
+        :keyword container_resource_id: Required. ARM Resource id of the container resource (Azure Arc
+         for Servers).
+        :paramtype container_resource_id: str
+        :keyword v_core: The number of logical processors used by the SQL Server instance.
+        :paramtype v_core: str
+        :keyword status: Required. The cloud connectivity status. Possible values include: "Connected",
+         "Disconnected", "Registered", "Unknown".
+        :paramtype status: str or ~azure.mgmt.azurearcdata.models.ConnectionStatus
+        :keyword patch_level: SQL Server update level.
+        :paramtype patch_level: str
+        :keyword collation: SQL Server collation.
+        :paramtype collation: str
+        :keyword current_version: SQL Server current version.
+        :paramtype current_version: str
+        :keyword instance_name: SQL Server instance name.
+        :paramtype instance_name: str
+        :keyword tcp_dynamic_ports: Dynamic TCP ports used by SQL Server.
+        :paramtype tcp_dynamic_ports: str
+        :keyword tcp_static_ports: Static TCP ports used by SQL Server.
+        :paramtype tcp_static_ports: str
+        :keyword product_id: SQL Server product ID.
+        :paramtype product_id: str
+        :keyword license_type: SQL Server license type. Possible values include: "Paid", "Free",
+         "HADR", "Undefined".
+        :paramtype license_type: str or ~azure.mgmt.azurearcdata.models.ArcSqlServerLicenseType
+        :keyword azure_defender_status_last_updated: Timestamp of last Azure Defender status update.
+        :paramtype azure_defender_status_last_updated: ~datetime.datetime
+        :keyword azure_defender_status: Status of Azure Defender. Possible values include: "Protected",
+         "Unprotected", "Unknown".
+        :paramtype azure_defender_status: str or ~azure.mgmt.azurearcdata.models.DefenderStatus
+        :keyword host_type: Type of host for Azure Arc SQL Server. Possible values include: "Virtual
+         Machine", "Physical Server", "AWS Virtual Machine", "GCP Virtual Machine", "Other".
+        :paramtype host_type: str or ~azure.mgmt.azurearcdata.models.HostType
+        """
         super(SqlServerInstanceProperties, self).__init__(**kwargs)
         self.version = version
         self.edition = edition
@@ -1478,13 +2415,14 @@ class SqlServerInstanceProperties(msrest.serialization.Model):
         self.azure_defender_status_last_updated = azure_defender_status_last_updated
         self.azure_defender_status = azure_defender_status
         self.provisioning_state = None
+        self.host_type = host_type
 
 
 class SqlServerInstanceUpdate(msrest.serialization.Model):
     """An update to a SQL Server Instance.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -1497,27 +2435,31 @@ class SqlServerInstanceUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(SqlServerInstanceUpdate, self).__init__(**kwargs)
         self.tags = tags
 
 
 class SystemData(msrest.serialization.Model):
-    """Read only system data.
+    """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: An identifier for the identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure_arc_data_management_client.models.IdentityType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: An identifier for the identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.azurearcdata.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure_arc_data_management_client.models.IdentityType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.azurearcdata.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1533,13 +2475,29 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "IdentityType"]] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "IdentityType"]] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.azurearcdata.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.azurearcdata.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -1552,15 +2510,15 @@ class SystemData(msrest.serialization.Model):
 class UploadServicePrincipal(msrest.serialization.Model):
     """Service principal for uploading billing, metrics and logs.
 
-    :param client_id: Client ID of the service principal for uploading data.
-    :type client_id: str
-    :param tenant_id: Tenant ID of the service principal.
-    :type tenant_id: str
-    :param authority: Authority for the service principal. Example:
+    :ivar client_id: Client ID of the service principal for uploading data.
+    :vartype client_id: str
+    :ivar tenant_id: Tenant ID of the service principal.
+    :vartype tenant_id: str
+    :ivar authority: Authority for the service principal. Example:
      https://login.microsoftonline.com/.
-    :type authority: str
-    :param client_secret: Secret of the service principal.
-    :type client_secret: str
+    :vartype authority: str
+    :ivar client_secret: Secret of the service principal.
+    :vartype client_secret: str
     """
 
     _attribute_map = {
@@ -1579,6 +2537,17 @@ class UploadServicePrincipal(msrest.serialization.Model):
         client_secret: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword client_id: Client ID of the service principal for uploading data.
+        :paramtype client_id: str
+        :keyword tenant_id: Tenant ID of the service principal.
+        :paramtype tenant_id: str
+        :keyword authority: Authority for the service principal. Example:
+         https://login.microsoftonline.com/.
+        :paramtype authority: str
+        :keyword client_secret: Secret of the service principal.
+        :paramtype client_secret: str
+        """
         super(UploadServicePrincipal, self).__init__(**kwargs)
         self.client_id = client_id
         self.tenant_id = tenant_id
@@ -1589,15 +2558,14 @@ class UploadServicePrincipal(msrest.serialization.Model):
 class UploadWatermark(msrest.serialization.Model):
     """Properties on upload watermark.  Mostly timestamp for each upload data type.
 
-    :param metrics: Last uploaded date for metrics from kubernetes cluster. Defaults to current
-     date time.
-    :type metrics: ~datetime.datetime
-    :param logs: Last uploaded date for logs from kubernetes cluster. Defaults to current date
+    :ivar metrics: Last uploaded date for metrics from kubernetes cluster. Defaults to current date
      time.
-    :type logs: ~datetime.datetime
-    :param usages: Last uploaded date for usages from kubernetes cluster. Defaults to current date
+    :vartype metrics: ~datetime.datetime
+    :ivar logs: Last uploaded date for logs from kubernetes cluster. Defaults to current date time.
+    :vartype logs: ~datetime.datetime
+    :ivar usages: Last uploaded date for usages from kubernetes cluster. Defaults to current date
      time.
-    :type usages: ~datetime.datetime
+    :vartype usages: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1614,6 +2582,17 @@ class UploadWatermark(msrest.serialization.Model):
         usages: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword metrics: Last uploaded date for metrics from kubernetes cluster. Defaults to current
+         date time.
+        :paramtype metrics: ~datetime.datetime
+        :keyword logs: Last uploaded date for logs from kubernetes cluster. Defaults to current date
+         time.
+        :paramtype logs: ~datetime.datetime
+        :keyword usages: Last uploaded date for usages from kubernetes cluster. Defaults to current
+         date time.
+        :paramtype usages: ~datetime.datetime
+        """
         super(UploadWatermark, self).__init__(**kwargs)
         self.metrics = metrics
         self.logs = logs

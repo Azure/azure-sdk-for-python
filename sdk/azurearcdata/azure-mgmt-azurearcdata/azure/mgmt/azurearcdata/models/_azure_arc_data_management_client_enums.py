@@ -6,34 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ArcSqlManagedInstanceLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccountProvisioningMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The service account provisioning mode for this Active Directory connector.
+    """
+
+    AUTOMATIC = "automatic"
+    MANUAL = "manual"
+
+class ArcSqlManagedInstanceLicenseType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The license type to apply for this managed instance.
     """
 
     BASE_PRICE = "BasePrice"
     LICENSE_INCLUDED = "LicenseIncluded"
+    DISASTER_RECOVERY = "DisasterRecovery"
 
-class ArcSqlServerLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ArcSqlServerLicenseType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SQL Server license type.
     """
 
@@ -42,15 +35,25 @@ class ArcSqlServerLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     HADR = "HADR"
     UNDEFINED = "Undefined"
 
-class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The cloud connectivity status.
     """
 
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
+    REGISTERED = "Registered"
     UNKNOWN = "Unknown"
 
-class DefenderStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class DefenderStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of Azure Defender.
     """
 
@@ -58,7 +61,7 @@ class DefenderStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNPROTECTED = "Unprotected"
     UNKNOWN = "Unknown"
 
-class EditionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EditionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SQL Server edition.
     """
 
@@ -69,22 +72,23 @@ class EditionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEVELOPER = "Developer"
     EXPRESS = "Express"
 
-class ExtendedLocationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExtendedLocationTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of extendedLocation.
     """
 
     CUSTOM_LOCATION = "CustomLocation"
 
-class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that creates/modifies resources
+class HostType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of host for Azure Arc SQL Server
     """
 
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
+    VIRTUAL_MACHINE = "Virtual Machine"
+    PHYSICAL_SERVER = "Physical Server"
+    AWS_VIRTUAL_MACHINE = "AWS Virtual Machine"
+    GCP_VIRTUAL_MACHINE = "GCP Virtual Machine"
+    OTHER = "Other"
 
-class Infrastructure(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Infrastructure(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The infrastructure the data controller is running on.
     """
 
@@ -95,24 +99,28 @@ class Infrastructure(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONPREMISES = "onpremises"
     OTHER = "other"
 
-class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationOrigin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation.
     """
 
     USER = "user"
     SYSTEM = "system"
 
-class SqlManagedInstanceSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SqlManagedInstanceSkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The pricing tier for the instance.
     """
 
     GENERAL_PURPOSE = "GeneralPurpose"
     BUSINESS_CRITICAL = "BusinessCritical"
 
-class SqlVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SqlVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """SQL Server version.
     """
 
-    SQL_SERVER2019 = "SQL Server 2019"
-    SQL_SERVER2017 = "SQL Server 2017"
+    SQL_SERVER2012 = "SQL Server 2012"
+    SQL_SERVER2014 = "SQL Server 2014"
     SQL_SERVER2016 = "SQL Server 2016"
+    SQL_SERVER2017 = "SQL Server 2017"
+    SQL_SERVER2019 = "SQL Server 2019"
+    SQL_SERVER2022 = "SQL Server 2022"
+    UNKNOWN = "Unknown"
