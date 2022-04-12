@@ -31,6 +31,27 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
 
 
 class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
+    """A base client for interacting with a DataLake file/directory, even if the file/directory may not
+    yet exist.
+
+    :param str account_url:
+        The URI to the storage account.
+    :param str file_system_name:
+        The file system for the directory or files.
+    :param str file_path:
+        The whole file path, so that to interact with a specific file.
+        eg. "{directory}/{subdirectory}/{file}"
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    """
     def __init__(
             self, account_url,  # type: str
             file_system_name,  # type: str

@@ -30,7 +30,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
-    def __init__(self, session_id: str, receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"]) -> None:
+    def __init__(self, session_id, receiver):
+        # type: (str, Union[ServiceBusReceiver, ServiceBusReceiverAsync]) -> None
         self._session_id = session_id
         self._receiver = receiver
         self._encoding = "UTF-8"
