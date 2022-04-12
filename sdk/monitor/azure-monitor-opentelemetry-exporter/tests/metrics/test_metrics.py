@@ -280,7 +280,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                 explicit_bounds=[0,5,10,0],
                 start_time_unix_nano=1646865018558419456,
                 time_unix_nano=1646865018558419457,
-                # sum=31,
+                sum=31,
             )
         )
         envelope = exporter._metric_to_envelope(_metric)
