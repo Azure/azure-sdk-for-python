@@ -101,11 +101,11 @@ if __name__ == '__main__':
     env = os.getcwd()
     docker_path = env.split("\scripts")[0]
     sp.call(fr"docker create -it --rm -h Change_log --name Change_log -v {docker_path}:/_ l601306339/autorest")
-    sp.call(fr"docker start Change_log")
+    sp.call("docker start Change_log")
     sp.call(f'docker exec -it Change_log /bin/bash -c  "python _/scripts/dev_setup.py -p azure-core"  ')
     for package in package_info:
-        package_name=str(package[0])
-        package_path=str(package[1])
+        package_name=package[0]
+        package_path=package[1]
 
         # sp.call(fr'docker exec -it Change_log /bin/bash -c "cd _/sdk/{package_name}/azure-mgmt-{package_path} && pip install e ."')
 
