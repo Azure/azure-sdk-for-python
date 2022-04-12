@@ -1944,18 +1944,23 @@ class CheckExceptionLogging(BaseChecker):
         super(CheckExceptionLogging, self).__init__(linter)
 
     def visit_functiondef(self, node):
-        print(node)
         for i in node.body:
-            print(i)
             if isinstance(i, astroid.TryExcept):
                 if isinstance(i.handlers[0], astroid.ExceptHandler):
-                    # Check that it is a call to logger etc. 
-                    for body in i.handlers[0].body:
-                        if isinstance(body, astroid.Expr) and isinstance(body.value, astroid.Call):
-                            if body.value.func.expr.name=="logger" and  body.value.func.attrname!="Debug":
-                                self.add_message(
-                                    msgid="exception-logging", node=node, confidence=None
-                                )
+                    if i.handlers[0].type.name=="Exception":
+                        # Check that it is a call to logger etc. 
+                        for body in i.handlers[0].body:
+                            if i.handlers[0].name:
+                                handler_name = i.handlers[0].name.name
+
+                            # Check that it is Exception, and that uses str(e) or repr(e) in the logger call****
+                            if isinstance(body, astroid.Expr) and isinstance(body.value, astroid.Call):
+                                if body.value.func.expr.name=="logger" and body.value.func.attrname!="Debug":
+                                    for arg in body.value.args:
+                                        if handler_name in arg.as_string():
+                                            self.add_message(
+                                                msgid="exception-logging", node=node, confidence=None
+                                            )
 
                     
        
