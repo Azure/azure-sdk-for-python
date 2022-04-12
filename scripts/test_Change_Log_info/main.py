@@ -160,8 +160,6 @@ if __name__ == '__main__':
         result_text=sp.getoutput(fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route} {last_route}"')
         print(result_text)
 
-
-
         change_log_foldor_path=env+r"\Change_Log"
         create_foldor(change_log_foldor_path)
         write_txt(change_log_foldor_path,package_path,result_text,last_version,version)
