@@ -3068,7 +3068,7 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node)
 
-    def test_acceptable_4(self):
+    def test_violation_4(self):
         class_node, function_node = astroid.extract_node(
             """
             class SomeClient(object): #@
@@ -3089,4 +3089,19 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_functiondef(function_node)
 
-
+    def test_acceptable_4(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                     # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialsPolicy
+                    '''
+                    :return: List of ints, floats, strings, or booleans
+                    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or ~HMACCredentialsPolicy
+                    '''
+                    return SomePolicy
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)

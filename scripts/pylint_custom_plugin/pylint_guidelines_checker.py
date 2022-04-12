@@ -1948,7 +1948,7 @@ class ReturnTypeMismatch(BaseChecker):
 
         generic_and_legacy_types = ["list","List","tuple","Tuple","dict","Dict","Iterable","Sequence","Mapping"]
         override_type = "Union"
-        # bracket_sets = "\\[(.*?)\\]"
+        tilda_to_ignore_package = "~"
 
         if node.type_comment_returns:
             try:
@@ -1969,33 +1969,29 @@ class ReturnTypeMismatch(BaseChecker):
                 inner_type= ""
             else:
                 split_rtype = node.type_comment_returns.as_string().split("[")
-                # print(split_rtype)
                 rtype = split_rtype[0]
                 inner_type = " ".join(split_rtype[1:]).split("]")
 
-            # re_type = re.findall(bracket_sets, node.type_comment_returns.as_string())
-            # print(re_type)
+    
+            doc_type = docstring[return_type].split(":")[-1].strip()
 
-            doc_type = docstring[return_type].split(":rtype:")[1].strip()
+            # If there is a tilda, ignore the package path and just compare the name
+            if tilda_to_ignore_package in doc_type:
+                packages = doc_type.split(tilda_to_ignore_package)
+                doc_type = ''
+                for p in range(0, len(packages)):
+                    doc_type += packages[p].split(".")[-1].strip()
+                    if p!=0 and p!=len(packages)-1:
+                        doc_type += " or "
 
-            # print("RTYPE", rtype)
-            # print("DOC TYPE", doc_type)
-            # print("INNER TYPE", inner_type)
-
+            print("RTYPE", rtype)
+            print("DOC TYPE", doc_type)
+            print("INNER TYPE", inner_type)
 
             if rtype not in doc_type:
                 self.add_message(
                     msgid="return-type-mismatch", node=node, confidence=None
                 )
-            # if override_type in node.type_comment_returns.as_string():
-            #     # Treat differently
-            #     # inner_union = "".join(inner_type).split(override_type)
-            #     # print("INNER UNION", inner_union)
-            #     # if "".join(inner_union) not in doc_type:
-            #     if rtype != doc_type:
-            #         self.add_message(
-            #             msgid="return-type-mismatch", node=node, confidence=None
-            #         )
             if rtype in (" ".join(generic_and_legacy_types)):
                 # Check if innards match
                 if "".join(inner_type) not in doc_type:
