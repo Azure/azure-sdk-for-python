@@ -156,33 +156,40 @@ For more information about legacy tests, see [Legacy tests](https://github.com/A
 
 Management plane SDKs are those that are formatted `azure-mgmt-xxxx`, otherwise the SDK is data plane. Management plane SDKs work against the [Azure Resource Manager APIs][arm_apis], while the data plane SDKs will work against service APIs. This section will demonstrate writing tests using `devtools_testutils` with a few increasingly sophisticated examples to show how to use some of the features of the underlying test frameworks.
 
+### Tips: 
+After the migration of the test proxy, `conftests.py` needs to be configured under the tests folder.<br/>
+For a sample about `conftest.py`, see [conftest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/advisor/azure-mgmt-advisor/tests/conftest.py). <br/>
+For more information about test proxy, see [TestProxy][testproxy].
+
 ### Example 1: Basic Azure service interaction and recording
 
 ```python
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-class ExampleResourceGroupTestCase(AzureMgmtTestCase):
-    def setUp(self):
-        super(ExampleResourceGroupTestCase, self).setUp()
+AZURE_LOCATION = 'eastus'
+
+class ExampleResourceGroupTestCase(AzureRecordedTestCase):
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(ResourceManagementClient)
-
+    
+    @recorded_by_proxy
     def test_create_resource_group(self):
         test_group_name = self.get_resource_name('testgroup')
         group = self.client.resource_groups.create_or_update(
             test_group_name,
             {'location': 'westus'}
         )
-        self.assertEqual(group.name, test_group_name)
-        self.client.resource_groups.delete(group.name).wait()
+        assert group.name == test_group_name
+        self.client.resource_groups.begin_delete(group.name)
 ```
 
 This simple test creates a resource group and checks that its name is assigned correctly.
 
 Notes:
 1. This test inherits all necessary behavior for HTTP recording and playback described previously in this document from its `AzureMgmtTestCase` superclass. You don't need to do anything special to implement it.
-2. The `get_resource_name()` helper method of `AzureMgmtTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducability and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
-3. The `create_mgmt_client()` helper method of `AzureMgmtTestCase` creates a client object using the credentials from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
+2. The `get_resource_name()` helper method of `AzureRecordedTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducability and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
+3. The `create_mgmt_client()` helper method of `AzureRecordedTestCase` creates a client object using the credentials from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
 4. While the test cleans up the resource group it creates, you will need to manually delete any resources you've created independent of the test framework. But if you need something like a resource group as a prerequisite for what you're actually trying to test, you should use a "preparer" as demonstrated in the following two examples. Preparers will create and clean up helper resources for you.
 
 
@@ -190,14 +197,14 @@ Notes:
 
 ```python
 from azure.mgmt.sql import SqlManagementClient
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
-class ExampleSqlServerTestCase(AzureMgmtTestCase):
-    def setUp(self):
-        super(ExampleSqlServerTestCase, self).setUp()
+class ExampleSqlServerTestCase(AzureRecordedTestCase):
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(SqlManagementClient)
 
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_create_sql_server(self, resource_group, location):
         test_server_name = self.get_resource_name('testsqlserver')
         server_creation = self.client.servers.create_or_update(
@@ -211,7 +218,7 @@ class ExampleSqlServerTestCase(AzureMgmtTestCase):
             }
         )
         server = server_creation.result()
-        self.assertEqual(server.name, test_server_name)
+        assert server.name == test_server_name
 ```
 
 This test creates a SQL server and confirms that its name is set correctly. Because a SQL server must be created in a resource group, the test uses a `ResourceGroupPreparer` to create a group for use in the test.
@@ -235,21 +242,21 @@ Notes:
 ```python
 from azure.mgmt.media import MediaServicesManagementClient
 from devtools_testutils import (
-    AzureMgmtTestCase, ResourceGroupPreparer, StorageAccountPreparer, FakeResource
+    AzureRecordedTestCase, ResourceGroupPreparer, StorageAccountPreparer, FakeResource, recorded_by_proxy
 )
 
 FAKE_STORAGE_ID = 'STORAGE-FAKE-ID'
 FAKE_STORAGE = FakeResource(name='teststorage', id=FAKE_STORAGE_ID)
 
-class ExampleMediaServiceTestCase(AzureMgmtTestCase):
-    def setUp(self):
-        super(ExampleMediaServiceTestCase, self).setUp()
+class ExampleMediaServiceTestCase(AzureRecordedTestCase):
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(MediaServicesManagementClient)
 
     @ResourceGroupPreparer(parameter_name='group')
     @StorageAccountPreparer(playback_fake_resource=FAKE_STORAGE,
                             name_prefix='testmedia',
                             resource_group_parameter_name='group')
+    @recorded_by_proxy
     def test_create_media_service(self, group, location, storage_account):
         test_media_name = self.get_resource_name('pymediatest')
         media_obj = self.client.media_service.create(
@@ -264,7 +271,7 @@ class ExampleMediaServiceTestCase(AzureMgmtTestCase):
             }
         )
 
-        self.assertEqual(media_obj.name, test_media_name)
+        assert media_obj.name == test_media_name
 ```
 
 This test creates a media service and confirms that its name is set correctly.
@@ -280,19 +287,19 @@ Notes:
 
 ```python
 from azure.mgmt.sql import SqlManagementClient
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 _CUSTOM_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
 
-class ExampleSqlServerTestCase(AzureMgmtTestCase):
-    def setUp(self):
-        super(ExampleSqlServerTestCase, self).setUp()
+class ExampleSqlServerTestCase(AzureRecordedTestCase):
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(
             SqlManagementClient,
             base_url=_CUSTOM_ENDPOINT
         )
 
     @ResourceGroupPreparer(client_kwargs={'base_url':_CUSTOM_ENDPOINT})
+    @recorded_by_proxy
     def test_create_sql_server(self, resource_group, location):
         test_server_name = self.get_resource_name('testsqlserver')
         server_creation = self.client.servers.create_or_update(
@@ -306,7 +313,7 @@ class ExampleSqlServerTestCase(AzureMgmtTestCase):
             }
         )
         server = server_creation.result()
-        self.assertEqual(server.name, test_server_name)
+        assert server.name == test_server_name
 ```
 
 <!-- LINKS -->
@@ -317,5 +324,6 @@ class ExampleSqlServerTestCase(AzureMgmtTestCase):
 [dev_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md
 [devtools_testutils]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
+[testproxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [pytest]: https://docs.pytest.org/en/latest/
 [vcrpy]: https://pypi.python.org/pypi/vcrpy
