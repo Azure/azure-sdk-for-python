@@ -90,7 +90,7 @@ class ChangeLog:
             for added_parameter in new_parameters - old_parameters:
                 self.breaking_changes.append(_ADD_OPERATION_PARAM.format(operation_name, function_name,added_parameter))
             return
-        raise NotImplementedError("Other situations. Be err for now.")
+        raise NotImplementedError(f"Other situations. Be err for now: {str(remaining_path)}")
 
     def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
