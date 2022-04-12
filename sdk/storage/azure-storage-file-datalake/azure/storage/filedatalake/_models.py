@@ -8,6 +8,7 @@
 from datetime import datetime
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
@@ -20,6 +21,7 @@ from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
+
 from ._shared.models import DictMixin
 
 
@@ -315,6 +317,10 @@ class FileSystemSasPermissions(object):
         Delete the file system.
     :param bool list:
         List paths in the file system.
+    :keyword bool add:
+        Append data to a file in the directory.
+    :keyword bool create:
+        Write a new file, snapshot a file, or copy a file to a new file.
     :keyword bool move:
         Move any file in the directory to a new location.
         Note the move operation can optionally be restricted to the child file or directory owner or
@@ -333,6 +339,8 @@ class FileSystemSasPermissions(object):
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
                  **kwargs):
         self.read = read
+        self.add = kwargs.pop('add', None)
+        self.create = kwargs.pop('create', None)
         self.write = write
         self.delete = delete
         self.list = list
@@ -341,6 +349,8 @@ class FileSystemSasPermissions(object):
         self.manage_ownership = kwargs.pop('manage_ownership', None)
         self.manage_access_control = kwargs.pop('manage_access_control', None)
         self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('l' if self.list else '') +
@@ -366,6 +376,8 @@ class FileSystemSasPermissions(object):
         :rtype: ~azure.storage.fildatalake.FileSystemSasPermissions
         """
         p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_list = 'l' in permission
@@ -375,7 +387,8 @@ class FileSystemSasPermissions(object):
         p_manage_access_control = 'p' in permission
 
         parsed = cls(read=p_read, write=p_write, delete=p_delete,
-                     list=p_list, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+                     list=p_list, add=p_add, create=p_create, move=p_move,
+                     execute=p_execute, manage_ownership=p_manage_ownership,
                      manage_access_control=p_manage_access_control)
         return parsed
 
@@ -392,6 +405,8 @@ class DirectorySasPermissions(object):
         Create or write content, properties, metadata. Lease the directory.
     :param bool delete:
         Delete the directory.
+    :keyword bool add:
+        Append data to a file in the directory.
     :keyword bool list:
         List any files in the directory. Implies Execute.
     :keyword bool move:
@@ -412,6 +427,7 @@ class DirectorySasPermissions(object):
     def __init__(self, read=False, create=False, write=False,
                  delete=False, **kwargs):
         self.read = read
+        self.add = kwargs.pop('add', None)
         self.create = create
         self.write = write
         self.delete = delete
@@ -421,6 +437,7 @@ class DirectorySasPermissions(object):
         self.manage_ownership = kwargs.pop('manage_ownership', None)
         self.manage_access_control = kwargs.pop('manage_access_control', None)
         self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
@@ -447,6 +464,7 @@ class DirectorySasPermissions(object):
         :rtype: ~azure.storage.filedatalake.DirectorySasPermissions
         """
         p_read = 'r' in permission
+        p_add = 'a' in permission
         p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
@@ -456,7 +474,7 @@ class DirectorySasPermissions(object):
         p_manage_ownership = 'o' in permission
         p_manage_access_control = 'p' in permission
 
-        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete,
+        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete, add=p_add,
                      list=p_list, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
                      manage_access_control=p_manage_access_control)
         return parsed
@@ -470,11 +488,13 @@ class FileSasPermissions(object):
         Read the content, properties, metadata etc. Use the file as
         the source of a read operation.
     :param bool create:
-        Write a new file
+        Write a new file.
     :param bool write:
         Create or write content, properties, metadata. Lease the file.
     :param bool delete:
         Delete the file.
+    :keyword bool add:
+        Append data to the file.
     :keyword bool move:
         Move any file in the directory to a new location.
         Note the move operation can optionally be restricted to the child file or directory owner or
@@ -492,15 +512,16 @@ class FileSasPermissions(object):
 
     def __init__(self, read=False, create=False, write=False, delete=False, **kwargs):
         self.read = read
+        self.add = kwargs.pop('add', None)
         self.create = create
         self.write = write
         self.delete = delete
-        self.list = list
         self.move = kwargs.pop('move', None)
         self.execute = kwargs.pop('execute', None)
         self.manage_ownership = kwargs.pop('manage_ownership', None)
         self.manage_access_control = kwargs.pop('manage_access_control', None)
         self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
@@ -526,6 +547,7 @@ class FileSasPermissions(object):
         :rtype: ~azure.storage.fildatalake.FileSasPermissions
         """
         p_read = 'r' in permission
+        p_add = 'a' in permission
         p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
@@ -534,7 +556,7 @@ class FileSasPermissions(object):
         p_manage_ownership = 'o' in permission
         p_manage_access_control = 'p' in permission
 
-        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete,
+        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete, add=p_add,
                      move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
                      manage_access_control=p_manage_access_control)
         return parsed
@@ -646,19 +668,19 @@ class UserDelegationKey(BlobUserDelegationKey):
         return delegation_key
 
 
-class PublicAccess(str, Enum):
+class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies whether data in the file system may be accessed publicly and the level of access.
     """
 
-    File = 'blob'
+    FILE = 'blob'
     """
     Specifies public read access for files. file data within this file system can be read
     via anonymous request, but file system data is not available. Clients cannot enumerate
     files within the container via anonymous request.
     """
 
-    FileSystem = 'container'
+    FILESYSTEM = 'container'
     """
     Specifies full public read access for file system and file data. Clients can enumerate
     files within the file system via anonymous request, but cannot enumerate file systems
@@ -723,15 +745,15 @@ class ArrowDialect(BlobArrowDialect):
     """
 
 
-class QuickQueryDialect(str, Enum):
+class QuickQueryDialect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the quick query input/output dialect."""
 
-    DelimitedText = 'DelimitedTextDialect'
-    DelimitedJson = 'DelimitedJsonDialect'
-    Parquet = 'ParquetDialect'
+    DELIMITEDTEXT = 'DelimitedTextDialect'
+    DELIMITEDJSON = 'DelimitedJsonDialect'
+    PARQUET = 'ParquetDialect'
 
 
-class ArrowType(str, Enum):
+class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INT64 = "int64"
     BOOL = "bool"

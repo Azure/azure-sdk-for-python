@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,20 +21,16 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
-# fmt: off
+_SERIALIZER.client_side_validation = False
 
 def build_get_notebooks_by_workspace_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -59,9 +55,8 @@ def build_get_notebooks_by_workspace_request(
 
 
 def build_get_notebook_summary_by_work_space_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -86,13 +81,15 @@ def build_get_notebook_summary_by_work_space_request(
 
 
 def build_create_or_update_notebook_request_initial(
-    notebook_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    notebook_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    if_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -120,17 +117,19 @@ def build_create_or_update_notebook_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_notebook_request(
-    notebook_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    notebook_name: str,
+    *,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -161,10 +160,9 @@ def build_get_notebook_request(
 
 
 def build_delete_notebook_request_initial(
-    notebook_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    notebook_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -194,10 +192,12 @@ def build_delete_notebook_request_initial(
 
 
 def build_rename_notebook_request_initial(
-    notebook_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    notebook_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -225,10 +225,11 @@ def build_rename_notebook_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class NotebookOperations(object):
     """NotebookOperations operations.
 
@@ -254,9 +255,8 @@ class NotebookOperations(object):
     @distributed_trace
     def get_notebooks_by_workspace(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.NotebookListResponse"]
+        **kwargs: Any
+    ) -> Iterable["_models.NotebookListResponse"]:
         """Lists Notebooks.
 
         :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
@@ -335,9 +335,8 @@ class NotebookOperations(object):
     @distributed_trace
     def get_notebook_summary_by_work_space(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.NotebookListResponse"]
+        **kwargs: Any
+    ) -> Iterable["_models.NotebookListResponse"]:
         """Lists a summary of Notebooks.
 
         :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
@@ -415,12 +414,11 @@ class NotebookOperations(object):
 
     def _create_or_update_notebook_initial(
         self,
-        notebook_name,  # type: str
-        notebook,  # type: "_models.NotebookResource"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.NotebookResource"]
+        notebook_name: str,
+        notebook: "_models.NotebookResource",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional["_models.NotebookResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NotebookResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -430,13 +428,13 @@ class NotebookOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(notebook, 'NotebookResource')
+        _json = self._serialize.body(notebook, 'NotebookResource')
 
         request = build_create_or_update_notebook_request_initial(
             notebook_name=notebook_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_notebook_initial.metadata['url'],
         )
@@ -468,12 +466,11 @@ class NotebookOperations(object):
     @distributed_trace
     def begin_create_or_update_notebook(
         self,
-        notebook_name,  # type: str
-        notebook,  # type: "_models.NotebookResource"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.NotebookResource"]
+        notebook_name: str,
+        notebook: "_models.NotebookResource",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller["_models.NotebookResource"]:
         """Creates or updates a Note Book.
 
         :param notebook_name: The notebook name.
@@ -550,11 +547,10 @@ class NotebookOperations(object):
     @distributed_trace
     def get_notebook(
         self,
-        notebook_name,  # type: str
-        if_none_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.NotebookResource"]
+        notebook_name: str,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional["_models.NotebookResource"]:
         """Gets a Note Book.
 
         :param notebook_name: The notebook name.
@@ -613,10 +609,9 @@ class NotebookOperations(object):
 
     def _delete_notebook_initial(
         self,
-        notebook_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        notebook_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -653,10 +648,9 @@ class NotebookOperations(object):
     @distributed_trace
     def begin_delete_notebook(
         self,
-        notebook_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        notebook_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes a Note book.
 
         :param notebook_name: The notebook name.
@@ -719,11 +713,10 @@ class NotebookOperations(object):
 
     def _rename_notebook_initial(
         self,
-        notebook_name,  # type: str
-        new_name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        notebook_name: str,
+        new_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -734,13 +727,13 @@ class NotebookOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
 
         request = build_rename_notebook_request_initial(
             notebook_name=notebook_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_notebook_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -765,11 +758,10 @@ class NotebookOperations(object):
     @distributed_trace
     def begin_rename_notebook(
         self,
-        notebook_name,  # type: str
-        new_name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        notebook_name: str,
+        new_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Renames a notebook.
 
         :param notebook_name: The notebook name.

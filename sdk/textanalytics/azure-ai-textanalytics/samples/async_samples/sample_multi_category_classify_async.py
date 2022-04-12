@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -51,7 +49,7 @@ async def sample_classify_document_multi_categories_async():
         )
     )
 
-    with open(path_to_sample_document, "r") as fd:
+    with open(path_to_sample_document) as fd:
         document = [fd.read()]
 
     text_analytics_client = TextAnalyticsClient(
@@ -79,7 +77,7 @@ async def sample_classify_document_multi_categories_async():
         for classification_result in classification_results:
             if not classification_result.is_error:
                 classifications = classification_result.classifications
-                print("\nThe movie plot '{}' was classified as the following genres:\n".format(doc))
+                print(f"\nThe movie plot '{doc}' was classified as the following genres:\n")
                 for classification in classifications:
                     print("'{}' with confidence score {}.".format(
                         classification.category, classification.confidence_score

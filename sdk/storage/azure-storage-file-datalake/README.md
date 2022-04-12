@@ -1,5 +1,5 @@
 ## _Disclaimer_
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. This change will be effective azure-storage-file-datalake>12.6.0b2 For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Azure DataLake service client library for Python
 Overview
@@ -15,7 +15,7 @@ This preview package for Python includes ADLS Gen2 specific API support made ava
 ## Getting started
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (ending Python 2.7 support starting 01 January 2022).
+* Python 3.6 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
 

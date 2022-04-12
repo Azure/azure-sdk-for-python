@@ -4,8 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
+from devtools_testutils.aio import recorded_by_proxy_async
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
@@ -18,8 +20,12 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_layout_stream_transform_pdf(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -55,6 +61,7 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_layout_stream_transform_jpg(self, client):
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
@@ -90,6 +97,7 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_layout_multipage_transform(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
@@ -123,24 +131,27 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_layout_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         async with client:
-            poller = await client.begin_analyze_document("prebuilt-layout", myfile)
+            poller = await client.begin_analyze_document("prebuilt-layout", my_file)
             layout = await poller.result()
         assert len(layout.tables) == 3
-        assert layout.tables[0].row_count == 29
+        assert layout.tables[0].row_count == 30
         assert layout.tables[0].column_count == 5
         assert layout.tables[1].row_count == 6
-        assert layout.tables[1].column_count == 4
+        assert layout.tables[1].column_count == 5
         assert layout.tables[2].row_count == 23
         assert layout.tables[2].column_count == 5
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
     async def test_layout_specify_pages(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()

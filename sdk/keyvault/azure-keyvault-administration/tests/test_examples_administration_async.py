@@ -4,6 +4,8 @@
 # ------------------------------------
 import asyncio
 
+import pytest
+
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import AdministrationTestCase, backup_client_setup, get_decorator
 

@@ -43,20 +43,11 @@ git clone https://github.com/azure/azure-sdk-for-python --single-branch --branch
 cd azure-sdk-for-python/sdk/identity/azure-identity
 ```
 
-
 ## Create virtual environments
-The Azure SDK supports Python 2.7 and 3.5.3+. Python 2 and 3 should be installed
-in your Cloud Shell. However, the Python 3 version may be less than 3.5.3. Check
-this with `python3 -V`. If the version is less than 3.5.3, run tests with Python
-2 only.
-
-### Python 2.7
-```sh
-virtualenv -p python2 ~/venv2
-```
+The Azure SDK supports Python 3.6+. Python 3 should be installed in your Cloud Shell.
 
 ### Python 3
-If your shell has at least Python 3.5.3 available, create a virtual environment
+If your shell has at least Python 3.6 available, create a virtual environment
 for it:
 ```sh
 virtualenv -p python3 ~/venv3

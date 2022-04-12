@@ -9,16 +9,16 @@ import unittest
 
 from azure.mgmt.eventgrid import EventGridManagementClient
 
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 
-class MgmtEventGridTest(AzureMgmtTestCase):
+class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtEventGridTest, self).setUp()
+    def setup_method(self, method):
         self.eventgrid_client = self.create_mgmt_client(EventGridManagementClient)
 
     @RandomNameResourceGroupPreparer(location="eastus2euap")
+    @recorded_by_proxy
     def test_domain(self, resource_group, location):
         # create
         DOMAIN_NAME = self.get_resource_name('domain')

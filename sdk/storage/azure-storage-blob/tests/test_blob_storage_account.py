@@ -5,25 +5,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-
-import unittest
-
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
-    BlobClient,
     StandardBlobTier
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._generated.models import RehydratePriority
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-
-
 # ------------------------------------------------------------------------------
 
 
@@ -31,9 +22,11 @@ class BlobStorageAccountTest(StorageTestCase):
 
     def _setup(self, bsc):
         self.container_name = self.get_resource_name('utcontainer')
-
         if self.is_live:
-            bsc.create_container(self.container_name)
+            try:
+                bsc.create_container(self.container_name)
+            except:
+                pass
 
     # --Helpers-----------------------------------------------------------------
     def _get_blob_reference(self, bsc):
@@ -49,54 +42,33 @@ class BlobStorageAccountTest(StorageTestCase):
         blob = bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob().readall()
         self.assertEqual(actual_data, expected_data)
-
-    # --Tests specific to Blob Storage Accounts (not general purpose)------------
+    # --------------------------------------------------------------------------
 
     @BlobPreparer()
     def test_standard_blob_tier_set_tier_api(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+
         self._setup(bsc)
-        container = bsc.get_container_client(self.container_name)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
         for tier in tiers:
-            blob = self._get_blob_reference(bsc)
-            data = b'hello world'
-            blob.upload_blob(data)
+            blob_name = self.get_resource_name(tier.value)
+            blob = bsc.get_blob_client(self.container_name, blob_name)
+            blob.upload_blob(b'hello world')
 
             blob_ref = blob.get_blob_properties()
             self.assertIsNotNone(blob_ref.blob_tier)
             self.assertTrue(blob_ref.blob_tier_inferred)
             self.assertIsNone(blob_ref.blob_tier_change_time)
 
-            blobs = list(container.list_blobs())
-
-            # Assert
-            self.assertIsNotNone(blobs)
-            self.assertGreaterEqual(len(blobs), 1)
-            self.assertIsNotNone(blobs[0])
-            self.assertNamedItemInContainer(blobs, blob.blob_name)
-            self.assertIsNotNone(blobs[0].blob_tier)
-            self.assertTrue(blobs[0].blob_tier_inferred)
-            self.assertIsNone(blobs[0].blob_tier_change_time)
-
+            # Act
             blob.set_standard_blob_tier(tier)
 
+            # Assert
             blob_ref2 = blob.get_blob_properties()
             self.assertEqual(tier, blob_ref2.blob_tier)
             self.assertFalse(blob_ref2.blob_tier_inferred)
             self.assertIsNotNone(blob_ref2.blob_tier_change_time)
-
-            blobs = list(container.list_blobs())
-
-            # Assert
-            self.assertIsNotNone(blobs)
-            self.assertGreaterEqual(len(blobs), 1)
-            self.assertIsNotNone(blobs[0])
-            self.assertNamedItemInContainer(blobs, blob.blob_name)
-            self.assertEqual(blobs[0].blob_tier, tier)
-            self.assertFalse(blobs[0].blob_tier_inferred)
-            self.assertIsNotNone(blobs[0].blob_tier_change_time)
 
             blob.delete_blob()
 
@@ -168,6 +140,3 @@ class BlobStorageAccountTest(StorageTestCase):
         self.assertEqual(StandardBlobTier.Archive, blobs[0].blob_tier)
         self.assertEqual("rehydrate-pending-to-hot", blobs[0].archive_status)
         self.assertFalse(blobs[0].blob_tier_inferred)
-
-
-# ------------------------------------------------------------------------------

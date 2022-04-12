@@ -45,7 +45,7 @@ class RecoveryServicesBackupPassiveClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2018-12-20"
+        self.api_version = "2021-11-15"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-recoveryservicesbackup/{}'.format(VERSION))
         self._configure(**kwargs)

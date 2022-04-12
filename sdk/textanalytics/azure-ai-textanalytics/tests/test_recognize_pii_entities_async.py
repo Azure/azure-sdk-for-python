@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -95,10 +94,10 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_passing_only_string(self, client):
         docs = [
-            u"My SSN is 859-98-0987.",
-            u"Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
-            u"Is 998.214.865-68 your Brazilian CPF number?",
-            u""
+            "My SSN is 859-98-0987.",
+            "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
+            "Is 998.214.865-68 your Brazilian CPF number?",
+            ""
         ]
 
         response = await client.recognize_pii_entities(docs, show_stats=True)
@@ -201,7 +200,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above inputs"
+            "You cannot mix string input with the above inputs"
         ]
         with pytest.raises(TypeError):
             response = await client.recognize_pii_entities(docs)
@@ -251,7 +250,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_batch_size_over_limit(self, client):
-        docs = [u"hello world"] * 1050
+        docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = await client.recognize_pii_entities(docs)
 
@@ -265,9 +264,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             assert language == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = await client.recognize_pii_entities(docs, language="fr", raw_response_hook=callback)
@@ -282,9 +281,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             assert language == 3
 
         docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
+            "This was the best day of my life.",
+            "I did not like the hotel we stayed at. It was too expensive.",
+            "The restaurant was not as good as I hoped."
         ]
 
         response = await client.recognize_pii_entities(docs, language="", raw_response_hook=callback)
@@ -565,7 +564,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_batch_size_over_limit_error(self, client):
         # Batch size over limit
-        docs = [u"hello world"] * 1001
+        docs = ["hello world"] * 1001
         try:
             response = await client.recognize_pii_entities(docs)
         except HttpResponseError as err:

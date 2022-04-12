@@ -49,6 +49,7 @@ setup(
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -56,17 +57,17 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
+    keywords="azure, azure sdk, text analytics, cognitive services, natural language processing",
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.ai',
     ]),
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=[
         "azure-core<2.0.0,>=1.19.1",
         "msrest>=0.6.21",
         'azure-common~=1.1',
-        'six>=1.11.0',
     ],
 )

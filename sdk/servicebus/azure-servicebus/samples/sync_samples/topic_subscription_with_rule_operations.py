@@ -9,8 +9,6 @@
 Example to show selecting a message into Subscriptions on a Topic using various Filters.
 """
 
-# pylint: disable=C0111
-
 import os
 import time
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError

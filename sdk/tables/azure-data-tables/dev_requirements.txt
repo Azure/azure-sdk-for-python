@@ -3,5 +3,5 @@
 -e ../../cosmos/azure-mgmt-cosmosdb
 ../../core/azure-core
 ../../nspkg/azure-data-nspkg
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 azure-identity

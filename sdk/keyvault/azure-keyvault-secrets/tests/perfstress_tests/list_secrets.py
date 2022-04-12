@@ -12,7 +12,6 @@ from azure.keyvault.secrets.aio import SecretClient as AsyncSecretClient
 
 
 class ListSecretsTest(PerfStressTest):
-
     def __init__(self, arguments):
         super().__init__(arguments)
 
@@ -31,11 +30,15 @@ class ListSecretsTest(PerfStressTest):
         # Validate that vault contains 0 secrets (including soft-deleted secrets), since additional secrets
         # (including soft-deleted) impact performance.
         async for secret in self.async_client.list_properties_of_secrets():
-            raise Exception("KeyVault %s must contain 0 secrets (including soft-deleted) before starting perf test" \
-                % self.async_client.vault_url)
+            raise Exception(
+                "KeyVault %s must contain 0 secrets (including soft-deleted) before starting perf test"
+                % self.async_client.vault_url
+            )
         async for secret in self.async_client.list_deleted_secrets():
-            raise Exception("KeyVault %s must contain 0 secrets (including soft-deleted) before starting perf test" \
-                % self.async_client.vault_url)
+            raise Exception(
+                "KeyVault %s must contain 0 secrets (including soft-deleted) before starting perf test"
+                % self.async_client.vault_url
+            )
 
         await super().global_setup()
         create = [self.async_client.set_secret(name, "secret-value") for name in self.secret_names]
@@ -72,5 +75,5 @@ class ListSecretsTest(PerfStressTest):
     def add_arguments(parser):
         super(ListSecretsTest, ListSecretsTest).add_arguments(parser)
         parser.add_argument(
-            '--count', nargs='?', type=int, help='Number of secrets to list. Defaults to 10', default=10
+            "--count", nargs="?", type=int, help="Number of secrets to list. Defaults to 10", default=10
         )

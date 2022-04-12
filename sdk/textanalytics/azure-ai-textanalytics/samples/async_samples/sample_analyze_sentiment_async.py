@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -65,8 +63,8 @@ async def sample_analyze_sentiment_async():
 
     print("Let's visualize the sentiment of each of these documents")
     for idx, doc in enumerate(docs):
-        print("Document text: {}".format(documents[idx]))
-        print("Overall sentiment: {}".format(doc.sentiment))
+        print(f"Document text: {documents[idx]}")
+        print(f"Overall sentiment: {doc.sentiment}")
     # [END analyze_sentiment_async]
 
     print("Now, let us extract all of the positive reviews")
@@ -89,7 +87,7 @@ async def sample_analyze_sentiment_async():
     )
     positive_reviews_final = []
     for idx, review in enumerate(positive_reviews):
-        print("Looking at positive review #{}".format(idx + 1))
+        print(f"Looking at positive review #{idx + 1}")
         any_sentence_not_positive = False
         for sentence in review.sentences:
             print("...Sentence '{}' has sentiment '{}' with confidence scores '{}'".format(

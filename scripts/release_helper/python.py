@@ -3,12 +3,12 @@ from typing import Any, List
 import os
 
 # assignee dict which will be assigned to handle issues
-_PYTHON_OWNER = {'RAY-316', 'BigCat20196', 'msyyc'}
+_PYTHON_OWNER = {'BigCat20196', 'msyyc'}
 
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN_PYTHON = {
-    'RAY-316': os.getenv('PYTHON_ZED_TOKEN'),
     'BigCat20196': os.getenv('PYTHON_BIGCAT_TOKEN'),
+    'msyyc': os.getenv('PYTHON_MSYYC_TOKEN'),
 }
 
 

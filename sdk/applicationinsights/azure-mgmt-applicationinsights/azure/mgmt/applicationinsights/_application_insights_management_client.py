@@ -23,7 +23,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -45,8 +44,6 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
-    :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
     :param base_url: Service URL
@@ -55,7 +52,7 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2021-08-01'
+    DEFAULT_API_VERSION = '2021-10-14'
     _PROFILE_TAG = "azure.mgmt.applicationinsights.ApplicationInsightsManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -75,7 +72,6 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             'ea_subscription_rollback_to_legacy_pricing_model': '2017-10-01',
             'export_configurations': '2015-05-01',
             'favorites': '2015-05-01',
-            'live_token': '2020-06-02-preview',
             'my_workbooks': '2021-03-08',
             'operations': '2015-05-01',
             'proactive_detection_configurations': '2015-05-01',
@@ -83,6 +79,7 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             'web_tests': '2015-05-01',
             'work_item_configurations': '2015-05-01',
             'workbook_templates': '2020-11-20',
+            'workbooks': '2021-08-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -90,15 +87,12 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
         api_version=None, # type: Optional[str]
-        base_url=None,  # type: Optional[str]
+        base_url="https://management.azure.com",  # type: str
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = ApplicationInsightsManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = ApplicationInsightsManagementClientConfiguration(credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ApplicationInsightsManagementClient, self).__init__(
             api_version=api_version,
@@ -124,6 +118,7 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-11-20: :mod:`v2020_11_20.models<azure.mgmt.applicationinsights.v2020_11_20.models>`
            * 2021-03-08: :mod:`v2021_03_08.models<azure.mgmt.applicationinsights.v2021_03_08.models>`
            * 2021-08-01: :mod:`v2021_08_01.models<azure.mgmt.applicationinsights.v2021_08_01.models>`
+           * 2021-10-14: :mod:`v2021_10.models<azure.mgmt.applicationinsights.v2021_10.models>`
         """
         if api_version == '2015-05-01':
             from .v2015_05_01 import models
@@ -157,6 +152,9 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2021-08-01':
             from .v2021_08_01 import models
+            return models
+        elif api_version == '2021-10-14':
+            from .v2021_10 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -366,10 +364,13 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-06-02-preview: :class:`LiveTokenOperations<azure.mgmt.applicationinsights.v2020_06_02_preview.operations.LiveTokenOperations>`
+           * 2021-10-14: :class:`LiveTokenOperations<azure.mgmt.applicationinsights.v2021_10.operations.LiveTokenOperations>`
         """
         api_version = self._get_api_version('live_token')
         if api_version == '2020-06-02-preview':
             from .v2020_06_02_preview.operations import LiveTokenOperations as OperationClass
+        elif api_version == '2021-10-14':
+            from .v2021_10.operations import LiveTokenOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'live_token'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

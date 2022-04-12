@@ -1,5 +1,52 @@
 # Release History
 
+## 7.0.0 (2022-03-15)
+
+**Features**
+
+  - Added operation SnapshotsOperations.begin_restore_files
+  - Added operation group SubvolumesOperations
+  - Model ActiveDirectory has a new parameter ldap_search_scope
+  - Model BackupPolicy has a new parameter system_data
+  - Model CapacityPool has a new parameter system_data
+  - Model SnapshotPolicy has a new parameter system_data
+  - Model Volume has a new parameter enable_subvolumes
+  - Model Volume has a new parameter maximum_number_of_files
+  - Model Volume has a new parameter system_data
+  - Model VolumeGroupVolumeProperties has a new parameter enable_subvolumes
+  - Model VolumeGroupVolumeProperties has a new parameter maximum_number_of_files
+  - Model VolumePatch has a new parameter unix_permissions
+
+**Breaking changes**
+
+  - Operation VolumesOperations.begin_delete has a new signature
+
+## 6.0.1 (2022-01-12)
+
+**Fixes**
+
+  - add support for Python 3.6
+
+## 6.0.0 (2022-01-06)
+
+**Features**
+
+  - Added operation group VolumeGroupsOperations
+  - Model ActiveDirectory has a new parameter encrypt_dc_connections
+  - Model Volume has a new parameter capacity_pool_resource_id
+  - Model Volume has a new parameter placement_rules
+  - Model Volume has a new parameter proximity_placement_group
+  - Model Volume has a new parameter t2_network
+  - Model Volume has a new parameter volume_group_name
+  - Model Volume has a new parameter volume_spec_name
+
+**Breaking changes**
+
+  - Model BackupPolicy no longer has parameter name_properties_name
+  - Model BackupPolicyDetails no longer has parameter name_properties_name
+  - Model BackupPolicyPatch no longer has parameter name_properties_name
+  - Model SubscriptionQuotaItem no longer has parameter name_properties_name
+
 ## 5.1.0 (2021-09-22)
 
 **Features**

@@ -13,26 +13,26 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Tue, 22 Jun 2021 20:47:32 GMT
+      - Wed, 12 Jan 2022 16:27:36 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2022-01-11-preview2
   response:
     body:
       string: '{"error": {"code": "InternalError", "message": "The server encountered
         an internal error."}}'
     headers:
       api-supported-versions:
-      - '2021-03-07'
+      - 2021-03-07, 2022-01-11-preview2
       content-type:
       - application/json
       date:
-      - Tue, 22 Jun 2021 20:47:32 GMT
+      - Wed, 12 Jan 2022 16:27:31 GMT
       ms-cv:
-      - wOfynf2/VkWvUO9h7jk2Sg.0
+      - zHkqjgmtiU6jWCK9tJRVrA.0
       request-context:
       - appId=
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 448ms
+      - 58ms
     status:
       code: 404
       message: Not Found

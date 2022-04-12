@@ -6,59 +6,36 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import DeleteOperationResult
-    from ._models_py3 import DnsConfig
-    from ._models_py3 import Endpoint
-    from ._models_py3 import EndpointPropertiesCustomHeadersItem
-    from ._models_py3 import EndpointPropertiesSubnetsItem
-    from ._models_py3 import HeatMapEndpoint
-    from ._models_py3 import HeatMapModel
-    from ._models_py3 import MonitorConfig
-    from ._models_py3 import MonitorConfigCustomHeadersItem
-    from ._models_py3 import MonitorConfigExpectedStatusCodeRangesItem
-    from ._models_py3 import Profile
-    from ._models_py3 import ProfileListResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import QueryExperience
-    from ._models_py3 import Region
-    from ._models_py3 import Resource
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import TrafficFlow
-    from ._models_py3 import TrafficManagerGeographicHierarchy
-    from ._models_py3 import TrafficManagerNameAvailability
-    from ._models_py3 import UserMetricsModel
-except (SyntaxError, ImportError):
-    from ._models import CheckTrafficManagerRelativeDnsNameAvailabilityParameters  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import DeleteOperationResult  # type: ignore
-    from ._models import DnsConfig  # type: ignore
-    from ._models import Endpoint  # type: ignore
-    from ._models import EndpointPropertiesCustomHeadersItem  # type: ignore
-    from ._models import EndpointPropertiesSubnetsItem  # type: ignore
-    from ._models import HeatMapEndpoint  # type: ignore
-    from ._models import HeatMapModel  # type: ignore
-    from ._models import MonitorConfig  # type: ignore
-    from ._models import MonitorConfigCustomHeadersItem  # type: ignore
-    from ._models import MonitorConfigExpectedStatusCodeRangesItem  # type: ignore
-    from ._models import Profile  # type: ignore
-    from ._models import ProfileListResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import QueryExperience  # type: ignore
-    from ._models import Region  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import TrafficFlow  # type: ignore
-    from ._models import TrafficManagerGeographicHierarchy  # type: ignore
-    from ._models import TrafficManagerNameAvailability  # type: ignore
-    from ._models import UserMetricsModel  # type: ignore
+from ._models_py3 import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import DeleteOperationResult
+from ._models_py3 import DnsConfig
+from ._models_py3 import Endpoint
+from ._models_py3 import EndpointPropertiesCustomHeadersItem
+from ._models_py3 import EndpointPropertiesSubnetsItem
+from ._models_py3 import HeatMapEndpoint
+from ._models_py3 import HeatMapModel
+from ._models_py3 import MonitorConfig
+from ._models_py3 import MonitorConfigCustomHeadersItem
+from ._models_py3 import MonitorConfigExpectedStatusCodeRangesItem
+from ._models_py3 import Profile
+from ._models_py3 import ProfileListResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import QueryExperience
+from ._models_py3 import Region
+from ._models_py3 import Resource
+from ._models_py3 import TrackedResource
+from ._models_py3 import TrafficFlow
+from ._models_py3 import TrafficManagerGeographicHierarchy
+from ._models_py3 import TrafficManagerNameAvailability
+from ._models_py3 import UserMetricsModel
+
 
 from ._traffic_manager_management_client_enums import (
     AllowedEndpointRecordType,
     EndpointMonitorStatus,
     EndpointStatus,
+    EndpointType,
     MonitorProtocol,
     ProfileMonitorStatus,
     ProfileStatus,
@@ -93,6 +70,7 @@ __all__ = [
     'AllowedEndpointRecordType',
     'EndpointMonitorStatus',
     'EndpointStatus',
+    'EndpointType',
     'MonitorProtocol',
     'ProfileMonitorStatus',
     'ProfileStatus',

@@ -2,5 +2,5 @@
 -e ../../identity/azure-identity
 -e ../azure-communication-identity
 ../../core/azure-core
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 -e ../../../tools/azure-devtools
