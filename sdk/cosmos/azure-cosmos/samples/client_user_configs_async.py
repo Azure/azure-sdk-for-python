@@ -40,10 +40,11 @@ MASTER_KEY = config.settings['master_key']
 # ----------------------------------------------------------------------------------------------------------
 
 async def change_connection_retry_policy_configs():
-    cosmos_client.CosmosClient(url=HOST, credential=MASTER_KEY, retry_total=10, retry_connect=3,
+    async with cosmos_client.CosmosClient(url=HOST, credential=MASTER_KEY, retry_total=10, retry_connect=3,
                                retry_read=3, retry_status=3,
                                retry_on_status_codes=([]),
-                               retry_backoff_factor=.08, retry_backoff_max=120, retry_fixed_interval=None)
+                               retry_backoff_factor=.08, retry_backoff_max=120, retry_fixed_interval=None) as client:
+        print('.')
 
 
 if __name__ == "__main__":
