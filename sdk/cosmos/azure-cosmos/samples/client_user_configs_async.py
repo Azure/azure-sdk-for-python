@@ -44,7 +44,7 @@ async def change_connection_retry_policy_configs():
                                retry_read=3, retry_status=3,
                                retry_on_status_codes=([]),
                                retry_backoff_factor=.08, retry_backoff_max=120, retry_fixed_interval=None) as client:
-        print('.')
+        print('Client initialized with custom retry options')
 
 
 if __name__ == "__main__":
