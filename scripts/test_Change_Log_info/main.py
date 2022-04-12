@@ -71,12 +71,12 @@ def findReportName(result):
         idx = line.find(pattern)
         idx1 = line.find(merged)
         if idx > 0 and idx1 > 0:
-            return "_/"+line[idx + len(pattern):].replace(" ","")
+            return "_/" + line[idx + len(pattern):].replace(" ", "")
 
     for line in result:
         idx = line.find(pattern)
         if idx > 0:
-            return "_/"+line[idx + len(pattern):].replace(" ","")
+            return "_/" + line[idx + len(pattern):].replace(" ", "")
 
     return ''
 
@@ -87,15 +87,31 @@ def create_foldor(name):
     else:
         print("foldor has been created")
 
-
-def write_txt(foldor,text_name,text,version1,version2):
-    foldor_path= r'{0}\\'.format(foldor)
-    path=foldor_path+text_name+" "+version1+"-"+version2+r".txt"
-    file=open(path,"w",encoding="utf-8")
+def write_txt(foldor, text_name, text, version1, version2):
+    foldor_path = r'{0}\\'.format(foldor)
+    path = foldor_path + text_name + " " + version1 + "-" + version2 + r".txt"
+    file = open(path, "w", encoding="utf-8")
     file.write(text)
     print("txt create successful")
     file.close()
 
+def create_code_report(cmd):
+    info = sp.Popen(cmd,
+                    stderr=sp.STDOUT,
+                    stdout=sp.PIPE,
+                    universal_newlines=True,
+                    cwd=None,
+                    shell=False,
+                    env=None,
+                    encoding="utf-8",
+                    )
+
+    output_buffer = []
+    for line in info.stdout:
+        output_buffer.append(line.rstrip())
+    info.wait()
+    info_output = "\n".join(output_buffer)
+    return info_output.split('\n')
 
 if __name__ == '__main__':
     env = os.getcwd()
@@ -104,8 +120,8 @@ if __name__ == '__main__':
     sp.call("docker start Change_log")
     sp.call(f'docker exec -it Change_log /bin/bash -c  "python _/scripts/dev_setup.py -p azure-core"  ')
     for package in package_info:
-        package_name=package[0]
-        package_path=package[1]
+        package_name = package[0]
+        package_path = package[1]
 
         # sp.call(fr'docker exec -it Change_log /bin/bash -c "cd _/sdk/{package_name}/azure-mgmt-{package_path} && pip install e ."')
 
@@ -118,51 +134,21 @@ if __name__ == '__main__':
             version = versions[-1]
             last_version = versions[-1]
 
+        cmd_cl1 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  azure-mgmt-{package_path} --version={last_version}"'
+        cmd_cl2 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report azure-mgmt-{package_path} --version={version}"'
 
-        cmd_cl1=fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  azure-mgmt-{package_path} --version={last_version}"'
-        last_info=sp.Popen(cmd_cl1,
-                           stderr=sp.STDOUT,
-                           stdout=sp.PIPE,
-                           universal_newlines=True,
-                           cwd=None,
-                           shell=False,
-                           env=None,
-                           encoding="utf-8",
-                           )
+        last_info = create_code_report(cmd_cl1)
+        info = create_code_report(cmd_cl2)
+        last_route = findReportName(last_info)
+        route = findReportName(info)
 
-        output_buffer = []
-        for line in last_info.stdout:
-            output_buffer.append(line.rstrip())
-        last_info.wait()
-        last_info_output = "\n".join(output_buffer)
-        cmd_cl2=fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report azure-mgmt-{package_path} --version={version}"'
-        info = sp.Popen(cmd_cl2,
-                        stderr=sp.STDOUT,
-                        stdout=sp.PIPE,
-                        universal_newlines=True,
-                        cwd=None,
-                        shell=False,
-                        env=None,
-                        encoding="utf-8",
-                        )
-
-        output_buffer = []
-        for line in info.stdout:
-            output_buffer.append(line.rstrip())
-        info.wait()
-        info_output = "\n".join(output_buffer)
-        
-        last_info=last_info_output.split('\n')
-        info=info_output.split('\n')
-        last_route=findReportName(last_info)
-        route=findReportName(info)
-
-        result_text=sp.getoutput(fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route} {last_route}"')
+        result_text = sp.getoutput(
+            fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route} {last_route}"')
         print(result_text)
 
-        change_log_foldor_path=env+r"\Change_Log"
+        change_log_foldor_path = env + r"\Change_Log"
         create_foldor(change_log_foldor_path)
-        write_txt(change_log_foldor_path,package_path,result_text,last_version,version)
+        write_txt(change_log_foldor_path, package_path, result_text, last_version, version)
 
         time.sleep(10)
     sp.call(f'docker exec -it Change_log /bin/bash -c "exit"')
