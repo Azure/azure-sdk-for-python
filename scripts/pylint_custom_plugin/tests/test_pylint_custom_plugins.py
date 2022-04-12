@@ -3021,7 +3021,7 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
                     # type: () -> list[int]
                     '''
                     :return: List of ints
-                    :rtype: list(int)
+                    :rtype: list[int]
                     '''
                     return [1,2,3]
             """
@@ -3094,10 +3094,10 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
             """
             class SomeClient(object): #@
                 def __init__(self, **kwargs): #@
-                     # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialsPolicy
+                     # type: (...) -> Union[BearerTokenCredentialPolicy,HMACCredentialsPolicy]
                     '''
                     :return: List of ints, floats, strings, or booleans
-                    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or ~HMACCredentialsPolicy
+                    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or ~azure.core.pipeline.policies.HMACCredentialsPolicy
                     '''
                     return SomePolicy
             """
@@ -3105,3 +3105,84 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
     
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node)
+
+    def test_acceptable_5(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                     # type: (...) -> Iterable[Dict[str, Any]]
+                    '''
+                    :return: Iterable
+                    :rtype: Iterable[Dict[str, Any]]
+                    '''
+                    return SomePolicy
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

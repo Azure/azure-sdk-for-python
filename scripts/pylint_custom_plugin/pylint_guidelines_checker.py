@@ -1957,47 +1957,52 @@ class ReturnTypeMismatch(BaseChecker):
             except AttributeError:
                 return
             
+            
             return_type = -1
             for line in docstring:
                 if "rtype" in line:
                     return_type = docstring.index(line)
-            
+            # print(return_type)
             # Breaking up type 
             
-            if override_type in node.type_comment_returns.as_string():
-                rtype = node.type_comment_returns.as_string()
-                inner_type= ""
-            else:
-                split_rtype = node.type_comment_returns.as_string().split("[")
-                rtype = split_rtype[0]
-                inner_type = " ".join(split_rtype[1:]).split("]")
+            # if override_type in node.type_comment_returns.as_string():
+            rtype = node.type_comment_returns.as_string()
+            inner_type= ""
+            # else:
+            #     split_rtype = node.type_comment_returns.as_string().split("[")
+            #     rtype = split_rtype[0]
+            #     inner_type = " ".join(split_rtype[1:]).split("]")
 
+            #TODO: conver "[" to "(" - are there cases where this could happen 
     
             doc_type = docstring[return_type].split(":")[-1].strip()
+            # print(docstring[return_type].split(":"))
 
-            # If there is a tilda, ignore the package path and just compare the name
+            # If there is a tilda, ignore the package path and just compare the name, if there are multiple - make it a Union
             if tilda_to_ignore_package in doc_type:
                 packages = doc_type.split(tilda_to_ignore_package)
                 doc_type = ''
                 for p in range(0, len(packages)):
-                    doc_type += packages[p].split(".")[-1].strip()
+                    doc_type += packages[p].split(".")[-1].strip("or ")
                     if p!=0 and p!=len(packages)-1:
-                        doc_type += " or "
+                        doc_type += ", "
+                if len(packages)>1:
+                    doc_type = "Union["+doc_type+"]"
 
-            print("RTYPE", rtype)
-            print("DOC TYPE", doc_type)
-            print("INNER TYPE", inner_type)
+            # print("RTYPE", rtype)
+            # print("DOC TYPE", doc_type)
+            # print("INNER TYPE", inner_type)
 
             if rtype not in doc_type:
                 self.add_message(
                     msgid="return-type-mismatch", node=node, confidence=None
                 )
-            if rtype in (" ".join(generic_and_legacy_types)):
-                # Check if innards match
-                if "".join(inner_type) not in doc_type:
-                    self.add_message(
-                        msgid="return-type-mismatch", node=node, confidence=None
-                    )
+            # if rtype in (" ".join(generic_and_legacy_types)):
+            #     # Check if innards match
+            #     if "".join(inner_type) not in doc_type:
+            #         self.add_message(
+            #             msgid="return-type-mismatch", node=node, confidence=None
+            #         )
 
    
 
