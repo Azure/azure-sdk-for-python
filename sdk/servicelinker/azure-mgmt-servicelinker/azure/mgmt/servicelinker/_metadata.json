@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-11-01-preview",
-    "total_api_version_list": ["2021-11-01-preview"],
+    "chosen_version": "2022-05-01",
+    "total_api_version_list": ["2022-05-01"],
     "client": {
         "name": "MicrosoftServiceLinker",
         "filename": "_microsoft_service_linker",

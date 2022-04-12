@@ -33,7 +33,7 @@ def build_list_request(
     resource_uri: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-01-preview"
+    api_version = "2022-05-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.ServiceLinker/linkers')
@@ -65,7 +65,7 @@ def build_get_request(
     linker_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-01-preview"
+    api_version = "2022-05-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}')
@@ -103,7 +103,7 @@ def build_create_or_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-01-preview"
+    api_version = "2022-05-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}')
@@ -140,7 +140,7 @@ def build_delete_request_initial(
     linker_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-01-preview"
+    api_version = "2022-05-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}')
@@ -178,7 +178,7 @@ def build_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-01-preview"
+    api_version = "2022-05-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}')
@@ -215,7 +215,7 @@ def build_validate_request_initial(
     linker_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-01-preview"
+    api_version = "2022-05-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}/validateLinker')
@@ -248,7 +248,7 @@ def build_list_configurations_request(
     linker_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-01-preview"
+    api_version = "2022-05-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}/listConfigurations')
@@ -282,7 +282,7 @@ class LinkerOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~microsoft_service_linker.models
+    :type models: ~azure.mgmt.servicelinker.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -310,7 +310,7 @@ class LinkerOperations(object):
         :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LinkerList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~microsoft_service_linker.models.LinkerList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.servicelinker.models.LinkerList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkerList"]
@@ -381,7 +381,7 @@ class LinkerOperations(object):
         :type linker_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkerResource, or the result of cls(response)
-        :rtype: ~microsoft_service_linker.models.LinkerResource
+        :rtype: ~azure.mgmt.servicelinker.models.LinkerResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkerResource"]
@@ -481,7 +481,7 @@ class LinkerOperations(object):
         :param linker_name: The name Linker resource.
         :type linker_name: str
         :param parameters: Linker details.
-        :type parameters: ~microsoft_service_linker.models.LinkerResource
+        :type parameters: ~azure.mgmt.servicelinker.models.LinkerResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -492,7 +492,7 @@ class LinkerOperations(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either LinkerResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~microsoft_service_linker.models.LinkerResource]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -697,7 +697,7 @@ class LinkerOperations(object):
         :param linker_name: The name Linker resource.
         :type linker_name: str
         :param parameters: Linker details.
-        :type parameters: ~microsoft_service_linker.models.LinkerPatch
+        :type parameters: ~azure.mgmt.servicelinker.models.LinkerPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -708,7 +708,7 @@ class LinkerOperations(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either LinkerResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~microsoft_service_linker.models.LinkerResource]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -817,7 +817,7 @@ class LinkerOperations(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either ValidateResult or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~microsoft_service_linker.models.ValidateResult]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.servicelinker.models.ValidateResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
@@ -875,7 +875,7 @@ class LinkerOperations(object):
         :type linker_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SourceConfigurationResult, or the result of cls(response)
-        :rtype: ~microsoft_service_linker.models.SourceConfigurationResult
+        :rtype: ~azure.mgmt.servicelinker.models.SourceConfigurationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceConfigurationResult"]
