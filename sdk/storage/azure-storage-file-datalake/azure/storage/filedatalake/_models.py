@@ -8,6 +8,7 @@
 from datetime import datetime
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
@@ -20,6 +21,7 @@ from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
+
 from ._shared.models import DictMixin
 
 
@@ -666,19 +668,19 @@ class UserDelegationKey(BlobUserDelegationKey):
         return delegation_key
 
 
-class PublicAccess(str, Enum):
+class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies whether data in the file system may be accessed publicly and the level of access.
     """
 
-    File = 'blob'
+    FILE = 'blob'
     """
     Specifies public read access for files. file data within this file system can be read
     via anonymous request, but file system data is not available. Clients cannot enumerate
     files within the container via anonymous request.
     """
 
-    FileSystem = 'container'
+    FILESYSTEM = 'container'
     """
     Specifies full public read access for file system and file data. Clients can enumerate
     files within the file system via anonymous request, but cannot enumerate file systems
@@ -743,15 +745,15 @@ class ArrowDialect(BlobArrowDialect):
     """
 
 
-class QuickQueryDialect(str, Enum):
+class QuickQueryDialect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the quick query input/output dialect."""
 
-    DelimitedText = 'DelimitedTextDialect'
-    DelimitedJson = 'DelimitedJsonDialect'
-    Parquet = 'ParquetDialect'
+    DELIMITEDTEXT = 'DelimitedTextDialect'
+    DELIMITEDJSON = 'DelimitedJsonDialect'
+    PARQUET = 'ParquetDialect'
 
 
-class ArrowType(str, Enum):
+class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INT64 = "int64"
     BOOL = "bool"
