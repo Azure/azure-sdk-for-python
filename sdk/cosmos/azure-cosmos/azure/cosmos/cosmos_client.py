@@ -23,7 +23,7 @@
 """
 
 from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
-
+import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -32,7 +32,6 @@ from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
-import warnings
 
 __all__ = ("CosmosClient",)
 
@@ -110,7 +109,11 @@ def _build_connection_policy(kwargs):
     max_backoff = kwargs.pop('retry_backoff_max', None)
     retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
     policy.RetryOptions = retry_options
-    connection_retry = policy.ConnectionRetryConfiguration
+    connection_retry = kwargs.pop('connection_retry_policy', None)
+     if connection_retry is not None:
+        warnings.warn("This option has been deprecated and will be removed from the SDK in a future release.",
+                      DeprecationWarning)
+    connection_retry = policy.ConnectionRetryConfiguration 
     if not connection_retry:
         connection_retry = ConnectionRetryPolicy(
             retry_total=total_retries,
