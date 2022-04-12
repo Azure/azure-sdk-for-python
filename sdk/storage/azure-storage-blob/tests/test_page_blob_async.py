@@ -42,6 +42,7 @@ from azure.storage.blob.aio import (
 
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
+from test_helpers import ProgressTracker
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -1952,5 +1953,61 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
                 self.assertEqual(byte, '\x00')
             except:
                 self.assertEqual(byte, 0)
+
+    @BlobPreparer()
+    async def test_upload_progress_chunked_non_parallel(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        await self._setup(bsc)
+
+        blob_name = self.get_resource_name(TEST_BLOB_PREFIX)
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_page_size=1024)
+
+        await blob_client.upload_blob(
+            data,
+            blob_type=BlobType.PageBlob,
+            overwrite=True,
+            max_concurrency=1,
+            progress_callback=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_upload_progress_chunked_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        await self._setup(bsc)
+
+        blob_name = self.get_resource_name(TEST_BLOB_PREFIX)
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_page_size=1024)
+
+        await blob_client.upload_blob(
+            data,
+            blob_type=BlobType.PageBlob,
+            overwrite=True,
+            max_concurrency=3,
+            progress_callback=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
 
 #------------------------------------------------------------------------------

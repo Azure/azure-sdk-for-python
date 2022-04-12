@@ -23,6 +23,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
+from test_helpers import ProgressTracker
 
 from azure.storage.blob import (
     BlobType,
@@ -1561,5 +1562,80 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
 
         # Assert
 
+    @BlobPreparer()
+    async def test_upload_progress_single_put(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), len(data))
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key)
+
+        await blob_client.upload_blob(
+            data,
+            blob_type=BlobType.BlockBlob,
+            overwrite=True,
+            max_concurrency=1,
+            progress_callback=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @BlobPreparer()
+    async def test_upload_progress_chunked_non_parallel(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_block_size=1024)
+
+        await blob_client.upload_blob(
+            data,
+            blob_type=BlobType.BlockBlob,
+            overwrite=True,
+            max_concurrency=1,
+            progress_callback=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_upload_progress_chunked_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_block_size=1024)
+
+        await blob_client.upload_blob(
+            data,
+            blob_type=BlobType.BlockBlob,
+            overwrite=True,
+            max_concurrency=3,
+            progress_callback=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
 
 #------------------------------------------------------------------------------
