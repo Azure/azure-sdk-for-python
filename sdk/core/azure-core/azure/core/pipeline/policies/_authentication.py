@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import time
 import six
+import urllib.parse
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -19,6 +20,85 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional
     from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential, AzureSasCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+
+
+class _HttpChallenge(object):
+    """ Represents a parsed HTTP WWW-Authentication Bearer challenge from a server. """
+
+    def __init__(self, request_uri, challenge):
+        self.source_authority = self._get_request_authority(request_uri)
+        self.source_uri = request_uri
+        self._parameters = {}
+
+        # Get the scheme of the challenge and remove it from the challenge string
+        trimmed_challenge = self._get_challenge_parts(challenge)
+        split_challenge = trimmed_challenge.split(" ", 1)
+        self.scheme = split_challenge[0]
+        trimmed_challenge = split_challenge[1]
+
+        # Split trimmed challenge into name=value pairs; these pairs are expected to be split by either commas or spaces
+        # Values may be surrounded by quotes, which are stripped here
+        separator = "," if "," in trimmed_challenge else " "
+        for item in trimmed_challenge.split(separator):
+            # process name=value pairs
+            comps = item.split("=")
+            if len(comps) == 2:
+                key = comps[0].strip(' "')
+                value = comps[1].strip(' "')
+                if key:
+                    self._parameters[key] = value
+
+        if not self._parameters:
+            raise ValueError("Invalid challenge parameters")
+
+        # Challenge must specify authorization or authorization_uri
+        if "authorization" not in self._parameters and "authorization_uri" not in self._parameters:
+            raise ValueError("Invalid challenge parameters")
+
+        authorization_uri = self.get_authorization_server()
+        # the authorization server URI should look something like https://login.windows.net/tenant-id[/oauth2/authorize]
+        uri_path = urllib.parse.urlparse(authorization_uri).path.lstrip("/")
+        self.tenant_id = uri_path.split("/")[0] or None
+
+    def get_authorization_server(self):
+        """ Returns the URI for the authorization server if present, otherwise an empty string. """
+        value = ""
+        for key in ["authorization_uri", "authorization"]:
+            value = self._parameters.get(key) or ""
+            if value:
+                break
+        return value
+
+    def get_resource(self):
+        """ Returns the resource if present, otherwise an empty string. """
+        return self._parameters.get("resource") or self._parameters.get("resource_id") or ""
+
+    def get_scope(self):
+        """ Returns the scope if present, otherwise an empty string. """
+        return self._parameters.get("scope") or ""
+
+    # pylint:disable=no-self-use
+    def _get_challenge_parts(self, challenge):
+        """ Verifies that the challenge is a valid auth challenge and returns the key=value pairs. """
+        if not challenge:
+            raise ValueError("Challenge cannot be empty")
+
+        return challenge.strip()
+
+    # pylint:disable=no-self-use
+    def _get_request_authority(self, uri):
+        """ Extracts the host authority from the given URI. """
+        if not uri:
+            raise ValueError("request_uri cannot be empty")
+
+        uri = urllib.parse.urlparse(uri)
+        if not uri.netloc:
+            raise ValueError("request_uri must be an absolute URI")
+
+        if uri.scheme.lower() not in ["http", "https"]:
+            raise ValueError("request_uri must be HTTP or HTTPS")
+
+        return uri.netloc
 
 
 # pylint:disable=too-few-public-methods
@@ -170,6 +250,41 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         """
         # pylint: disable=no-self-use,unused-argument
         return
+
+
+class MultitenantTokenCredentialPolicy(BearerTokenCredentialPolicy):
+    """Adds a bearer token Authorization header to requests, for the tenant provided in authorization challenges.
+
+    See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
+    authentication challenges.
+
+    :param credential: The credential.
+    :type credential: ~azure.core.TokenCredential
+    :param str scopes: Lets you specify the type of access needed.
+    :raises: :class:`~azure.core.exceptions.ServiceRequestError`
+    """
+
+    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+        """Authorize request according to an authentication challenge
+
+        This method is called when the resource provider responds 401 with a WWW-Authenticate header.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
+        :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
+        :returns: a bool indicating whether the policy should send the request
+        """
+        try:
+            challenge = _HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
+            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+        except ValueError:
+            return False
+
+        body = request.context.pop("key_vault_request_data", None)
+        request.http_request.set_text_body(body)  # no-op when text is None
+        self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+
+        return True
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
