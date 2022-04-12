@@ -675,7 +675,7 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return ThroughputProperties(throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
     def list_conflicts(self, max_item_count=None, **kwargs):
