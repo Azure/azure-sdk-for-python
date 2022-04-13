@@ -4,6 +4,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: identity
+      SupportedClouds: 'Public,UsGov,China'
       EnvVars:
         AZURE_CLIENT_ID: $(python-identity-client-id)
         AZURE_CLIENT_SECRET: $(python-identity-client-secret)
