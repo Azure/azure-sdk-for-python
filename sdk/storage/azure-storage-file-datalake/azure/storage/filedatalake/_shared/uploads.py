@@ -135,7 +135,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
             self, service,
             total_size,
-            chunk_size, 
+            chunk_size,
             stream,
             parallel,
             encryptor=None,

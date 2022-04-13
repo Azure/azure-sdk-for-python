@@ -6,8 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-import unittest
 from datetime import datetime, timedelta
+from io import BytesIO
 
 import pytest
 import uuid
@@ -29,7 +29,7 @@ from azure.storage.blob import (
     BlobImmutabilityPolicyMode, ImmutabilityPolicy)
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
-from test_helpers import ProgressTracker
+from test_helpers import NonSeekableStream, ProgressTracker
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -1445,6 +1445,34 @@ class StorageBlockBlobTest(StorageTestCase):
 
         blob_client.upload_blob(
             data,
+            blob_type=BlobType.BlockBlob,
+            overwrite=True,
+            max_concurrency=3,
+            progress_callback=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_upload_progress_unknown_size(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+        stream = NonSeekableStream(BytesIO(data))
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_block_size=1024)
+
+        blob_client.upload_blob(
+            data=stream,
             blob_type=BlobType.BlockBlob,
             overwrite=True,
             max_concurrency=3,
