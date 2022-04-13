@@ -4,11 +4,12 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: identity
+      BuildTargetingString: azure-identity
       SupportedClouds: 'Public,UsGov,China'
       EnvVars:
-        AZURE_CLIENT_ID: $(python-identity-client-id)
-        AZURE_CLIENT_SECRET: $(python-identity-client-secret)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_CLIENT_ID: $(IDENTITY_CLIENT_ID)
+        AZURE_CLIENT_SECRET: $(IDENTITY_CLIENT_SECRET)
+        AZURE_TENANT_ID: $(IDENTITY_TENANT_ID)
         CERTIFICATE_PASSWORD: $(python-identity-certificate-password)
         PEM_CONTENT: $(python-identity-certificate)
         PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password)
