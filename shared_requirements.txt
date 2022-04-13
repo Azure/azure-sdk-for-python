@@ -199,8 +199,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-ai-translation-document azure-core<2.0.0,>=1.14.0
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.23.0
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
-#override azure-monitor-opentelemetry-exporter opentelemetry-api<2.0.0,>=1.9.0,!=1.10a0
-#override azure-monitor-opentelemetry-exporter opentelemetry-sdk<2.0.0,>=1.9.0,!=1.10a0
+#override azure-monitor-opentelemetry-exporter opentelemetry-api<2.0.0,>=1.10.0,!=1.10a0
+#override azure-monitor-opentelemetry-exporter opentelemetry-sdk<2.0.0,>=1.10.0,!=1.10a0
 #override azure-core-tracing-opentelemetry opentelemetry-api<2.0.0,>=1.0.0
 #override azure-identity six>=1.12.0
 #override azure-keyvault-keys six>=1.12.0
@@ -318,6 +318,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-frontdoor azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-signalr msrest>=0.6.21
 #override azure-mgmt-signalr azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-iotcentral msrest>=0.6.21
+#override azure-mgmt-iotcentral azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-redisenterprise msrest>=0.6.21
 #override azure-mgmt-redisenterprise azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-storage azure-mgmt-core>=1.3.0,<2.0.0
