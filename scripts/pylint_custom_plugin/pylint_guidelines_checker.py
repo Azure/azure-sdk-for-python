@@ -6,7 +6,6 @@
 """
 Pylint custom checkers for SDK guidelines: C4717 - C4744
 """
-from typing import Dict
 import logging
 import astroid
 import re
@@ -1960,8 +1959,8 @@ class ReturnTypeMismatch(BaseChecker):
                 if "rtype" in line:
                     return_type = docstring.index(line)
             # TODO: If there is no rtype -- return, nothing to compare --- we might want to actually remove this
-            # if return_type==-1:
-            #     return
+            if return_type==-1:
+                return
 
             rtype = node.type_comment_returns.as_string()
 
@@ -1990,7 +1989,7 @@ class ReturnTypeMismatch(BaseChecker):
             # If it is an "or"
             if p!=0 and p!=len(packages)-1 and is_union:
                 formatted_package += ", "
-        if len(packages)>1 and is_union:
+        if len(packages) > 1 and is_union:
             formatted_package = formatted_package.replace(" or,",",")
             formatted_package = "Union["+formatted_package+"]"
         return formatted_package
