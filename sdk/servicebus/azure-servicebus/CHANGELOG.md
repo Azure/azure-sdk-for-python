@@ -1,5 +1,11 @@
 # Release History
 
+## 7.6.2 (Unreleased)
+
+### Bugs Fixed
+
+- Make AMQP exceptions retryable by default to ensure that InternalServerErrors are retried.
+
 ## 7.6.1 (2022-04-11)
 
 ### Other Changes
