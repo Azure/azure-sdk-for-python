@@ -75,7 +75,7 @@ class UserProxy(object):
     async def read(self, **kwargs: Any) -> Dict[str, Any]:
         """Read user properties.
 
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :returns: A dictionary of the retrieved user properties.
@@ -301,7 +301,7 @@ class UserProxy(object):
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be deleted.
         :type permission: Union[str, Dict[str, Any], ~azure.cosmos.Permission]
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.

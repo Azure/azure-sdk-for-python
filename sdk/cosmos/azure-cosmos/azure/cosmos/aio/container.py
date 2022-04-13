@@ -123,7 +123,8 @@ class ContainerProxy(object):
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
