@@ -113,7 +113,7 @@ mock
 typing
 typing-extensions
 msal<2.0.0,>=1.12.0
-msal-extensions~=0.3.0
+msal-extensions~=1.0.0
 msrest>=0.6.21
 msrestazure<2.0.0,>=0.4.32
 azure-mgmt-core<2.0.0,>=1.3.0
@@ -159,6 +159,7 @@ chardet<5,>=3.0.2
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
 #override azure-data-tables msrest>=0.6.19
 #override azure-schemaregistry azure-core<2.0.0,>=1.20.0
+#override azure-schemaregistry-avroencoder typing-extensions>=4.0.1
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
@@ -258,6 +259,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-mobilenetwork msrest>=0.6.21
 #override azure-mgmt-kusto msrest>=0.6.21
 #override azure-mgmt-servicelinker msrest>=0.6.21
+#override azure-mgmt-servicelinker azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-azurestackhci msrest>=0.6.21
+#override azure-mgmt-azurestackhci azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-sqlvirtualmachine msrest>=0.6.21
 #override azure-mgmt-rdbms msrest>=0.6.21
 #override azure-cognitiveservices-anomalydetector azure-mgmt-core>=1.2.0,<2.0.0
@@ -298,15 +302,27 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-cdn azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-digitaltwins msrest>=0.6.21
 #override azure-mgmt-digitaltwins azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-mobilenetwork azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-kubernetesconfiguration msrest>=0.6.21
+#override azure-mgmt-kubernetesconfiguration azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-healthcareapis msrest>=0.6.21
+#override azure-mgmt-healthcareapis azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-media msrest>=0.6.21
 #override azure-mgmt-media azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-containerservice azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-resource azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-cognitiveservices msrest>=0.6.21
 #override azure-mgmt-cognitiveservices azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-eventgrid azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-frontdoor msrest>=0.6.21
 #override azure-mgmt-frontdoor azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-signalr msrest>=0.6.21
 #override azure-mgmt-signalr azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-iotcentral msrest>=0.6.21
 #override azure-mgmt-iotcentral azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-redisenterprise msrest>=0.6.21
+#override azure-mgmt-redisenterprise azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-storage azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-dashboard msrest>=0.6.21
+#override azure-mgmt-dashboard azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-loganalytics azure-mgmt-core>=1.3.0,<2.0.0

@@ -31,11 +31,11 @@ class ChangeLog:
         self.sort()
         buffer = []
         if self.features:
-            _build_md(self.features, "**Features**", buffer)
+            _build_md(sorted(set(self.features), key=self.features.index), "**Features**", buffer)
         if self.breaking_changes:
-            _build_md(self.breaking_changes, "**Breaking changes**", buffer)
+            _build_md(sorted(set(self.breaking_changes), key=self.breaking_changes.index), "**Breaking changes**", buffer)
         if not (self.features or self.breaking_changes) and self.optional_features:
-            _build_md(self.optional_features, "**Features**", buffer)
+            _build_md(sorted(set(self.optional_features), key=self.optional_features.index), "**Features**", buffer)
 
         return "\n".join(buffer).strip()
 
@@ -67,7 +67,7 @@ class ChangeLog:
             return
 
         # Is this a new operation, inside a known operation group?
-        function_name, parameter_name, *remaining_path = remaining_path
+        function_name, *remaining_path = remaining_path
         if not remaining_path:
             if is_deletion:
                 self.breaking_changes.append(_REMOVE_OPERATION.format(operation_name, function_name))
@@ -79,8 +79,18 @@ class ChangeLog:
             # Ignore change in metadata for now, they have no impact
             return
 
-        # So method signaure changed. Be vague for now
-        self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name, parameter_name))
+        if remaining_path[0] == "parameters":
+            old_parameters_list = self._old_report["operations"][operation_name]["functions"][function_name]['parameters']
+            new_parameters_list = self._new_report["operations"][operation_name]["functions"][function_name]['parameters']
+            old_parameters = {param_name['name'] for param_name in old_parameters_list}
+            new_parameters = {param_name['name'] for param_name in new_parameters_list}
+            # The new parameter is optional or not. Be breaking change for now.
+            for removed_parameter in old_parameters - new_parameters:
+                self.breaking_changes.append(_REMOVE_OPERATION_PARAM.format(operation_name, function_name, removed_parameter))
+            for added_parameter in new_parameters - old_parameters:
+                self.breaking_changes.append(_ADD_OPERATION_PARAM.format(operation_name, function_name,added_parameter))
+            return
+        raise NotImplementedError(f"Other situations. Be err for now: {str(remaining_path)}")
 
     def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
@@ -138,13 +148,14 @@ class ChangeLog:
 ## Features
 _ADD_OPERATION_GROUP = "Added operation group {}"
 _ADD_OPERATION = "Added operation {}.{}"
+_ADD_OPERATION_PARAM = "Operation {}.{} has a new parameter {}"
 _MODEL_PARAM_ADD = "Model {} has a new parameter {}"
 _MODEL_ADD = "Added model {}"
 
 ## Breaking Changes
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
-_SIGNATURE_CHANGE = "Operation {}.{} has a new signature {}"
+_REMOVE_OPERATION_PARAM = "Operation {}.{} no longer has parameter {}"
 _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"

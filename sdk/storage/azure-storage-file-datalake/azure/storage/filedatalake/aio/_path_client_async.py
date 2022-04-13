@@ -25,6 +25,27 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
 
 
 class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
+    """A base client for interacting with a DataLake file/directory, even if the file/directory may not
+    yet exist.
+
+    :param str account_url:
+        The URI to the storage account.
+    :param str file_system_name:
+        The file system for the directory or files.
+    :param str file_path:
+        The whole file path, so that to interact with a specific file.
+        eg. "{directory}/{subdirectory}/{file}"
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    """
     def __init__(
             self, account_url,  # type: str
             file_system_name,  # type: str
@@ -42,18 +63,18 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         kwargs.pop('_hosts', None)
 
-        self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=file_system_name,
-                                       blob_name=path_name,
+        self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=self.file_system_name,
+                                       blob_name=self.path_name,
                                        credential=credential,
                                        _hosts=self._blob_client._hosts,  # pylint: disable=protected-access
                                        **kwargs)
 
-        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=file_system_name,
-                                                   path=path_name, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=self.file_system_name,
+                                                   path=self.path_name, pipeline=self._pipeline)
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._blob_client.url,
                                                                                base_url=self._blob_client.url,
-                                                                               file_system=file_system_name,
-                                                                               path=path_name,
+                                                                               file_system=self.file_system_name,
+                                                                               path=self.path_name,
                                                                                pipeline=self._pipeline)
         api_version = get_api_version(kwargs)
         self._client._config.version = api_version  # pylint: disable=protected-access
