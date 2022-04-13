@@ -76,9 +76,9 @@ class DatabaseProxy(object):
     def __init__(
             self,
             client_connection: CosmosClientConnection,
-            id: str,
+            id: str,  # pylint: disable=redefined-builtin
             properties: Dict[str, Any] = None
-    ) -> None:  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :param client_connection: Client from which this database was retrieved.
         :type client_connection: ~azure.cosmos.aio.CosmosClientConnection

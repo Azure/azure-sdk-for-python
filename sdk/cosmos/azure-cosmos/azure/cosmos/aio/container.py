@@ -61,9 +61,9 @@ class ContainerProxy(object):
             self,
             client_connection: CosmosClientConnection,
             database_link: str,
-            id: str,
+            id: str,  # pylint: disable=redefined-builtin
             properties: Dict[str, Any] = None
-    ) -> None:  # pylint: disable=redefined-builtin
+    ) -> None:
         self.client_connection = client_connection
         self.id = id
         self._properties = properties

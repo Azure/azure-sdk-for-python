@@ -45,10 +45,10 @@ class UserProxy(object):
     def __init__(
             self,
             client_connection: CosmosClientConnection,
-            id: str,
+            id: str,  # pylint: disable=redefined-builtin
             database_link: str,
             properties: Dict[str, Any] = None
-    ) -> None:  # pylint: disable=redefined-builtin
+    ) -> None:
         self.client_connection = client_connection
         self.id = id
         self.user_link = u"{}/users/{}".format(database_link, id)
