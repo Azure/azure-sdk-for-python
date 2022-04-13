@@ -90,21 +90,19 @@ class ScriptsProxy(object):
         self,
         query: str,
         parameters: Optional[List[str]] = None,
-        max_item_count: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all stored procedures matching the given `query`.
 
-        :param query: The Azure Cosmos DB SQL query to execute.
-        :type query: str
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :type parameters: Optional[List[str]]
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :type max_item_count: Optional[int]
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An AsyncItemPaged of stored procedures (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
+        max_item_count = kwargs.pop('max_item_count', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -202,7 +200,6 @@ class ScriptsProxy(object):
         sproc: Union[str, Dict[str, Any]],
         partition_key: Optional[str] = None,
         params: Optional[List[Any]] = None,
-        enable_script_logging: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Execute a specified stored procedure.
@@ -215,8 +212,7 @@ class ScriptsProxy(object):
         :type partition_key: Optional[str]
         :param params: List of parameters to be passed to the stored procedure to be executed.
         :type params: Optional[List[Any]]
-        :param enable_script_logging: Enables or disables script logging for the current request.
-        :type enable_script_logging: Optional[bool]
+        :keyword bool enable_script_logging: Enables or disables script logging for the current request.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
             or if the stored procedure with given id does not exists in the container.
         :returns: Result of the executed stored procedure for the given parameters.
@@ -231,6 +227,7 @@ class ScriptsProxy(object):
                 if partition_key == NonePartitionKeyValue
                 else partition_key
             )
+        enable_script_logging = kwargs.pop('enable_script_logging', None)
         if enable_script_logging is not None:
             request_options["enableScriptLogging"] = enable_script_logging
 

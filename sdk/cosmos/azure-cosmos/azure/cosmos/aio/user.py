@@ -32,7 +32,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
-from ..permission import Permission as _Permission
+from ..permission import Permission
 
 
 class UserProxy(object):
@@ -57,7 +57,7 @@ class UserProxy(object):
     def __repr__(self) -> str:
         return "<UserProxy [{}]>".format(self.user_link)[:1024]
 
-    def _get_permission_link(self, permission_or_id: Union[_Permission, str, Dict[str, Any]]) -> str:
+    def _get_permission_link(self, permission_or_id: Union[Permission, str, Dict[str, Any]]) -> str:
         if isinstance(permission_or_id, str):
             return u"{}/permissions/{}".format(self.user_link, permission_or_id)
         try:
@@ -76,7 +76,7 @@ class UserProxy(object):
         """Read user properties.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :returns: A dictionary of the retrieved user properties.
         :rtype: Dict[str, Any]
@@ -93,18 +93,18 @@ class UserProxy(object):
         return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
-    def list_permissions(self, max_item_count: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged[Dict[str, Any]]:
+    def list_permissions(self, **kwargs: Any) -> AsyncItemPaged[Dict[str, Any]]:
         """List all permission for the user.
 
-        :param max_item_count: Max number of permissions to be returned in the enumeration operation.
-        :type max_item_count: Optional[int]
+        :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :returns: An AsyncItemPaged of permissions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        max_item_count = kwargs.pop('max_item_count', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -119,25 +119,23 @@ class UserProxy(object):
     def query_permissions(
         self,
         query: str,
-        parameters: Optional[List[str]] = None,
-        max_item_count: Optional[int] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all permissions matching the given `query`.
 
-        :param query: The Azure Cosmos DB SQL query to execute.
-        :type query: str
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: Optional[List[str]]
-        :param max_item_count: Max number of permissions to be returned in the enumeration operation.
-        :type max_item_count: Optional[int]
+        :type parameters: Optional[List[Dict[str, Any]]]
+        :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :returns: An AsyncItemPaged of permissions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        max_item_count = kwargs.pop('max_item_count', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -156,16 +154,16 @@ class UserProxy(object):
     @distributed_trace_async
     async def get_permission(
             self,
-            permission: Union[str, Dict[str, Any], _Permission],
+            permission: Union[str, Dict[str, Any], Permission],
             **kwargs: Any
-    ) -> _Permission:
+    ) -> Permission:
         """Get the permission identified by `id`.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be retrieved.
         :type permission: Union[str, Dict[str, Any], ~azure.cosmos.Permission]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
         :returns: The retrieved permission object.
         :rtype: ~azure.cosmos.Permission
@@ -180,7 +178,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
 
-        return _Permission(
+        return Permission(
             id=permission_resp["id"],
             user_link=self.user_link,
             permission_mode=permission_resp["permissionMode"],
@@ -189,7 +187,7 @@ class UserProxy(object):
         )
 
     @distributed_trace_async
-    async def create_permission(self, body: Dict[str, Any], **kwargs: Any) -> _Permission:
+    async def create_permission(self, body: Dict[str, Any], **kwargs: Any) -> Permission:
         """Create a permission for the user.
 
         To update or replace an existing permission, use the :func:`UserProxy.upsert_permission` method.
@@ -197,7 +195,7 @@ class UserProxy(object):
         :param body: A dict-like object representing the permission to create.
         :type body: Dict[str, Any]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be created.
         :returns: A permission object representing the new permission.
         :rtype: ~azure.cosmos.Permission
@@ -212,7 +210,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
 
-        return _Permission(
+        return Permission(
             id=permission["id"],
             user_link=self.user_link,
             permission_mode=permission["permissionMode"],
@@ -221,7 +219,7 @@ class UserProxy(object):
         )
 
     @distributed_trace_async
-    async def upsert_permission(self, body: Dict[str, Any], **kwargs: Any) -> _Permission:
+    async def upsert_permission(self, body: Dict[str, Any], **kwargs: Any) -> Permission:
         """Insert or update the specified permission.
 
         If the permission already exists in the container, it is replaced. If
@@ -230,7 +228,7 @@ class UserProxy(object):
         :param body: A dict-like object representing the permission to update or insert.
         :type body: Dict[str, Any]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission could not be upserted.
         :returns: A dict representing the upserted permission.
         :rtype: ~azure.cosmos.Permission
@@ -245,7 +243,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
 
-        return _Permission(
+        return Permission(
             id=permission["id"],
             user_link=self.user_link,
             permission_mode=permission["permissionMode"],
@@ -256,10 +254,10 @@ class UserProxy(object):
     @distributed_trace_async
     async def replace_permission(
             self,
-            permission: Union[str, Dict[str, Any], _Permission],
+            permission: Union[str, Dict[str, Any], Permission],
             body: Dict[str, Any],
             **kwargs: Any
-    ) -> _Permission:
+    ) -> Permission:
         """Replaces the specified permission if it exists for the user.
 
         If the permission does not already exist, an exception is raised.
@@ -270,7 +268,7 @@ class UserProxy(object):
         :param body: A dict-like object representing the permission to replace.
         :type body: Dict[str, Any]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the permission
             with given id does not exist.
         :returns: A permission object representing the permission after the replace went through.
@@ -286,7 +284,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission_resp)
 
-        return _Permission(
+        return Permission(
             id=permission_resp["id"],
             user_link=self.user_link,
             permission_mode=permission_resp["permissionMode"],
@@ -295,7 +293,7 @@ class UserProxy(object):
         )
 
     @distributed_trace_async
-    async def delete_permission(self, permission: Union[str, Dict[str, Any], _Permission], **kwargs: Any) -> None:
+    async def delete_permission(self, permission: Union[str, Dict[str, Any], Permission], **kwargs: Any) -> None:
         """Delete the specified permission from the user.
 
         If the permission does not already exist, an exception is raised.
@@ -304,7 +302,7 @@ class UserProxy(object):
             instance of the permission to be deleted.
         :type permission: Union[str, Dict[str, Any], ~azure.cosmos.Permission]
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable
+        :paramtype response_hook: Callable[[Dict[str, str]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
         :rtype: None
