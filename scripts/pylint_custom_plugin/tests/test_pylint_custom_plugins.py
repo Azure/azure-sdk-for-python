@@ -3159,6 +3159,21 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node)
 
+    def test_acceptable_8(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                     # type: (**Any) -> Offer
+                    '''
+                    :rtype: ~azure.cosmos.Offer
+                    '''
+                    return offer
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
 
 
 

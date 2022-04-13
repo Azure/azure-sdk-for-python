@@ -1990,13 +1990,12 @@ class ReturnTypeMismatch(BaseChecker):
                 packages = doc_type.split(tilda_to_ignore_package)
                 doc_type = ''
                 for p in range(0, len(packages)):
-                    doc_type += packages[p].split(".")[-1].strip("or ")
-
-
+                    doc_type += packages[p].split(".")[-1].strip()
                     # If it is an "or"
                     if p!=0 and p!=len(packages)-1 and is_union:
                         doc_type += ", "
                 if len(packages)>1 and is_union:
+                    doc_type = doc_type.replace(" or,",",")
                     doc_type = "Union["+doc_type+"]"
 
             # print("RTYPE", rtype)
