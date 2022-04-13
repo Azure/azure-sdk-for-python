@@ -5,6 +5,7 @@ stages:
     parameters:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 300
+      TestProxy: true
       MatrixReplace:
         - TestSamples=.*/true
       BuildTargetingString: azure-servicebus*
