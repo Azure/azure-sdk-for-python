@@ -2003,16 +2003,17 @@ class ReturnTypeMismatch(BaseChecker):
             # print("DOC TYPE", doc_type)
             # print("INNER TYPE", inner_type)
 
-            if rtype not in doc_type:
-                self.add_message(
-                    msgid="return-type-mismatch", node=node, confidence=None
-                )
             # if rtype in (" ".join(generic_and_legacy_types)):
             #     # Check if innards match
-            #     if "".join(inner_type) not in doc_type:
+            #     if rtype.lower() not in doc_type.lower():
             #         self.add_message(
             #             msgid="return-type-mismatch", node=node, confidence=None
             #         )
+            if rtype.lower() not in doc_type.lower():
+                self.add_message(
+                    msgid="return-type-mismatch", node=node, confidence=None
+                )
+        
 
    
 
