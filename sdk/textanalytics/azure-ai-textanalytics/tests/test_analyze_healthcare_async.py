@@ -27,6 +27,7 @@ from azure.ai.textanalytics import (
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 
+@pytest.mark.skip("Not deployed yet")
 class TestHealth(TextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0

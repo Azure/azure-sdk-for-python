@@ -59,6 +59,7 @@ TextAnalyticsCustomPreparer = functools.partial(
     textanalytics_custom_entities_deployment_name="custom_entities_deployment_name",
 )
 
+@pytest.mark.skip("Not deployed yet")
 class TestAnalyze(TextAnalyticsTest):
 
     def _interval(self):

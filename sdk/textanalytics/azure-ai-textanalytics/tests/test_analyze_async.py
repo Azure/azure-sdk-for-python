@@ -97,6 +97,7 @@ class AsyncMockTransport(mock.MagicMock):
         await asyncio.sleep(duration)
 
 
+@pytest.mark.skip("Not deployed yet")
 class TestAnalyzeAsync(TextAnalyticsTest):
 
     def _interval(self):

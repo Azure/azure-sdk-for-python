@@ -22,6 +22,7 @@ from ._request_handlers import (
     _validate_input,
     _determine_action_type,
     _check_string_index_type_arg,
+    is_language_api
 )
 from ._version import DEFAULT_API_VERSION
 from ._response_handlers import (
@@ -198,13 +199,29 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
+
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextLanguageDetectionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.LanguageDetectionTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", language_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.languages(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", language_result),
                 **kwargs
             )
@@ -283,19 +300,34 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             self._api_version,
             string_index_type_default=self._string_index_type_default,
         )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextEntityRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.EntitiesTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                string_index_type=string_index_type,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", entities_result),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -377,25 +409,41 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         domain_filter = kwargs.pop("domain_filter", None)
         categories_filter = kwargs.pop("categories_filter", None)
-
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
             string_index_type_default=self._string_index_type_default,
         )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextPiiEntitiesRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.PiiTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            domain=domain_filter,
+                            pii_categories=categories_filter,
+                            string_index_type=string_index_type
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", pii_entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
                 pii_categories=categories_filter,
+                logging_opt_out=disable_service_logs,
+                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
@@ -480,21 +528,35 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
             string_index_type_default=self._string_index_type_default,
         )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextEntityLinkingInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.EntityLinkingTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", linked_entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.entities_linking(
                 documents=docs,
+                logging_opt_out=disable_service_logs,
                 model_version=model_version,
+                string_index_type=string_index_type,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", linked_entities_result),
                 **kwargs
@@ -724,14 +786,29 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextKeyPhraseExtractionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.KeyPhraseTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", key_phrases_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.key_phrases(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", key_phrases_result),
                 **kwargs
             )
@@ -813,17 +890,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
             string_index_type_default=self._string_index_type_default,
         )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
-
         if show_opinion_mining is not None:
             if (
                 self._api_version == TextAnalyticsApiVersion.V3_0
@@ -832,12 +903,32 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 raise ValueError(
                     "'show_opinion_mining' is only available for API version v3.1 and up"
                 )
-            kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return self._client.analyze_text(
+                    body=models.AnalyzeTextSentimentAnalysisInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.SentimentAnalysisTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type,
+                            opinion_mining=show_opinion_mining,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", sentiment_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return self._client.sentiment(
                 documents=docs,
+                logging_opt_out=disable_service_logs,
                 model_version=model_version,
+                string_index_type=string_index_type,
+                opinion_mining=show_opinion_mining,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
