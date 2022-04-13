@@ -11,8 +11,6 @@ from .._generated.models import (
     CustomAnalyzer as _CustomAnalyzer,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
-    DefaultCognitiveServicesAccount as _DefaultCognitiveServicesAccount,
-    CognitiveServicesAccountKey as _CognitiveServicesAccountKey,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
     SearchIndexerDataSource as _SearchIndexerDataSource,
     SynonymMap as _SynonymMap,
@@ -546,77 +544,6 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
         )
-
-
-class DefaultCognitiveServicesAccount(_DefaultCognitiveServicesAccount):
-    """An empty object that represents the default cognitive service resource for a skillset.
-
-    :param description: Description of the cognitive service resource attached to a skillset.
-    :type description: str
-    """
-
-    _validation = {
-        "odata_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-    }
-
-    def __init__(self, description, **kwargs):
-        super(DefaultCognitiveServicesAccount, self).__init__(**kwargs)
-        self.odata_type = "#Microsoft.Azure.Search.DefaultCognitiveServices"  # type: str
-        self.description = description
-
-    def _to_generated(self):
-        return _DefaultCognitiveServicesAccount(odata_type=self.odata_type, description=self.description)
-
-    @classmethod
-    def _from_generated(cls, cognitive_services_account):
-        if not cognitive_services_account:
-            return None
-        return cls(cognitive_services_account.description)
-
-
-class CognitiveServicesAccountKey(_CognitiveServicesAccountKey):
-    """A cognitive service resource provisioned with a key that is attached to a skillset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param description: Description of the cognitive service resource attached to a skillset.
-    :type description: str
-    :param key: Required. The key used to provision the cognitive service resource attached to a
-     skillset.
-    :type key: str
-    """
-
-    _validation = {
-        "odata_type": {"required": True},
-        "key": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "key": {"key": "key", "type": "str"},
-    }
-
-    def __init__(self, key, description, **kwargs):
-        super(CognitiveServicesAccountKey, self).__init__(**kwargs)
-        self.odata_type = "#Microsoft.Azure.Search.CognitiveServicesByKey"  # type: str
-        self.key = key
-        self.description = description
-
-    def _to_generated(self):
-        return _CognitiveServicesAccountKey(odata_type=self.odata_type, key=self.key, description=self.description)
-
-    @classmethod
-    def _from_generated(cls, cognitive_services_account):
-        if not cognitive_services_account:
-            return None
-        return cls(cognitive_services_account.key, cognitive_services_account.description)
-
 
 def pack_analyzer(analyzer):
     if not analyzer:
