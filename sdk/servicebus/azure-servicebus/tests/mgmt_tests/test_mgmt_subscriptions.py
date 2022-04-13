@@ -144,7 +144,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.delete_topic(topic_name)
 
     @ServiceBusPreparer()
-    @recorded_by_proxy
+    @pytest.mark.live_test_only
     def test_mgmt_subscription_update_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
@@ -411,7 +411,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             SubscriptionProperties("randomname")
 
     @ServiceBusPreparer()
-    @recorded_by_proxy
+    @pytest.mark.live_test_only
     def test_mgmt_subscription_update_dict_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
