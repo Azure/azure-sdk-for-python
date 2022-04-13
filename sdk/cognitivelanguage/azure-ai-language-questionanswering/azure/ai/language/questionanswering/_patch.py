@@ -7,7 +7,7 @@ from typing import Any
 
 from azure.core.credentials import AzureKeyCredential
 
-from ._question_answering_client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
+from ._client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
 
 
 class QuestionAnsweringClient(QuestionAnsweringClientGenerated):

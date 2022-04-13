@@ -21,12 +21,12 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._vendor import MixinABC
 
 T = TypeVar("T")
-JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -34,72 +34,65 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_get_answers_request(
-    *, project_name: str, deployment_name: str, json: JSONType = None, content: Any = None, **kwargs: Any
+    *,
+    project_name: str,
+    deployment_name: str,
+    json: Optional[_models.AnswersOptions] = None,
+    content: Any = None,
+    **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/:query-knowledgebases"
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters["projectName"] = _SERIALIZER.query("project_name", project_name, "str")
-    _query_parameters["deploymentName"] = _SERIALIZER.query("deployment_name", deployment_name, "str")
-    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["projectName"] = _SERIALIZER.query("project_name", project_name, "str")
+    _params["deploymentName"] = _SERIALIZER.query("deployment_name", deployment_name, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_answers_from_text_request(*, json: JSONType = None, content: Any = None, **kwargs: Any) -> HttpRequest:
-    api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
-    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+def build_get_answers_from_text_request(
+    *, json: Optional[_models.AnswersFromTextOptions] = None, content: Any = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/:query-text"
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 class QuestionAnsweringClientOperationsMixin(MixinABC):
     @distributed_trace
     def get_answers(
-        self, options: "_models.AnswersOptions", *, project_name: str, deployment_name: str, **kwargs: Any
-    ) -> "_models.AnswersResult":
+        self, options: _models.AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
+    ) -> _models.AnswersResult:
         """Answers the specified question using your knowledge base.
 
         Answers the specified question using your knowledge base.
@@ -115,11 +108,16 @@ class QuestionAnsweringClientOperationsMixin(MixinABC):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnswersResult"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnswersResult]
 
         _json = self._serialize.body(options, "AnswersOptions")
 
@@ -129,6 +127,8 @@ class QuestionAnsweringClientOperationsMixin(MixinABC):
             project_name=project_name,
             deployment_name=deployment_name,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -154,8 +154,8 @@ class QuestionAnsweringClientOperationsMixin(MixinABC):
 
     @distributed_trace
     def get_answers_from_text(
-        self, options: "_models.AnswersFromTextOptions", **kwargs: Any
-    ) -> "_models.AnswersFromTextResult":
+        self, options: _models.AnswersFromTextOptions, **kwargs: Any
+    ) -> _models.AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 
         Answers the specified question using the provided text in the body.
@@ -167,11 +167,16 @@ class QuestionAnsweringClientOperationsMixin(MixinABC):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnswersFromTextResult"]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnswersFromTextResult]
 
         _json = self._serialize.body(options, "AnswersFromTextOptions")
 
@@ -179,6 +184,8 @@ class QuestionAnsweringClientOperationsMixin(MixinABC):
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
