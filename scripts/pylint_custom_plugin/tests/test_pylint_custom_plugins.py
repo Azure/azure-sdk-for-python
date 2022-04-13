@@ -3175,8 +3175,47 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_functiondef(function_node)
 
+    def test_acceptable_9(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                     # type: (**Any) -> LROPoller[List[RecognizedForm]]
+                    '''
+                    :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+                    '''
+                    return offer
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
 
 
+    def test_acceptable_10(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            class SomeClient(object): #@
+                def create_entity( #@
+                    self,
+                    entity,  # type: EntityType
+                    **kwargs  # type: Any
+                ): 
+                    # type: (...) -> Dict[str, str]
+                    '''Insert entity in a table.
+                    :param entity: The properties for the table entity.
+                    :type entity: Union[TableEntity, Mapping[str, Any]]
+                    :return: Dictionary mapping operation metadata returned from the service
+                    :rtype: Dict[str, str]
+                    :raises: :class:`~azure.core.exceptions.HttpResponseError`
+                    '''
+                    pass
+            """
+        )
+        
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
 
 
 

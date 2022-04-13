@@ -6,7 +6,7 @@
 """
 Pylint custom checkers for SDK guidelines: C4717 - C4744
 """
-
+from typing import Dict
 import logging
 import astroid
 import re
@@ -1946,8 +1946,6 @@ class ReturnTypeMismatch(BaseChecker):
     
     def visit_functiondef(self, node):
 
-        generic_and_legacy_types = ["list","List","tuple","Tuple","dict","Dict","Iterable","Sequence","Mapping"]
-        override_type = "Union"
         tilda_to_ignore_package = "~"
 
         if node.type_comment_returns:
@@ -1957,30 +1955,17 @@ class ReturnTypeMismatch(BaseChecker):
             except AttributeError:
                 return
             
-            
             return_type = -1
             for line in docstring:
                 if "rtype" in line:
                     return_type = docstring.index(line)
             # TODO: If there is no rtype -- return, nothing to compare --- we might want to actually remove this
-            if return_type==-1:
-                return
-            # print(return_type)
-            # Breaking up type 
-            
-            # if override_type in node.type_comment_returns.as_string():
-            rtype = node.type_comment_returns.as_string()
-            # inner_type= ""
-            # else:
-            #     split_rtype = node.type_comment_returns.as_string().split("[")
-            #     rtype = split_rtype[0]
-            #     inner_type = " ".join(split_rtype[1:]).split("]")
+            # if return_type==-1:
+            #     return
 
-            # TODO: conver "[" to "(" - are there cases where this could happen ?
-            # https://github.com/l0lawrence/azure-sdk-for-python/blob/f56c26b09645d9e063679ea21069417f1ae3a5af/sdk/containerregistry/azure-containerregistry/azure/containerregistry/_container_registry_client.py#L224
-    
+            rtype = node.type_comment_returns.as_string()
+   
             doc_type = docstring[return_type].split(":")[-1].strip()
-            # print(docstring[return_type].split(":"))
 
             # If there is a tilda, ignore the package path and just compare the name, if there are multiple - make it a Union
             is_union = False
@@ -1988,6 +1973,7 @@ class ReturnTypeMismatch(BaseChecker):
                 if " or " in doc_type: 
                     is_union=True
                 packages = doc_type.split(tilda_to_ignore_package)
+                print(packages)
                 doc_type = ''
                 for p in range(0, len(packages)):
                     doc_type += packages[p].split(".")[-1].strip()
@@ -1998,28 +1984,11 @@ class ReturnTypeMismatch(BaseChecker):
                     doc_type = doc_type.replace(" or,",",")
                     doc_type = "Union["+doc_type+"]"
 
-            # print("RTYPE", rtype)
-            # print("DOC TYPE", doc_type)
-            # print("INNER TYPE", inner_type)
-
-            # if rtype in (" ".join(generic_and_legacy_types)):
-            #     # Check if innards match
-            #     if rtype.lower() not in doc_type.lower():
-            #         self.add_message(
-            #             msgid="return-type-mismatch", node=node, confidence=None
-            #         )
             if rtype.lower() not in doc_type.lower():
                 self.add_message(
                     msgid="return-type-mismatch", node=node, confidence=None
                 )
         
-
-   
-
-            
-            
-
-
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
