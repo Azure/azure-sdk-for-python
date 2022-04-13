@@ -30,8 +30,10 @@ from ._models_py3 import AmazonS3Dataset
 from ._models_py3 import AmazonS3LinkedService
 from ._models_py3 import AmazonS3Location
 from ._models_py3 import AmazonS3ReadSettings
+from ._models_py3 import AppFiguresLinkedService
 from ._models_py3 import AppendVariableActivity
 from ._models_py3 import ArtifactRenameRequest
+from ._models_py3 import AsanaLinkedService
 from ._models_py3 import AutoPauseProperties
 from ._models_py3 import AutoScaleProperties
 from ._models_py3 import AvroDataset
@@ -205,6 +207,7 @@ from ._models_py3 import DatasetReference
 from ._models_py3 import DatasetResource
 from ._models_py3 import DatasetSchemaDataElement
 from ._models_py3 import DatasetStorageFormat
+from ._models_py3 import DataworldLinkedService
 from ._models_py3 import Db2LinkedService
 from ._models_py3 import Db2Source
 from ._models_py3 import Db2TableDataset
@@ -677,6 +680,7 @@ from ._models_py3 import TriggerRunsQueryResponse
 from ._models_py3 import TriggerSubscriptionOperationStatus
 from ._models_py3 import TumblingWindowTrigger
 from ._models_py3 import TumblingWindowTriggerDependencyReference
+from ._models_py3 import TwilioLinkedService
 from ._models_py3 import TypeConversionSettings
 from ._models_py3 import UntilActivity
 from ._models_py3 import UpdateLandingZoneCredential
@@ -857,8 +861,10 @@ __all__ = [
     'AmazonS3LinkedService',
     'AmazonS3Location',
     'AmazonS3ReadSettings',
+    'AppFiguresLinkedService',
     'AppendVariableActivity',
     'ArtifactRenameRequest',
+    'AsanaLinkedService',
     'AutoPauseProperties',
     'AutoScaleProperties',
     'AvroDataset',
@@ -1032,6 +1038,7 @@ __all__ = [
     'DatasetResource',
     'DatasetSchemaDataElement',
     'DatasetStorageFormat',
+    'DataworldLinkedService',
     'Db2LinkedService',
     'Db2Source',
     'Db2TableDataset',
@@ -1504,6 +1511,7 @@ __all__ = [
     'TriggerSubscriptionOperationStatus',
     'TumblingWindowTrigger',
     'TumblingWindowTriggerDependencyReference',
+    'TwilioLinkedService',
     'TypeConversionSettings',
     'UntilActivity',
     'UpdateLandingZoneCredential',
