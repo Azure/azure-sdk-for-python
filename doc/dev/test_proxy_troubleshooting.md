@@ -16,6 +16,7 @@ GitHub repository, and documentation of how to set up and use the proxy can be f
 - [KeyError during container startup](#keyerror-during-container-startup)
 - [ConnectionError during test startup](#connectionerror-during-test-startup)
 - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
+- [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
 
 ## General troubleshooting tip
 
@@ -91,10 +92,20 @@ if exc_info.type is HttpResponseError:
     assert "Name does not resolve" in response_content["Message"]
 ```
 
+## Test setup failure in test pipeline
+
+If the test proxy isn't configured correctly for pipeline tests, you may see each test fail with an error message
+of `test setup failure`. To resolve this, follow the instructions in the
+[Enable the test proxy in pipelines][proxy_pipelines] section of the [migration guide][migration_guide]. The test
+proxy should be enabled for playback test pipelines and disabled for live test pipelines, since recordings are only
+involved in the former scenario.
+
+
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[proxy_pipelines]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#enable-the-test-proxy-in-pipelines
 [proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
