@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(ClientBase):
+class EventHubConsumerClient(ClientBase):   # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
