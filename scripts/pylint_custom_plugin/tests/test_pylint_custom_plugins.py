@@ -3212,6 +3212,23 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
                     pass
             """
         )
+    
+    def test_acceptable_11(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            import azure
+            class SomeClient(object): #@
+                def something( #@
+                    self,
+                    **kwargs  # type: Any
+                ): 
+                    # type: (...) -> list[azure.core.paging.ItemPaged[Something]]
+                    '''
+                    :rtype: list[~azure.core.paging.ItemPaged[Something]]
+                    '''
+                    pass
+            """
+        )
         
     
         with self.assertNoMessages():

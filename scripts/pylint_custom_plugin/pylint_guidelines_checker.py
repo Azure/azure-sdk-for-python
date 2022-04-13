@@ -1964,31 +1964,36 @@ class ReturnTypeMismatch(BaseChecker):
             #     return
 
             rtype = node.type_comment_returns.as_string()
+
+            # If rtype has a path
+            if "." in node.type_comment_returns.as_string():
+                rtype = self.format_paths([rtype], False)
    
             doc_type = docstring[return_type].split(":")[-1].strip()
 
             # If there is a tilda, ignore the package path and just compare the name, if there are multiple - make it a Union
             is_union = False
             if tilda_to_ignore_package in doc_type:
-                if " or " in doc_type: 
-                    is_union=True
+                if " or " in doc_type:
+                    is_union = True
                 packages = doc_type.split(tilda_to_ignore_package)
-                print(packages)
-                doc_type = ''
-                for p in range(0, len(packages)):
-                    doc_type += packages[p].split(".")[-1].strip()
-                    # If it is an "or"
-                    if p!=0 and p!=len(packages)-1 and is_union:
-                        doc_type += ", "
-                if len(packages)>1 and is_union:
-                    doc_type = doc_type.replace(" or,",",")
-                    doc_type = "Union["+doc_type+"]"
+                doc_type = self.format_paths(packages, is_union)
 
             if rtype.lower() not in doc_type.lower():
                 self.add_message(
                     msgid="return-type-mismatch", node=node, confidence=None
                 )
-        
+    def format_paths(self, packages, is_union):
+        formatted_package = ''
+        for p in range(0, len(packages)):
+            formatted_package += packages[p].split(".")[-1].strip()
+            # If it is an "or"
+            if p!=0 and p!=len(packages)-1 and is_union:
+                formatted_package += ", "
+        if len(packages)>1 and is_union:
+            formatted_package = formatted_package.replace(" or,",",")
+            formatted_package = "Union["+formatted_package+"]"
+        return formatted_package
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
