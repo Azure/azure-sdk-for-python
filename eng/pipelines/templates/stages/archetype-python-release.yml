@@ -85,7 +85,7 @@ stages:
 
                       - script: |
                           set -e
-                          pip install -r eng/release_dependencies.txt
+                          pip install -r eng/release_requirements.txt
                           pip install tools/azure-sdk-tools
                         displayName: Install Release Dependencies
 
