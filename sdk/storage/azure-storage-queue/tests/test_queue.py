@@ -71,27 +71,6 @@ class StorageQueueTest(StorageTestCase):
         self.assertTrue(created)
 
     @QueuePreparer()
-    def test_create_queue_if_not_exists_without_existing_queue(self, storage_account_name, storage_account_key):
-        # Action
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        queue_client = self._get_queue_reference(qsc)
-        created = queue_client.create_queue_if_not_exists()
-
-        # Asserts
-        self.assertTrue(created)
-
-    @QueuePreparer()
-    def test_create_queue_if_not_exists_with_existing_queue(self, storage_account_name, storage_account_key):
-        # Action
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        queue_client = self._get_queue_reference(qsc)
-        queue_client.create_queue()
-        created = queue_client.create_queue_if_not_exists()
-
-        # Asserts
-        self.assertIsNone(created)
-
-    @QueuePreparer()
     def test_create_queue_fail_on_exist(self, storage_account_name, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)

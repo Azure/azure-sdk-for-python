@@ -35,7 +35,7 @@ def build_list_file_systems_request(
 ):
     # type: (...) -> HttpRequest
     resource = kwargs.pop('resource', "account")  # type: str
-    version = kwargs.pop('version', "2020-10-02")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     prefix = kwargs.pop('prefix', None)  # type: Optional[str]
     continuation = kwargs.pop('continuation', None)  # type: Optional[str]
     max_results = kwargs.pop('max_results', None)  # type: Optional[int]
