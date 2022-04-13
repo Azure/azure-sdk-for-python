@@ -2027,6 +2027,19 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
+    
+    def test_list_return_type_file_custom_class_acceptable(self):
+        file = open("./test_files/list_return_type_custom_class_acceptable.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        function_node = node.body[1].body[1]
+       
+        with self.assertAddsMessages(
+            pylint.testutils.Message(
+                msg_id="client-list-methods-use-paging", node=function_node
+        )):
+            self.checker.visit_functiondef(function_node)
 
     def test_guidelines_link_active(self):
         url = "https://azure.github.io/azure-sdk/python_design.html#response-formats"
