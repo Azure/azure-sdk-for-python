@@ -14,6 +14,7 @@ stages:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       Clouds: 'Public,Canary'
