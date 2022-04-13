@@ -9,7 +9,7 @@ steps:
     # This variable is set in globals.yml
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: $(PythonVersion)
+        versionSpec: '3.8'
 
     - task: PowerShell@2
       displayName: Prep template pipeline for release
