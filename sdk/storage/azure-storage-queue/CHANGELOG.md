@@ -1,6 +1,6 @@
 # Release History
 
-## 12.3.0b1 (Unreleased)
+## 12.3.0b1 (2022-04-14)
 
 ### Features Added
 - Added support for `max_messages` in `receive_messages()` to specify the maximum number of messages to receive from the queue.
