@@ -3055,8 +3055,8 @@ class TestCheckExceptionLogging(pylint.testutils.CheckerTestCase):
                 def __init__(self, something, **kwargs): #@
                     try:
                         pass
-                    except (Exception, AttributeError):
-                        logger.Warning("this is not okay"+ repr(Exception))
+                    except (Exception, AttributeError) as e:
+                        logger.Warning("this is not okay"+ repr(e))
             """
         )
     
