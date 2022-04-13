@@ -93,7 +93,7 @@ stages:
                         displayName: Verify Dependency Presence
                         condition: and(succeeded(), ne(variables['Skip.VerifyDependencies'], 'true'))
                         inputs:
-                          scriptPath: 'eng/scripts/devops_tasks/verify_dependencies_present.py'
+                          scriptPath: 'scripts/devops_tasks/verify_dependencies_present.py'
                           arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
 
                       - task: TwineAuthenticate@1

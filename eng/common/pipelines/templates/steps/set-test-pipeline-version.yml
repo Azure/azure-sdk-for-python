@@ -6,7 +6,6 @@ parameters:
 steps:
 - ${{ if eq(parameters.TestPipeline, 'true') }}:
 
-    # This variable is set in globals.yml
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.8'
