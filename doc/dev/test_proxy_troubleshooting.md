@@ -71,13 +71,13 @@ installed and is up to date, and ensure that Linux containers are being used.
 
 ## Different error than expected when using proxy
 
-Some tests intentionally trigger exceptions in order to validate error behavior. There's a known case where the
-exception returned will be different when using the test proxy vs. when sending requests to the service directly.
+Some tests intentionally trigger exceptions in order to validate error behavior. There are a few known cases where
+the exception returned will be different when using the test proxy vs. when sending requests to the service directly.
 
-This happens in the case of a DNS lookup failure, which can occur when trying to contact a nonexistent endpoint.
-[This issue][wrong_exception] describes an instance of this behavior. As described in the issue, the best way to
-work around this for the time being is to have tests expect either of two potential errors, to cover both cases.
-For example:
+One such instance is in the case of a DNS lookup failure, which can occur when trying to contact a nonexistent
+endpoint. [This issue][wrong_exception] describes an instance of this behavior. As described in the issue, the best
+way to work around this for the time being is to have tests expect either of two potential errors, to cover both
+cases. For example:
 
 ```python
 with pytest.raises((ServiceRequestError, HttpResponseError)) as exc_info:
