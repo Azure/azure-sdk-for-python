@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0b2 (unreleased)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
 ## 1.1.0b1 (2022-02-08)
 
 ### Features Added

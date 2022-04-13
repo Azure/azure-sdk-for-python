@@ -2,6 +2,8 @@
 
 ## 1.0.0b3 (2022-03-01)
 
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
 ### Features Added
 * Entity resolutions
 * Extra features
