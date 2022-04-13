@@ -345,7 +345,7 @@ extends:
 To run autorest automation locally run the following command from the home of `azure-sdk-for-python`
 
 ```bash
-azure-sdk-for-python> python scripts/devop_tasks/verify_autorest.py --service_directory <your_service_directory>
+azure-sdk-for-python> python scripts/devops_tasks/verify_autorest.py --service_directory <your_service_directory>
 ```
 
 ## Nightly Live Checks
