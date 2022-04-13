@@ -5,16 +5,16 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_orchestration_app_luis_response.py
+FILE: sample_analyze_orchestration_direct_target.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration project.
-    In this sample, orchestration project's top intent will map to a LUIS project.
+    In this sample, orchestration project's top intent will map to a Qna project.
 
     For more info about how to setup a CLU orchestration project, see the README.
 
 USAGE:
-    python sample_analyze_orchestration_app_luis_response.py
+    python sample_analyze_orchestration_direct_target.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CLU_ENDPOINT                       - endpoint for your CLU resource.
@@ -23,8 +23,8 @@ USAGE:
     4) AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
-def sample_analyze_orchestration_app_luis_response():
-    # [START analyze_orchestration_app_luis_response]
+def sample_analyze_orchestration_direct_target():
+    # [START analyze_orchestration_app_qna_response]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -34,7 +34,8 @@ def sample_analyze_orchestration_app_luis_response():
         CustomConversationalTask,
         ConversationAnalysisOptions,
         CustomConversationTaskParameters,
-        TextConversationItem
+        TextConversationItem,
+        QuestionAnsweringParameters
     )
 
     # get secrets
@@ -46,7 +47,8 @@ def sample_analyze_orchestration_app_luis_response():
     # analyze query
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     with client:
-        query = "Reserve a table for 2 at the Italian restaurant"
+        query = "How are you?"
+        qna_app = "ChitChat-QnA"
         result = client.analyze_conversation(
                 task=CustomConversationalTask(
                     analysis_input=ConversationAnalysisOptions(
@@ -56,7 +58,15 @@ def sample_analyze_orchestration_app_luis_response():
                     ),
                     parameters=CustomConversationTaskParameters(
                         project_name=project_name,
-                        deployment_name=deployment_name
+                        deployment_name=deployment_name,
+                        direct_target=qna_app,
+                        target_project_parameters={
+                            "ChitChat-QnA": QuestionAnsweringParameters(
+                                calling_options={
+                                    "question": query
+                                }
+                            )
+                        }
                     )
                 )
             )
@@ -72,15 +82,14 @@ def sample_analyze_orchestration_app_luis_response():
     print("confidence score: {}".format(top_intent_object.confidence))
     print("project kind: {}".format(top_intent_object.target_kind))
 
-    if top_intent_object.target_kind == "luis":
-        print("\nluis response:")
-        luis_response = top_intent_object.result["prediction"]
-        print("top intent: {}".format(luis_response["topIntent"]))
-        print("\nentities:")
-        for entity in luis_response["entities"]:
-            print("\n{}".format(entity))
+    if top_intent_object.target_kind == "question_answering":
+        print("\nview qna result:")
+        qna_result = top_intent_object.result
+        for answer in qna_result.answers:
+            print("\nanswer: {}".format(answer.answer))
+            print("answer: {}".format(answer.confidence))
 
-    # [END analyze_orchestration_app_luis_response]
+    # [END analyze_orchestration_app_qna_response]
 
 if __name__ == '__main__':
-    sample_analyze_orchestration_app_luis_response()
+    sample_analyze_orchestration_direct_target()
