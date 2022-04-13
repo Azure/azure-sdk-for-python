@@ -3125,8 +3125,39 @@ class TestReturnTypeMismatch(pylint.testutils.CheckerTestCase):
 
 
 
+    def test_acceptable_6(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            from azure.core.paging import ItemPaged
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                     # type: (**Any) -> ItemPaged[str]
+                    '''
+                    :rtype: ~azure.core.paging.ItemPaged[str]
+                    '''
+                    return ItemPaged()
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
 
-
+    def test_acceptable_7(self):
+        class_node, function_node = astroid.extract_node(
+            """
+            from azure.core.paging import ItemPaged
+            class SomeClient(object): #@
+                def __init__(self, **kwargs): #@
+                     # type: (**Any) -> ItemPaged[ArtifactManifestProperties]
+                    '''
+                    :rtype: ~azure.core.paging.ItemPaged[~azure.containerregistry.ArtifactManifestProperties]
+                    '''
+                    return ItemPaged()
+            """
+        )
+    
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
 
 
 

@@ -1962,7 +1962,7 @@ class ReturnTypeMismatch(BaseChecker):
             for line in docstring:
                 if "rtype" in line:
                     return_type = docstring.index(line)
-            # If there is no rtype -- return, nothing to compare
+            # TODO: If there is no rtype -- return, nothing to compare --- we might want to actually remove this
             if return_type==-1:
                 return
             # print(return_type)
@@ -1976,20 +1976,27 @@ class ReturnTypeMismatch(BaseChecker):
             #     rtype = split_rtype[0]
             #     inner_type = " ".join(split_rtype[1:]).split("]")
 
-            #TODO: conver "[" to "(" - are there cases where this could happen 
+            # TODO: conver "[" to "(" - are there cases where this could happen ?
+            # https://github.com/l0lawrence/azure-sdk-for-python/blob/f56c26b09645d9e063679ea21069417f1ae3a5af/sdk/containerregistry/azure-containerregistry/azure/containerregistry/_container_registry_client.py#L224
     
             doc_type = docstring[return_type].split(":")[-1].strip()
             # print(docstring[return_type].split(":"))
 
             # If there is a tilda, ignore the package path and just compare the name, if there are multiple - make it a Union
+            is_union = False
             if tilda_to_ignore_package in doc_type:
+                if " or " in doc_type: 
+                    is_union=True
                 packages = doc_type.split(tilda_to_ignore_package)
                 doc_type = ''
                 for p in range(0, len(packages)):
                     doc_type += packages[p].split(".")[-1].strip("or ")
-                    if p!=0 and p!=len(packages)-1:
+
+
+                    # If it is an "or"
+                    if p!=0 and p!=len(packages)-1 and is_union:
                         doc_type += ", "
-                if len(packages)>1:
+                if len(packages)>1 and is_union:
                     doc_type = "Union["+doc_type+"]"
 
             # print("RTYPE", rtype)
