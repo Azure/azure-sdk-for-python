@@ -2035,10 +2035,7 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
 
         function_node = node.body[1].body[1]
        
-        with self.assertAddsMessages(
-            pylint.testutils.Message(
-                msg_id="client-list-methods-use-paging", node=function_node
-        )):
+        with self.assertNoMessages():
             self.checker.visit_functiondef(function_node)
 
     def test_guidelines_link_active(self):
