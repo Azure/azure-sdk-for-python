@@ -112,10 +112,11 @@ def _handle_amqp_exception_with_condition(
         error=exception,
         condition=condition,
         status_code=status_code,
-        retryable=True,
     )
     if condition in _NO_RETRY_CONDITION_ERROR_CODES:
         error._retryable = False  # pylint: disable=protected-access
+    else:
+        error._retryable = True # pylint: disable=protected-access
 
     return error
 
