@@ -6,12 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._conversation_analysis_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class QuantityResolution(msrest.serialization.Model):
@@ -54,8 +56,8 @@ class BaseResolution(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
     """
@@ -90,12 +92,12 @@ class AgeResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar unit: Required. The Age Unit of measurement. Possible values include: "Unspecified",
-     "Year", "Month", "Week", "Day".
+    :ivar unit: Required. The Age Unit of measurement. Known values are: "Unspecified", "Year",
+     "Month", "Week", "Day".
     :vartype unit: str or ~azure.ai.language.conversations.models.AgeUnit
     """
 
@@ -115,14 +117,14 @@ class AgeResolution(BaseResolution, QuantityResolution):
         self,
         *,
         value: float,
-        unit: Union[str, "AgeUnit"],
+        unit: Union[str, "_models.AgeUnit"],
         **kwargs
     ):
         """
         :keyword value: Required. The numeric value that the extracted text denotes.
         :paramtype value: float
-        :keyword unit: Required. The Age Unit of measurement. Possible values include: "Unspecified",
-         "Year", "Month", "Week", "Day".
+        :keyword unit: Required. The Age Unit of measurement. Known values are: "Unspecified", "Year",
+         "Month", "Week", "Day".
         :paramtype unit: str or ~azure.ai.language.conversations.models.AgeUnit
         """
         super(AgeResolution, self).__init__(value=value, **kwargs)
@@ -139,8 +141,8 @@ class AnalysisParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_kind: Required. The type of a target service.Constant filled by server. Possible
-     values include: "luis", "conversation", "question_answering", "non_linked".
+    :ivar target_kind: Required. The type of a target service.Constant filled by server. Known
+     values are: "luis", "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -203,7 +205,7 @@ class AnalyzeConversationResult(msrest.serialization.Model):
         self,
         *,
         query: str,
-        prediction: "BasePrediction",
+        prediction: "_models.BasePrediction",
         detected_language: Optional[str] = None,
         **kwargs
     ):
@@ -231,7 +233,7 @@ class AnalyzeConversationTask(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Enumeration of supported Conversation tasks.Constant filled by server.
-     Possible values include: "CustomConversation".
+     Known values are: "CustomConversation".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationTaskKind
     """
 
@@ -266,7 +268,7 @@ class AnalyzeConversationTaskResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Enumeration of supported conversational task results.Constant filled by
-     server. Possible values include: "CustomConversationResult".
+     server. Known values are: "CustomConversationResult".
     :vartype kind: str or
      ~azure.ai.language.conversations.models.AnalyzeConversationTaskResultsKind
     """
@@ -351,11 +353,11 @@ class AreaResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar unit: Required. The area Unit of measurement. Possible values include: "Unspecified",
+    :ivar unit: Required. The area Unit of measurement. Known values are: "Unspecified",
      "SquareKilometer", "SquareHectometer", "SquareDecameter", "SquareDecimeter", "SquareMeter",
      "SquareCentimeter", "SquareMillimeter", "SquareInch", "SquareFoot", "SquareMile", "SquareYard",
      "Acre".
@@ -378,13 +380,13 @@ class AreaResolution(BaseResolution, QuantityResolution):
         self,
         *,
         value: float,
-        unit: Union[str, "AreaUnit"],
+        unit: Union[str, "_models.AreaUnit"],
         **kwargs
     ):
         """
         :keyword value: Required. The numeric value that the extracted text denotes.
         :paramtype value: float
-        :keyword unit: Required. The area Unit of measurement. Possible values include: "Unspecified",
+        :keyword unit: Required. The area Unit of measurement. Known values are: "Unspecified",
          "SquareKilometer", "SquareHectometer", "SquareDecameter", "SquareDecimeter", "SquareMeter",
          "SquareCentimeter", "SquareMillimeter", "SquareInch", "SquareFoot", "SquareMile", "SquareYard",
          "Acre".
@@ -405,7 +407,7 @@ class BaseExtraInformation(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar extra_information_kind: Required. The extra information object kind.Constant filled by
-     server. Possible values include: "EntitySubtype", "ListKey".
+     server. Known values are: "EntitySubtype", "ListKey".
     :vartype extra_information_kind: str or
      ~azure.ai.language.conversations.models.ExtraInformationKind
     """
@@ -440,8 +442,8 @@ class BasePrediction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar project_kind: Required. The type of the project.Constant filled by server. Possible
-     values include: "conversation", "workflow".
+    :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
+     are: "conversation", "workflow".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -481,8 +483,8 @@ class BooleanResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
     :ivar value: Required.
@@ -535,7 +537,7 @@ class ConversationAnalysisOptions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        conversation_item: "ConversationItemBase",
+        conversation_item: "_models.ConversationItemBase",
         **kwargs
     ):
         """
@@ -635,8 +637,8 @@ class ConversationEntity(msrest.serialization.Model):
         offset: int,
         length: int,
         confidence: float,
-        resolutions: Optional[List["BaseResolution"]] = None,
-        extra_information: Optional[List["BaseExtraInformation"]] = None,
+        resolutions: Optional[List["_models.BaseResolution"]] = None,
+        extra_information: Optional[List["_models.BaseExtraInformation"]] = None,
         **kwargs
     ):
         """
@@ -720,7 +722,7 @@ class ConversationItemBase(msrest.serialization.Model):
     :ivar language: The input language of a ConversationItem in BCP 47 language representation.
     :vartype language: str
     :ivar modality: Required. The modality (format) of ConversationItem (e.g., Text,
-     Transcript).Constant filled by server. Possible values include: "text".
+     Transcript).Constant filled by server. Known values are: "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.Modality
     """
 
@@ -769,8 +771,8 @@ class ConversationParameters(AnalysisParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_kind: Required. The type of a target service.Constant filled by server. Possible
-     values include: "luis", "conversation", "question_answering", "non_linked".
+    :ivar target_kind: Required. The type of a target service.Constant filled by server. Known
+     values are: "luis", "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -792,7 +794,7 @@ class ConversationParameters(AnalysisParameters):
         self,
         *,
         api_version: Optional[str] = None,
-        calling_options: Optional["ConversationCallingOptions"] = None,
+        calling_options: Optional["_models.ConversationCallingOptions"] = None,
         **kwargs
     ):
         """
@@ -811,8 +813,8 @@ class ConversationPrediction(BasePrediction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar project_kind: Required. The type of the project.Constant filled by server. Possible
-     values include: "conversation", "workflow".
+    :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
+     are: "conversation", "workflow".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -838,8 +840,8 @@ class ConversationPrediction(BasePrediction):
     def __init__(
         self,
         *,
-        intents: List["ConversationIntent"],
-        entities: List["ConversationEntity"],
+        intents: List["_models.ConversationIntent"],
+        entities: List["_models.ConversationEntity"],
         top_intent: Optional[str] = None,
         **kwargs
     ):
@@ -886,7 +888,7 @@ class ConversationResult(msrest.serialization.Model):
         self,
         *,
         query: str,
-        prediction: "ConversationPrediction",
+        prediction: "_models.ConversationPrediction",
         detected_language: Optional[str] = None,
         **kwargs
     ):
@@ -914,7 +916,7 @@ class TargetIntentResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
@@ -963,7 +965,7 @@ class ConversationTargetIntentResult(TargetIntentResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
@@ -991,7 +993,7 @@ class ConversationTargetIntentResult(TargetIntentResult):
         *,
         confidence: float,
         api_version: Optional[str] = None,
-        result: Optional["ConversationResult"] = None,
+        result: Optional["_models.ConversationResult"] = None,
         **kwargs
     ):
         """
@@ -1015,8 +1017,8 @@ class CurrencyResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
     :ivar iso4217: The alphabetic code based on another ISO standard, ISO 3166, which lists the
@@ -1073,7 +1075,7 @@ class CustomConversationalTask(AnalyzeConversationTask):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Enumeration of supported Conversation tasks.Constant filled by server.
-     Possible values include: "CustomConversation".
+     Known values are: "CustomConversation".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationTaskKind
     :ivar analysis_input: Required. The input ConversationItem and its optional parameters.
     :vartype analysis_input: ~azure.ai.language.conversations.models.ConversationAnalysisOptions
@@ -1096,8 +1098,8 @@ class CustomConversationalTask(AnalyzeConversationTask):
     def __init__(
         self,
         *,
-        analysis_input: "ConversationAnalysisOptions",
-        parameters: "CustomConversationTaskParameters",
+        analysis_input: "_models.ConversationAnalysisOptions",
+        parameters: "_models.CustomConversationTaskParameters",
         **kwargs
     ):
         """
@@ -1118,7 +1120,7 @@ class CustomConversationalTaskResult(AnalyzeConversationTaskResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Enumeration of supported conversational task results.Constant filled by
-     server. Possible values include: "CustomConversationResult".
+     server. Known values are: "CustomConversationResult".
     :vartype kind: str or
      ~azure.ai.language.conversations.models.AnalyzeConversationTaskResultsKind
     :ivar results: Required. Represents a conversation analysis response.
@@ -1138,7 +1140,7 @@ class CustomConversationalTaskResult(AnalyzeConversationTaskResult):
     def __init__(
         self,
         *,
-        results: "AnalyzeConversationResult",
+        results: "_models.AnalyzeConversationResult",
         **kwargs
     ):
         """
@@ -1163,11 +1165,6 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
     :vartype verbose: bool
     :ivar is_logging_enabled: If true, the service will keep the query for further review.
     :vartype is_logging_enabled: bool
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-     "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
     :ivar direct_target: The name of a target project to forward the request to.
     :vartype direct_target: str
     :ivar target_project_parameters: A dictionary representing the parameters for each target
@@ -1186,7 +1183,6 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         'deployment_name': {'key': 'deploymentName', 'type': 'str'},
         'verbose': {'key': 'verbose', 'type': 'bool'},
         'is_logging_enabled': {'key': 'isLoggingEnabled', 'type': 'bool'},
-        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
         'direct_target': {'key': 'directTarget', 'type': 'str'},
         'target_project_parameters': {'key': 'targetProjectParameters', 'type': '{AnalysisParameters}'},
     }
@@ -1198,9 +1194,8 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         deployment_name: str,
         verbose: Optional[bool] = None,
         is_logging_enabled: Optional[bool] = None,
-        string_index_type: Optional[Union[str, "StringIndexType"]] = "TextElements_v8",
         direct_target: Optional[str] = None,
-        target_project_parameters: Optional[Dict[str, "AnalysisParameters"]] = None,
+        target_project_parameters: Optional[Dict[str, "_models.AnalysisParameters"]] = None,
         **kwargs
     ):
         """
@@ -1212,11 +1207,6 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         :paramtype verbose: bool
         :keyword is_logging_enabled: If true, the service will keep the query for further review.
         :paramtype is_logging_enabled: bool
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-         https://aka.ms/text-analytics-offsets. Possible values include: "TextElements_v8",
-         "UnicodeCodePoint", "Utf16CodeUnit". Default value: "TextElements_v8".
-        :paramtype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
         :keyword direct_target: The name of a target project to forward the request to.
         :paramtype direct_target: str
         :keyword target_project_parameters: A dictionary representing the parameters for each target
@@ -1229,7 +1219,6 @@ class CustomConversationTaskParameters(msrest.serialization.Model):
         self.deployment_name = deployment_name
         self.verbose = verbose
         self.is_logging_enabled = is_logging_enabled
-        self.string_index_type = string_index_type
         self.direct_target = direct_target
         self.target_project_parameters = target_project_parameters
 
@@ -1240,22 +1229,22 @@ class DateTimeResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
     :ivar timex: Required. An extended ISO 8601 date/time representation as described in
      (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
     :vartype timex: str
-    :ivar date_time_sub_kind: Required. The DateTime SubKind. Possible values include: "Time",
-     "Date", "DateTime", "Duration", "Set".
+    :ivar date_time_sub_kind: Required. The DateTime SubKind. Known values are: "Time", "Date",
+     "DateTime", "Duration", "Set".
     :vartype date_time_sub_kind: str or ~azure.ai.language.conversations.models.DateTimeSubKind
     :ivar value: Required. The actual time that the extracted text denote.
     :vartype value: str
-    :ivar modifier: An optional modifier of a date/time instance. Possible values include:
-     "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
-     "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
-     "Mid", "More".
+    :ivar modifier: An optional modifier of a date/time instance. Known values are: "AfterApprox",
+     "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
+     "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid",
+     "More".
     :vartype modifier: str or ~azure.ai.language.conversations.models.Modifier
     """
 
@@ -1278,21 +1267,21 @@ class DateTimeResolution(BaseResolution):
         self,
         *,
         timex: str,
-        date_time_sub_kind: Union[str, "DateTimeSubKind"],
+        date_time_sub_kind: Union[str, "_models.DateTimeSubKind"],
         value: str,
-        modifier: Optional[Union[str, "Modifier"]] = None,
+        modifier: Optional[Union[str, "_models.Modifier"]] = None,
         **kwargs
     ):
         """
         :keyword timex: Required. An extended ISO 8601 date/time representation as described in
          (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
         :paramtype timex: str
-        :keyword date_time_sub_kind: Required. The DateTime SubKind. Possible values include: "Time",
-         "Date", "DateTime", "Duration", "Set".
+        :keyword date_time_sub_kind: Required. The DateTime SubKind. Known values are: "Time", "Date",
+         "DateTime", "Duration", "Set".
         :paramtype date_time_sub_kind: str or ~azure.ai.language.conversations.models.DateTimeSubKind
         :keyword value: Required. The actual time that the extracted text denote.
         :paramtype value: str
-        :keyword modifier: An optional modifier of a date/time instance. Possible values include:
+        :keyword modifier: An optional modifier of a date/time instance. Known values are:
          "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
          "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
          "Mid", "More".
@@ -1312,7 +1301,7 @@ class EntitySubtype(BaseExtraInformation):
     All required parameters must be populated in order to send to Azure.
 
     :ivar extra_information_kind: Required. The extra information object kind.Constant filled by
-     server. Possible values include: "EntitySubtype", "ListKey".
+     server. Known values are: "EntitySubtype", "ListKey".
     :vartype extra_information_kind: str or
      ~azure.ai.language.conversations.models.ExtraInformationKind
     :ivar value: The Subtype of an extracted entity type.
@@ -1351,7 +1340,7 @@ class Error(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar code: Required. One of a server-defined set of error codes. Possible values include:
+    :ivar code: Required. One of a server-defined set of error codes. Known values are:
      "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
      "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
      "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
@@ -1385,19 +1374,19 @@ class Error(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "ErrorCode"],
+        code: Union[str, "_models.ErrorCode"],
         message: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         target: Optional[str] = None,
-        details: Optional[List["Error"]] = None,
-        innererror: Optional["InnerErrorModel"] = None,
+        details: Optional[List["_models.Error"]] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
         **kwargs
     ):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, any]
-        :keyword code: Required. One of a server-defined set of error codes. Possible values include:
+        :keyword code: Required. One of a server-defined set of error codes. Known values are:
          "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
          "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
          "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
@@ -1442,7 +1431,7 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: "Error",
+        error: "_models.Error",
         **kwargs
     ):
         """
@@ -1461,11 +1450,11 @@ class InformationResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar unit: Required. The information (data) Unit of measurement. Possible values include:
+    :ivar unit: Required. The information (data) Unit of measurement. Known values are:
      "Unspecified", "Bit", "Kilobit", "Megabit", "Gigabit", "Terabit", "Petabit", "Byte",
      "Kilobyte", "Megabyte", "Gigabyte", "Terabyte", "Petabyte".
     :vartype unit: str or ~azure.ai.language.conversations.models.InformationUnit
@@ -1487,13 +1476,13 @@ class InformationResolution(BaseResolution, QuantityResolution):
         self,
         *,
         value: float,
-        unit: Union[str, "InformationUnit"],
+        unit: Union[str, "_models.InformationUnit"],
         **kwargs
     ):
         """
         :keyword value: Required. The numeric value that the extracted text denotes.
         :paramtype value: float
-        :keyword unit: Required. The information (data) Unit of measurement. Possible values include:
+        :keyword unit: Required. The information (data) Unit of measurement. Known values are:
          "Unspecified", "Bit", "Kilobit", "Megabit", "Gigabit", "Terabit", "Petabit", "Byte",
          "Kilobyte", "Megabyte", "Gigabyte", "Terabyte", "Petabyte".
         :paramtype unit: str or ~azure.ai.language.conversations.models.InformationUnit
@@ -1509,7 +1498,7 @@ class InnerErrorModel(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. One of a server-defined set of error codes. Possible values include:
+    :ivar code: Required. One of a server-defined set of error codes. Known values are:
      "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
      "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure",
      "InvalidRequestBodyFormat", "EmptyRequest", "MissingInputDocuments", "InvalidDocument",
@@ -1543,15 +1532,15 @@ class InnerErrorModel(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        code: Union[str, "InnerErrorCode"],
+        code: Union[str, "_models.InnerErrorCode"],
         message: str,
         details: Optional[Dict[str, str]] = None,
         target: Optional[str] = None,
-        innererror: Optional["InnerErrorModel"] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
         **kwargs
     ):
         """
-        :keyword code: Required. One of a server-defined set of error codes. Possible values include:
+        :keyword code: Required. One of a server-defined set of error codes. Known values are:
          "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
          "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", "ExtractionFailure",
          "InvalidRequestBodyFormat", "EmptyRequest", "MissingInputDocuments", "InvalidDocument",
@@ -1622,8 +1611,8 @@ class KnowledgeBaseAnswer(msrest.serialization.Model):
         id: Optional[int] = None,
         source: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        dialog: Optional["KnowledgeBaseAnswerDialog"] = None,
-        answer_span: Optional["AnswerSpan"] = None,
+        dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
+        answer_span: Optional["_models.AnswerSpan"] = None,
         **kwargs
     ):
         """
@@ -1680,7 +1669,7 @@ class KnowledgeBaseAnswerDialog(msrest.serialization.Model):
         self,
         *,
         is_context_only: Optional[bool] = None,
-        prompts: Optional[List["KnowledgeBaseAnswerPrompt"]] = None,
+        prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = None,
         **kwargs
     ):
         """
@@ -1753,7 +1742,7 @@ class KnowledgeBaseAnswers(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        answers: Optional[List["KnowledgeBaseAnswer"]] = None,
+        answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None,
         **kwargs
     ):
         """
@@ -1772,11 +1761,11 @@ class LengthResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar unit: Required. The length Unit of measurement. Possible values include: "Unspecified",
+    :ivar unit: Required. The length Unit of measurement. Known values are: "Unspecified",
      "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter", "Millimeter",
      "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot", "LightYear", "Pt".
     :vartype unit: str or ~azure.ai.language.conversations.models.LengthUnit
@@ -1798,16 +1787,15 @@ class LengthResolution(BaseResolution, QuantityResolution):
         self,
         *,
         value: float,
-        unit: Union[str, "LengthUnit"],
+        unit: Union[str, "_models.LengthUnit"],
         **kwargs
     ):
         """
         :keyword value: Required. The numeric value that the extracted text denotes.
         :paramtype value: float
-        :keyword unit: Required. The length Unit of measurement. Possible values include:
-         "Unspecified", "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter",
-         "Millimeter", "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot",
-         "LightYear", "Pt".
+        :keyword unit: Required. The length Unit of measurement. Known values are: "Unspecified",
+         "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter", "Millimeter",
+         "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot", "LightYear", "Pt".
         :paramtype unit: str or ~azure.ai.language.conversations.models.LengthUnit
         """
         super(LengthResolution, self).__init__(value=value, **kwargs)
@@ -1822,7 +1810,7 @@ class ListKey(BaseExtraInformation):
     All required parameters must be populated in order to send to Azure.
 
     :ivar extra_information_kind: Required. The extra information object kind.Constant filled by
-     server. Possible values include: "EntitySubtype", "ListKey".
+     server. Known values are: "EntitySubtype", "ListKey".
     :vartype extra_information_kind: str or
      ~azure.ai.language.conversations.models.ExtraInformationKind
     :ivar key: The canonical form of the extracted entity.
@@ -1920,8 +1908,8 @@ class LUISParameters(AnalysisParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_kind: Required. The type of a target service.Constant filled by server. Possible
-     values include: "luis", "conversation", "question_answering", "non_linked".
+    :ivar target_kind: Required. The type of a target service.Constant filled by server. Known
+     values are: "luis", "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -1953,7 +1941,7 @@ class LUISParameters(AnalysisParameters):
         api_version: Optional[str] = None,
         additional_properties: Optional[Dict[str, Any]] = None,
         query: Optional[str] = None,
-        calling_options: Optional["LUISCallingOptions"] = None,
+        calling_options: Optional["_models.LUISCallingOptions"] = None,
         **kwargs
     ):
         """
@@ -1981,7 +1969,7 @@ class LUISTargetIntentResult(TargetIntentResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
@@ -2031,7 +2019,7 @@ class NoneLinkedTargetIntentResult(TargetIntentResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
@@ -2059,7 +2047,7 @@ class NoneLinkedTargetIntentResult(TargetIntentResult):
         *,
         confidence: float,
         api_version: Optional[str] = None,
-        result: Optional["ConversationResult"] = None,
+        result: Optional["_models.ConversationResult"] = None,
         **kwargs
     ):
         """
@@ -2081,11 +2069,11 @@ class NumberResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar number_kind: Required. The type of the extracted number entity. Possible values include:
+    :ivar number_kind: Required. The type of the extracted number entity. Known values are:
      "Integer", "Decimal", "Power", "Fraction", "Percent", "Unspecified".
     :vartype number_kind: str or ~azure.ai.language.conversations.models.NumberKind
     :ivar value: Required. A numeric representation of what the extracted text denotes.
@@ -2107,13 +2095,13 @@ class NumberResolution(BaseResolution):
     def __init__(
         self,
         *,
-        number_kind: Union[str, "NumberKind"],
+        number_kind: Union[str, "_models.NumberKind"],
         value: str,
         **kwargs
     ):
         """
-        :keyword number_kind: Required. The type of the extracted number entity. Possible values
-         include: "Integer", "Decimal", "Power", "Fraction", "Percent", "Unspecified".
+        :keyword number_kind: Required. The type of the extracted number entity. Known values are:
+         "Integer", "Decimal", "Power", "Fraction", "Percent", "Unspecified".
         :paramtype number_kind: str or ~azure.ai.language.conversations.models.NumberKind
         :keyword value: Required. A numeric representation of what the extracted text denotes.
         :paramtype value: str
@@ -2130,12 +2118,12 @@ class NumericRangeResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar range_kind: Required. The kind of range that the resolution object represents. Possible
-     values include: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
+    :ivar range_kind: Required. The kind of range that the resolution object represents. Known
+     values are: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
      "Temperature", "Currency".
     :vartype range_kind: str or ~azure.ai.language.conversations.models.RangeKind
     :ivar minimum: Required. The beginning value of  the interval.
@@ -2161,15 +2149,15 @@ class NumericRangeResolution(BaseResolution):
     def __init__(
         self,
         *,
-        range_kind: Union[str, "RangeKind"],
+        range_kind: Union[str, "_models.RangeKind"],
         minimum: float,
         maximum: float,
         **kwargs
     ):
         """
-        :keyword range_kind: Required. The kind of range that the resolution object represents.
-         Possible values include: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age",
-         "Information", "Temperature", "Currency".
+        :keyword range_kind: Required. The kind of range that the resolution object represents. Known
+         values are: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
+         "Temperature", "Currency".
         :paramtype range_kind: str or ~azure.ai.language.conversations.models.RangeKind
         :keyword minimum: Required. The beginning value of  the interval.
         :paramtype minimum: float
@@ -2188,8 +2176,8 @@ class OrchestratorPrediction(BasePrediction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar project_kind: Required. The type of the project.Constant filled by server. Possible
-     values include: "conversation", "workflow".
+    :ivar project_kind: Required. The type of the project.Constant filled by server. Known values
+     are: "conversation", "workflow".
     :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
     :ivar top_intent: The intent with the highest score.
     :vartype top_intent: str
@@ -2213,7 +2201,7 @@ class OrchestratorPrediction(BasePrediction):
     def __init__(
         self,
         *,
-        intents: Dict[str, "TargetIntentResult"],
+        intents: Dict[str, "_models.TargetIntentResult"],
         top_intent: Optional[str] = None,
         **kwargs
     ):
@@ -2236,15 +2224,15 @@ class OrdinalResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
     :ivar offset: Required. The offset With respect to the reference (e.g., offset = -1 in "show me
      the second to last".
     :vartype offset: str
-    :ivar relative_to: Required. The reference point that the ordinal number denotes. Possible
-     values include: "Current", "End", "Start".
+    :ivar relative_to: Required. The reference point that the ordinal number denotes. Known values
+     are: "Current", "End", "Start".
     :vartype relative_to: str or ~azure.ai.language.conversations.models.RelativeTo
     :ivar value: Required. A simple arithmetic expression that the ordinal denotes.
     :vartype value: str
@@ -2268,7 +2256,7 @@ class OrdinalResolution(BaseResolution):
         self,
         *,
         offset: str,
-        relative_to: Union[str, "RelativeTo"],
+        relative_to: Union[str, "_models.RelativeTo"],
         value: str,
         **kwargs
     ):
@@ -2276,8 +2264,8 @@ class OrdinalResolution(BaseResolution):
         :keyword offset: Required. The offset With respect to the reference (e.g., offset = -1 in "show
          me the second to last".
         :paramtype offset: str
-        :keyword relative_to: Required. The reference point that the ordinal number denotes. Possible
-         values include: "Current", "End", "Start".
+        :keyword relative_to: Required. The reference point that the ordinal number denotes. Known
+         values are: "Current", "End", "Start".
         :paramtype relative_to: str or ~azure.ai.language.conversations.models.RelativeTo
         :keyword value: Required. A simple arithmetic expression that the ordinal denotes.
         :paramtype value: str
@@ -2294,8 +2282,8 @@ class QuestionAnsweringParameters(AnalysisParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar target_kind: Required. The type of a target service.Constant filled by server. Possible
-     values include: "luis", "conversation", "question_answering", "non_linked".
+    :ivar target_kind: Required. The type of a target service.Constant filled by server. Known
+     values are: "luis", "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version to use when call a specific target service.
     :vartype api_version: str
@@ -2337,7 +2325,7 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_kind: Required. This discriminator property specifies the type of the target
-     project that returns the response.Constant filled by server. Possible values include: "luis",
+     project that returns the response.Constant filled by server. Known values are: "luis",
      "conversation", "question_answering", "non_linked".
     :vartype target_kind: str or ~azure.ai.language.conversations.models.TargetKind
     :ivar api_version: The API version used to call a target service.
@@ -2365,7 +2353,7 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult):
         *,
         confidence: float,
         api_version: Optional[str] = None,
-        result: Optional["KnowledgeBaseAnswers"] = None,
+        result: Optional["_models.KnowledgeBaseAnswers"] = None,
         **kwargs
     ):
         """
@@ -2389,11 +2377,11 @@ class SpeedResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar unit: Required. The speed Unit of measurement. Possible values include: "Unspecified",
+    :ivar unit: Required. The speed Unit of measurement. Known values are: "Unspecified",
      "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
      "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
      "MetersPerMillisecond", "CentimetersPerMillisecond", "KilometersPerMillisecond".
@@ -2416,13 +2404,13 @@ class SpeedResolution(BaseResolution, QuantityResolution):
         self,
         *,
         value: float,
-        unit: Union[str, "SpeedUnit"],
+        unit: Union[str, "_models.SpeedUnit"],
         **kwargs
     ):
         """
         :keyword value: Required. The numeric value that the extracted text denotes.
         :paramtype value: float
-        :keyword unit: Required. The speed Unit of measurement. Possible values include: "Unspecified",
+        :keyword unit: Required. The speed Unit of measurement. Known values are: "Unspecified",
          "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
          "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
          "MetersPerMillisecond", "CentimetersPerMillisecond", "KilometersPerMillisecond".
@@ -2442,12 +2430,12 @@ class TemperatureResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar unit: Required. The temperature Unit of measurement. Possible values include:
-     "Unspecified", "Fahrenheit", "Kelvin", "Rankine", "Celsius".
+    :ivar unit: Required. The temperature Unit of measurement. Known values are: "Unspecified",
+     "Fahrenheit", "Kelvin", "Rankine", "Celsius".
     :vartype unit: str or ~azure.ai.language.conversations.models.TemperatureUnit
     """
 
@@ -2467,14 +2455,14 @@ class TemperatureResolution(BaseResolution, QuantityResolution):
         self,
         *,
         value: float,
-        unit: Union[str, "TemperatureUnit"],
+        unit: Union[str, "_models.TemperatureUnit"],
         **kwargs
     ):
         """
         :keyword value: Required. The numeric value that the extracted text denotes.
         :paramtype value: float
-        :keyword unit: Required. The temperature Unit of measurement. Possible values include:
-         "Unspecified", "Fahrenheit", "Kelvin", "Rankine", "Celsius".
+        :keyword unit: Required. The temperature Unit of measurement. Known values are: "Unspecified",
+         "Fahrenheit", "Kelvin", "Rankine", "Celsius".
         :paramtype unit: str or ~azure.ai.language.conversations.models.TemperatureUnit
         """
         super(TemperatureResolution, self).__init__(value=value, **kwargs)
@@ -2489,8 +2477,8 @@ class TemporalSpanResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
     :ivar begin: An extended ISO 8601 date/time representation as described in
@@ -2502,10 +2490,10 @@ class TemporalSpanResolution(BaseResolution):
     :ivar duration: An optional duration value formatted based on the ISO 8601
      (https://en.wikipedia.org/wiki/ISO_8601#Durations).
     :vartype duration: str
-    :ivar modifier: An optional modifier of a date/time instance. Possible values include:
-     "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
-     "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
-     "Mid", "More".
+    :ivar modifier: An optional modifier of a date/time instance. Known values are: "AfterApprox",
+     "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
+     "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid",
+     "More".
     :vartype modifier: str or ~azure.ai.language.conversations.models.Modifier
     """
 
@@ -2527,7 +2515,7 @@ class TemporalSpanResolution(BaseResolution):
         begin: Optional[str] = None,
         end: Optional[str] = None,
         duration: Optional[str] = None,
-        modifier: Optional[Union[str, "Modifier"]] = None,
+        modifier: Optional[Union[str, "_models.Modifier"]] = None,
         **kwargs
     ):
         """
@@ -2540,7 +2528,7 @@ class TemporalSpanResolution(BaseResolution):
         :keyword duration: An optional duration value formatted based on the ISO 8601
          (https://en.wikipedia.org/wiki/ISO_8601#Durations).
         :paramtype duration: str
-        :keyword modifier: An optional modifier of a date/time instance. Possible values include:
+        :keyword modifier: An optional modifier of a date/time instance. Known values are:
          "AfterApprox", "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid",
          "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
          "Mid", "More".
@@ -2566,7 +2554,7 @@ class TextConversationItem(ConversationItemBase):
     :ivar language: The input language of a ConversationItem in BCP 47 language representation.
     :vartype language: str
     :ivar modality: Required. The modality (format) of ConversationItem (e.g., Text,
-     Transcript).Constant filled by server. Possible values include: "text".
+     Transcript).Constant filled by server. Known values are: "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.Modality
     :ivar text: Required. The single input query.
     :vartype text: str
@@ -2619,11 +2607,11 @@ class VolumeResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar unit: Required. The Volume Unit of measurement. Possible values include: "Unspecified",
+    :ivar unit: Required. The Volume Unit of measurement. Known values are: "Unspecified",
      "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter", "Liter",
      "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile", "FluidOunce",
      "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram", "Barrel",
@@ -2647,17 +2635,17 @@ class VolumeResolution(BaseResolution, QuantityResolution):
         self,
         *,
         value: float,
-        unit: Union[str, "VolumeUnit"],
+        unit: Union[str, "_models.VolumeUnit"],
         **kwargs
     ):
         """
         :keyword value: Required. The numeric value that the extracted text denotes.
         :paramtype value: float
-        :keyword unit: Required. The Volume Unit of measurement. Possible values include:
-         "Unspecified", "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter",
-         "Liter", "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile",
-         "FluidOunce", "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram",
-         "Barrel", "Minim", "Cord", "Peck", "Bushel", "Hogshead".
+        :keyword unit: Required. The Volume Unit of measurement. Known values are: "Unspecified",
+         "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter", "Liter",
+         "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile", "FluidOunce",
+         "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram", "Barrel",
+         "Minim", "Cord", "Peck", "Bushel", "Hogshead".
         :paramtype unit: str or ~azure.ai.language.conversations.models.VolumeUnit
         """
         super(VolumeResolution, self).__init__(value=value, **kwargs)
@@ -2674,11 +2662,11 @@ class WeightResolution(BaseResolution, QuantityResolution):
     :ivar value: Required. The numeric value that the extracted text denotes.
     :vartype value: float
     :ivar resolution_kind: Required. The entity resolution object kind.Constant filled by server.
-     Possible values include: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight",
-     "Length", "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
+     Known values are: "Boolean", "DateTime", "Number", "Ordinal", "Speed", "Weight", "Length",
+     "Volume", "Area", "Age", "Information", "Temperature", "Currency", "NumericRange",
      "TemporalSpan".
     :vartype resolution_kind: str or ~azure.ai.language.conversations.models.ResolutionKind
-    :ivar unit: Required. The weight Unit of measurement. Possible values include: "Unspecified",
+    :ivar unit: Required. The weight Unit of measurement. Known values are: "Unspecified",
      "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce", "Grain",
      "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone", "Dram".
     :vartype unit: str or ~azure.ai.language.conversations.models.WeightUnit
@@ -2700,16 +2688,15 @@ class WeightResolution(BaseResolution, QuantityResolution):
         self,
         *,
         value: float,
-        unit: Union[str, "WeightUnit"],
+        unit: Union[str, "_models.WeightUnit"],
         **kwargs
     ):
         """
         :keyword value: Required. The numeric value that the extracted text denotes.
         :paramtype value: float
-        :keyword unit: Required. The weight Unit of measurement. Possible values include:
-         "Unspecified", "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce",
-         "Grain", "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone",
-         "Dram".
+        :keyword unit: Required. The weight Unit of measurement. Known values are: "Unspecified",
+         "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce", "Grain",
+         "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone", "Dram".
         :paramtype unit: str or ~azure.ai.language.conversations.models.WeightUnit
         """
         super(WeightResolution, self).__init__(value=value, **kwargs)

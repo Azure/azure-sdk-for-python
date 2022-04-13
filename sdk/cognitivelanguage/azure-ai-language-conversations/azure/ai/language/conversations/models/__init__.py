@@ -6,63 +6,63 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import AgeResolution
-from ._models_py3 import AnalysisParameters
-from ._models_py3 import AnalyzeConversationResult
-from ._models_py3 import AnalyzeConversationTask
-from ._models_py3 import AnalyzeConversationTaskResult
-from ._models_py3 import AnswerSpan
-from ._models_py3 import AreaResolution
-from ._models_py3 import BaseExtraInformation
-from ._models_py3 import BasePrediction
-from ._models_py3 import BaseResolution
-from ._models_py3 import BooleanResolution
-from ._models_py3 import ConversationAnalysisOptions
-from ._models_py3 import ConversationCallingOptions
-from ._models_py3 import ConversationEntity
-from ._models_py3 import ConversationIntent
-from ._models_py3 import ConversationItemBase
-from ._models_py3 import ConversationParameters
-from ._models_py3 import ConversationPrediction
-from ._models_py3 import ConversationResult
-from ._models_py3 import ConversationTargetIntentResult
-from ._models_py3 import CurrencyResolution
-from ._models_py3 import CustomConversationTaskParameters
-from ._models_py3 import CustomConversationalTask
-from ._models_py3 import CustomConversationalTaskResult
-from ._models_py3 import DateTimeResolution
-from ._models_py3 import EntitySubtype
-from ._models_py3 import Error
-from ._models_py3 import ErrorResponse
-from ._models_py3 import InformationResolution
-from ._models_py3 import InnerErrorModel
-from ._models_py3 import KnowledgeBaseAnswer
-from ._models_py3 import KnowledgeBaseAnswerDialog
-from ._models_py3 import KnowledgeBaseAnswerPrompt
-from ._models_py3 import KnowledgeBaseAnswers
-from ._models_py3 import LUISCallingOptions
-from ._models_py3 import LUISParameters
-from ._models_py3 import LUISTargetIntentResult
-from ._models_py3 import LengthResolution
-from ._models_py3 import ListKey
-from ._models_py3 import NoneLinkedTargetIntentResult
-from ._models_py3 import NumberResolution
-from ._models_py3 import NumericRangeResolution
-from ._models_py3 import OrchestratorPrediction
-from ._models_py3 import OrdinalResolution
-from ._models_py3 import QuantityResolution
-from ._models_py3 import QuestionAnsweringParameters
-from ._models_py3 import QuestionAnsweringTargetIntentResult
-from ._models_py3 import SpeedResolution
-from ._models_py3 import TargetIntentResult
-from ._models_py3 import TemperatureResolution
-from ._models_py3 import TemporalSpanResolution
-from ._models_py3 import TextConversationItem
-from ._models_py3 import VolumeResolution
-from ._models_py3 import WeightResolution
+from ._models import AgeResolution
+from ._models import AnalysisParameters
+from ._models import AnalyzeConversationResult
+from ._models import AnalyzeConversationTask
+from ._models import AnalyzeConversationTaskResult
+from ._models import AnswerSpan
+from ._models import AreaResolution
+from ._models import BaseExtraInformation
+from ._models import BasePrediction
+from ._models import BaseResolution
+from ._models import BooleanResolution
+from ._models import ConversationAnalysisOptions
+from ._models import ConversationCallingOptions
+from ._models import ConversationEntity
+from ._models import ConversationIntent
+from ._models import ConversationItemBase
+from ._models import ConversationParameters
+from ._models import ConversationPrediction
+from ._models import ConversationResult
+from ._models import ConversationTargetIntentResult
+from ._models import CurrencyResolution
+from ._models import CustomConversationTaskParameters
+from ._models import CustomConversationalTask
+from ._models import CustomConversationalTaskResult
+from ._models import DateTimeResolution
+from ._models import EntitySubtype
+from ._models import Error
+from ._models import ErrorResponse
+from ._models import InformationResolution
+from ._models import InnerErrorModel
+from ._models import KnowledgeBaseAnswer
+from ._models import KnowledgeBaseAnswerDialog
+from ._models import KnowledgeBaseAnswerPrompt
+from ._models import KnowledgeBaseAnswers
+from ._models import LUISCallingOptions
+from ._models import LUISParameters
+from ._models import LUISTargetIntentResult
+from ._models import LengthResolution
+from ._models import ListKey
+from ._models import NoneLinkedTargetIntentResult
+from ._models import NumberResolution
+from ._models import NumericRangeResolution
+from ._models import OrchestratorPrediction
+from ._models import OrdinalResolution
+from ._models import QuantityResolution
+from ._models import QuestionAnsweringParameters
+from ._models import QuestionAnsweringTargetIntentResult
+from ._models import SpeedResolution
+from ._models import TargetIntentResult
+from ._models import TemperatureResolution
+from ._models import TemporalSpanResolution
+from ._models import TextConversationItem
+from ._models import VolumeResolution
+from ._models import WeightResolution
 
 
-from ._conversation_analysis_client_enums import (
+from ._enums import (
     AgeUnit,
     AnalyzeConversationTaskKind,
     AnalyzeConversationTaskResultsKind,
@@ -81,13 +81,14 @@ from ._conversation_analysis_client_enums import (
     RelativeTo,
     ResolutionKind,
     SpeedUnit,
-    StringIndexType,
     TargetKind,
     TemperatureUnit,
     VolumeUnit,
     WeightUnit,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'AgeResolution',
     'AnalysisParameters',
@@ -161,9 +162,10 @@ __all__ = [
     'RelativeTo',
     'ResolutionKind',
     'SpeedUnit',
-    'StringIndexType',
     'TargetKind',
     'TemperatureUnit',
     'VolumeUnit',
     'WeightUnit',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
