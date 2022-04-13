@@ -5,16 +5,16 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_orchestration_app_luis_response_async.py
+FILE: sample_analyze_orchestration_direct_target_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration project.
-    In this sample, orchestration project's top intent will map to a LUIS project.
+    In this sample, orchestration project's top intent will map to a Qna project.
 
     For more info about how to setup a CLU orchestration project, see the README.
 
 USAGE:
-    python sample_analyze_orchestration_app_luis_response_async.py
+    python sample_analyze_orchestration_direct_target_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CLU_ENDPOINT                       - endpoint for your CLU resource.
@@ -25,8 +25,8 @@ USAGE:
 
 import asyncio
 
-async def sample_analyze_orchestration_app_luis_response_async():
-    # [START analyze_orchestration_app_luis_response_async]
+async def sample_analyze_orchestration_direct_target_async():
+    # [START analyze_orchestration_app_qna_response_async]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -36,7 +36,8 @@ async def sample_analyze_orchestration_app_luis_response_async():
         CustomConversationalTask,
         ConversationAnalysisOptions,
         CustomConversationTaskParameters,
-        TextConversationItem
+        TextConversationItem,
+        QuestionAnsweringParameters
     )
 
     # get secrets
@@ -48,7 +49,8 @@ async def sample_analyze_orchestration_app_luis_response_async():
     # analyze query
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     async with client:
-        query = "Reserve a table for 2 at the Italian restaurant"
+        query = "How are you?"
+        qna_app = "ChitChat-QnA"
         result = await client.analyze_conversation(
                 task=CustomConversationalTask(
                     analysis_input=ConversationAnalysisOptions(
@@ -58,7 +60,15 @@ async def sample_analyze_orchestration_app_luis_response_async():
                     ),
                     parameters=CustomConversationTaskParameters(
                         project_name=project_name,
-                        deployment_name=deployment_name
+                        deployment_name=deployment_name,
+                        direct_target=qna_app,
+                        target_project_parameters={
+                            "ChitChat-QnA": QuestionAnsweringParameters(
+                                calling_options={
+                                    "question": query
+                                }
+                            )
+                        }
                     )
                 )
             )
@@ -74,19 +84,18 @@ async def sample_analyze_orchestration_app_luis_response_async():
         print("confidence score: {}".format(top_intent_object.confidence))
         print("project kind: {}".format(top_intent_object.target_kind))
 
-        if top_intent_object.target_kind == "luis":
-            print("\nluis response:")
-            luis_response = top_intent_object.result["prediction"]
-            print("top intent: {}".format(luis_response["topIntent"]))
-            print("\nentities:")
-            for entity in luis_response["entities"]:
-                print("\n{}".format(entity))
+        if top_intent_object.target_kind == "question_answering":
+            print("\nview qna result:")
+            qna_result = top_intent_object.result
+            for answer in qna_result.answers:
+                print("\nanswer: {}".format(answer.answer))
+                print("answer: {}".format(answer.confidence))
 
-    # [END analyze_orchestration_app_luis_response_async]
+    # [END analyze_orchestration_app_qna_response_async]
 
 
 async def main():
-    await sample_analyze_orchestration_app_luis_response_async()
+    await sample_analyze_orchestration_direct_target_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

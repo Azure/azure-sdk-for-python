@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgeUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AgeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Age Unit of measurement
     """
 
@@ -21,19 +20,19 @@ class AgeUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     WEEK = "Week"
     DAY = "Day"
 
-class AnalyzeConversationTaskKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AnalyzeConversationTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Conversation tasks.
     """
 
     CUSTOM_CONVERSATION = "CustomConversation"
 
-class AnalyzeConversationTaskResultsKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AnalyzeConversationTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported conversational task results
     """
 
     CUSTOM_CONVERSATION_RESULT = "CustomConversationResult"
 
-class AreaUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The area Unit of measurement
     """
 
@@ -51,7 +50,7 @@ class AreaUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SQUARE_YARD = "SquareYard"
     ACRE = "Acre"
 
-class DateTimeSubKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DateTimeSubKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The DateTime SubKind
     """
 
@@ -61,7 +60,7 @@ class DateTimeSubKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DURATION = "Duration"
     SET = "Set"
 
-class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code.
     """
 
@@ -80,14 +79,14 @@ class ErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INTERNAL_SERVER_ERROR = "InternalServerError"
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
 
-class ExtraInformationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ExtraInformationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The extra information object kind.
     """
 
     ENTITY_SUBTYPE = "EntitySubtype"
     LIST_KEY = "ListKey"
 
-class InformationUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InformationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The information (data) Unit of measurement.
     """
 
@@ -105,7 +104,7 @@ class InformationUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     TERABYTE = "Terabyte"
     PETABYTE = "Petabyte"
 
-class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code.
     """
 
@@ -124,7 +123,7 @@ class InnerErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
-class LengthUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The length Unit of measurement
     """
 
@@ -146,13 +145,13 @@ class LengthUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LIGHT_YEAR = "LightYear"
     PT = "Pt"
 
-class Modality(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The modality (format) of ConversationItem (e.g., Text, Transcript)
     """
 
     TEXT = "text"
 
-class Modifier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Modifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An optional modifier of a date/time instance.
     """
 
@@ -175,7 +174,7 @@ class Modifier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MID = "Mid"
     MORE = "More"
 
-class NumberKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class NumberKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the extracted number entity.
     """
 
@@ -186,14 +185,14 @@ class NumberKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PERCENT = "Percent"
     UNSPECIFIED = "Unspecified"
 
-class ProjectKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the project.
     """
 
     CONVERSATION = "conversation"
     WORKFLOW = "workflow"
 
-class RangeKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RangeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of range that the resolution object represents.
     """
 
@@ -208,7 +207,7 @@ class RangeKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     TEMPERATURE = "Temperature"
     CURRENCY = "Currency"
 
-class RelativeTo(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RelativeTo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reference point that the ordinal number denotes.
     """
 
@@ -216,7 +215,7 @@ class RelativeTo(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     END = "End"
     START = "Start"
 
-class ResolutionKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResolutionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity resolution object kind.
     """
 
@@ -236,7 +235,7 @@ class ResolutionKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NUMERIC_RANGE = "NumericRange"
     TEMPORAL_SPAN = "TemporalSpan"
 
-class SpeedUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The speed Unit of measurement
     """
 
@@ -255,7 +254,7 @@ class SpeedUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CENTIMETERS_PER_MILLISECOND = "CentimetersPerMillisecond"
     KILOMETERS_PER_MILLISECOND = "KilometersPerMillisecond"
 
-class TargetKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TargetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of a target service.
     """
 
@@ -264,7 +263,7 @@ class TargetKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     QUESTION_ANSWERING = "question_answering"
     NON_LINKED = "non_linked"
 
-class TemperatureUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TemperatureUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The temperature Unit of measurement.
     """
 
@@ -274,7 +273,7 @@ class TemperatureUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     RANKINE = "Rankine"
     CELSIUS = "Celsius"
 
-class VolumeUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class VolumeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Volume Unit of measurement
     """
 
@@ -307,7 +306,7 @@ class VolumeUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BUSHEL = "Bushel"
     HOGSHEAD = "Hogshead"
 
-class WeightUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WeightUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The weight Unit of measurement.
     """
 

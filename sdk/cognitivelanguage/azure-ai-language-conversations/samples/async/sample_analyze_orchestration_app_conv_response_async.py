@@ -53,8 +53,6 @@ async def sample_analyze_orchestration_app_conv_response_async():
                 task=CustomConversationalTask(
                     analysis_input=ConversationAnalysisOptions(
                         conversation_item=TextConversationItem(
-                            id=1,
-                            participant_id=1,
                             text=query
                         )
                     ),
