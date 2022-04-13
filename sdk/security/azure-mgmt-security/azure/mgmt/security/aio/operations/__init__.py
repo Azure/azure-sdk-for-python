@@ -6,6 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._mde_onboardings_operations import MdeOnboardingsOperations
+from ._custom_assessment_automations_operations import CustomAssessmentAutomationsOperations
+from ._custom_entity_store_assignments_operations import CustomEntityStoreAssignmentsOperations
 from ._compliance_results_operations import ComplianceResultsOperations
 from ._pricings_operations import PricingsOperations
 from ._advanced_threat_protection_operations import AdvancedThreatProtectionOperations
@@ -51,8 +54,12 @@ from ._alerts_operations import AlertsOperations
 from ._settings_operations import SettingsOperations
 from ._ingestion_settings_operations import IngestionSettingsOperations
 from ._software_inventories_operations import SoftwareInventoriesOperations
+from ._security_connectors_operations import SecurityConnectorsOperations
 
 __all__ = [
+    'MdeOnboardingsOperations',
+    'CustomAssessmentAutomationsOperations',
+    'CustomEntityStoreAssignmentsOperations',
     'ComplianceResultsOperations',
     'PricingsOperations',
     'AdvancedThreatProtectionOperations',
@@ -98,4 +105,5 @@ __all__ = [
     'SettingsOperations',
     'IngestionSettingsOperations',
     'SoftwareInventoriesOperations',
+    'SecurityConnectorsOperations',
 ]

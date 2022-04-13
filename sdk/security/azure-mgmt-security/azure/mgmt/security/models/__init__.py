@@ -6,478 +6,275 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AadConnectivityState
-    from ._models_py3 import AadExternalSecuritySolution
-    from ._models_py3 import AadSolutionProperties
-    from ._models_py3 import ActiveConnectionsNotInAllowedRange
-    from ._models_py3 import AdaptiveApplicationControlGroup
-    from ._models_py3 import AdaptiveApplicationControlGroups
-    from ._models_py3 import AdaptiveApplicationControlIssueSummary
-    from ._models_py3 import AdaptiveNetworkHardening
-    from ._models_py3 import AdaptiveNetworkHardeningEnforceRequest
-    from ._models_py3 import AdaptiveNetworkHardeningsList
-    from ._models_py3 import AdditionalData
-    from ._models_py3 import AdditionalWorkspacesProperties
-    from ._models_py3 import AdvancedThreatProtectionSetting
-    from ._models_py3 import Alert
-    from ._models_py3 import AlertEntity
-    from ._models_py3 import AlertList
-    from ._models_py3 import AlertSimulatorBundlesRequestProperties
-    from ._models_py3 import AlertSimulatorRequestBody
-    from ._models_py3 import AlertSimulatorRequestProperties
-    from ._models_py3 import AlertSyncSettings
-    from ._models_py3 import AlertsSuppressionRule
-    from ._models_py3 import AlertsSuppressionRulesList
-    from ._models_py3 import AllowedConnectionsList
-    from ._models_py3 import AllowedConnectionsResource
-    from ._models_py3 import AllowlistCustomAlertRule
-    from ._models_py3 import AmqpC2DMessagesNotInAllowedRange
-    from ._models_py3 import AmqpC2DRejectedMessagesNotInAllowedRange
-    from ._models_py3 import AmqpD2CMessagesNotInAllowedRange
-    from ._models_py3 import AscLocation
-    from ._models_py3 import AscLocationList
-    from ._models_py3 import AssessmentLinks
-    from ._models_py3 import AssessmentStatus
-    from ._models_py3 import AtaExternalSecuritySolution
-    from ._models_py3 import AtaSolutionProperties
-    from ._models_py3 import AuthenticationDetailsProperties
-    from ._models_py3 import AutoProvisioningSetting
-    from ._models_py3 import AutoProvisioningSettingList
-    from ._models_py3 import Automation
-    from ._models_py3 import AutomationAction
-    from ._models_py3 import AutomationActionEventHub
-    from ._models_py3 import AutomationActionLogicApp
-    from ._models_py3 import AutomationActionWorkspace
-    from ._models_py3 import AutomationList
-    from ._models_py3 import AutomationRuleSet
-    from ._models_py3 import AutomationScope
-    from ._models_py3 import AutomationSource
-    from ._models_py3 import AutomationTriggeringRule
-    from ._models_py3 import AutomationValidationStatus
-    from ._models_py3 import AwAssumeRoleAuthenticationDetailsProperties
-    from ._models_py3 import AwsCredsAuthenticationDetailsProperties
-    from ._models_py3 import AzureResourceDetails
-    from ._models_py3 import AzureResourceIdentifier
-    from ._models_py3 import AzureResourceLink
-    from ._models_py3 import AzureTrackedResourceLocation
-    from ._models_py3 import Baseline
-    from ._models_py3 import BaselineAdjustedResult
-    from ._models_py3 import BenchmarkReference
-    from ._models_py3 import CVE
-    from ._models_py3 import CVSS
-    from ._models_py3 import CefExternalSecuritySolution
-    from ._models_py3 import CefSolutionProperties
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import Compliance
-    from ._models_py3 import ComplianceList
-    from ._models_py3 import ComplianceResult
-    from ._models_py3 import ComplianceResultList
-    from ._models_py3 import ComplianceSegment
-    from ._models_py3 import ConnectableResource
-    from ._models_py3 import ConnectedResource
-    from ._models_py3 import ConnectedWorkspace
-    from ._models_py3 import ConnectionFromIpNotAllowed
-    from ._models_py3 import ConnectionStrings
-    from ._models_py3 import ConnectionToIpNotAllowed
-    from ._models_py3 import ConnectorSetting
-    from ._models_py3 import ConnectorSettingList
-    from ._models_py3 import ContainerRegistryVulnerabilityProperties
-    from ._models_py3 import CustomAlertRule
-    from ._models_py3 import DataExportSettings
-    from ._models_py3 import DenylistCustomAlertRule
-    from ._models_py3 import DeviceSecurityGroup
-    from ._models_py3 import DeviceSecurityGroupList
-    from ._models_py3 import DirectMethodInvokesNotInAllowedRange
-    from ._models_py3 import DiscoveredSecuritySolution
-    from ._models_py3 import DiscoveredSecuritySolutionList
-    from ._models_py3 import ETag
-    from ._models_py3 import EffectiveNetworkSecurityGroups
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ExternalSecuritySolution
-    from ._models_py3 import ExternalSecuritySolutionKind
-    from ._models_py3 import ExternalSecuritySolutionList
-    from ._models_py3 import ExternalSecuritySolutionProperties
-    from ._models_py3 import FailedLocalLoginsNotInAllowedRange
-    from ._models_py3 import FileUploadsNotInAllowedRange
-    from ._models_py3 import GcpCredentialsDetailsProperties
-    from ._models_py3 import HttpC2DMessagesNotInAllowedRange
-    from ._models_py3 import HttpC2DRejectedMessagesNotInAllowedRange
-    from ._models_py3 import HttpD2CMessagesNotInAllowedRange
-    from ._models_py3 import HybridComputeSettingsProperties
-    from ._models_py3 import InformationProtectionKeyword
-    from ._models_py3 import InformationProtectionPolicy
-    from ._models_py3 import InformationProtectionPolicyList
-    from ._models_py3 import InformationType
-    from ._models_py3 import IngestionConnectionString
-    from ._models_py3 import IngestionSetting
-    from ._models_py3 import IngestionSettingList
-    from ._models_py3 import IngestionSettingToken
-    from ._models_py3 import IoTSecurityAggregatedAlert
-    from ._models_py3 import IoTSecurityAggregatedAlertList
-    from ._models_py3 import IoTSecurityAggregatedAlertPropertiesTopDevicesListItem
-    from ._models_py3 import IoTSecurityAggregatedRecommendation
-    from ._models_py3 import IoTSecurityAggregatedRecommendationList
-    from ._models_py3 import IoTSecurityAlertedDevice
-    from ._models_py3 import IoTSecurityDeviceAlert
-    from ._models_py3 import IoTSecurityDeviceRecommendation
-    from ._models_py3 import IoTSecuritySolutionAnalyticsModel
-    from ._models_py3 import IoTSecuritySolutionAnalyticsModelList
-    from ._models_py3 import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
-    from ._models_py3 import IoTSecuritySolutionModel
-    from ._models_py3 import IoTSecuritySolutionsList
-    from ._models_py3 import IoTSeverityMetrics
-    from ._models_py3 import JitNetworkAccessPoliciesList
-    from ._models_py3 import JitNetworkAccessPolicy
-    from ._models_py3 import JitNetworkAccessPolicyInitiatePort
-    from ._models_py3 import JitNetworkAccessPolicyInitiateRequest
-    from ._models_py3 import JitNetworkAccessPolicyInitiateVirtualMachine
-    from ._models_py3 import JitNetworkAccessPolicyVirtualMachine
-    from ._models_py3 import JitNetworkAccessPortRule
-    from ._models_py3 import JitNetworkAccessRequest
-    from ._models_py3 import JitNetworkAccessRequestPort
-    from ._models_py3 import JitNetworkAccessRequestVirtualMachine
-    from ._models_py3 import Kind
-    from ._models_py3 import ListCustomAlertRule
-    from ._models_py3 import LocalUserNotAllowed
-    from ._models_py3 import Location
-    from ._models_py3 import LogAnalyticsIdentifier
-    from ._models_py3 import MqttC2DMessagesNotInAllowedRange
-    from ._models_py3 import MqttC2DRejectedMessagesNotInAllowedRange
-    from ._models_py3 import MqttD2CMessagesNotInAllowedRange
-    from ._models_py3 import OnPremiseResourceDetails
-    from ._models_py3 import OnPremiseSqlResourceDetails
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationList
-    from ._models_py3 import PathRecommendation
-    from ._models_py3 import Pricing
-    from ._models_py3 import PricingList
-    from ._models_py3 import ProcessNotAllowed
-    from ._models_py3 import ProtectionMode
-    from ._models_py3 import ProxyServerProperties
-    from ._models_py3 import PublisherInfo
-    from ._models_py3 import QueryCheck
-    from ._models_py3 import QueuePurgesNotInAllowedRange
-    from ._models_py3 import RecommendationConfigurationProperties
-    from ._models_py3 import RegulatoryComplianceAssessment
-    from ._models_py3 import RegulatoryComplianceAssessmentList
-    from ._models_py3 import RegulatoryComplianceControl
-    from ._models_py3 import RegulatoryComplianceControlList
-    from ._models_py3 import RegulatoryComplianceStandard
-    from ._models_py3 import RegulatoryComplianceStandardList
-    from ._models_py3 import Remediation
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceDetails
-    from ._models_py3 import ResourceIdentifier
-    from ._models_py3 import Rule
-    from ._models_py3 import RuleResults
-    from ._models_py3 import RuleResultsInput
-    from ._models_py3 import RuleResultsProperties
-    from ._models_py3 import RulesResults
-    from ._models_py3 import RulesResultsInput
-    from ._models_py3 import Scan
-    from ._models_py3 import ScanProperties
-    from ._models_py3 import ScanResult
-    from ._models_py3 import ScanResultProperties
-    from ._models_py3 import ScanResults
-    from ._models_py3 import Scans
-    from ._models_py3 import ScopeElement
-    from ._models_py3 import SecureScoreControlDefinitionItem
-    from ._models_py3 import SecureScoreControlDefinitionList
-    from ._models_py3 import SecureScoreControlDefinitionSource
-    from ._models_py3 import SecureScoreControlDetails
-    from ._models_py3 import SecureScoreControlList
-    from ._models_py3 import SecureScoreControlScore
-    from ._models_py3 import SecureScoreItem
-    from ._models_py3 import SecureScoresList
-    from ._models_py3 import SecurityAssessment
-    from ._models_py3 import SecurityAssessmentList
-    from ._models_py3 import SecurityAssessmentMetadata
-    from ._models_py3 import SecurityAssessmentMetadataList
-    from ._models_py3 import SecurityAssessmentMetadataPartnerData
-    from ._models_py3 import SecurityAssessmentMetadataProperties
-    from ._models_py3 import SecurityAssessmentPartnerData
-    from ._models_py3 import SecurityContact
-    from ._models_py3 import SecurityContactList
-    from ._models_py3 import SecuritySolution
-    from ._models_py3 import SecuritySolutionList
-    from ._models_py3 import SecuritySolutionsReferenceData
-    from ._models_py3 import SecuritySolutionsReferenceDataList
-    from ._models_py3 import SecuritySubAssessment
-    from ._models_py3 import SecuritySubAssessmentList
-    from ._models_py3 import SecurityTask
-    from ._models_py3 import SecurityTaskList
-    from ._models_py3 import SecurityTaskParameters
-    from ._models_py3 import SensitivityLabel
-    from ._models_py3 import ServerVulnerabilityAssessment
-    from ._models_py3 import ServerVulnerabilityAssessmentsList
-    from ._models_py3 import ServerVulnerabilityProperties
-    from ._models_py3 import ServicePrincipalProperties
-    from ._models_py3 import Setting
-    from ._models_py3 import SettingsList
-    from ._models_py3 import Software
-    from ._models_py3 import SoftwaresList
-    from ._models_py3 import SqlServerVulnerabilityProperties
-    from ._models_py3 import SubAssessmentStatus
-    from ._models_py3 import SuppressionAlertsScope
-    from ._models_py3 import SystemData
-    from ._models_py3 import Tags
-    from ._models_py3 import TagsResource
-    from ._models_py3 import ThresholdCustomAlertRule
-    from ._models_py3 import TimeWindowCustomAlertRule
-    from ._models_py3 import TopologyList
-    from ._models_py3 import TopologyResource
-    from ._models_py3 import TopologySingleResource
-    from ._models_py3 import TopologySingleResourceChild
-    from ._models_py3 import TopologySingleResourceParent
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import TwinUpdatesNotInAllowedRange
-    from ._models_py3 import UnauthorizedOperationsNotInAllowedRange
-    from ._models_py3 import UpdateIotSecuritySolutionData
-    from ._models_py3 import UserDefinedResourcesProperties
-    from ._models_py3 import UserRecommendation
-    from ._models_py3 import VaRule
-    from ._models_py3 import VendorReference
-    from ._models_py3 import VmRecommendation
-    from ._models_py3 import WorkspaceSetting
-    from ._models_py3 import WorkspaceSettingList
-except (SyntaxError, ImportError):
-    from ._models import AadConnectivityState  # type: ignore
-    from ._models import AadExternalSecuritySolution  # type: ignore
-    from ._models import AadSolutionProperties  # type: ignore
-    from ._models import ActiveConnectionsNotInAllowedRange  # type: ignore
-    from ._models import AdaptiveApplicationControlGroup  # type: ignore
-    from ._models import AdaptiveApplicationControlGroups  # type: ignore
-    from ._models import AdaptiveApplicationControlIssueSummary  # type: ignore
-    from ._models import AdaptiveNetworkHardening  # type: ignore
-    from ._models import AdaptiveNetworkHardeningEnforceRequest  # type: ignore
-    from ._models import AdaptiveNetworkHardeningsList  # type: ignore
-    from ._models import AdditionalData  # type: ignore
-    from ._models import AdditionalWorkspacesProperties  # type: ignore
-    from ._models import AdvancedThreatProtectionSetting  # type: ignore
-    from ._models import Alert  # type: ignore
-    from ._models import AlertEntity  # type: ignore
-    from ._models import AlertList  # type: ignore
-    from ._models import AlertSimulatorBundlesRequestProperties  # type: ignore
-    from ._models import AlertSimulatorRequestBody  # type: ignore
-    from ._models import AlertSimulatorRequestProperties  # type: ignore
-    from ._models import AlertSyncSettings  # type: ignore
-    from ._models import AlertsSuppressionRule  # type: ignore
-    from ._models import AlertsSuppressionRulesList  # type: ignore
-    from ._models import AllowedConnectionsList  # type: ignore
-    from ._models import AllowedConnectionsResource  # type: ignore
-    from ._models import AllowlistCustomAlertRule  # type: ignore
-    from ._models import AmqpC2DMessagesNotInAllowedRange  # type: ignore
-    from ._models import AmqpC2DRejectedMessagesNotInAllowedRange  # type: ignore
-    from ._models import AmqpD2CMessagesNotInAllowedRange  # type: ignore
-    from ._models import AscLocation  # type: ignore
-    from ._models import AscLocationList  # type: ignore
-    from ._models import AssessmentLinks  # type: ignore
-    from ._models import AssessmentStatus  # type: ignore
-    from ._models import AtaExternalSecuritySolution  # type: ignore
-    from ._models import AtaSolutionProperties  # type: ignore
-    from ._models import AuthenticationDetailsProperties  # type: ignore
-    from ._models import AutoProvisioningSetting  # type: ignore
-    from ._models import AutoProvisioningSettingList  # type: ignore
-    from ._models import Automation  # type: ignore
-    from ._models import AutomationAction  # type: ignore
-    from ._models import AutomationActionEventHub  # type: ignore
-    from ._models import AutomationActionLogicApp  # type: ignore
-    from ._models import AutomationActionWorkspace  # type: ignore
-    from ._models import AutomationList  # type: ignore
-    from ._models import AutomationRuleSet  # type: ignore
-    from ._models import AutomationScope  # type: ignore
-    from ._models import AutomationSource  # type: ignore
-    from ._models import AutomationTriggeringRule  # type: ignore
-    from ._models import AutomationValidationStatus  # type: ignore
-    from ._models import AwAssumeRoleAuthenticationDetailsProperties  # type: ignore
-    from ._models import AwsCredsAuthenticationDetailsProperties  # type: ignore
-    from ._models import AzureResourceDetails  # type: ignore
-    from ._models import AzureResourceIdentifier  # type: ignore
-    from ._models import AzureResourceLink  # type: ignore
-    from ._models import AzureTrackedResourceLocation  # type: ignore
-    from ._models import Baseline  # type: ignore
-    from ._models import BaselineAdjustedResult  # type: ignore
-    from ._models import BenchmarkReference  # type: ignore
-    from ._models import CVE  # type: ignore
-    from ._models import CVSS  # type: ignore
-    from ._models import CefExternalSecuritySolution  # type: ignore
-    from ._models import CefSolutionProperties  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import Compliance  # type: ignore
-    from ._models import ComplianceList  # type: ignore
-    from ._models import ComplianceResult  # type: ignore
-    from ._models import ComplianceResultList  # type: ignore
-    from ._models import ComplianceSegment  # type: ignore
-    from ._models import ConnectableResource  # type: ignore
-    from ._models import ConnectedResource  # type: ignore
-    from ._models import ConnectedWorkspace  # type: ignore
-    from ._models import ConnectionFromIpNotAllowed  # type: ignore
-    from ._models import ConnectionStrings  # type: ignore
-    from ._models import ConnectionToIpNotAllowed  # type: ignore
-    from ._models import ConnectorSetting  # type: ignore
-    from ._models import ConnectorSettingList  # type: ignore
-    from ._models import ContainerRegistryVulnerabilityProperties  # type: ignore
-    from ._models import CustomAlertRule  # type: ignore
-    from ._models import DataExportSettings  # type: ignore
-    from ._models import DenylistCustomAlertRule  # type: ignore
-    from ._models import DeviceSecurityGroup  # type: ignore
-    from ._models import DeviceSecurityGroupList  # type: ignore
-    from ._models import DirectMethodInvokesNotInAllowedRange  # type: ignore
-    from ._models import DiscoveredSecuritySolution  # type: ignore
-    from ._models import DiscoveredSecuritySolutionList  # type: ignore
-    from ._models import ETag  # type: ignore
-    from ._models import EffectiveNetworkSecurityGroups  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ExternalSecuritySolution  # type: ignore
-    from ._models import ExternalSecuritySolutionKind  # type: ignore
-    from ._models import ExternalSecuritySolutionList  # type: ignore
-    from ._models import ExternalSecuritySolutionProperties  # type: ignore
-    from ._models import FailedLocalLoginsNotInAllowedRange  # type: ignore
-    from ._models import FileUploadsNotInAllowedRange  # type: ignore
-    from ._models import GcpCredentialsDetailsProperties  # type: ignore
-    from ._models import HttpC2DMessagesNotInAllowedRange  # type: ignore
-    from ._models import HttpC2DRejectedMessagesNotInAllowedRange  # type: ignore
-    from ._models import HttpD2CMessagesNotInAllowedRange  # type: ignore
-    from ._models import HybridComputeSettingsProperties  # type: ignore
-    from ._models import InformationProtectionKeyword  # type: ignore
-    from ._models import InformationProtectionPolicy  # type: ignore
-    from ._models import InformationProtectionPolicyList  # type: ignore
-    from ._models import InformationType  # type: ignore
-    from ._models import IngestionConnectionString  # type: ignore
-    from ._models import IngestionSetting  # type: ignore
-    from ._models import IngestionSettingList  # type: ignore
-    from ._models import IngestionSettingToken  # type: ignore
-    from ._models import IoTSecurityAggregatedAlert  # type: ignore
-    from ._models import IoTSecurityAggregatedAlertList  # type: ignore
-    from ._models import IoTSecurityAggregatedAlertPropertiesTopDevicesListItem  # type: ignore
-    from ._models import IoTSecurityAggregatedRecommendation  # type: ignore
-    from ._models import IoTSecurityAggregatedRecommendationList  # type: ignore
-    from ._models import IoTSecurityAlertedDevice  # type: ignore
-    from ._models import IoTSecurityDeviceAlert  # type: ignore
-    from ._models import IoTSecurityDeviceRecommendation  # type: ignore
-    from ._models import IoTSecuritySolutionAnalyticsModel  # type: ignore
-    from ._models import IoTSecuritySolutionAnalyticsModelList  # type: ignore
-    from ._models import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem  # type: ignore
-    from ._models import IoTSecuritySolutionModel  # type: ignore
-    from ._models import IoTSecuritySolutionsList  # type: ignore
-    from ._models import IoTSeverityMetrics  # type: ignore
-    from ._models import JitNetworkAccessPoliciesList  # type: ignore
-    from ._models import JitNetworkAccessPolicy  # type: ignore
-    from ._models import JitNetworkAccessPolicyInitiatePort  # type: ignore
-    from ._models import JitNetworkAccessPolicyInitiateRequest  # type: ignore
-    from ._models import JitNetworkAccessPolicyInitiateVirtualMachine  # type: ignore
-    from ._models import JitNetworkAccessPolicyVirtualMachine  # type: ignore
-    from ._models import JitNetworkAccessPortRule  # type: ignore
-    from ._models import JitNetworkAccessRequest  # type: ignore
-    from ._models import JitNetworkAccessRequestPort  # type: ignore
-    from ._models import JitNetworkAccessRequestVirtualMachine  # type: ignore
-    from ._models import Kind  # type: ignore
-    from ._models import ListCustomAlertRule  # type: ignore
-    from ._models import LocalUserNotAllowed  # type: ignore
-    from ._models import Location  # type: ignore
-    from ._models import LogAnalyticsIdentifier  # type: ignore
-    from ._models import MqttC2DMessagesNotInAllowedRange  # type: ignore
-    from ._models import MqttC2DRejectedMessagesNotInAllowedRange  # type: ignore
-    from ._models import MqttD2CMessagesNotInAllowedRange  # type: ignore
-    from ._models import OnPremiseResourceDetails  # type: ignore
-    from ._models import OnPremiseSqlResourceDetails  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationList  # type: ignore
-    from ._models import PathRecommendation  # type: ignore
-    from ._models import Pricing  # type: ignore
-    from ._models import PricingList  # type: ignore
-    from ._models import ProcessNotAllowed  # type: ignore
-    from ._models import ProtectionMode  # type: ignore
-    from ._models import ProxyServerProperties  # type: ignore
-    from ._models import PublisherInfo  # type: ignore
-    from ._models import QueryCheck  # type: ignore
-    from ._models import QueuePurgesNotInAllowedRange  # type: ignore
-    from ._models import RecommendationConfigurationProperties  # type: ignore
-    from ._models import RegulatoryComplianceAssessment  # type: ignore
-    from ._models import RegulatoryComplianceAssessmentList  # type: ignore
-    from ._models import RegulatoryComplianceControl  # type: ignore
-    from ._models import RegulatoryComplianceControlList  # type: ignore
-    from ._models import RegulatoryComplianceStandard  # type: ignore
-    from ._models import RegulatoryComplianceStandardList  # type: ignore
-    from ._models import Remediation  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceDetails  # type: ignore
-    from ._models import ResourceIdentifier  # type: ignore
-    from ._models import Rule  # type: ignore
-    from ._models import RuleResults  # type: ignore
-    from ._models import RuleResultsInput  # type: ignore
-    from ._models import RuleResultsProperties  # type: ignore
-    from ._models import RulesResults  # type: ignore
-    from ._models import RulesResultsInput  # type: ignore
-    from ._models import Scan  # type: ignore
-    from ._models import ScanProperties  # type: ignore
-    from ._models import ScanResult  # type: ignore
-    from ._models import ScanResultProperties  # type: ignore
-    from ._models import ScanResults  # type: ignore
-    from ._models import Scans  # type: ignore
-    from ._models import ScopeElement  # type: ignore
-    from ._models import SecureScoreControlDefinitionItem  # type: ignore
-    from ._models import SecureScoreControlDefinitionList  # type: ignore
-    from ._models import SecureScoreControlDefinitionSource  # type: ignore
-    from ._models import SecureScoreControlDetails  # type: ignore
-    from ._models import SecureScoreControlList  # type: ignore
-    from ._models import SecureScoreControlScore  # type: ignore
-    from ._models import SecureScoreItem  # type: ignore
-    from ._models import SecureScoresList  # type: ignore
-    from ._models import SecurityAssessment  # type: ignore
-    from ._models import SecurityAssessmentList  # type: ignore
-    from ._models import SecurityAssessmentMetadata  # type: ignore
-    from ._models import SecurityAssessmentMetadataList  # type: ignore
-    from ._models import SecurityAssessmentMetadataPartnerData  # type: ignore
-    from ._models import SecurityAssessmentMetadataProperties  # type: ignore
-    from ._models import SecurityAssessmentPartnerData  # type: ignore
-    from ._models import SecurityContact  # type: ignore
-    from ._models import SecurityContactList  # type: ignore
-    from ._models import SecuritySolution  # type: ignore
-    from ._models import SecuritySolutionList  # type: ignore
-    from ._models import SecuritySolutionsReferenceData  # type: ignore
-    from ._models import SecuritySolutionsReferenceDataList  # type: ignore
-    from ._models import SecuritySubAssessment  # type: ignore
-    from ._models import SecuritySubAssessmentList  # type: ignore
-    from ._models import SecurityTask  # type: ignore
-    from ._models import SecurityTaskList  # type: ignore
-    from ._models import SecurityTaskParameters  # type: ignore
-    from ._models import SensitivityLabel  # type: ignore
-    from ._models import ServerVulnerabilityAssessment  # type: ignore
-    from ._models import ServerVulnerabilityAssessmentsList  # type: ignore
-    from ._models import ServerVulnerabilityProperties  # type: ignore
-    from ._models import ServicePrincipalProperties  # type: ignore
-    from ._models import Setting  # type: ignore
-    from ._models import SettingsList  # type: ignore
-    from ._models import Software  # type: ignore
-    from ._models import SoftwaresList  # type: ignore
-    from ._models import SqlServerVulnerabilityProperties  # type: ignore
-    from ._models import SubAssessmentStatus  # type: ignore
-    from ._models import SuppressionAlertsScope  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import Tags  # type: ignore
-    from ._models import TagsResource  # type: ignore
-    from ._models import ThresholdCustomAlertRule  # type: ignore
-    from ._models import TimeWindowCustomAlertRule  # type: ignore
-    from ._models import TopologyList  # type: ignore
-    from ._models import TopologyResource  # type: ignore
-    from ._models import TopologySingleResource  # type: ignore
-    from ._models import TopologySingleResourceChild  # type: ignore
-    from ._models import TopologySingleResourceParent  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import TwinUpdatesNotInAllowedRange  # type: ignore
-    from ._models import UnauthorizedOperationsNotInAllowedRange  # type: ignore
-    from ._models import UpdateIotSecuritySolutionData  # type: ignore
-    from ._models import UserDefinedResourcesProperties  # type: ignore
-    from ._models import UserRecommendation  # type: ignore
-    from ._models import VaRule  # type: ignore
-    from ._models import VendorReference  # type: ignore
-    from ._models import VmRecommendation  # type: ignore
-    from ._models import WorkspaceSetting  # type: ignore
-    from ._models import WorkspaceSettingList  # type: ignore
+from ._models_py3 import AadConnectivityState
+from ._models_py3 import AadExternalSecuritySolution
+from ._models_py3 import AadSolutionProperties
+from ._models_py3 import ActiveConnectionsNotInAllowedRange
+from ._models_py3 import AdaptiveApplicationControlGroup
+from ._models_py3 import AdaptiveApplicationControlGroups
+from ._models_py3 import AdaptiveApplicationControlIssueSummary
+from ._models_py3 import AdaptiveNetworkHardening
+from ._models_py3 import AdaptiveNetworkHardeningEnforceRequest
+from ._models_py3 import AdaptiveNetworkHardeningsList
+from ._models_py3 import AdditionalData
+from ._models_py3 import AdditionalWorkspacesProperties
+from ._models_py3 import AdvancedThreatProtectionSetting
+from ._models_py3 import Alert
+from ._models_py3 import AlertEntity
+from ._models_py3 import AlertList
+from ._models_py3 import AlertSimulatorBundlesRequestProperties
+from ._models_py3 import AlertSimulatorRequestBody
+from ._models_py3 import AlertSimulatorRequestProperties
+from ._models_py3 import AlertSyncSettings
+from ._models_py3 import AlertsSuppressionRule
+from ._models_py3 import AlertsSuppressionRulesList
+from ._models_py3 import AllowedConnectionsList
+from ._models_py3 import AllowedConnectionsResource
+from ._models_py3 import AllowlistCustomAlertRule
+from ._models_py3 import AmqpC2DMessagesNotInAllowedRange
+from ._models_py3 import AmqpC2DRejectedMessagesNotInAllowedRange
+from ._models_py3 import AmqpD2CMessagesNotInAllowedRange
+from ._models_py3 import AscLocation
+from ._models_py3 import AscLocationList
+from ._models_py3 import AssessmentLinks
+from ._models_py3 import AssessmentStatus
+from ._models_py3 import AssessmentStatusResponse
+from ._models_py3 import AtaExternalSecuritySolution
+from ._models_py3 import AtaSolutionProperties
+from ._models_py3 import AuthenticationDetailsProperties
+from ._models_py3 import AutoProvisioningSetting
+from ._models_py3 import AutoProvisioningSettingList
+from ._models_py3 import Automation
+from ._models_py3 import AutomationAction
+from ._models_py3 import AutomationActionEventHub
+from ._models_py3 import AutomationActionLogicApp
+from ._models_py3 import AutomationActionWorkspace
+from ._models_py3 import AutomationList
+from ._models_py3 import AutomationRuleSet
+from ._models_py3 import AutomationScope
+from ._models_py3 import AutomationSource
+from ._models_py3 import AutomationTriggeringRule
+from ._models_py3 import AutomationValidationStatus
+from ._models_py3 import AwAssumeRoleAuthenticationDetailsProperties
+from ._models_py3 import AwsCredsAuthenticationDetailsProperties
+from ._models_py3 import AzureResourceDetails
+from ._models_py3 import AzureResourceIdentifier
+from ._models_py3 import AzureResourceLink
+from ._models_py3 import AzureTrackedResourceLocation
+from ._models_py3 import Baseline
+from ._models_py3 import BaselineAdjustedResult
+from ._models_py3 import BenchmarkReference
+from ._models_py3 import CVE
+from ._models_py3 import CVSS
+from ._models_py3 import CefExternalSecuritySolution
+from ._models_py3 import CefSolutionProperties
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import CloudOffering
+from ._models_py3 import Compliance
+from ._models_py3 import ComplianceList
+from ._models_py3 import ComplianceResult
+from ._models_py3 import ComplianceResultList
+from ._models_py3 import ComplianceSegment
+from ._models_py3 import ConnectableResource
+from ._models_py3 import ConnectedResource
+from ._models_py3 import ConnectedWorkspace
+from ._models_py3 import ConnectionFromIpNotAllowed
+from ._models_py3 import ConnectionStrings
+from ._models_py3 import ConnectionToIpNotAllowed
+from ._models_py3 import ConnectorSetting
+from ._models_py3 import ConnectorSettingList
+from ._models_py3 import ContainerRegistryVulnerabilityProperties
+from ._models_py3 import CspmMonitorAwsOffering
+from ._models_py3 import CspmMonitorAwsOfferingNativeCloudConnection
+from ._models_py3 import CustomAlertRule
+from ._models_py3 import CustomAssessmentAutomation
+from ._models_py3 import CustomAssessmentAutomationRequest
+from ._models_py3 import CustomAssessmentAutomationsListResult
+from ._models_py3 import CustomEntityStoreAssignment
+from ._models_py3 import CustomEntityStoreAssignmentRequest
+from ._models_py3 import CustomEntityStoreAssignmentsListResult
+from ._models_py3 import DataExportSettings
+from ._models_py3 import DefenderForContainersAwsOffering
+from ._models_py3 import DefenderForContainersAwsOfferingCloudWatchToKinesis
+from ._models_py3 import DefenderForContainersAwsOfferingKinesisToS3
+from ._models_py3 import DefenderForContainersAwsOfferingKubernetesScubaReader
+from ._models_py3 import DefenderForContainersAwsOfferingKubernetesService
+from ._models_py3 import DefenderForServersAwsOffering
+from ._models_py3 import DefenderForServersAwsOfferingArcAutoProvisioning
+from ._models_py3 import DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata
+from ._models_py3 import DefenderForServersAwsOfferingDefenderForServers
+from ._models_py3 import DenylistCustomAlertRule
+from ._models_py3 import DeviceSecurityGroup
+from ._models_py3 import DeviceSecurityGroupList
+from ._models_py3 import DirectMethodInvokesNotInAllowedRange
+from ._models_py3 import DiscoveredSecuritySolution
+from ._models_py3 import DiscoveredSecuritySolutionList
+from ._models_py3 import ETag
+from ._models_py3 import EffectiveNetworkSecurityGroups
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ExternalSecuritySolution
+from ._models_py3 import ExternalSecuritySolutionKind
+from ._models_py3 import ExternalSecuritySolutionList
+from ._models_py3 import ExternalSecuritySolutionProperties
+from ._models_py3 import FailedLocalLoginsNotInAllowedRange
+from ._models_py3 import FileUploadsNotInAllowedRange
+from ._models_py3 import GcpCredentialsDetailsProperties
+from ._models_py3 import HttpC2DMessagesNotInAllowedRange
+from ._models_py3 import HttpC2DRejectedMessagesNotInAllowedRange
+from ._models_py3 import HttpD2CMessagesNotInAllowedRange
+from ._models_py3 import HybridComputeSettingsProperties
+from ._models_py3 import InformationProtectionAwsOffering
+from ._models_py3 import InformationProtectionAwsOfferingInformationProtection
+from ._models_py3 import InformationProtectionKeyword
+from ._models_py3 import InformationProtectionPolicy
+from ._models_py3 import InformationProtectionPolicyList
+from ._models_py3 import InformationType
+from ._models_py3 import IngestionConnectionString
+from ._models_py3 import IngestionSetting
+from ._models_py3 import IngestionSettingList
+from ._models_py3 import IngestionSettingToken
+from ._models_py3 import IoTSecurityAggregatedAlert
+from ._models_py3 import IoTSecurityAggregatedAlertList
+from ._models_py3 import IoTSecurityAggregatedAlertPropertiesTopDevicesListItem
+from ._models_py3 import IoTSecurityAggregatedRecommendation
+from ._models_py3 import IoTSecurityAggregatedRecommendationList
+from ._models_py3 import IoTSecurityAlertedDevice
+from ._models_py3 import IoTSecurityDeviceAlert
+from ._models_py3 import IoTSecurityDeviceRecommendation
+from ._models_py3 import IoTSecuritySolutionAnalyticsModel
+from ._models_py3 import IoTSecuritySolutionAnalyticsModelList
+from ._models_py3 import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+from ._models_py3 import IoTSecuritySolutionModel
+from ._models_py3 import IoTSecuritySolutionsList
+from ._models_py3 import IoTSeverityMetrics
+from ._models_py3 import JitNetworkAccessPoliciesList
+from ._models_py3 import JitNetworkAccessPolicy
+from ._models_py3 import JitNetworkAccessPolicyInitiatePort
+from ._models_py3 import JitNetworkAccessPolicyInitiateRequest
+from ._models_py3 import JitNetworkAccessPolicyInitiateVirtualMachine
+from ._models_py3 import JitNetworkAccessPolicyVirtualMachine
+from ._models_py3 import JitNetworkAccessPortRule
+from ._models_py3 import JitNetworkAccessRequest
+from ._models_py3 import JitNetworkAccessRequestPort
+from ._models_py3 import JitNetworkAccessRequestVirtualMachine
+from ._models_py3 import Kind
+from ._models_py3 import ListCustomAlertRule
+from ._models_py3 import LocalUserNotAllowed
+from ._models_py3 import Location
+from ._models_py3 import LogAnalyticsIdentifier
+from ._models_py3 import MdeOnboardingData
+from ._models_py3 import MdeOnboardingDataList
+from ._models_py3 import MqttC2DMessagesNotInAllowedRange
+from ._models_py3 import MqttC2DRejectedMessagesNotInAllowedRange
+from ._models_py3 import MqttD2CMessagesNotInAllowedRange
+from ._models_py3 import OnPremiseResourceDetails
+from ._models_py3 import OnPremiseSqlResourceDetails
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationList
+from ._models_py3 import PathRecommendation
+from ._models_py3 import Pricing
+from ._models_py3 import PricingList
+from ._models_py3 import ProcessNotAllowed
+from ._models_py3 import ProtectionMode
+from ._models_py3 import ProxyServerProperties
+from ._models_py3 import PublisherInfo
+from ._models_py3 import QueryCheck
+from ._models_py3 import QueuePurgesNotInAllowedRange
+from ._models_py3 import RecommendationConfigurationProperties
+from ._models_py3 import RegulatoryComplianceAssessment
+from ._models_py3 import RegulatoryComplianceAssessmentList
+from ._models_py3 import RegulatoryComplianceControl
+from ._models_py3 import RegulatoryComplianceControlList
+from ._models_py3 import RegulatoryComplianceStandard
+from ._models_py3 import RegulatoryComplianceStandardList
+from ._models_py3 import Remediation
+from ._models_py3 import Resource
+from ._models_py3 import ResourceDetails
+from ._models_py3 import ResourceIdentifier
+from ._models_py3 import Rule
+from ._models_py3 import RuleResults
+from ._models_py3 import RuleResultsInput
+from ._models_py3 import RuleResultsProperties
+from ._models_py3 import RulesResults
+from ._models_py3 import RulesResultsInput
+from ._models_py3 import Scan
+from ._models_py3 import ScanProperties
+from ._models_py3 import ScanResult
+from ._models_py3 import ScanResultProperties
+from ._models_py3 import ScanResults
+from ._models_py3 import Scans
+from ._models_py3 import ScopeElement
+from ._models_py3 import SecureScoreControlDefinitionItem
+from ._models_py3 import SecureScoreControlDefinitionList
+from ._models_py3 import SecureScoreControlDefinitionSource
+from ._models_py3 import SecureScoreControlDetails
+from ._models_py3 import SecureScoreControlList
+from ._models_py3 import SecureScoreControlScore
+from ._models_py3 import SecureScoreItem
+from ._models_py3 import SecureScoresList
+from ._models_py3 import SecurityAssessment
+from ._models_py3 import SecurityAssessmentList
+from ._models_py3 import SecurityAssessmentMetadata
+from ._models_py3 import SecurityAssessmentMetadataPartnerData
+from ._models_py3 import SecurityAssessmentMetadataProperties
+from ._models_py3 import SecurityAssessmentMetadataPropertiesResponse
+from ._models_py3 import SecurityAssessmentMetadataPropertiesResponsePublishDates
+from ._models_py3 import SecurityAssessmentMetadataResponse
+from ._models_py3 import SecurityAssessmentMetadataResponseList
+from ._models_py3 import SecurityAssessmentPartnerData
+from ._models_py3 import SecurityAssessmentProperties
+from ._models_py3 import SecurityAssessmentPropertiesBase
+from ._models_py3 import SecurityAssessmentPropertiesResponse
+from ._models_py3 import SecurityAssessmentResponse
+from ._models_py3 import SecurityConnector
+from ._models_py3 import SecurityConnectorPropertiesOrganizationalData
+from ._models_py3 import SecurityConnectorsList
+from ._models_py3 import SecurityContact
+from ._models_py3 import SecurityContactList
+from ._models_py3 import SecuritySolution
+from ._models_py3 import SecuritySolutionList
+from ._models_py3 import SecuritySolutionsReferenceData
+from ._models_py3 import SecuritySolutionsReferenceDataList
+from ._models_py3 import SecuritySubAssessment
+from ._models_py3 import SecuritySubAssessmentList
+from ._models_py3 import SecurityTask
+from ._models_py3 import SecurityTaskList
+from ._models_py3 import SecurityTaskParameters
+from ._models_py3 import SensitivityLabel
+from ._models_py3 import ServerVulnerabilityAssessment
+from ._models_py3 import ServerVulnerabilityAssessmentsList
+from ._models_py3 import ServerVulnerabilityProperties
+from ._models_py3 import ServicePrincipalProperties
+from ._models_py3 import Setting
+from ._models_py3 import SettingsList
+from ._models_py3 import Software
+from ._models_py3 import SoftwaresList
+from ._models_py3 import SqlServerVulnerabilityProperties
+from ._models_py3 import SubAssessmentStatus
+from ._models_py3 import SuppressionAlertsScope
+from ._models_py3 import SystemData
+from ._models_py3 import Tags
+from ._models_py3 import TagsResource
+from ._models_py3 import ThresholdCustomAlertRule
+from ._models_py3 import TimeWindowCustomAlertRule
+from ._models_py3 import TopologyList
+from ._models_py3 import TopologyResource
+from ._models_py3 import TopologySingleResource
+from ._models_py3 import TopologySingleResourceChild
+from ._models_py3 import TopologySingleResourceParent
+from ._models_py3 import TrackedResource
+from ._models_py3 import TwinUpdatesNotInAllowedRange
+from ._models_py3 import UnauthorizedOperationsNotInAllowedRange
+from ._models_py3 import UpdateIotSecuritySolutionData
+from ._models_py3 import UserDefinedResourcesProperties
+from ._models_py3 import UserRecommendation
+from ._models_py3 import VaRule
+from ._models_py3 import VendorReference
+from ._models_py3 import VmRecommendation
+from ._models_py3 import WorkspaceSetting
+from ._models_py3 import WorkspaceSettingList
+
 
 from ._security_center_enums import (
     AadConnectivityStateEnum,
@@ -497,6 +294,7 @@ from ._security_center_enums import (
     AutoProvision,
     BundleType,
     Categories,
+    CloudName,
     ConfigurationStatus,
     ConnectionType,
     ControlType,
@@ -506,9 +304,6 @@ from ._security_center_enums import (
     EndOfSupportStatus,
     EnforcementMode,
     EnforcementSupport,
-    Enum13,
-    Enum15,
-    Enum69,
     EventSource,
     ExpandControlsEnum,
     ExpandEnum,
@@ -517,9 +312,12 @@ from ._security_center_enums import (
     FileType,
     HybridComputeProvisioningState,
     ImplementationEffort,
+    InformationProtectionPolicyName,
     Intent,
     KindEnum,
+    OfferingType,
     Operator,
+    OrganizationMembershipType,
     PermissionProperty,
     PricingTier,
     PropertyType,
@@ -543,13 +341,19 @@ from ._security_center_enums import (
     SecuritySolutionStatus,
     ServerVulnerabilityAssessmentPropertiesProvisioningState,
     SettingKind,
+    SettingName,
     Severity,
+    SeverityEnum,
     Source,
     SourceSystem,
     State,
     Status,
     StatusReason,
     SubAssessmentStatusCode,
+    SupportedCloudEnum,
+    Tactics,
+    TaskUpdateActionType,
+    Techniques,
     Threats,
     TransportProtocol,
     UnmaskedIpLoggingStatus,
@@ -590,6 +394,7 @@ __all__ = [
     'AscLocationList',
     'AssessmentLinks',
     'AssessmentStatus',
+    'AssessmentStatusResponse',
     'AtaExternalSecuritySolution',
     'AtaSolutionProperties',
     'AuthenticationDetailsProperties',
@@ -620,6 +425,7 @@ __all__ = [
     'CefExternalSecuritySolution',
     'CefSolutionProperties',
     'CloudErrorBody',
+    'CloudOffering',
     'Compliance',
     'ComplianceList',
     'ComplianceResult',
@@ -634,8 +440,25 @@ __all__ = [
     'ConnectorSetting',
     'ConnectorSettingList',
     'ContainerRegistryVulnerabilityProperties',
+    'CspmMonitorAwsOffering',
+    'CspmMonitorAwsOfferingNativeCloudConnection',
     'CustomAlertRule',
+    'CustomAssessmentAutomation',
+    'CustomAssessmentAutomationRequest',
+    'CustomAssessmentAutomationsListResult',
+    'CustomEntityStoreAssignment',
+    'CustomEntityStoreAssignmentRequest',
+    'CustomEntityStoreAssignmentsListResult',
     'DataExportSettings',
+    'DefenderForContainersAwsOffering',
+    'DefenderForContainersAwsOfferingCloudWatchToKinesis',
+    'DefenderForContainersAwsOfferingKinesisToS3',
+    'DefenderForContainersAwsOfferingKubernetesScubaReader',
+    'DefenderForContainersAwsOfferingKubernetesService',
+    'DefenderForServersAwsOffering',
+    'DefenderForServersAwsOfferingArcAutoProvisioning',
+    'DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata',
+    'DefenderForServersAwsOfferingDefenderForServers',
     'DenylistCustomAlertRule',
     'DeviceSecurityGroup',
     'DeviceSecurityGroupList',
@@ -656,6 +479,8 @@ __all__ = [
     'HttpC2DRejectedMessagesNotInAllowedRange',
     'HttpD2CMessagesNotInAllowedRange',
     'HybridComputeSettingsProperties',
+    'InformationProtectionAwsOffering',
+    'InformationProtectionAwsOfferingInformationProtection',
     'InformationProtectionKeyword',
     'InformationProtectionPolicy',
     'InformationProtectionPolicyList',
@@ -693,6 +518,8 @@ __all__ = [
     'LocalUserNotAllowed',
     'Location',
     'LogAnalyticsIdentifier',
+    'MdeOnboardingData',
+    'MdeOnboardingDataList',
     'MqttC2DMessagesNotInAllowedRange',
     'MqttC2DRejectedMessagesNotInAllowedRange',
     'MqttD2CMessagesNotInAllowedRange',
@@ -745,10 +572,20 @@ __all__ = [
     'SecurityAssessment',
     'SecurityAssessmentList',
     'SecurityAssessmentMetadata',
-    'SecurityAssessmentMetadataList',
     'SecurityAssessmentMetadataPartnerData',
     'SecurityAssessmentMetadataProperties',
+    'SecurityAssessmentMetadataPropertiesResponse',
+    'SecurityAssessmentMetadataPropertiesResponsePublishDates',
+    'SecurityAssessmentMetadataResponse',
+    'SecurityAssessmentMetadataResponseList',
     'SecurityAssessmentPartnerData',
+    'SecurityAssessmentProperties',
+    'SecurityAssessmentPropertiesBase',
+    'SecurityAssessmentPropertiesResponse',
+    'SecurityAssessmentResponse',
+    'SecurityConnector',
+    'SecurityConnectorPropertiesOrganizationalData',
+    'SecurityConnectorsList',
     'SecurityContact',
     'SecurityContactList',
     'SecuritySolution',
@@ -810,6 +647,7 @@ __all__ = [
     'AutoProvision',
     'BundleType',
     'Categories',
+    'CloudName',
     'ConfigurationStatus',
     'ConnectionType',
     'ControlType',
@@ -819,9 +657,6 @@ __all__ = [
     'EndOfSupportStatus',
     'EnforcementMode',
     'EnforcementSupport',
-    'Enum13',
-    'Enum15',
-    'Enum69',
     'EventSource',
     'ExpandControlsEnum',
     'ExpandEnum',
@@ -830,9 +665,12 @@ __all__ = [
     'FileType',
     'HybridComputeProvisioningState',
     'ImplementationEffort',
+    'InformationProtectionPolicyName',
     'Intent',
     'KindEnum',
+    'OfferingType',
     'Operator',
+    'OrganizationMembershipType',
     'PermissionProperty',
     'PricingTier',
     'PropertyType',
@@ -856,13 +694,19 @@ __all__ = [
     'SecuritySolutionStatus',
     'ServerVulnerabilityAssessmentPropertiesProvisioningState',
     'SettingKind',
+    'SettingName',
     'Severity',
+    'SeverityEnum',
     'Source',
     'SourceSystem',
     'State',
     'Status',
     'StatusReason',
     'SubAssessmentStatusCode',
+    'SupportedCloudEnum',
+    'Tactics',
+    'TaskUpdateActionType',
+    'Techniques',
     'Threats',
     'TransportProtocol',
     'UnmaskedIpLoggingStatus',

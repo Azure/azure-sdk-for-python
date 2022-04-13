@@ -17,9 +17,9 @@ from ._security_center_enums import *
 class AadConnectivityState(msrest.serialization.Model):
     """Describes an Azure resource with kind.
 
-    :param connectivity_state: The connectivity state of the external AAD solution. Possible values
+    :ivar connectivity_state: The connectivity state of the external AAD solution. Possible values
      include: "Discovered", "NotLicensed", "Connected".
-    :type connectivity_state: str or ~azure.mgmt.security.models.AadConnectivityStateEnum
+    :vartype connectivity_state: str or ~azure.mgmt.security.models.AadConnectivityStateEnum
     """
 
     _attribute_map = {
@@ -32,6 +32,11 @@ class AadConnectivityState(msrest.serialization.Model):
         connectivity_state: Optional[Union[str, "AadConnectivityStateEnum"]] = None,
         **kwargs
     ):
+        """
+        :keyword connectivity_state: The connectivity state of the external AAD solution. Possible
+         values include: "Discovered", "NotLicensed", "Connected".
+        :paramtype connectivity_state: str or ~azure.mgmt.security.models.AadConnectivityStateEnum
+        """
         super(AadConnectivityState, self).__init__(**kwargs)
         self.connectivity_state = connectivity_state
 
@@ -39,8 +44,8 @@ class AadConnectivityState(msrest.serialization.Model):
 class ExternalSecuritySolutionKind(msrest.serialization.Model):
     """Describes an Azure resource with kind.
 
-    :param kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
-    :type kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+    :ivar kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
     """
 
     _attribute_map = {
@@ -53,6 +58,10 @@ class ExternalSecuritySolutionKind(msrest.serialization.Model):
         kind: Optional[Union[str, "ExternalSecuritySolutionKindEnum"]] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+        :paramtype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+        """
         super(ExternalSecuritySolutionKind, self).__init__(**kwargs)
         self.kind = kind
 
@@ -78,6 +87,8 @@ class Location(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Location, self).__init__(**kwargs)
         self.location = None
 
@@ -111,6 +122,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -122,8 +135,8 @@ class ExternalSecuritySolution(Resource, Location, ExternalSecuritySolutionKind)
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
-    :type kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+    :ivar kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
     :ivar location: Location where the resource is stored.
     :vartype location: str
     :ivar id: Resource Id.
@@ -155,6 +168,10 @@ class ExternalSecuritySolution(Resource, Location, ExternalSecuritySolutionKind)
         kind: Optional[Union[str, "ExternalSecuritySolutionKindEnum"]] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+        :paramtype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+        """
         super(ExternalSecuritySolution, self).__init__(kind=kind, **kwargs)
         self.kind = kind
         self.location = None
@@ -173,8 +190,8 @@ class AadExternalSecuritySolution(ExternalSecuritySolution):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
-    :type kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+    :ivar kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
     :ivar location: Location where the resource is stored.
     :vartype location: str
     :ivar id: Resource Id.
@@ -183,8 +200,8 @@ class AadExternalSecuritySolution(ExternalSecuritySolution):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: The external security solution properties for AAD solutions.
-    :type properties: ~azure.mgmt.security.models.AadSolutionProperties
+    :ivar properties: The external security solution properties for AAD solutions.
+    :vartype properties: ~azure.mgmt.security.models.AadSolutionProperties
     """
 
     _validation = {
@@ -210,6 +227,12 @@ class AadExternalSecuritySolution(ExternalSecuritySolution):
         properties: Optional["AadSolutionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+        :paramtype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+        :keyword properties: The external security solution properties for AAD solutions.
+        :paramtype properties: ~azure.mgmt.security.models.AadSolutionProperties
+        """
         super(AadExternalSecuritySolution, self).__init__(kind=kind, **kwargs)
         self.properties = properties
 
@@ -217,15 +240,15 @@ class AadExternalSecuritySolution(ExternalSecuritySolution):
 class ExternalSecuritySolutionProperties(msrest.serialization.Model):
     """The solution properties (correspond to the solution kind).
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param device_vendor:
-    :type device_vendor: str
-    :param device_type:
-    :type device_type: str
-    :param workspace: Represents an OMS workspace to which the solution is connected.
-    :type workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+    :vartype additional_properties: dict[str, any]
+    :ivar device_vendor:
+    :vartype device_vendor: str
+    :ivar device_type:
+    :vartype device_type: str
+    :ivar workspace: Represents an OMS workspace to which the solution is connected.
+    :vartype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
     """
 
     _attribute_map = {
@@ -244,6 +267,17 @@ class ExternalSecuritySolutionProperties(msrest.serialization.Model):
         workspace: Optional["ConnectedWorkspace"] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword device_vendor:
+        :paramtype device_vendor: str
+        :keyword device_type:
+        :paramtype device_type: str
+        :keyword workspace: Represents an OMS workspace to which the solution is connected.
+        :paramtype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+        """
         super(ExternalSecuritySolutionProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.device_vendor = device_vendor
@@ -254,18 +288,18 @@ class ExternalSecuritySolutionProperties(msrest.serialization.Model):
 class AadSolutionProperties(ExternalSecuritySolutionProperties, AadConnectivityState):
     """The external security solution properties for AAD solutions.
 
-    :param connectivity_state: The connectivity state of the external AAD solution. Possible values
+    :ivar connectivity_state: The connectivity state of the external AAD solution. Possible values
      include: "Discovered", "NotLicensed", "Connected".
-    :type connectivity_state: str or ~azure.mgmt.security.models.AadConnectivityStateEnum
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :vartype connectivity_state: str or ~azure.mgmt.security.models.AadConnectivityStateEnum
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param device_vendor:
-    :type device_vendor: str
-    :param device_type:
-    :type device_type: str
-    :param workspace: Represents an OMS workspace to which the solution is connected.
-    :type workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+    :vartype additional_properties: dict[str, any]
+    :ivar device_vendor:
+    :vartype device_vendor: str
+    :ivar device_type:
+    :vartype device_type: str
+    :ivar workspace: Represents an OMS workspace to which the solution is connected.
+    :vartype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
     """
 
     _attribute_map = {
@@ -286,6 +320,20 @@ class AadSolutionProperties(ExternalSecuritySolutionProperties, AadConnectivityS
         workspace: Optional["ConnectedWorkspace"] = None,
         **kwargs
     ):
+        """
+        :keyword connectivity_state: The connectivity state of the external AAD solution. Possible
+         values include: "Discovered", "NotLicensed", "Connected".
+        :paramtype connectivity_state: str or ~azure.mgmt.security.models.AadConnectivityStateEnum
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword device_vendor:
+        :paramtype device_vendor: str
+        :keyword device_type:
+        :paramtype device_type: str
+        :keyword workspace: Represents an OMS workspace to which the solution is connected.
+        :paramtype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+        """
         super(AadSolutionProperties, self).__init__(additional_properties=additional_properties, device_vendor=device_vendor, device_type=device_type, workspace=workspace, connectivity_state=connectivity_state, **kwargs)
         self.connectivity_state = connectivity_state
         self.additional_properties = additional_properties
@@ -308,10 +356,10 @@ class CustomAlertRule(msrest.serialization.Model):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
     """
 
     _validation = {
@@ -338,6 +386,10 @@ class CustomAlertRule(msrest.serialization.Model):
         is_enabled: bool,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        """
         super(CustomAlertRule, self).__init__(**kwargs)
         self.display_name = None
         self.description = None
@@ -359,14 +411,14 @@ class ThresholdCustomAlertRule(CustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
     """
 
     _validation = {
@@ -399,6 +451,14 @@ class ThresholdCustomAlertRule(CustomAlertRule):
         max_threshold: int,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        """
         super(ThresholdCustomAlertRule, self).__init__(is_enabled=is_enabled, **kwargs)
         self.rule_type = 'ThresholdCustomAlertRule'  # type: str
         self.min_threshold = min_threshold
@@ -419,16 +479,16 @@ class TimeWindowCustomAlertRule(ThresholdCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -464,6 +524,16 @@ class TimeWindowCustomAlertRule(ThresholdCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(TimeWindowCustomAlertRule, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, **kwargs)
         self.rule_type = 'TimeWindowCustomAlertRule'  # type: str
         self.time_window_size = time_window_size
@@ -480,16 +550,16 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -521,6 +591,16 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(ActiveConnectionsNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'ActiveConnectionsNotInAllowedRange'  # type: str
 
@@ -538,12 +618,12 @@ class AdaptiveApplicationControlGroup(Resource, Location):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param enforcement_mode: The application control policy enforcement/protection mode of the
+    :ivar enforcement_mode: The application control policy enforcement/protection mode of the
      machine group. Possible values include: "Audit", "Enforce", "None".
-    :type enforcement_mode: str or ~azure.mgmt.security.models.EnforcementMode
-    :param protection_mode: The protection mode of the collection/file types. Exe/Msi/Script are
+    :vartype enforcement_mode: str or ~azure.mgmt.security.models.EnforcementMode
+    :ivar protection_mode: The protection mode of the collection/file types. Exe/Msi/Script are
      used for Windows, Executable is used for Linux.
-    :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
+    :vartype protection_mode: ~azure.mgmt.security.models.ProtectionMode
     :ivar configuration_status: The configuration status of the machines group or machine or rule.
      Possible values include: "Configured", "NotConfigured", "InProgress", "Failed", "NoStatus".
     :vartype configuration_status: str or ~azure.mgmt.security.models.ConfigurationStatus
@@ -555,10 +635,10 @@ class AdaptiveApplicationControlGroup(Resource, Location):
     :ivar source_system: The source type of the machine group. Possible values include:
      "Azure_AppLocker", "Azure_AuditD", "NonAzure_AppLocker", "NonAzure_AuditD", "None".
     :vartype source_system: str or ~azure.mgmt.security.models.SourceSystem
-    :param vm_recommendations:
-    :type vm_recommendations: list[~azure.mgmt.security.models.VmRecommendation]
-    :param path_recommendations:
-    :type path_recommendations: list[~azure.mgmt.security.models.PathRecommendation]
+    :ivar vm_recommendations:
+    :vartype vm_recommendations: list[~azure.mgmt.security.models.VmRecommendation]
+    :ivar path_recommendations:
+    :vartype path_recommendations: list[~azure.mgmt.security.models.PathRecommendation]
     """
 
     _validation = {
@@ -596,6 +676,18 @@ class AdaptiveApplicationControlGroup(Resource, Location):
         path_recommendations: Optional[List["PathRecommendation"]] = None,
         **kwargs
     ):
+        """
+        :keyword enforcement_mode: The application control policy enforcement/protection mode of the
+         machine group. Possible values include: "Audit", "Enforce", "None".
+        :paramtype enforcement_mode: str or ~azure.mgmt.security.models.EnforcementMode
+        :keyword protection_mode: The protection mode of the collection/file types. Exe/Msi/Script are
+         used for Windows, Executable is used for Linux.
+        :paramtype protection_mode: ~azure.mgmt.security.models.ProtectionMode
+        :keyword vm_recommendations:
+        :paramtype vm_recommendations: list[~azure.mgmt.security.models.VmRecommendation]
+        :keyword path_recommendations:
+        :paramtype path_recommendations: list[~azure.mgmt.security.models.PathRecommendation]
+        """
         super(AdaptiveApplicationControlGroup, self).__init__(**kwargs)
         self.location = None
         self.enforcement_mode = enforcement_mode
@@ -622,8 +714,8 @@ class AdaptiveApplicationControlGroup(Resource, Location):
 class AdaptiveApplicationControlGroups(msrest.serialization.Model):
     """Represents a list of machine groups and set of rules that are recommended by Azure Security Center to be allowed.
 
-    :param value:
-    :type value: list[~azure.mgmt.security.models.AdaptiveApplicationControlGroup]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.AdaptiveApplicationControlGroup]
     """
 
     _attribute_map = {
@@ -636,6 +728,10 @@ class AdaptiveApplicationControlGroups(msrest.serialization.Model):
         value: Optional[List["AdaptiveApplicationControlGroup"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.security.models.AdaptiveApplicationControlGroup]
+        """
         super(AdaptiveApplicationControlGroups, self).__init__(**kwargs)
         self.value = value
 
@@ -643,12 +739,12 @@ class AdaptiveApplicationControlGroups(msrest.serialization.Model):
 class AdaptiveApplicationControlIssueSummary(msrest.serialization.Model):
     """Represents a summary of the alerts of the machine group.
 
-    :param issue: An alert that machines within a group can have. Possible values include:
+    :ivar issue: An alert that machines within a group can have. Possible values include:
      "ViolationsAudited", "ViolationsBlocked", "MsiAndScriptViolationsAudited",
      "MsiAndScriptViolationsBlocked", "ExecutableViolationsAudited", "RulesViolatedManually".
-    :type issue: str or ~azure.mgmt.security.models.AdaptiveApplicationControlIssue
-    :param number_of_vms: The number of machines in the group that have this alert.
-    :type number_of_vms: float
+    :vartype issue: str or ~azure.mgmt.security.models.AdaptiveApplicationControlIssue
+    :ivar number_of_vms: The number of machines in the group that have this alert.
+    :vartype number_of_vms: float
     """
 
     _attribute_map = {
@@ -663,6 +759,14 @@ class AdaptiveApplicationControlIssueSummary(msrest.serialization.Model):
         number_of_vms: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword issue: An alert that machines within a group can have. Possible values include:
+         "ViolationsAudited", "ViolationsBlocked", "MsiAndScriptViolationsAudited",
+         "MsiAndScriptViolationsBlocked", "ExecutableViolationsAudited", "RulesViolatedManually".
+        :paramtype issue: str or ~azure.mgmt.security.models.AdaptiveApplicationControlIssue
+        :keyword number_of_vms: The number of machines in the group that have this alert.
+        :paramtype number_of_vms: float
+        """
         super(AdaptiveApplicationControlIssueSummary, self).__init__(**kwargs)
         self.issue = issue
         self.number_of_vms = number_of_vms
@@ -679,13 +783,13 @@ class AdaptiveNetworkHardening(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param rules: The security rules which are recommended to be effective on the VM.
-    :type rules: list[~azure.mgmt.security.models.Rule]
-    :param rules_calculation_time: The UTC time on which the rules were calculated.
-    :type rules_calculation_time: ~datetime.datetime
-    :param effective_network_security_groups: The Network Security Groups effective on the network
+    :ivar rules: The security rules which are recommended to be effective on the VM.
+    :vartype rules: list[~azure.mgmt.security.models.Rule]
+    :ivar rules_calculation_time: The UTC time on which the rules were calculated.
+    :vartype rules_calculation_time: ~datetime.datetime
+    :ivar effective_network_security_groups: The Network Security Groups effective on the network
      interfaces of the protected resource.
-    :type effective_network_security_groups:
+    :vartype effective_network_security_groups:
      list[~azure.mgmt.security.models.EffectiveNetworkSecurityGroups]
     """
 
@@ -712,6 +816,16 @@ class AdaptiveNetworkHardening(Resource):
         effective_network_security_groups: Optional[List["EffectiveNetworkSecurityGroups"]] = None,
         **kwargs
     ):
+        """
+        :keyword rules: The security rules which are recommended to be effective on the VM.
+        :paramtype rules: list[~azure.mgmt.security.models.Rule]
+        :keyword rules_calculation_time: The UTC time on which the rules were calculated.
+        :paramtype rules_calculation_time: ~datetime.datetime
+        :keyword effective_network_security_groups: The Network Security Groups effective on the
+         network interfaces of the protected resource.
+        :paramtype effective_network_security_groups:
+         list[~azure.mgmt.security.models.EffectiveNetworkSecurityGroups]
+        """
         super(AdaptiveNetworkHardening, self).__init__(**kwargs)
         self.rules = rules
         self.rules_calculation_time = rules_calculation_time
@@ -723,12 +837,12 @@ class AdaptiveNetworkHardeningEnforceRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param rules: Required. The rules to enforce.
-    :type rules: list[~azure.mgmt.security.models.Rule]
-    :param network_security_groups: Required. The Azure resource IDs of the effective network
+    :ivar rules: Required. The rules to enforce.
+    :vartype rules: list[~azure.mgmt.security.models.Rule]
+    :ivar network_security_groups: Required. The Azure resource IDs of the effective network
      security groups that will be updated with the created security rules from the Adaptive Network
      Hardening rules.
-    :type network_security_groups: list[str]
+    :vartype network_security_groups: list[str]
     """
 
     _validation = {
@@ -748,6 +862,14 @@ class AdaptiveNetworkHardeningEnforceRequest(msrest.serialization.Model):
         network_security_groups: List[str],
         **kwargs
     ):
+        """
+        :keyword rules: Required. The rules to enforce.
+        :paramtype rules: list[~azure.mgmt.security.models.Rule]
+        :keyword network_security_groups: Required. The Azure resource IDs of the effective network
+         security groups that will be updated with the created security rules from the Adaptive Network
+         Hardening rules.
+        :paramtype network_security_groups: list[str]
+        """
         super(AdaptiveNetworkHardeningEnforceRequest, self).__init__(**kwargs)
         self.rules = rules
         self.network_security_groups = network_security_groups
@@ -756,10 +878,10 @@ class AdaptiveNetworkHardeningEnforceRequest(msrest.serialization.Model):
 class AdaptiveNetworkHardeningsList(msrest.serialization.Model):
     """Response for ListAdaptiveNetworkHardenings API service call.
 
-    :param value: A list of Adaptive Network Hardenings resources.
-    :type value: list[~azure.mgmt.security.models.AdaptiveNetworkHardening]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: A list of Adaptive Network Hardenings resources.
+    :vartype value: list[~azure.mgmt.security.models.AdaptiveNetworkHardening]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -774,6 +896,12 @@ class AdaptiveNetworkHardeningsList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A list of Adaptive Network Hardenings resources.
+        :paramtype value: list[~azure.mgmt.security.models.AdaptiveNetworkHardening]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(AdaptiveNetworkHardeningsList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -787,10 +915,10 @@ class AdditionalData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param assessed_resource_type: Required. Sub-assessment resource type.Constant filled by
-     server.  Possible values include: "SqlServerVulnerability", "ContainerRegistryVulnerability",
+    :ivar assessed_resource_type: Required. Sub-assessment resource type.Constant filled by server.
+     Possible values include: "SqlServerVulnerability", "ContainerRegistryVulnerability",
      "ServerVulnerability".
-    :type assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
+    :vartype assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
     """
 
     _validation = {
@@ -809,6 +937,8 @@ class AdditionalData(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AdditionalData, self).__init__(**kwargs)
         self.assessed_resource_type = None  # type: Optional[str]
 
@@ -816,12 +946,12 @@ class AdditionalData(msrest.serialization.Model):
 class AdditionalWorkspacesProperties(msrest.serialization.Model):
     """Properties of the additional workspaces.
 
-    :param workspace: Workspace resource id.
-    :type workspace: str
-    :param type: Workspace type. Possible values include: "Sentinel". Default value: "Sentinel".
-    :type type: str or ~azure.mgmt.security.models.AdditionalWorkspaceType
-    :param data_types: List of data types sent to workspace.
-    :type data_types: list[str or ~azure.mgmt.security.models.AdditionalWorkspaceDataType]
+    :ivar workspace: Workspace resource id.
+    :vartype workspace: str
+    :ivar type: Workspace type. Possible values include: "Sentinel". Default value: "Sentinel".
+    :vartype type: str or ~azure.mgmt.security.models.AdditionalWorkspaceType
+    :ivar data_types: List of data types sent to workspace.
+    :vartype data_types: list[str or ~azure.mgmt.security.models.AdditionalWorkspaceDataType]
     """
 
     _attribute_map = {
@@ -838,6 +968,14 @@ class AdditionalWorkspacesProperties(msrest.serialization.Model):
         data_types: Optional[List[Union[str, "AdditionalWorkspaceDataType"]]] = None,
         **kwargs
     ):
+        """
+        :keyword workspace: Workspace resource id.
+        :paramtype workspace: str
+        :keyword type: Workspace type. Possible values include: "Sentinel". Default value: "Sentinel".
+        :paramtype type: str or ~azure.mgmt.security.models.AdditionalWorkspaceType
+        :keyword data_types: List of data types sent to workspace.
+        :paramtype data_types: list[str or ~azure.mgmt.security.models.AdditionalWorkspaceDataType]
+        """
         super(AdditionalWorkspacesProperties, self).__init__(**kwargs)
         self.workspace = workspace
         self.type = type
@@ -855,8 +993,8 @@ class AdvancedThreatProtectionSetting(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param is_enabled: Indicates whether Advanced Threat Protection is enabled.
-    :type is_enabled: bool
+    :ivar is_enabled: Indicates whether Advanced Threat Protection is enabled.
+    :vartype is_enabled: bool
     """
 
     _validation = {
@@ -878,6 +1016,10 @@ class AdvancedThreatProtectionSetting(Resource):
         is_enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Indicates whether Advanced Threat Protection is enabled.
+        :paramtype is_enabled: bool
+        """
         super(AdvancedThreatProtectionSetting, self).__init__(**kwargs)
         self.is_enabled = is_enabled
 
@@ -952,8 +1094,8 @@ class Alert(Resource):
     :ivar correlation_key: Key for corelating related alerts. Alerts with the same correlation key
      considered to be related.
     :vartype correlation_key: str
-    :param extended_properties: Custom properties for the alert.
-    :type extended_properties: dict[str, str]
+    :ivar extended_properties: Custom properties for the alert.
+    :vartype extended_properties: dict[str, str]
     :ivar compromised_entity: The display name of the resource most related to this alert.
     :vartype compromised_entity: str
     """
@@ -1021,6 +1163,10 @@ class Alert(Resource):
         extended_properties: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword extended_properties: Custom properties for the alert.
+        :paramtype extended_properties: dict[str, str]
+        """
         super(Alert, self).__init__(**kwargs)
         self.alert_type = None
         self.system_alert_id = None
@@ -1052,9 +1198,9 @@ class AlertEntity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar type: Type of entity.
     :vartype type: str
     """
@@ -1074,6 +1220,11 @@ class AlertEntity(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(AlertEntity, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.type = None
@@ -1084,8 +1235,8 @@ class AlertList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: describes security alert properties.
-    :type value: list[~azure.mgmt.security.models.Alert]
+    :ivar value: describes security alert properties.
+    :vartype value: list[~azure.mgmt.security.models.Alert]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -1105,6 +1256,10 @@ class AlertList(msrest.serialization.Model):
         value: Optional[List["Alert"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: describes security alert properties.
+        :paramtype value: list[~azure.mgmt.security.models.Alert]
+        """
         super(AlertList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -1118,12 +1273,12 @@ class AlertSimulatorRequestProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param kind: Required. The kind of alert simulation.Constant filled by server.  Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar kind: Required. The kind of alert simulation.Constant filled by server. Possible values
      include: "Bundles".
-    :type kind: str or ~azure.mgmt.security.models.KindEnum
+    :vartype kind: str or ~azure.mgmt.security.models.KindEnum
     """
 
     _validation = {
@@ -1145,6 +1300,11 @@ class AlertSimulatorRequestProperties(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(AlertSimulatorRequestProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.kind = 'AlertSimulatorRequestProperties'  # type: str
@@ -1155,14 +1315,14 @@ class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param kind: Required. The kind of alert simulation.Constant filled by server.  Possible values
+    :vartype additional_properties: dict[str, any]
+    :ivar kind: Required. The kind of alert simulation.Constant filled by server. Possible values
      include: "Bundles".
-    :type kind: str or ~azure.mgmt.security.models.KindEnum
-    :param bundles: Bundles list.
-    :type bundles: list[str or ~azure.mgmt.security.models.BundleType]
+    :vartype kind: str or ~azure.mgmt.security.models.KindEnum
+    :ivar bundles: Bundles list.
+    :vartype bundles: list[str or ~azure.mgmt.security.models.BundleType]
     """
 
     _validation = {
@@ -1182,6 +1342,13 @@ class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties):
         bundles: Optional[List[Union[str, "BundleType"]]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword bundles: Bundles list.
+        :paramtype bundles: list[str or ~azure.mgmt.security.models.BundleType]
+        """
         super(AlertSimulatorBundlesRequestProperties, self).__init__(additional_properties=additional_properties, **kwargs)
         self.kind = 'Bundles'  # type: str
         self.bundles = bundles
@@ -1190,8 +1357,8 @@ class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties):
 class AlertSimulatorRequestBody(msrest.serialization.Model):
     """Alert Simulator request body.
 
-    :param properties: Alert Simulator request body data.
-    :type properties: ~azure.mgmt.security.models.AlertSimulatorRequestProperties
+    :ivar properties: Alert Simulator request body data.
+    :vartype properties: ~azure.mgmt.security.models.AlertSimulatorRequestProperties
     """
 
     _attribute_map = {
@@ -1204,6 +1371,10 @@ class AlertSimulatorRequestBody(msrest.serialization.Model):
         properties: Optional["AlertSimulatorRequestProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Alert Simulator request body data.
+        :paramtype properties: ~azure.mgmt.security.models.AlertSimulatorRequestProperties
+        """
         super(AlertSimulatorRequestBody, self).__init__(**kwargs)
         self.properties = properties
 
@@ -1219,22 +1390,22 @@ class AlertsSuppressionRule(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param alert_type: Type of the alert to automatically suppress. For all alert types, use '*'.
-    :type alert_type: str
+    :ivar alert_type: Type of the alert to automatically suppress. For all alert types, use '*'.
+    :vartype alert_type: str
     :ivar last_modified_utc: The last time this rule was modified.
     :vartype last_modified_utc: ~datetime.datetime
-    :param expiration_date_utc: Expiration date of the rule, if value is not provided or provided
-     as null this field will default to the maximum allowed expiration date.
-    :type expiration_date_utc: ~datetime.datetime
-    :param reason: The reason for dismissing the alert.
-    :type reason: str
-    :param state: Possible states of the rule. Possible values include: "Enabled", "Disabled",
+    :ivar expiration_date_utc: Expiration date of the rule, if value is not provided or provided as
+     null this field will default to the maximum allowed expiration date.
+    :vartype expiration_date_utc: ~datetime.datetime
+    :ivar reason: The reason for dismissing the alert.
+    :vartype reason: str
+    :ivar state: Possible states of the rule. Possible values include: "Enabled", "Disabled",
      "Expired".
-    :type state: str or ~azure.mgmt.security.models.RuleState
-    :param comment: Any comment regarding the rule.
-    :type comment: str
-    :param suppression_alerts_scope: The suppression conditions.
-    :type suppression_alerts_scope: ~azure.mgmt.security.models.SuppressionAlertsScope
+    :vartype state: str or ~azure.mgmt.security.models.RuleState
+    :ivar comment: Any comment regarding the rule.
+    :vartype comment: str
+    :ivar suppression_alerts_scope: The suppression conditions.
+    :vartype suppression_alerts_scope: ~azure.mgmt.security.models.SuppressionAlertsScope
     """
 
     _validation = {
@@ -1268,6 +1439,22 @@ class AlertsSuppressionRule(Resource):
         suppression_alerts_scope: Optional["SuppressionAlertsScope"] = None,
         **kwargs
     ):
+        """
+        :keyword alert_type: Type of the alert to automatically suppress. For all alert types, use '*'.
+        :paramtype alert_type: str
+        :keyword expiration_date_utc: Expiration date of the rule, if value is not provided or provided
+         as null this field will default to the maximum allowed expiration date.
+        :paramtype expiration_date_utc: ~datetime.datetime
+        :keyword reason: The reason for dismissing the alert.
+        :paramtype reason: str
+        :keyword state: Possible states of the rule. Possible values include: "Enabled", "Disabled",
+         "Expired".
+        :paramtype state: str or ~azure.mgmt.security.models.RuleState
+        :keyword comment: Any comment regarding the rule.
+        :paramtype comment: str
+        :keyword suppression_alerts_scope: The suppression conditions.
+        :paramtype suppression_alerts_scope: ~azure.mgmt.security.models.SuppressionAlertsScope
+        """
         super(AlertsSuppressionRule, self).__init__(**kwargs)
         self.alert_type = alert_type
         self.last_modified_utc = None
@@ -1285,8 +1472,8 @@ class AlertsSuppressionRulesList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required.
-    :type value: list[~azure.mgmt.security.models.AlertsSuppressionRule]
+    :ivar value: Required.
+    :vartype value: list[~azure.mgmt.security.models.AlertsSuppressionRule]
     :ivar next_link: URI to fetch the next page.
     :vartype next_link: str
     """
@@ -1307,6 +1494,10 @@ class AlertsSuppressionRulesList(msrest.serialization.Model):
         value: List["AlertsSuppressionRule"],
         **kwargs
     ):
+        """
+        :keyword value: Required.
+        :paramtype value: list[~azure.mgmt.security.models.AlertsSuppressionRule]
+        """
         super(AlertsSuppressionRulesList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -1328,9 +1519,9 @@ class Setting(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param kind: Required. the kind of the settings string.Constant filled by server.  Possible
+    :ivar kind: Required. the kind of the settings string.Constant filled by server. Possible
      values include: "DataExportSettings", "AlertSuppressionSetting", "AlertSyncSettings".
-    :type kind: str or ~azure.mgmt.security.models.SettingKind
+    :vartype kind: str or ~azure.mgmt.security.models.SettingKind
     """
 
     _validation = {
@@ -1355,6 +1546,8 @@ class Setting(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(Setting, self).__init__(**kwargs)
         self.kind = 'Setting'  # type: str
 
@@ -1372,11 +1565,11 @@ class AlertSyncSettings(Setting):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param kind: Required. the kind of the settings string.Constant filled by server.  Possible
+    :ivar kind: Required. the kind of the settings string.Constant filled by server. Possible
      values include: "DataExportSettings", "AlertSuppressionSetting", "AlertSyncSettings".
-    :type kind: str or ~azure.mgmt.security.models.SettingKind
-    :param enabled: Is the alert sync setting enabled.
-    :type enabled: bool
+    :vartype kind: str or ~azure.mgmt.security.models.SettingKind
+    :ivar enabled: Is the alert sync setting enabled.
+    :vartype enabled: bool
     """
 
     _validation = {
@@ -1400,6 +1593,10 @@ class AlertSyncSettings(Setting):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Is the alert sync setting enabled.
+        :paramtype enabled: bool
+        """
         super(AlertSyncSettings, self).__init__(**kwargs)
         self.kind = 'AlertSyncSettings'  # type: str
         self.enabled = enabled
@@ -1430,6 +1627,8 @@ class AllowedConnectionsList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AllowedConnectionsList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1477,6 +1676,8 @@ class AllowedConnectionsResource(Resource, Location):
         self,
         **kwargs
     ):
+        """
+        """
         super(AllowedConnectionsResource, self).__init__(**kwargs)
         self.location = None
         self.calculated_date_time = None
@@ -1502,10 +1703,10 @@ class ListCustomAlertRule(CustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
@@ -1537,6 +1738,10 @@ class ListCustomAlertRule(CustomAlertRule):
         is_enabled: bool,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        """
         super(ListCustomAlertRule, self).__init__(is_enabled=is_enabled, **kwargs)
         self.rule_type = 'ListCustomAlertRule'  # type: str
         self.value_type = None
@@ -1556,16 +1761,16 @@ class AllowlistCustomAlertRule(ListCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
-    :param allowlist_values: Required. The values to allow. The format of the values depends on the
+    :ivar allowlist_values: Required. The values to allow. The format of the values depends on the
      rule type.
-    :type allowlist_values: list[str]
+    :vartype allowlist_values: list[str]
     """
 
     _validation = {
@@ -1597,6 +1802,13 @@ class AllowlistCustomAlertRule(ListCustomAlertRule):
         allowlist_values: List[str],
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword allowlist_values: Required. The values to allow. The format of the values depends on
+         the rule type.
+        :paramtype allowlist_values: list[str]
+        """
         super(AllowlistCustomAlertRule, self).__init__(is_enabled=is_enabled, **kwargs)
         self.rule_type = 'AllowlistCustomAlertRule'  # type: str
         self.allowlist_values = allowlist_values
@@ -1613,16 +1825,16 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -1654,6 +1866,16 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(AmqpC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'AmqpC2DMessagesNotInAllowedRange'  # type: str
 
@@ -1669,16 +1891,16 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -1710,6 +1932,16 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(AmqpC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'AmqpC2DRejectedMessagesNotInAllowedRange'  # type: str
 
@@ -1725,16 +1957,16 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -1766,6 +1998,16 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(AmqpD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'AmqpD2CMessagesNotInAllowedRange'  # type: str
 
@@ -1781,8 +2023,8 @@ class AscLocation(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: Any object.
-    :type properties: any
+    :ivar properties: Any object.
+    :vartype properties: any
     """
 
     _validation = {
@@ -1804,6 +2046,10 @@ class AscLocation(Resource):
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Any object.
+        :paramtype properties: any
+        """
         super(AscLocation, self).__init__(**kwargs)
         self.properties = properties
 
@@ -1833,6 +2079,8 @@ class AscLocationList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AscLocationList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1859,6 +2107,8 @@ class AssessmentLinks(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AssessmentLinks, self).__init__(**kwargs)
         self.azure_portal_uri = None
 
@@ -1868,13 +2118,13 @@ class AssessmentStatus(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Programmatic code for the status of the assessment. Possible values
+    :ivar code: Required. Programmatic code for the status of the assessment. Possible values
      include: "Healthy", "Unhealthy", "NotApplicable".
-    :type code: str or ~azure.mgmt.security.models.AssessmentStatusCode
-    :param cause: Programmatic code for the cause of the assessment status.
-    :type cause: str
-    :param description: Human readable description of the assessment status.
-    :type description: str
+    :vartype code: str or ~azure.mgmt.security.models.AssessmentStatusCode
+    :ivar cause: Programmatic code for the cause of the assessment status.
+    :vartype cause: str
+    :ivar description: Human readable description of the assessment status.
+    :vartype description: str
     """
 
     _validation = {
@@ -1895,10 +2145,77 @@ class AssessmentStatus(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Required. Programmatic code for the status of the assessment. Possible values
+         include: "Healthy", "Unhealthy", "NotApplicable".
+        :paramtype code: str or ~azure.mgmt.security.models.AssessmentStatusCode
+        :keyword cause: Programmatic code for the cause of the assessment status.
+        :paramtype cause: str
+        :keyword description: Human readable description of the assessment status.
+        :paramtype description: str
+        """
         super(AssessmentStatus, self).__init__(**kwargs)
         self.code = code
         self.cause = cause
         self.description = description
+
+
+class AssessmentStatusResponse(AssessmentStatus):
+    """The result of the assessment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: Required. Programmatic code for the status of the assessment. Possible values
+     include: "Healthy", "Unhealthy", "NotApplicable".
+    :vartype code: str or ~azure.mgmt.security.models.AssessmentStatusCode
+    :ivar cause: Programmatic code for the cause of the assessment status.
+    :vartype cause: str
+    :ivar description: Human readable description of the assessment status.
+    :vartype description: str
+    :ivar first_evaluation_date: The time that the assessment was created and first evaluated.
+     Returned as UTC time in ISO 8601 format.
+    :vartype first_evaluation_date: ~datetime.datetime
+    :ivar status_change_date: The time that the status of the assessment last changed. Returned as
+     UTC time in ISO 8601 format.
+    :vartype status_change_date: ~datetime.datetime
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'first_evaluation_date': {'readonly': True},
+        'status_change_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'cause': {'key': 'cause', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'first_evaluation_date': {'key': 'firstEvaluationDate', 'type': 'iso-8601'},
+        'status_change_date': {'key': 'statusChangeDate', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: Union[str, "AssessmentStatusCode"],
+        cause: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword code: Required. Programmatic code for the status of the assessment. Possible values
+         include: "Healthy", "Unhealthy", "NotApplicable".
+        :paramtype code: str or ~azure.mgmt.security.models.AssessmentStatusCode
+        :keyword cause: Programmatic code for the cause of the assessment status.
+        :paramtype cause: str
+        :keyword description: Human readable description of the assessment status.
+        :paramtype description: str
+        """
+        super(AssessmentStatusResponse, self).__init__(code=code, cause=cause, description=description, **kwargs)
+        self.first_evaluation_date = None
+        self.status_change_date = None
 
 
 class AtaExternalSecuritySolution(ExternalSecuritySolution):
@@ -1906,8 +2223,8 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
-    :type kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+    :ivar kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
     :ivar location: Location where the resource is stored.
     :vartype location: str
     :ivar id: Resource Id.
@@ -1916,8 +2233,8 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: The external security solution properties for ATA solutions.
-    :type properties: ~azure.mgmt.security.models.AtaSolutionProperties
+    :ivar properties: The external security solution properties for ATA solutions.
+    :vartype properties: ~azure.mgmt.security.models.AtaSolutionProperties
     """
 
     _validation = {
@@ -1943,6 +2260,12 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution):
         properties: Optional["AtaSolutionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+        :paramtype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+        :keyword properties: The external security solution properties for ATA solutions.
+        :paramtype properties: ~azure.mgmt.security.models.AtaSolutionProperties
+        """
         super(AtaExternalSecuritySolution, self).__init__(kind=kind, **kwargs)
         self.properties = properties
 
@@ -1950,17 +2273,17 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution):
 class AtaSolutionProperties(ExternalSecuritySolutionProperties):
     """The external security solution properties for ATA solutions.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param device_vendor:
-    :type device_vendor: str
-    :param device_type:
-    :type device_type: str
-    :param workspace: Represents an OMS workspace to which the solution is connected.
-    :type workspace: ~azure.mgmt.security.models.ConnectedWorkspace
-    :param last_event_received:
-    :type last_event_received: str
+    :vartype additional_properties: dict[str, any]
+    :ivar device_vendor:
+    :vartype device_vendor: str
+    :ivar device_type:
+    :vartype device_type: str
+    :ivar workspace: Represents an OMS workspace to which the solution is connected.
+    :vartype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+    :ivar last_event_received:
+    :vartype last_event_received: str
     """
 
     _attribute_map = {
@@ -1981,6 +2304,19 @@ class AtaSolutionProperties(ExternalSecuritySolutionProperties):
         last_event_received: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword device_vendor:
+        :paramtype device_vendor: str
+        :keyword device_type:
+        :paramtype device_type: str
+        :keyword workspace: Represents an OMS workspace to which the solution is connected.
+        :paramtype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+        :keyword last_event_received:
+        :paramtype last_event_received: str
+        """
         super(AtaSolutionProperties, self).__init__(additional_properties=additional_properties, device_vendor=device_vendor, device_type=device_type, workspace=workspace, **kwargs)
         self.last_event_received = last_event_received
 
@@ -2001,10 +2337,10 @@ class AuthenticationDetailsProperties(msrest.serialization.Model):
      ~azure.mgmt.security.models.AuthenticationProvisioningState
     :ivar granted_permissions: The permissions detected in the cloud account.
     :vartype granted_permissions: list[str or ~azure.mgmt.security.models.PermissionProperty]
-    :param authentication_type: Required. Connect to your cloud account, for AWS use either account
+    :ivar authentication_type: Required. Connect to your cloud account, for AWS use either account
      credentials or role-based authentication. For GCP use account organization credentials.Constant
-     filled by server.  Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
-    :type authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
+     filled by server. Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
+    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
     """
 
     _validation = {
@@ -2027,6 +2363,8 @@ class AuthenticationDetailsProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AuthenticationDetailsProperties, self).__init__(**kwargs)
         self.authentication_provisioning_state = None
         self.granted_permissions = None
@@ -2036,8 +2374,8 @@ class AuthenticationDetailsProperties(msrest.serialization.Model):
 class Tags(msrest.serialization.Model):
     """A list of key value pairs that describe the resource.
 
-    :param tags: A set of tags. A list of key value pairs that describe the resource.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. A list of key value pairs that describe the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -2050,6 +2388,10 @@ class Tags(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. A list of key value pairs that describe the resource.
+        :paramtype tags: dict[str, str]
+        """
         super(Tags, self).__init__(**kwargs)
         self.tags = tags
 
@@ -2057,9 +2399,9 @@ class Tags(msrest.serialization.Model):
 class ETag(msrest.serialization.Model):
     """Entity tag is used for comparing two or more entities from the same requested resource.
 
-    :param etag: Entity tag is used for comparing two or more entities from the same requested
+    :ivar etag: Entity tag is used for comparing two or more entities from the same requested
      resource.
-    :type etag: str
+    :vartype etag: str
     """
 
     _attribute_map = {
@@ -2072,6 +2414,11 @@ class ETag(msrest.serialization.Model):
         etag: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword etag: Entity tag is used for comparing two or more entities from the same requested
+         resource.
+        :paramtype etag: str
+        """
         super(ETag, self).__init__(**kwargs)
         self.etag = etag
 
@@ -2079,8 +2426,8 @@ class ETag(msrest.serialization.Model):
 class Kind(msrest.serialization.Model):
     """Describes an Azure resource with kind.
 
-    :param kind: Kind of the resource.
-    :type kind: str
+    :ivar kind: Kind of the resource.
+    :vartype kind: str
     """
 
     _attribute_map = {
@@ -2093,6 +2440,10 @@ class Kind(msrest.serialization.Model):
         kind: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of the resource.
+        :paramtype kind: str
+        """
         super(Kind, self).__init__(**kwargs)
         self.kind = kind
 
@@ -2100,8 +2451,8 @@ class Kind(msrest.serialization.Model):
 class AzureTrackedResourceLocation(msrest.serialization.Model):
     """Describes an Azure resource with location.
 
-    :param location: Location where the resource is stored.
-    :type location: str
+    :ivar location: Location where the resource is stored.
+    :vartype location: str
     """
 
     _attribute_map = {
@@ -2114,6 +2465,10 @@ class AzureTrackedResourceLocation(msrest.serialization.Model):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Location where the resource is stored.
+        :paramtype location: str
+        """
         super(AzureTrackedResourceLocation, self).__init__(**kwargs)
         self.location = location
 
@@ -2123,15 +2478,15 @@ class TrackedResource(Resource, AzureTrackedResourceLocation, Kind, ETag, Tags):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. A list of key value pairs that describe the resource.
-    :type tags: dict[str, str]
-    :param etag: Entity tag is used for comparing two or more entities from the same requested
+    :ivar tags: A set of tags. A list of key value pairs that describe the resource.
+    :vartype tags: dict[str, str]
+    :ivar etag: Entity tag is used for comparing two or more entities from the same requested
      resource.
-    :type etag: str
-    :param kind: Kind of the resource.
-    :type kind: str
-    :param location: Location where the resource is stored.
-    :type location: str
+    :vartype etag: str
+    :ivar kind: Kind of the resource.
+    :vartype kind: str
+    :ivar location: Location where the resource is stored.
+    :vartype location: str
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
@@ -2165,6 +2520,17 @@ class TrackedResource(Resource, AzureTrackedResourceLocation, Kind, ETag, Tags):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. A list of key value pairs that describe the resource.
+        :paramtype tags: dict[str, str]
+        :keyword etag: Entity tag is used for comparing two or more entities from the same requested
+         resource.
+        :paramtype etag: str
+        :keyword kind: Kind of the resource.
+        :paramtype kind: str
+        :keyword location: Location where the resource is stored.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(location=location, kind=kind, etag=etag, tags=tags, **kwargs)
         self.tags = tags
         self.etag = etag
@@ -2201,35 +2567,35 @@ class Automation(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. A list of key value pairs that describe the resource.
-    :type tags: dict[str, str]
-    :param etag: Entity tag is used for comparing two or more entities from the same requested
+    :ivar tags: A set of tags. A list of key value pairs that describe the resource.
+    :vartype tags: dict[str, str]
+    :ivar etag: Entity tag is used for comparing two or more entities from the same requested
      resource.
-    :type etag: str
-    :param kind: Kind of the resource.
-    :type kind: str
-    :param location: Location where the resource is stored.
-    :type location: str
+    :vartype etag: str
+    :ivar kind: Kind of the resource.
+    :vartype kind: str
+    :ivar location: Location where the resource is stored.
+    :vartype location: str
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param description: The security automation description.
-    :type description: str
-    :param is_enabled: Indicates whether the security automation is enabled.
-    :type is_enabled: bool
-    :param scopes: A collection of scopes on which the security automations logic is applied.
+    :ivar description: The security automation description.
+    :vartype description: str
+    :ivar is_enabled: Indicates whether the security automation is enabled.
+    :vartype is_enabled: bool
+    :ivar scopes: A collection of scopes on which the security automations logic is applied.
      Supported scopes are the subscription itself or a resource group under that subscription. The
      automation will only apply on defined scopes.
-    :type scopes: list[~azure.mgmt.security.models.AutomationScope]
-    :param sources: A collection of the source event types which evaluate the security automation
+    :vartype scopes: list[~azure.mgmt.security.models.AutomationScope]
+    :ivar sources: A collection of the source event types which evaluate the security automation
      set of rules.
-    :type sources: list[~azure.mgmt.security.models.AutomationSource]
-    :param actions: A collection of the actions which are triggered if all the configured rules
+    :vartype sources: list[~azure.mgmt.security.models.AutomationSource]
+    :ivar actions: A collection of the actions which are triggered if all the configured rules
      evaluations, within at least one rule set, are true.
-    :type actions: list[~azure.mgmt.security.models.AutomationAction]
+    :vartype actions: list[~azure.mgmt.security.models.AutomationAction]
     """
 
     _validation = {
@@ -2267,6 +2633,31 @@ class Automation(TrackedResource):
         actions: Optional[List["AutomationAction"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. A list of key value pairs that describe the resource.
+        :paramtype tags: dict[str, str]
+        :keyword etag: Entity tag is used for comparing two or more entities from the same requested
+         resource.
+        :paramtype etag: str
+        :keyword kind: Kind of the resource.
+        :paramtype kind: str
+        :keyword location: Location where the resource is stored.
+        :paramtype location: str
+        :keyword description: The security automation description.
+        :paramtype description: str
+        :keyword is_enabled: Indicates whether the security automation is enabled.
+        :paramtype is_enabled: bool
+        :keyword scopes: A collection of scopes on which the security automations logic is applied.
+         Supported scopes are the subscription itself or a resource group under that subscription. The
+         automation will only apply on defined scopes.
+        :paramtype scopes: list[~azure.mgmt.security.models.AutomationScope]
+        :keyword sources: A collection of the source event types which evaluate the security automation
+         set of rules.
+        :paramtype sources: list[~azure.mgmt.security.models.AutomationSource]
+        :keyword actions: A collection of the actions which are triggered if all the configured rules
+         evaluations, within at least one rule set, are true.
+        :paramtype actions: list[~azure.mgmt.security.models.AutomationAction]
+        """
         super(Automation, self).__init__(tags=tags, etag=etag, kind=kind, location=location, **kwargs)
         self.description = description
         self.is_enabled = is_enabled
@@ -2283,10 +2674,10 @@ class AutomationAction(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action_type: Required. The type of the action that will be triggered by the
-     Automation.Constant filled by server.  Possible values include: "LogicApp", "EventHub",
+    :ivar action_type: Required. The type of the action that will be triggered by the
+     Automation.Constant filled by server. Possible values include: "LogicApp", "EventHub",
      "Workspace".
-    :type action_type: str or ~azure.mgmt.security.models.ActionType
+    :vartype action_type: str or ~azure.mgmt.security.models.ActionType
     """
 
     _validation = {
@@ -2305,28 +2696,30 @@ class AutomationAction(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AutomationAction, self).__init__(**kwargs)
         self.action_type = None  # type: Optional[str]
 
 
 class AutomationActionEventHub(AutomationAction):
-    """The target Event Hub to which event data will be exported. To learn more about Security Center continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
+    """The target Event Hub to which event data will be exported. To learn more about Microsoft Defender for Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action_type: Required. The type of the action that will be triggered by the
-     Automation.Constant filled by server.  Possible values include: "LogicApp", "EventHub",
+    :ivar action_type: Required. The type of the action that will be triggered by the
+     Automation.Constant filled by server. Possible values include: "LogicApp", "EventHub",
      "Workspace".
-    :type action_type: str or ~azure.mgmt.security.models.ActionType
-    :param event_hub_resource_id: The target Event Hub Azure Resource ID.
-    :type event_hub_resource_id: str
+    :vartype action_type: str or ~azure.mgmt.security.models.ActionType
+    :ivar event_hub_resource_id: The target Event Hub Azure Resource ID.
+    :vartype event_hub_resource_id: str
     :ivar sas_policy_name: The target Event Hub SAS policy name.
     :vartype sas_policy_name: str
-    :param connection_string: The target Event Hub connection string (it will not be included in
-     any response).
-    :type connection_string: str
+    :ivar connection_string: The target Event Hub connection string (it will not be included in any
+     response).
+    :vartype connection_string: str
     """
 
     _validation = {
@@ -2348,6 +2741,13 @@ class AutomationActionEventHub(AutomationAction):
         connection_string: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword event_hub_resource_id: The target Event Hub Azure Resource ID.
+        :paramtype event_hub_resource_id: str
+        :keyword connection_string: The target Event Hub connection string (it will not be included in
+         any response).
+        :paramtype connection_string: str
+        """
         super(AutomationActionEventHub, self).__init__(**kwargs)
         self.action_type = 'EventHub'  # type: str
         self.event_hub_resource_id = event_hub_resource_id
@@ -2356,19 +2756,19 @@ class AutomationActionEventHub(AutomationAction):
 
 
 class AutomationActionLogicApp(AutomationAction):
-    """The logic app action that should be triggered. To learn more about Security Center's Workflow Automation capabilities, visit https://aka.ms/ASCWorkflowAutomationLearnMore.
+    """The logic app action that should be triggered. To learn more about Microsoft Defender for Cloud's Workflow Automation capabilities, visit https://aka.ms/ASCWorkflowAutomationLearnMore.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action_type: Required. The type of the action that will be triggered by the
-     Automation.Constant filled by server.  Possible values include: "LogicApp", "EventHub",
+    :ivar action_type: Required. The type of the action that will be triggered by the
+     Automation.Constant filled by server. Possible values include: "LogicApp", "EventHub",
      "Workspace".
-    :type action_type: str or ~azure.mgmt.security.models.ActionType
-    :param logic_app_resource_id: The triggered Logic App Azure Resource ID. This can also reside
-     on other subscriptions, given that you have permissions to trigger the Logic App.
-    :type logic_app_resource_id: str
-    :param uri: The Logic App trigger URI endpoint (it will not be included in any response).
-    :type uri: str
+    :vartype action_type: str or ~azure.mgmt.security.models.ActionType
+    :ivar logic_app_resource_id: The triggered Logic App Azure Resource ID. This can also reside on
+     other subscriptions, given that you have permissions to trigger the Logic App.
+    :vartype logic_app_resource_id: str
+    :ivar uri: The Logic App trigger URI endpoint (it will not be included in any response).
+    :vartype uri: str
     """
 
     _validation = {
@@ -2388,6 +2788,13 @@ class AutomationActionLogicApp(AutomationAction):
         uri: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword logic_app_resource_id: The triggered Logic App Azure Resource ID. This can also reside
+         on other subscriptions, given that you have permissions to trigger the Logic App.
+        :paramtype logic_app_resource_id: str
+        :keyword uri: The Logic App trigger URI endpoint (it will not be included in any response).
+        :paramtype uri: str
+        """
         super(AutomationActionLogicApp, self).__init__(**kwargs)
         self.action_type = 'LogicApp'  # type: str
         self.logic_app_resource_id = logic_app_resource_id
@@ -2395,16 +2802,16 @@ class AutomationActionLogicApp(AutomationAction):
 
 
 class AutomationActionWorkspace(AutomationAction):
-    """The Log Analytics Workspace to which event data will be exported. Security alerts data will reside in the 'SecurityAlert' table and the assessments data will reside in the 'SecurityRecommendation' table (under the 'Security'/'SecurityCenterFree' solutions). Note that in order to view the data in the workspace, the Security Center Log Analytics free/standard solution needs to be enabled on that workspace. To learn more about Security Center continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
+    """The Log Analytics Workspace to which event data will be exported. Security alerts data will reside in the 'SecurityAlert' table and the assessments data will reside in the 'SecurityRecommendation' table (under the 'Security'/'SecurityCenterFree' solutions). Note that in order to view the data in the workspace, the Security Center Log Analytics free/standard solution needs to be enabled on that workspace. To learn more about Microsoft Defender for Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action_type: Required. The type of the action that will be triggered by the
-     Automation.Constant filled by server.  Possible values include: "LogicApp", "EventHub",
+    :ivar action_type: Required. The type of the action that will be triggered by the
+     Automation.Constant filled by server. Possible values include: "LogicApp", "EventHub",
      "Workspace".
-    :type action_type: str or ~azure.mgmt.security.models.ActionType
-    :param workspace_resource_id: The fully qualified Log Analytics Workspace Azure Resource ID.
-    :type workspace_resource_id: str
+    :vartype action_type: str or ~azure.mgmt.security.models.ActionType
+    :ivar workspace_resource_id: The fully qualified Log Analytics Workspace Azure Resource ID.
+    :vartype workspace_resource_id: str
     """
 
     _validation = {
@@ -2422,6 +2829,10 @@ class AutomationActionWorkspace(AutomationAction):
         workspace_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword workspace_resource_id: The fully qualified Log Analytics Workspace Azure Resource ID.
+        :paramtype workspace_resource_id: str
+        """
         super(AutomationActionWorkspace, self).__init__(**kwargs)
         self.action_type = 'Workspace'  # type: str
         self.workspace_resource_id = workspace_resource_id
@@ -2434,8 +2845,8 @@ class AutomationList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of security automations under the given scope.
-    :type value: list[~azure.mgmt.security.models.Automation]
+    :ivar value: Required. The list of security automations under the given scope.
+    :vartype value: list[~azure.mgmt.security.models.Automation]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -2456,6 +2867,10 @@ class AutomationList(msrest.serialization.Model):
         value: List["Automation"],
         **kwargs
     ):
+        """
+        :keyword value: Required. The list of security automations under the given scope.
+        :paramtype value: list[~azure.mgmt.security.models.Automation]
+        """
         super(AutomationList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2464,8 +2879,8 @@ class AutomationList(msrest.serialization.Model):
 class AutomationRuleSet(msrest.serialization.Model):
     """A rule set which evaluates all its rules upon an event interception. Only when all the included rules in the rule set will be evaluated as 'true', will the event trigger the defined actions.
 
-    :param rules:
-    :type rules: list[~azure.mgmt.security.models.AutomationTriggeringRule]
+    :ivar rules:
+    :vartype rules: list[~azure.mgmt.security.models.AutomationTriggeringRule]
     """
 
     _attribute_map = {
@@ -2478,6 +2893,10 @@ class AutomationRuleSet(msrest.serialization.Model):
         rules: Optional[List["AutomationTriggeringRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword rules:
+        :paramtype rules: list[~azure.mgmt.security.models.AutomationTriggeringRule]
+        """
         super(AutomationRuleSet, self).__init__(**kwargs)
         self.rules = rules
 
@@ -2485,11 +2904,11 @@ class AutomationRuleSet(msrest.serialization.Model):
 class AutomationScope(msrest.serialization.Model):
     """A single automation scope.
 
-    :param description: The resources scope description.
-    :type description: str
-    :param scope_path: The resources scope path. Can be the subscription on which the automation is
+    :ivar description: The resources scope description.
+    :vartype description: str
+    :ivar scope_path: The resources scope path. Can be the subscription on which the automation is
      defined on or a resource group under that subscription (fully qualified Azure resource IDs).
-    :type scope_path: str
+    :vartype scope_path: str
     """
 
     _attribute_map = {
@@ -2504,6 +2923,13 @@ class AutomationScope(msrest.serialization.Model):
         scope_path: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword description: The resources scope description.
+        :paramtype description: str
+        :keyword scope_path: The resources scope path. Can be the subscription on which the automation
+         is defined on or a resource group under that subscription (fully qualified Azure resource IDs).
+        :paramtype scope_path: str
+        """
         super(AutomationScope, self).__init__(**kwargs)
         self.description = description
         self.scope_path = scope_path
@@ -2512,14 +2938,14 @@ class AutomationScope(msrest.serialization.Model):
 class AutomationSource(msrest.serialization.Model):
     """The source event types which evaluate the security automation set of rules. For example - security alerts and security assessments. To learn more about the supported security events data models schemas - please visit https://aka.ms/ASCAutomationSchemas.
 
-    :param event_source: A valid event source type. Possible values include: "Assessments",
-     "SubAssessments", "Alerts", "SecureScores", "SecureScoresSnapshot", "SecureScoreControls",
-     "SecureScoreControlsSnapshot", "RegulatoryComplianceAssessment",
-     "RegulatoryComplianceAssessmentSnapshot".
-    :type event_source: str or ~azure.mgmt.security.models.EventSource
-    :param rule_sets: A set of rules which evaluate upon event interception. A logical disjunction
+    :ivar event_source: A valid event source type. Possible values include: "Assessments",
+     "AssessmentsSnapshot", "SubAssessments", "SubAssessmentsSnapshot", "Alerts", "SecureScores",
+     "SecureScoresSnapshot", "SecureScoreControls", "SecureScoreControlsSnapshot",
+     "RegulatoryComplianceAssessment", "RegulatoryComplianceAssessmentSnapshot".
+    :vartype event_source: str or ~azure.mgmt.security.models.EventSource
+    :ivar rule_sets: A set of rules which evaluate upon event interception. A logical disjunction
      is applied between defined rule sets (logical 'or').
-    :type rule_sets: list[~azure.mgmt.security.models.AutomationRuleSet]
+    :vartype rule_sets: list[~azure.mgmt.security.models.AutomationRuleSet]
     """
 
     _attribute_map = {
@@ -2534,6 +2960,16 @@ class AutomationSource(msrest.serialization.Model):
         rule_sets: Optional[List["AutomationRuleSet"]] = None,
         **kwargs
     ):
+        """
+        :keyword event_source: A valid event source type. Possible values include: "Assessments",
+         "AssessmentsSnapshot", "SubAssessments", "SubAssessmentsSnapshot", "Alerts", "SecureScores",
+         "SecureScoresSnapshot", "SecureScoreControls", "SecureScoreControlsSnapshot",
+         "RegulatoryComplianceAssessment", "RegulatoryComplianceAssessmentSnapshot".
+        :paramtype event_source: str or ~azure.mgmt.security.models.EventSource
+        :keyword rule_sets: A set of rules which evaluate upon event interception. A logical
+         disjunction is applied between defined rule sets (logical 'or').
+        :paramtype rule_sets: list[~azure.mgmt.security.models.AutomationRuleSet]
+        """
         super(AutomationSource, self).__init__(**kwargs)
         self.event_source = event_source
         self.rule_sets = rule_sets
@@ -2542,19 +2978,19 @@ class AutomationSource(msrest.serialization.Model):
 class AutomationTriggeringRule(msrest.serialization.Model):
     """A rule which is evaluated upon event interception. The rule is configured by comparing a specific value from the event model to an expected value. This comparison is done by using one of the supported operators set.
 
-    :param property_j_path: The JPath of the entity model property that should be checked.
-    :type property_j_path: str
-    :param property_type: The data type of the compared operands (string, integer, floating point
+    :ivar property_j_path: The JPath of the entity model property that should be checked.
+    :vartype property_j_path: str
+    :ivar property_type: The data type of the compared operands (string, integer, floating point
      number or a boolean [true/false]]. Possible values include: "String", "Integer", "Number",
      "Boolean".
-    :type property_type: str or ~azure.mgmt.security.models.PropertyType
-    :param expected_value: The expected value.
-    :type expected_value: str
-    :param operator: A valid comparer operator to use. A case-insensitive comparison will be
-     applied for String PropertyType. Possible values include: "Equals", "GreaterThan",
+    :vartype property_type: str or ~azure.mgmt.security.models.PropertyType
+    :ivar expected_value: The expected value.
+    :vartype expected_value: str
+    :ivar operator: A valid comparer operator to use. A case-insensitive comparison will be applied
+     for String PropertyType. Possible values include: "Equals", "GreaterThan",
      "GreaterThanOrEqualTo", "LesserThan", "LesserThanOrEqualTo", "NotEquals", "Contains",
      "StartsWith", "EndsWith".
-    :type operator: str or ~azure.mgmt.security.models.Operator
+    :vartype operator: str or ~azure.mgmt.security.models.Operator
     """
 
     _attribute_map = {
@@ -2573,6 +3009,21 @@ class AutomationTriggeringRule(msrest.serialization.Model):
         operator: Optional[Union[str, "Operator"]] = None,
         **kwargs
     ):
+        """
+        :keyword property_j_path: The JPath of the entity model property that should be checked.
+        :paramtype property_j_path: str
+        :keyword property_type: The data type of the compared operands (string, integer, floating point
+         number or a boolean [true/false]]. Possible values include: "String", "Integer", "Number",
+         "Boolean".
+        :paramtype property_type: str or ~azure.mgmt.security.models.PropertyType
+        :keyword expected_value: The expected value.
+        :paramtype expected_value: str
+        :keyword operator: A valid comparer operator to use. A case-insensitive comparison will be
+         applied for String PropertyType. Possible values include: "Equals", "GreaterThan",
+         "GreaterThanOrEqualTo", "LesserThan", "LesserThanOrEqualTo", "NotEquals", "Contains",
+         "StartsWith", "EndsWith".
+        :paramtype operator: str or ~azure.mgmt.security.models.Operator
+        """
         super(AutomationTriggeringRule, self).__init__(**kwargs)
         self.property_j_path = property_j_path
         self.property_type = property_type
@@ -2583,10 +3034,10 @@ class AutomationTriggeringRule(msrest.serialization.Model):
 class AutomationValidationStatus(msrest.serialization.Model):
     """The security automation model state property bag.
 
-    :param is_valid: Indicates whether the model is valid or not.
-    :type is_valid: bool
-    :param message: The validation message.
-    :type message: str
+    :ivar is_valid: Indicates whether the model is valid or not.
+    :vartype is_valid: bool
+    :ivar message: The validation message.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -2601,6 +3052,12 @@ class AutomationValidationStatus(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword is_valid: Indicates whether the model is valid or not.
+        :paramtype is_valid: bool
+        :keyword message: The validation message.
+        :paramtype message: str
+        """
         super(AutomationValidationStatus, self).__init__(**kwargs)
         self.is_valid = is_valid
         self.message = message
@@ -2617,9 +3074,9 @@ class AutoProvisioningSetting(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param auto_provision: Describes what kind of security agent provisioning action to take.
+    :ivar auto_provision: Describes what kind of security agent provisioning action to take.
      Possible values include: "On", "Off".
-    :type auto_provision: str or ~azure.mgmt.security.models.AutoProvision
+    :vartype auto_provision: str or ~azure.mgmt.security.models.AutoProvision
     """
 
     _validation = {
@@ -2641,6 +3098,11 @@ class AutoProvisioningSetting(Resource):
         auto_provision: Optional[Union[str, "AutoProvision"]] = None,
         **kwargs
     ):
+        """
+        :keyword auto_provision: Describes what kind of security agent provisioning action to take.
+         Possible values include: "On", "Off".
+        :paramtype auto_provision: str or ~azure.mgmt.security.models.AutoProvision
+        """
         super(AutoProvisioningSetting, self).__init__(**kwargs)
         self.auto_provision = auto_provision
 
@@ -2650,8 +3112,8 @@ class AutoProvisioningSettingList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of all the auto provisioning settings.
-    :type value: list[~azure.mgmt.security.models.AutoProvisioningSetting]
+    :ivar value: List of all the auto provisioning settings.
+    :vartype value: list[~azure.mgmt.security.models.AutoProvisioningSetting]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -2671,6 +3133,10 @@ class AutoProvisioningSettingList(msrest.serialization.Model):
         value: Optional[List["AutoProvisioningSetting"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of all the auto provisioning settings.
+        :paramtype value: list[~azure.mgmt.security.models.AutoProvisioningSetting]
+        """
         super(AutoProvisioningSettingList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -2689,18 +3155,18 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
      ~azure.mgmt.security.models.AuthenticationProvisioningState
     :ivar granted_permissions: The permissions detected in the cloud account.
     :vartype granted_permissions: list[str or ~azure.mgmt.security.models.PermissionProperty]
-    :param authentication_type: Required. Connect to your cloud account, for AWS use either account
+    :ivar authentication_type: Required. Connect to your cloud account, for AWS use either account
      credentials or role-based authentication. For GCP use account organization credentials.Constant
-     filled by server.  Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
-    :type authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
+     filled by server. Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
+    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
     :ivar account_id: The ID of the cloud account.
     :vartype account_id: str
-    :param aws_assume_role_arn: Required. Assumed role ID is an identifier that you can use to
+    :ivar aws_assume_role_arn: Required. Assumed role ID is an identifier that you can use to
      create temporary security credentials.
-    :type aws_assume_role_arn: str
-    :param aws_external_id: Required. A unique identifier that is required when you assume a role
-     in another account.
-    :type aws_external_id: str
+    :vartype aws_assume_role_arn: str
+    :ivar aws_external_id: Required. A unique identifier that is required when you assume a role in
+     another account.
+    :vartype aws_external_id: str
     """
 
     _validation = {
@@ -2728,6 +3194,14 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
         aws_external_id: str,
         **kwargs
     ):
+        """
+        :keyword aws_assume_role_arn: Required. Assumed role ID is an identifier that you can use to
+         create temporary security credentials.
+        :paramtype aws_assume_role_arn: str
+        :keyword aws_external_id: Required. A unique identifier that is required when you assume a role
+         in another account.
+        :paramtype aws_external_id: str
+        """
         super(AwAssumeRoleAuthenticationDetailsProperties, self).__init__(**kwargs)
         self.authentication_type = 'awsAssumeRole'  # type: str
         self.account_id = None
@@ -2748,18 +3222,18 @@ class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
      ~azure.mgmt.security.models.AuthenticationProvisioningState
     :ivar granted_permissions: The permissions detected in the cloud account.
     :vartype granted_permissions: list[str or ~azure.mgmt.security.models.PermissionProperty]
-    :param authentication_type: Required. Connect to your cloud account, for AWS use either account
+    :ivar authentication_type: Required. Connect to your cloud account, for AWS use either account
      credentials or role-based authentication. For GCP use account organization credentials.Constant
-     filled by server.  Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
-    :type authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
+     filled by server. Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
+    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
     :ivar account_id: The ID of the cloud account.
     :vartype account_id: str
-    :param aws_access_key_id: Required. Public key element of the AWS credential object (write
+    :ivar aws_access_key_id: Required. Public key element of the AWS credential object (write
      only).
-    :type aws_access_key_id: str
-    :param aws_secret_access_key: Required. Secret key element of the AWS credential object (write
+    :vartype aws_access_key_id: str
+    :ivar aws_secret_access_key: Required. Secret key element of the AWS credential object (write
      only).
-    :type aws_secret_access_key: str
+    :vartype aws_secret_access_key: str
     """
 
     _validation = {
@@ -2787,6 +3261,14 @@ class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
         aws_secret_access_key: str,
         **kwargs
     ):
+        """
+        :keyword aws_access_key_id: Required. Public key element of the AWS credential object (write
+         only).
+        :paramtype aws_access_key_id: str
+        :keyword aws_secret_access_key: Required. Secret key element of the AWS credential object
+         (write only).
+        :paramtype aws_secret_access_key: str
+        """
         super(AwsCredsAuthenticationDetailsProperties, self).__init__(**kwargs)
         self.authentication_type = 'awsCreds'  # type: str
         self.account_id = None
@@ -2802,9 +3284,9 @@ class ResourceDetails(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. The platform where the assessed resource resides.Constant filled by
-     server.  Possible values include: "Azure", "OnPremise", "OnPremiseSql".
-    :type source: str or ~azure.mgmt.security.models.Source
+    :ivar source: Required. The platform where the assessed resource resides.Constant filled by
+     server. Possible values include: "Azure", "OnPremise", "OnPremiseSql".
+    :vartype source: str or ~azure.mgmt.security.models.Source
     """
 
     _validation = {
@@ -2823,6 +3305,8 @@ class ResourceDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceDetails, self).__init__(**kwargs)
         self.source = None  # type: Optional[str]
 
@@ -2834,9 +3318,9 @@ class AzureResourceDetails(ResourceDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. The platform where the assessed resource resides.Constant filled by
-     server.  Possible values include: "Azure", "OnPremise", "OnPremiseSql".
-    :type source: str or ~azure.mgmt.security.models.Source
+    :ivar source: Required. The platform where the assessed resource resides.Constant filled by
+     server. Possible values include: "Azure", "OnPremise", "OnPremiseSql".
+    :vartype source: str or ~azure.mgmt.security.models.Source
     :ivar id: Azure resource Id of the assessed resource.
     :vartype id: str
     """
@@ -2855,6 +3339,8 @@ class AzureResourceDetails(ResourceDetails):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureResourceDetails, self).__init__(**kwargs)
         self.source = 'Azure'  # type: str
         self.id = None
@@ -2868,10 +3354,10 @@ class ResourceIdentifier(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. There can be multiple identifiers of different type per alert, this
-     field specify the identifier type.Constant filled by server.  Possible values include:
+    :ivar type: Required. There can be multiple identifiers of different type per alert, this field
+     specify the identifier type.Constant filled by server. Possible values include:
      "AzureResource", "LogAnalytics".
-    :type type: str or ~azure.mgmt.security.models.ResourceIdentifierType
+    :vartype type: str or ~azure.mgmt.security.models.ResourceIdentifierType
     """
 
     _validation = {
@@ -2890,6 +3376,8 @@ class ResourceIdentifier(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceIdentifier, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -2901,10 +3389,10 @@ class AzureResourceIdentifier(ResourceIdentifier):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. There can be multiple identifiers of different type per alert, this
-     field specify the identifier type.Constant filled by server.  Possible values include:
+    :ivar type: Required. There can be multiple identifiers of different type per alert, this field
+     specify the identifier type.Constant filled by server. Possible values include:
      "AzureResource", "LogAnalytics".
-    :type type: str or ~azure.mgmt.security.models.ResourceIdentifierType
+    :vartype type: str or ~azure.mgmt.security.models.ResourceIdentifierType
     :ivar azure_resource_id: ARM resource identifier for the cloud resource being alerted on.
     :vartype azure_resource_id: str
     """
@@ -2923,6 +3411,8 @@ class AzureResourceIdentifier(ResourceIdentifier):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureResourceIdentifier, self).__init__(**kwargs)
         self.type = 'AzureResource'  # type: str
         self.azure_resource_id = None
@@ -2949,6 +3439,8 @@ class AzureResourceLink(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureResourceLink, self).__init__(**kwargs)
         self.id = None
 
@@ -2956,10 +3448,10 @@ class AzureResourceLink(msrest.serialization.Model):
 class Baseline(msrest.serialization.Model):
     """Baseline details.
 
-    :param expected_results: Expected results.
-    :type expected_results: list[list[str]]
-    :param updated_time: Baseline update time (UTC).
-    :type updated_time: ~datetime.datetime
+    :ivar expected_results: Expected results.
+    :vartype expected_results: list[list[str]]
+    :ivar updated_time: Baseline update time (UTC).
+    :vartype updated_time: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -2974,6 +3466,12 @@ class Baseline(msrest.serialization.Model):
         updated_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword expected_results: Expected results.
+        :paramtype expected_results: list[list[str]]
+        :keyword updated_time: Baseline update time (UTC).
+        :paramtype updated_time: ~datetime.datetime
+        """
         super(Baseline, self).__init__(**kwargs)
         self.expected_results = expected_results
         self.updated_time = updated_time
@@ -2982,15 +3480,15 @@ class Baseline(msrest.serialization.Model):
 class BaselineAdjustedResult(msrest.serialization.Model):
     """The rule result adjusted with baseline.
 
-    :param baseline: Baseline details.
-    :type baseline: ~azure.mgmt.security.models.Baseline
-    :param status: The rule result status. Possible values include: "NonFinding", "Finding",
+    :ivar baseline: Baseline details.
+    :vartype baseline: ~azure.mgmt.security.models.Baseline
+    :ivar status: The rule result status. Possible values include: "NonFinding", "Finding",
      "InternalError".
-    :type status: str or ~azure.mgmt.security.models.RuleStatus
-    :param results_not_in_baseline: Results the are not in baseline.
-    :type results_not_in_baseline: list[list[str]]
-    :param results_only_in_baseline: Results the are in baseline.
-    :type results_only_in_baseline: list[list[str]]
+    :vartype status: str or ~azure.mgmt.security.models.RuleStatus
+    :ivar results_not_in_baseline: Results the are not in baseline.
+    :vartype results_not_in_baseline: list[list[str]]
+    :ivar results_only_in_baseline: Results the are in baseline.
+    :vartype results_only_in_baseline: list[list[str]]
     """
 
     _attribute_map = {
@@ -3009,6 +3507,17 @@ class BaselineAdjustedResult(msrest.serialization.Model):
         results_only_in_baseline: Optional[List[List[str]]] = None,
         **kwargs
     ):
+        """
+        :keyword baseline: Baseline details.
+        :paramtype baseline: ~azure.mgmt.security.models.Baseline
+        :keyword status: The rule result status. Possible values include: "NonFinding", "Finding",
+         "InternalError".
+        :paramtype status: str or ~azure.mgmt.security.models.RuleStatus
+        :keyword results_not_in_baseline: Results the are not in baseline.
+        :paramtype results_not_in_baseline: list[list[str]]
+        :keyword results_only_in_baseline: Results the are in baseline.
+        :paramtype results_only_in_baseline: list[list[str]]
+        """
         super(BaselineAdjustedResult, self).__init__(**kwargs)
         self.baseline = baseline
         self.status = status
@@ -3019,10 +3528,10 @@ class BaselineAdjustedResult(msrest.serialization.Model):
 class BenchmarkReference(msrest.serialization.Model):
     """The benchmark references.
 
-    :param benchmark: The benchmark name.
-    :type benchmark: str
-    :param reference: The benchmark reference.
-    :type reference: str
+    :ivar benchmark: The benchmark name.
+    :vartype benchmark: str
+    :ivar reference: The benchmark reference.
+    :vartype reference: str
     """
 
     _attribute_map = {
@@ -3037,6 +3546,12 @@ class BenchmarkReference(msrest.serialization.Model):
         reference: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword benchmark: The benchmark name.
+        :paramtype benchmark: str
+        :keyword reference: The benchmark reference.
+        :paramtype reference: str
+        """
         super(BenchmarkReference, self).__init__(**kwargs)
         self.benchmark = benchmark
         self.reference = reference
@@ -3047,8 +3562,8 @@ class CefExternalSecuritySolution(ExternalSecuritySolution):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
-    :type kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+    :ivar kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
     :ivar location: Location where the resource is stored.
     :vartype location: str
     :ivar id: Resource Id.
@@ -3057,8 +3572,8 @@ class CefExternalSecuritySolution(ExternalSecuritySolution):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: The external security solution properties for CEF solutions.
-    :type properties: ~azure.mgmt.security.models.CefSolutionProperties
+    :ivar properties: The external security solution properties for CEF solutions.
+    :vartype properties: ~azure.mgmt.security.models.CefSolutionProperties
     """
 
     _validation = {
@@ -3084,6 +3599,12 @@ class CefExternalSecuritySolution(ExternalSecuritySolution):
         properties: Optional["CefSolutionProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword kind: The kind of the external solution. Possible values include: "CEF", "ATA", "AAD".
+        :paramtype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+        :keyword properties: The external security solution properties for CEF solutions.
+        :paramtype properties: ~azure.mgmt.security.models.CefSolutionProperties
+        """
         super(CefExternalSecuritySolution, self).__init__(kind=kind, **kwargs)
         self.properties = properties
 
@@ -3091,21 +3612,21 @@ class CefExternalSecuritySolution(ExternalSecuritySolution):
 class CefSolutionProperties(ExternalSecuritySolutionProperties):
     """The external security solution properties for CEF solutions.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param device_vendor:
-    :type device_vendor: str
-    :param device_type:
-    :type device_type: str
-    :param workspace: Represents an OMS workspace to which the solution is connected.
-    :type workspace: ~azure.mgmt.security.models.ConnectedWorkspace
-    :param hostname:
-    :type hostname: str
-    :param agent:
-    :type agent: str
-    :param last_event_received:
-    :type last_event_received: str
+    :vartype additional_properties: dict[str, any]
+    :ivar device_vendor:
+    :vartype device_vendor: str
+    :ivar device_type:
+    :vartype device_type: str
+    :ivar workspace: Represents an OMS workspace to which the solution is connected.
+    :vartype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+    :ivar hostname:
+    :vartype hostname: str
+    :ivar agent:
+    :vartype agent: str
+    :ivar last_event_received:
+    :vartype last_event_received: str
     """
 
     _attribute_map = {
@@ -3130,6 +3651,23 @@ class CefSolutionProperties(ExternalSecuritySolutionProperties):
         last_event_received: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword device_vendor:
+        :paramtype device_vendor: str
+        :keyword device_type:
+        :paramtype device_type: str
+        :keyword workspace: Represents an OMS workspace to which the solution is connected.
+        :paramtype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+        :keyword hostname:
+        :paramtype hostname: str
+        :keyword agent:
+        :paramtype agent: str
+        :keyword last_event_received:
+        :paramtype last_event_received: str
+        """
         super(CefSolutionProperties, self).__init__(additional_properties=additional_properties, device_vendor=device_vendor, device_type=device_type, workspace=workspace, **kwargs)
         self.hostname = hostname
         self.agent = agent
@@ -3173,12 +3711,57 @@ class CloudErrorBody(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class CloudOffering(msrest.serialization.Model):
+    """The security offering details.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CspmMonitorAwsOffering, DefenderForContainersAwsOffering, DefenderForServersAwsOffering, InformationProtectionAwsOffering.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar offering_type: Required. The type of the security offering.Constant filled by server.
+     Possible values include: "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
+     "InformationProtectionAws".
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
+    :ivar description: The offering description.
+    :vartype description: str
+    """
+
+    _validation = {
+        'offering_type': {'required': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'offering_type': {'key': 'offeringType', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'offering_type': {'CspmMonitorAws': 'CspmMonitorAwsOffering', 'DefenderForContainersAws': 'DefenderForContainersAwsOffering', 'DefenderForServersAws': 'DefenderForServersAwsOffering', 'InformationProtectionAws': 'InformationProtectionAwsOffering'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(CloudOffering, self).__init__(**kwargs)
+        self.offering_type = None  # type: Optional[str]
+        self.description = None
 
 
 class Compliance(Resource):
@@ -3224,6 +3807,8 @@ class Compliance(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(Compliance, self).__init__(**kwargs)
         self.assessment_timestamp_utc_date = None
         self.resource_count = None
@@ -3235,8 +3820,8 @@ class ComplianceList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of Compliance objects.
-    :type value: list[~azure.mgmt.security.models.Compliance]
+    :ivar value: List of Compliance objects.
+    :vartype value: list[~azure.mgmt.security.models.Compliance]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -3256,6 +3841,10 @@ class ComplianceList(msrest.serialization.Model):
         value: Optional[List["Compliance"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Compliance objects.
+        :paramtype value: list[~azure.mgmt.security.models.Compliance]
+        """
         super(ComplianceList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -3295,6 +3884,8 @@ class ComplianceResult(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ComplianceResult, self).__init__(**kwargs)
         self.resource_status = None
 
@@ -3306,8 +3897,8 @@ class ComplianceResultList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of compliance results.
-    :type value: list[~azure.mgmt.security.models.ComplianceResult]
+    :ivar value: Required. List of compliance results.
+    :vartype value: list[~azure.mgmt.security.models.ComplianceResult]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -3328,6 +3919,10 @@ class ComplianceResultList(msrest.serialization.Model):
         value: List["ComplianceResult"],
         **kwargs
     ):
+        """
+        :keyword value: Required. List of compliance results.
+        :paramtype value: list[~azure.mgmt.security.models.ComplianceResult]
+        """
         super(ComplianceResultList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -3359,6 +3954,8 @@ class ComplianceSegment(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ComplianceSegment, self).__init__(**kwargs)
         self.segment_type = None
         self.percentage = None
@@ -3395,6 +3992,8 @@ class ConnectableResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ConnectableResource, self).__init__(**kwargs)
         self.id = None
         self.inbound_connected_resources = None
@@ -3430,6 +4029,8 @@ class ConnectedResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ConnectedResource, self).__init__(**kwargs)
         self.connected_resource_id = None
         self.tcp_ports = None
@@ -3439,8 +4040,8 @@ class ConnectedResource(msrest.serialization.Model):
 class ConnectedWorkspace(msrest.serialization.Model):
     """Represents an OMS workspace to which the solution is connected.
 
-    :param id: Azure resource ID of the connected OMS workspace.
-    :type id: str
+    :ivar id: Azure resource ID of the connected OMS workspace.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -3453,6 +4054,10 @@ class ConnectedWorkspace(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Azure resource ID of the connected OMS workspace.
+        :paramtype id: str
+        """
         super(ConnectedWorkspace, self).__init__(**kwargs)
         self.id = id
 
@@ -3468,16 +4073,16 @@ class ConnectionFromIpNotAllowed(AllowlistCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
-    :param allowlist_values: Required. The values to allow. The format of the values depends on the
+    :ivar allowlist_values: Required. The values to allow. The format of the values depends on the
      rule type.
-    :type allowlist_values: list[str]
+    :vartype allowlist_values: list[str]
     """
 
     _validation = {
@@ -3505,6 +4110,13 @@ class ConnectionFromIpNotAllowed(AllowlistCustomAlertRule):
         allowlist_values: List[str],
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword allowlist_values: Required. The values to allow. The format of the values depends on
+         the rule type.
+        :paramtype allowlist_values: list[str]
+        """
         super(ConnectionFromIpNotAllowed, self).__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type = 'ConnectionFromIpNotAllowed'  # type: str
 
@@ -3514,8 +4126,8 @@ class ConnectionStrings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. Connection strings.
-    :type value: list[~azure.mgmt.security.models.IngestionConnectionString]
+    :ivar value: Required. Connection strings.
+    :vartype value: list[~azure.mgmt.security.models.IngestionConnectionString]
     """
 
     _validation = {
@@ -3532,6 +4144,10 @@ class ConnectionStrings(msrest.serialization.Model):
         value: List["IngestionConnectionString"],
         **kwargs
     ):
+        """
+        :keyword value: Required. Connection strings.
+        :paramtype value: list[~azure.mgmt.security.models.IngestionConnectionString]
+        """
         super(ConnectionStrings, self).__init__(**kwargs)
         self.value = value
 
@@ -3547,16 +4163,16 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
-    :param allowlist_values: Required. The values to allow. The format of the values depends on the
+    :ivar allowlist_values: Required. The values to allow. The format of the values depends on the
      rule type.
-    :type allowlist_values: list[str]
+    :vartype allowlist_values: list[str]
     """
 
     _validation = {
@@ -3584,6 +4200,13 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
         allowlist_values: List[str],
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword allowlist_values: Required. The values to allow. The format of the values depends on
+         the rule type.
+        :paramtype allowlist_values: list[str]
+        """
         super(ConnectionToIpNotAllowed, self).__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type = 'ConnectionToIpNotAllowed'  # type: str
 
@@ -3599,12 +4222,12 @@ class ConnectorSetting(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param hybrid_compute_settings: Settings for hybrid compute management. These settings are
+    :ivar hybrid_compute_settings: Settings for hybrid compute management. These settings are
      relevant only for Arc autoProvision (Hybrid Compute).
-    :type hybrid_compute_settings: ~azure.mgmt.security.models.HybridComputeSettingsProperties
-    :param authentication_details: Settings for authentication management, these settings are
+    :vartype hybrid_compute_settings: ~azure.mgmt.security.models.HybridComputeSettingsProperties
+    :ivar authentication_details: Settings for authentication management, these settings are
      relevant only for the cloud connector.
-    :type authentication_details: ~azure.mgmt.security.models.AuthenticationDetailsProperties
+    :vartype authentication_details: ~azure.mgmt.security.models.AuthenticationDetailsProperties
     """
 
     _validation = {
@@ -3628,6 +4251,14 @@ class ConnectorSetting(Resource):
         authentication_details: Optional["AuthenticationDetailsProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword hybrid_compute_settings: Settings for hybrid compute management. These settings are
+         relevant only for Arc autoProvision (Hybrid Compute).
+        :paramtype hybrid_compute_settings: ~azure.mgmt.security.models.HybridComputeSettingsProperties
+        :keyword authentication_details: Settings for authentication management, these settings are
+         relevant only for the cloud connector.
+        :paramtype authentication_details: ~azure.mgmt.security.models.AuthenticationDetailsProperties
+        """
         super(ConnectorSetting, self).__init__(**kwargs)
         self.hybrid_compute_settings = hybrid_compute_settings
         self.authentication_details = authentication_details
@@ -3638,8 +4269,8 @@ class ConnectorSettingList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of all the cloud account connector settings.
-    :type value: list[~azure.mgmt.security.models.ConnectorSetting]
+    :ivar value: List of all the cloud account connector settings.
+    :vartype value: list[~azure.mgmt.security.models.ConnectorSetting]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -3659,6 +4290,10 @@ class ConnectorSettingList(msrest.serialization.Model):
         value: Optional[List["ConnectorSetting"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of all the cloud account connector settings.
+        :paramtype value: list[~azure.mgmt.security.models.ConnectorSetting]
+        """
         super(ConnectorSettingList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -3671,10 +4306,10 @@ class ContainerRegistryVulnerabilityProperties(AdditionalData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param assessed_resource_type: Required. Sub-assessment resource type.Constant filled by
-     server.  Possible values include: "SqlServerVulnerability", "ContainerRegistryVulnerability",
+    :ivar assessed_resource_type: Required. Sub-assessment resource type.Constant filled by server.
+     Possible values include: "SqlServerVulnerability", "ContainerRegistryVulnerability",
      "ServerVulnerability".
-    :type assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
+    :vartype assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
     :ivar type: Vulnerability Type. e.g: Vulnerability, Potential Vulnerability, Information
      Gathered, Vulnerability.
     :vartype type: str
@@ -3722,6 +4357,8 @@ class ContainerRegistryVulnerabilityProperties(AdditionalData):
         self,
         **kwargs
     ):
+        """
+        """
         super(ContainerRegistryVulnerabilityProperties, self).__init__(**kwargs)
         self.assessed_resource_type = 'ContainerRegistryVulnerability'  # type: str
         self.type = None
@@ -3732,6 +4369,423 @@ class ContainerRegistryVulnerabilityProperties(AdditionalData):
         self.vendor_references = None
         self.repository_name = None
         self.image_digest = None
+
+
+class CspmMonitorAwsOffering(CloudOffering):
+    """The CSPM monitoring for AWS offering configurations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar offering_type: Required. The type of the security offering.Constant filled by server.
+     Possible values include: "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
+     "InformationProtectionAws".
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
+    :ivar description: The offering description.
+    :vartype description: str
+    :ivar native_cloud_connection: The native cloud connection configuration.
+    :vartype native_cloud_connection:
+     ~azure.mgmt.security.models.CspmMonitorAwsOfferingNativeCloudConnection
+    """
+
+    _validation = {
+        'offering_type': {'required': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'offering_type': {'key': 'offeringType', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'native_cloud_connection': {'key': 'nativeCloudConnection', 'type': 'CspmMonitorAwsOfferingNativeCloudConnection'},
+    }
+
+    def __init__(
+        self,
+        *,
+        native_cloud_connection: Optional["CspmMonitorAwsOfferingNativeCloudConnection"] = None,
+        **kwargs
+    ):
+        """
+        :keyword native_cloud_connection: The native cloud connection configuration.
+        :paramtype native_cloud_connection:
+         ~azure.mgmt.security.models.CspmMonitorAwsOfferingNativeCloudConnection
+        """
+        super(CspmMonitorAwsOffering, self).__init__(**kwargs)
+        self.offering_type = 'CspmMonitorAws'  # type: str
+        self.native_cloud_connection = native_cloud_connection
+
+
+class CspmMonitorAwsOfferingNativeCloudConnection(msrest.serialization.Model):
+    """The native cloud connection configuration.
+
+    :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
+    :vartype cloud_role_arn: str
+    """
+
+    _attribute_map = {
+        'cloud_role_arn': {'key': 'cloudRoleArn', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_role_arn: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
+        :paramtype cloud_role_arn: str
+        """
+        super(CspmMonitorAwsOfferingNativeCloudConnection, self).__init__(**kwargs)
+        self.cloud_role_arn = cloud_role_arn
+
+
+class CustomAssessmentAutomation(Resource):
+    """Custom Assessment Automation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.security.models.SystemData
+    :ivar compressed_query: GZip encoded KQL query representing the assessment automation results
+     required.
+    :vartype compressed_query: str
+    :ivar supported_cloud: Relevant cloud for the custom assessment automation. Possible values
+     include: "AWS", "GCP".
+    :vartype supported_cloud: str or ~azure.mgmt.security.models.SupportedCloudEnum
+    :ivar severity: The severity to relate to the assessments generated by this assessment
+     automation. Possible values include: "High", "Medium", "Low".
+    :vartype severity: str or ~azure.mgmt.security.models.SeverityEnum
+    :ivar display_name: The display name of the assessments generated by this assessment
+     automation.
+    :vartype display_name: str
+    :ivar description: The description to relate to the assessments generated by this assessment
+     automation.
+    :vartype description: str
+    :ivar remediation_description: The remediation description to relate to the assessments
+     generated by this assessment automation.
+    :vartype remediation_description: str
+    :ivar assessment_key: The assessment metadata key used when an assessment is generated for this
+     assessment automation.
+    :vartype assessment_key: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'compressed_query': {'key': 'properties.compressedQuery', 'type': 'str'},
+        'supported_cloud': {'key': 'properties.supportedCloud', 'type': 'str'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'remediation_description': {'key': 'properties.remediationDescription', 'type': 'str'},
+        'assessment_key': {'key': 'properties.assessmentKey', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        compressed_query: Optional[str] = None,
+        supported_cloud: Optional[Union[str, "SupportedCloudEnum"]] = "AWS",
+        severity: Optional[Union[str, "SeverityEnum"]] = "Low",
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        remediation_description: Optional[str] = None,
+        assessment_key: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword compressed_query: GZip encoded KQL query representing the assessment automation
+         results required.
+        :paramtype compressed_query: str
+        :keyword supported_cloud: Relevant cloud for the custom assessment automation. Possible values
+         include: "AWS", "GCP".
+        :paramtype supported_cloud: str or ~azure.mgmt.security.models.SupportedCloudEnum
+        :keyword severity: The severity to relate to the assessments generated by this assessment
+         automation. Possible values include: "High", "Medium", "Low".
+        :paramtype severity: str or ~azure.mgmt.security.models.SeverityEnum
+        :keyword display_name: The display name of the assessments generated by this assessment
+         automation.
+        :paramtype display_name: str
+        :keyword description: The description to relate to the assessments generated by this assessment
+         automation.
+        :paramtype description: str
+        :keyword remediation_description: The remediation description to relate to the assessments
+         generated by this assessment automation.
+        :paramtype remediation_description: str
+        :keyword assessment_key: The assessment metadata key used when an assessment is generated for
+         this assessment automation.
+        :paramtype assessment_key: str
+        """
+        super(CustomAssessmentAutomation, self).__init__(**kwargs)
+        self.system_data = None
+        self.compressed_query = compressed_query
+        self.supported_cloud = supported_cloud
+        self.severity = severity
+        self.display_name = display_name
+        self.description = description
+        self.remediation_description = remediation_description
+        self.assessment_key = assessment_key
+
+
+class CustomAssessmentAutomationRequest(Resource):
+    """Custom Assessment Automation request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar compressed_query: Base 64 encoded KQL query representing the assessment automation
+     results required.
+    :vartype compressed_query: str
+    :ivar supported_cloud: Relevant cloud for the custom assessment automation. Possible values
+     include: "AWS", "GCP".
+    :vartype supported_cloud: str or ~azure.mgmt.security.models.SupportedCloudEnum
+    :ivar severity: The severity to relate to the assessments generated by this assessment
+     automation. Possible values include: "High", "Medium", "Low".
+    :vartype severity: str or ~azure.mgmt.security.models.SeverityEnum
+    :ivar display_name: The display name of the assessments generated by this assessment
+     automation.
+    :vartype display_name: str
+    :ivar description: The description to relate to the assessments generated by this assessment
+     automation.
+    :vartype description: str
+    :ivar remediation_description: The remediation description to relate to the assessments
+     generated by this assessment automation.
+    :vartype remediation_description: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'compressed_query': {'key': 'properties.compressedQuery', 'type': 'str'},
+        'supported_cloud': {'key': 'properties.supportedCloud', 'type': 'str'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'remediation_description': {'key': 'properties.remediationDescription', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        compressed_query: Optional[str] = None,
+        supported_cloud: Optional[Union[str, "SupportedCloudEnum"]] = "AWS",
+        severity: Optional[Union[str, "SeverityEnum"]] = "Low",
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        remediation_description: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword compressed_query: Base 64 encoded KQL query representing the assessment automation
+         results required.
+        :paramtype compressed_query: str
+        :keyword supported_cloud: Relevant cloud for the custom assessment automation. Possible values
+         include: "AWS", "GCP".
+        :paramtype supported_cloud: str or ~azure.mgmt.security.models.SupportedCloudEnum
+        :keyword severity: The severity to relate to the assessments generated by this assessment
+         automation. Possible values include: "High", "Medium", "Low".
+        :paramtype severity: str or ~azure.mgmt.security.models.SeverityEnum
+        :keyword display_name: The display name of the assessments generated by this assessment
+         automation.
+        :paramtype display_name: str
+        :keyword description: The description to relate to the assessments generated by this assessment
+         automation.
+        :paramtype description: str
+        :keyword remediation_description: The remediation description to relate to the assessments
+         generated by this assessment automation.
+        :paramtype remediation_description: str
+        """
+        super(CustomAssessmentAutomationRequest, self).__init__(**kwargs)
+        self.compressed_query = compressed_query
+        self.supported_cloud = supported_cloud
+        self.severity = severity
+        self.display_name = display_name
+        self.description = description
+        self.remediation_description = remediation_description
+
+
+class CustomAssessmentAutomationsListResult(msrest.serialization.Model):
+    """A list of Custom Assessment Automations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Collection of Custom Assessment Automations.
+    :vartype value: list[~azure.mgmt.security.models.CustomAssessmentAutomation]
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[CustomAssessmentAutomation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        """
+        super(CustomAssessmentAutomationsListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = next_link
+
+
+class CustomEntityStoreAssignment(Resource):
+    """Custom entity store assignment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.security.models.SystemData
+    :ivar principal: The principal assigned with entity store. Format of principal is: [AAD
+     type]=[PrincipalObjectId];[TenantId].
+    :vartype principal: str
+    :ivar entity_store_database_link: The link to entity store database.
+    :vartype entity_store_database_link: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'principal': {'key': 'properties.principal', 'type': 'str'},
+        'entity_store_database_link': {'key': 'properties.entityStoreDatabaseLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        principal: Optional[str] = None,
+        entity_store_database_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword principal: The principal assigned with entity store. Format of principal is: [AAD
+         type]=[PrincipalObjectId];[TenantId].
+        :paramtype principal: str
+        :keyword entity_store_database_link: The link to entity store database.
+        :paramtype entity_store_database_link: str
+        """
+        super(CustomEntityStoreAssignment, self).__init__(**kwargs)
+        self.system_data = None
+        self.principal = principal
+        self.entity_store_database_link = entity_store_database_link
+
+
+class CustomEntityStoreAssignmentRequest(msrest.serialization.Model):
+    """describes the custom entity store assignment request.
+
+    :ivar principal: The principal assigned with entity store. If not provided, will use caller
+     principal. Format of principal is: [AAD type]=[PrincipalObjectId];[TenantId].
+    :vartype principal: str
+    """
+
+    _attribute_map = {
+        'principal': {'key': 'properties.principal', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        principal: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword principal: The principal assigned with entity store. If not provided, will use caller
+         principal. Format of principal is: [AAD type]=[PrincipalObjectId];[TenantId].
+        :paramtype principal: str
+        """
+        super(CustomEntityStoreAssignmentRequest, self).__init__(**kwargs)
+        self.principal = principal
+
+
+class CustomEntityStoreAssignmentsListResult(msrest.serialization.Model):
+    """A list of custom entity store assignments.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Collection of custom entity store assignments.
+    :vartype value: list[~azure.mgmt.security.models.CustomEntityStoreAssignment]
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[CustomEntityStoreAssignment]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        """
+        super(CustomEntityStoreAssignmentsListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = next_link
 
 
 class CVE(msrest.serialization.Model):
@@ -3759,6 +4813,8 @@ class CVE(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CVE, self).__init__(**kwargs)
         self.title = None
         self.link = None
@@ -3785,6 +4841,8 @@ class CVSS(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CVSS, self).__init__(**kwargs)
         self.base = None
 
@@ -3802,11 +4860,11 @@ class DataExportSettings(Setting):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param kind: Required. the kind of the settings string.Constant filled by server.  Possible
+    :ivar kind: Required. the kind of the settings string.Constant filled by server. Possible
      values include: "DataExportSettings", "AlertSuppressionSetting", "AlertSyncSettings".
-    :type kind: str or ~azure.mgmt.security.models.SettingKind
-    :param enabled: Is the data export setting enabled.
-    :type enabled: bool
+    :vartype kind: str or ~azure.mgmt.security.models.SettingKind
+    :ivar enabled: Is the data export setting enabled.
+    :vartype enabled: bool
     """
 
     _validation = {
@@ -3830,9 +4888,338 @@ class DataExportSettings(Setting):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Is the data export setting enabled.
+        :paramtype enabled: bool
+        """
         super(DataExportSettings, self).__init__(**kwargs)
         self.kind = 'DataExportSettings'  # type: str
         self.enabled = enabled
+
+
+class DefenderForContainersAwsOffering(CloudOffering):
+    """The Defender for Containers AWS offering configurations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar offering_type: Required. The type of the security offering.Constant filled by server.
+     Possible values include: "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
+     "InformationProtectionAws".
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
+    :ivar description: The offering description.
+    :vartype description: str
+    :ivar kubernetes_service: The kubernetes service connection configuration.
+    :vartype kubernetes_service:
+     ~azure.mgmt.security.models.DefenderForContainersAwsOfferingKubernetesService
+    :ivar kubernetes_scuba_reader: The kubernetes to scuba connection configuration.
+    :vartype kubernetes_scuba_reader:
+     ~azure.mgmt.security.models.DefenderForContainersAwsOfferingKubernetesScubaReader
+    :ivar cloud_watch_to_kinesis: The cloudwatch to kinesis connection configuration.
+    :vartype cloud_watch_to_kinesis:
+     ~azure.mgmt.security.models.DefenderForContainersAwsOfferingCloudWatchToKinesis
+    :ivar kinesis_to_s3: The kinesis to s3 connection configuration.
+    :vartype kinesis_to_s3: ~azure.mgmt.security.models.DefenderForContainersAwsOfferingKinesisToS3
+    """
+
+    _validation = {
+        'offering_type': {'required': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'offering_type': {'key': 'offeringType', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'kubernetes_service': {'key': 'kubernetesService', 'type': 'DefenderForContainersAwsOfferingKubernetesService'},
+        'kubernetes_scuba_reader': {'key': 'kubernetesScubaReader', 'type': 'DefenderForContainersAwsOfferingKubernetesScubaReader'},
+        'cloud_watch_to_kinesis': {'key': 'cloudWatchToKinesis', 'type': 'DefenderForContainersAwsOfferingCloudWatchToKinesis'},
+        'kinesis_to_s3': {'key': 'kinesisToS3', 'type': 'DefenderForContainersAwsOfferingKinesisToS3'},
+    }
+
+    def __init__(
+        self,
+        *,
+        kubernetes_service: Optional["DefenderForContainersAwsOfferingKubernetesService"] = None,
+        kubernetes_scuba_reader: Optional["DefenderForContainersAwsOfferingKubernetesScubaReader"] = None,
+        cloud_watch_to_kinesis: Optional["DefenderForContainersAwsOfferingCloudWatchToKinesis"] = None,
+        kinesis_to_s3: Optional["DefenderForContainersAwsOfferingKinesisToS3"] = None,
+        **kwargs
+    ):
+        """
+        :keyword kubernetes_service: The kubernetes service connection configuration.
+        :paramtype kubernetes_service:
+         ~azure.mgmt.security.models.DefenderForContainersAwsOfferingKubernetesService
+        :keyword kubernetes_scuba_reader: The kubernetes to scuba connection configuration.
+        :paramtype kubernetes_scuba_reader:
+         ~azure.mgmt.security.models.DefenderForContainersAwsOfferingKubernetesScubaReader
+        :keyword cloud_watch_to_kinesis: The cloudwatch to kinesis connection configuration.
+        :paramtype cloud_watch_to_kinesis:
+         ~azure.mgmt.security.models.DefenderForContainersAwsOfferingCloudWatchToKinesis
+        :keyword kinesis_to_s3: The kinesis to s3 connection configuration.
+        :paramtype kinesis_to_s3:
+         ~azure.mgmt.security.models.DefenderForContainersAwsOfferingKinesisToS3
+        """
+        super(DefenderForContainersAwsOffering, self).__init__(**kwargs)
+        self.offering_type = 'DefenderForContainersAws'  # type: str
+        self.kubernetes_service = kubernetes_service
+        self.kubernetes_scuba_reader = kubernetes_scuba_reader
+        self.cloud_watch_to_kinesis = cloud_watch_to_kinesis
+        self.kinesis_to_s3 = kinesis_to_s3
+
+
+class DefenderForContainersAwsOfferingCloudWatchToKinesis(msrest.serialization.Model):
+    """The cloudwatch to kinesis connection configuration.
+
+    :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
+    :vartype cloud_role_arn: str
+    """
+
+    _attribute_map = {
+        'cloud_role_arn': {'key': 'cloudRoleArn', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_role_arn: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
+        :paramtype cloud_role_arn: str
+        """
+        super(DefenderForContainersAwsOfferingCloudWatchToKinesis, self).__init__(**kwargs)
+        self.cloud_role_arn = cloud_role_arn
+
+
+class DefenderForContainersAwsOfferingKinesisToS3(msrest.serialization.Model):
+    """The kinesis to s3 connection configuration.
+
+    :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
+    :vartype cloud_role_arn: str
+    """
+
+    _attribute_map = {
+        'cloud_role_arn': {'key': 'cloudRoleArn', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_role_arn: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
+        :paramtype cloud_role_arn: str
+        """
+        super(DefenderForContainersAwsOfferingKinesisToS3, self).__init__(**kwargs)
+        self.cloud_role_arn = cloud_role_arn
+
+
+class DefenderForContainersAwsOfferingKubernetesScubaReader(msrest.serialization.Model):
+    """The kubernetes to scuba connection configuration.
+
+    :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
+    :vartype cloud_role_arn: str
+    """
+
+    _attribute_map = {
+        'cloud_role_arn': {'key': 'cloudRoleArn', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_role_arn: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
+        :paramtype cloud_role_arn: str
+        """
+        super(DefenderForContainersAwsOfferingKubernetesScubaReader, self).__init__(**kwargs)
+        self.cloud_role_arn = cloud_role_arn
+
+
+class DefenderForContainersAwsOfferingKubernetesService(msrest.serialization.Model):
+    """The kubernetes service connection configuration.
+
+    :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
+    :vartype cloud_role_arn: str
+    """
+
+    _attribute_map = {
+        'cloud_role_arn': {'key': 'cloudRoleArn', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_role_arn: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
+        :paramtype cloud_role_arn: str
+        """
+        super(DefenderForContainersAwsOfferingKubernetesService, self).__init__(**kwargs)
+        self.cloud_role_arn = cloud_role_arn
+
+
+class DefenderForServersAwsOffering(CloudOffering):
+    """The Defender for Servers AWS offering configurations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar offering_type: Required. The type of the security offering.Constant filled by server.
+     Possible values include: "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
+     "InformationProtectionAws".
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
+    :ivar description: The offering description.
+    :vartype description: str
+    :ivar defender_for_servers: The Defender for servers connection configuration.
+    :vartype defender_for_servers:
+     ~azure.mgmt.security.models.DefenderForServersAwsOfferingDefenderForServers
+    :ivar arc_auto_provisioning: The ARC autoprovisioning configuration.
+    :vartype arc_auto_provisioning:
+     ~azure.mgmt.security.models.DefenderForServersAwsOfferingArcAutoProvisioning
+    """
+
+    _validation = {
+        'offering_type': {'required': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'offering_type': {'key': 'offeringType', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'defender_for_servers': {'key': 'defenderForServers', 'type': 'DefenderForServersAwsOfferingDefenderForServers'},
+        'arc_auto_provisioning': {'key': 'arcAutoProvisioning', 'type': 'DefenderForServersAwsOfferingArcAutoProvisioning'},
+    }
+
+    def __init__(
+        self,
+        *,
+        defender_for_servers: Optional["DefenderForServersAwsOfferingDefenderForServers"] = None,
+        arc_auto_provisioning: Optional["DefenderForServersAwsOfferingArcAutoProvisioning"] = None,
+        **kwargs
+    ):
+        """
+        :keyword defender_for_servers: The Defender for servers connection configuration.
+        :paramtype defender_for_servers:
+         ~azure.mgmt.security.models.DefenderForServersAwsOfferingDefenderForServers
+        :keyword arc_auto_provisioning: The ARC autoprovisioning configuration.
+        :paramtype arc_auto_provisioning:
+         ~azure.mgmt.security.models.DefenderForServersAwsOfferingArcAutoProvisioning
+        """
+        super(DefenderForServersAwsOffering, self).__init__(**kwargs)
+        self.offering_type = 'DefenderForServersAws'  # type: str
+        self.defender_for_servers = defender_for_servers
+        self.arc_auto_provisioning = arc_auto_provisioning
+
+
+class DefenderForServersAwsOfferingArcAutoProvisioning(msrest.serialization.Model):
+    """The ARC autoprovisioning configuration.
+
+    :ivar enabled: Is arc auto provisioning enabled.
+    :vartype enabled: bool
+    :ivar service_principal_secret_metadata: Metadata of Service Principal secret for
+     autoprovisioning.
+    :vartype service_principal_secret_metadata:
+     ~azure.mgmt.security.models.DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'service_principal_secret_metadata': {'key': 'servicePrincipalSecretMetadata', 'type': 'DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata'},
+    }
+
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        service_principal_secret_metadata: Optional["DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata"] = None,
+        **kwargs
+    ):
+        """
+        :keyword enabled: Is arc auto provisioning enabled.
+        :paramtype enabled: bool
+        :keyword service_principal_secret_metadata: Metadata of Service Principal secret for
+         autoprovisioning.
+        :paramtype service_principal_secret_metadata:
+         ~azure.mgmt.security.models.DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata
+        """
+        super(DefenderForServersAwsOfferingArcAutoProvisioning, self).__init__(**kwargs)
+        self.enabled = enabled
+        self.service_principal_secret_metadata = service_principal_secret_metadata
+
+
+class DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata(msrest.serialization.Model):
+    """Metadata of Service Principal secret for autoprovisioning.
+
+    :ivar expiry_date: expiration date of service principal secret.
+    :vartype expiry_date: str
+    :ivar parameter_store_region: region of parameter store where secret is kept.
+    :vartype parameter_store_region: str
+    :ivar parameter_name_in_store: name of secret resource in parameter store.
+    :vartype parameter_name_in_store: str
+    """
+
+    _attribute_map = {
+        'expiry_date': {'key': 'expiryDate', 'type': 'str'},
+        'parameter_store_region': {'key': 'parameterStoreRegion', 'type': 'str'},
+        'parameter_name_in_store': {'key': 'parameterNameInStore', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        expiry_date: Optional[str] = None,
+        parameter_store_region: Optional[str] = None,
+        parameter_name_in_store: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword expiry_date: expiration date of service principal secret.
+        :paramtype expiry_date: str
+        :keyword parameter_store_region: region of parameter store where secret is kept.
+        :paramtype parameter_store_region: str
+        :keyword parameter_name_in_store: name of secret resource in parameter store.
+        :paramtype parameter_name_in_store: str
+        """
+        super(DefenderForServersAwsOfferingArcAutoProvisioningServicePrincipalSecretMetadata, self).__init__(**kwargs)
+        self.expiry_date = expiry_date
+        self.parameter_store_region = parameter_store_region
+        self.parameter_name_in_store = parameter_name_in_store
+
+
+class DefenderForServersAwsOfferingDefenderForServers(msrest.serialization.Model):
+    """The Defender for servers connection configuration.
+
+    :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
+    :vartype cloud_role_arn: str
+    """
+
+    _attribute_map = {
+        'cloud_role_arn': {'key': 'cloudRoleArn', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_role_arn: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
+        :paramtype cloud_role_arn: str
+        """
+        super(DefenderForServersAwsOfferingDefenderForServers, self).__init__(**kwargs)
+        self.cloud_role_arn = cloud_role_arn
 
 
 class DenylistCustomAlertRule(ListCustomAlertRule):
@@ -3846,16 +5233,16 @@ class DenylistCustomAlertRule(ListCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
-    :param denylist_values: Required. The values to deny. The format of the values depends on the
+    :ivar denylist_values: Required. The values to deny. The format of the values depends on the
      rule type.
-    :type denylist_values: list[str]
+    :vartype denylist_values: list[str]
     """
 
     _validation = {
@@ -3883,6 +5270,13 @@ class DenylistCustomAlertRule(ListCustomAlertRule):
         denylist_values: List[str],
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword denylist_values: Required. The values to deny. The format of the values depends on the
+         rule type.
+        :paramtype denylist_values: list[str]
+        """
         super(DenylistCustomAlertRule, self).__init__(is_enabled=is_enabled, **kwargs)
         self.rule_type = 'DenylistCustomAlertRule'  # type: str
         self.denylist_values = denylist_values
@@ -3899,14 +5293,14 @@ class DeviceSecurityGroup(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param threshold_rules: The list of custom alert threshold rules.
-    :type threshold_rules: list[~azure.mgmt.security.models.ThresholdCustomAlertRule]
-    :param time_window_rules: The list of custom alert time-window rules.
-    :type time_window_rules: list[~azure.mgmt.security.models.TimeWindowCustomAlertRule]
-    :param allowlist_rules: The allow-list custom alert rules.
-    :type allowlist_rules: list[~azure.mgmt.security.models.AllowlistCustomAlertRule]
-    :param denylist_rules: The deny-list custom alert rules.
-    :type denylist_rules: list[~azure.mgmt.security.models.DenylistCustomAlertRule]
+    :ivar threshold_rules: The list of custom alert threshold rules.
+    :vartype threshold_rules: list[~azure.mgmt.security.models.ThresholdCustomAlertRule]
+    :ivar time_window_rules: The list of custom alert time-window rules.
+    :vartype time_window_rules: list[~azure.mgmt.security.models.TimeWindowCustomAlertRule]
+    :ivar allowlist_rules: The allow-list custom alert rules.
+    :vartype allowlist_rules: list[~azure.mgmt.security.models.AllowlistCustomAlertRule]
+    :ivar denylist_rules: The deny-list custom alert rules.
+    :vartype denylist_rules: list[~azure.mgmt.security.models.DenylistCustomAlertRule]
     """
 
     _validation = {
@@ -3934,6 +5328,16 @@ class DeviceSecurityGroup(Resource):
         denylist_rules: Optional[List["DenylistCustomAlertRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword threshold_rules: The list of custom alert threshold rules.
+        :paramtype threshold_rules: list[~azure.mgmt.security.models.ThresholdCustomAlertRule]
+        :keyword time_window_rules: The list of custom alert time-window rules.
+        :paramtype time_window_rules: list[~azure.mgmt.security.models.TimeWindowCustomAlertRule]
+        :keyword allowlist_rules: The allow-list custom alert rules.
+        :paramtype allowlist_rules: list[~azure.mgmt.security.models.AllowlistCustomAlertRule]
+        :keyword denylist_rules: The deny-list custom alert rules.
+        :paramtype denylist_rules: list[~azure.mgmt.security.models.DenylistCustomAlertRule]
+        """
         super(DeviceSecurityGroup, self).__init__(**kwargs)
         self.threshold_rules = threshold_rules
         self.time_window_rules = time_window_rules
@@ -3946,8 +5350,8 @@ class DeviceSecurityGroupList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of device security group objects.
-    :type value: list[~azure.mgmt.security.models.DeviceSecurityGroup]
+    :ivar value: List of device security group objects.
+    :vartype value: list[~azure.mgmt.security.models.DeviceSecurityGroup]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -3967,6 +5371,10 @@ class DeviceSecurityGroupList(msrest.serialization.Model):
         value: Optional[List["DeviceSecurityGroup"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of device security group objects.
+        :paramtype value: list[~azure.mgmt.security.models.DeviceSecurityGroup]
+        """
         super(DeviceSecurityGroupList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -3983,16 +5391,16 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -4024,6 +5432,16 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(DirectMethodInvokesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'DirectMethodInvokesNotInAllowedRange'  # type: str
 
@@ -4043,15 +5461,15 @@ class DiscoveredSecuritySolution(Resource, Location):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param security_family: Required. The security family of the discovered solution. Possible
+    :ivar security_family: Required. The security family of the discovered solution. Possible
      values include: "Waf", "Ngfw", "SaasWaf", "Va".
-    :type security_family: str or ~azure.mgmt.security.models.SecurityFamily
-    :param offer: Required. The security solutions' image offer.
-    :type offer: str
-    :param publisher: Required. The security solutions' image publisher.
-    :type publisher: str
-    :param sku: Required. The security solutions' image sku.
-    :type sku: str
+    :vartype security_family: str or ~azure.mgmt.security.models.SecurityFamily
+    :ivar offer: Required. The security solutions' image offer.
+    :vartype offer: str
+    :ivar publisher: Required. The security solutions' image publisher.
+    :vartype publisher: str
+    :ivar sku: Required. The security solutions' image sku.
+    :vartype sku: str
     """
 
     _validation = {
@@ -4085,6 +5503,17 @@ class DiscoveredSecuritySolution(Resource, Location):
         sku: str,
         **kwargs
     ):
+        """
+        :keyword security_family: Required. The security family of the discovered solution. Possible
+         values include: "Waf", "Ngfw", "SaasWaf", "Va".
+        :paramtype security_family: str or ~azure.mgmt.security.models.SecurityFamily
+        :keyword offer: Required. The security solutions' image offer.
+        :paramtype offer: str
+        :keyword publisher: Required. The security solutions' image publisher.
+        :paramtype publisher: str
+        :keyword sku: Required. The security solutions' image sku.
+        :paramtype sku: str
+        """
         super(DiscoveredSecuritySolution, self).__init__(**kwargs)
         self.location = None
         self.security_family = security_family
@@ -4105,8 +5534,8 @@ class DiscoveredSecuritySolutionList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.security.models.DiscoveredSecuritySolution]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.DiscoveredSecuritySolution]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -4126,6 +5555,10 @@ class DiscoveredSecuritySolutionList(msrest.serialization.Model):
         value: Optional[List["DiscoveredSecuritySolution"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.security.models.DiscoveredSecuritySolution]
+        """
         super(DiscoveredSecuritySolutionList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -4134,10 +5567,10 @@ class DiscoveredSecuritySolutionList(msrest.serialization.Model):
 class EffectiveNetworkSecurityGroups(msrest.serialization.Model):
     """Describes the Network Security Groups effective on a network interface.
 
-    :param network_interface: The Azure resource ID of the network interface.
-    :type network_interface: str
-    :param network_security_groups: The Network Security Groups effective on the network interface.
-    :type network_security_groups: list[str]
+    :ivar network_interface: The Azure resource ID of the network interface.
+    :vartype network_interface: str
+    :ivar network_security_groups: The Network Security Groups effective on the network interface.
+    :vartype network_security_groups: list[str]
     """
 
     _attribute_map = {
@@ -4152,6 +5585,13 @@ class EffectiveNetworkSecurityGroups(msrest.serialization.Model):
         network_security_groups: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword network_interface: The Azure resource ID of the network interface.
+        :paramtype network_interface: str
+        :keyword network_security_groups: The Network Security Groups effective on the network
+         interface.
+        :paramtype network_security_groups: list[str]
+        """
         super(EffectiveNetworkSecurityGroups, self).__init__(**kwargs)
         self.network_interface = network_interface
         self.network_security_groups = network_security_groups
@@ -4182,6 +5622,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -4192,8 +5634,8 @@ class ExternalSecuritySolutionList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.security.models.ExternalSecuritySolution]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.ExternalSecuritySolution]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -4213,6 +5655,10 @@ class ExternalSecuritySolutionList(msrest.serialization.Model):
         value: Optional[List["ExternalSecuritySolution"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.security.models.ExternalSecuritySolution]
+        """
         super(ExternalSecuritySolutionList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -4229,16 +5675,16 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -4270,6 +5716,16 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(FailedLocalLoginsNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'FailedLocalLoginsNotInAllowedRange'  # type: str
 
@@ -4285,16 +5741,16 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -4326,6 +5782,16 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(FileUploadsNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'FileUploadsNotInAllowedRange'  # type: str
 
@@ -4343,34 +5809,34 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
      ~azure.mgmt.security.models.AuthenticationProvisioningState
     :ivar granted_permissions: The permissions detected in the cloud account.
     :vartype granted_permissions: list[str or ~azure.mgmt.security.models.PermissionProperty]
-    :param authentication_type: Required. Connect to your cloud account, for AWS use either account
+    :ivar authentication_type: Required. Connect to your cloud account, for AWS use either account
      credentials or role-based authentication. For GCP use account organization credentials.Constant
-     filled by server.  Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
-    :type authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
-    :param organization_id: Required. The organization ID of the GCP cloud account.
-    :type organization_id: str
-    :param type: Required. Type field of the API key (write only).
-    :type type: str
-    :param project_id: Required. Project ID field of the API key (write only).
-    :type project_id: str
-    :param private_key_id: Required. Private key ID field of the API key (write only).
-    :type private_key_id: str
-    :param private_key: Required. Private key field of the API key (write only).
-    :type private_key: str
-    :param client_email: Required. Client email field of the API key (write only).
-    :type client_email: str
-    :param client_id: Required. Client ID field of the API key (write only).
-    :type client_id: str
-    :param auth_uri: Required. Auth URI field of the API key (write only).
-    :type auth_uri: str
-    :param token_uri: Required. Token URI field of the API key (write only).
-    :type token_uri: str
-    :param auth_provider_x509_cert_url: Required. Auth provider x509 certificate URL field of the
+     filled by server. Possible values include: "awsCreds", "awsAssumeRole", "gcpCredentials".
+    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
+    :ivar organization_id: Required. The organization ID of the GCP cloud account.
+    :vartype organization_id: str
+    :ivar type: Required. Type field of the API key (write only).
+    :vartype type: str
+    :ivar project_id: Required. Project ID field of the API key (write only).
+    :vartype project_id: str
+    :ivar private_key_id: Required. Private key ID field of the API key (write only).
+    :vartype private_key_id: str
+    :ivar private_key: Required. Private key field of the API key (write only).
+    :vartype private_key: str
+    :ivar client_email: Required. Client email field of the API key (write only).
+    :vartype client_email: str
+    :ivar client_id: Required. Client ID field of the API key (write only).
+    :vartype client_id: str
+    :ivar auth_uri: Required. Auth URI field of the API key (write only).
+    :vartype auth_uri: str
+    :ivar token_uri: Required. Token URI field of the API key (write only).
+    :vartype token_uri: str
+    :ivar auth_provider_x509_cert_url: Required. Auth provider x509 certificate URL field of the
      API key (write only).
-    :type auth_provider_x509_cert_url: str
-    :param client_x509_cert_url: Required. Client x509 certificate URL field of the API key (write
+    :vartype auth_provider_x509_cert_url: str
+    :ivar client_x509_cert_url: Required. Client x509 certificate URL field of the API key (write
      only).
-    :type client_x509_cert_url: str
+    :vartype client_x509_cert_url: str
     """
 
     _validation = {
@@ -4423,6 +5889,32 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
         client_x509_cert_url: str,
         **kwargs
     ):
+        """
+        :keyword organization_id: Required. The organization ID of the GCP cloud account.
+        :paramtype organization_id: str
+        :keyword type: Required. Type field of the API key (write only).
+        :paramtype type: str
+        :keyword project_id: Required. Project ID field of the API key (write only).
+        :paramtype project_id: str
+        :keyword private_key_id: Required. Private key ID field of the API key (write only).
+        :paramtype private_key_id: str
+        :keyword private_key: Required. Private key field of the API key (write only).
+        :paramtype private_key: str
+        :keyword client_email: Required. Client email field of the API key (write only).
+        :paramtype client_email: str
+        :keyword client_id: Required. Client ID field of the API key (write only).
+        :paramtype client_id: str
+        :keyword auth_uri: Required. Auth URI field of the API key (write only).
+        :paramtype auth_uri: str
+        :keyword token_uri: Required. Token URI field of the API key (write only).
+        :paramtype token_uri: str
+        :keyword auth_provider_x509_cert_url: Required. Auth provider x509 certificate URL field of the
+         API key (write only).
+        :paramtype auth_provider_x509_cert_url: str
+        :keyword client_x509_cert_url: Required. Client x509 certificate URL field of the API key
+         (write only).
+        :paramtype client_x509_cert_url: str
+        """
         super(GcpCredentialsDetailsProperties, self).__init__(**kwargs)
         self.authentication_type = 'gcpCredentials'  # type: str
         self.organization_id = organization_id
@@ -4449,16 +5941,16 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -4490,6 +5982,16 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(HttpC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'HttpC2DMessagesNotInAllowedRange'  # type: str
 
@@ -4505,16 +6007,16 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -4546,6 +6048,16 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(HttpC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'HttpC2DRejectedMessagesNotInAllowedRange'  # type: str
 
@@ -4561,16 +6073,16 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -4602,6 +6114,16 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(HttpD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'HttpD2CMessagesNotInAllowedRange'  # type: str
 
@@ -4617,19 +6139,19 @@ class HybridComputeSettingsProperties(msrest.serialization.Model):
      Possible values include: "Valid", "Invalid", "Expired".
     :vartype hybrid_compute_provisioning_state: str or
      ~azure.mgmt.security.models.HybridComputeProvisioningState
-    :param auto_provision: Required. Whether or not to automatically install Azure Arc (hybrid
+    :ivar auto_provision: Required. Whether or not to automatically install Azure Arc (hybrid
      compute) agents on machines. Possible values include: "On", "Off".
-    :type auto_provision: str or ~azure.mgmt.security.models.AutoProvision
-    :param resource_group_name: The name of the resource group where Arc (Hybrid Compute)
-     connectors are connected.
-    :type resource_group_name: str
-    :param region: The location where the metadata of machines will be stored.
-    :type region: str
-    :param proxy_server: For a non-Azure machine that is not connected directly to the internet,
+    :vartype auto_provision: str or ~azure.mgmt.security.models.AutoProvision
+    :ivar resource_group_name: The name of the resource group where Arc (Hybrid Compute) connectors
+     are connected.
+    :vartype resource_group_name: str
+    :ivar region: The location where the metadata of machines will be stored.
+    :vartype region: str
+    :ivar proxy_server: For a non-Azure machine that is not connected directly to the internet,
      specify a proxy server that the non-Azure machine can use.
-    :type proxy_server: ~azure.mgmt.security.models.ProxyServerProperties
-    :param service_principal: An object to access resources that are secured by an Azure AD tenant.
-    :type service_principal: ~azure.mgmt.security.models.ServicePrincipalProperties
+    :vartype proxy_server: ~azure.mgmt.security.models.ProxyServerProperties
+    :ivar service_principal: An object to access resources that are secured by an Azure AD tenant.
+    :vartype service_principal: ~azure.mgmt.security.models.ServicePrincipalProperties
     """
 
     _validation = {
@@ -4656,6 +6178,22 @@ class HybridComputeSettingsProperties(msrest.serialization.Model):
         service_principal: Optional["ServicePrincipalProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword auto_provision: Required. Whether or not to automatically install Azure Arc (hybrid
+         compute) agents on machines. Possible values include: "On", "Off".
+        :paramtype auto_provision: str or ~azure.mgmt.security.models.AutoProvision
+        :keyword resource_group_name: The name of the resource group where Arc (Hybrid Compute)
+         connectors are connected.
+        :paramtype resource_group_name: str
+        :keyword region: The location where the metadata of machines will be stored.
+        :paramtype region: str
+        :keyword proxy_server: For a non-Azure machine that is not connected directly to the internet,
+         specify a proxy server that the non-Azure machine can use.
+        :paramtype proxy_server: ~azure.mgmt.security.models.ProxyServerProperties
+        :keyword service_principal: An object to access resources that are secured by an Azure AD
+         tenant.
+        :paramtype service_principal: ~azure.mgmt.security.models.ServicePrincipalProperties
+        """
         super(HybridComputeSettingsProperties, self).__init__(**kwargs)
         self.hybrid_compute_provisioning_state = None
         self.auto_provision = auto_provision
@@ -4665,17 +6203,87 @@ class HybridComputeSettingsProperties(msrest.serialization.Model):
         self.service_principal = service_principal
 
 
+class InformationProtectionAwsOffering(CloudOffering):
+    """The information protection for AWS offering configurations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar offering_type: Required. The type of the security offering.Constant filled by server.
+     Possible values include: "CspmMonitorAws", "DefenderForContainersAws", "DefenderForServersAws",
+     "InformationProtectionAws".
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
+    :ivar description: The offering description.
+    :vartype description: str
+    :ivar information_protection: The native cloud connection configuration.
+    :vartype information_protection:
+     ~azure.mgmt.security.models.InformationProtectionAwsOfferingInformationProtection
+    """
+
+    _validation = {
+        'offering_type': {'required': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'offering_type': {'key': 'offeringType', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'information_protection': {'key': 'informationProtection', 'type': 'InformationProtectionAwsOfferingInformationProtection'},
+    }
+
+    def __init__(
+        self,
+        *,
+        information_protection: Optional["InformationProtectionAwsOfferingInformationProtection"] = None,
+        **kwargs
+    ):
+        """
+        :keyword information_protection: The native cloud connection configuration.
+        :paramtype information_protection:
+         ~azure.mgmt.security.models.InformationProtectionAwsOfferingInformationProtection
+        """
+        super(InformationProtectionAwsOffering, self).__init__(**kwargs)
+        self.offering_type = 'InformationProtectionAws'  # type: str
+        self.information_protection = information_protection
+
+
+class InformationProtectionAwsOfferingInformationProtection(msrest.serialization.Model):
+    """The native cloud connection configuration.
+
+    :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
+    :vartype cloud_role_arn: str
+    """
+
+    _attribute_map = {
+        'cloud_role_arn': {'key': 'cloudRoleArn', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_role_arn: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword cloud_role_arn: The cloud role ARN in AWS for this feature.
+        :paramtype cloud_role_arn: str
+        """
+        super(InformationProtectionAwsOfferingInformationProtection, self).__init__(**kwargs)
+        self.cloud_role_arn = cloud_role_arn
+
+
 class InformationProtectionKeyword(msrest.serialization.Model):
     """The information type keyword.
 
-    :param pattern: The keyword pattern.
-    :type pattern: str
-    :param custom: Indicates whether the keyword is custom or not.
-    :type custom: bool
-    :param can_be_numeric: Indicates whether the keyword can be applied on numeric types or not.
-    :type can_be_numeric: bool
-    :param excluded: Indicates whether the keyword is excluded or not.
-    :type excluded: bool
+    :ivar pattern: The keyword pattern.
+    :vartype pattern: str
+    :ivar custom: Indicates whether the keyword is custom or not.
+    :vartype custom: bool
+    :ivar can_be_numeric: Indicates whether the keyword can be applied on numeric types or not.
+    :vartype can_be_numeric: bool
+    :ivar excluded: Indicates whether the keyword is excluded or not.
+    :vartype excluded: bool
     """
 
     _attribute_map = {
@@ -4694,6 +6302,16 @@ class InformationProtectionKeyword(msrest.serialization.Model):
         excluded: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword pattern: The keyword pattern.
+        :paramtype pattern: str
+        :keyword custom: Indicates whether the keyword is custom or not.
+        :paramtype custom: bool
+        :keyword can_be_numeric: Indicates whether the keyword can be applied on numeric types or not.
+        :paramtype can_be_numeric: bool
+        :keyword excluded: Indicates whether the keyword is excluded or not.
+        :paramtype excluded: bool
+        """
         super(InformationProtectionKeyword, self).__init__(**kwargs)
         self.pattern = pattern
         self.custom = custom
@@ -4716,10 +6334,10 @@ class InformationProtectionPolicy(Resource):
     :vartype last_modified_utc: ~datetime.datetime
     :ivar version: Describes the version of the policy.
     :vartype version: str
-    :param labels: Dictionary of sensitivity labels.
-    :type labels: dict[str, ~azure.mgmt.security.models.SensitivityLabel]
-    :param information_types: The sensitivity information types.
-    :type information_types: dict[str, ~azure.mgmt.security.models.InformationType]
+    :ivar labels: Dictionary of sensitivity labels.
+    :vartype labels: dict[str, ~azure.mgmt.security.models.SensitivityLabel]
+    :ivar information_types: The sensitivity information types.
+    :vartype information_types: dict[str, ~azure.mgmt.security.models.InformationType]
     """
 
     _validation = {
@@ -4747,6 +6365,12 @@ class InformationProtectionPolicy(Resource):
         information_types: Optional[Dict[str, "InformationType"]] = None,
         **kwargs
     ):
+        """
+        :keyword labels: Dictionary of sensitivity labels.
+        :paramtype labels: dict[str, ~azure.mgmt.security.models.SensitivityLabel]
+        :keyword information_types: The sensitivity information types.
+        :paramtype information_types: dict[str, ~azure.mgmt.security.models.InformationType]
+        """
         super(InformationProtectionPolicy, self).__init__(**kwargs)
         self.last_modified_utc = None
         self.version = None
@@ -4759,8 +6383,8 @@ class InformationProtectionPolicyList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of information protection policies.
-    :type value: list[~azure.mgmt.security.models.InformationProtectionPolicy]
+    :ivar value: List of information protection policies.
+    :vartype value: list[~azure.mgmt.security.models.InformationProtectionPolicy]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -4780,6 +6404,10 @@ class InformationProtectionPolicyList(msrest.serialization.Model):
         value: Optional[List["InformationProtectionPolicy"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of information protection policies.
+        :paramtype value: list[~azure.mgmt.security.models.InformationProtectionPolicy]
+        """
         super(InformationProtectionPolicyList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -4788,21 +6416,21 @@ class InformationProtectionPolicyList(msrest.serialization.Model):
 class InformationType(msrest.serialization.Model):
     """The information type.
 
-    :param display_name: The name of the information type.
-    :type display_name: str
-    :param description: The description of the information type.
-    :type description: str
-    :param order: The order of the information type.
-    :type order: int
-    :param recommended_label_id: The recommended label id to be associated with this information
+    :ivar display_name: The name of the information type.
+    :vartype display_name: str
+    :ivar description: The description of the information type.
+    :vartype description: str
+    :ivar order: The order of the information type.
+    :vartype order: int
+    :ivar recommended_label_id: The recommended label id to be associated with this information
      type.
-    :type recommended_label_id: str
-    :param enabled: Indicates whether the information type is enabled or not.
-    :type enabled: bool
-    :param custom: Indicates whether the information type is custom or not.
-    :type custom: bool
-    :param keywords: The information type keywords.
-    :type keywords: list[~azure.mgmt.security.models.InformationProtectionKeyword]
+    :vartype recommended_label_id: str
+    :ivar enabled: Indicates whether the information type is enabled or not.
+    :vartype enabled: bool
+    :ivar custom: Indicates whether the information type is custom or not.
+    :vartype custom: bool
+    :ivar keywords: The information type keywords.
+    :vartype keywords: list[~azure.mgmt.security.models.InformationProtectionKeyword]
     """
 
     _attribute_map = {
@@ -4827,6 +6455,23 @@ class InformationType(msrest.serialization.Model):
         keywords: Optional[List["InformationProtectionKeyword"]] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: The name of the information type.
+        :paramtype display_name: str
+        :keyword description: The description of the information type.
+        :paramtype description: str
+        :keyword order: The order of the information type.
+        :paramtype order: int
+        :keyword recommended_label_id: The recommended label id to be associated with this information
+         type.
+        :paramtype recommended_label_id: str
+        :keyword enabled: Indicates whether the information type is enabled or not.
+        :paramtype enabled: bool
+        :keyword custom: Indicates whether the information type is custom or not.
+        :paramtype custom: bool
+        :keyword keywords: The information type keywords.
+        :paramtype keywords: list[~azure.mgmt.security.models.InformationProtectionKeyword]
+        """
         super(InformationType, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
@@ -4862,6 +6507,8 @@ class IngestionConnectionString(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IngestionConnectionString, self).__init__(**kwargs)
         self.location = None
         self.value = None
@@ -4878,8 +6525,8 @@ class IngestionSetting(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: Ingestion setting data.
-    :type properties: any
+    :ivar properties: Ingestion setting data.
+    :vartype properties: any
     """
 
     _validation = {
@@ -4901,6 +6548,10 @@ class IngestionSetting(Resource):
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Ingestion setting data.
+        :paramtype properties: any
+        """
         super(IngestionSetting, self).__init__(**kwargs)
         self.properties = properties
 
@@ -4930,6 +6581,8 @@ class IngestionSettingList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IngestionSettingList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -4957,6 +6610,8 @@ class IngestionSettingToken(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IngestionSettingToken, self).__init__(**kwargs)
         self.token = None
 
@@ -4964,8 +6619,8 @@ class IngestionSettingToken(msrest.serialization.Model):
 class TagsResource(msrest.serialization.Model):
     """A container holding only the Tags for a resource, allowing the user to update the tags.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -4978,6 +6633,10 @@ class TagsResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TagsResource, self).__init__(**kwargs)
         self.tags = tags
 
@@ -4987,8 +6646,8 @@ class IoTSecurityAggregatedAlert(Resource, TagsResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
@@ -5071,6 +6730,10 @@ class IoTSecurityAggregatedAlert(Resource, TagsResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(IoTSecurityAggregatedAlert, self).__init__(tags=tags, **kwargs)
         self.tags = tags
         self.alert_type = None
@@ -5111,8 +6774,8 @@ class IoTSecurityAggregatedAlertList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of aggregated alerts data.
-    :type value: list[~azure.mgmt.security.models.IoTSecurityAggregatedAlert]
+    :ivar value: Required. List of aggregated alerts data.
+    :vartype value: list[~azure.mgmt.security.models.IoTSecurityAggregatedAlert]
     :ivar next_link: When there is too much alert data for one page, use this URI to fetch the next
      page.
     :vartype next_link: str
@@ -5134,6 +6797,10 @@ class IoTSecurityAggregatedAlertList(msrest.serialization.Model):
         value: List["IoTSecurityAggregatedAlert"],
         **kwargs
     ):
+        """
+        :keyword value: Required. List of aggregated alerts data.
+        :paramtype value: list[~azure.mgmt.security.models.IoTSecurityAggregatedAlert]
+        """
         super(IoTSecurityAggregatedAlertList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -5168,6 +6835,8 @@ class IoTSecurityAggregatedAlertPropertiesTopDevicesListItem(msrest.serializatio
         self,
         **kwargs
     ):
+        """
+        """
         super(IoTSecurityAggregatedAlertPropertiesTopDevicesListItem, self).__init__(**kwargs)
         self.device_id = None
         self.alerts_count = None
@@ -5179,16 +6848,16 @@ class IoTSecurityAggregatedRecommendation(Resource, TagsResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param recommendation_name: Name of the recommendation.
-    :type recommendation_name: str
+    :ivar recommendation_name: Name of the recommendation.
+    :vartype recommendation_name: str
     :ivar recommendation_display_name: Display name of the recommendation type.
     :vartype recommendation_display_name: str
     :ivar description: Description of the suspected vulnerability and meaning.
@@ -5249,6 +6918,12 @@ class IoTSecurityAggregatedRecommendation(Resource, TagsResource):
         recommendation_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword recommendation_name: Name of the recommendation.
+        :paramtype recommendation_name: str
+        """
         super(IoTSecurityAggregatedRecommendation, self).__init__(tags=tags, **kwargs)
         self.tags = tags
         self.recommendation_name = recommendation_name
@@ -5283,8 +6958,8 @@ class IoTSecurityAggregatedRecommendationList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of aggregated recommendations data.
-    :type value: list[~azure.mgmt.security.models.IoTSecurityAggregatedRecommendation]
+    :ivar value: Required. List of aggregated recommendations data.
+    :vartype value: list[~azure.mgmt.security.models.IoTSecurityAggregatedRecommendation]
     :ivar next_link: When there is too much alert data for one page, use this URI to fetch the next
      page.
     :vartype next_link: str
@@ -5306,6 +6981,10 @@ class IoTSecurityAggregatedRecommendationList(msrest.serialization.Model):
         value: List["IoTSecurityAggregatedRecommendation"],
         **kwargs
     ):
+        """
+        :keyword value: Required. List of aggregated recommendations data.
+        :paramtype value: list[~azure.mgmt.security.models.IoTSecurityAggregatedRecommendation]
+        """
         super(IoTSecurityAggregatedRecommendationList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -5336,6 +7015,8 @@ class IoTSecurityAlertedDevice(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IoTSecurityAlertedDevice, self).__init__(**kwargs)
         self.device_id = None
         self.alerts_count = None
@@ -5371,6 +7052,8 @@ class IoTSecurityDeviceAlert(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IoTSecurityDeviceAlert, self).__init__(**kwargs)
         self.alert_display_name = None
         self.reported_severity = None
@@ -5407,6 +7090,8 @@ class IoTSecurityDeviceRecommendation(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(IoTSecurityDeviceRecommendation, self).__init__(**kwargs)
         self.recommendation_display_name = None
         self.reported_severity = None
@@ -5431,13 +7116,13 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
     :ivar devices_metrics: List of device metrics by the aggregation date.
     :vartype devices_metrics:
      list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem]
-    :param top_alerted_devices: List of the 3 devices with the most alerts.
-    :type top_alerted_devices: list[~azure.mgmt.security.models.IoTSecurityAlertedDevice]
-    :param most_prevalent_device_alerts: List of the 3 most prevalent device alerts.
-    :type most_prevalent_device_alerts: list[~azure.mgmt.security.models.IoTSecurityDeviceAlert]
-    :param most_prevalent_device_recommendations: List of the 3 most prevalent device
+    :ivar top_alerted_devices: List of the 3 devices with the most alerts.
+    :vartype top_alerted_devices: list[~azure.mgmt.security.models.IoTSecurityAlertedDevice]
+    :ivar most_prevalent_device_alerts: List of the 3 most prevalent device alerts.
+    :vartype most_prevalent_device_alerts: list[~azure.mgmt.security.models.IoTSecurityDeviceAlert]
+    :ivar most_prevalent_device_recommendations: List of the 3 most prevalent device
      recommendations.
-    :type most_prevalent_device_recommendations:
+    :vartype most_prevalent_device_recommendations:
      list[~azure.mgmt.security.models.IoTSecurityDeviceRecommendation]
     """
 
@@ -5470,6 +7155,17 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
         most_prevalent_device_recommendations: Optional[List["IoTSecurityDeviceRecommendation"]] = None,
         **kwargs
     ):
+        """
+        :keyword top_alerted_devices: List of the 3 devices with the most alerts.
+        :paramtype top_alerted_devices: list[~azure.mgmt.security.models.IoTSecurityAlertedDevice]
+        :keyword most_prevalent_device_alerts: List of the 3 most prevalent device alerts.
+        :paramtype most_prevalent_device_alerts:
+         list[~azure.mgmt.security.models.IoTSecurityDeviceAlert]
+        :keyword most_prevalent_device_recommendations: List of the 3 most prevalent device
+         recommendations.
+        :paramtype most_prevalent_device_recommendations:
+         list[~azure.mgmt.security.models.IoTSecurityDeviceRecommendation]
+        """
         super(IoTSecuritySolutionAnalyticsModel, self).__init__(**kwargs)
         self.metrics = None
         self.unhealthy_device_count = None
@@ -5486,8 +7182,8 @@ class IoTSecuritySolutionAnalyticsModelList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of Security analytics of your IoT Security solution.
-    :type value: list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModel]
+    :ivar value: Required. List of Security analytics of your IoT Security solution.
+    :vartype value: list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModel]
     :ivar next_link: When there is too much alert data for one page, use this URI to fetch the next
      page.
     :vartype next_link: str
@@ -5509,6 +7205,10 @@ class IoTSecuritySolutionAnalyticsModelList(msrest.serialization.Model):
         value: List["IoTSecuritySolutionAnalyticsModel"],
         **kwargs
     ):
+        """
+        :keyword value: Required. List of Security analytics of your IoT Security solution.
+        :paramtype value: list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModel]
+        """
         super(IoTSecuritySolutionAnalyticsModelList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -5517,10 +7217,10 @@ class IoTSecuritySolutionAnalyticsModelList(msrest.serialization.Model):
 class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(msrest.serialization.Model):
     """IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem.
 
-    :param date: Aggregation of IoT Security solution device alert metrics by date.
-    :type date: ~datetime.datetime
-    :param devices_metrics: Device alert count by severity.
-    :type devices_metrics: ~azure.mgmt.security.models.IoTSeverityMetrics
+    :ivar date: Aggregation of IoT Security solution device alert metrics by date.
+    :vartype date: ~datetime.datetime
+    :ivar devices_metrics: Device alert count by severity.
+    :vartype devices_metrics: ~azure.mgmt.security.models.IoTSeverityMetrics
     """
 
     _attribute_map = {
@@ -5535,6 +7235,12 @@ class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(msrest.seria
         devices_metrics: Optional["IoTSeverityMetrics"] = None,
         **kwargs
     ):
+        """
+        :keyword date: Aggregation of IoT Security solution device alert metrics by date.
+        :paramtype date: ~datetime.datetime
+        :keyword devices_metrics: Device alert count by severity.
+        :paramtype devices_metrics: ~azure.mgmt.security.models.IoTSeverityMetrics
+        """
         super(IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem, self).__init__(**kwargs)
         self.date = date
         self.devices_metrics = devices_metrics
@@ -5545,48 +7251,48 @@ class IoTSecuritySolutionModel(Resource, TagsResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
+    :ivar location: The resource location.
+    :vartype location: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.security.models.SystemData
-    :param workspace: Workspace resource ID.
-    :type workspace: str
-    :param display_name: Resource display name.
-    :type display_name: str
-    :param status: Status of the IoT Security solution. Possible values include: "Enabled",
+    :ivar workspace: Workspace resource ID.
+    :vartype workspace: str
+    :ivar display_name: Resource display name.
+    :vartype display_name: str
+    :ivar status: Status of the IoT Security solution. Possible values include: "Enabled",
      "Disabled". Default value: "Enabled".
-    :type status: str or ~azure.mgmt.security.models.SecuritySolutionStatus
-    :param export: List of additional options for exporting to workspace data.
-    :type export: list[str or ~azure.mgmt.security.models.ExportData]
-    :param disabled_data_sources: Disabled data sources. Disabling these data sources compromises
+    :vartype status: str or ~azure.mgmt.security.models.SecuritySolutionStatus
+    :ivar export: List of additional options for exporting to workspace data.
+    :vartype export: list[str or ~azure.mgmt.security.models.ExportData]
+    :ivar disabled_data_sources: Disabled data sources. Disabling these data sources compromises
      the system.
-    :type disabled_data_sources: list[str or ~azure.mgmt.security.models.DataSource]
-    :param iot_hubs: IoT Hub resource IDs.
-    :type iot_hubs: list[str]
-    :param user_defined_resources: Properties of the IoT Security solution's user defined
-     resources.
-    :type user_defined_resources: ~azure.mgmt.security.models.UserDefinedResourcesProperties
+    :vartype disabled_data_sources: list[str or ~azure.mgmt.security.models.DataSource]
+    :ivar iot_hubs: IoT Hub resource IDs.
+    :vartype iot_hubs: list[str]
+    :ivar user_defined_resources: Properties of the IoT Security solution's user defined resources.
+    :vartype user_defined_resources: ~azure.mgmt.security.models.UserDefinedResourcesProperties
     :ivar auto_discovered_resources: List of resources that were automatically discovered as
      relevant to the security solution.
     :vartype auto_discovered_resources: list[str]
-    :param recommendations_configuration: List of the configuration status for each recommendation
+    :ivar recommendations_configuration: List of the configuration status for each recommendation
      type.
-    :type recommendations_configuration:
+    :vartype recommendations_configuration:
      list[~azure.mgmt.security.models.RecommendationConfigurationProperties]
-    :param unmasked_ip_logging_status: Unmasked IP address logging status. Possible values include:
+    :ivar unmasked_ip_logging_status: Unmasked IP address logging status. Possible values include:
      "Disabled", "Enabled". Default value: "Disabled".
-    :type unmasked_ip_logging_status: str or ~azure.mgmt.security.models.UnmaskedIpLoggingStatus
-    :param additional_workspaces: List of additional workspaces.
-    :type additional_workspaces: list[~azure.mgmt.security.models.AdditionalWorkspacesProperties]
+    :vartype unmasked_ip_logging_status: str or ~azure.mgmt.security.models.UnmaskedIpLoggingStatus
+    :ivar additional_workspaces: List of additional workspaces.
+    :vartype additional_workspaces:
+     list[~azure.mgmt.security.models.AdditionalWorkspacesProperties]
     """
 
     _validation = {
@@ -5634,6 +7340,40 @@ class IoTSecuritySolutionModel(Resource, TagsResource):
         additional_workspaces: Optional[List["AdditionalWorkspacesProperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword workspace: Workspace resource ID.
+        :paramtype workspace: str
+        :keyword display_name: Resource display name.
+        :paramtype display_name: str
+        :keyword status: Status of the IoT Security solution. Possible values include: "Enabled",
+         "Disabled". Default value: "Enabled".
+        :paramtype status: str or ~azure.mgmt.security.models.SecuritySolutionStatus
+        :keyword export: List of additional options for exporting to workspace data.
+        :paramtype export: list[str or ~azure.mgmt.security.models.ExportData]
+        :keyword disabled_data_sources: Disabled data sources. Disabling these data sources compromises
+         the system.
+        :paramtype disabled_data_sources: list[str or ~azure.mgmt.security.models.DataSource]
+        :keyword iot_hubs: IoT Hub resource IDs.
+        :paramtype iot_hubs: list[str]
+        :keyword user_defined_resources: Properties of the IoT Security solution's user defined
+         resources.
+        :paramtype user_defined_resources: ~azure.mgmt.security.models.UserDefinedResourcesProperties
+        :keyword recommendations_configuration: List of the configuration status for each
+         recommendation type.
+        :paramtype recommendations_configuration:
+         list[~azure.mgmt.security.models.RecommendationConfigurationProperties]
+        :keyword unmasked_ip_logging_status: Unmasked IP address logging status. Possible values
+         include: "Disabled", "Enabled". Default value: "Disabled".
+        :paramtype unmasked_ip_logging_status: str or
+         ~azure.mgmt.security.models.UnmaskedIpLoggingStatus
+        :keyword additional_workspaces: List of additional workspaces.
+        :paramtype additional_workspaces:
+         list[~azure.mgmt.security.models.AdditionalWorkspacesProperties]
+        """
         super(IoTSecuritySolutionModel, self).__init__(tags=tags, **kwargs)
         self.tags = tags
         self.location = location
@@ -5674,8 +7414,8 @@ class IoTSecuritySolutionsList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of IoT Security solutions.
-    :type value: list[~azure.mgmt.security.models.IoTSecuritySolutionModel]
+    :ivar value: Required. List of IoT Security solutions.
+    :vartype value: list[~azure.mgmt.security.models.IoTSecuritySolutionModel]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -5696,6 +7436,10 @@ class IoTSecuritySolutionsList(msrest.serialization.Model):
         value: List["IoTSecuritySolutionModel"],
         **kwargs
     ):
+        """
+        :keyword value: Required. List of IoT Security solutions.
+        :paramtype value: list[~azure.mgmt.security.models.IoTSecuritySolutionModel]
+        """
         super(IoTSecuritySolutionsList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -5704,12 +7448,12 @@ class IoTSecuritySolutionsList(msrest.serialization.Model):
 class IoTSeverityMetrics(msrest.serialization.Model):
     """IoT Security solution analytics severity metrics.
 
-    :param high: Count of high severity alerts/recommendations.
-    :type high: long
-    :param medium: Count of medium severity alerts/recommendations.
-    :type medium: long
-    :param low: Count of low severity alerts/recommendations.
-    :type low: long
+    :ivar high: Count of high severity alerts/recommendations.
+    :vartype high: long
+    :ivar medium: Count of medium severity alerts/recommendations.
+    :vartype medium: long
+    :ivar low: Count of low severity alerts/recommendations.
+    :vartype low: long
     """
 
     _attribute_map = {
@@ -5726,6 +7470,14 @@ class IoTSeverityMetrics(msrest.serialization.Model):
         low: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword high: Count of high severity alerts/recommendations.
+        :paramtype high: long
+        :keyword medium: Count of medium severity alerts/recommendations.
+        :paramtype medium: long
+        :keyword low: Count of low severity alerts/recommendations.
+        :paramtype low: long
+        """
         super(IoTSeverityMetrics, self).__init__(**kwargs)
         self.high = high
         self.medium = medium
@@ -5737,8 +7489,8 @@ class JitNetworkAccessPoliciesList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.security.models.JitNetworkAccessPolicy]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.JitNetworkAccessPolicy]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -5758,6 +7510,10 @@ class JitNetworkAccessPoliciesList(msrest.serialization.Model):
         value: Optional[List["JitNetworkAccessPolicy"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.security.models.JitNetworkAccessPolicy]
+        """
         super(JitNetworkAccessPoliciesList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -5772,19 +7528,20 @@ class JitNetworkAccessPolicy(Resource, Kind, Location):
 
     :ivar location: Location where the resource is stored.
     :vartype location: str
-    :param kind: Kind of the resource.
-    :type kind: str
+    :ivar kind: Kind of the resource.
+    :vartype kind: str
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param virtual_machines: Required. Configurations for Microsoft.Compute/virtualMachines
-     resource type.
-    :type virtual_machines: list[~azure.mgmt.security.models.JitNetworkAccessPolicyVirtualMachine]
-    :param requests:
-    :type requests: list[~azure.mgmt.security.models.JitNetworkAccessRequest]
+    :ivar virtual_machines: Required. Configurations for Microsoft.Compute/virtualMachines resource
+     type.
+    :vartype virtual_machines:
+     list[~azure.mgmt.security.models.JitNetworkAccessPolicyVirtualMachine]
+    :ivar requests:
+    :vartype requests: list[~azure.mgmt.security.models.JitNetworkAccessRequest]
     :ivar provisioning_state: Gets the provisioning state of the Just-in-Time policy.
     :vartype provisioning_state: str
     """
@@ -5817,6 +7574,16 @@ class JitNetworkAccessPolicy(Resource, Kind, Location):
         requests: Optional[List["JitNetworkAccessRequest"]] = None,
         **kwargs
     ):
+        """
+        :keyword kind: Kind of the resource.
+        :paramtype kind: str
+        :keyword virtual_machines: Required. Configurations for Microsoft.Compute/virtualMachines
+         resource type.
+        :paramtype virtual_machines:
+         list[~azure.mgmt.security.models.JitNetworkAccessPolicyVirtualMachine]
+        :keyword requests:
+        :paramtype requests: list[~azure.mgmt.security.models.JitNetworkAccessRequest]
+        """
         super(JitNetworkAccessPolicy, self).__init__(kind=kind, **kwargs)
         self.location = None
         self.kind = kind
@@ -5844,13 +7611,13 @@ class JitNetworkAccessPolicyInitiatePort(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param number: Required.
-    :type number: int
-    :param allowed_source_address_prefix: Source of the allowed traffic. If omitted, the request
+    :ivar number: Required.
+    :vartype number: int
+    :ivar allowed_source_address_prefix: Source of the allowed traffic. If omitted, the request
      will be for the source IP address of the initiate request.
-    :type allowed_source_address_prefix: str
-    :param end_time_utc: Required. The time to close the request in UTC.
-    :type end_time_utc: ~datetime.datetime
+    :vartype allowed_source_address_prefix: str
+    :ivar end_time_utc: Required. The time to close the request in UTC.
+    :vartype end_time_utc: ~datetime.datetime
     """
 
     _validation = {
@@ -5872,6 +7639,15 @@ class JitNetworkAccessPolicyInitiatePort(msrest.serialization.Model):
         allowed_source_address_prefix: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword number: Required.
+        :paramtype number: int
+        :keyword allowed_source_address_prefix: Source of the allowed traffic. If omitted, the request
+         will be for the source IP address of the initiate request.
+        :paramtype allowed_source_address_prefix: str
+        :keyword end_time_utc: Required. The time to close the request in UTC.
+        :paramtype end_time_utc: ~datetime.datetime
+        """
         super(JitNetworkAccessPolicyInitiatePort, self).__init__(**kwargs)
         self.number = number
         self.allowed_source_address_prefix = allowed_source_address_prefix
@@ -5883,11 +7659,11 @@ class JitNetworkAccessPolicyInitiateRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param virtual_machines: Required. A list of virtual machines & ports to open access for.
-    :type virtual_machines:
+    :ivar virtual_machines: Required. A list of virtual machines & ports to open access for.
+    :vartype virtual_machines:
      list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiateVirtualMachine]
-    :param justification: The justification for making the initiate request.
-    :type justification: str
+    :ivar justification: The justification for making the initiate request.
+    :vartype justification: str
     """
 
     _validation = {
@@ -5906,6 +7682,13 @@ class JitNetworkAccessPolicyInitiateRequest(msrest.serialization.Model):
         justification: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword virtual_machines: Required. A list of virtual machines & ports to open access for.
+        :paramtype virtual_machines:
+         list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiateVirtualMachine]
+        :keyword justification: The justification for making the initiate request.
+        :paramtype justification: str
+        """
         super(JitNetworkAccessPolicyInitiateRequest, self).__init__(**kwargs)
         self.virtual_machines = virtual_machines
         self.justification = justification
@@ -5916,10 +7699,10 @@ class JitNetworkAccessPolicyInitiateVirtualMachine(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Resource ID of the virtual machine that is linked to this policy.
-    :type id: str
-    :param ports: Required. The ports to open for the resource with the ``id``.
-    :type ports: list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiatePort]
+    :ivar id: Required. Resource ID of the virtual machine that is linked to this policy.
+    :vartype id: str
+    :ivar ports: Required. The ports to open for the resource with the ``id``.
+    :vartype ports: list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiatePort]
     """
 
     _validation = {
@@ -5939,6 +7722,12 @@ class JitNetworkAccessPolicyInitiateVirtualMachine(msrest.serialization.Model):
         ports: List["JitNetworkAccessPolicyInitiatePort"],
         **kwargs
     ):
+        """
+        :keyword id: Required. Resource ID of the virtual machine that is linked to this policy.
+        :paramtype id: str
+        :keyword ports: Required. The ports to open for the resource with the ``id``.
+        :paramtype ports: list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiatePort]
+        """
         super(JitNetworkAccessPolicyInitiateVirtualMachine, self).__init__(**kwargs)
         self.id = id
         self.ports = ports
@@ -5949,13 +7738,13 @@ class JitNetworkAccessPolicyVirtualMachine(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Resource ID of the virtual machine that is linked to this policy.
-    :type id: str
-    :param ports: Required. Port configurations for the virtual machine.
-    :type ports: list[~azure.mgmt.security.models.JitNetworkAccessPortRule]
-    :param public_ip_address: Public IP address of the Azure Firewall that is linked to this
-     policy, if applicable.
-    :type public_ip_address: str
+    :ivar id: Required. Resource ID of the virtual machine that is linked to this policy.
+    :vartype id: str
+    :ivar ports: Required. Port configurations for the virtual machine.
+    :vartype ports: list[~azure.mgmt.security.models.JitNetworkAccessPortRule]
+    :ivar public_ip_address: Public IP address of the Azure Firewall that is linked to this policy,
+     if applicable.
+    :vartype public_ip_address: str
     """
 
     _validation = {
@@ -5977,6 +7766,15 @@ class JitNetworkAccessPolicyVirtualMachine(msrest.serialization.Model):
         public_ip_address: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. Resource ID of the virtual machine that is linked to this policy.
+        :paramtype id: str
+        :keyword ports: Required. Port configurations for the virtual machine.
+        :paramtype ports: list[~azure.mgmt.security.models.JitNetworkAccessPortRule]
+        :keyword public_ip_address: Public IP address of the Azure Firewall that is linked to this
+         policy, if applicable.
+        :paramtype public_ip_address: str
+        """
         super(JitNetworkAccessPolicyVirtualMachine, self).__init__(**kwargs)
         self.id = id
         self.ports = ports
@@ -5988,20 +7786,19 @@ class JitNetworkAccessPortRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param number: Required.
-    :type number: int
-    :param protocol: Required.  Possible values include: "TCP", "UDP", "*".
-    :type protocol: str or ~azure.mgmt.security.models.ProtocolEnum
-    :param allowed_source_address_prefix: Mutually exclusive with the
-     "allowedSourceAddressPrefixes" parameter. Should be an IP address or CIDR, for example
-     "192.168.0.3" or "192.168.0.0/16".
-    :type allowed_source_address_prefix: str
-    :param allowed_source_address_prefixes: Mutually exclusive with the
-     "allowedSourceAddressPrefix" parameter.
-    :type allowed_source_address_prefixes: list[str]
-    :param max_request_access_duration: Required. Maximum duration requests can be made for. In ISO
+    :ivar number: Required.
+    :vartype number: int
+    :ivar protocol: Required. Possible values include: "TCP", "UDP", "*".
+    :vartype protocol: str or ~azure.mgmt.security.models.ProtocolEnum
+    :ivar allowed_source_address_prefix: Mutually exclusive with the "allowedSourceAddressPrefixes"
+     parameter. Should be an IP address or CIDR, for example "192.168.0.3" or "192.168.0.0/16".
+    :vartype allowed_source_address_prefix: str
+    :ivar allowed_source_address_prefixes: Mutually exclusive with the "allowedSourceAddressPrefix"
+     parameter.
+    :vartype allowed_source_address_prefixes: list[str]
+    :ivar max_request_access_duration: Required. Maximum duration requests can be made for. In ISO
      8601 duration format. Minimum 5 minutes, maximum 1 day.
-    :type max_request_access_duration: str
+    :vartype max_request_access_duration: str
     """
 
     _validation = {
@@ -6028,6 +7825,22 @@ class JitNetworkAccessPortRule(msrest.serialization.Model):
         allowed_source_address_prefixes: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword number: Required.
+        :paramtype number: int
+        :keyword protocol: Required. Possible values include: "TCP", "UDP", "*".
+        :paramtype protocol: str or ~azure.mgmt.security.models.ProtocolEnum
+        :keyword allowed_source_address_prefix: Mutually exclusive with the
+         "allowedSourceAddressPrefixes" parameter. Should be an IP address or CIDR, for example
+         "192.168.0.3" or "192.168.0.0/16".
+        :paramtype allowed_source_address_prefix: str
+        :keyword allowed_source_address_prefixes: Mutually exclusive with the
+         "allowedSourceAddressPrefix" parameter.
+        :paramtype allowed_source_address_prefixes: list[str]
+        :keyword max_request_access_duration: Required. Maximum duration requests can be made for. In
+         ISO 8601 duration format. Minimum 5 minutes, maximum 1 day.
+        :paramtype max_request_access_duration: str
+        """
         super(JitNetworkAccessPortRule, self).__init__(**kwargs)
         self.number = number
         self.protocol = protocol
@@ -6041,14 +7854,15 @@ class JitNetworkAccessRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param virtual_machines: Required.
-    :type virtual_machines: list[~azure.mgmt.security.models.JitNetworkAccessRequestVirtualMachine]
-    :param start_time_utc: Required. The start time of the request in UTC.
-    :type start_time_utc: ~datetime.datetime
-    :param requestor: Required. The identity of the person who made the request.
-    :type requestor: str
-    :param justification: The justification for making the initiate request.
-    :type justification: str
+    :ivar virtual_machines: Required.
+    :vartype virtual_machines:
+     list[~azure.mgmt.security.models.JitNetworkAccessRequestVirtualMachine]
+    :ivar start_time_utc: Required. The start time of the request in UTC.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar requestor: Required. The identity of the person who made the request.
+    :vartype requestor: str
+    :ivar justification: The justification for making the initiate request.
+    :vartype justification: str
     """
 
     _validation = {
@@ -6073,6 +7887,17 @@ class JitNetworkAccessRequest(msrest.serialization.Model):
         justification: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword virtual_machines: Required.
+        :paramtype virtual_machines:
+         list[~azure.mgmt.security.models.JitNetworkAccessRequestVirtualMachine]
+        :keyword start_time_utc: Required. The start time of the request in UTC.
+        :paramtype start_time_utc: ~datetime.datetime
+        :keyword requestor: Required. The identity of the person who made the request.
+        :paramtype requestor: str
+        :keyword justification: The justification for making the initiate request.
+        :paramtype justification: str
+        """
         super(JitNetworkAccessRequest, self).__init__(**kwargs)
         self.virtual_machines = virtual_machines
         self.start_time_utc = start_time_utc
@@ -6085,26 +7910,25 @@ class JitNetworkAccessRequestPort(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param number: Required.
-    :type number: int
-    :param allowed_source_address_prefix: Mutually exclusive with the
-     "allowedSourceAddressPrefixes" parameter. Should be an IP address or CIDR, for example
-     "192.168.0.3" or "192.168.0.0/16".
-    :type allowed_source_address_prefix: str
-    :param allowed_source_address_prefixes: Mutually exclusive with the
-     "allowedSourceAddressPrefix" parameter.
-    :type allowed_source_address_prefixes: list[str]
-    :param end_time_utc: Required. The date & time at which the request ends in UTC.
-    :type end_time_utc: ~datetime.datetime
-    :param status: Required. The status of the port. Possible values include: "Revoked",
+    :ivar number: Required.
+    :vartype number: int
+    :ivar allowed_source_address_prefix: Mutually exclusive with the "allowedSourceAddressPrefixes"
+     parameter. Should be an IP address or CIDR, for example "192.168.0.3" or "192.168.0.0/16".
+    :vartype allowed_source_address_prefix: str
+    :ivar allowed_source_address_prefixes: Mutually exclusive with the "allowedSourceAddressPrefix"
+     parameter.
+    :vartype allowed_source_address_prefixes: list[str]
+    :ivar end_time_utc: Required. The date & time at which the request ends in UTC.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Required. The status of the port. Possible values include: "Revoked",
      "Initiated".
-    :type status: str or ~azure.mgmt.security.models.Status
-    :param status_reason: Required. A description of why the ``status`` has its value. Possible
+    :vartype status: str or ~azure.mgmt.security.models.Status
+    :ivar status_reason: Required. A description of why the ``status`` has its value. Possible
      values include: "Expired", "UserRequested", "NewerRequestInitiated".
-    :type status_reason: str or ~azure.mgmt.security.models.StatusReason
-    :param mapped_port: The port which is mapped to this port's ``number`` in the Azure Firewall,
-     if applicable.
-    :type mapped_port: int
+    :vartype status_reason: str or ~azure.mgmt.security.models.StatusReason
+    :ivar mapped_port: The port which is mapped to this port's ``number`` in the Azure Firewall, if
+     applicable.
+    :vartype mapped_port: int
     """
 
     _validation = {
@@ -6136,6 +7960,28 @@ class JitNetworkAccessRequestPort(msrest.serialization.Model):
         mapped_port: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword number: Required.
+        :paramtype number: int
+        :keyword allowed_source_address_prefix: Mutually exclusive with the
+         "allowedSourceAddressPrefixes" parameter. Should be an IP address or CIDR, for example
+         "192.168.0.3" or "192.168.0.0/16".
+        :paramtype allowed_source_address_prefix: str
+        :keyword allowed_source_address_prefixes: Mutually exclusive with the
+         "allowedSourceAddressPrefix" parameter.
+        :paramtype allowed_source_address_prefixes: list[str]
+        :keyword end_time_utc: Required. The date & time at which the request ends in UTC.
+        :paramtype end_time_utc: ~datetime.datetime
+        :keyword status: Required. The status of the port. Possible values include: "Revoked",
+         "Initiated".
+        :paramtype status: str or ~azure.mgmt.security.models.Status
+        :keyword status_reason: Required. A description of why the ``status`` has its value. Possible
+         values include: "Expired", "UserRequested", "NewerRequestInitiated".
+        :paramtype status_reason: str or ~azure.mgmt.security.models.StatusReason
+        :keyword mapped_port: The port which is mapped to this port's ``number`` in the Azure Firewall,
+         if applicable.
+        :paramtype mapped_port: int
+        """
         super(JitNetworkAccessRequestPort, self).__init__(**kwargs)
         self.number = number
         self.allowed_source_address_prefix = allowed_source_address_prefix
@@ -6151,10 +7997,10 @@ class JitNetworkAccessRequestVirtualMachine(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Resource ID of the virtual machine that is linked to this policy.
-    :type id: str
-    :param ports: Required. The ports that were opened for the virtual machine.
-    :type ports: list[~azure.mgmt.security.models.JitNetworkAccessRequestPort]
+    :ivar id: Required. Resource ID of the virtual machine that is linked to this policy.
+    :vartype id: str
+    :ivar ports: Required. The ports that were opened for the virtual machine.
+    :vartype ports: list[~azure.mgmt.security.models.JitNetworkAccessRequestPort]
     """
 
     _validation = {
@@ -6174,6 +8020,12 @@ class JitNetworkAccessRequestVirtualMachine(msrest.serialization.Model):
         ports: List["JitNetworkAccessRequestPort"],
         **kwargs
     ):
+        """
+        :keyword id: Required. Resource ID of the virtual machine that is linked to this policy.
+        :paramtype id: str
+        :keyword ports: Required. The ports that were opened for the virtual machine.
+        :paramtype ports: list[~azure.mgmt.security.models.JitNetworkAccessRequestPort]
+        """
         super(JitNetworkAccessRequestVirtualMachine, self).__init__(**kwargs)
         self.id = id
         self.ports = ports
@@ -6190,16 +8042,16 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
-    :param allowlist_values: Required. The values to allow. The format of the values depends on the
+    :ivar allowlist_values: Required. The values to allow. The format of the values depends on the
      rule type.
-    :type allowlist_values: list[str]
+    :vartype allowlist_values: list[str]
     """
 
     _validation = {
@@ -6227,6 +8079,13 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
         allowlist_values: List[str],
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword allowlist_values: Required. The values to allow. The format of the values depends on
+         the rule type.
+        :paramtype allowlist_values: list[str]
+        """
         super(LocalUserNotAllowed, self).__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type = 'LocalUserNotAllowed'  # type: str
 
@@ -6238,10 +8097,10 @@ class LogAnalyticsIdentifier(ResourceIdentifier):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. There can be multiple identifiers of different type per alert, this
-     field specify the identifier type.Constant filled by server.  Possible values include:
+    :ivar type: Required. There can be multiple identifiers of different type per alert, this field
+     specify the identifier type.Constant filled by server. Possible values include:
      "AzureResource", "LogAnalytics".
-    :type type: str or ~azure.mgmt.security.models.ResourceIdentifierType
+    :vartype type: str or ~azure.mgmt.security.models.ResourceIdentifierType
     :ivar workspace_id: The LogAnalytics workspace id that stores this alert.
     :vartype workspace_id: str
     :ivar workspace_subscription_id: The azure subscription id for the LogAnalytics workspace
@@ -6275,12 +8134,94 @@ class LogAnalyticsIdentifier(ResourceIdentifier):
         self,
         **kwargs
     ):
+        """
+        """
         super(LogAnalyticsIdentifier, self).__init__(**kwargs)
         self.type = 'LogAnalytics'  # type: str
         self.workspace_id = None
         self.workspace_subscription_id = None
         self.workspace_resource_group = None
         self.agent_id = None
+
+
+class MdeOnboardingData(Resource):
+    """The resource of the configuration or data needed to onboard the machine to MDE.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar onboarding_package_windows: The onboarding package used to onboard Windows machines to
+     MDE, coded in base64. This can also be used for onboarding using the dedicated VM Extension.
+    :vartype onboarding_package_windows: bytearray
+    :ivar onboarding_package_linux: The onboarding package used to onboard Linux machines to MDE,
+     coded in base64. This can also be used for onboarding using the dedicated VM Extension.
+    :vartype onboarding_package_linux: bytearray
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'onboarding_package_windows': {'key': 'properties.onboardingPackageWindows', 'type': 'bytearray'},
+        'onboarding_package_linux': {'key': 'properties.onboardingPackageLinux', 'type': 'bytearray'},
+    }
+
+    def __init__(
+        self,
+        *,
+        onboarding_package_windows: Optional[bytearray] = None,
+        onboarding_package_linux: Optional[bytearray] = None,
+        **kwargs
+    ):
+        """
+        :keyword onboarding_package_windows: The onboarding package used to onboard Windows machines to
+         MDE, coded in base64. This can also be used for onboarding using the dedicated VM Extension.
+        :paramtype onboarding_package_windows: bytearray
+        :keyword onboarding_package_linux: The onboarding package used to onboard Linux machines to
+         MDE, coded in base64. This can also be used for onboarding using the dedicated VM Extension.
+        :paramtype onboarding_package_linux: bytearray
+        """
+        super(MdeOnboardingData, self).__init__(**kwargs)
+        self.onboarding_package_windows = onboarding_package_windows
+        self.onboarding_package_linux = onboarding_package_linux
+
+
+class MdeOnboardingDataList(msrest.serialization.Model):
+    """List of all MDE onboarding data resources.
+
+    :ivar value: List of the resources of the configuration or data needed to onboard the machine
+     to MDE.
+    :vartype value: list[~azure.mgmt.security.models.MdeOnboardingData]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[MdeOnboardingData]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["MdeOnboardingData"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: List of the resources of the configuration or data needed to onboard the
+         machine to MDE.
+        :paramtype value: list[~azure.mgmt.security.models.MdeOnboardingData]
+        """
+        super(MdeOnboardingDataList, self).__init__(**kwargs)
+        self.value = value
 
 
 class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
@@ -6294,16 +8235,16 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -6335,6 +8276,16 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(MqttC2DMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'MqttC2DMessagesNotInAllowedRange'  # type: str
 
@@ -6350,16 +8301,16 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -6391,6 +8342,16 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(MqttC2DRejectedMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'MqttC2DRejectedMessagesNotInAllowedRange'  # type: str
 
@@ -6406,16 +8367,16 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -6447,6 +8408,16 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(MqttD2CMessagesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'MqttD2CMessagesNotInAllowedRange'  # type: str
 
@@ -6459,17 +8430,17 @@ class OnPremiseResourceDetails(ResourceDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. The platform where the assessed resource resides.Constant filled by
-     server.  Possible values include: "Azure", "OnPremise", "OnPremiseSql".
-    :type source: str or ~azure.mgmt.security.models.Source
-    :param workspace_id: Required. Azure resource Id of the workspace the machine is attached to.
-    :type workspace_id: str
-    :param vmuuid: Required. The unique Id of the machine.
-    :type vmuuid: str
-    :param source_computer_id: Required. The oms agent Id installed on the machine.
-    :type source_computer_id: str
-    :param machine_name: Required. The name of the machine.
-    :type machine_name: str
+    :ivar source: Required. The platform where the assessed resource resides.Constant filled by
+     server. Possible values include: "Azure", "OnPremise", "OnPremiseSql".
+    :vartype source: str or ~azure.mgmt.security.models.Source
+    :ivar workspace_id: Required. Azure resource Id of the workspace the machine is attached to.
+    :vartype workspace_id: str
+    :ivar vmuuid: Required. The unique Id of the machine.
+    :vartype vmuuid: str
+    :ivar source_computer_id: Required. The oms agent Id installed on the machine.
+    :vartype source_computer_id: str
+    :ivar machine_name: Required. The name of the machine.
+    :vartype machine_name: str
     """
 
     _validation = {
@@ -6501,6 +8472,16 @@ class OnPremiseResourceDetails(ResourceDetails):
         machine_name: str,
         **kwargs
     ):
+        """
+        :keyword workspace_id: Required. Azure resource Id of the workspace the machine is attached to.
+        :paramtype workspace_id: str
+        :keyword vmuuid: Required. The unique Id of the machine.
+        :paramtype vmuuid: str
+        :keyword source_computer_id: Required. The oms agent Id installed on the machine.
+        :paramtype source_computer_id: str
+        :keyword machine_name: Required. The name of the machine.
+        :paramtype machine_name: str
+        """
         super(OnPremiseResourceDetails, self).__init__(**kwargs)
         self.source = 'OnPremise'  # type: str
         self.workspace_id = workspace_id
@@ -6514,21 +8495,21 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. The platform where the assessed resource resides.Constant filled by
-     server.  Possible values include: "Azure", "OnPremise", "OnPremiseSql".
-    :type source: str or ~azure.mgmt.security.models.Source
-    :param workspace_id: Required. Azure resource Id of the workspace the machine is attached to.
-    :type workspace_id: str
-    :param vmuuid: Required. The unique Id of the machine.
-    :type vmuuid: str
-    :param source_computer_id: Required. The oms agent Id installed on the machine.
-    :type source_computer_id: str
-    :param machine_name: Required. The name of the machine.
-    :type machine_name: str
-    :param server_name: Required. The Sql server name installed on the machine.
-    :type server_name: str
-    :param database_name: Required. The Sql database name installed on the machine.
-    :type database_name: str
+    :ivar source: Required. The platform where the assessed resource resides.Constant filled by
+     server. Possible values include: "Azure", "OnPremise", "OnPremiseSql".
+    :vartype source: str or ~azure.mgmt.security.models.Source
+    :ivar workspace_id: Required. Azure resource Id of the workspace the machine is attached to.
+    :vartype workspace_id: str
+    :ivar vmuuid: Required. The unique Id of the machine.
+    :vartype vmuuid: str
+    :ivar source_computer_id: Required. The oms agent Id installed on the machine.
+    :vartype source_computer_id: str
+    :ivar machine_name: Required. The name of the machine.
+    :vartype machine_name: str
+    :ivar server_name: Required. The Sql server name installed on the machine.
+    :vartype server_name: str
+    :ivar database_name: Required. The Sql database name installed on the machine.
+    :vartype database_name: str
     """
 
     _validation = {
@@ -6562,6 +8543,20 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
         database_name: str,
         **kwargs
     ):
+        """
+        :keyword workspace_id: Required. Azure resource Id of the workspace the machine is attached to.
+        :paramtype workspace_id: str
+        :keyword vmuuid: Required. The unique Id of the machine.
+        :paramtype vmuuid: str
+        :keyword source_computer_id: Required. The oms agent Id installed on the machine.
+        :paramtype source_computer_id: str
+        :keyword machine_name: Required. The name of the machine.
+        :paramtype machine_name: str
+        :keyword server_name: Required. The Sql server name installed on the machine.
+        :paramtype server_name: str
+        :keyword database_name: Required. The Sql database name installed on the machine.
+        :paramtype database_name: str
+        """
         super(OnPremiseSqlResourceDetails, self).__init__(workspace_id=workspace_id, vmuuid=vmuuid, source_computer_id=source_computer_id, machine_name=machine_name, **kwargs)
         self.source = 'OnPremiseSql'  # type: str
         self.server_name = server_name
@@ -6577,8 +8572,8 @@ class Operation(msrest.serialization.Model):
     :vartype name: str
     :ivar origin: Where the operation is originated.
     :vartype origin: str
-    :param display: Security operation display.
-    :type display: ~azure.mgmt.security.models.OperationDisplay
+    :ivar display: Security operation display.
+    :vartype display: ~azure.mgmt.security.models.OperationDisplay
     """
 
     _validation = {
@@ -6598,6 +8593,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: Security operation display.
+        :paramtype display: ~azure.mgmt.security.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.origin = None
@@ -6637,6 +8636,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -6649,8 +8650,8 @@ class OperationList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of Security operations.
-    :type value: list[~azure.mgmt.security.models.Operation]
+    :ivar value: List of Security operations.
+    :vartype value: list[~azure.mgmt.security.models.Operation]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -6670,6 +8671,10 @@ class OperationList(msrest.serialization.Model):
         value: Optional[List["Operation"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Security operations.
+        :paramtype value: list[~azure.mgmt.security.models.Operation]
+        """
         super(OperationList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -6678,33 +8683,33 @@ class OperationList(msrest.serialization.Model):
 class PathRecommendation(msrest.serialization.Model):
     """Represents a path that is recommended to be allowed and its properties.
 
-    :param path: The full path of the file, or an identifier of the application.
-    :type path: str
-    :param action: The recommendation action of the machine or rule. Possible values include:
+    :ivar path: The full path of the file, or an identifier of the application.
+    :vartype path: str
+    :ivar action: The recommendation action of the machine or rule. Possible values include:
      "Recommended", "Add", "Remove".
-    :type action: str or ~azure.mgmt.security.models.RecommendationAction
-    :param type: The type of IoT Security recommendation. Possible values include:
+    :vartype action: str or ~azure.mgmt.security.models.RecommendationAction
+    :ivar type: The type of IoT Security recommendation. Possible values include:
      "IoT_ACRAuthentication", "IoT_AgentSendsUnutilizedMessages", "IoT_Baseline",
      "IoT_EdgeHubMemOptimize", "IoT_EdgeLoggingOptions", "IoT_InconsistentModuleSettings",
      "IoT_InstallAgent", "IoT_IPFilter_DenyAll", "IoT_IPFilter_PermissiveRule", "IoT_OpenPorts",
      "IoT_PermissiveFirewallPolicy", "IoT_PermissiveInputFirewallRules",
      "IoT_PermissiveOutputFirewallRules", "IoT_PrivilegedDockerOptions", "IoT_SharedCredentials",
      "IoT_VulnerableTLSCipherSuite".
-    :type type: str or ~azure.mgmt.security.models.RecommendationType
-    :param publisher_info: Represents the publisher information of a process/rule.
-    :type publisher_info: ~azure.mgmt.security.models.PublisherInfo
-    :param common: Whether the application is commonly run on the machine.
-    :type common: bool
-    :param user_sids:
-    :type user_sids: list[str]
-    :param usernames:
-    :type usernames: list[~azure.mgmt.security.models.UserRecommendation]
-    :param file_type: The type of the file (for Linux files - Executable is used). Possible values
+    :vartype type: str or ~azure.mgmt.security.models.RecommendationType
+    :ivar publisher_info: Represents the publisher information of a process/rule.
+    :vartype publisher_info: ~azure.mgmt.security.models.PublisherInfo
+    :ivar common: Whether the application is commonly run on the machine.
+    :vartype common: bool
+    :ivar user_sids:
+    :vartype user_sids: list[str]
+    :ivar usernames:
+    :vartype usernames: list[~azure.mgmt.security.models.UserRecommendation]
+    :ivar file_type: The type of the file (for Linux files - Executable is used). Possible values
      include: "Exe", "Dll", "Msi", "Script", "Executable", "Unknown".
-    :type file_type: str or ~azure.mgmt.security.models.FileType
-    :param configuration_status: The configuration status of the machines group or machine or rule.
+    :vartype file_type: str or ~azure.mgmt.security.models.FileType
+    :ivar configuration_status: The configuration status of the machines group or machine or rule.
      Possible values include: "Configured", "NotConfigured", "InProgress", "Failed", "NoStatus".
-    :type configuration_status: str or ~azure.mgmt.security.models.ConfigurationStatus
+    :vartype configuration_status: str or ~azure.mgmt.security.models.ConfigurationStatus
     """
 
     _attribute_map = {
@@ -6733,6 +8738,36 @@ class PathRecommendation(msrest.serialization.Model):
         configuration_status: Optional[Union[str, "ConfigurationStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword path: The full path of the file, or an identifier of the application.
+        :paramtype path: str
+        :keyword action: The recommendation action of the machine or rule. Possible values include:
+         "Recommended", "Add", "Remove".
+        :paramtype action: str or ~azure.mgmt.security.models.RecommendationAction
+        :keyword type: The type of IoT Security recommendation. Possible values include:
+         "IoT_ACRAuthentication", "IoT_AgentSendsUnutilizedMessages", "IoT_Baseline",
+         "IoT_EdgeHubMemOptimize", "IoT_EdgeLoggingOptions", "IoT_InconsistentModuleSettings",
+         "IoT_InstallAgent", "IoT_IPFilter_DenyAll", "IoT_IPFilter_PermissiveRule", "IoT_OpenPorts",
+         "IoT_PermissiveFirewallPolicy", "IoT_PermissiveInputFirewallRules",
+         "IoT_PermissiveOutputFirewallRules", "IoT_PrivilegedDockerOptions", "IoT_SharedCredentials",
+         "IoT_VulnerableTLSCipherSuite".
+        :paramtype type: str or ~azure.mgmt.security.models.RecommendationType
+        :keyword publisher_info: Represents the publisher information of a process/rule.
+        :paramtype publisher_info: ~azure.mgmt.security.models.PublisherInfo
+        :keyword common: Whether the application is commonly run on the machine.
+        :paramtype common: bool
+        :keyword user_sids:
+        :paramtype user_sids: list[str]
+        :keyword usernames:
+        :paramtype usernames: list[~azure.mgmt.security.models.UserRecommendation]
+        :keyword file_type: The type of the file (for Linux files - Executable is used). Possible
+         values include: "Exe", "Dll", "Msi", "Script", "Executable", "Unknown".
+        :paramtype file_type: str or ~azure.mgmt.security.models.FileType
+        :keyword configuration_status: The configuration status of the machines group or machine or
+         rule. Possible values include: "Configured", "NotConfigured", "InProgress", "Failed",
+         "NoStatus".
+        :paramtype configuration_status: str or ~azure.mgmt.security.models.ConfigurationStatus
+        """
         super(PathRecommendation, self).__init__(**kwargs)
         self.path = path
         self.action = action
@@ -6746,7 +8781,7 @@ class PathRecommendation(msrest.serialization.Model):
 
 
 class Pricing(Resource):
-    """Azure Security Center is provided in two pricing tiers: free and standard, with the standard tier available with a trial period. The standard tier offers advanced security capabilities, while the free tier offers basic security features.
+    """Microsoft Defender for Cloud is provided in two pricing tiers: free and standard, with the standard tier available with a trial period. The standard tier offers advanced security capabilities, while the free tier offers basic security features.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -6756,11 +8791,15 @@ class Pricing(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param pricing_tier: The pricing tier value. Azure Security Center is provided in two pricing
-     tiers: free and standard, with the standard tier available with a trial period. The standard
-     tier offers advanced security capabilities, while the free tier offers basic security features.
-     Possible values include: "Free", "Standard".
-    :type pricing_tier: str or ~azure.mgmt.security.models.PricingTier
+    :ivar pricing_tier: The pricing tier value. Microsoft Defender for Cloud is provided in two
+     pricing tiers: free and standard, with the standard tier available with a trial period. The
+     standard tier offers advanced security capabilities, while the free tier offers basic security
+     features. Possible values include: "Free", "Standard".
+    :vartype pricing_tier: str or ~azure.mgmt.security.models.PricingTier
+    :ivar sub_plan: The sub-plan selected for a Standard pricing configuration, when more than one
+     sub-plan is available. Each sub-plan enables a set of security features. When not specified,
+     full plan is applied.
+    :vartype sub_plan: str
     :ivar free_trial_remaining_time: The duration left for the subscriptions free trial period - in
      ISO 8601 format (e.g. P3Y6M4DT12H30M5S).
     :vartype free_trial_remaining_time: ~datetime.timedelta
@@ -6778,6 +8817,7 @@ class Pricing(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'pricing_tier': {'key': 'properties.pricingTier', 'type': 'str'},
+        'sub_plan': {'key': 'properties.subPlan', 'type': 'str'},
         'free_trial_remaining_time': {'key': 'properties.freeTrialRemainingTime', 'type': 'duration'},
     }
 
@@ -6785,10 +8825,23 @@ class Pricing(Resource):
         self,
         *,
         pricing_tier: Optional[Union[str, "PricingTier"]] = None,
+        sub_plan: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword pricing_tier: The pricing tier value. Microsoft Defender for Cloud is provided in two
+         pricing tiers: free and standard, with the standard tier available with a trial period. The
+         standard tier offers advanced security capabilities, while the free tier offers basic security
+         features. Possible values include: "Free", "Standard".
+        :paramtype pricing_tier: str or ~azure.mgmt.security.models.PricingTier
+        :keyword sub_plan: The sub-plan selected for a Standard pricing configuration, when more than
+         one sub-plan is available. Each sub-plan enables a set of security features. When not
+         specified, full plan is applied.
+        :paramtype sub_plan: str
+        """
         super(Pricing, self).__init__(**kwargs)
         self.pricing_tier = pricing_tier
+        self.sub_plan = sub_plan
         self.free_trial_remaining_time = None
 
 
@@ -6797,8 +8850,8 @@ class PricingList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of pricing configurations.
-    :type value: list[~azure.mgmt.security.models.Pricing]
+    :ivar value: Required. List of pricing configurations.
+    :vartype value: list[~azure.mgmt.security.models.Pricing]
     """
 
     _validation = {
@@ -6815,6 +8868,10 @@ class PricingList(msrest.serialization.Model):
         value: List["Pricing"],
         **kwargs
     ):
+        """
+        :keyword value: Required. List of pricing configurations.
+        :paramtype value: list[~azure.mgmt.security.models.Pricing]
+        """
         super(PricingList, self).__init__(**kwargs)
         self.value = value
 
@@ -6830,16 +8887,16 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
     :ivar value_type: The value type of the items in the list. Possible values include: "IpCidr",
      "String".
     :vartype value_type: str or ~azure.mgmt.security.models.ValueType
-    :param allowlist_values: Required. The values to allow. The format of the values depends on the
+    :ivar allowlist_values: Required. The values to allow. The format of the values depends on the
      rule type.
-    :type allowlist_values: list[str]
+    :vartype allowlist_values: list[str]
     """
 
     _validation = {
@@ -6867,6 +8924,13 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
         allowlist_values: List[str],
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword allowlist_values: Required. The values to allow. The format of the values depends on
+         the rule type.
+        :paramtype allowlist_values: list[str]
+        """
         super(ProcessNotAllowed, self).__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type = 'ProcessNotAllowed'  # type: str
 
@@ -6874,18 +8938,18 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
 class ProtectionMode(msrest.serialization.Model):
     """The protection mode of the collection/file types. Exe/Msi/Script are used for Windows, Executable is used for Linux.
 
-    :param exe: The application control policy enforcement/protection mode of the machine group.
+    :ivar exe: The application control policy enforcement/protection mode of the machine group.
      Possible values include: "Audit", "Enforce", "None".
-    :type exe: str or ~azure.mgmt.security.models.EnforcementMode
-    :param msi: The application control policy enforcement/protection mode of the machine group.
+    :vartype exe: str or ~azure.mgmt.security.models.EnforcementMode
+    :ivar msi: The application control policy enforcement/protection mode of the machine group.
      Possible values include: "Audit", "Enforce", "None".
-    :type msi: str or ~azure.mgmt.security.models.EnforcementMode
-    :param script: The application control policy enforcement/protection mode of the machine group.
+    :vartype msi: str or ~azure.mgmt.security.models.EnforcementMode
+    :ivar script: The application control policy enforcement/protection mode of the machine group.
      Possible values include: "Audit", "Enforce", "None".
-    :type script: str or ~azure.mgmt.security.models.EnforcementMode
-    :param executable: The application control policy enforcement/protection mode of the machine
+    :vartype script: str or ~azure.mgmt.security.models.EnforcementMode
+    :ivar executable: The application control policy enforcement/protection mode of the machine
      group. Possible values include: "Audit", "Enforce", "None".
-    :type executable: str or ~azure.mgmt.security.models.EnforcementMode
+    :vartype executable: str or ~azure.mgmt.security.models.EnforcementMode
     """
 
     _attribute_map = {
@@ -6904,6 +8968,20 @@ class ProtectionMode(msrest.serialization.Model):
         executable: Optional[Union[str, "EnforcementMode"]] = None,
         **kwargs
     ):
+        """
+        :keyword exe: The application control policy enforcement/protection mode of the machine group.
+         Possible values include: "Audit", "Enforce", "None".
+        :paramtype exe: str or ~azure.mgmt.security.models.EnforcementMode
+        :keyword msi: The application control policy enforcement/protection mode of the machine group.
+         Possible values include: "Audit", "Enforce", "None".
+        :paramtype msi: str or ~azure.mgmt.security.models.EnforcementMode
+        :keyword script: The application control policy enforcement/protection mode of the machine
+         group. Possible values include: "Audit", "Enforce", "None".
+        :paramtype script: str or ~azure.mgmt.security.models.EnforcementMode
+        :keyword executable: The application control policy enforcement/protection mode of the machine
+         group. Possible values include: "Audit", "Enforce", "None".
+        :paramtype executable: str or ~azure.mgmt.security.models.EnforcementMode
+        """
         super(ProtectionMode, self).__init__(**kwargs)
         self.exe = exe
         self.msi = msi
@@ -6914,10 +8992,10 @@ class ProtectionMode(msrest.serialization.Model):
 class ProxyServerProperties(msrest.serialization.Model):
     """For a non-Azure machine that is not connected directly to the internet, specify a proxy server that the non-Azure machine can use.
 
-    :param ip: Proxy server IP.
-    :type ip: str
-    :param port: Proxy server port.
-    :type port: str
+    :ivar ip: Proxy server IP.
+    :vartype ip: str
+    :ivar port: Proxy server port.
+    :vartype port: str
     """
 
     _attribute_map = {
@@ -6932,6 +9010,12 @@ class ProxyServerProperties(msrest.serialization.Model):
         port: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword ip: Proxy server IP.
+        :paramtype ip: str
+        :keyword port: Proxy server port.
+        :paramtype port: str
+        """
         super(ProxyServerProperties, self).__init__(**kwargs)
         self.ip = ip
         self.port = port
@@ -6940,15 +9024,15 @@ class ProxyServerProperties(msrest.serialization.Model):
 class PublisherInfo(msrest.serialization.Model):
     """Represents the publisher information of a process/rule.
 
-    :param publisher_name: The Subject field of the x.509 certificate used to sign the code, using
+    :ivar publisher_name: The Subject field of the x.509 certificate used to sign the code, using
      the following fields -  O = Organization, L = Locality, S = State or Province, and C = Country.
-    :type publisher_name: str
-    :param product_name: The product name taken from the file's version resource.
-    :type product_name: str
-    :param binary_name: The "OriginalName" field taken from the file's version resource.
-    :type binary_name: str
-    :param version: The binary file version taken from the file's version resource.
-    :type version: str
+    :vartype publisher_name: str
+    :ivar product_name: The product name taken from the file's version resource.
+    :vartype product_name: str
+    :ivar binary_name: The "OriginalName" field taken from the file's version resource.
+    :vartype binary_name: str
+    :ivar version: The binary file version taken from the file's version resource.
+    :vartype version: str
     """
 
     _attribute_map = {
@@ -6967,6 +9051,18 @@ class PublisherInfo(msrest.serialization.Model):
         version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword publisher_name: The Subject field of the x.509 certificate used to sign the code,
+         using the following fields -  O = Organization, L = Locality, S = State or Province, and C =
+         Country.
+        :paramtype publisher_name: str
+        :keyword product_name: The product name taken from the file's version resource.
+        :paramtype product_name: str
+        :keyword binary_name: The "OriginalName" field taken from the file's version resource.
+        :paramtype binary_name: str
+        :keyword version: The binary file version taken from the file's version resource.
+        :paramtype version: str
+        """
         super(PublisherInfo, self).__init__(**kwargs)
         self.publisher_name = publisher_name
         self.product_name = product_name
@@ -6977,12 +9073,12 @@ class PublisherInfo(msrest.serialization.Model):
 class QueryCheck(msrest.serialization.Model):
     """The rule query details.
 
-    :param query: The rule query.
-    :type query: str
-    :param expected_result: Expected result.
-    :type expected_result: list[list[str]]
-    :param column_names: Column names of expected result.
-    :type column_names: list[str]
+    :ivar query: The rule query.
+    :vartype query: str
+    :ivar expected_result: Expected result.
+    :vartype expected_result: list[list[str]]
+    :ivar column_names: Column names of expected result.
+    :vartype column_names: list[str]
     """
 
     _attribute_map = {
@@ -6999,6 +9095,14 @@ class QueryCheck(msrest.serialization.Model):
         column_names: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword query: The rule query.
+        :paramtype query: str
+        :keyword expected_result: Expected result.
+        :paramtype expected_result: list[list[str]]
+        :keyword column_names: Column names of expected result.
+        :paramtype column_names: list[str]
+        """
         super(QueryCheck, self).__init__(**kwargs)
         self.query = query
         self.expected_result = expected_result
@@ -7016,16 +9120,16 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -7057,6 +9161,16 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(QueuePurgesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'QueuePurgesNotInAllowedRange'  # type: str
 
@@ -7068,20 +9182,20 @@ class RecommendationConfigurationProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param recommendation_type: Required. The type of IoT Security recommendation. Possible values
+    :ivar recommendation_type: Required. The type of IoT Security recommendation. Possible values
      include: "IoT_ACRAuthentication", "IoT_AgentSendsUnutilizedMessages", "IoT_Baseline",
      "IoT_EdgeHubMemOptimize", "IoT_EdgeLoggingOptions", "IoT_InconsistentModuleSettings",
      "IoT_InstallAgent", "IoT_IPFilter_DenyAll", "IoT_IPFilter_PermissiveRule", "IoT_OpenPorts",
      "IoT_PermissiveFirewallPolicy", "IoT_PermissiveInputFirewallRules",
      "IoT_PermissiveOutputFirewallRules", "IoT_PrivilegedDockerOptions", "IoT_SharedCredentials",
      "IoT_VulnerableTLSCipherSuite".
-    :type recommendation_type: str or ~azure.mgmt.security.models.RecommendationType
+    :vartype recommendation_type: str or ~azure.mgmt.security.models.RecommendationType
     :ivar name:
     :vartype name: str
-    :param status: Required. Recommendation status. When the recommendation status is disabled
+    :ivar status: Required. Recommendation status. When the recommendation status is disabled
      recommendations are not generated. Possible values include: "Disabled", "Enabled". Default
      value: "Enabled".
-    :type status: str or ~azure.mgmt.security.models.RecommendationConfigStatus
+    :vartype status: str or ~azure.mgmt.security.models.RecommendationConfigStatus
     """
 
     _validation = {
@@ -7103,6 +9217,20 @@ class RecommendationConfigurationProperties(msrest.serialization.Model):
         status: Union[str, "RecommendationConfigStatus"] = "Enabled",
         **kwargs
     ):
+        """
+        :keyword recommendation_type: Required. The type of IoT Security recommendation. Possible
+         values include: "IoT_ACRAuthentication", "IoT_AgentSendsUnutilizedMessages", "IoT_Baseline",
+         "IoT_EdgeHubMemOptimize", "IoT_EdgeLoggingOptions", "IoT_InconsistentModuleSettings",
+         "IoT_InstallAgent", "IoT_IPFilter_DenyAll", "IoT_IPFilter_PermissiveRule", "IoT_OpenPorts",
+         "IoT_PermissiveFirewallPolicy", "IoT_PermissiveInputFirewallRules",
+         "IoT_PermissiveOutputFirewallRules", "IoT_PrivilegedDockerOptions", "IoT_SharedCredentials",
+         "IoT_VulnerableTLSCipherSuite".
+        :paramtype recommendation_type: str or ~azure.mgmt.security.models.RecommendationType
+        :keyword status: Required. Recommendation status. When the recommendation status is disabled
+         recommendations are not generated. Possible values include: "Disabled", "Enabled". Default
+         value: "Enabled".
+        :paramtype status: str or ~azure.mgmt.security.models.RecommendationConfigStatus
+        """
         super(RecommendationConfigurationProperties, self).__init__(**kwargs)
         self.recommendation_type = recommendation_type
         self.name = None
@@ -7127,9 +9255,9 @@ class RegulatoryComplianceAssessment(Resource):
     :ivar assessment_details_link: Link to more detailed assessment results data. The response type
      will be according to the assessmentType field.
     :vartype assessment_details_link: str
-    :param state: Aggregative state based on the assessment's scanned resources states. Possible
+    :ivar state: Aggregative state based on the assessment's scanned resources states. Possible
      values include: "Passed", "Failed", "Skipped", "Unsupported".
-    :type state: str or ~azure.mgmt.security.models.State
+    :vartype state: str or ~azure.mgmt.security.models.State
     :ivar passed_resources: The given assessment's related resources count with passed state.
     :vartype passed_resources: int
     :ivar failed_resources: The given assessment's related resources count with failed state.
@@ -7174,6 +9302,11 @@ class RegulatoryComplianceAssessment(Resource):
         state: Optional[Union[str, "State"]] = None,
         **kwargs
     ):
+        """
+        :keyword state: Aggregative state based on the assessment's scanned resources states. Possible
+         values include: "Passed", "Failed", "Skipped", "Unsupported".
+        :paramtype state: str or ~azure.mgmt.security.models.State
+        """
         super(RegulatoryComplianceAssessment, self).__init__(**kwargs)
         self.description = None
         self.assessment_type = None
@@ -7192,8 +9325,8 @@ class RegulatoryComplianceAssessmentList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required.
-    :type value: list[~azure.mgmt.security.models.RegulatoryComplianceAssessment]
+    :ivar value: Required.
+    :vartype value: list[~azure.mgmt.security.models.RegulatoryComplianceAssessment]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -7214,6 +9347,10 @@ class RegulatoryComplianceAssessmentList(msrest.serialization.Model):
         value: List["RegulatoryComplianceAssessment"],
         **kwargs
     ):
+        """
+        :keyword value: Required.
+        :paramtype value: list[~azure.mgmt.security.models.RegulatoryComplianceAssessment]
+        """
         super(RegulatoryComplianceAssessmentList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -7232,9 +9369,9 @@ class RegulatoryComplianceControl(Resource):
     :vartype type: str
     :ivar description: The description of the regulatory compliance control.
     :vartype description: str
-    :param state: Aggregative state based on the control's supported assessments states. Possible
+    :ivar state: Aggregative state based on the control's supported assessments states. Possible
      values include: "Passed", "Failed", "Skipped", "Unsupported".
-    :type state: str or ~azure.mgmt.security.models.State
+    :vartype state: str or ~azure.mgmt.security.models.State
     :ivar passed_assessments: The number of supported regulatory compliance assessments of the
      given control with a passed state.
     :vartype passed_assessments: int
@@ -7273,6 +9410,11 @@ class RegulatoryComplianceControl(Resource):
         state: Optional[Union[str, "State"]] = None,
         **kwargs
     ):
+        """
+        :keyword state: Aggregative state based on the control's supported assessments states. Possible
+         values include: "Passed", "Failed", "Skipped", "Unsupported".
+        :paramtype state: str or ~azure.mgmt.security.models.State
+        """
         super(RegulatoryComplianceControl, self).__init__(**kwargs)
         self.description = None
         self.state = state
@@ -7288,8 +9430,8 @@ class RegulatoryComplianceControlList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of regulatory compliance controls.
-    :type value: list[~azure.mgmt.security.models.RegulatoryComplianceControl]
+    :ivar value: Required. List of regulatory compliance controls.
+    :vartype value: list[~azure.mgmt.security.models.RegulatoryComplianceControl]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -7310,6 +9452,10 @@ class RegulatoryComplianceControlList(msrest.serialization.Model):
         value: List["RegulatoryComplianceControl"],
         **kwargs
     ):
+        """
+        :keyword value: Required. List of regulatory compliance controls.
+        :paramtype value: list[~azure.mgmt.security.models.RegulatoryComplianceControl]
+        """
         super(RegulatoryComplianceControlList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -7326,9 +9472,9 @@ class RegulatoryComplianceStandard(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param state: Aggregative state based on the standard's supported controls states. Possible
+    :ivar state: Aggregative state based on the standard's supported controls states. Possible
      values include: "Passed", "Failed", "Skipped", "Unsupported".
-    :type state: str or ~azure.mgmt.security.models.State
+    :vartype state: str or ~azure.mgmt.security.models.State
     :ivar passed_controls: The number of supported regulatory compliance controls of the given
      standard with a passed state.
     :vartype passed_controls: int
@@ -7370,6 +9516,11 @@ class RegulatoryComplianceStandard(Resource):
         state: Optional[Union[str, "State"]] = None,
         **kwargs
     ):
+        """
+        :keyword state: Aggregative state based on the standard's supported controls states. Possible
+         values include: "Passed", "Failed", "Skipped", "Unsupported".
+        :paramtype state: str or ~azure.mgmt.security.models.State
+        """
         super(RegulatoryComplianceStandard, self).__init__(**kwargs)
         self.state = state
         self.passed_controls = None
@@ -7385,8 +9536,8 @@ class RegulatoryComplianceStandardList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required.
-    :type value: list[~azure.mgmt.security.models.RegulatoryComplianceStandard]
+    :ivar value: Required.
+    :vartype value: list[~azure.mgmt.security.models.RegulatoryComplianceStandard]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -7407,6 +9558,10 @@ class RegulatoryComplianceStandardList(msrest.serialization.Model):
         value: List["RegulatoryComplianceStandard"],
         **kwargs
     ):
+        """
+        :keyword value: Required.
+        :paramtype value: list[~azure.mgmt.security.models.RegulatoryComplianceStandard]
+        """
         super(RegulatoryComplianceStandardList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -7415,14 +9570,14 @@ class RegulatoryComplianceStandardList(msrest.serialization.Model):
 class Remediation(msrest.serialization.Model):
     """Remediation details.
 
-    :param description: Remediation description.
-    :type description: str
-    :param scripts: Remediation script.
-    :type scripts: list[str]
-    :param automated: Is remediation automated.
-    :type automated: bool
-    :param portal_link: Optional link to remediate in Azure Portal.
-    :type portal_link: str
+    :ivar description: Remediation description.
+    :vartype description: str
+    :ivar scripts: Remediation script.
+    :vartype scripts: list[str]
+    :ivar automated: Is remediation automated.
+    :vartype automated: bool
+    :ivar portal_link: Optional link to remediate in Azure Portal.
+    :vartype portal_link: str
     """
 
     _attribute_map = {
@@ -7441,6 +9596,16 @@ class Remediation(msrest.serialization.Model):
         portal_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword description: Remediation description.
+        :paramtype description: str
+        :keyword scripts: Remediation script.
+        :paramtype scripts: list[str]
+        :keyword automated: Is remediation automated.
+        :paramtype automated: bool
+        :keyword portal_link: Optional link to remediate in Azure Portal.
+        :paramtype portal_link: str
+        """
         super(Remediation, self).__init__(**kwargs)
         self.description = description
         self.scripts = scripts
@@ -7451,17 +9616,17 @@ class Remediation(msrest.serialization.Model):
 class Rule(msrest.serialization.Model):
     """Describes remote addresses that is recommended to communicate with the Azure resource on some (Protocol, Port, Direction). All other remote addresses are recommended to be blocked.
 
-    :param name: The name of the rule.
-    :type name: str
-    :param direction: The rule's direction. Possible values include: "Inbound", "Outbound".
-    :type direction: str or ~azure.mgmt.security.models.Direction
-    :param destination_port: The rule's destination port.
-    :type destination_port: int
-    :param protocols: The rule's transport protocols.
-    :type protocols: list[str or ~azure.mgmt.security.models.TransportProtocol]
-    :param ip_addresses: The remote IP addresses that should be able to communicate with the Azure
+    :ivar name: The name of the rule.
+    :vartype name: str
+    :ivar direction: The rule's direction. Possible values include: "Inbound", "Outbound".
+    :vartype direction: str or ~azure.mgmt.security.models.Direction
+    :ivar destination_port: The rule's destination port.
+    :vartype destination_port: int
+    :ivar protocols: The rule's transport protocols.
+    :vartype protocols: list[str or ~azure.mgmt.security.models.TransportProtocol]
+    :ivar ip_addresses: The remote IP addresses that should be able to communicate with the Azure
      resource on the rule's destination port and protocol.
-    :type ip_addresses: list[str]
+    :vartype ip_addresses: list[str]
     """
 
     _validation = {
@@ -7486,6 +9651,19 @@ class Rule(msrest.serialization.Model):
         ip_addresses: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the rule.
+        :paramtype name: str
+        :keyword direction: The rule's direction. Possible values include: "Inbound", "Outbound".
+        :paramtype direction: str or ~azure.mgmt.security.models.Direction
+        :keyword destination_port: The rule's destination port.
+        :paramtype destination_port: int
+        :keyword protocols: The rule's transport protocols.
+        :paramtype protocols: list[str or ~azure.mgmt.security.models.TransportProtocol]
+        :keyword ip_addresses: The remote IP addresses that should be able to communicate with the
+         Azure resource on the rule's destination port and protocol.
+        :paramtype ip_addresses: list[str]
+        """
         super(Rule, self).__init__(**kwargs)
         self.name = name
         self.direction = direction
@@ -7505,8 +9683,8 @@ class RuleResults(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: Rule results properties.
-    :type properties: ~azure.mgmt.security.models.RuleResultsProperties
+    :ivar properties: Rule results properties.
+    :vartype properties: ~azure.mgmt.security.models.RuleResultsProperties
     """
 
     _validation = {
@@ -7528,6 +9706,10 @@ class RuleResults(Resource):
         properties: Optional["RuleResultsProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Rule results properties.
+        :paramtype properties: ~azure.mgmt.security.models.RuleResultsProperties
+        """
         super(RuleResults, self).__init__(**kwargs)
         self.properties = properties
 
@@ -7535,11 +9717,11 @@ class RuleResults(Resource):
 class RuleResultsInput(msrest.serialization.Model):
     """Rule results input.
 
-    :param latest_scan: Take results from latest scan.
-    :type latest_scan: bool
-    :param results: Expected results to be inserted into the baseline.
+    :ivar latest_scan: Take results from latest scan.
+    :vartype latest_scan: bool
+    :ivar results: Expected results to be inserted into the baseline.
      Leave this field empty it LatestScan == true.
-    :type results: list[list[str]]
+    :vartype results: list[list[str]]
     """
 
     _attribute_map = {
@@ -7554,6 +9736,13 @@ class RuleResultsInput(msrest.serialization.Model):
         results: Optional[List[List[str]]] = None,
         **kwargs
     ):
+        """
+        :keyword latest_scan: Take results from latest scan.
+        :paramtype latest_scan: bool
+        :keyword results: Expected results to be inserted into the baseline.
+         Leave this field empty it LatestScan == true.
+        :paramtype results: list[list[str]]
+        """
         super(RuleResultsInput, self).__init__(**kwargs)
         self.latest_scan = latest_scan
         self.results = results
@@ -7562,8 +9751,8 @@ class RuleResultsInput(msrest.serialization.Model):
 class RuleResultsProperties(msrest.serialization.Model):
     """Rule results properties.
 
-    :param results: Expected results in the baseline.
-    :type results: list[list[str]]
+    :ivar results: Expected results in the baseline.
+    :vartype results: list[list[str]]
     """
 
     _attribute_map = {
@@ -7576,6 +9765,10 @@ class RuleResultsProperties(msrest.serialization.Model):
         results: Optional[List[List[str]]] = None,
         **kwargs
     ):
+        """
+        :keyword results: Expected results in the baseline.
+        :paramtype results: list[list[str]]
+        """
         super(RuleResultsProperties, self).__init__(**kwargs)
         self.results = results
 
@@ -7583,8 +9776,8 @@ class RuleResultsProperties(msrest.serialization.Model):
 class RulesResults(msrest.serialization.Model):
     """A list of rules results.
 
-    :param value: List of rule results.
-    :type value: list[~azure.mgmt.security.models.RuleResults]
+    :ivar value: List of rule results.
+    :vartype value: list[~azure.mgmt.security.models.RuleResults]
     """
 
     _attribute_map = {
@@ -7597,6 +9790,10 @@ class RulesResults(msrest.serialization.Model):
         value: Optional[List["RuleResults"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of rule results.
+        :paramtype value: list[~azure.mgmt.security.models.RuleResults]
+        """
         super(RulesResults, self).__init__(**kwargs)
         self.value = value
 
@@ -7604,11 +9801,11 @@ class RulesResults(msrest.serialization.Model):
 class RulesResultsInput(msrest.serialization.Model):
     """Rules results input.
 
-    :param latest_scan: Take results from latest scan.
-    :type latest_scan: bool
-    :param results: Expected results to be inserted into the baseline.
+    :ivar latest_scan: Take results from latest scan.
+    :vartype latest_scan: bool
+    :ivar results: Expected results to be inserted into the baseline.
      Leave this field empty it LatestScan == true.
-    :type results: dict[str, list[list[str]]]
+    :vartype results: dict[str, list[list[str]]]
     """
 
     _attribute_map = {
@@ -7623,6 +9820,13 @@ class RulesResultsInput(msrest.serialization.Model):
         results: Optional[Dict[str, List[List[str]]]] = None,
         **kwargs
     ):
+        """
+        :keyword latest_scan: Take results from latest scan.
+        :paramtype latest_scan: bool
+        :keyword results: Expected results to be inserted into the baseline.
+         Leave this field empty it LatestScan == true.
+        :paramtype results: dict[str, list[list[str]]]
+        """
         super(RulesResultsInput, self).__init__(**kwargs)
         self.latest_scan = latest_scan
         self.results = results
@@ -7639,8 +9843,8 @@ class Scan(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: A vulnerability assessment scan record properties.
-    :type properties: ~azure.mgmt.security.models.ScanProperties
+    :ivar properties: A vulnerability assessment scan record properties.
+    :vartype properties: ~azure.mgmt.security.models.ScanProperties
     """
 
     _validation = {
@@ -7662,6 +9866,10 @@ class Scan(Resource):
         properties: Optional["ScanProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: A vulnerability assessment scan record properties.
+        :paramtype properties: ~azure.mgmt.security.models.ScanProperties
+        """
         super(Scan, self).__init__(**kwargs)
         self.properties = properties
 
@@ -7669,35 +9877,35 @@ class Scan(Resource):
 class ScanProperties(msrest.serialization.Model):
     """A vulnerability assessment scan record properties.
 
-    :param trigger_type: The scan trigger type. Possible values include: "OnDemand", "Recurring".
-    :type trigger_type: str or ~azure.mgmt.security.models.ScanTriggerType
-    :param state: The scan status. Possible values include: "Failed", "FailedToRun", "InProgress",
+    :ivar trigger_type: The scan trigger type. Possible values include: "OnDemand", "Recurring".
+    :vartype trigger_type: str or ~azure.mgmt.security.models.ScanTriggerType
+    :ivar state: The scan status. Possible values include: "Failed", "FailedToRun", "InProgress",
      "Passed".
-    :type state: str or ~azure.mgmt.security.models.ScanState
-    :param server: The server name.
-    :type server: str
-    :param database: The database name.
-    :type database: str
-    :param sql_version: The SQL version.
-    :type sql_version: str
-    :param start_time: The scan start time (UTC).
-    :type start_time: ~datetime.datetime
-    :param end_time: Scan results are valid until end time (UTC).
-    :type end_time: ~datetime.datetime
-    :param high_severity_failed_rules_count: The number of failed rules with high severity.
-    :type high_severity_failed_rules_count: int
-    :param medium_severity_failed_rules_count: The number of failed rules with medium severity.
-    :type medium_severity_failed_rules_count: int
-    :param low_severity_failed_rules_count: The number of failed rules with low severity.
-    :type low_severity_failed_rules_count: int
-    :param total_passed_rules_count: The number of total passed rules.
-    :type total_passed_rules_count: int
-    :param total_failed_rules_count: The number of total failed rules.
-    :type total_failed_rules_count: int
-    :param total_rules_count: The number of total rules assessed.
-    :type total_rules_count: int
-    :param is_baseline_applied: Baseline created for this database, and has one or more rules.
-    :type is_baseline_applied: bool
+    :vartype state: str or ~azure.mgmt.security.models.ScanState
+    :ivar server: The server name.
+    :vartype server: str
+    :ivar database: The database name.
+    :vartype database: str
+    :ivar sql_version: The SQL version.
+    :vartype sql_version: str
+    :ivar start_time: The scan start time (UTC).
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Scan results are valid until end time (UTC).
+    :vartype end_time: ~datetime.datetime
+    :ivar high_severity_failed_rules_count: The number of failed rules with high severity.
+    :vartype high_severity_failed_rules_count: int
+    :ivar medium_severity_failed_rules_count: The number of failed rules with medium severity.
+    :vartype medium_severity_failed_rules_count: int
+    :ivar low_severity_failed_rules_count: The number of failed rules with low severity.
+    :vartype low_severity_failed_rules_count: int
+    :ivar total_passed_rules_count: The number of total passed rules.
+    :vartype total_passed_rules_count: int
+    :ivar total_failed_rules_count: The number of total failed rules.
+    :vartype total_failed_rules_count: int
+    :ivar total_rules_count: The number of total rules assessed.
+    :vartype total_rules_count: int
+    :ivar is_baseline_applied: Baseline created for this database, and has one or more rules.
+    :vartype is_baseline_applied: bool
     """
 
     _attribute_map = {
@@ -7736,6 +9944,37 @@ class ScanProperties(msrest.serialization.Model):
         is_baseline_applied: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword trigger_type: The scan trigger type. Possible values include: "OnDemand", "Recurring".
+        :paramtype trigger_type: str or ~azure.mgmt.security.models.ScanTriggerType
+        :keyword state: The scan status. Possible values include: "Failed", "FailedToRun",
+         "InProgress", "Passed".
+        :paramtype state: str or ~azure.mgmt.security.models.ScanState
+        :keyword server: The server name.
+        :paramtype server: str
+        :keyword database: The database name.
+        :paramtype database: str
+        :keyword sql_version: The SQL version.
+        :paramtype sql_version: str
+        :keyword start_time: The scan start time (UTC).
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Scan results are valid until end time (UTC).
+        :paramtype end_time: ~datetime.datetime
+        :keyword high_severity_failed_rules_count: The number of failed rules with high severity.
+        :paramtype high_severity_failed_rules_count: int
+        :keyword medium_severity_failed_rules_count: The number of failed rules with medium severity.
+        :paramtype medium_severity_failed_rules_count: int
+        :keyword low_severity_failed_rules_count: The number of failed rules with low severity.
+        :paramtype low_severity_failed_rules_count: int
+        :keyword total_passed_rules_count: The number of total passed rules.
+        :paramtype total_passed_rules_count: int
+        :keyword total_failed_rules_count: The number of total failed rules.
+        :paramtype total_failed_rules_count: int
+        :keyword total_rules_count: The number of total rules assessed.
+        :paramtype total_rules_count: int
+        :keyword is_baseline_applied: Baseline created for this database, and has one or more rules.
+        :paramtype is_baseline_applied: bool
+        """
         super(ScanProperties, self).__init__(**kwargs)
         self.trigger_type = trigger_type
         self.state = state
@@ -7764,8 +10003,8 @@ class ScanResult(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: A vulnerability assessment scan result properties for a single rule.
-    :type properties: ~azure.mgmt.security.models.ScanResultProperties
+    :ivar properties: A vulnerability assessment scan result properties for a single rule.
+    :vartype properties: ~azure.mgmt.security.models.ScanResultProperties
     """
 
     _validation = {
@@ -7787,6 +10026,10 @@ class ScanResult(Resource):
         properties: Optional["ScanResultProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: A vulnerability assessment scan result properties for a single rule.
+        :paramtype properties: ~azure.mgmt.security.models.ScanResultProperties
+        """
         super(ScanResult, self).__init__(**kwargs)
         self.properties = properties
 
@@ -7794,21 +10037,21 @@ class ScanResult(Resource):
 class ScanResultProperties(msrest.serialization.Model):
     """A vulnerability assessment scan result properties for a single rule.
 
-    :param rule_id: The rule Id.
-    :type rule_id: str
-    :param status: The rule result status. Possible values include: "NonFinding", "Finding",
+    :ivar rule_id: The rule Id.
+    :vartype rule_id: str
+    :ivar status: The rule result status. Possible values include: "NonFinding", "Finding",
      "InternalError".
-    :type status: str or ~azure.mgmt.security.models.RuleStatus
-    :param is_trimmed: Indicated whether the results specified here are trimmed.
-    :type is_trimmed: bool
-    :param query_results: The results of the query that was run.
-    :type query_results: list[list[str]]
-    :param remediation: Remediation details.
-    :type remediation: ~azure.mgmt.security.models.Remediation
-    :param baseline_adjusted_result: The rule result adjusted with baseline.
-    :type baseline_adjusted_result: ~azure.mgmt.security.models.BaselineAdjustedResult
-    :param rule_metadata: vulnerability assessment rule metadata details.
-    :type rule_metadata: ~azure.mgmt.security.models.VaRule
+    :vartype status: str or ~azure.mgmt.security.models.RuleStatus
+    :ivar is_trimmed: Indicated whether the results specified here are trimmed.
+    :vartype is_trimmed: bool
+    :ivar query_results: The results of the query that was run.
+    :vartype query_results: list[list[str]]
+    :ivar remediation: Remediation details.
+    :vartype remediation: ~azure.mgmt.security.models.Remediation
+    :ivar baseline_adjusted_result: The rule result adjusted with baseline.
+    :vartype baseline_adjusted_result: ~azure.mgmt.security.models.BaselineAdjustedResult
+    :ivar rule_metadata: vulnerability assessment rule metadata details.
+    :vartype rule_metadata: ~azure.mgmt.security.models.VaRule
     """
 
     _attribute_map = {
@@ -7833,6 +10076,23 @@ class ScanResultProperties(msrest.serialization.Model):
         rule_metadata: Optional["VaRule"] = None,
         **kwargs
     ):
+        """
+        :keyword rule_id: The rule Id.
+        :paramtype rule_id: str
+        :keyword status: The rule result status. Possible values include: "NonFinding", "Finding",
+         "InternalError".
+        :paramtype status: str or ~azure.mgmt.security.models.RuleStatus
+        :keyword is_trimmed: Indicated whether the results specified here are trimmed.
+        :paramtype is_trimmed: bool
+        :keyword query_results: The results of the query that was run.
+        :paramtype query_results: list[list[str]]
+        :keyword remediation: Remediation details.
+        :paramtype remediation: ~azure.mgmt.security.models.Remediation
+        :keyword baseline_adjusted_result: The rule result adjusted with baseline.
+        :paramtype baseline_adjusted_result: ~azure.mgmt.security.models.BaselineAdjustedResult
+        :keyword rule_metadata: vulnerability assessment rule metadata details.
+        :paramtype rule_metadata: ~azure.mgmt.security.models.VaRule
+        """
         super(ScanResultProperties, self).__init__(**kwargs)
         self.rule_id = rule_id
         self.status = status
@@ -7846,8 +10106,8 @@ class ScanResultProperties(msrest.serialization.Model):
 class ScanResults(msrest.serialization.Model):
     """A list of vulnerability assessment scan results.
 
-    :param value: List of vulnerability assessment scan results.
-    :type value: list[~azure.mgmt.security.models.ScanResult]
+    :ivar value: List of vulnerability assessment scan results.
+    :vartype value: list[~azure.mgmt.security.models.ScanResult]
     """
 
     _attribute_map = {
@@ -7860,6 +10120,10 @@ class ScanResults(msrest.serialization.Model):
         value: Optional[List["ScanResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of vulnerability assessment scan results.
+        :paramtype value: list[~azure.mgmt.security.models.ScanResult]
+        """
         super(ScanResults, self).__init__(**kwargs)
         self.value = value
 
@@ -7867,8 +10131,8 @@ class ScanResults(msrest.serialization.Model):
 class Scans(msrest.serialization.Model):
     """A list of vulnerability assessment scan records.
 
-    :param value: List of vulnerability assessment scan records.
-    :type value: list[~azure.mgmt.security.models.Scan]
+    :ivar value: List of vulnerability assessment scan records.
+    :vartype value: list[~azure.mgmt.security.models.Scan]
     """
 
     _attribute_map = {
@@ -7881,6 +10145,10 @@ class Scans(msrest.serialization.Model):
         value: Optional[List["Scan"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of vulnerability assessment scan records.
+        :paramtype value: list[~azure.mgmt.security.models.Scan]
+        """
         super(Scans, self).__init__(**kwargs)
         self.value = value
 
@@ -7888,11 +10156,11 @@ class Scans(msrest.serialization.Model):
 class ScopeElement(msrest.serialization.Model):
     """A more specific scope used to identify the alerts to suppress.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
-    :param field: The alert entity type to suppress by.
-    :type field: str
+    :vartype additional_properties: dict[str, any]
+    :ivar field: The alert entity type to suppress by.
+    :vartype field: str
     """
 
     _attribute_map = {
@@ -7907,6 +10175,13 @@ class ScopeElement(msrest.serialization.Model):
         field: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword field: The alert entity type to suppress by.
+        :paramtype field: str
+        """
         super(ScopeElement, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.field = field
@@ -7962,6 +10237,8 @@ class SecureScoreControlDefinitionItem(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecureScoreControlDefinitionItem, self).__init__(**kwargs)
         self.display_name = None
         self.description = None
@@ -7995,6 +10272,8 @@ class SecureScoreControlDefinitionList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecureScoreControlDefinitionList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8003,9 +10282,9 @@ class SecureScoreControlDefinitionList(msrest.serialization.Model):
 class SecureScoreControlDefinitionSource(msrest.serialization.Model):
     """The type of the security control (For example, BuiltIn).
 
-    :param source_type: The type of security control (for example, BuiltIn). Possible values
+    :ivar source_type: The type of security control (for example, BuiltIn). Possible values
      include: "BuiltIn", "Custom".
-    :type source_type: str or ~azure.mgmt.security.models.ControlType
+    :vartype source_type: str or ~azure.mgmt.security.models.ControlType
     """
 
     _attribute_map = {
@@ -8018,6 +10297,11 @@ class SecureScoreControlDefinitionSource(msrest.serialization.Model):
         source_type: Optional[Union[str, "ControlType"]] = None,
         **kwargs
     ):
+        """
+        :keyword source_type: The type of security control (for example, BuiltIn). Possible values
+         include: "BuiltIn", "Custom".
+        :paramtype source_type: str or ~azure.mgmt.security.models.ControlType
+        """
         super(SecureScoreControlDefinitionSource, self).__init__(**kwargs)
         self.source_type = source_type
 
@@ -8044,8 +10328,8 @@ class SecureScoreControlDetails(Resource):
     :ivar weight: The relative weight for this specific control in each of your subscriptions. Used
      when calculating an aggregated score for this control across all of your subscriptions.
     :vartype weight: long
-    :param definition: Information about the security control.
-    :type definition: ~azure.mgmt.security.models.SecureScoreControlDefinitionItem
+    :ivar definition: Information about the security control.
+    :vartype definition: ~azure.mgmt.security.models.SecureScoreControlDefinitionItem
     :ivar max: Maximum score available.
     :vartype max: int
     :ivar current: Current score.
@@ -8090,6 +10374,10 @@ class SecureScoreControlDetails(Resource):
         definition: Optional["SecureScoreControlDefinitionItem"] = None,
         **kwargs
     ):
+        """
+        :keyword definition: Information about the security control.
+        :paramtype definition: ~azure.mgmt.security.models.SecureScoreControlDefinitionItem
+        """
         super(SecureScoreControlDetails, self).__init__(**kwargs)
         self.display_name = None
         self.healthy_resource_count = None
@@ -8127,6 +10415,8 @@ class SecureScoreControlList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecureScoreControlList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8163,6 +10453,8 @@ class SecureScoreControlScore(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecureScoreControlScore, self).__init__(**kwargs)
         self.max = None
         self.current = None
@@ -8220,6 +10512,8 @@ class SecureScoreItem(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecureScoreItem, self).__init__(**kwargs)
         self.display_name = None
         self.weight = None
@@ -8253,6 +10547,8 @@ class SecureScoresList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecureScoresList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8269,20 +10565,20 @@ class SecurityAssessment(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param resource_details: Details of the resource that was assessed.
-    :type resource_details: ~azure.mgmt.security.models.ResourceDetails
+    :ivar resource_details: Details of the resource that was assessed.
+    :vartype resource_details: ~azure.mgmt.security.models.ResourceDetails
     :ivar display_name: User friendly display name of the assessment.
     :vartype display_name: str
-    :param status: The result of the assessment.
-    :type status: ~azure.mgmt.security.models.AssessmentStatus
-    :param additional_data: Additional data regarding the assessment.
-    :type additional_data: dict[str, str]
+    :ivar additional_data: Additional data regarding the assessment.
+    :vartype additional_data: dict[str, str]
     :ivar links: Links relevant to the assessment.
     :vartype links: ~azure.mgmt.security.models.AssessmentLinks
-    :param metadata: Describes properties of an assessment metadata.
-    :type metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
-    :param partners_data: Data regarding 3rd party partner integration.
-    :type partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+    :ivar metadata: Describes properties of an assessment metadata.
+    :vartype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+    :ivar partners_data: Data regarding 3rd party partner integration.
+    :vartype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+    :ivar status: The result of the assessment.
+    :vartype status: ~azure.mgmt.security.models.AssessmentStatus
     """
 
     _validation = {
@@ -8299,31 +10595,43 @@ class SecurityAssessment(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'resource_details': {'key': 'properties.resourceDetails', 'type': 'ResourceDetails'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'AssessmentStatus'},
         'additional_data': {'key': 'properties.additionalData', 'type': '{str}'},
         'links': {'key': 'properties.links', 'type': 'AssessmentLinks'},
         'metadata': {'key': 'properties.metadata', 'type': 'SecurityAssessmentMetadataProperties'},
         'partners_data': {'key': 'properties.partnersData', 'type': 'SecurityAssessmentPartnerData'},
+        'status': {'key': 'properties.status', 'type': 'AssessmentStatus'},
     }
 
     def __init__(
         self,
         *,
         resource_details: Optional["ResourceDetails"] = None,
-        status: Optional["AssessmentStatus"] = None,
         additional_data: Optional[Dict[str, str]] = None,
         metadata: Optional["SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["SecurityAssessmentPartnerData"] = None,
+        status: Optional["AssessmentStatus"] = None,
         **kwargs
     ):
+        """
+        :keyword resource_details: Details of the resource that was assessed.
+        :paramtype resource_details: ~azure.mgmt.security.models.ResourceDetails
+        :keyword additional_data: Additional data regarding the assessment.
+        :paramtype additional_data: dict[str, str]
+        :keyword metadata: Describes properties of an assessment metadata.
+        :paramtype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+        :keyword partners_data: Data regarding 3rd party partner integration.
+        :paramtype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+        :keyword status: The result of the assessment.
+        :paramtype status: ~azure.mgmt.security.models.AssessmentStatus
+        """
         super(SecurityAssessment, self).__init__(**kwargs)
         self.resource_details = resource_details
         self.display_name = None
-        self.status = status
         self.additional_data = additional_data
         self.links = None
         self.metadata = metadata
         self.partners_data = partners_data
+        self.status = status
 
 
 class SecurityAssessmentList(msrest.serialization.Model):
@@ -8332,7 +10640,7 @@ class SecurityAssessmentList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Collection of security assessments in this page.
-    :vartype value: list[~azure.mgmt.security.models.SecurityAssessment]
+    :vartype value: list[~azure.mgmt.security.models.SecurityAssessmentResponse]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -8343,7 +10651,7 @@ class SecurityAssessmentList(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecurityAssessment]'},
+        'value': {'key': 'value', 'type': '[SecurityAssessmentResponse]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -8351,6 +10659,8 @@ class SecurityAssessmentList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecurityAssessmentList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8367,37 +10677,37 @@ class SecurityAssessmentMetadata(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: User friendly display name of the assessment.
-    :type display_name: str
+    :ivar display_name: User friendly display name of the assessment.
+    :vartype display_name: str
     :ivar policy_definition_id: Azure resource ID of the policy definition that turns this
      assessment calculation on.
     :vartype policy_definition_id: str
-    :param description: Human readable description of the assessment.
-    :type description: str
-    :param remediation_description: Human readable description of what you should do to mitigate
+    :ivar description: Human readable description of the assessment.
+    :vartype description: str
+    :ivar remediation_description: Human readable description of what you should do to mitigate
      this security issue.
-    :type remediation_description: str
-    :param categories:
-    :type categories: list[str or ~azure.mgmt.security.models.Categories]
-    :param severity: The severity level of the assessment. Possible values include: "Low",
-     "Medium", "High".
-    :type severity: str or ~azure.mgmt.security.models.Severity
-    :param user_impact: The user impact of the assessment. Possible values include: "Low",
+    :vartype remediation_description: str
+    :ivar categories:
+    :vartype categories: list[str or ~azure.mgmt.security.models.Categories]
+    :ivar severity: The severity level of the assessment. Possible values include: "Low", "Medium",
+     "High".
+    :vartype severity: str or ~azure.mgmt.security.models.Severity
+    :ivar user_impact: The user impact of the assessment. Possible values include: "Low",
      "Moderate", "High".
-    :type user_impact: str or ~azure.mgmt.security.models.UserImpact
-    :param implementation_effort: The implementation effort required to remediate this assessment.
+    :vartype user_impact: str or ~azure.mgmt.security.models.UserImpact
+    :ivar implementation_effort: The implementation effort required to remediate this assessment.
      Possible values include: "Low", "Moderate", "High".
-    :type implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
-    :param threats:
-    :type threats: list[str or ~azure.mgmt.security.models.Threats]
-    :param preview: True if this assessment is in preview release status.
-    :type preview: bool
-    :param assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
+    :vartype implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
+    :ivar threats:
+    :vartype threats: list[str or ~azure.mgmt.security.models.Threats]
+    :ivar preview: True if this assessment is in preview release status.
+    :vartype preview: bool
+    :ivar assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
      Custom if the assessment based on custom Azure Policy definition. Possible values include:
      "BuiltIn", "CustomPolicy", "CustomerManaged", "VerifiedPartner".
-    :type assessment_type: str or ~azure.mgmt.security.models.AssessmentType
-    :param partner_data: Describes the partner that created the assessment.
-    :type partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
+    :vartype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+    :ivar partner_data: Describes the partner that created the assessment.
+    :vartype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
     """
 
     _validation = {
@@ -8441,6 +10751,36 @@ class SecurityAssessmentMetadata(Resource):
         partner_data: Optional["SecurityAssessmentMetadataPartnerData"] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: User friendly display name of the assessment.
+        :paramtype display_name: str
+        :keyword description: Human readable description of the assessment.
+        :paramtype description: str
+        :keyword remediation_description: Human readable description of what you should do to mitigate
+         this security issue.
+        :paramtype remediation_description: str
+        :keyword categories:
+        :paramtype categories: list[str or ~azure.mgmt.security.models.Categories]
+        :keyword severity: The severity level of the assessment. Possible values include: "Low",
+         "Medium", "High".
+        :paramtype severity: str or ~azure.mgmt.security.models.Severity
+        :keyword user_impact: The user impact of the assessment. Possible values include: "Low",
+         "Moderate", "High".
+        :paramtype user_impact: str or ~azure.mgmt.security.models.UserImpact
+        :keyword implementation_effort: The implementation effort required to remediate this
+         assessment. Possible values include: "Low", "Moderate", "High".
+        :paramtype implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
+        :keyword threats:
+        :paramtype threats: list[str or ~azure.mgmt.security.models.Threats]
+        :keyword preview: True if this assessment is in preview release status.
+        :paramtype preview: bool
+        :keyword assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
+         Custom if the assessment based on custom Azure Policy definition. Possible values include:
+         "BuiltIn", "CustomPolicy", "CustomerManaged", "VerifiedPartner".
+        :paramtype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+        :keyword partner_data: Describes the partner that created the assessment.
+        :paramtype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
+        """
         super(SecurityAssessmentMetadata, self).__init__(**kwargs)
         self.display_name = display_name
         self.policy_definition_id = None
@@ -8456,48 +10796,18 @@ class SecurityAssessmentMetadata(Resource):
         self.partner_data = partner_data
 
 
-class SecurityAssessmentMetadataList(msrest.serialization.Model):
-    """List of security assessment metadata.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.security.models.SecurityAssessmentMetadata]
-    :ivar next_link: The URI to fetch the next page.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecurityAssessmentMetadata]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SecurityAssessmentMetadataList, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
 class SecurityAssessmentMetadataPartnerData(msrest.serialization.Model):
     """Describes the partner that created the assessment.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param partner_name: Required. Name of the company of the partner.
-    :type partner_name: str
-    :param product_name: Name of the product of the partner that created the assessment.
-    :type product_name: str
-    :param secret: Required. Secret to authenticate the partner and verify it created the
-     assessment - write only.
-    :type secret: str
+    :ivar partner_name: Required. Name of the company of the partner.
+    :vartype partner_name: str
+    :ivar product_name: Name of the product of the partner that created the assessment.
+    :vartype product_name: str
+    :ivar secret: Required. Secret to authenticate the partner and verify it created the assessment
+     - write only.
+    :vartype secret: str
     """
 
     _validation = {
@@ -8519,6 +10829,15 @@ class SecurityAssessmentMetadataPartnerData(msrest.serialization.Model):
         product_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword partner_name: Required. Name of the company of the partner.
+        :paramtype partner_name: str
+        :keyword product_name: Name of the product of the partner that created the assessment.
+        :paramtype product_name: str
+        :keyword secret: Required. Secret to authenticate the partner and verify it created the
+         assessment - write only.
+        :paramtype secret: str
+        """
         super(SecurityAssessmentMetadataPartnerData, self).__init__(**kwargs)
         self.partner_name = partner_name
         self.product_name = product_name
@@ -8532,37 +10851,37 @@ class SecurityAssessmentMetadataProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param display_name: Required. User friendly display name of the assessment.
-    :type display_name: str
+    :ivar display_name: Required. User friendly display name of the assessment.
+    :vartype display_name: str
     :ivar policy_definition_id: Azure resource ID of the policy definition that turns this
      assessment calculation on.
     :vartype policy_definition_id: str
-    :param description: Human readable description of the assessment.
-    :type description: str
-    :param remediation_description: Human readable description of what you should do to mitigate
+    :ivar description: Human readable description of the assessment.
+    :vartype description: str
+    :ivar remediation_description: Human readable description of what you should do to mitigate
      this security issue.
-    :type remediation_description: str
-    :param categories:
-    :type categories: list[str or ~azure.mgmt.security.models.Categories]
-    :param severity: Required. The severity level of the assessment. Possible values include:
-     "Low", "Medium", "High".
-    :type severity: str or ~azure.mgmt.security.models.Severity
-    :param user_impact: The user impact of the assessment. Possible values include: "Low",
+    :vartype remediation_description: str
+    :ivar categories:
+    :vartype categories: list[str or ~azure.mgmt.security.models.Categories]
+    :ivar severity: Required. The severity level of the assessment. Possible values include: "Low",
+     "Medium", "High".
+    :vartype severity: str or ~azure.mgmt.security.models.Severity
+    :ivar user_impact: The user impact of the assessment. Possible values include: "Low",
      "Moderate", "High".
-    :type user_impact: str or ~azure.mgmt.security.models.UserImpact
-    :param implementation_effort: The implementation effort required to remediate this assessment.
+    :vartype user_impact: str or ~azure.mgmt.security.models.UserImpact
+    :ivar implementation_effort: The implementation effort required to remediate this assessment.
      Possible values include: "Low", "Moderate", "High".
-    :type implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
-    :param threats:
-    :type threats: list[str or ~azure.mgmt.security.models.Threats]
-    :param preview: True if this assessment is in preview release status.
-    :type preview: bool
-    :param assessment_type: Required. BuiltIn if the assessment based on built-in Azure Policy
+    :vartype implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
+    :ivar threats:
+    :vartype threats: list[str or ~azure.mgmt.security.models.Threats]
+    :ivar preview: True if this assessment is in preview release status.
+    :vartype preview: bool
+    :ivar assessment_type: Required. BuiltIn if the assessment based on built-in Azure Policy
      definition, Custom if the assessment based on custom Azure Policy definition. Possible values
      include: "BuiltIn", "CustomPolicy", "CustomerManaged", "VerifiedPartner".
-    :type assessment_type: str or ~azure.mgmt.security.models.AssessmentType
-    :param partner_data: Describes the partner that created the assessment.
-    :type partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
+    :vartype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+    :ivar partner_data: Describes the partner that created the assessment.
+    :vartype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
     """
 
     _validation = {
@@ -8603,6 +10922,36 @@ class SecurityAssessmentMetadataProperties(msrest.serialization.Model):
         partner_data: Optional["SecurityAssessmentMetadataPartnerData"] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: Required. User friendly display name of the assessment.
+        :paramtype display_name: str
+        :keyword description: Human readable description of the assessment.
+        :paramtype description: str
+        :keyword remediation_description: Human readable description of what you should do to mitigate
+         this security issue.
+        :paramtype remediation_description: str
+        :keyword categories:
+        :paramtype categories: list[str or ~azure.mgmt.security.models.Categories]
+        :keyword severity: Required. The severity level of the assessment. Possible values include:
+         "Low", "Medium", "High".
+        :paramtype severity: str or ~azure.mgmt.security.models.Severity
+        :keyword user_impact: The user impact of the assessment. Possible values include: "Low",
+         "Moderate", "High".
+        :paramtype user_impact: str or ~azure.mgmt.security.models.UserImpact
+        :keyword implementation_effort: The implementation effort required to remediate this
+         assessment. Possible values include: "Low", "Moderate", "High".
+        :paramtype implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
+        :keyword threats:
+        :paramtype threats: list[str or ~azure.mgmt.security.models.Threats]
+        :keyword preview: True if this assessment is in preview release status.
+        :paramtype preview: bool
+        :keyword assessment_type: Required. BuiltIn if the assessment based on built-in Azure Policy
+         definition, Custom if the assessment based on custom Azure Policy definition. Possible values
+         include: "BuiltIn", "CustomPolicy", "CustomerManaged", "VerifiedPartner".
+        :paramtype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+        :keyword partner_data: Describes the partner that created the assessment.
+        :paramtype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
+        """
         super(SecurityAssessmentMetadataProperties, self).__init__(**kwargs)
         self.display_name = display_name
         self.policy_definition_id = None
@@ -8618,15 +10967,389 @@ class SecurityAssessmentMetadataProperties(msrest.serialization.Model):
         self.partner_data = partner_data
 
 
+class SecurityAssessmentMetadataPropertiesResponse(SecurityAssessmentMetadataProperties):
+    """Describes properties of an assessment metadata response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar display_name: Required. User friendly display name of the assessment.
+    :vartype display_name: str
+    :ivar policy_definition_id: Azure resource ID of the policy definition that turns this
+     assessment calculation on.
+    :vartype policy_definition_id: str
+    :ivar description: Human readable description of the assessment.
+    :vartype description: str
+    :ivar remediation_description: Human readable description of what you should do to mitigate
+     this security issue.
+    :vartype remediation_description: str
+    :ivar categories:
+    :vartype categories: list[str or ~azure.mgmt.security.models.Categories]
+    :ivar severity: Required. The severity level of the assessment. Possible values include: "Low",
+     "Medium", "High".
+    :vartype severity: str or ~azure.mgmt.security.models.Severity
+    :ivar user_impact: The user impact of the assessment. Possible values include: "Low",
+     "Moderate", "High".
+    :vartype user_impact: str or ~azure.mgmt.security.models.UserImpact
+    :ivar implementation_effort: The implementation effort required to remediate this assessment.
+     Possible values include: "Low", "Moderate", "High".
+    :vartype implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
+    :ivar threats:
+    :vartype threats: list[str or ~azure.mgmt.security.models.Threats]
+    :ivar preview: True if this assessment is in preview release status.
+    :vartype preview: bool
+    :ivar assessment_type: Required. BuiltIn if the assessment based on built-in Azure Policy
+     definition, Custom if the assessment based on custom Azure Policy definition. Possible values
+     include: "BuiltIn", "CustomPolicy", "CustomerManaged", "VerifiedPartner".
+    :vartype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+    :ivar partner_data: Describes the partner that created the assessment.
+    :vartype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
+    :ivar publish_dates:
+    :vartype publish_dates:
+     ~azure.mgmt.security.models.SecurityAssessmentMetadataPropertiesResponsePublishDates
+    :ivar planned_deprecation_date:
+    :vartype planned_deprecation_date: str
+    :ivar tactics:
+    :vartype tactics: list[str or ~azure.mgmt.security.models.Tactics]
+    :ivar techniques:
+    :vartype techniques: list[str or ~azure.mgmt.security.models.Techniques]
+    """
+
+    _validation = {
+        'display_name': {'required': True},
+        'policy_definition_id': {'readonly': True},
+        'severity': {'required': True},
+        'assessment_type': {'required': True},
+        'planned_deprecation_date': {'pattern': r'^[0-9]{2}/[0-9]{4}$'},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'remediation_description': {'key': 'remediationDescription', 'type': 'str'},
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'severity': {'key': 'severity', 'type': 'str'},
+        'user_impact': {'key': 'userImpact', 'type': 'str'},
+        'implementation_effort': {'key': 'implementationEffort', 'type': 'str'},
+        'threats': {'key': 'threats', 'type': '[str]'},
+        'preview': {'key': 'preview', 'type': 'bool'},
+        'assessment_type': {'key': 'assessmentType', 'type': 'str'},
+        'partner_data': {'key': 'partnerData', 'type': 'SecurityAssessmentMetadataPartnerData'},
+        'publish_dates': {'key': 'publishDates', 'type': 'SecurityAssessmentMetadataPropertiesResponsePublishDates'},
+        'planned_deprecation_date': {'key': 'plannedDeprecationDate', 'type': 'str'},
+        'tactics': {'key': 'tactics', 'type': '[str]'},
+        'techniques': {'key': 'techniques', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        severity: Union[str, "Severity"],
+        assessment_type: Union[str, "AssessmentType"],
+        description: Optional[str] = None,
+        remediation_description: Optional[str] = None,
+        categories: Optional[List[Union[str, "Categories"]]] = None,
+        user_impact: Optional[Union[str, "UserImpact"]] = None,
+        implementation_effort: Optional[Union[str, "ImplementationEffort"]] = None,
+        threats: Optional[List[Union[str, "Threats"]]] = None,
+        preview: Optional[bool] = None,
+        partner_data: Optional["SecurityAssessmentMetadataPartnerData"] = None,
+        publish_dates: Optional["SecurityAssessmentMetadataPropertiesResponsePublishDates"] = None,
+        planned_deprecation_date: Optional[str] = None,
+        tactics: Optional[List[Union[str, "Tactics"]]] = None,
+        techniques: Optional[List[Union[str, "Techniques"]]] = None,
+        **kwargs
+    ):
+        """
+        :keyword display_name: Required. User friendly display name of the assessment.
+        :paramtype display_name: str
+        :keyword description: Human readable description of the assessment.
+        :paramtype description: str
+        :keyword remediation_description: Human readable description of what you should do to mitigate
+         this security issue.
+        :paramtype remediation_description: str
+        :keyword categories:
+        :paramtype categories: list[str or ~azure.mgmt.security.models.Categories]
+        :keyword severity: Required. The severity level of the assessment. Possible values include:
+         "Low", "Medium", "High".
+        :paramtype severity: str or ~azure.mgmt.security.models.Severity
+        :keyword user_impact: The user impact of the assessment. Possible values include: "Low",
+         "Moderate", "High".
+        :paramtype user_impact: str or ~azure.mgmt.security.models.UserImpact
+        :keyword implementation_effort: The implementation effort required to remediate this
+         assessment. Possible values include: "Low", "Moderate", "High".
+        :paramtype implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
+        :keyword threats:
+        :paramtype threats: list[str or ~azure.mgmt.security.models.Threats]
+        :keyword preview: True if this assessment is in preview release status.
+        :paramtype preview: bool
+        :keyword assessment_type: Required. BuiltIn if the assessment based on built-in Azure Policy
+         definition, Custom if the assessment based on custom Azure Policy definition. Possible values
+         include: "BuiltIn", "CustomPolicy", "CustomerManaged", "VerifiedPartner".
+        :paramtype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+        :keyword partner_data: Describes the partner that created the assessment.
+        :paramtype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
+        :keyword publish_dates:
+        :paramtype publish_dates:
+         ~azure.mgmt.security.models.SecurityAssessmentMetadataPropertiesResponsePublishDates
+        :keyword planned_deprecation_date:
+        :paramtype planned_deprecation_date: str
+        :keyword tactics:
+        :paramtype tactics: list[str or ~azure.mgmt.security.models.Tactics]
+        :keyword techniques:
+        :paramtype techniques: list[str or ~azure.mgmt.security.models.Techniques]
+        """
+        super(SecurityAssessmentMetadataPropertiesResponse, self).__init__(display_name=display_name, description=description, remediation_description=remediation_description, categories=categories, severity=severity, user_impact=user_impact, implementation_effort=implementation_effort, threats=threats, preview=preview, assessment_type=assessment_type, partner_data=partner_data, **kwargs)
+        self.publish_dates = publish_dates
+        self.planned_deprecation_date = planned_deprecation_date
+        self.tactics = tactics
+        self.techniques = techniques
+
+
+class SecurityAssessmentMetadataPropertiesResponsePublishDates(msrest.serialization.Model):
+    """SecurityAssessmentMetadataPropertiesResponsePublishDates.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar ga:
+    :vartype ga: str
+    :ivar public: Required.
+    :vartype public: str
+    """
+
+    _validation = {
+        'ga': {'pattern': r'^([0-9]{2}/){2}[0-9]{4}$'},
+        'public': {'required': True, 'pattern': r'^([0-9]{2}/){2}[0-9]{4}$'},
+    }
+
+    _attribute_map = {
+        'ga': {'key': 'GA', 'type': 'str'},
+        'public': {'key': 'public', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        public: str,
+        ga: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword ga:
+        :paramtype ga: str
+        :keyword public: Required.
+        :paramtype public: str
+        """
+        super(SecurityAssessmentMetadataPropertiesResponsePublishDates, self).__init__(**kwargs)
+        self.ga = ga
+        self.public = public
+
+
+class SecurityAssessmentMetadataResponse(Resource):
+    """Security assessment metadata response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar display_name: User friendly display name of the assessment.
+    :vartype display_name: str
+    :ivar policy_definition_id: Azure resource ID of the policy definition that turns this
+     assessment calculation on.
+    :vartype policy_definition_id: str
+    :ivar description: Human readable description of the assessment.
+    :vartype description: str
+    :ivar remediation_description: Human readable description of what you should do to mitigate
+     this security issue.
+    :vartype remediation_description: str
+    :ivar categories:
+    :vartype categories: list[str or ~azure.mgmt.security.models.Categories]
+    :ivar severity: The severity level of the assessment. Possible values include: "Low", "Medium",
+     "High".
+    :vartype severity: str or ~azure.mgmt.security.models.Severity
+    :ivar user_impact: The user impact of the assessment. Possible values include: "Low",
+     "Moderate", "High".
+    :vartype user_impact: str or ~azure.mgmt.security.models.UserImpact
+    :ivar implementation_effort: The implementation effort required to remediate this assessment.
+     Possible values include: "Low", "Moderate", "High".
+    :vartype implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
+    :ivar threats:
+    :vartype threats: list[str or ~azure.mgmt.security.models.Threats]
+    :ivar preview: True if this assessment is in preview release status.
+    :vartype preview: bool
+    :ivar assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
+     Custom if the assessment based on custom Azure Policy definition. Possible values include:
+     "BuiltIn", "CustomPolicy", "CustomerManaged", "VerifiedPartner".
+    :vartype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+    :ivar partner_data: Describes the partner that created the assessment.
+    :vartype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
+    :ivar publish_dates:
+    :vartype publish_dates:
+     ~azure.mgmt.security.models.SecurityAssessmentMetadataPropertiesResponsePublishDates
+    :ivar planned_deprecation_date:
+    :vartype planned_deprecation_date: str
+    :ivar tactics:
+    :vartype tactics: list[str or ~azure.mgmt.security.models.Tactics]
+    :ivar techniques:
+    :vartype techniques: list[str or ~azure.mgmt.security.models.Techniques]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'policy_definition_id': {'readonly': True},
+        'planned_deprecation_date': {'pattern': r'^[0-9]{2}/[0-9]{4}$'},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'policy_definition_id': {'key': 'properties.policyDefinitionId', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'remediation_description': {'key': 'properties.remediationDescription', 'type': 'str'},
+        'categories': {'key': 'properties.categories', 'type': '[str]'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'user_impact': {'key': 'properties.userImpact', 'type': 'str'},
+        'implementation_effort': {'key': 'properties.implementationEffort', 'type': 'str'},
+        'threats': {'key': 'properties.threats', 'type': '[str]'},
+        'preview': {'key': 'properties.preview', 'type': 'bool'},
+        'assessment_type': {'key': 'properties.assessmentType', 'type': 'str'},
+        'partner_data': {'key': 'properties.partnerData', 'type': 'SecurityAssessmentMetadataPartnerData'},
+        'publish_dates': {'key': 'properties.publishDates', 'type': 'SecurityAssessmentMetadataPropertiesResponsePublishDates'},
+        'planned_deprecation_date': {'key': 'properties.plannedDeprecationDate', 'type': 'str'},
+        'tactics': {'key': 'properties.tactics', 'type': '[str]'},
+        'techniques': {'key': 'properties.techniques', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        remediation_description: Optional[str] = None,
+        categories: Optional[List[Union[str, "Categories"]]] = None,
+        severity: Optional[Union[str, "Severity"]] = None,
+        user_impact: Optional[Union[str, "UserImpact"]] = None,
+        implementation_effort: Optional[Union[str, "ImplementationEffort"]] = None,
+        threats: Optional[List[Union[str, "Threats"]]] = None,
+        preview: Optional[bool] = None,
+        assessment_type: Optional[Union[str, "AssessmentType"]] = None,
+        partner_data: Optional["SecurityAssessmentMetadataPartnerData"] = None,
+        publish_dates: Optional["SecurityAssessmentMetadataPropertiesResponsePublishDates"] = None,
+        planned_deprecation_date: Optional[str] = None,
+        tactics: Optional[List[Union[str, "Tactics"]]] = None,
+        techniques: Optional[List[Union[str, "Techniques"]]] = None,
+        **kwargs
+    ):
+        """
+        :keyword display_name: User friendly display name of the assessment.
+        :paramtype display_name: str
+        :keyword description: Human readable description of the assessment.
+        :paramtype description: str
+        :keyword remediation_description: Human readable description of what you should do to mitigate
+         this security issue.
+        :paramtype remediation_description: str
+        :keyword categories:
+        :paramtype categories: list[str or ~azure.mgmt.security.models.Categories]
+        :keyword severity: The severity level of the assessment. Possible values include: "Low",
+         "Medium", "High".
+        :paramtype severity: str or ~azure.mgmt.security.models.Severity
+        :keyword user_impact: The user impact of the assessment. Possible values include: "Low",
+         "Moderate", "High".
+        :paramtype user_impact: str or ~azure.mgmt.security.models.UserImpact
+        :keyword implementation_effort: The implementation effort required to remediate this
+         assessment. Possible values include: "Low", "Moderate", "High".
+        :paramtype implementation_effort: str or ~azure.mgmt.security.models.ImplementationEffort
+        :keyword threats:
+        :paramtype threats: list[str or ~azure.mgmt.security.models.Threats]
+        :keyword preview: True if this assessment is in preview release status.
+        :paramtype preview: bool
+        :keyword assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
+         Custom if the assessment based on custom Azure Policy definition. Possible values include:
+         "BuiltIn", "CustomPolicy", "CustomerManaged", "VerifiedPartner".
+        :paramtype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
+        :keyword partner_data: Describes the partner that created the assessment.
+        :paramtype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
+        :keyword publish_dates:
+        :paramtype publish_dates:
+         ~azure.mgmt.security.models.SecurityAssessmentMetadataPropertiesResponsePublishDates
+        :keyword planned_deprecation_date:
+        :paramtype planned_deprecation_date: str
+        :keyword tactics:
+        :paramtype tactics: list[str or ~azure.mgmt.security.models.Tactics]
+        :keyword techniques:
+        :paramtype techniques: list[str or ~azure.mgmt.security.models.Techniques]
+        """
+        super(SecurityAssessmentMetadataResponse, self).__init__(**kwargs)
+        self.display_name = display_name
+        self.policy_definition_id = None
+        self.description = description
+        self.remediation_description = remediation_description
+        self.categories = categories
+        self.severity = severity
+        self.user_impact = user_impact
+        self.implementation_effort = implementation_effort
+        self.threats = threats
+        self.preview = preview
+        self.assessment_type = assessment_type
+        self.partner_data = partner_data
+        self.publish_dates = publish_dates
+        self.planned_deprecation_date = planned_deprecation_date
+        self.tactics = tactics
+        self.techniques = techniques
+
+
+class SecurityAssessmentMetadataResponseList(msrest.serialization.Model):
+    """List of security assessment metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.SecurityAssessmentMetadataResponse]
+    :ivar next_link: The URI to fetch the next page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SecurityAssessmentMetadataResponse]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(SecurityAssessmentMetadataResponseList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class SecurityAssessmentPartnerData(msrest.serialization.Model):
     """Data regarding 3rd party partner integration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param partner_name: Required. Name of the company of the partner.
-    :type partner_name: str
-    :param secret: Required. secret to authenticate the partner - write only.
-    :type secret: str
+    :ivar partner_name: Required. Name of the company of the partner.
+    :vartype partner_name: str
+    :ivar secret: Required. secret to authenticate the partner - write only.
+    :vartype secret: str
     """
 
     _validation = {
@@ -8646,9 +11369,486 @@ class SecurityAssessmentPartnerData(msrest.serialization.Model):
         secret: str,
         **kwargs
     ):
+        """
+        :keyword partner_name: Required. Name of the company of the partner.
+        :paramtype partner_name: str
+        :keyword secret: Required. secret to authenticate the partner - write only.
+        :paramtype secret: str
+        """
         super(SecurityAssessmentPartnerData, self).__init__(**kwargs)
         self.partner_name = partner_name
         self.secret = secret
+
+
+class SecurityAssessmentPropertiesBase(msrest.serialization.Model):
+    """Describes properties of an assessment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resource_details: Required. Details of the resource that was assessed.
+    :vartype resource_details: ~azure.mgmt.security.models.ResourceDetails
+    :ivar display_name: User friendly display name of the assessment.
+    :vartype display_name: str
+    :ivar additional_data: Additional data regarding the assessment.
+    :vartype additional_data: dict[str, str]
+    :ivar links: Links relevant to the assessment.
+    :vartype links: ~azure.mgmt.security.models.AssessmentLinks
+    :ivar metadata: Describes properties of an assessment metadata.
+    :vartype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+    :ivar partners_data: Data regarding 3rd party partner integration.
+    :vartype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+    """
+
+    _validation = {
+        'resource_details': {'required': True},
+        'display_name': {'readonly': True},
+        'links': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_details': {'key': 'resourceDetails', 'type': 'ResourceDetails'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'additional_data': {'key': 'additionalData', 'type': '{str}'},
+        'links': {'key': 'links', 'type': 'AssessmentLinks'},
+        'metadata': {'key': 'metadata', 'type': 'SecurityAssessmentMetadataProperties'},
+        'partners_data': {'key': 'partnersData', 'type': 'SecurityAssessmentPartnerData'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_details: "ResourceDetails",
+        additional_data: Optional[Dict[str, str]] = None,
+        metadata: Optional["SecurityAssessmentMetadataProperties"] = None,
+        partners_data: Optional["SecurityAssessmentPartnerData"] = None,
+        **kwargs
+    ):
+        """
+        :keyword resource_details: Required. Details of the resource that was assessed.
+        :paramtype resource_details: ~azure.mgmt.security.models.ResourceDetails
+        :keyword additional_data: Additional data regarding the assessment.
+        :paramtype additional_data: dict[str, str]
+        :keyword metadata: Describes properties of an assessment metadata.
+        :paramtype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+        :keyword partners_data: Data regarding 3rd party partner integration.
+        :paramtype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+        """
+        super(SecurityAssessmentPropertiesBase, self).__init__(**kwargs)
+        self.resource_details = resource_details
+        self.display_name = None
+        self.additional_data = additional_data
+        self.links = None
+        self.metadata = metadata
+        self.partners_data = partners_data
+
+
+class SecurityAssessmentProperties(SecurityAssessmentPropertiesBase):
+    """Describes properties of an assessment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resource_details: Required. Details of the resource that was assessed.
+    :vartype resource_details: ~azure.mgmt.security.models.ResourceDetails
+    :ivar display_name: User friendly display name of the assessment.
+    :vartype display_name: str
+    :ivar additional_data: Additional data regarding the assessment.
+    :vartype additional_data: dict[str, str]
+    :ivar links: Links relevant to the assessment.
+    :vartype links: ~azure.mgmt.security.models.AssessmentLinks
+    :ivar metadata: Describes properties of an assessment metadata.
+    :vartype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+    :ivar partners_data: Data regarding 3rd party partner integration.
+    :vartype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+    :ivar status: Required. The result of the assessment.
+    :vartype status: ~azure.mgmt.security.models.AssessmentStatus
+    """
+
+    _validation = {
+        'resource_details': {'required': True},
+        'display_name': {'readonly': True},
+        'links': {'readonly': True},
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_details': {'key': 'resourceDetails', 'type': 'ResourceDetails'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'additional_data': {'key': 'additionalData', 'type': '{str}'},
+        'links': {'key': 'links', 'type': 'AssessmentLinks'},
+        'metadata': {'key': 'metadata', 'type': 'SecurityAssessmentMetadataProperties'},
+        'partners_data': {'key': 'partnersData', 'type': 'SecurityAssessmentPartnerData'},
+        'status': {'key': 'status', 'type': 'AssessmentStatus'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_details: "ResourceDetails",
+        status: "AssessmentStatus",
+        additional_data: Optional[Dict[str, str]] = None,
+        metadata: Optional["SecurityAssessmentMetadataProperties"] = None,
+        partners_data: Optional["SecurityAssessmentPartnerData"] = None,
+        **kwargs
+    ):
+        """
+        :keyword resource_details: Required. Details of the resource that was assessed.
+        :paramtype resource_details: ~azure.mgmt.security.models.ResourceDetails
+        :keyword additional_data: Additional data regarding the assessment.
+        :paramtype additional_data: dict[str, str]
+        :keyword metadata: Describes properties of an assessment metadata.
+        :paramtype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+        :keyword partners_data: Data regarding 3rd party partner integration.
+        :paramtype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+        :keyword status: Required. The result of the assessment.
+        :paramtype status: ~azure.mgmt.security.models.AssessmentStatus
+        """
+        super(SecurityAssessmentProperties, self).__init__(resource_details=resource_details, additional_data=additional_data, metadata=metadata, partners_data=partners_data, **kwargs)
+        self.status = status
+
+
+class SecurityAssessmentPropertiesResponse(SecurityAssessmentPropertiesBase):
+    """Describes properties of an assessment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resource_details: Required. Details of the resource that was assessed.
+    :vartype resource_details: ~azure.mgmt.security.models.ResourceDetails
+    :ivar display_name: User friendly display name of the assessment.
+    :vartype display_name: str
+    :ivar additional_data: Additional data regarding the assessment.
+    :vartype additional_data: dict[str, str]
+    :ivar links: Links relevant to the assessment.
+    :vartype links: ~azure.mgmt.security.models.AssessmentLinks
+    :ivar metadata: Describes properties of an assessment metadata.
+    :vartype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+    :ivar partners_data: Data regarding 3rd party partner integration.
+    :vartype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+    :ivar status: Required. The result of the assessment.
+    :vartype status: ~azure.mgmt.security.models.AssessmentStatusResponse
+    """
+
+    _validation = {
+        'resource_details': {'required': True},
+        'display_name': {'readonly': True},
+        'links': {'readonly': True},
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_details': {'key': 'resourceDetails', 'type': 'ResourceDetails'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'additional_data': {'key': 'additionalData', 'type': '{str}'},
+        'links': {'key': 'links', 'type': 'AssessmentLinks'},
+        'metadata': {'key': 'metadata', 'type': 'SecurityAssessmentMetadataProperties'},
+        'partners_data': {'key': 'partnersData', 'type': 'SecurityAssessmentPartnerData'},
+        'status': {'key': 'status', 'type': 'AssessmentStatusResponse'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_details: "ResourceDetails",
+        status: "AssessmentStatusResponse",
+        additional_data: Optional[Dict[str, str]] = None,
+        metadata: Optional["SecurityAssessmentMetadataProperties"] = None,
+        partners_data: Optional["SecurityAssessmentPartnerData"] = None,
+        **kwargs
+    ):
+        """
+        :keyword resource_details: Required. Details of the resource that was assessed.
+        :paramtype resource_details: ~azure.mgmt.security.models.ResourceDetails
+        :keyword additional_data: Additional data regarding the assessment.
+        :paramtype additional_data: dict[str, str]
+        :keyword metadata: Describes properties of an assessment metadata.
+        :paramtype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+        :keyword partners_data: Data regarding 3rd party partner integration.
+        :paramtype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+        :keyword status: Required. The result of the assessment.
+        :paramtype status: ~azure.mgmt.security.models.AssessmentStatusResponse
+        """
+        super(SecurityAssessmentPropertiesResponse, self).__init__(resource_details=resource_details, additional_data=additional_data, metadata=metadata, partners_data=partners_data, **kwargs)
+        self.status = status
+
+
+class SecurityAssessmentResponse(Resource):
+    """Security assessment on a resource - response format.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar resource_details: Details of the resource that was assessed.
+    :vartype resource_details: ~azure.mgmt.security.models.ResourceDetails
+    :ivar display_name: User friendly display name of the assessment.
+    :vartype display_name: str
+    :ivar additional_data: Additional data regarding the assessment.
+    :vartype additional_data: dict[str, str]
+    :ivar links: Links relevant to the assessment.
+    :vartype links: ~azure.mgmt.security.models.AssessmentLinks
+    :ivar metadata: Describes properties of an assessment metadata.
+    :vartype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+    :ivar partners_data: Data regarding 3rd party partner integration.
+    :vartype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+    :ivar status: The result of the assessment.
+    :vartype status: ~azure.mgmt.security.models.AssessmentStatusResponse
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'display_name': {'readonly': True},
+        'links': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'resource_details': {'key': 'properties.resourceDetails', 'type': 'ResourceDetails'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{str}'},
+        'links': {'key': 'properties.links', 'type': 'AssessmentLinks'},
+        'metadata': {'key': 'properties.metadata', 'type': 'SecurityAssessmentMetadataProperties'},
+        'partners_data': {'key': 'properties.partnersData', 'type': 'SecurityAssessmentPartnerData'},
+        'status': {'key': 'properties.status', 'type': 'AssessmentStatusResponse'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_details: Optional["ResourceDetails"] = None,
+        additional_data: Optional[Dict[str, str]] = None,
+        metadata: Optional["SecurityAssessmentMetadataProperties"] = None,
+        partners_data: Optional["SecurityAssessmentPartnerData"] = None,
+        status: Optional["AssessmentStatusResponse"] = None,
+        **kwargs
+    ):
+        """
+        :keyword resource_details: Details of the resource that was assessed.
+        :paramtype resource_details: ~azure.mgmt.security.models.ResourceDetails
+        :keyword additional_data: Additional data regarding the assessment.
+        :paramtype additional_data: dict[str, str]
+        :keyword metadata: Describes properties of an assessment metadata.
+        :paramtype metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataProperties
+        :keyword partners_data: Data regarding 3rd party partner integration.
+        :paramtype partners_data: ~azure.mgmt.security.models.SecurityAssessmentPartnerData
+        :keyword status: The result of the assessment.
+        :paramtype status: ~azure.mgmt.security.models.AssessmentStatusResponse
+        """
+        super(SecurityAssessmentResponse, self).__init__(**kwargs)
+        self.resource_details = resource_details
+        self.display_name = None
+        self.additional_data = additional_data
+        self.links = None
+        self.metadata = metadata
+        self.partners_data = partners_data
+        self.status = status
+
+
+class SecurityConnector(TrackedResource):
+    """The security connector resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar tags: A set of tags. A list of key value pairs that describe the resource.
+    :vartype tags: dict[str, str]
+    :ivar etag: Entity tag is used for comparing two or more entities from the same requested
+     resource.
+    :vartype etag: str
+    :ivar kind: Kind of the resource.
+    :vartype kind: str
+    :ivar location: Location where the resource is stored.
+    :vartype location: str
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.security.models.SystemData
+    :ivar hierarchy_identifier: The multi cloud resource identifier (account id in case of AWS
+     connector).
+    :vartype hierarchy_identifier: str
+    :ivar cloud_name: The multi cloud resource's cloud name. Possible values include: "Azure",
+     "AWS", "GCP".
+    :vartype cloud_name: str or ~azure.mgmt.security.models.CloudName
+    :ivar offerings: A collection of offerings for the security connector.
+    :vartype offerings: list[~azure.mgmt.security.models.CloudOffering]
+    :ivar organizational_data: The multi cloud account's organizational data.
+    :vartype organizational_data:
+     ~azure.mgmt.security.models.SecurityConnectorPropertiesOrganizationalData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'hierarchy_identifier': {'key': 'properties.hierarchyIdentifier', 'type': 'str'},
+        'cloud_name': {'key': 'properties.cloudName', 'type': 'str'},
+        'offerings': {'key': 'properties.offerings', 'type': '[CloudOffering]'},
+        'organizational_data': {'key': 'properties.organizationalData', 'type': 'SecurityConnectorPropertiesOrganizationalData'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        kind: Optional[str] = None,
+        location: Optional[str] = None,
+        hierarchy_identifier: Optional[str] = None,
+        cloud_name: Optional[Union[str, "CloudName"]] = None,
+        offerings: Optional[List["CloudOffering"]] = None,
+        organizational_data: Optional["SecurityConnectorPropertiesOrganizationalData"] = None,
+        **kwargs
+    ):
+        """
+        :keyword tags: A set of tags. A list of key value pairs that describe the resource.
+        :paramtype tags: dict[str, str]
+        :keyword etag: Entity tag is used for comparing two or more entities from the same requested
+         resource.
+        :paramtype etag: str
+        :keyword kind: Kind of the resource.
+        :paramtype kind: str
+        :keyword location: Location where the resource is stored.
+        :paramtype location: str
+        :keyword hierarchy_identifier: The multi cloud resource identifier (account id in case of AWS
+         connector).
+        :paramtype hierarchy_identifier: str
+        :keyword cloud_name: The multi cloud resource's cloud name. Possible values include: "Azure",
+         "AWS", "GCP".
+        :paramtype cloud_name: str or ~azure.mgmt.security.models.CloudName
+        :keyword offerings: A collection of offerings for the security connector.
+        :paramtype offerings: list[~azure.mgmt.security.models.CloudOffering]
+        :keyword organizational_data: The multi cloud account's organizational data.
+        :paramtype organizational_data:
+         ~azure.mgmt.security.models.SecurityConnectorPropertiesOrganizationalData
+        """
+        super(SecurityConnector, self).__init__(tags=tags, etag=etag, kind=kind, location=location, **kwargs)
+        self.system_data = None
+        self.hierarchy_identifier = hierarchy_identifier
+        self.cloud_name = cloud_name
+        self.offerings = offerings
+        self.organizational_data = organizational_data
+
+
+class SecurityConnectorPropertiesOrganizationalData(msrest.serialization.Model):
+    """The multi cloud account's organizational data.
+
+    :ivar organization_membership_type: The multi cloud account's membership type in the
+     organization. Possible values include: "Member", "Organization".
+    :vartype organization_membership_type: str or
+     ~azure.mgmt.security.models.OrganizationMembershipType
+    :ivar parent_hierarchy_id: If the multi cloud account is not of membership type organization,
+     this will be the ID of the account's parent.
+    :vartype parent_hierarchy_id: str
+    :ivar stackset_name: If the multi cloud account is of membership type organization, this will
+     be the name of the onboarding stackset.
+    :vartype stackset_name: str
+    :ivar excluded_account_ids: If the multi cloud account is of membership type organization, list
+     of accounts excluded from offering.
+    :vartype excluded_account_ids: list[str]
+    """
+
+    _attribute_map = {
+        'organization_membership_type': {'key': 'organizationMembershipType', 'type': 'str'},
+        'parent_hierarchy_id': {'key': 'parentHierarchyId', 'type': 'str'},
+        'stackset_name': {'key': 'stacksetName', 'type': 'str'},
+        'excluded_account_ids': {'key': 'excludedAccountIds', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        organization_membership_type: Optional[Union[str, "OrganizationMembershipType"]] = None,
+        parent_hierarchy_id: Optional[str] = None,
+        stackset_name: Optional[str] = None,
+        excluded_account_ids: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword organization_membership_type: The multi cloud account's membership type in the
+         organization. Possible values include: "Member", "Organization".
+        :paramtype organization_membership_type: str or
+         ~azure.mgmt.security.models.OrganizationMembershipType
+        :keyword parent_hierarchy_id: If the multi cloud account is not of membership type
+         organization, this will be the ID of the account's parent.
+        :paramtype parent_hierarchy_id: str
+        :keyword stackset_name: If the multi cloud account is of membership type organization, this
+         will be the name of the onboarding stackset.
+        :paramtype stackset_name: str
+        :keyword excluded_account_ids: If the multi cloud account is of membership type organization,
+         list of accounts excluded from offering.
+        :paramtype excluded_account_ids: list[str]
+        """
+        super(SecurityConnectorPropertiesOrganizationalData, self).__init__(**kwargs)
+        self.organization_membership_type = organization_membership_type
+        self.parent_hierarchy_id = parent_hierarchy_id
+        self.stackset_name = stackset_name
+        self.excluded_account_ids = excluded_account_ids
+
+
+class SecurityConnectorsList(msrest.serialization.Model):
+    """List of security connectors response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The list of security connectors under the given scope.
+    :vartype value: list[~azure.mgmt.security.models.SecurityConnector]
+    :ivar next_link: The URI to fetch the next page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SecurityConnector]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["SecurityConnector"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The list of security connectors under the given scope.
+        :paramtype value: list[~azure.mgmt.security.models.SecurityConnector]
+        """
+        super(SecurityConnectorsList, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
 
 
 class SecurityContact(Resource):
@@ -8662,16 +11862,16 @@ class SecurityContact(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param email: The email of this security contact.
-    :type email: str
-    :param phone: The phone number of this security contact.
-    :type phone: str
-    :param alert_notifications: Whether to send security alerts notifications to the security
+    :ivar email: The email of this security contact.
+    :vartype email: str
+    :ivar phone: The phone number of this security contact.
+    :vartype phone: str
+    :ivar alert_notifications: Whether to send security alerts notifications to the security
      contact. Possible values include: "On", "Off".
-    :type alert_notifications: str or ~azure.mgmt.security.models.AlertNotifications
-    :param alerts_to_admins: Whether to send security alerts notifications to subscription admins.
+    :vartype alert_notifications: str or ~azure.mgmt.security.models.AlertNotifications
+    :ivar alerts_to_admins: Whether to send security alerts notifications to subscription admins.
      Possible values include: "On", "Off".
-    :type alerts_to_admins: str or ~azure.mgmt.security.models.AlertsToAdmins
+    :vartype alerts_to_admins: str or ~azure.mgmt.security.models.AlertsToAdmins
     """
 
     _validation = {
@@ -8699,6 +11899,18 @@ class SecurityContact(Resource):
         alerts_to_admins: Optional[Union[str, "AlertsToAdmins"]] = None,
         **kwargs
     ):
+        """
+        :keyword email: The email of this security contact.
+        :paramtype email: str
+        :keyword phone: The phone number of this security contact.
+        :paramtype phone: str
+        :keyword alert_notifications: Whether to send security alerts notifications to the security
+         contact. Possible values include: "On", "Off".
+        :paramtype alert_notifications: str or ~azure.mgmt.security.models.AlertNotifications
+        :keyword alerts_to_admins: Whether to send security alerts notifications to subscription
+         admins. Possible values include: "On", "Off".
+        :paramtype alerts_to_admins: str or ~azure.mgmt.security.models.AlertsToAdmins
+        """
         super(SecurityContact, self).__init__(**kwargs)
         self.email = email
         self.phone = phone
@@ -8731,6 +11943,8 @@ class SecurityContactList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecurityContactList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -8749,16 +11963,16 @@ class SecuritySolution(Resource, Location):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param security_family: The security family of the security solution. Possible values include:
+    :ivar security_family: The security family of the security solution. Possible values include:
      "Waf", "Ngfw", "SaasWaf", "Va".
-    :type security_family: str or ~azure.mgmt.security.models.SecurityFamily
-    :param provisioning_state: The security family provisioning State. Possible values include:
+    :vartype security_family: str or ~azure.mgmt.security.models.SecurityFamily
+    :ivar provisioning_state: The security family provisioning State. Possible values include:
      "Succeeded", "Failed", "Updating".
-    :type provisioning_state: str or ~azure.mgmt.security.models.ProvisioningState
-    :param template: The security solutions' template.
-    :type template: str
-    :param protection_status: The security solutions' status.
-    :type protection_status: str
+    :vartype provisioning_state: str or ~azure.mgmt.security.models.ProvisioningState
+    :ivar template: The security solutions' template.
+    :vartype template: str
+    :ivar protection_status: The security solutions' status.
+    :vartype protection_status: str
     """
 
     _validation = {
@@ -8788,6 +12002,18 @@ class SecuritySolution(Resource, Location):
         protection_status: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword security_family: The security family of the security solution. Possible values
+         include: "Waf", "Ngfw", "SaasWaf", "Va".
+        :paramtype security_family: str or ~azure.mgmt.security.models.SecurityFamily
+        :keyword provisioning_state: The security family provisioning State. Possible values include:
+         "Succeeded", "Failed", "Updating".
+        :paramtype provisioning_state: str or ~azure.mgmt.security.models.ProvisioningState
+        :keyword template: The security solutions' template.
+        :paramtype template: str
+        :keyword protection_status: The security solutions' status.
+        :paramtype protection_status: str
+        """
         super(SecuritySolution, self).__init__(**kwargs)
         self.location = None
         self.security_family = security_family
@@ -8808,8 +12034,8 @@ class SecuritySolutionList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.security.models.SecuritySolution]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.SecuritySolution]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -8829,6 +12055,10 @@ class SecuritySolutionList(msrest.serialization.Model):
         value: Optional[List["SecuritySolution"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.security.models.SecuritySolution]
+        """
         super(SecuritySolutionList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -8849,21 +12079,21 @@ class SecuritySolutionsReferenceData(Resource, Location):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param security_family: Required. The security family of the security solution. Possible values
+    :ivar security_family: Required. The security family of the security solution. Possible values
      include: "Waf", "Ngfw", "SaasWaf", "Va".
-    :type security_family: str or ~azure.mgmt.security.models.SecurityFamily
-    :param alert_vendor_name: Required. The security solutions' vendor name.
-    :type alert_vendor_name: str
-    :param package_info_url: Required. The security solutions' package info url.
-    :type package_info_url: str
-    :param product_name: Required. The security solutions' product name.
-    :type product_name: str
-    :param publisher: Required. The security solutions' publisher.
-    :type publisher: str
-    :param publisher_display_name: Required. The security solutions' publisher display name.
-    :type publisher_display_name: str
-    :param template: Required. The security solutions' template.
-    :type template: str
+    :vartype security_family: str or ~azure.mgmt.security.models.SecurityFamily
+    :ivar alert_vendor_name: Required. The security solutions' vendor name.
+    :vartype alert_vendor_name: str
+    :ivar package_info_url: Required. The security solutions' package info url.
+    :vartype package_info_url: str
+    :ivar product_name: Required. The security solutions' product name.
+    :vartype product_name: str
+    :ivar publisher: Required. The security solutions' publisher.
+    :vartype publisher: str
+    :ivar publisher_display_name: Required. The security solutions' publisher display name.
+    :vartype publisher_display_name: str
+    :ivar template: Required. The security solutions' template.
+    :vartype template: str
     """
 
     _validation = {
@@ -8906,6 +12136,23 @@ class SecuritySolutionsReferenceData(Resource, Location):
         template: str,
         **kwargs
     ):
+        """
+        :keyword security_family: Required. The security family of the security solution. Possible
+         values include: "Waf", "Ngfw", "SaasWaf", "Va".
+        :paramtype security_family: str or ~azure.mgmt.security.models.SecurityFamily
+        :keyword alert_vendor_name: Required. The security solutions' vendor name.
+        :paramtype alert_vendor_name: str
+        :keyword package_info_url: Required. The security solutions' package info url.
+        :paramtype package_info_url: str
+        :keyword product_name: Required. The security solutions' product name.
+        :paramtype product_name: str
+        :keyword publisher: Required. The security solutions' publisher.
+        :paramtype publisher: str
+        :keyword publisher_display_name: Required. The security solutions' publisher display name.
+        :paramtype publisher_display_name: str
+        :keyword template: Required. The security solutions' template.
+        :paramtype template: str
+        """
         super(SecuritySolutionsReferenceData, self).__init__(**kwargs)
         self.location = None
         self.security_family = security_family
@@ -8930,8 +12177,8 @@ class SecuritySolutionsReferenceData(Resource, Location):
 class SecuritySolutionsReferenceDataList(msrest.serialization.Model):
     """SecuritySolutionsReferenceDataList.
 
-    :param value:
-    :type value: list[~azure.mgmt.security.models.SecuritySolutionsReferenceData]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.SecuritySolutionsReferenceData]
     """
 
     _attribute_map = {
@@ -8944,6 +12191,10 @@ class SecuritySolutionsReferenceDataList(msrest.serialization.Model):
         value: Optional[List["SecuritySolutionsReferenceData"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.security.models.SecuritySolutionsReferenceData]
+        """
         super(SecuritySolutionsReferenceDataList, self).__init__(**kwargs)
         self.value = value
 
@@ -8963,8 +12214,8 @@ class SecuritySubAssessment(Resource):
     :vartype id_properties_id: str
     :ivar display_name: User friendly display name of the sub-assessment.
     :vartype display_name: str
-    :param status: Status of the sub-assessment.
-    :type status: ~azure.mgmt.security.models.SubAssessmentStatus
+    :ivar status: Status of the sub-assessment.
+    :vartype status: ~azure.mgmt.security.models.SubAssessmentStatus
     :ivar remediation: Information on how to remediate this sub-assessment.
     :vartype remediation: str
     :ivar impact: Description of the impact of this sub-assessment.
@@ -8975,10 +12226,10 @@ class SecuritySubAssessment(Resource):
     :vartype description: str
     :ivar time_generated: The date and time the sub-assessment was generated.
     :vartype time_generated: ~datetime.datetime
-    :param resource_details: Details of the resource that was assessed.
-    :type resource_details: ~azure.mgmt.security.models.ResourceDetails
-    :param additional_data: Details of the sub-assessment.
-    :type additional_data: ~azure.mgmt.security.models.AdditionalData
+    :ivar resource_details: Details of the resource that was assessed.
+    :vartype resource_details: ~azure.mgmt.security.models.ResourceDetails
+    :ivar additional_data: Details of the sub-assessment.
+    :vartype additional_data: ~azure.mgmt.security.models.AdditionalData
     """
 
     _validation = {
@@ -9018,6 +12269,14 @@ class SecuritySubAssessment(Resource):
         additional_data: Optional["AdditionalData"] = None,
         **kwargs
     ):
+        """
+        :keyword status: Status of the sub-assessment.
+        :paramtype status: ~azure.mgmt.security.models.SubAssessmentStatus
+        :keyword resource_details: Details of the resource that was assessed.
+        :paramtype resource_details: ~azure.mgmt.security.models.ResourceDetails
+        :keyword additional_data: Details of the sub-assessment.
+        :paramtype additional_data: ~azure.mgmt.security.models.AdditionalData
+        """
         super(SecuritySubAssessment, self).__init__(**kwargs)
         self.id_properties_id = None
         self.display_name = None
@@ -9056,6 +12315,8 @@ class SecuritySubAssessmentList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecuritySubAssessmentList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9076,9 +12337,9 @@ class SecurityTask(Resource):
     :vartype state: str
     :ivar creation_time_utc: The time this task was discovered in UTC.
     :vartype creation_time_utc: ~datetime.datetime
-    :param security_task_parameters: Changing set of properties, depending on the task type that is
+    :ivar security_task_parameters: Changing set of properties, depending on the task type that is
      derived from the name field.
-    :type security_task_parameters: ~azure.mgmt.security.models.SecurityTaskParameters
+    :vartype security_task_parameters: ~azure.mgmt.security.models.SecurityTaskParameters
     :ivar last_state_change_time_utc: The time this task's details were last changed in UTC.
     :vartype last_state_change_time_utc: ~datetime.datetime
     :ivar sub_state: Additional data on the state of the task.
@@ -9112,6 +12373,11 @@ class SecurityTask(Resource):
         security_task_parameters: Optional["SecurityTaskParameters"] = None,
         **kwargs
     ):
+        """
+        :keyword security_task_parameters: Changing set of properties, depending on the task type that
+         is derived from the name field.
+        :paramtype security_task_parameters: ~azure.mgmt.security.models.SecurityTaskParameters
+        """
         super(SecurityTask, self).__init__(**kwargs)
         self.state = None
         self.creation_time_utc = None
@@ -9145,6 +12411,8 @@ class SecurityTaskList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecurityTaskList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9155,9 +12423,9 @@ class SecurityTaskParameters(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, any]
     :ivar name: Name of the task type.
     :vartype name: str
     """
@@ -9177,6 +12445,11 @@ class SecurityTaskParameters(msrest.serialization.Model):
         additional_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        """
         super(SecurityTaskParameters, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.name = None
@@ -9185,17 +12458,17 @@ class SecurityTaskParameters(msrest.serialization.Model):
 class SensitivityLabel(msrest.serialization.Model):
     """The sensitivity label.
 
-    :param display_name: The name of the sensitivity label.
-    :type display_name: str
-    :param description: The description of the sensitivity label.
-    :type description: str
-    :param rank: The rank of the sensitivity label. Possible values include: "None", "Low",
+    :ivar display_name: The name of the sensitivity label.
+    :vartype display_name: str
+    :ivar description: The description of the sensitivity label.
+    :vartype description: str
+    :ivar rank: The rank of the sensitivity label. Possible values include: "None", "Low",
      "Medium", "High", "Critical".
-    :type rank: str or ~azure.mgmt.security.models.Rank
-    :param order: The order of the sensitivity label.
-    :type order: int
-    :param enabled: Indicates whether the label is enabled or not.
-    :type enabled: bool
+    :vartype rank: str or ~azure.mgmt.security.models.Rank
+    :ivar order: The order of the sensitivity label.
+    :vartype order: int
+    :ivar enabled: Indicates whether the label is enabled or not.
+    :vartype enabled: bool
     """
 
     _attribute_map = {
@@ -9216,6 +12489,19 @@ class SensitivityLabel(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword display_name: The name of the sensitivity label.
+        :paramtype display_name: str
+        :keyword description: The description of the sensitivity label.
+        :paramtype description: str
+        :keyword rank: The rank of the sensitivity label. Possible values include: "None", "Low",
+         "Medium", "High", "Critical".
+        :paramtype rank: str or ~azure.mgmt.security.models.Rank
+        :keyword order: The order of the sensitivity label.
+        :paramtype order: int
+        :keyword enabled: Indicates whether the label is enabled or not.
+        :paramtype enabled: bool
+        """
         super(SensitivityLabel, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
@@ -9260,6 +12546,8 @@ class ServerVulnerabilityAssessment(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerVulnerabilityAssessment, self).__init__(**kwargs)
         self.provisioning_state = None
 
@@ -9267,8 +12555,8 @@ class ServerVulnerabilityAssessment(Resource):
 class ServerVulnerabilityAssessmentsList(msrest.serialization.Model):
     """List of server vulnerability assessments.
 
-    :param value:
-    :type value: list[~azure.mgmt.security.models.ServerVulnerabilityAssessment]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.ServerVulnerabilityAssessment]
     """
 
     _attribute_map = {
@@ -9281,6 +12569,10 @@ class ServerVulnerabilityAssessmentsList(msrest.serialization.Model):
         value: Optional[List["ServerVulnerabilityAssessment"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.security.models.ServerVulnerabilityAssessment]
+        """
         super(ServerVulnerabilityAssessmentsList, self).__init__(**kwargs)
         self.value = value
 
@@ -9292,10 +12584,10 @@ class ServerVulnerabilityProperties(AdditionalData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param assessed_resource_type: Required. Sub-assessment resource type.Constant filled by
-     server.  Possible values include: "SqlServerVulnerability", "ContainerRegistryVulnerability",
+    :ivar assessed_resource_type: Required. Sub-assessment resource type.Constant filled by server.
+     Possible values include: "SqlServerVulnerability", "ContainerRegistryVulnerability",
      "ServerVulnerability".
-    :type assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
+    :vartype assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
     :ivar type: Vulnerability Type. e.g: Vulnerability, Potential Vulnerability, Information
      Gathered.
     :vartype type: str
@@ -9339,6 +12631,8 @@ class ServerVulnerabilityProperties(AdditionalData):
         self,
         **kwargs
     ):
+        """
+        """
         super(ServerVulnerabilityProperties, self).__init__(**kwargs)
         self.assessed_resource_type = 'ServerVulnerabilityAssessment'  # type: str
         self.type = None
@@ -9353,11 +12647,11 @@ class ServerVulnerabilityProperties(AdditionalData):
 class ServicePrincipalProperties(msrest.serialization.Model):
     """Details of the service principal.
 
-    :param application_id: Application ID of service principal.
-    :type application_id: str
-    :param secret: A secret string that the application uses to prove its identity, also can be
+    :ivar application_id: Application ID of service principal.
+    :vartype application_id: str
+    :ivar secret: A secret string that the application uses to prove its identity, also can be
      referred to as application password (write only).
-    :type secret: str
+    :vartype secret: str
     """
 
     _attribute_map = {
@@ -9372,6 +12666,13 @@ class ServicePrincipalProperties(msrest.serialization.Model):
         secret: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword application_id: Application ID of service principal.
+        :paramtype application_id: str
+        :keyword secret: A secret string that the application uses to prove its identity, also can be
+         referred to as application password (write only).
+        :paramtype secret: str
+        """
         super(ServicePrincipalProperties, self).__init__(**kwargs)
         self.application_id = application_id
         self.secret = secret
@@ -9382,8 +12683,8 @@ class SettingsList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The settings list.
-    :type value: list[~azure.mgmt.security.models.Setting]
+    :ivar value: The settings list.
+    :vartype value: list[~azure.mgmt.security.models.Setting]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -9403,6 +12704,10 @@ class SettingsList(msrest.serialization.Model):
         value: Optional[List["Setting"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The settings list.
+        :paramtype value: list[~azure.mgmt.security.models.Setting]
+        """
         super(SettingsList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -9419,27 +12724,27 @@ class Software(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param device_id: Unique identifier for the virtual machine in the service.
-    :type device_id: str
-    :param os_platform: Platform of the operating system running on the device.
-    :type os_platform: str
-    :param vendor: Name of the software vendor.
-    :type vendor: str
-    :param software_name: Name of the software product.
-    :type software_name: str
-    :param version: Version number of the software product.
-    :type version: str
-    :param end_of_support_status: End of support status. Possible values include: "None",
+    :ivar device_id: Unique identifier for the virtual machine in the service.
+    :vartype device_id: str
+    :ivar os_platform: Platform of the operating system running on the device.
+    :vartype os_platform: str
+    :ivar vendor: Name of the software vendor.
+    :vartype vendor: str
+    :ivar software_name: Name of the software product.
+    :vartype software_name: str
+    :ivar version: Version number of the software product.
+    :vartype version: str
+    :ivar end_of_support_status: End of support status. Possible values include: "None",
      "noLongerSupported", "versionNoLongerSupported", "upcomingNoLongerSupported",
      "upcomingVersionNoLongerSupported".
-    :type end_of_support_status: str or ~azure.mgmt.security.models.EndOfSupportStatus
-    :param end_of_support_date: The end of support date in case the product is upcoming end of
+    :vartype end_of_support_status: str or ~azure.mgmt.security.models.EndOfSupportStatus
+    :ivar end_of_support_date: The end of support date in case the product is upcoming end of
      support.
-    :type end_of_support_date: str
-    :param number_of_known_vulnerabilities: Number of weaknesses.
-    :type number_of_known_vulnerabilities: int
-    :param first_seen_at: First time that the software was seen in the device.
-    :type first_seen_at: str
+    :vartype end_of_support_date: str
+    :ivar number_of_known_vulnerabilities: Number of weaknesses.
+    :vartype number_of_known_vulnerabilities: int
+    :ivar first_seen_at: First time that the software was seen in the device.
+    :vartype first_seen_at: str
     """
 
     _validation = {
@@ -9477,6 +12782,29 @@ class Software(Resource):
         first_seen_at: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword device_id: Unique identifier for the virtual machine in the service.
+        :paramtype device_id: str
+        :keyword os_platform: Platform of the operating system running on the device.
+        :paramtype os_platform: str
+        :keyword vendor: Name of the software vendor.
+        :paramtype vendor: str
+        :keyword software_name: Name of the software product.
+        :paramtype software_name: str
+        :keyword version: Version number of the software product.
+        :paramtype version: str
+        :keyword end_of_support_status: End of support status. Possible values include: "None",
+         "noLongerSupported", "versionNoLongerSupported", "upcomingNoLongerSupported",
+         "upcomingVersionNoLongerSupported".
+        :paramtype end_of_support_status: str or ~azure.mgmt.security.models.EndOfSupportStatus
+        :keyword end_of_support_date: The end of support date in case the product is upcoming end of
+         support.
+        :paramtype end_of_support_date: str
+        :keyword number_of_known_vulnerabilities: Number of weaknesses.
+        :paramtype number_of_known_vulnerabilities: int
+        :keyword first_seen_at: First time that the software was seen in the device.
+        :paramtype first_seen_at: str
+        """
         super(Software, self).__init__(**kwargs)
         self.device_id = device_id
         self.os_platform = os_platform
@@ -9494,8 +12822,8 @@ class SoftwaresList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.security.models.Software]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.Software]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -9515,6 +12843,10 @@ class SoftwaresList(msrest.serialization.Model):
         value: Optional[List["Software"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.security.models.Software]
+        """
         super(SoftwaresList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -9527,10 +12859,10 @@ class SqlServerVulnerabilityProperties(AdditionalData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param assessed_resource_type: Required. Sub-assessment resource type.Constant filled by
-     server.  Possible values include: "SqlServerVulnerability", "ContainerRegistryVulnerability",
+    :ivar assessed_resource_type: Required. Sub-assessment resource type.Constant filled by server.
+     Possible values include: "SqlServerVulnerability", "ContainerRegistryVulnerability",
      "ServerVulnerability".
-    :type assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
+    :vartype assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
     :ivar type: The resource type the sub assessment refers to in its resource details.
     :vartype type: str
     :ivar query: The T-SQL query that runs on your SQL database to perform the particular check.
@@ -9553,6 +12885,8 @@ class SqlServerVulnerabilityProperties(AdditionalData):
         self,
         **kwargs
     ):
+        """
+        """
         super(SqlServerVulnerabilityProperties, self).__init__(**kwargs)
         self.assessed_resource_type = 'SqlServerVulnerability'  # type: str
         self.type = None
@@ -9594,6 +12928,8 @@ class SubAssessmentStatus(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SubAssessmentStatus, self).__init__(**kwargs)
         self.code = None
         self.cause = None
@@ -9606,9 +12942,9 @@ class SuppressionAlertsScope(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param all_of: Required. All the conditions inside need to be true in order to suppress the
+    :ivar all_of: Required. All the conditions inside need to be true in order to suppress the
      alert.
-    :type all_of: list[~azure.mgmt.security.models.ScopeElement]
+    :vartype all_of: list[~azure.mgmt.security.models.ScopeElement]
     """
 
     _validation = {
@@ -9625,6 +12961,11 @@ class SuppressionAlertsScope(msrest.serialization.Model):
         all_of: List["ScopeElement"],
         **kwargs
     ):
+        """
+        :keyword all_of: Required. All the conditions inside need to be true in order to suppress the
+         alert.
+        :paramtype all_of: list[~azure.mgmt.security.models.ScopeElement]
+        """
         super(SuppressionAlertsScope, self).__init__(**kwargs)
         self.all_of = all_of
 
@@ -9632,20 +12973,20 @@ class SuppressionAlertsScope(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.security.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.security.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.security.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.security.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -9668,6 +13009,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.security.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.security.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -9702,6 +13059,8 @@ class TopologyList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TopologyList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -9748,6 +13107,8 @@ class TopologyResource(Resource, Location):
         self,
         **kwargs
     ):
+        """
+        """
         super(TopologyResource, self).__init__(**kwargs)
         self.location = None
         self.calculated_date_time = None
@@ -9811,6 +13172,8 @@ class TopologySingleResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TopologySingleResource, self).__init__(**kwargs)
         self.resource_id = None
         self.severity = None
@@ -9843,6 +13206,8 @@ class TopologySingleResourceChild(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TopologySingleResourceChild, self).__init__(**kwargs)
         self.resource_id = None
 
@@ -9868,6 +13233,8 @@ class TopologySingleResourceParent(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TopologySingleResourceParent, self).__init__(**kwargs)
         self.resource_id = None
 
@@ -9883,16 +13250,16 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -9924,6 +13291,16 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(TwinUpdatesNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'TwinUpdatesNotInAllowedRange'  # type: str
 
@@ -9939,16 +13316,16 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Status of the custom alert.
-    :type is_enabled: bool
-    :param rule_type: Required. The type of the custom alert rule.Constant filled by server.
-    :type rule_type: str
-    :param min_threshold: Required. The minimum threshold.
-    :type min_threshold: int
-    :param max_threshold: Required. The maximum threshold.
-    :type max_threshold: int
-    :param time_window_size: Required. The time window size in iso8601 format.
-    :type time_window_size: ~datetime.timedelta
+    :ivar is_enabled: Required. Status of the custom alert.
+    :vartype is_enabled: bool
+    :ivar rule_type: Required. The type of the custom alert rule.Constant filled by server.
+    :vartype rule_type: str
+    :ivar min_threshold: Required. The minimum threshold.
+    :vartype min_threshold: int
+    :ivar max_threshold: Required. The maximum threshold.
+    :vartype max_threshold: int
+    :ivar time_window_size: Required. The time window size in iso8601 format.
+    :vartype time_window_size: ~datetime.timedelta
     """
 
     _validation = {
@@ -9980,6 +13357,16 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
         time_window_size: datetime.timedelta,
         **kwargs
     ):
+        """
+        :keyword is_enabled: Required. Status of the custom alert.
+        :paramtype is_enabled: bool
+        :keyword min_threshold: Required. The minimum threshold.
+        :paramtype min_threshold: int
+        :keyword max_threshold: Required. The maximum threshold.
+        :paramtype max_threshold: int
+        :keyword time_window_size: Required. The time window size in iso8601 format.
+        :paramtype time_window_size: ~datetime.timedelta
+        """
         super(UnauthorizedOperationsNotInAllowedRange, self).__init__(is_enabled=is_enabled, min_threshold=min_threshold, max_threshold=max_threshold, time_window_size=time_window_size, **kwargs)
         self.rule_type = 'UnauthorizedOperationsNotInAllowedRange'  # type: str
 
@@ -9987,14 +13374,13 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
 class UpdateIotSecuritySolutionData(TagsResource):
     """UpdateIotSecuritySolutionData.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param user_defined_resources: Properties of the IoT Security solution's user defined
-     resources.
-    :type user_defined_resources: ~azure.mgmt.security.models.UserDefinedResourcesProperties
-    :param recommendations_configuration: List of the configuration status for each recommendation
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar user_defined_resources: Properties of the IoT Security solution's user defined resources.
+    :vartype user_defined_resources: ~azure.mgmt.security.models.UserDefinedResourcesProperties
+    :ivar recommendations_configuration: List of the configuration status for each recommendation
      type.
-    :type recommendations_configuration:
+    :vartype recommendations_configuration:
      list[~azure.mgmt.security.models.RecommendationConfigurationProperties]
     """
 
@@ -10012,6 +13398,17 @@ class UpdateIotSecuritySolutionData(TagsResource):
         recommendations_configuration: Optional[List["RecommendationConfigurationProperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword user_defined_resources: Properties of the IoT Security solution's user defined
+         resources.
+        :paramtype user_defined_resources: ~azure.mgmt.security.models.UserDefinedResourcesProperties
+        :keyword recommendations_configuration: List of the configuration status for each
+         recommendation type.
+        :paramtype recommendations_configuration:
+         list[~azure.mgmt.security.models.RecommendationConfigurationProperties]
+        """
         super(UpdateIotSecuritySolutionData, self).__init__(tags=tags, **kwargs)
         self.user_defined_resources = user_defined_resources
         self.recommendations_configuration = recommendations_configuration
@@ -10022,12 +13419,12 @@ class UserDefinedResourcesProperties(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param query: Required. Azure Resource Graph query which represents the security solution's
-     user defined resources. Required to start with "where type != "Microsoft.Devices/IotHubs"".
-    :type query: str
-    :param query_subscriptions: Required. List of Azure subscription ids on which the user defined
+    :ivar query: Required. Azure Resource Graph query which represents the security solution's user
+     defined resources. Required to start with "where type != "Microsoft.Devices/IotHubs"".
+    :vartype query: str
+    :ivar query_subscriptions: Required. List of Azure subscription ids on which the user defined
      resources query should be executed.
-    :type query_subscriptions: list[str]
+    :vartype query_subscriptions: list[str]
     """
 
     _validation = {
@@ -10047,6 +13444,14 @@ class UserDefinedResourcesProperties(msrest.serialization.Model):
         query_subscriptions: List[str],
         **kwargs
     ):
+        """
+        :keyword query: Required. Azure Resource Graph query which represents the security solution's
+         user defined resources. Required to start with "where type != "Microsoft.Devices/IotHubs"".
+        :paramtype query: str
+        :keyword query_subscriptions: Required. List of Azure subscription ids on which the user
+         defined resources query should be executed.
+        :paramtype query_subscriptions: list[str]
+        """
         super(UserDefinedResourcesProperties, self).__init__(**kwargs)
         self.query = query
         self.query_subscriptions = query_subscriptions
@@ -10055,11 +13460,11 @@ class UserDefinedResourcesProperties(msrest.serialization.Model):
 class UserRecommendation(msrest.serialization.Model):
     """Represents a user that is recommended to be allowed for a certain rule.
 
-    :param username: Represents a user that is recommended to be allowed for a certain rule.
-    :type username: str
-    :param recommendation_action: The recommendation action of the machine or rule. Possible values
+    :ivar username: Represents a user that is recommended to be allowed for a certain rule.
+    :vartype username: str
+    :ivar recommendation_action: The recommendation action of the machine or rule. Possible values
      include: "Recommended", "Add", "Remove".
-    :type recommendation_action: str or ~azure.mgmt.security.models.RecommendationAction
+    :vartype recommendation_action: str or ~azure.mgmt.security.models.RecommendationAction
     """
 
     _attribute_map = {
@@ -10074,6 +13479,13 @@ class UserRecommendation(msrest.serialization.Model):
         recommendation_action: Optional[Union[str, "RecommendationAction"]] = None,
         **kwargs
     ):
+        """
+        :keyword username: Represents a user that is recommended to be allowed for a certain rule.
+        :paramtype username: str
+        :keyword recommendation_action: The recommendation action of the machine or rule. Possible
+         values include: "Recommended", "Add", "Remove".
+        :paramtype recommendation_action: str or ~azure.mgmt.security.models.RecommendationAction
+        """
         super(UserRecommendation, self).__init__(**kwargs)
         self.username = username
         self.recommendation_action = recommendation_action
@@ -10082,26 +13494,26 @@ class UserRecommendation(msrest.serialization.Model):
 class VaRule(msrest.serialization.Model):
     """vulnerability assessment rule metadata details.
 
-    :param rule_id: The rule Id.
-    :type rule_id: str
-    :param severity: The rule severity. Possible values include: "High", "Medium", "Low",
+    :ivar rule_id: The rule Id.
+    :vartype rule_id: str
+    :ivar severity: The rule severity. Possible values include: "High", "Medium", "Low",
      "Informational", "Obsolete".
-    :type severity: str or ~azure.mgmt.security.models.RuleSeverity
-    :param category: The rule category.
-    :type category: str
-    :param rule_type: The rule type. Possible values include: "Binary", "BaselineExpected",
+    :vartype severity: str or ~azure.mgmt.security.models.RuleSeverity
+    :ivar category: The rule category.
+    :vartype category: str
+    :ivar rule_type: The rule type. Possible values include: "Binary", "BaselineExpected",
      "PositiveList", "NegativeList".
-    :type rule_type: str or ~azure.mgmt.security.models.RuleType
-    :param title: The rule title.
-    :type title: str
-    :param description: The rule description.
-    :type description: str
-    :param rationale: The rule rationale.
-    :type rationale: str
-    :param query_check: The rule query details.
-    :type query_check: ~azure.mgmt.security.models.QueryCheck
-    :param benchmark_references: The benchmark references.
-    :type benchmark_references: list[~azure.mgmt.security.models.BenchmarkReference]
+    :vartype rule_type: str or ~azure.mgmt.security.models.RuleType
+    :ivar title: The rule title.
+    :vartype title: str
+    :ivar description: The rule description.
+    :vartype description: str
+    :ivar rationale: The rule rationale.
+    :vartype rationale: str
+    :ivar query_check: The rule query details.
+    :vartype query_check: ~azure.mgmt.security.models.QueryCheck
+    :ivar benchmark_references: The benchmark references.
+    :vartype benchmark_references: list[~azure.mgmt.security.models.BenchmarkReference]
     """
 
     _attribute_map = {
@@ -10130,6 +13542,28 @@ class VaRule(msrest.serialization.Model):
         benchmark_references: Optional[List["BenchmarkReference"]] = None,
         **kwargs
     ):
+        """
+        :keyword rule_id: The rule Id.
+        :paramtype rule_id: str
+        :keyword severity: The rule severity. Possible values include: "High", "Medium", "Low",
+         "Informational", "Obsolete".
+        :paramtype severity: str or ~azure.mgmt.security.models.RuleSeverity
+        :keyword category: The rule category.
+        :paramtype category: str
+        :keyword rule_type: The rule type. Possible values include: "Binary", "BaselineExpected",
+         "PositiveList", "NegativeList".
+        :paramtype rule_type: str or ~azure.mgmt.security.models.RuleType
+        :keyword title: The rule title.
+        :paramtype title: str
+        :keyword description: The rule description.
+        :paramtype description: str
+        :keyword rationale: The rule rationale.
+        :paramtype rationale: str
+        :keyword query_check: The rule query details.
+        :paramtype query_check: ~azure.mgmt.security.models.QueryCheck
+        :keyword benchmark_references: The benchmark references.
+        :paramtype benchmark_references: list[~azure.mgmt.security.models.BenchmarkReference]
+        """
         super(VaRule, self).__init__(**kwargs)
         self.rule_id = rule_id
         self.severity = severity
@@ -10167,6 +13601,8 @@ class VendorReference(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(VendorReference, self).__init__(**kwargs)
         self.title = None
         self.link = None
@@ -10175,17 +13611,17 @@ class VendorReference(msrest.serialization.Model):
 class VmRecommendation(msrest.serialization.Model):
     """Represents a machine that is part of a machine group.
 
-    :param configuration_status: The configuration status of the machines group or machine or rule.
+    :ivar configuration_status: The configuration status of the machines group or machine or rule.
      Possible values include: "Configured", "NotConfigured", "InProgress", "Failed", "NoStatus".
-    :type configuration_status: str or ~azure.mgmt.security.models.ConfigurationStatus
-    :param recommendation_action: The recommendation action of the machine or rule. Possible values
+    :vartype configuration_status: str or ~azure.mgmt.security.models.ConfigurationStatus
+    :ivar recommendation_action: The recommendation action of the machine or rule. Possible values
      include: "Recommended", "Add", "Remove".
-    :type recommendation_action: str or ~azure.mgmt.security.models.RecommendationAction
-    :param resource_id: The full resource id of the machine.
-    :type resource_id: str
-    :param enforcement_support: The machine supportability of Enforce feature. Possible values
+    :vartype recommendation_action: str or ~azure.mgmt.security.models.RecommendationAction
+    :ivar resource_id: The full resource id of the machine.
+    :vartype resource_id: str
+    :ivar enforcement_support: The machine supportability of Enforce feature. Possible values
      include: "Supported", "NotSupported", "Unknown".
-    :type enforcement_support: str or ~azure.mgmt.security.models.EnforcementSupport
+    :vartype enforcement_support: str or ~azure.mgmt.security.models.EnforcementSupport
     """
 
     _attribute_map = {
@@ -10204,6 +13640,20 @@ class VmRecommendation(msrest.serialization.Model):
         enforcement_support: Optional[Union[str, "EnforcementSupport"]] = None,
         **kwargs
     ):
+        """
+        :keyword configuration_status: The configuration status of the machines group or machine or
+         rule. Possible values include: "Configured", "NotConfigured", "InProgress", "Failed",
+         "NoStatus".
+        :paramtype configuration_status: str or ~azure.mgmt.security.models.ConfigurationStatus
+        :keyword recommendation_action: The recommendation action of the machine or rule. Possible
+         values include: "Recommended", "Add", "Remove".
+        :paramtype recommendation_action: str or ~azure.mgmt.security.models.RecommendationAction
+        :keyword resource_id: The full resource id of the machine.
+        :paramtype resource_id: str
+        :keyword enforcement_support: The machine supportability of Enforce feature. Possible values
+         include: "Supported", "NotSupported", "Unknown".
+        :paramtype enforcement_support: str or ~azure.mgmt.security.models.EnforcementSupport
+        """
         super(VmRecommendation, self).__init__(**kwargs)
         self.configuration_status = configuration_status
         self.recommendation_action = recommendation_action
@@ -10222,11 +13672,11 @@ class WorkspaceSetting(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param workspace_id: The full Azure ID of the workspace to save the data in.
-    :type workspace_id: str
-    :param scope: All the VMs in this scope will send their security data to the mentioned
-     workspace unless overridden by a setting with more specific scope.
-    :type scope: str
+    :ivar workspace_id: The full Azure ID of the workspace to save the data in.
+    :vartype workspace_id: str
+    :ivar scope: All the VMs in this scope will send their security data to the mentioned workspace
+     unless overridden by a setting with more specific scope.
+    :vartype scope: str
     """
 
     _validation = {
@@ -10250,6 +13700,13 @@ class WorkspaceSetting(Resource):
         scope: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword workspace_id: The full Azure ID of the workspace to save the data in.
+        :paramtype workspace_id: str
+        :keyword scope: All the VMs in this scope will send their security data to the mentioned
+         workspace unless overridden by a setting with more specific scope.
+        :paramtype scope: str
+        """
         super(WorkspaceSetting, self).__init__(**kwargs)
         self.workspace_id = workspace_id
         self.scope = scope
@@ -10262,8 +13719,8 @@ class WorkspaceSettingList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of workspace settings.
-    :type value: list[~azure.mgmt.security.models.WorkspaceSetting]
+    :ivar value: Required. List of workspace settings.
+    :vartype value: list[~azure.mgmt.security.models.WorkspaceSetting]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
     """
@@ -10284,6 +13741,10 @@ class WorkspaceSettingList(msrest.serialization.Model):
         value: List["WorkspaceSetting"],
         **kwargs
     ):
+        """
+        :keyword value: Required. List of workspace settings.
+        :paramtype value: list[~azure.mgmt.security.models.WorkspaceSetting]
+        """
         super(WorkspaceSettingList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
