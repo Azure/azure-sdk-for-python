@@ -242,6 +242,7 @@
     "parameterizing",
     "pytz",
     "pywin",
+    "pyversion",
     "RAGRS",
     "rdbms",
     "reauthenticated",
