@@ -34,8 +34,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy_async
     async def test_async_mgmt_queue_list_basic(self, servicebus_connection_str,
-                                                        servicebus_fully_qualified_namespace, servicebus_fully_qualified_namespace_key_name,
-                                                        servicebus_fully_qualified_namespace_primary_key):
+                                                        servicebus_fully_qualified_namespace, servicebus_sas_policy,
+                                                        servicebus_sas_key):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_queues(mgmt_service)
         queues = await async_pageable_to_list(mgmt_service.list_queues())
@@ -47,19 +47,19 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         assert len(queues) == 0
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
-        mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace,
-            credential=ServiceBusSharedKeyCredential(servicebus_fully_qualified_namespace_key_name, servicebus_fully_qualified_namespace_primary_key)
-        )
-        queues = await async_pageable_to_list(mgmt_service.list_queues())
-        assert len(queues) == 0
-        await mgmt_service.create_queue("test_queue")
-        queues = await async_pageable_to_list(mgmt_service.list_queues())
-        assert len(queues) == 1 and queues[0].name == "test_queue"
-        await mgmt_service.delete_queue("test_queue")
-        queues = await async_pageable_to_list(mgmt_service.list_queues())
-        assert len(queues) == 0
+        # fully_qualified_namespace = servicebus_fully_qualified_namespace
+        # mgmt_service = ServiceBusAdministrationClient(
+        #     fully_qualified_namespace,
+        #     credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
+        # )
+        # queues = await async_pageable_to_list(mgmt_service.list_queues())
+        # assert len(queues) == 0
+        # await mgmt_service.create_queue("test_queue")
+        # queues = await async_pageable_to_list(mgmt_service.list_queues())
+        # assert len(queues) == 1 and queues[0].name == "test_queue"
+        # await mgmt_service.delete_queue("test_queue")
+        # queues = await async_pageable_to_list(mgmt_service.list_queues())
+        # assert len(queues) == 0
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
@@ -86,8 +86,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_list_with_negative_credential(self, servicebus_fully_qualified_namespace, servicebus_fully_qualified_namespace_key_name,
-                                                        servicebus_fully_qualified_namespace_primary_key):
+    async def test_async_mgmt_queue_list_with_negative_credential(self, servicebus_fully_qualified_namespace, servicebus_sas_policy,
+                                                        servicebus_sas_key):
         # invalid_conn_str = 'Endpoint=sb://invalid.servicebus.windows.net/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'
         # mgmt_service = ServiceBusAdministrationClient.from_connection_string(invalid_conn_str)
         # with pytest.raises(ServiceRequestError):
@@ -101,7 +101,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         # fully_qualified_namespace = 'invalid.servicebus.windows.net'
         # mgmt_service = ServiceBusAdministrationClient(
         #     fully_qualified_namespace,
-        #     credential=ServiceBusSharedKeyCredential(servicebus_fully_qualified_namespace_key_name, servicebus_fully_qualified_namespace_primary_key)
+        #     credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key)
         # )
         # with pytest.raises(ServiceRequestError):
         #     await async_pageable_to_list(mgmt_service.list_queues())
@@ -765,8 +765,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy_async
     async def test_async_mgmt_queue_basic_v2017_04(self, servicebus_connection_str,
-                                                        servicebus_fully_qualified_namespace, servicebus_fully_qualified_namespace_key_name,
-                                                        servicebus_fully_qualified_namespace_primary_key):
+                                                        servicebus_fully_qualified_namespace, servicebus_sas_key,
+                                                        servicebus_sas_policy):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str, api_version=ApiVersion.V2017_04)
         await clear_queues(mgmt_service)
 
@@ -782,20 +782,20 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         with pytest.raises(HttpResponseError):
             await mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
-        mgmt_service = ServiceBusAdministrationClient(
-            fully_qualified_namespace,
-            credential=ServiceBusSharedKeyCredential(servicebus_fully_qualified_namespace_key_name, servicebus_fully_qualified_namespace_primary_key),
-            api_version=ApiVersion.V2017_04
-        )
-        await mgmt_service.create_queue("test_queue")
-        queues = await async_pageable_to_list(mgmt_service.list_queues())
-        assert len(queues) == 1 and queues[0].name == "test_queue"
-        queue = await mgmt_service.get_queue("test_queue")
-        assert queue.name == "test_queue"
-        await mgmt_service.delete_queue("test_queue")
-        queues = await async_pageable_to_list(mgmt_service.list_queues())
-        assert len(queues) == 0
+        # fully_qualified_namespace = servicebus_fully_qualified_namespace
+        # mgmt_service = ServiceBusAdministrationClient(
+        #     fully_qualified_namespace,
+        #     credential=ServiceBusSharedKeyCredential(servicebus_sas_policy, servicebus_sas_key),
+        #     api_version=ApiVersion.V2017_04
+        # )
+        # await mgmt_service.create_queue("test_queue")
+        # queues = await async_pageable_to_list(mgmt_service.list_queues())
+        # assert len(queues) == 1 and queues[0].name == "test_queue"
+        # queue = await mgmt_service.get_queue("test_queue")
+        # assert queue.name == "test_queue"
+        # await mgmt_service.delete_queue("test_queue")
+        # queues = await async_pageable_to_list(mgmt_service.list_queues())
+        # assert len(queues) == 0
 
-        with pytest.raises(HttpResponseError):
-            await mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
+        # with pytest.raises(HttpResponseError):
+        #     await mgmt_service.create_queue("queue_can_not_be_created", max_message_size_in_kilobytes=1024)
