@@ -15,10 +15,11 @@ from .._generated.models import (
     SearchIndexerDataSource as _SearchIndexerDataSource,
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
-    AzureActiveDirectoryApplicationCredentials
+    AzureActiveDirectoryApplicationCredentials,
 )
 
 DELIMITER = "|"
+
 
 class AnalyzeTextOptions(msrest.serialization.Model):
     """Specifies some text and analysis components used to break that text into tokens.
@@ -62,27 +63,24 @@ class AnalyzeTextOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
+        "text": {"required": True},
     }
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'analyzer_name': {'key': 'analyzerName', 'type': 'str'},
-        'tokenizer_name': {'key': 'tokenizerName', 'type': 'str'},
-        'token_filters': {'key': 'tokenFilters', 'type': '[str]'},
-        'char_filters': {'key': 'charFilters', 'type': '[str]'},
+        "text": {"key": "text", "type": "str"},
+        "analyzer_name": {"key": "analyzerName", "type": "str"},
+        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
+        "token_filters": {"key": "tokenFilters", "type": "[str]"},
+        "char_filters": {"key": "charFilters", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AnalyzeTextOptions, self).__init__(**kwargs)
-        self.text = kwargs['text']
-        self.analyzer_name = kwargs.get('analyzer_name', None)
-        self.tokenizer_name = kwargs.get('tokenizer_name', None)
-        self.token_filters = kwargs.get('token_filters', None)
-        self.char_filters = kwargs.get('char_filters', None)
+        self.text = kwargs["text"]
+        self.analyzer_name = kwargs.get("analyzer_name", None)
+        self.tokenizer_name = kwargs.get("tokenizer_name", None)
+        self.token_filters = kwargs.get("token_filters", None)
+        self.char_filters = kwargs.get("char_filters", None)
 
     def _to_analyze_request(self):
         return AnalyzeRequest(
@@ -90,7 +88,7 @@ class AnalyzeTextOptions(msrest.serialization.Model):
             analyzer=self.analyzer_name,
             tokenizer=self.tokenizer_name,
             token_filters=self.token_filters,
-            char_filters=self.char_filters
+            char_filters=self.char_filters,
         )
 
 
@@ -126,28 +124,25 @@ class CustomAnalyzer(LexicalAnalyzer):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'name': {'required': True},
-        'tokenizer_name': {'required': True},
+        "odata_type": {"required": True},
+        "name": {"required": True},
+        "tokenizer_name": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tokenizer_name': {'key': 'tokenizerName', 'type': 'str'},
-        'token_filters': {'key': 'tokenFilters', 'type': '[str]'},
-        'char_filters': {'key': 'charFilters', 'type': '[str]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
+        "token_filters": {"key": "tokenFilters", "type": "[str]"},
+        "char_filters": {"key": "charFilters", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CustomAnalyzer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.CustomAnalyzer'
-        self.tokenizer_name = kwargs['tokenizer_name']
-        self.token_filters = kwargs.get('token_filters', None)
-        self.char_filters = kwargs.get('char_filters', None)
+        self.odata_type = "#Microsoft.Azure.Search.CustomAnalyzer"
+        self.tokenizer_name = kwargs["tokenizer_name"]
+        self.token_filters = kwargs.get("token_filters", None)
+        self.char_filters = kwargs.get("char_filters", None)
 
     def _to_generated(self):
         return _CustomAnalyzer(
@@ -155,7 +150,7 @@ class CustomAnalyzer(LexicalAnalyzer):
             odata_type=self.odata_type,
             tokenizer=self.tokenizer_name,
             token_filters=self.token_filters,
-            char_filters=self.char_filters
+            char_filters=self.char_filters,
         )
 
     @classmethod
@@ -167,8 +162,9 @@ class CustomAnalyzer(LexicalAnalyzer):
             odata_type=custom_analyzer.odata_type,
             tokenizer_name=custom_analyzer.tokenizer,
             token_filters=custom_analyzer.token_filters,
-            char_filters=custom_analyzer.char_filters
+            char_filters=custom_analyzer.char_filters,
         )
+
 
 class PatternAnalyzer(LexicalAnalyzer):
     """Flexibly separates text into terms via a regular expression.
@@ -241,6 +237,7 @@ class PatternAnalyzer(LexicalAnalyzer):
             stopwords=pattern_analyzer.stopwords,
         )
 
+
 class PatternTokenizer(LexicalTokenizer):
     """Tokenizer that uses regex pattern matching to construct distinct tokens.
     This tokenizer is implemented using Apache Lucene.
@@ -307,6 +304,7 @@ class PatternTokenizer(LexicalTokenizer):
             group=pattern_tokenizer.group,
         )
 
+
 class SearchResourceEncryptionKey(msrest.serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
@@ -332,35 +330,31 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_name': {'required': True},
-        'key_version': {'required': True},
-        'vault_uri': {'required': True},
+        "key_name": {"required": True},
+        "key_version": {"required": True},
+        "vault_uri": {"required": True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyVaultKeyName', 'type': 'str'},
-        'key_version': {'key': 'keyVaultKeyVersion', 'type': 'str'},
-        'vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
-        'application_id': {'key': 'applicationId', 'type': 'str'},
-        'application_secret': {'key': 'applicationSecret', 'type': 'str'},
+        "key_name": {"key": "keyVaultKeyName", "type": "str"},
+        "key_version": {"key": "keyVaultKeyVersion", "type": "str"},
+        "vault_uri": {"key": "keyVaultUri", "type": "str"},
+        "application_id": {"key": "applicationId", "type": "str"},
+        "application_secret": {"key": "applicationSecret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SearchResourceEncryptionKey, self).__init__(**kwargs)
-        self.key_name = kwargs['key_name']
-        self.key_version = kwargs['key_version']
-        self.vault_uri = kwargs['vault_uri']
-        self.application_id = kwargs.get('application_id', None)
-        self.application_secret = kwargs.get('application_secret', None)
+        self.key_name = kwargs["key_name"]
+        self.key_version = kwargs["key_version"]
+        self.vault_uri = kwargs["vault_uri"]
+        self.application_id = kwargs.get("application_id", None)
+        self.application_secret = kwargs.get("application_secret", None)
 
     def _to_generated(self):
         if self.application_id and self.application_secret:
             access_credentials = AzureActiveDirectoryApplicationCredentials(
-                application_id=self.application_id,
-                application_secret=self.application_secret
+                application_id=self.application_id, application_secret=self.application_secret
             )
         else:
             access_credentials = None
@@ -368,7 +362,7 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
             key_name=self.key_name,
             key_version=self.key_version,
             vault_uri=self.vault_uri,
-            access_credentials=access_credentials
+            access_credentials=access_credentials,
         )
 
     @classmethod
@@ -386,8 +380,9 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
             key_version=search_resource_encryption_key.key_version,
             vault_uri=search_resource_encryption_key.vault_uri,
             application_id=application_id,
-            application_secret=application_secret
+            application_secret=application_secret,
         )
+
 
 class SynonymMap(msrest.serialization.Model):
     """Represents a synonym map definition.
@@ -418,37 +413,34 @@ class SynonymMap(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'format': {'required': True, 'constant': True},
-        'synonyms': {'required': True},
+        "name": {"required": True},
+        "format": {"required": True, "constant": True},
+        "synonyms": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'format': {'key': 'format', 'type': 'str'},
-        'synonyms': {'key': 'synonyms', 'type': '[str]'},
-        'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
-        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "format": {"key": "format", "type": "str"},
+        "synonyms": {"key": "synonyms", "type": "[str]"},
+        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "e_tag": {"key": "@odata\\.etag", "type": "str"},
     }
 
     format = "solr"
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SynonymMap, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.synonyms = kwargs['synonyms']
-        self.encryption_key = kwargs.get('encryption_key', None)
-        self.e_tag = kwargs.get('e_tag', None)
+        self.name = kwargs["name"]
+        self.synonyms = kwargs["synonyms"]
+        self.encryption_key = kwargs.get("encryption_key", None)
+        self.e_tag = kwargs.get("e_tag", None)
 
     def _to_generated(self):
         return _SynonymMap(
             name=self.name,
             synonyms="\n".join(self.synonyms),
-            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None, # pylint:disable=protected-access
-            e_tag=self.e_tag
+            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,  # pylint:disable=protected-access
+            e_tag=self.e_tag,
         )
 
     @classmethod
@@ -460,8 +452,9 @@ class SynonymMap(msrest.serialization.Model):
             synonyms=synonym_map.synonyms.split("\n"),
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
-            e_tag=synonym_map.e_tag
+            e_tag=synonym_map.e_tag,
         )
+
 
 class SearchIndexerDataSourceConnection(msrest.serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.
@@ -489,45 +482,40 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
-        'connection_string': {'required': True},
-        'container': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
+        "connection_string": {"required": True},
+        "container": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'container': {'key': 'container', 'type': 'SearchIndexerDataContainer'},
-        'data_change_detection_policy': {'key': 'dataChangeDetectionPolicy', 'type': 'DataChangeDetectionPolicy'},
-        'data_deletion_detection_policy': {'key': 'dataDeletionDetectionPolicy', 'type': 'DataDeletionDetectionPolicy'},
-        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "container": {"key": "container", "type": "SearchIndexerDataContainer"},
+        "data_change_detection_policy": {"key": "dataChangeDetectionPolicy", "type": "DataChangeDetectionPolicy"},
+        "data_deletion_detection_policy": {"key": "dataDeletionDetectionPolicy", "type": "DataDeletionDetectionPolicy"},
+        "e_tag": {"key": "@odata\\.etag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SearchIndexerDataSourceConnection, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.description = kwargs.get('description', None)
-        self.type = kwargs['type']
-        self.connection_string = kwargs['connection_string']
-        self.container = kwargs['container']
-        self.data_change_detection_policy = kwargs.get('data_change_detection_policy', None)
-        self.data_deletion_detection_policy = kwargs.get('data_deletion_detection_policy', None)
-        self.e_tag = kwargs.get('e_tag', None)
+        self.name = kwargs["name"]
+        self.description = kwargs.get("description", None)
+        self.type = kwargs["type"]
+        self.connection_string = kwargs["connection_string"]
+        self.container = kwargs["container"]
+        self.data_change_detection_policy = kwargs.get("data_change_detection_policy", None)
+        self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
+        self.e_tag = kwargs.get("e_tag", None)
 
     def _to_generated(self):
         if self.connection_string is None or self.connection_string == "":
             connection_string = "<unchanged>"
         else:
             connection_string = self.connection_string
-        credentials = DataSourceCredentials(
-            connection_string=connection_string
-        )
+        credentials = DataSourceCredentials(connection_string=connection_string)
         return _SearchIndexerDataSource(
             name=self.name,
             description=self.description,
@@ -536,15 +524,16 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             container=self.container,
             data_change_detection_policy=self.data_change_detection_policy,
             data_deletion_detection_policy=self.data_deletion_detection_policy,
-            e_tag=self.e_tag
+            e_tag=self.e_tag,
         )
 
     @classmethod
     def _from_generated(cls, search_indexer_data_source):
         if not search_indexer_data_source:
             return None
-        connection_string = search_indexer_data_source.credentials.connection_string \
-            if search_indexer_data_source.credentials else None
+        connection_string = (
+            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
+        )
         return cls(
             name=search_indexer_data_source.name,
             description=search_indexer_data_source.description,
@@ -553,15 +542,14 @@ class SearchIndexerDataSourceConnection(msrest.serialization.Model):
             container=search_indexer_data_source.container,
             data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
-            e_tag=search_indexer_data_source.e_tag
+            e_tag=search_indexer_data_source.e_tag,
         )
-
 
 def pack_analyzer(analyzer):
     if not analyzer:
         return None
     if isinstance(analyzer, (PatternAnalyzer, CustomAnalyzer)):
-        return analyzer._to_generated() # pylint:disable=protected-access
+        return analyzer._to_generated()  # pylint:disable=protected-access
     return analyzer
 
 
@@ -569,7 +557,7 @@ def unpack_analyzer(analyzer):
     if not analyzer:
         return None
     if isinstance(analyzer, _PatternAnalyzer):
-        return PatternAnalyzer._from_generated(analyzer)    # pylint:disable=protected-access
+        return PatternAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
     if isinstance(analyzer, _CustomAnalyzer):
-        return CustomAnalyzer._from_generated(analyzer) # pylint:disable=protected-access
+        return CustomAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
     return analyzer
