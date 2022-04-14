@@ -178,7 +178,7 @@ def add_sanitizers(test_proxy):
             real = urlparse(arm_url)
             add_general_regex_sanitizer(regex=real.netloc, value="management.azure.com")
             add_general_regex_sanitizer(regex=os.environ["CAE_TENANT_ID"], value="tenant")
-            add_general_regex_sanitizer(regex=os.environ.get("CAE_USERNAME"), value="username")
+            add_general_regex_sanitizer(regex=os.environ["CAE_USERNAME"], value="username")
         except Exception:
             pass
     if "OBO_TENANT_ID" in os.environ and "OBO_USERNAME" in os.environ:
