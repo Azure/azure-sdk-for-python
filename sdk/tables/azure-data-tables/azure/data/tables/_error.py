@@ -236,8 +236,8 @@ class TableTransactionError(HttpResponseError):
 class RequestTooLargeError(TableTransactionError):
     """An error response with status code 413 - Request Entity Too Large"""
 
-
-class TableErrorCode(str, Enum):
+# pylint: disable=enum-must-be-uppercase
+class TableErrorCode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     # Generic storage values
     account_already_exists = "AccountAlreadyExists"
     account_being_created = "AccountBeingCreated"
