@@ -8,6 +8,7 @@
 
 from typing import Any, Iterable, List
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 from collections import namedtuple
 from ._generated.v2022_06_30_preview.models import ModelInfo, Error
 from ._helpers import (
@@ -150,7 +151,7 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_country_region
     return None
 
-class DocumentBuildMode(str, Enum):
+class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used when building custom models.
 
     For more information, see https://aka.ms/azsdk/formrecognizer/buildmode.
@@ -160,7 +161,7 @@ class DocumentBuildMode(str, Enum):
     TEMPLATE = "template"
 
 
-class FieldValueType(str, Enum):
+class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic data type of the field value.
 
     .. versionadded:: v2.1
@@ -179,7 +180,7 @@ class FieldValueType(str, Enum):
     COUNTRY_REGION = "countryRegion"
 
 
-class LengthUnit(str, Enum):
+class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height and bounding box properties.
     For images, the unit is "pixel". For PDF, the unit is "inch".
     """
@@ -188,7 +189,7 @@ class LengthUnit(str, Enum):
     INCH = "inch"
 
 
-class TrainingStatus(str, Enum):
+class TrainingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the training operation."""
 
     SUCCEEDED = "succeeded"
@@ -196,7 +197,7 @@ class TrainingStatus(str, Enum):
     FAILED = "failed"
 
 
-class CustomFormModelStatus(str, Enum):
+class CustomFormModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status indicating the model's readiness for use."""
 
     CREATING = "creating"
@@ -204,7 +205,7 @@ class CustomFormModelStatus(str, Enum):
     INVALID = "invalid"
 
 
-class FormContentType(str, Enum):
+class FormContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload.
 
     .. versionadded:: v2.1
