@@ -18,10 +18,10 @@ class CheckNameAvailability(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The Name to check the namespace name availability and The namespace name
+    :ivar name: Required. The Name to check the namespace name availability and The namespace name
      can contain only letters, numbers, and hyphens. The namespace must start with a letter, and it
      must end with a letter or number.
-    :type name: str
+    :vartype name: str
     """
 
     _validation = {
@@ -38,6 +38,12 @@ class CheckNameAvailability(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. The Name to check the namespace name availability and The namespace
+         name can contain only letters, numbers, and hyphens. The namespace must start with a letter,
+         and it must end with a letter or number.
+        :paramtype name: str
+        """
         super(CheckNameAvailability, self).__init__(**kwargs)
         self.name = name
 
@@ -47,13 +53,13 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name_available: Value indicating namespace is availability, true if the namespace is
+    :ivar name_available: Value indicating namespace is availability, true if the namespace is
      available; otherwise, false.
-    :type name_available: bool
-    :param reason: The reason for unavailability of a namespace. Possible values include: "None",
+    :vartype name_available: bool
+    :ivar reason: The reason for unavailability of a namespace. Possible values include: "None",
      "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
      "TooManyNamespaceInCurrentSubscription".
-    :type reason: str or ~azure.mgmt.servicebus.v2015_08_01.models.UnavailableReason
+    :vartype reason: str or ~azure.mgmt.servicebus.v2015_08_01.models.UnavailableReason
     :ivar message: The detailed info regarding the reason associated with the namespace.
     :vartype message: str
     """
@@ -75,6 +81,15 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         reason: Optional[Union[str, "UnavailableReason"]] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Value indicating namespace is availability, true if the namespace is
+         available; otherwise, false.
+        :paramtype name_available: bool
+        :keyword reason: The reason for unavailability of a namespace. Possible values include: "None",
+         "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+         "TooManyNamespaceInCurrentSubscription".
+        :paramtype reason: str or ~azure.mgmt.servicebus.v2015_08_01.models.UnavailableReason
+        """
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
@@ -119,6 +134,8 @@ class MessageCountDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(MessageCountDetails, self).__init__(**kwargs)
         self.active_message_count = None
         self.dead_letter_message_count = None
@@ -134,28 +151,28 @@ class NamespaceCreateOrUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. Namespace location.
-    :type location: str
-    :param sku: SKU of the namespace.
-    :type sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
-    :param tags: A set of tags. Namespace tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Namespace location.
+    :vartype location: str
+    :ivar sku: SKU of the namespace.
+    :vartype sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
+    :ivar tags: A set of tags. Namespace tags.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
-    :param status: State of the namespace. Possible values include: "Unknown", "Creating",
+    :ivar status: State of the namespace. Possible values include: "Unknown", "Creating",
      "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
      "SoftDeleted", "Removing", "Removed", "Failed".
-    :type status: str or ~azure.mgmt.servicebus.v2015_08_01.models.NamespaceState
+    :vartype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.NamespaceState
     :ivar created_at: The time the namespace was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The time the namespace was updated.
     :vartype updated_at: ~datetime.datetime
     :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
     :vartype service_bus_endpoint: str
-    :param create_acs_namespace: Indicates whether to create an ACS namespace.
-    :type create_acs_namespace: bool
-    :param enabled: Specifies whether this instance is enabled.
-    :type enabled: bool
+    :ivar create_acs_namespace: Indicates whether to create an ACS namespace.
+    :vartype create_acs_namespace: bool
+    :ivar enabled: Specifies whether this instance is enabled.
+    :vartype enabled: bool
     """
 
     _validation = {
@@ -190,6 +207,22 @@ class NamespaceCreateOrUpdateParameters(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Namespace location.
+        :paramtype location: str
+        :keyword sku: SKU of the namespace.
+        :paramtype sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
+        :keyword tags: A set of tags. Namespace tags.
+        :paramtype tags: dict[str, str]
+        :keyword status: State of the namespace. Possible values include: "Unknown", "Creating",
+         "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
+         "SoftDeleted", "Removing", "Removed", "Failed".
+        :paramtype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.NamespaceState
+        :keyword create_acs_namespace: Indicates whether to create an ACS namespace.
+        :paramtype create_acs_namespace: bool
+        :keyword enabled: Specifies whether this instance is enabled.
+        :paramtype enabled: bool
+        """
         super(NamespaceCreateOrUpdateParameters, self).__init__(**kwargs)
         self.location = location
         self.sku = sku
@@ -206,11 +239,11 @@ class NamespaceCreateOrUpdateParameters(msrest.serialization.Model):
 class NamespaceListResult(msrest.serialization.Model):
     """The response of the List Namespace operation.
 
-    :param value: Result of the List Namespace operation.
-    :type value: list[~azure.mgmt.servicebus.v2015_08_01.models.NamespaceResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Namespace operation.
+    :vartype value: list[~azure.mgmt.servicebus.v2015_08_01.models.NamespaceResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Namespaces.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -225,6 +258,13 @@ class NamespaceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Namespace operation.
+        :paramtype value: list[~azure.mgmt.servicebus.v2015_08_01.models.NamespaceResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of Namespaces.
+        :paramtype next_link: str
+        """
         super(NamespaceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -239,8 +279,8 @@ class Resource(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
     """
@@ -264,6 +304,10 @@ class Resource(msrest.serialization.Model):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -280,12 +324,12 @@ class TrackedResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -309,6 +353,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(location=location, **kwargs)
         self.tags = tags
 
@@ -322,30 +372,30 @@ class NamespaceResource(TrackedResource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: SKU of the namespace.
-    :type sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: SKU of the namespace.
+    :vartype sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
-    :param status: State of the namespace. Possible values include: "Unknown", "Creating",
+    :ivar status: State of the namespace. Possible values include: "Unknown", "Creating",
      "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
      "SoftDeleted", "Removing", "Removed", "Failed".
-    :type status: str or ~azure.mgmt.servicebus.v2015_08_01.models.NamespaceState
+    :vartype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.NamespaceState
     :ivar created_at: The time the namespace was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The time the namespace was updated.
     :vartype updated_at: ~datetime.datetime
     :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
     :vartype service_bus_endpoint: str
-    :param create_acs_namespace: Indicates whether to create an ACS namespace.
-    :type create_acs_namespace: bool
-    :param enabled: Specifies whether this instance is enabled.
-    :type enabled: bool
+    :ivar create_acs_namespace: Indicates whether to create an ACS namespace.
+    :vartype create_acs_namespace: bool
+    :ivar enabled: Specifies whether this instance is enabled.
+    :vartype enabled: bool
     """
 
     _validation = {
@@ -385,6 +435,22 @@ class NamespaceResource(TrackedResource):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: SKU of the namespace.
+        :paramtype sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
+        :keyword status: State of the namespace. Possible values include: "Unknown", "Creating",
+         "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
+         "SoftDeleted", "Removing", "Removed", "Failed".
+        :paramtype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.NamespaceState
+        :keyword create_acs_namespace: Indicates whether to create an ACS namespace.
+        :paramtype create_acs_namespace: bool
+        :keyword enabled: Specifies whether this instance is enabled.
+        :paramtype enabled: bool
+        """
         super(NamespaceResource, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.provisioning_state = None
@@ -399,10 +465,10 @@ class NamespaceResource(TrackedResource):
 class NamespaceUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to the Patch Namespace operation.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created namespace.
-    :type sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created namespace.
+    :vartype sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
     """
 
     _attribute_map = {
@@ -417,6 +483,12 @@ class NamespaceUpdateParameters(msrest.serialization.Model):
         sku: Optional["Sku"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created namespace.
+        :paramtype sku: ~azure.mgmt.servicebus.v2015_08_01.models.Sku
+        """
         super(NamespaceUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.sku = sku
@@ -429,8 +501,8 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.servicebus.v2015_08_01.models.OperationDisplay
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.servicebus.v2015_08_01.models.OperationDisplay
     """
 
     _validation = {
@@ -448,6 +520,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.servicebus.v2015_08_01.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
@@ -482,6 +558,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -514,6 +592,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -526,72 +606,72 @@ class QueueCreateOrUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Queue name.
-    :type name: str
-    :param location: Required. location of the resource.
-    :type location: str
-    :param lock_duration: The duration of a peek-lock; that is, the amount of time that the message
+    :ivar name: Queue name.
+    :vartype name: str
+    :ivar location: Required. location of the resource.
+    :vartype location: str
+    :ivar lock_duration: The duration of a peek-lock; that is, the amount of time that the message
      is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default
      value is 1 minute.
-    :type lock_duration: str
+    :vartype lock_duration: str
     :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
     :vartype accessed_at: ~datetime.datetime
-    :param auto_delete_on_idle: the TimeSpan idle interval after which the queue is automatically
+    :ivar auto_delete_on_idle: the TimeSpan idle interval after which the queue is automatically
      deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: str
-    :param entity_availability_status: Entity availability status for the queue. Possible values
+    :vartype auto_delete_on_idle: str
+    :ivar entity_availability_status: Entity availability status for the queue. Possible values
      include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :vartype entity_availability_status: str or
      ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
     :ivar created_at: The exact time the message was created.
     :vartype created_at: ~datetime.datetime
-    :param default_message_time_to_live: The default message time to live value. This is the
+    :ivar default_message_time_to_live: The default message time to live value. This is the
      duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: str
-    :param duplicate_detection_history_time_window: TimeSpan structure that defines the duration of
+    :vartype default_message_time_to_live: str
+    :ivar duplicate_detection_history_time_window: TimeSpan structure that defines the duration of
      the duplicate detection history. The default value is 10 minutes.
-    :type duplicate_detection_history_time_window: str
-    :param enable_batched_operations: A value that indicates whether server-side batched operations
+    :vartype duplicate_detection_history_time_window: str
+    :ivar enable_batched_operations: A value that indicates whether server-side batched operations
      are enabled.
-    :type enable_batched_operations: bool
-    :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+    :vartype enable_batched_operations: bool
+    :ivar dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
      letter support when a message expires.
-    :type dead_lettering_on_message_expiration: bool
-    :param enable_express: A value that indicates whether Express Entities are enabled. An express
+    :vartype dead_lettering_on_message_expiration: bool
+    :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
-    :type enable_express: bool
-    :param enable_partitioning: A value that indicates whether the queue is to be partitioned
-     across multiple message brokers.
-    :type enable_partitioning: bool
-    :param is_anonymous_accessible: A value that indicates whether the message is accessible
+    :vartype enable_express: bool
+    :ivar enable_partitioning: A value that indicates whether the queue is to be partitioned across
+     multiple message brokers.
+    :vartype enable_partitioning: bool
+    :ivar is_anonymous_accessible: A value that indicates whether the message is accessible
      anonymously.
-    :type is_anonymous_accessible: bool
-    :param max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+    :vartype is_anonymous_accessible: bool
+    :ivar max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries.
-    :type max_delivery_count: int
-    :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
+    :vartype max_delivery_count: int
+    :ivar max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
-    :type max_size_in_megabytes: long
+    :vartype max_size_in_megabytes: long
     :ivar message_count: The number of messages in the queue.
     :vartype message_count: long
     :ivar count_details: Message Count Details.
     :vartype count_details: ~azure.mgmt.servicebus.v2015_08_01.models.MessageCountDetails
-    :param requires_duplicate_detection: A value indicating if this queue requires duplicate
+    :ivar requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
-    :type requires_duplicate_detection: bool
-    :param requires_session: A value that indicates whether the queue supports the concept of
+    :vartype requires_duplicate_detection: bool
+    :ivar requires_session: A value that indicates whether the queue supports the concept of
      sessions.
-    :type requires_session: bool
+    :vartype requires_session: bool
     :ivar size_in_bytes: The size of the queue, in bytes.
     :vartype size_in_bytes: long
-    :param status: Enumerates the possible values for the status of a messaging entity. Possible
+    :ivar status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
      "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
-    :param support_ordering: A value that indicates whether the queue supports ordering.
-    :type support_ordering: bool
+    :vartype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+    :ivar support_ordering: A value that indicates whether the queue supports ordering.
+    :vartype support_ordering: bool
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     """
@@ -656,6 +736,63 @@ class QueueCreateOrUpdateParameters(msrest.serialization.Model):
         support_ordering: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Queue name.
+        :paramtype name: str
+        :keyword location: Required. location of the resource.
+        :paramtype location: str
+        :keyword lock_duration: The duration of a peek-lock; that is, the amount of time that the
+         message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the
+         default value is 1 minute.
+        :paramtype lock_duration: str
+        :keyword auto_delete_on_idle: the TimeSpan idle interval after which the queue is automatically
+         deleted. The minimum duration is 5 minutes.
+        :paramtype auto_delete_on_idle: str
+        :keyword entity_availability_status: Entity availability status for the queue. Possible values
+         include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :paramtype entity_availability_status: str or
+         ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
+        :keyword default_message_time_to_live: The default message time to live value. This is the
+         duration after which the message expires, starting from when the message is sent to Service
+         Bus. This is the default value used when TimeToLive is not set on a message itself.
+        :paramtype default_message_time_to_live: str
+        :keyword duplicate_detection_history_time_window: TimeSpan structure that defines the duration
+         of the duplicate detection history. The default value is 10 minutes.
+        :paramtype duplicate_detection_history_time_window: str
+        :keyword enable_batched_operations: A value that indicates whether server-side batched
+         operations are enabled.
+        :paramtype enable_batched_operations: bool
+        :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has
+         dead letter support when a message expires.
+        :paramtype dead_lettering_on_message_expiration: bool
+        :keyword enable_express: A value that indicates whether Express Entities are enabled. An
+         express queue holds a message in memory temporarily before writing it to persistent storage.
+        :paramtype enable_express: bool
+        :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
+         across multiple message brokers.
+        :paramtype enable_partitioning: bool
+        :keyword is_anonymous_accessible: A value that indicates whether the message is accessible
+         anonymously.
+        :paramtype is_anonymous_accessible: bool
+        :keyword max_delivery_count: The maximum delivery count. A message is automatically
+         deadlettered after this number of deliveries.
+        :paramtype max_delivery_count: int
+        :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size
+         of memory allocated for the queue.
+        :paramtype max_size_in_megabytes: long
+        :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
+         detection.
+        :paramtype requires_duplicate_detection: bool
+        :keyword requires_session: A value that indicates whether the queue supports the concept of
+         sessions.
+        :paramtype requires_session: bool
+        :keyword status: Enumerates the possible values for the status of a messaging entity. Possible
+         values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
+         "Restoring", "SendDisabled", "Unknown".
+        :paramtype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+        :keyword support_ordering: A value that indicates whether the queue supports ordering.
+        :paramtype support_ordering: bool
+        """
         super(QueueCreateOrUpdateParameters, self).__init__(**kwargs)
         self.name = name
         self.location = location
@@ -686,11 +823,11 @@ class QueueCreateOrUpdateParameters(msrest.serialization.Model):
 class QueueListResult(msrest.serialization.Model):
     """The response to the List Queues operation.
 
-    :param value: Result of the List Queues operation.
-    :type value: list[~azure.mgmt.servicebus.v2015_08_01.models.QueueResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Queues operation.
+    :vartype value: list[~azure.mgmt.servicebus.v2015_08_01.models.QueueResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of queues.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -705,6 +842,13 @@ class QueueListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Queues operation.
+        :paramtype value: list[~azure.mgmt.servicebus.v2015_08_01.models.QueueResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of queues.
+        :paramtype next_link: str
+        """
         super(QueueListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -719,72 +863,72 @@ class QueueResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param lock_duration: The duration of a peek-lock; that is, the amount of time that the message
+    :ivar lock_duration: The duration of a peek-lock; that is, the amount of time that the message
      is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default
      value is 1 minute.
-    :type lock_duration: str
+    :vartype lock_duration: str
     :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
     :vartype accessed_at: ~datetime.datetime
-    :param auto_delete_on_idle: the TimeSpan idle interval after which the queue is automatically
+    :ivar auto_delete_on_idle: the TimeSpan idle interval after which the queue is automatically
      deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: str
-    :param entity_availability_status: Entity availability status for the queue. Possible values
+    :vartype auto_delete_on_idle: str
+    :ivar entity_availability_status: Entity availability status for the queue. Possible values
      include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :vartype entity_availability_status: str or
      ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
     :ivar created_at: The exact time the message was created.
     :vartype created_at: ~datetime.datetime
-    :param default_message_time_to_live: The default message time to live value. This is the
+    :ivar default_message_time_to_live: The default message time to live value. This is the
      duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: str
-    :param duplicate_detection_history_time_window: TimeSpan structure that defines the duration of
+    :vartype default_message_time_to_live: str
+    :ivar duplicate_detection_history_time_window: TimeSpan structure that defines the duration of
      the duplicate detection history. The default value is 10 minutes.
-    :type duplicate_detection_history_time_window: str
-    :param enable_batched_operations: A value that indicates whether server-side batched operations
+    :vartype duplicate_detection_history_time_window: str
+    :ivar enable_batched_operations: A value that indicates whether server-side batched operations
      are enabled.
-    :type enable_batched_operations: bool
-    :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+    :vartype enable_batched_operations: bool
+    :ivar dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
      letter support when a message expires.
-    :type dead_lettering_on_message_expiration: bool
-    :param enable_express: A value that indicates whether Express Entities are enabled. An express
+    :vartype dead_lettering_on_message_expiration: bool
+    :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
-    :type enable_express: bool
-    :param enable_partitioning: A value that indicates whether the queue is to be partitioned
-     across multiple message brokers.
-    :type enable_partitioning: bool
-    :param is_anonymous_accessible: A value that indicates whether the message is accessible
+    :vartype enable_express: bool
+    :ivar enable_partitioning: A value that indicates whether the queue is to be partitioned across
+     multiple message brokers.
+    :vartype enable_partitioning: bool
+    :ivar is_anonymous_accessible: A value that indicates whether the message is accessible
      anonymously.
-    :type is_anonymous_accessible: bool
-    :param max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+    :vartype is_anonymous_accessible: bool
+    :ivar max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries.
-    :type max_delivery_count: int
-    :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
+    :vartype max_delivery_count: int
+    :ivar max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
-    :type max_size_in_megabytes: long
+    :vartype max_size_in_megabytes: long
     :ivar message_count: The number of messages in the queue.
     :vartype message_count: long
     :ivar count_details: Message Count Details.
     :vartype count_details: ~azure.mgmt.servicebus.v2015_08_01.models.MessageCountDetails
-    :param requires_duplicate_detection: A value indicating if this queue requires duplicate
+    :ivar requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
-    :type requires_duplicate_detection: bool
-    :param requires_session: A value that indicates whether the queue supports the concept of
+    :vartype requires_duplicate_detection: bool
+    :ivar requires_session: A value that indicates whether the queue supports the concept of
      sessions.
-    :type requires_session: bool
+    :vartype requires_session: bool
     :ivar size_in_bytes: The size of the queue, in bytes.
     :vartype size_in_bytes: long
-    :param status: Enumerates the possible values for the status of a messaging entity. Possible
+    :ivar status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
      "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
-    :param support_ordering: A value that indicates whether the queue supports ordering.
-    :type support_ordering: bool
+    :vartype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+    :ivar support_ordering: A value that indicates whether the queue supports ordering.
+    :vartype support_ordering: bool
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     """
@@ -852,6 +996,61 @@ class QueueResource(Resource):
         support_ordering: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword lock_duration: The duration of a peek-lock; that is, the amount of time that the
+         message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the
+         default value is 1 minute.
+        :paramtype lock_duration: str
+        :keyword auto_delete_on_idle: the TimeSpan idle interval after which the queue is automatically
+         deleted. The minimum duration is 5 minutes.
+        :paramtype auto_delete_on_idle: str
+        :keyword entity_availability_status: Entity availability status for the queue. Possible values
+         include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :paramtype entity_availability_status: str or
+         ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
+        :keyword default_message_time_to_live: The default message time to live value. This is the
+         duration after which the message expires, starting from when the message is sent to Service
+         Bus. This is the default value used when TimeToLive is not set on a message itself.
+        :paramtype default_message_time_to_live: str
+        :keyword duplicate_detection_history_time_window: TimeSpan structure that defines the duration
+         of the duplicate detection history. The default value is 10 minutes.
+        :paramtype duplicate_detection_history_time_window: str
+        :keyword enable_batched_operations: A value that indicates whether server-side batched
+         operations are enabled.
+        :paramtype enable_batched_operations: bool
+        :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has
+         dead letter support when a message expires.
+        :paramtype dead_lettering_on_message_expiration: bool
+        :keyword enable_express: A value that indicates whether Express Entities are enabled. An
+         express queue holds a message in memory temporarily before writing it to persistent storage.
+        :paramtype enable_express: bool
+        :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
+         across multiple message brokers.
+        :paramtype enable_partitioning: bool
+        :keyword is_anonymous_accessible: A value that indicates whether the message is accessible
+         anonymously.
+        :paramtype is_anonymous_accessible: bool
+        :keyword max_delivery_count: The maximum delivery count. A message is automatically
+         deadlettered after this number of deliveries.
+        :paramtype max_delivery_count: int
+        :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size
+         of memory allocated for the queue.
+        :paramtype max_size_in_megabytes: long
+        :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
+         detection.
+        :paramtype requires_duplicate_detection: bool
+        :keyword requires_session: A value that indicates whether the queue supports the concept of
+         sessions.
+        :paramtype requires_session: bool
+        :keyword status: Enumerates the possible values for the status of a messaging entity. Possible
+         values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
+         "Restoring", "SendDisabled", "Unknown".
+        :paramtype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+        :keyword support_ordering: A value that indicates whether the queue supports ordering.
+        :paramtype support_ordering: bool
+        """
         super(QueueResource, self).__init__(location=location, **kwargs)
         self.lock_duration = lock_duration
         self.accessed_at = None
@@ -880,9 +1079,9 @@ class QueueResource(Resource):
 class RegenerateKeysParameters(msrest.serialization.Model):
     """Parameters supplied to the Regenerate Authorization Rule operation.
 
-    :param policykey: Key that needs to be regenerated. Possible values include: "PrimaryKey",
+    :ivar policykey: Key that needs to be regenerated. Possible values include: "PrimaryKey",
      "SecondaryKey".
-    :type policykey: str or ~azure.mgmt.servicebus.v2015_08_01.models.Policykey
+    :vartype policykey: str or ~azure.mgmt.servicebus.v2015_08_01.models.Policykey
     """
 
     _attribute_map = {
@@ -895,6 +1094,11 @@ class RegenerateKeysParameters(msrest.serialization.Model):
         policykey: Optional[Union[str, "Policykey"]] = None,
         **kwargs
     ):
+        """
+        :keyword policykey: Key that needs to be regenerated. Possible values include: "PrimaryKey",
+         "SecondaryKey".
+        :paramtype policykey: str or ~azure.mgmt.servicebus.v2015_08_01.models.Policykey
+        """
         super(RegenerateKeysParameters, self).__init__(**kwargs)
         self.policykey = policykey
 
@@ -902,20 +1106,20 @@ class RegenerateKeysParameters(msrest.serialization.Model):
 class ResourceListKeys(msrest.serialization.Model):
     """Namespace/ServiceBus Connection String.
 
-    :param primary_connection_string: Primary connection string of the created namespace
+    :ivar primary_connection_string: Primary connection string of the created namespace
      authorization rule.
-    :type primary_connection_string: str
-    :param secondary_connection_string: Secondary connection string of the created namespace
+    :vartype primary_connection_string: str
+    :ivar secondary_connection_string: Secondary connection string of the created namespace
      authorization rule.
-    :type secondary_connection_string: str
-    :param primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
+    :vartype secondary_connection_string: str
+    :ivar primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
      token.
-    :type primary_key: str
-    :param secondary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
+    :vartype primary_key: str
+    :ivar secondary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
      token.
-    :type secondary_key: str
-    :param key_name: A string that describes the authorization rule.
-    :type key_name: str
+    :vartype secondary_key: str
+    :ivar key_name: A string that describes the authorization rule.
+    :vartype key_name: str
     """
 
     _attribute_map = {
@@ -936,6 +1140,22 @@ class ResourceListKeys(msrest.serialization.Model):
         key_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword primary_connection_string: Primary connection string of the created namespace
+         authorization rule.
+        :paramtype primary_connection_string: str
+        :keyword secondary_connection_string: Secondary connection string of the created namespace
+         authorization rule.
+        :paramtype secondary_connection_string: str
+        :keyword primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
+         token.
+        :paramtype primary_key: str
+        :keyword secondary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
+         token.
+        :paramtype secondary_key: str
+        :keyword key_name: A string that describes the authorization rule.
+        :paramtype key_name: str
+        """
         super(ResourceListKeys, self).__init__(**kwargs)
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string
@@ -947,12 +1167,12 @@ class ResourceListKeys(msrest.serialization.Model):
 class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to the Create Or Update Authorization Rules operation.
 
-    :param location: data center location.
-    :type location: str
-    :param name: Name of the authorization rule.
-    :type name: str
-    :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.servicebus.v2015_08_01.models.AccessRights]
+    :ivar location: data center location.
+    :vartype location: str
+    :ivar name: Name of the authorization rule.
+    :vartype name: str
+    :ivar rights: The rights associated with the rule.
+    :vartype rights: list[str or ~azure.mgmt.servicebus.v2015_08_01.models.AccessRights]
     """
 
     _attribute_map = {
@@ -969,6 +1189,14 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization
         rights: Optional[List[Union[str, "AccessRights"]]] = None,
         **kwargs
     ):
+        """
+        :keyword location: data center location.
+        :paramtype location: str
+        :keyword name: Name of the authorization rule.
+        :paramtype name: str
+        :keyword rights: The rights associated with the rule.
+        :paramtype rights: list[str or ~azure.mgmt.servicebus.v2015_08_01.models.AccessRights]
+        """
         super(SharedAccessAuthorizationRuleCreateOrUpdateParameters, self).__init__(**kwargs)
         self.location = location
         self.name = name
@@ -978,12 +1206,12 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization
 class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
     """The response to the List Namespace operation.
 
-    :param value: Result of the List Authorization Rules operation.
-    :type value:
+    :ivar value: Result of the List Authorization Rules operation.
+    :vartype value:
      list[~azure.mgmt.servicebus.v2015_08_01.models.SharedAccessAuthorizationRuleResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Authorization Rules.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -998,6 +1226,14 @@ class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Authorization Rules operation.
+        :paramtype value:
+         list[~azure.mgmt.servicebus.v2015_08_01.models.SharedAccessAuthorizationRuleResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of Authorization Rules.
+        :paramtype next_link: str
+        """
         super(SharedAccessAuthorizationRuleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1012,12 +1248,12 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.servicebus.v2015_08_01.models.AccessRights]
+    :ivar rights: The rights associated with the rule.
+    :vartype rights: list[str or ~azure.mgmt.servicebus.v2015_08_01.models.AccessRights]
     """
 
     _validation = {
@@ -1041,6 +1277,12 @@ class SharedAccessAuthorizationRuleResource(Resource):
         rights: Optional[List[Union[str, "AccessRights"]]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword rights: The rights associated with the rule.
+        :paramtype rights: list[str or ~azure.mgmt.servicebus.v2015_08_01.models.AccessRights]
+        """
         super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, **kwargs)
         self.rights = rights
 
@@ -1050,13 +1292,13 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Name of this SKU. Possible values include: "Basic", "Standard", "Premium".
-    :type name: str or ~azure.mgmt.servicebus.v2015_08_01.models.SkuName
-    :param tier: Required. The billing tier of this particular SKU. Possible values include:
+    :ivar name: Name of this SKU. Possible values include: "Basic", "Standard", "Premium".
+    :vartype name: str or ~azure.mgmt.servicebus.v2015_08_01.models.SkuName
+    :ivar tier: Required. The billing tier of this particular SKU. Possible values include:
      "Basic", "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.servicebus.v2015_08_01.models.SkuTier
-    :param capacity: The specified messaging units for the tier.
-    :type capacity: int
+    :vartype tier: str or ~azure.mgmt.servicebus.v2015_08_01.models.SkuTier
+    :ivar capacity: The specified messaging units for the tier.
+    :vartype capacity: int
     """
 
     _validation = {
@@ -1077,6 +1319,15 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of this SKU. Possible values include: "Basic", "Standard", "Premium".
+        :paramtype name: str or ~azure.mgmt.servicebus.v2015_08_01.models.SkuName
+        :keyword tier: Required. The billing tier of this particular SKU. Possible values include:
+         "Basic", "Standard", "Premium".
+        :paramtype tier: str or ~azure.mgmt.servicebus.v2015_08_01.models.SkuTier
+        :keyword capacity: The specified messaging units for the tier.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
@@ -1090,50 +1341,50 @@ class SubscriptionCreateOrUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. Subscription data center location.
-    :type location: str
-    :param type: Resource manager type of the resource.
-    :type type: str
+    :ivar location: Required. Subscription data center location.
+    :vartype location: str
+    :ivar type: Resource manager type of the resource.
+    :vartype type: str
     :ivar accessed_at: Last time there was a receive request to this subscription.
     :vartype accessed_at: ~datetime.datetime
-    :param auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
+    :ivar auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
      deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: str
+    :vartype auto_delete_on_idle: str
     :ivar count_details: Message Count Details.
     :vartype count_details: ~azure.mgmt.servicebus.v2015_08_01.models.MessageCountDetails
     :ivar created_at: Exact time the message was created.
     :vartype created_at: ~datetime.datetime
-    :param default_message_time_to_live: Default message time to live value. This is the duration
+    :ivar default_message_time_to_live: Default message time to live value. This is the duration
      after which the message expires, starting from when the message is sent to Service Bus. This is
      the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: str
-    :param dead_lettering_on_filter_evaluation_exceptions: Value that indicates whether a
+    :vartype default_message_time_to_live: str
+    :ivar dead_lettering_on_filter_evaluation_exceptions: Value that indicates whether a
      subscription has dead letter support on filter evaluation exceptions.
-    :type dead_lettering_on_filter_evaluation_exceptions: bool
-    :param dead_lettering_on_message_expiration: Value that indicates whether a subscription has
+    :vartype dead_lettering_on_filter_evaluation_exceptions: bool
+    :ivar dead_lettering_on_message_expiration: Value that indicates whether a subscription has
      dead letter support when a message expires.
-    :type dead_lettering_on_message_expiration: bool
-    :param enable_batched_operations: Value that indicates whether server-side batched operations
+    :vartype dead_lettering_on_message_expiration: bool
+    :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :type enable_batched_operations: bool
-    :param entity_availability_status: Entity availability status for the topic. Possible values
+    :vartype enable_batched_operations: bool
+    :ivar entity_availability_status: Entity availability status for the topic. Possible values
      include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :vartype entity_availability_status: str or
      ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
-    :param is_read_only: Value that indicates whether the entity description is read-only.
-    :type is_read_only: bool
-    :param lock_duration: The lock duration time span for the subscription.
-    :type lock_duration: str
-    :param max_delivery_count: Number of maximum deliveries.
-    :type max_delivery_count: int
+    :ivar is_read_only: Value that indicates whether the entity description is read-only.
+    :vartype is_read_only: bool
+    :ivar lock_duration: The lock duration time span for the subscription.
+    :vartype lock_duration: str
+    :ivar max_delivery_count: Number of maximum deliveries.
+    :vartype max_delivery_count: int
     :ivar message_count: Number of messages.
     :vartype message_count: long
-    :param requires_session: Value indicating if a subscription supports the concept of sessions.
-    :type requires_session: bool
-    :param status: Enumerates the possible values for the status of a messaging entity. Possible
+    :ivar requires_session: Value indicating if a subscription supports the concept of sessions.
+    :vartype requires_session: bool
+    :ivar status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
      "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+    :vartype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     """
@@ -1186,6 +1437,44 @@ class SubscriptionCreateOrUpdateParameters(msrest.serialization.Model):
         status: Optional[Union[str, "EntityStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Subscription data center location.
+        :paramtype location: str
+        :keyword type: Resource manager type of the resource.
+        :paramtype type: str
+        :keyword auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
+         deleted. The minimum duration is 5 minutes.
+        :paramtype auto_delete_on_idle: str
+        :keyword default_message_time_to_live: Default message time to live value. This is the duration
+         after which the message expires, starting from when the message is sent to Service Bus. This is
+         the default value used when TimeToLive is not set on a message itself.
+        :paramtype default_message_time_to_live: str
+        :keyword dead_lettering_on_filter_evaluation_exceptions: Value that indicates whether a
+         subscription has dead letter support on filter evaluation exceptions.
+        :paramtype dead_lettering_on_filter_evaluation_exceptions: bool
+        :keyword dead_lettering_on_message_expiration: Value that indicates whether a subscription has
+         dead letter support when a message expires.
+        :paramtype dead_lettering_on_message_expiration: bool
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :paramtype enable_batched_operations: bool
+        :keyword entity_availability_status: Entity availability status for the topic. Possible values
+         include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :paramtype entity_availability_status: str or
+         ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
+        :keyword is_read_only: Value that indicates whether the entity description is read-only.
+        :paramtype is_read_only: bool
+        :keyword lock_duration: The lock duration time span for the subscription.
+        :paramtype lock_duration: str
+        :keyword max_delivery_count: Number of maximum deliveries.
+        :paramtype max_delivery_count: int
+        :keyword requires_session: Value indicating if a subscription supports the concept of sessions.
+        :paramtype requires_session: bool
+        :keyword status: Enumerates the possible values for the status of a messaging entity. Possible
+         values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
+         "Restoring", "SendDisabled", "Unknown".
+        :paramtype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+        """
         super(SubscriptionCreateOrUpdateParameters, self).__init__(**kwargs)
         self.location = location
         self.type = type
@@ -1210,11 +1499,11 @@ class SubscriptionCreateOrUpdateParameters(msrest.serialization.Model):
 class SubscriptionListResult(msrest.serialization.Model):
     """The response to the List Subscriptions operation.
 
-    :param value: Result of the List Subscriptions operation.
-    :type value: list[~azure.mgmt.servicebus.v2015_08_01.models.SubscriptionResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Subscriptions operation.
+    :vartype value: list[~azure.mgmt.servicebus.v2015_08_01.models.SubscriptionResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of subscriptions.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1229,6 +1518,13 @@ class SubscriptionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Subscriptions operation.
+        :paramtype value: list[~azure.mgmt.servicebus.v2015_08_01.models.SubscriptionResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of subscriptions.
+        :paramtype next_link: str
+        """
         super(SubscriptionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1243,50 +1539,50 @@ class SubscriptionResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
     :ivar accessed_at: Last time there was a receive request to this subscription.
     :vartype accessed_at: ~datetime.datetime
-    :param auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
+    :ivar auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
      deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: str
+    :vartype auto_delete_on_idle: str
     :ivar count_details: Message Count Details.
     :vartype count_details: ~azure.mgmt.servicebus.v2015_08_01.models.MessageCountDetails
     :ivar created_at: Exact time the message was created.
     :vartype created_at: ~datetime.datetime
-    :param default_message_time_to_live: Default message time to live value. This is the duration
+    :ivar default_message_time_to_live: Default message time to live value. This is the duration
      after which the message expires, starting from when the message is sent to Service Bus. This is
      the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: str
-    :param dead_lettering_on_filter_evaluation_exceptions: Value that indicates whether a
+    :vartype default_message_time_to_live: str
+    :ivar dead_lettering_on_filter_evaluation_exceptions: Value that indicates whether a
      subscription has dead letter support on filter evaluation exceptions.
-    :type dead_lettering_on_filter_evaluation_exceptions: bool
-    :param dead_lettering_on_message_expiration: Value that indicates whether a subscription has
+    :vartype dead_lettering_on_filter_evaluation_exceptions: bool
+    :ivar dead_lettering_on_message_expiration: Value that indicates whether a subscription has
      dead letter support when a message expires.
-    :type dead_lettering_on_message_expiration: bool
-    :param enable_batched_operations: Value that indicates whether server-side batched operations
+    :vartype dead_lettering_on_message_expiration: bool
+    :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :type enable_batched_operations: bool
-    :param entity_availability_status: Entity availability status for the topic. Possible values
+    :vartype enable_batched_operations: bool
+    :ivar entity_availability_status: Entity availability status for the topic. Possible values
      include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :vartype entity_availability_status: str or
      ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
-    :param is_read_only: Value that indicates whether the entity description is read-only.
-    :type is_read_only: bool
-    :param lock_duration: The lock duration time span for the subscription.
-    :type lock_duration: str
-    :param max_delivery_count: Number of maximum deliveries.
-    :type max_delivery_count: int
+    :ivar is_read_only: Value that indicates whether the entity description is read-only.
+    :vartype is_read_only: bool
+    :ivar lock_duration: The lock duration time span for the subscription.
+    :vartype lock_duration: str
+    :ivar max_delivery_count: Number of maximum deliveries.
+    :vartype max_delivery_count: int
     :ivar message_count: Number of messages.
     :vartype message_count: long
-    :param requires_session: Value indicating if a subscription supports the concept of sessions.
-    :type requires_session: bool
-    :param status: Enumerates the possible values for the status of a messaging entity. Possible
+    :ivar requires_session: Value indicating if a subscription supports the concept of sessions.
+    :vartype requires_session: bool
+    :ivar status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
      "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+    :vartype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     """
@@ -1342,6 +1638,42 @@ class SubscriptionResource(Resource):
         status: Optional[Union[str, "EntityStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
+         deleted. The minimum duration is 5 minutes.
+        :paramtype auto_delete_on_idle: str
+        :keyword default_message_time_to_live: Default message time to live value. This is the duration
+         after which the message expires, starting from when the message is sent to Service Bus. This is
+         the default value used when TimeToLive is not set on a message itself.
+        :paramtype default_message_time_to_live: str
+        :keyword dead_lettering_on_filter_evaluation_exceptions: Value that indicates whether a
+         subscription has dead letter support on filter evaluation exceptions.
+        :paramtype dead_lettering_on_filter_evaluation_exceptions: bool
+        :keyword dead_lettering_on_message_expiration: Value that indicates whether a subscription has
+         dead letter support when a message expires.
+        :paramtype dead_lettering_on_message_expiration: bool
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :paramtype enable_batched_operations: bool
+        :keyword entity_availability_status: Entity availability status for the topic. Possible values
+         include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :paramtype entity_availability_status: str or
+         ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
+        :keyword is_read_only: Value that indicates whether the entity description is read-only.
+        :paramtype is_read_only: bool
+        :keyword lock_duration: The lock duration time span for the subscription.
+        :paramtype lock_duration: str
+        :keyword max_delivery_count: Number of maximum deliveries.
+        :paramtype max_delivery_count: int
+        :keyword requires_session: Value indicating if a subscription supports the concept of sessions.
+        :paramtype requires_session: bool
+        :keyword status: Enumerates the possible values for the status of a messaging entity. Possible
+         values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
+         "Restoring", "SendDisabled", "Unknown".
+        :paramtype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+        """
         super(SubscriptionResource, self).__init__(location=location, **kwargs)
         self.accessed_at = None
         self.auto_delete_on_idle = auto_delete_on_idle
@@ -1368,63 +1700,63 @@ class TopicCreateOrUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Topic name.
-    :type name: str
-    :param location: Required. Location of the resource.
-    :type location: str
+    :ivar name: Topic name.
+    :vartype name: str
+    :ivar location: Required. Location of the resource.
+    :vartype location: str
     :ivar accessed_at: Last time the message was sent, or a request was received, for this topic.
     :vartype accessed_at: ~datetime.datetime
-    :param auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
+    :ivar auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
      deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: str
-    :param entity_availability_status: Entity availability status for the topic. Possible values
+    :vartype auto_delete_on_idle: str
+    :ivar entity_availability_status: Entity availability status for the topic. Possible values
      include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :vartype entity_availability_status: str or
      ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
     :ivar created_at: Exact time the message was created.
     :vartype created_at: ~datetime.datetime
     :ivar count_details: Message Count Details.
     :vartype count_details: ~azure.mgmt.servicebus.v2015_08_01.models.MessageCountDetails
-    :param default_message_time_to_live: Default message time to live value. This is the duration
+    :ivar default_message_time_to_live: Default message time to live value. This is the duration
      after which the message expires, starting from when the message is sent to Service Bus. This is
      the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: str
-    :param duplicate_detection_history_time_window: TimeSpan structure that defines the duration of
+    :vartype default_message_time_to_live: str
+    :ivar duplicate_detection_history_time_window: TimeSpan structure that defines the duration of
      the duplicate detection history. The default value is 10 minutes.
-    :type duplicate_detection_history_time_window: str
-    :param enable_batched_operations: Value that indicates whether server-side batched operations
+    :vartype duplicate_detection_history_time_window: str
+    :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :type enable_batched_operations: bool
-    :param enable_express: Value that indicates whether Express Entities are enabled. An express
+    :vartype enable_batched_operations: bool
+    :ivar enable_express: Value that indicates whether Express Entities are enabled. An express
      topic holds a message in memory temporarily before writing it to persistent storage.
-    :type enable_express: bool
-    :param enable_partitioning: Value that indicates whether the topic to be partitioned across
+    :vartype enable_express: bool
+    :ivar enable_partitioning: Value that indicates whether the topic to be partitioned across
      multiple message brokers is enabled.
-    :type enable_partitioning: bool
-    :param filtering_messages_before_publishing: Whether messages should be filtered before
+    :vartype enable_partitioning: bool
+    :ivar filtering_messages_before_publishing: Whether messages should be filtered before
      publishing.
-    :type filtering_messages_before_publishing: bool
-    :param is_anonymous_accessible: Value that indicates whether the message is accessible
+    :vartype filtering_messages_before_publishing: bool
+    :ivar is_anonymous_accessible: Value that indicates whether the message is accessible
      anonymously.
-    :type is_anonymous_accessible: bool
-    :param is_express:
-    :type is_express: bool
-    :param max_size_in_megabytes: Maximum size of the topic in megabytes, which is the size of the
+    :vartype is_anonymous_accessible: bool
+    :ivar is_express:
+    :vartype is_express: bool
+    :ivar max_size_in_megabytes: Maximum size of the topic in megabytes, which is the size of the
      memory allocated for the topic.
-    :type max_size_in_megabytes: long
-    :param requires_duplicate_detection: Value indicating if this topic requires duplicate
+    :vartype max_size_in_megabytes: long
+    :ivar requires_duplicate_detection: Value indicating if this topic requires duplicate
      detection.
-    :type requires_duplicate_detection: bool
+    :vartype requires_duplicate_detection: bool
     :ivar size_in_bytes: Size of the topic, in bytes.
     :vartype size_in_bytes: long
-    :param status: Enumerates the possible values for the status of a messaging entity. Possible
+    :ivar status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
      "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+    :vartype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
     :ivar subscription_count: Number of subscriptions.
     :vartype subscription_count: int
-    :param support_ordering: Value that indicates whether the topic supports ordering.
-    :type support_ordering: bool
+    :ivar support_ordering: Value that indicates whether the topic supports ordering.
+    :vartype support_ordering: bool
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     """
@@ -1485,6 +1817,55 @@ class TopicCreateOrUpdateParameters(msrest.serialization.Model):
         support_ordering: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Topic name.
+        :paramtype name: str
+        :keyword location: Required. Location of the resource.
+        :paramtype location: str
+        :keyword auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
+         deleted. The minimum duration is 5 minutes.
+        :paramtype auto_delete_on_idle: str
+        :keyword entity_availability_status: Entity availability status for the topic. Possible values
+         include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :paramtype entity_availability_status: str or
+         ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
+        :keyword default_message_time_to_live: Default message time to live value. This is the duration
+         after which the message expires, starting from when the message is sent to Service Bus. This is
+         the default value used when TimeToLive is not set on a message itself.
+        :paramtype default_message_time_to_live: str
+        :keyword duplicate_detection_history_time_window: TimeSpan structure that defines the duration
+         of the duplicate detection history. The default value is 10 minutes.
+        :paramtype duplicate_detection_history_time_window: str
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :paramtype enable_batched_operations: bool
+        :keyword enable_express: Value that indicates whether Express Entities are enabled. An express
+         topic holds a message in memory temporarily before writing it to persistent storage.
+        :paramtype enable_express: bool
+        :keyword enable_partitioning: Value that indicates whether the topic to be partitioned across
+         multiple message brokers is enabled.
+        :paramtype enable_partitioning: bool
+        :keyword filtering_messages_before_publishing: Whether messages should be filtered before
+         publishing.
+        :paramtype filtering_messages_before_publishing: bool
+        :keyword is_anonymous_accessible: Value that indicates whether the message is accessible
+         anonymously.
+        :paramtype is_anonymous_accessible: bool
+        :keyword is_express:
+        :paramtype is_express: bool
+        :keyword max_size_in_megabytes: Maximum size of the topic in megabytes, which is the size of
+         the memory allocated for the topic.
+        :paramtype max_size_in_megabytes: long
+        :keyword requires_duplicate_detection: Value indicating if this topic requires duplicate
+         detection.
+        :paramtype requires_duplicate_detection: bool
+        :keyword status: Enumerates the possible values for the status of a messaging entity. Possible
+         values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
+         "Restoring", "SendDisabled", "Unknown".
+        :paramtype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+        :keyword support_ordering: Value that indicates whether the topic supports ordering.
+        :paramtype support_ordering: bool
+        """
         super(TopicCreateOrUpdateParameters, self).__init__(**kwargs)
         self.name = name
         self.location = location
@@ -1513,11 +1894,11 @@ class TopicCreateOrUpdateParameters(msrest.serialization.Model):
 class TopicListResult(msrest.serialization.Model):
     """The response to the List Topics operation.
 
-    :param value: Result of the List Topics operation.
-    :type value: list[~azure.mgmt.servicebus.v2015_08_01.models.TopicResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Topics operation.
+    :vartype value: list[~azure.mgmt.servicebus.v2015_08_01.models.TopicResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of topics.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1532,6 +1913,13 @@ class TopicListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Topics operation.
+        :paramtype value: list[~azure.mgmt.servicebus.v2015_08_01.models.TopicResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of topics.
+        :paramtype next_link: str
+        """
         super(TopicListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1546,63 +1934,63 @@ class TopicResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
     :ivar accessed_at: Last time the message was sent, or a request was received, for this topic.
     :vartype accessed_at: ~datetime.datetime
-    :param auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
+    :ivar auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
      deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: str
-    :param entity_availability_status: Entity availability status for the topic. Possible values
+    :vartype auto_delete_on_idle: str
+    :ivar entity_availability_status: Entity availability status for the topic. Possible values
      include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :vartype entity_availability_status: str or
      ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
     :ivar created_at: Exact time the message was created.
     :vartype created_at: ~datetime.datetime
     :ivar count_details: Message Count Details.
     :vartype count_details: ~azure.mgmt.servicebus.v2015_08_01.models.MessageCountDetails
-    :param default_message_time_to_live: Default message time to live value. This is the duration
+    :ivar default_message_time_to_live: Default message time to live value. This is the duration
      after which the message expires, starting from when the message is sent to Service Bus. This is
      the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: str
-    :param duplicate_detection_history_time_window: TimeSpan structure that defines the duration of
+    :vartype default_message_time_to_live: str
+    :ivar duplicate_detection_history_time_window: TimeSpan structure that defines the duration of
      the duplicate detection history. The default value is 10 minutes.
-    :type duplicate_detection_history_time_window: str
-    :param enable_batched_operations: Value that indicates whether server-side batched operations
+    :vartype duplicate_detection_history_time_window: str
+    :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :type enable_batched_operations: bool
-    :param enable_express: Value that indicates whether Express Entities are enabled. An express
+    :vartype enable_batched_operations: bool
+    :ivar enable_express: Value that indicates whether Express Entities are enabled. An express
      topic holds a message in memory temporarily before writing it to persistent storage.
-    :type enable_express: bool
-    :param enable_partitioning: Value that indicates whether the topic to be partitioned across
+    :vartype enable_express: bool
+    :ivar enable_partitioning: Value that indicates whether the topic to be partitioned across
      multiple message brokers is enabled.
-    :type enable_partitioning: bool
-    :param filtering_messages_before_publishing: Whether messages should be filtered before
+    :vartype enable_partitioning: bool
+    :ivar filtering_messages_before_publishing: Whether messages should be filtered before
      publishing.
-    :type filtering_messages_before_publishing: bool
-    :param is_anonymous_accessible: Value that indicates whether the message is accessible
+    :vartype filtering_messages_before_publishing: bool
+    :ivar is_anonymous_accessible: Value that indicates whether the message is accessible
      anonymously.
-    :type is_anonymous_accessible: bool
-    :param is_express:
-    :type is_express: bool
-    :param max_size_in_megabytes: Maximum size of the topic in megabytes, which is the size of the
+    :vartype is_anonymous_accessible: bool
+    :ivar is_express:
+    :vartype is_express: bool
+    :ivar max_size_in_megabytes: Maximum size of the topic in megabytes, which is the size of the
      memory allocated for the topic.
-    :type max_size_in_megabytes: long
-    :param requires_duplicate_detection: Value indicating if this topic requires duplicate
+    :vartype max_size_in_megabytes: long
+    :ivar requires_duplicate_detection: Value indicating if this topic requires duplicate
      detection.
-    :type requires_duplicate_detection: bool
+    :vartype requires_duplicate_detection: bool
     :ivar size_in_bytes: Size of the topic, in bytes.
     :vartype size_in_bytes: long
-    :param status: Enumerates the possible values for the status of a messaging entity. Possible
+    :ivar status: Enumerates the possible values for the status of a messaging entity. Possible
      values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
      "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+    :vartype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
     :ivar subscription_count: Number of subscriptions.
     :vartype subscription_count: int
-    :param support_ordering: Value that indicates whether the topic supports ordering.
-    :type support_ordering: bool
+    :ivar support_ordering: Value that indicates whether the topic supports ordering.
+    :vartype support_ordering: bool
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     """
@@ -1666,6 +2054,53 @@ class TopicResource(Resource):
         support_ordering: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword auto_delete_on_idle: TimeSpan idle interval after which the topic is automatically
+         deleted. The minimum duration is 5 minutes.
+        :paramtype auto_delete_on_idle: str
+        :keyword entity_availability_status: Entity availability status for the topic. Possible values
+         include: "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :paramtype entity_availability_status: str or
+         ~azure.mgmt.servicebus.v2015_08_01.models.EntityAvailabilityStatus
+        :keyword default_message_time_to_live: Default message time to live value. This is the duration
+         after which the message expires, starting from when the message is sent to Service Bus. This is
+         the default value used when TimeToLive is not set on a message itself.
+        :paramtype default_message_time_to_live: str
+        :keyword duplicate_detection_history_time_window: TimeSpan structure that defines the duration
+         of the duplicate detection history. The default value is 10 minutes.
+        :paramtype duplicate_detection_history_time_window: str
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :paramtype enable_batched_operations: bool
+        :keyword enable_express: Value that indicates whether Express Entities are enabled. An express
+         topic holds a message in memory temporarily before writing it to persistent storage.
+        :paramtype enable_express: bool
+        :keyword enable_partitioning: Value that indicates whether the topic to be partitioned across
+         multiple message brokers is enabled.
+        :paramtype enable_partitioning: bool
+        :keyword filtering_messages_before_publishing: Whether messages should be filtered before
+         publishing.
+        :paramtype filtering_messages_before_publishing: bool
+        :keyword is_anonymous_accessible: Value that indicates whether the message is accessible
+         anonymously.
+        :paramtype is_anonymous_accessible: bool
+        :keyword is_express:
+        :paramtype is_express: bool
+        :keyword max_size_in_megabytes: Maximum size of the topic in megabytes, which is the size of
+         the memory allocated for the topic.
+        :paramtype max_size_in_megabytes: long
+        :keyword requires_duplicate_detection: Value indicating if this topic requires duplicate
+         detection.
+        :paramtype requires_duplicate_detection: bool
+        :keyword status: Enumerates the possible values for the status of a messaging entity. Possible
+         values include: "Active", "Creating", "Deleting", "Disabled", "ReceiveDisabled", "Renaming",
+         "Restoring", "SendDisabled", "Unknown".
+        :paramtype status: str or ~azure.mgmt.servicebus.v2015_08_01.models.EntityStatus
+        :keyword support_ordering: Value that indicates whether the topic supports ordering.
+        :paramtype support_ordering: bool
+        """
         super(TopicResource, self).__init__(location=location, **kwargs)
         self.accessed_at = None
         self.auto_delete_on_idle = auto_delete_on_idle
