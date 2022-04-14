@@ -136,7 +136,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self.default_headers = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
-            http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
+            http_constants.HttpHeaders.Version: http_constants.Versions.current_version,
             # For single partition query with aggregate functions we would try to accumulate the results on the SDK.
             # We need to set continuation as not expected.
             http_constants.HttpHeaders.IsContinuationExpected: False,
@@ -2505,7 +2505,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             "contentType": runtime_constants.MediaTypes.Json,
             "isQueryPlanRequest": True,
             "supportedQueryFeatures": supported_query_features,
-            "queryVersion": http_constants.Versions.QueryVersion
+            "queryVersion": http_constants.Versions.query_version
             }
 
         resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
