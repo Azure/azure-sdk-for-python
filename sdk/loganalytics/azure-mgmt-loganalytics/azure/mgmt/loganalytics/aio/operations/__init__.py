@@ -6,10 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._workspaces_operations import WorkspacesOperations
-from ._deleted_workspaces_operations import DeletedWorkspacesOperations
-from ._tables_operations import TablesOperations
+from ._query_packs_operations import QueryPacksOperations
+from ._queries_operations import QueriesOperations
 from ._data_exports_operations import DataExportsOperations
 from ._data_sources_operations import DataSourcesOperations
 from ._intelligence_packs_operations import IntelligencePacksOperations
@@ -26,12 +24,14 @@ from ._gateways_operations import GatewaysOperations
 from ._schema_operations import SchemaOperations
 from ._workspace_purge_operations import WorkspacePurgeOperations
 from ._clusters_operations import ClustersOperations
+from ._operations import Operations
+from ._workspaces_operations import WorkspacesOperations
+from ._deleted_workspaces_operations import DeletedWorkspacesOperations
+from ._tables_operations import TablesOperations
 
 __all__ = [
-    'Operations',
-    'WorkspacesOperations',
-    'DeletedWorkspacesOperations',
-    'TablesOperations',
+    'QueryPacksOperations',
+    'QueriesOperations',
     'DataExportsOperations',
     'DataSourcesOperations',
     'IntelligencePacksOperations',
@@ -48,4 +48,8 @@ __all__ = [
     'SchemaOperations',
     'WorkspacePurgeOperations',
     'ClustersOperations',
+    'Operations',
+    'WorkspacesOperations',
+    'DeletedWorkspacesOperations',
+    'TablesOperations',
 ]

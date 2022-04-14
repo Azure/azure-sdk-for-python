@@ -2049,6 +2049,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
+        copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -2099,6 +2100,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
+         copied or replaced with the tags specified by x-ms-tags. Default value is None.
+        :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
@@ -2178,6 +2182,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             legal_hold=legal_hold,
             copy_source_authorization=copy_source_authorization,
             encryption_scope=_encryption_scope,
+            copy_source_tags=copy_source_tags,
             template_url=self.copy_from_url.metadata['url'],
         )
         request = _convert_request(request)

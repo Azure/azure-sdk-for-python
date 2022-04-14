@@ -23,6 +23,11 @@ class DeleteSnapshotsOptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     INCLUDE = "include"
     INCLUDE_LEASED = "include-leased"
 
+class FileLastWrittenMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    NOW = "Now"
+    PRESERVE = "Preserve"
+
 class FileRangeWriteType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     UPDATE = "update"
