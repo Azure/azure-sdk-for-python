@@ -43,7 +43,7 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub):
     for index, partition in enumerate(receivers):
         retry_total = 0
         while retry_total < 3:
-            timeout = 5000 + retry_total * 1000
+            timeout = 5000 + retry_total * 5000
             try:
                 received = partition.receive_message_batch(timeout=timeout)
                 for message in received:
@@ -56,7 +56,7 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub):
                 if received:
                     break
                 retry_total += 1
-            except uamqp.errors.ConnectionClose:
+            except Exception:
                 for r in reconnect_receivers:
                     r.close()
                 uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
