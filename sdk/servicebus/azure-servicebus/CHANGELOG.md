@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Make AMQP exceptions retryable by default to ensure that InternalServerErrors are retried.
+- Fixed bug to make AMQP exceptions retryable by default, if condition is not non-retryable, to ensure that InternalServerErrors are retried.
 
 ## 7.6.1 (2022-04-11)
 
