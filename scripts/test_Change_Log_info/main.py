@@ -129,8 +129,7 @@ if __name__ == '__main__':
             version = versions[-2]
             last_version = versions[-1]
         else:
-            version = versions[-1]
-            last_version = versions[-1]
+            continue
 
         cmd_cl1 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  azure-mgmt-{package_path} --version={last_version}"'
         cmd_cl2 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report azure-mgmt-{package_path} --version={version}"'
