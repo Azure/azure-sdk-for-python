@@ -2,7 +2,7 @@
 
 ## 11.2.2 (2022-04-14)
 
-### Fixes
+### Bugs Fixes
 - Fixes a bug allowing users to set keys for cognitive service skills using the API. Exposes `DefaultCognitiveServicesAccount` and `CognitiveServicesAccountKey`
 
 ## 11.2.1 (2022-01-10)
