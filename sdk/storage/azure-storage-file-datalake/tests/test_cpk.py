@@ -174,7 +174,7 @@ class DatalakeCpkTest(StorageTestCase):
         data = self.get_random_bytes(1024)
 
         # Act
-        response = file_client.upload_data(data, cpk=TEST_ENCRYPTION_KEY)
+        response = file_client.upload_data(data, overwrite=True, cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
         self.assertIsNotNone(response)
@@ -202,10 +202,12 @@ class DatalakeCpkTest(StorageTestCase):
     def test_file_download_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
         # Arrange
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        directory_name = self._get_directory_reference()
-        file_client = self._create_file(directory_name=directory_name, cpk=TEST_ENCRYPTION_KEY)
+        directory_client = self._create_directory(cpk=TEST_ENCRYPTION_KEY)
+        file_name = self._get_file_reference()
+        file_client = directory_client.get_file_client(file_name)
+
         data = self.get_random_bytes(1024)
-        file_client.upload_data(data, cpk=TEST_ENCRYPTION_KEY)
+        file_client.upload_data(data, overwrite=True, cpk=TEST_ENCRYPTION_KEY)
 
         # Act
         file = file_client.download_file(cpk=TEST_ENCRYPTION_KEY).readall()
