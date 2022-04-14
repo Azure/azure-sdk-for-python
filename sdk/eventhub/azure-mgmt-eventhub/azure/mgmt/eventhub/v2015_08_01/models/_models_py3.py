@@ -19,8 +19,8 @@ class CheckNameAvailabilityParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name to check the namespace name availability.
-    :type name: str
+    :ivar name: Required. Name to check the namespace name availability.
+    :vartype name: str
     """
 
     _validation = {
@@ -37,6 +37,10 @@ class CheckNameAvailabilityParameter(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name to check the namespace name availability.
+        :paramtype name: str
+        """
         super(CheckNameAvailabilityParameter, self).__init__(**kwargs)
         self.name = name
 
@@ -46,13 +50,13 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param name_available: Value indicating Namespace is availability, true if the Namespace is
+    :ivar name_available: Value indicating Namespace is availability, true if the Namespace is
      available; otherwise, false.
-    :type name_available: bool
-    :param reason: The reason for unavailability of a Namespace. Possible values include: "None",
+    :vartype name_available: bool
+    :ivar reason: The reason for unavailability of a Namespace. Possible values include: "None",
      "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
      "TooManyNamespaceInCurrentSubscription".
-    :type reason: str or ~azure.mgmt.eventhub.v2015_08_01.models.UnavailableReason
+    :vartype reason: str or ~azure.mgmt.eventhub.v2015_08_01.models.UnavailableReason
     :ivar message: The detailed info regarding the reason associated with the Namespace.
     :vartype message: str
     """
@@ -74,6 +78,15 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         reason: Optional[Union[str, "UnavailableReason"]] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Value indicating Namespace is availability, true if the Namespace is
+         available; otherwise, false.
+        :paramtype name_available: bool
+        :keyword reason: The reason for unavailability of a Namespace. Possible values include: "None",
+         "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+         "TooManyNamespaceInCurrentSubscription".
+        :paramtype reason: str or ~azure.mgmt.eventhub.v2015_08_01.models.UnavailableReason
+        """
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
@@ -87,20 +100,20 @@ class ConsumerGroupCreateOrUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. Location of the resource.
-    :type location: str
-    :param type: ARM type of the Namespace.
-    :type type: str
-    :param name: Name of the consumer group.
-    :type name: str
+    :ivar location: Required. Location of the resource.
+    :vartype location: str
+    :ivar type: ARM type of the Namespace.
+    :vartype type: str
+    :ivar name: Name of the consumer group.
+    :vartype name: str
     :ivar created_at: Exact time the message was created.
     :vartype created_at: ~datetime.datetime
     :ivar event_hub_path: The path of the Event Hub.
     :vartype event_hub_path: str
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
-    :param user_metadata: The user metadata.
-    :type user_metadata: str
+    :ivar user_metadata: The user metadata.
+    :vartype user_metadata: str
     """
 
     _validation = {
@@ -129,6 +142,16 @@ class ConsumerGroupCreateOrUpdateParameters(msrest.serialization.Model):
         user_metadata: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Location of the resource.
+        :paramtype location: str
+        :keyword type: ARM type of the Namespace.
+        :paramtype type: str
+        :keyword name: Name of the consumer group.
+        :paramtype name: str
+        :keyword user_metadata: The user metadata.
+        :paramtype user_metadata: str
+        """
         super(ConsumerGroupCreateOrUpdateParameters, self).__init__(**kwargs)
         self.location = location
         self.type = type
@@ -142,11 +165,11 @@ class ConsumerGroupCreateOrUpdateParameters(msrest.serialization.Model):
 class ConsumerGroupListResult(msrest.serialization.Model):
     """The result to the List Consumer Group operation.
 
-    :param value: Result of the List Consumer Group operation.
-    :type value: list[~azure.mgmt.eventhub.v2015_08_01.models.ConsumerGroupResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Consumer Group operation.
+    :vartype value: list[~azure.mgmt.eventhub.v2015_08_01.models.ConsumerGroupResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of Consumer Group.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -161,6 +184,13 @@ class ConsumerGroupListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Consumer Group operation.
+        :paramtype value: list[~azure.mgmt.eventhub.v2015_08_01.models.ConsumerGroupResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of Consumer Group.
+        :paramtype next_link: str
+        """
         super(ConsumerGroupListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -175,8 +205,8 @@ class Resource(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
     """
@@ -200,6 +230,10 @@ class Resource(msrest.serialization.Model):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -216,8 +250,8 @@ class ConsumerGroupResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
     :ivar created_at: Exact time the message was created.
@@ -226,8 +260,8 @@ class ConsumerGroupResource(Resource):
     :vartype event_hub_path: str
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
-    :param user_metadata: The user metadata.
-    :type user_metadata: str
+    :ivar user_metadata: The user metadata.
+    :vartype user_metadata: str
     """
 
     _validation = {
@@ -257,6 +291,12 @@ class ConsumerGroupResource(Resource):
         user_metadata: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword user_metadata: The user metadata.
+        :paramtype user_metadata: str
+        """
         super(ConsumerGroupResource, self).__init__(location=location, **kwargs)
         self.created_at = None
         self.event_hub_path = None
@@ -271,24 +311,24 @@ class EventHubCreateOrUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. Location of the resource.
-    :type location: str
-    :param type: ARM type of the Namespace.
-    :type type: str
-    :param name: Name of the Event Hub.
-    :type name: str
+    :ivar location: Required. Location of the resource.
+    :vartype location: str
+    :ivar type: ARM type of the Namespace.
+    :vartype type: str
+    :ivar name: Name of the Event Hub.
+    :vartype name: str
     :ivar created_at: Exact time the Event Hub was created.
     :vartype created_at: ~datetime.datetime
-    :param message_retention_in_days: Number of days to retain the events for this Event Hub.
-    :type message_retention_in_days: long
-    :param partition_count: Number of partitions created for the Event Hub.
-    :type partition_count: long
+    :ivar message_retention_in_days: Number of days to retain the events for this Event Hub.
+    :vartype message_retention_in_days: long
+    :ivar partition_count: Number of partitions created for the Event Hub.
+    :vartype partition_count: long
     :ivar partition_ids: Current number of shards on the Event Hub.
     :vartype partition_ids: list[str]
-    :param status: Enumerates the possible values for the status of the Event Hub. Possible values
+    :ivar status: Enumerates the possible values for the status of the Event Hub. Possible values
      include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
      "Deleting", "Renaming", "Unknown".
-    :type status: str or ~azure.mgmt.eventhub.v2015_08_01.models.EntityStatus
+    :vartype status: str or ~azure.mgmt.eventhub.v2015_08_01.models.EntityStatus
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     """
@@ -323,6 +363,22 @@ class EventHubCreateOrUpdateParameters(msrest.serialization.Model):
         status: Optional[Union[str, "EntityStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Location of the resource.
+        :paramtype location: str
+        :keyword type: ARM type of the Namespace.
+        :paramtype type: str
+        :keyword name: Name of the Event Hub.
+        :paramtype name: str
+        :keyword message_retention_in_days: Number of days to retain the events for this Event Hub.
+        :paramtype message_retention_in_days: long
+        :keyword partition_count: Number of partitions created for the Event Hub.
+        :paramtype partition_count: long
+        :keyword status: Enumerates the possible values for the status of the Event Hub. Possible
+         values include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled",
+         "Creating", "Deleting", "Renaming", "Unknown".
+        :paramtype status: str or ~azure.mgmt.eventhub.v2015_08_01.models.EntityStatus
+        """
         super(EventHubCreateOrUpdateParameters, self).__init__(**kwargs)
         self.location = location
         self.type = type
@@ -338,11 +394,11 @@ class EventHubCreateOrUpdateParameters(msrest.serialization.Model):
 class EventHubListResult(msrest.serialization.Model):
     """The result of the List EventHubs operation.
 
-    :param value: Result of the List EventHubs operation.
-    :type value: list[~azure.mgmt.eventhub.v2015_08_01.models.EventHubResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List EventHubs operation.
+    :vartype value: list[~azure.mgmt.eventhub.v2015_08_01.models.EventHubResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of EventHubs.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -357,6 +413,13 @@ class EventHubListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List EventHubs operation.
+        :paramtype value: list[~azure.mgmt.eventhub.v2015_08_01.models.EventHubResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of EventHubs.
+        :paramtype next_link: str
+        """
         super(EventHubListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -371,22 +434,22 @@ class EventHubResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
     :ivar created_at: Exact time the Event Hub was created.
     :vartype created_at: ~datetime.datetime
-    :param message_retention_in_days: Number of days to retain the events for this Event Hub.
-    :type message_retention_in_days: long
-    :param partition_count: Number of partitions created for the Event Hub.
-    :type partition_count: long
+    :ivar message_retention_in_days: Number of days to retain the events for this Event Hub.
+    :vartype message_retention_in_days: long
+    :ivar partition_count: Number of partitions created for the Event Hub.
+    :vartype partition_count: long
     :ivar partition_ids: Current number of shards on the Event Hub.
     :vartype partition_ids: list[str]
-    :param status: Enumerates the possible values for the status of the Event Hub. Possible values
+    :ivar status: Enumerates the possible values for the status of the Event Hub. Possible values
      include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
      "Deleting", "Renaming", "Unknown".
-    :type status: str or ~azure.mgmt.eventhub.v2015_08_01.models.EntityStatus
+    :vartype status: str or ~azure.mgmt.eventhub.v2015_08_01.models.EntityStatus
     :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: ~datetime.datetime
     """
@@ -422,6 +485,18 @@ class EventHubResource(Resource):
         status: Optional[Union[str, "EntityStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword message_retention_in_days: Number of days to retain the events for this Event Hub.
+        :paramtype message_retention_in_days: long
+        :keyword partition_count: Number of partitions created for the Event Hub.
+        :paramtype partition_count: long
+        :keyword status: Enumerates the possible values for the status of the Event Hub. Possible
+         values include: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled",
+         "Creating", "Deleting", "Renaming", "Unknown".
+        :paramtype status: str or ~azure.mgmt.eventhub.v2015_08_01.models.EntityStatus
+        """
         super(EventHubResource, self).__init__(location=location, **kwargs)
         self.created_at = None
         self.message_retention_in_days = message_retention_in_days
@@ -438,28 +513,28 @@ class NamespaceCreateOrUpdateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. Namespace location.
-    :type location: str
-    :param sku: SKU parameters supplied to the create Namespace operation.
-    :type sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
-    :param tags: A set of tags. Namespace tags.
-    :type tags: dict[str, str]
-    :param status: State of the Namespace. Possible values include: "Unknown", "Creating",
+    :ivar location: Required. Namespace location.
+    :vartype location: str
+    :ivar sku: SKU parameters supplied to the create Namespace operation.
+    :vartype sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
+    :ivar tags: A set of tags. Namespace tags.
+    :vartype tags: dict[str, str]
+    :ivar status: State of the Namespace. Possible values include: "Unknown", "Creating",
      "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
      "SoftDeleted", "Removing", "Removed", "Failed".
-    :type status: str or ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceState
-    :param provisioning_state: Provisioning state of the Namespace.
-    :type provisioning_state: str
-    :param created_at: The time the Namespace was created.
-    :type created_at: ~datetime.datetime
-    :param updated_at: The time the Namespace was updated.
-    :type updated_at: ~datetime.datetime
-    :param service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
-    :type service_bus_endpoint: str
+    :vartype status: str or ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceState
+    :ivar provisioning_state: Provisioning state of the Namespace.
+    :vartype provisioning_state: str
+    :ivar created_at: The time the Namespace was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The time the Namespace was updated.
+    :vartype updated_at: ~datetime.datetime
+    :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
+    :vartype service_bus_endpoint: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
-    :param enabled: Specifies whether this instance is enabled.
-    :type enabled: bool
+    :ivar enabled: Specifies whether this instance is enabled.
+    :vartype enabled: bool
     """
 
     _validation = {
@@ -494,6 +569,28 @@ class NamespaceCreateOrUpdateParameters(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Namespace location.
+        :paramtype location: str
+        :keyword sku: SKU parameters supplied to the create Namespace operation.
+        :paramtype sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
+        :keyword tags: A set of tags. Namespace tags.
+        :paramtype tags: dict[str, str]
+        :keyword status: State of the Namespace. Possible values include: "Unknown", "Creating",
+         "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
+         "SoftDeleted", "Removing", "Removed", "Failed".
+        :paramtype status: str or ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceState
+        :keyword provisioning_state: Provisioning state of the Namespace.
+        :paramtype provisioning_state: str
+        :keyword created_at: The time the Namespace was created.
+        :paramtype created_at: ~datetime.datetime
+        :keyword updated_at: The time the Namespace was updated.
+        :paramtype updated_at: ~datetime.datetime
+        :keyword service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
+        :paramtype service_bus_endpoint: str
+        :keyword enabled: Specifies whether this instance is enabled.
+        :paramtype enabled: bool
+        """
         super(NamespaceCreateOrUpdateParameters, self).__init__(**kwargs)
         self.location = location
         self.sku = sku
@@ -510,11 +607,11 @@ class NamespaceCreateOrUpdateParameters(msrest.serialization.Model):
 class NamespaceListResult(msrest.serialization.Model):
     """The response of the List Namespace operation.
 
-    :param value: Result of the List Namespace operation.
-    :type value: list[~azure.mgmt.eventhub.v2015_08_01.models.NamespaceResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains incomplete list
+    :ivar value: Result of the List Namespace operation.
+    :vartype value: list[~azure.mgmt.eventhub.v2015_08_01.models.NamespaceResource]
+    :ivar next_link: Link to the next set of results. Not empty if Value contains incomplete list
      of namespaces.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -529,6 +626,13 @@ class NamespaceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Namespace operation.
+        :paramtype value: list[~azure.mgmt.eventhub.v2015_08_01.models.NamespaceResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains incomplete
+         list of namespaces.
+        :paramtype next_link: str
+        """
         super(NamespaceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -543,12 +647,12 @@ class TrackedResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -572,6 +676,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(location=location, **kwargs)
         self.tags = tags
 
@@ -585,30 +695,30 @@ class NamespaceResource(TrackedResource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: SKU parameters supplied to the create Namespace operation.
-    :type sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
-    :param status: State of the Namespace. Possible values include: "Unknown", "Creating",
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: SKU parameters supplied to the create Namespace operation.
+    :vartype sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
+    :ivar status: State of the Namespace. Possible values include: "Unknown", "Creating",
      "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
      "SoftDeleted", "Removing", "Removed", "Failed".
-    :type status: str or ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceState
-    :param provisioning_state: Provisioning state of the Namespace.
-    :type provisioning_state: str
-    :param created_at: The time the Namespace was created.
-    :type created_at: ~datetime.datetime
-    :param updated_at: The time the Namespace was updated.
-    :type updated_at: ~datetime.datetime
-    :param service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
-    :type service_bus_endpoint: str
+    :vartype status: str or ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceState
+    :ivar provisioning_state: Provisioning state of the Namespace.
+    :vartype provisioning_state: str
+    :ivar created_at: The time the Namespace was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The time the Namespace was updated.
+    :vartype updated_at: ~datetime.datetime
+    :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
+    :vartype service_bus_endpoint: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
-    :param enabled: Specifies whether this instance is enabled.
-    :type enabled: bool
+    :ivar enabled: Specifies whether this instance is enabled.
+    :vartype enabled: bool
     """
 
     _validation = {
@@ -648,6 +758,28 @@ class NamespaceResource(TrackedResource):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: SKU parameters supplied to the create Namespace operation.
+        :paramtype sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
+        :keyword status: State of the Namespace. Possible values include: "Unknown", "Creating",
+         "Created", "Activating", "Enabling", "Active", "Disabling", "Disabled", "SoftDeleting",
+         "SoftDeleted", "Removing", "Removed", "Failed".
+        :paramtype status: str or ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceState
+        :keyword provisioning_state: Provisioning state of the Namespace.
+        :paramtype provisioning_state: str
+        :keyword created_at: The time the Namespace was created.
+        :paramtype created_at: ~datetime.datetime
+        :keyword updated_at: The time the Namespace was updated.
+        :paramtype updated_at: ~datetime.datetime
+        :keyword service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
+        :paramtype service_bus_endpoint: str
+        :keyword enabled: Specifies whether this instance is enabled.
+        :paramtype enabled: bool
+        """
         super(NamespaceResource, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.status = status
@@ -662,10 +794,10 @@ class NamespaceResource(TrackedResource):
 class NamespaceUpdateParameter(msrest.serialization.Model):
     """Parameters supplied to the Patch/update Namespace operation.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: The sku of the created Namespace.
-    :type sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku of the created Namespace.
+    :vartype sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
     """
 
     _attribute_map = {
@@ -680,6 +812,12 @@ class NamespaceUpdateParameter(msrest.serialization.Model):
         sku: Optional["Sku"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku of the created Namespace.
+        :paramtype sku: ~azure.mgmt.eventhub.v2015_08_01.models.Sku
+        """
         super(NamespaceUpdateParameter, self).__init__(**kwargs)
         self.tags = tags
         self.sku = sku
@@ -692,8 +830,8 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.eventhub.v2015_08_01.models.OperationDisplay
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.eventhub.v2015_08_01.models.OperationDisplay
     """
 
     _validation = {
@@ -711,6 +849,10 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.eventhub.v2015_08_01.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
@@ -745,6 +887,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -777,6 +921,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -785,9 +931,9 @@ class OperationListResult(msrest.serialization.Model):
 class RegenerateKeysParameters(msrest.serialization.Model):
     """Parameters supplied to the Regenerate Authorization Rule keys operation.
 
-    :param policykey: Key that needs to be regenerated. Possible values include: "PrimaryKey",
+    :ivar policykey: Key that needs to be regenerated. Possible values include: "PrimaryKey",
      "SecondaryKey".
-    :type policykey: str or ~azure.mgmt.eventhub.v2015_08_01.models.Policykey
+    :vartype policykey: str or ~azure.mgmt.eventhub.v2015_08_01.models.Policykey
     """
 
     _attribute_map = {
@@ -800,6 +946,11 @@ class RegenerateKeysParameters(msrest.serialization.Model):
         policykey: Optional[Union[str, "Policykey"]] = None,
         **kwargs
     ):
+        """
+        :keyword policykey: Key that needs to be regenerated. Possible values include: "PrimaryKey",
+         "SecondaryKey".
+        :paramtype policykey: str or ~azure.mgmt.eventhub.v2015_08_01.models.Policykey
+        """
         super(RegenerateKeysParameters, self).__init__(**kwargs)
         self.policykey = policykey
 
@@ -845,6 +996,8 @@ class ResourceListKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceListKeys, self).__init__(**kwargs)
         self.primary_connection_string = None
         self.secondary_connection_string = None
@@ -856,12 +1009,12 @@ class ResourceListKeys(msrest.serialization.Model):
 class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to the Create Or Update Authorization Rules operation.
 
-    :param location: Data center location.
-    :type location: str
-    :param name: Name of the AuthorizationRule.
-    :type name: str
-    :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.eventhub.v2015_08_01.models.AccessRights]
+    :ivar location: Data center location.
+    :vartype location: str
+    :ivar name: Name of the AuthorizationRule.
+    :vartype name: str
+    :ivar rights: The rights associated with the rule.
+    :vartype rights: list[str or ~azure.mgmt.eventhub.v2015_08_01.models.AccessRights]
     """
 
     _attribute_map = {
@@ -878,6 +1031,14 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization
         rights: Optional[List[Union[str, "AccessRights"]]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Data center location.
+        :paramtype location: str
+        :keyword name: Name of the AuthorizationRule.
+        :paramtype name: str
+        :keyword rights: The rights associated with the rule.
+        :paramtype rights: list[str or ~azure.mgmt.eventhub.v2015_08_01.models.AccessRights]
+        """
         super(SharedAccessAuthorizationRuleCreateOrUpdateParameters, self).__init__(**kwargs)
         self.location = location
         self.name = name
@@ -887,12 +1048,12 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization
 class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
     """The response from the List Namespace operation.
 
-    :param value: Result of the List Authorization Rules operation.
-    :type value:
+    :ivar value: Result of the List Authorization Rules operation.
+    :vartype value:
      list[~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleResource]
-    :param next_link: Link to the next set of results. Not empty if Value contains an incomplete
+    :ivar next_link: Link to the next set of results. Not empty if Value contains an incomplete
      list of Authorization Rules.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -907,6 +1068,14 @@ class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the List Authorization Rules operation.
+        :paramtype value:
+         list[~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleResource]
+        :keyword next_link: Link to the next set of results. Not empty if Value contains an incomplete
+         list of Authorization Rules.
+        :paramtype next_link: str
+        """
         super(SharedAccessAuthorizationRuleListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -921,12 +1090,12 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar type: Resource type.
     :vartype type: str
-    :param rights: The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.eventhub.v2015_08_01.models.AccessRights]
+    :ivar rights: The rights associated with the rule.
+    :vartype rights: list[str or ~azure.mgmt.eventhub.v2015_08_01.models.AccessRights]
     """
 
     _validation = {
@@ -950,6 +1119,12 @@ class SharedAccessAuthorizationRuleResource(Resource):
         rights: Optional[List[Union[str, "AccessRights"]]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword rights: The rights associated with the rule.
+        :paramtype rights: list[str or ~azure.mgmt.eventhub.v2015_08_01.models.AccessRights]
+        """
         super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, **kwargs)
         self.rights = rights
 
@@ -959,13 +1134,13 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Name of this SKU. Possible values include: "Basic", "Standard".
-    :type name: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuName
-    :param tier: Required. The billing tier of this particular SKU. Possible values include:
+    :ivar name: Name of this SKU. Possible values include: "Basic", "Standard".
+    :vartype name: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuName
+    :ivar tier: Required. The billing tier of this particular SKU. Possible values include:
      "Basic", "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuTier
-    :param capacity: The Event Hubs throughput units.
-    :type capacity: int
+    :vartype tier: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuTier
+    :ivar capacity: The Event Hubs throughput units.
+    :vartype capacity: int
     """
 
     _validation = {
@@ -986,6 +1161,15 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of this SKU. Possible values include: "Basic", "Standard".
+        :paramtype name: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuName
+        :keyword tier: Required. The billing tier of this particular SKU. Possible values include:
+         "Basic", "Standard", "Premium".
+        :paramtype tier: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuTier
+        :keyword capacity: The Event Hubs throughput units.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
