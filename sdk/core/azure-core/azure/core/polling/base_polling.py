@@ -28,13 +28,13 @@ import base64
 import json
 from enum import Enum
 from typing import TYPE_CHECKING, Optional, Any, Union
-from azure.core import CaseInsensitiveEnumMeta
 
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
 from ..pipeline._tools import is_rest
+from .._enum_meta import CaseInsensitiveEnumMeta
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse

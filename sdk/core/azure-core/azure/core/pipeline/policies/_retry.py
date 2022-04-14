@@ -33,7 +33,6 @@ import logging
 import time
 from enum import Enum
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
     AzureError,
@@ -46,6 +45,7 @@ from azure.core.exceptions import (
 
 from ._base import HTTPPolicy, RequestHistory
 from . import _utils
+from ..._enum_meta import CaseInsensitiveEnumMeta
 
 
 _LOGGER = logging.getLogger(__name__)
