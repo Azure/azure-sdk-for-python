@@ -3,6 +3,7 @@ import os
 import subprocess as sp
 import time
 from pypi_tools.pypi import PyPIClient
+from pathlib import Path
 
 package_info = [('powerbiembedded', 'powerbiembedded'), ('signalr', 'signalr'), ('attestation', 'attestation'),
                 ('managementpartner', 'managementpartner'), ('network', 'dns'), ('mobilenetwork', 'mobilenetwork'),
@@ -114,8 +115,8 @@ def create_code_report(cmd):
     return info_output.split('\n')
 
 if __name__ == '__main__':
-    env = os.getcwd()
-    docker_path = env.split("\scripts")[0]
+    env = Path.cwd()
+    docker_path = env.parent.parent
     sp.call(fr"docker create -it --rm -h Change_log --name Change_log -v {docker_path}:/_ l601306339/autorest")
     sp.call("docker start Change_log")
     sp.call(f'docker exec -it Change_log /bin/bash -c  "python _/scripts/dev_setup.py -p azure-core"  ')
