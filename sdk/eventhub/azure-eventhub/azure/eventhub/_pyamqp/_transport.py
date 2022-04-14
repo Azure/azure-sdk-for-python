@@ -392,7 +392,8 @@ class _AbstractTransport(object):
         read_frame_buffer = BytesIO()
         try:
             frame_header = memoryview(bytearray(8))
-            read_frame_buffer.write(read(8, buffer=frame_header, initial=True))
+            data = read(8, buffer=frame_header, initial=True)
+            read_frame_buffer.write(data)
 
             channel = struct.unpack('>H', frame_header[6:])[0]
             size = frame_header[0:4]
@@ -663,7 +664,6 @@ class WebSocketTransport(_AbstractTransport):
     def __init__(self, host, port=WEBSOCKET_PORT,   connect_timeout=None, ssl=None, **kwargs
         ):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
-        self._read_buffer = BytesIO()
         super().__init__(
             host, port, connect_timeout, **kwargs
             )
@@ -686,7 +686,7 @@ class WebSocketTransport(_AbstractTransport):
             self.ws = create_connection(
                 url="wss://{}/$servicebus/websocket/".format("testeh.servicebus.windows.net"),
                 subprotocols=['AMQPWSB10'],
-                timeout=self.connect_timeout,
+                timeout=9999,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
@@ -696,31 +696,34 @@ class WebSocketTransport(_AbstractTransport):
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 
-    def _read(self, n, initial=False, **kwargs): # pylint: disable=unused-arguments
+    def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
+        
         length = 0
-        buffer = kwargs.get('buffer', None)
-        view = buffer or memoryview(bytearray(toread))
+        view = buffer or memoryview(bytearray(n))
+        rbuf = self._read_buffer
         nbytes = self._read_buffer.readinto(view)
-        toread -= nbytes
         length += nbytes
         try:
-            while toread:
+            while length < n:
                 data = self.ws.recv()
-                if len(data) <= toread:
-                    view = memoryview(bytes(view) + data)
-                    toread = 0
-                else:
-                    view = memoryview(bytes(view) + data[:n])
-                    toread -= n
-                length += len(data)
-                if not nbytes:
-                    raise IOError('Server unexpectedly closed connection')
+                try:
+                    data = bytes(data, 'utf-8')
+                except TypeError:
+                    pass
 
-                length += nbytes
-                toread -= nbytes
-        except:  # noqa
-            self._read_buffer = BytesIO(view[:length])
+                if len(data) + length < n:
+                    for i in range(len(data)):
+                        view[length+i] = data[i]
+                    length += len(data)
+                else:
+                    for i in range(n-length):
+                        view[length+i] = data[i]
+                    rbuf.write(data[n-length:])
+                    length = n
+            print('done with while loop')
+        except:
+            self._read_buffer = rbuf
             raise
         return view
 
@@ -730,4 +733,7 @@ class WebSocketTransport(_AbstractTransport):
 
     def _write(self, s):
         """Completely write a string to the peer."""
-        self.ws.send(s)
+        try:
+            self.ws.send(s)
+        except:
+            raise
