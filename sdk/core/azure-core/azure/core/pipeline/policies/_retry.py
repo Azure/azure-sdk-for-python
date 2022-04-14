@@ -33,6 +33,7 @@ import logging
 import time
 from enum import Enum
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
     AzureError,
@@ -49,7 +50,8 @@ from . import _utils
 
 _LOGGER = logging.getLogger(__name__)
 
-class RetryMode(str, Enum):
+# pylint: disable=enum-must-be-uppercase
+class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Exponential = 'exponential'
     Fixed = 'fixed'
 
