@@ -95,8 +95,7 @@ class CosmosClient(object):
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
 
-    :param url: The URL of the Cosmos DB account.
-    :type url: str
+    :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials_async.AsyncTokenCredential]
     :param str consistency_level: Consistency level to use for the session. Default value is None (account-level).

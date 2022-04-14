@@ -82,8 +82,7 @@ class DatabaseProxy(object):
         """
         :param client_connection: Client from which this database was retrieved.
         :type client_connection: ~azure.cosmos.aio.CosmosClientConnection
-        :param id: ID (name) of the database.
-        :type id: str
+        :param str id: ID (name) of the database.
         """
         self.client_connection = client_connection
         self.id = id
