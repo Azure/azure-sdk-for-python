@@ -19,7 +19,7 @@ from azure.eventhub._buffered_producer import PartitionResolver
 from azure.eventhub.amqp import (
     AmqpAnnotatedMessage,
 )
-from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError
+from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError, EventHubError
 
 
 def random_pkey_generation(partitions):
@@ -416,7 +416,7 @@ def test_send_with_timing_configuration(connection_str):
         producer.send_event(EventData('data'))
         time.sleep(5)
         assert not sent_events
-        time.sleep(7)
+        time.sleep(10)
         assert sum([len(sent_events[pid]) for pid in partitions]) == 1
 
     assert not on_error.err
@@ -546,7 +546,7 @@ def test_send_failure_cases(connection_str):
         producer.flush()
 
         # error case: close error, unable to flush/backpressure in timeout
-        with pytest.raises(EventDataSendError):
+        with pytest.raises(EventHubError):
             # mock back pressure
             producer.send_event(EventData('back pressure event2'), partition_id='0')
             producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()

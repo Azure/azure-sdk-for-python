@@ -551,9 +551,8 @@ class EventDataBatch(object):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
         outgoing_batch_data = [transform_outbound_single_message(m, EventData) for m in batch_data]
         batch_data_instance = cls(partition_key=partition_key)
-        batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
-            outgoing_batch_data
-        )
+        for data in outgoing_batch_data:
+            batch_data_instance.add(data)
         return batch_data_instance
 
     def _load_events(self, events):
