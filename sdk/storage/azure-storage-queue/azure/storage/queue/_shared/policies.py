@@ -14,6 +14,9 @@ import logging
 import uuid
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
+
+import requests
+
 try:
     from urllib.parse import (
         urlparse,
@@ -521,6 +524,20 @@ class StorageRetryPolicy(HTTPPolicy):
                         self.sleep(retry_settings, request.context.transport)
                         continue
                 break
+            except ServiceResponseError as err:
+                if hasattr(err, "inner_exception") and isinstance(
+                        err.inner_exception, requests.exceptions.ConnectionError):
+                    retries_remaining = self.increment(
+                        retry_settings, request=request.http_request, error=err)
+                    if retries_remaining:
+                        retry_hook(
+                            retry_settings,
+                            request=request.http_request,
+                            response=None,
+                            error=err)
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
+                    raise err
             except AzureError as err:
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
