@@ -8,8 +8,8 @@
 
 from typing import Any, Iterable, List
 from enum import Enum
-from azure.core import CaseInsensitiveEnumMeta
 from collections import namedtuple
+from azure.core import CaseInsensitiveEnumMeta
 from ._generated.v2022_06_30_preview.models import ModelInfo, Error
 from ._helpers import (
     adjust_value_type,
