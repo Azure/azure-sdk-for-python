@@ -1923,9 +1923,9 @@ class CheckExceptionLogging(BaseChecker):
     priority = -1
     msgs = {
         "C4751": (
-            "BLAH",
+            "Do not allow logging of Exception, as it can reveal personally identifiable information.",
             "exception-logging",
-            "BALH.",
+            "Do not log exceptions.",
         ),
     }
     options = (
@@ -1935,7 +1935,7 @@ class CheckExceptionLogging(BaseChecker):
                 "default": False,
                 "type": "yn",
                 "metavar": "<y_or_n>",
-                "help": "blah",
+                "help": "Do not log exceptions",
             },
         ),
     )
