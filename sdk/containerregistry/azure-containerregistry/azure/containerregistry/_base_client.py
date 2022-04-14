@@ -16,13 +16,14 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ContainerRegistryApiVersion(str, Enum):
+
+class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """Container Registry API version supported by this package"""
 
     V0_PREVIEW = ""
 
 
-class ContainerRegistryBaseClient(object):
+class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Base class for ContainerRegistryClient
 
     :param str endpoint: Azure Container Registry endpoint
