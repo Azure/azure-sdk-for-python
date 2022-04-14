@@ -3,11 +3,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from __future__ import annotations
 import base64
+import hashlib
 import json
 import re
 import time
-from typing import TYPE_CHECKING, List, Dict
+import pickle
+from typing import TYPE_CHECKING
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -16,7 +19,9 @@ except ImportError:
 from azure.core.exceptions import ServiceRequestError
 
 if TYPE_CHECKING:
+    from typing import List, Dict, IO
     from azure.core.pipeline import PipelineRequest
+    from ._generated.models import OCIManifest
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
@@ -24,6 +29,7 @@ SUPPORTED_API_VERSIONS = [
     "2019-08-15-preview",
     "2021-07-01"
 ]
+OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
 
 
 def _is_tag(tag_or_digest):
@@ -125,3 +131,11 @@ def _parse_exp_time(raw_token):
         return web_token.get("exp", time.time())
 
     return time.time()
+
+def _serialize_manifest(manifest):
+    # type: (OCIManifest) -> IO
+    return pickle.dumps(manifest)
+
+def _compute_digest(stream):
+    # type: (IO) -> str
+    return hashlib.sha256(stream).digest().decode()
