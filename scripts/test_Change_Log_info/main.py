@@ -64,7 +64,7 @@ package_info = [('powerbiembedded', 'powerbiembedded'), ('signalr', 'signalr'), 
                 ('storage', 'storagesync'), ('cosmos', 'cosmosdb'), ('botservice', 'botservice')
                 ]
 
-def findReportName(result):
+def find_report_name(result):
     pattern = 'written to'
     merged = 'merged_report'
     for line in result:
@@ -123,8 +123,6 @@ if __name__ == '__main__':
         package_name = package[0]
         package_path = package[1]
 
-        # sp.call(fr'docker exec -it Change_log /bin/bash -c "cd _/sdk/{package_name}/azure-mgmt-{package_path} && pip install e ."')
-
         client = PyPIClient()
         versions = [str(v) for v in client.get_ordered_versions(f"azure-mgmt-{package_path}")]
         if len(versions) >= 2:
@@ -139,8 +137,8 @@ if __name__ == '__main__':
 
         last_info = create_code_report(cmd_cl1)
         info = create_code_report(cmd_cl2)
-        last_route = findReportName(last_info)
-        route = findReportName(info)
+        last_route = find_report_name(last_info)
+        route = find_report_name(info)
 
         result_text = sp.getoutput(
             fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route} {last_route}"')
