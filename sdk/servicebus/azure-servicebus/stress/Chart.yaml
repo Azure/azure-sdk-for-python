@@ -10,4 +10,4 @@ annotations:
 dependencies:
 - name: stress-test-addons
   version: 0.1.14
-  repository: file:///Git\azure-sdk-tools\tools\stress-cluster\cluster\kubernetes\stress-test-addons #https://stresstestcharts.blob.core.windows.net/helm/
+  repository: https://stresstestcharts.blob.core.windows.net/helm/
