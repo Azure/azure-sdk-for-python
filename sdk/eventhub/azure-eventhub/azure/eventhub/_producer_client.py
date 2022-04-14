@@ -182,6 +182,8 @@ class EventHubProducerClient(ClientBase):
         self._buffered_producer_dispatcher = None
         self._max_wait_time = max_wait_time
         self._max_buffer_length = max_buffer_length
+        # the following two parameters are not part of the public api yet
+        # which could be exposed in the future if needed
         self._executor = kwargs.get("executor")
         self._max_worker = kwargs.get("max_worker")
 
@@ -471,8 +473,9 @@ class EventHubProducerClient(ClientBase):
         """
         Sends an event data.
         By default, the method will block until acknowledgement is received or operation times out.
-        If the `EventHubProducerClient` is configured to run in buffered mode, the method will enqueue the event
-        into local buffer and return. The producer will do automatic batching and sending in the background.
+        If the `EventHubProducerClient` is configured to run in buffered mode, the method will try enqueuing
+        the events into buffer within the given time if specified and return.
+        The producer will do automatic sending in the background in buffered mode.
 
         If `on_error` is passed while `buffered_mode` is False when instantiating the producer client,
         instead of error being raised from the send methods,
@@ -480,8 +483,10 @@ class EventHubProducerClient(ClientBase):
 
         :param event_data: The `EventData` object to be sent.
         :type event_data: Union[~azure.eventhub.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage]
-        :keyword float timeout: The maximum wait time to send the event data.
-         If not specified, the default wait time specified when the producer was created will be used.
+        :keyword float timeout: The maximum wait time to send the event data in non-buffered mode or the
+         maximum wait time to enqueue the event data into the buffer in buffered mode.
+         In non-buffered mode, the default wait time specified when the producer
+         was created will be used. In buffered mode, the default wait time is None.
         :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
          A `TypeError` will be raised if partition_id is specified and event_data_batch is an `EventDataBatch` because
@@ -495,6 +500,15 @@ class EventHubProducerClient(ClientBase):
          as the partition_key will be ignored by the Event Hub service and events will be assigned
          to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
          partition_key to only be string type, they might fail to parse the non-string value.**
+        :rtype: None
+        :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
+         :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
+         :class:`ConnectionLostError<azure.eventhub.exceptions.ConnectionLostError>`
+         :class:`EventDataError<azure.eventhub.exceptions.EventDataError>`
+         :class:`EventDataSendError<azure.eventhub.exceptions.EventDataSendError>`
+         :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        :raises OperationTimeoutError: If the value specified by the timeout parameter elapses before the event can be
+         sent in non-buffered mode or the events can be enqueued into the buffered in buffered mode.
         """
         input_pid = kwargs.get("partition_id")
         pid = input_pid or ALL_PARTITIONS
@@ -524,8 +538,9 @@ class EventHubProducerClient(ClientBase):
         """
         Sends a batch of event data.
         By default, the method will block until acknowledgement is received or operation times out.
-        If the `EventHubProducerClient` is configured to run in buffered mode, the method will enqueue the events
-        into local buffer and return. The producer will do automatic sending in the background.
+        If the `EventHubProducerClient` is configured to run in buffered mode, the method will try enqueuing
+        the events into buffer within the given time if specified and return.
+        The producer will do automatic sending in the background in buffered mode.
 
         In non-buffered mode, if `on_error` is passed in when instantiating the producer client,
         instead of error being raised from the send methods in error scenarios,
@@ -543,8 +558,10 @@ class EventHubProducerClient(ClientBase):
          All `EventData` or `AmqpAnnotatedMessage` in the list or `EventDataBatch` will land on the same partition.
         :type event_data_batch: Union[~azure.eventhub.EventDataBatch, List[Union[~azure.eventhub.EventData,
             ~azure.eventhub.amqp.AmqpAnnotatedMessage]]
-        :keyword float timeout: The maximum wait time to send the event data.
-         If not specified, the default wait time specified when the producer was created will be used.
+        :keyword float timeout: The maximum wait time to send the event data in non-buffered mode or the
+         maximum wait time to enqueue the event data into the buffer in buffered mode.
+         In non-buffered mode, the default wait time specified when the producer
+         was created will be used. In buffered mode, the default wait time is None.
         :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
          A `TypeError` will be raised if partition_id is specified and event_data_batch is an `EventDataBatch` because
@@ -567,6 +584,8 @@ class EventHubProducerClient(ClientBase):
          :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
          :class:`ValueError`
          :class:`TypeError`
+        :raises OperationTimeoutError: If the value specified by the timeout parameter elapses before the event can be
+         sent in non-buffered mode or the events can not be enqueued into the buffered in buffered mode.
 
         .. admonition:: Example:
 
@@ -711,6 +730,8 @@ class EventHubProducerClient(ClientBase):
 
         :keyword Optional[float] timeout: Timeout to flush the buffered events, default is None which means no timeout.
         :rtype: None
+        :raises EventDataSendError: If the producer fails to flush the buffer within the given timeout
+         in buffered mode.
         """
         if self._buffered_mode and self._buffered_producer_dispatcher:
             self._buffered_producer_dispatcher.flush(timeout=kwargs.get("timeout"))
@@ -728,6 +749,8 @@ class EventHubProducerClient(ClientBase):
         :keyword Optional[float] timeout: Buffered mode only. Timeout to close the producer.
          Default is None which means no timeout.
         :rtype: None
+        :raises EventHubError: If an error occurred when flushing the buffer if `flush` is set to True or closing the
+         underlying AMQP connections in buffered mode.
 
         .. admonition:: Example:
 

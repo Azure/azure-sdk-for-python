@@ -36,6 +36,8 @@ producer = EventHubProducerClient.from_connection_string(
 )
 
 start_time = time.time()
+
+# exiting the context manager will automatically call flush
 with producer:
     # single events will be batched automatically
     for i in range(10):

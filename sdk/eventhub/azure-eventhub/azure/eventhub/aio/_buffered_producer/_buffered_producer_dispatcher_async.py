@@ -4,13 +4,13 @@
 # --------------------------------------------------------------------------------------------
 import asyncio
 import logging
-from typing import Dict, List, Callable, Optional, Awaitable, Any, TYPE_CHECKING
+from typing import Dict, List, Callable, Optional, Awaitable, TYPE_CHECKING
 from asyncio import Lock
 
 from ._partition_resolver_async import PartitionResolver
 from ...aio._producer_async import EventHubProducer
 from ._buffered_producer_async import BufferedProducer
-from ...exceptions import EventDataSendError, ConnectError
+from ...exceptions import EventDataSendError, ConnectError, EventHubError
 
 if TYPE_CHECKING:
     from ..._producer_client import SendEventTypes
@@ -125,7 +125,7 @@ class BufferedProducerDispatcher:
         if exc_results:
             _LOGGER.warning('Stopping all partitions failed with result %r.', exc_results)
             if raise_error:
-                raise EventDataSendError(
+                raise EventHubError(
                     message="Stopping all partitions partially failed, failed partitions are {!r}"
                             " Exception details are {!r}".format(exc_results.keys(), exc_results)
                 )

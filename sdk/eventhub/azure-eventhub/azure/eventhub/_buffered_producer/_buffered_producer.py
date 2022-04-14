@@ -63,6 +63,7 @@ class BufferedProducer:
 
     def stop(self, flush=True, timeout=None, raise_error=False):
         self._running = False
+        timeout_time = time.time() + timeout if timeout else None
         if flush:
             self.flush(timeout=timeout, raise_error=raise_error)
         else:
@@ -73,12 +74,13 @@ class BufferedProducer:
                     self._cur_buffered_len
                 )
         if self._check_max_wait_time_future:
+            remain_timeout = timeout_time - time.time() if timeout else None
             try:
                 with self._not_empty:
                     # in the stop procedure, calling notify to give check_max_wait_time_future a chance to stop
                     # as it is waiting for Condition self._not_empty
                     self._not_empty.notify()
-                self._check_max_wait_time_future.result(timeout)
+                self._check_max_wait_time_future.result(remain_timeout)
             except Exception as exc:  # pylint: disable=broad-except
                 _LOGGER.warning(
                     "Partition %r stopped with error %r",
@@ -100,8 +102,7 @@ class BufferedProducer:
 
             if self._max_buffer_len - self._cur_buffered_len < new_events_len:
                 _LOGGER.info(
-                    "Partition %r does not have enough room for coming %r events."
-                    "Flush first.",
+                    "The buffer for partition %r is full. Attempting to flush before adding %r events.",
                     self.partition_id,
                     new_events_len
                 )

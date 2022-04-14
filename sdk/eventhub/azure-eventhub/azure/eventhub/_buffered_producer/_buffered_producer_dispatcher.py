@@ -10,7 +10,7 @@ from typing import Dict, Optional, List, Callable, TYPE_CHECKING
 from ._partition_resolver import PartitionResolver
 from ._buffered_producer import BufferedProducer
 from .._producer import EventHubProducer
-from ..exceptions import EventDataSendError, ConnectError
+from ..exceptions import EventDataSendError, ConnectError, EventHubError
 
 if TYPE_CHECKING:
     from .._producer_client import SendEventTypes
@@ -133,7 +133,7 @@ class BufferedProducerDispatcher:
         if exc_results:
             _LOGGER.warning('Stopping all partitions partially failed with result %r.', exc_results)
             if raise_error:
-                raise EventDataSendError(
+                raise EventHubError(
                     message="Stopping all partitions partially failed, failed partitions are {!r}"
                             " Exception details are {!r}".format(exc_results.keys(), exc_results)
                 )

@@ -100,8 +100,7 @@ class BufferedProducer:
 
         if self._max_buffer_len - self._cur_buffered_len < new_events_len:
             _LOGGER.info(
-                "Partition %r does not have enough room for coming %r events."
-                "Flush first.",
+                "The buffer for partition %r is full. Attempting to flush before adding %r events.",
                 self.partition_id,
                 new_events_len
             )

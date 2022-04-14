@@ -40,6 +40,7 @@ async def run():
         on_error=on_error
     )
 
+    # exiting the context manager will automatically call flush
     async with producer:
         # single events will be batched automatically
         for i in range(10):
