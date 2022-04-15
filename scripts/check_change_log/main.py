@@ -31,12 +31,11 @@ def create_foldor(name):
         print("foldor has been created")
 
 def write_txt(foldor, text_name, text, version1, version2):
-    foldor_path = r'{0}\\'.format(foldor)
-    path = foldor_path + text_name + " " + version1 + "-" + version2 + r".txt"
-    file = open(path, "w", encoding="utf-8")
-    file.write(text)
+    path = foldor + f"\{text_name}" + " " + version1 + "-" + version2 + r".txt"
+    with open(file=path, mode="w", encoding="utf-8") as file:
+
+        file.write(text)
     print("txt create successful")
-    file.close()
 
 def create_code_report(cmd):
     info = sp.Popen(cmd,
@@ -70,7 +69,7 @@ if __name__ == '__main__':
 
     # get all azure-mgmt-package paths
     in_files = glob.glob(f'{docker_path}\sdk\*\*mgmt*')
-    for i in in_files:
+    for i in in_files[0:1]:
         t = i.split('\\\\')
         mgmt_path_list = t[0].split('\\')
         package_name = mgmt_path_list[3]
@@ -99,7 +98,6 @@ if __name__ == '__main__':
             print(result_text)
 
             # write a txt to save change_log
-            env = Path.cwd()
             change_log_foldor_path = str(env) + r"\Change_Log"
             create_foldor(change_log_foldor_path)
             write_txt(change_log_foldor_path, service_name, result_text, last_version, version)
