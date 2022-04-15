@@ -775,25 +775,12 @@ class FileSystemTest(StorageTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = self._create_file_system()
-        for i in range(0, 6):
-            file_system.create_directory("dir1{}")
-
-            # create a subdirectory under the current directory
-            subdir = file_system.get_directory_client("dir1{}").create_sub_directory("subdir")
-            subdir.create_sub_directory("subsub")
-
-
-            # create a file under the current directory
-            subdir.delete_directory()
-            file_client = subdir.create_file("file")
-            file_client.append_data(b"abced", 0, 5)
-            file_client.flush_data(5)
-
-        generator1 = file_system.get_paths(path="dir10/subdir", max_results=2, upn=True).by_page()
+        dir = file_system.create_directory("dir1")
+        dir.delete_directory()
 
         # Assert
         try:
-            list(next(generator1))
+            dir.delete_directory()
         except HttpResponseError as e:
             self.assertEqual(e.error_code, StorageErrorCode.path_not_found)
             self.assertEqual(e.status_code, 404)
