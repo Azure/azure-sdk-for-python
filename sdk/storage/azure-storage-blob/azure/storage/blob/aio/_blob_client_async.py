@@ -1130,12 +1130,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """Copies a blob from the given URL.
 
         This operation returns a dictionary containing `copy_status` and `copy_id`,
-        which be used to check the status of the copy or abort the copy operation.
+        which can be used to check the status of or abort the copy operation.
         `copy_status` will be 'success' if the copy completed synchronously or
-        'pending' if the copy has been started asynchronously. Set `requires_sync`
-        to True to force the copy to be synchronous. For asynchronous copies, the
-        status can be checked by polling the :func:`get_blob_properties` method and
-        checking the copy status.
+        'pending' if the copy has been started asynchronously. For asynchronous copies,
+        the status can be checked by polling the :func:`get_blob_properties` method and
+        checking the copy status. Set `requires_sync` to True to force the copy to be synchronous.
         The Blob service copies blobs on a best-effort basis.
 
         The source blob for a copy operation may be a block blob, an append blob,
