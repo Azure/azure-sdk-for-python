@@ -1255,7 +1255,7 @@ class StorageContainerTest(StorageTestCase):
             container.account_name,
             container.container_name,
             account_key=storage_account_key,
-            permission=ContainerSasPermissions(find=True),
+            permission=ContainerSasPermissions(filter_by_tags=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         container = ContainerClient.from_container_url(container.url, credential=sas_token)

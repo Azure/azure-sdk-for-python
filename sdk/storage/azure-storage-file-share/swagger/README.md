@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-04-10/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-06-08/file.json
 output-folder: ../azure/storage/fileshare/_generated
 namespace: azure.storage.fileshare
 no-namespace-folders: true
@@ -55,6 +55,10 @@ directive:
     $.format = "str";
 - from: swagger-document
   where: $["x-ms-paths"]..responses..headers["x-ms-file-creation-time"]
+  transform: >
+    $.format = "str";
+- from: swagger-document
+  where: $.parameters.FileChangeTime
   transform: >
     $.format = "str";
 ```
@@ -102,6 +106,35 @@ directive:
         else if (property.includes('/{shareName}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ShareName"))});
+        }
+    }
+```
+
+### Remove x-ms-parameterized-host
+``` yaml
+directive:
+- from: swagger-document
+  where: $
+  transform: >
+    $["x-ms-parameterized-host"] = undefined;
+```
+
+### Add url parameter to each operation and add it to the url
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        // Don't apply to service operations (where path is just '/')
+        if (property !== '/' && !property.startsWith('/?')) {
+            $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+    
+            var oldName = property;
+            var newName = '{url}' + property;
+            $[newName] = $[oldName];
+            delete $[oldName];
         }
     }
 ```

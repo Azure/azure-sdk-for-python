@@ -30,23 +30,23 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 def build_delete_request_initial(
+    subscription_id: str,
     resource_group_name: str,
     packet_core_control_plane_name: str,
     packet_core_data_plane_name: str,
     attached_data_network_name: str,
-    subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}')
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "packetCoreControlPlaneName": _SERIALIZER.url("packet_core_control_plane_name", packet_core_control_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "packetCoreDataPlaneName": _SERIALIZER.url("packet_core_data_plane_name", packet_core_data_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "attachedDataNetworkName": _SERIALIZER.url("attached_data_network_name", attached_data_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])*(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])*)*$'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -69,23 +69,23 @@ def build_delete_request_initial(
 
 
 def build_get_request(
+    subscription_id: str,
     resource_group_name: str,
     packet_core_control_plane_name: str,
     packet_core_data_plane_name: str,
     attached_data_network_name: str,
-    subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}')
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "packetCoreControlPlaneName": _SERIALIZER.url("packet_core_control_plane_name", packet_core_control_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "packetCoreDataPlaneName": _SERIALIZER.url("packet_core_data_plane_name", packet_core_data_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "attachedDataNetworkName": _SERIALIZER.url("attached_data_network_name", attached_data_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])*(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])*)*$'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -108,11 +108,11 @@ def build_get_request(
 
 
 def build_create_or_update_request_initial(
+    subscription_id: str,
     resource_group_name: str,
     packet_core_control_plane_name: str,
     packet_core_data_plane_name: str,
     attached_data_network_name: str,
-    subscription_id: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -120,16 +120,16 @@ def build_create_or_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}')
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "packetCoreControlPlaneName": _SERIALIZER.url("packet_core_control_plane_name", packet_core_control_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "packetCoreDataPlaneName": _SERIALIZER.url("packet_core_data_plane_name", packet_core_data_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "attachedDataNetworkName": _SERIALIZER.url("attached_data_network_name", attached_data_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])*(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])*)*$'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -156,11 +156,11 @@ def build_create_or_update_request_initial(
 
 
 def build_update_tags_request(
+    subscription_id: str,
     resource_group_name: str,
     packet_core_control_plane_name: str,
     packet_core_data_plane_name: str,
     attached_data_network_name: str,
-    subscription_id: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -168,16 +168,16 @@ def build_update_tags_request(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks/{attachedDataNetworkName}')
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "packetCoreControlPlaneName": _SERIALIZER.url("packet_core_control_plane_name", packet_core_control_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "packetCoreDataPlaneName": _SERIALIZER.url("packet_core_data_plane_name", packet_core_data_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "attachedDataNetworkName": _SERIALIZER.url("attached_data_network_name", attached_data_network_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])*(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])*)*$'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -204,21 +204,21 @@ def build_update_tags_request(
 
 
 def build_list_by_packet_core_data_plane_request(
+    subscription_id: str,
     resource_group_name: str,
     packet_core_control_plane_name: str,
     packet_core_data_plane_name: str,
-    subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2022-01-01-preview"
+    api_version = "2022-03-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MobileNetwork/packetCoreControlPlanes/{packetCoreControlPlaneName}/packetCoreDataPlanes/{packetCoreDataPlaneName}/attachedDataNetworks')
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "packetCoreControlPlaneName": _SERIALIZER.url("packet_core_control_plane_name", packet_core_control_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
         "packetCoreDataPlaneName": _SERIALIZER.url("packet_core_data_plane_name", packet_core_data_plane_name, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -246,7 +246,7 @@ class AttachedDataNetworksOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -277,11 +277,11 @@ class AttachedDataNetworksOperations(object):
 
         
         request = build_delete_request_initial(
+            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             packet_core_control_plane_name=packet_core_control_plane_name,
             packet_core_data_plane_name=packet_core_data_plane_name,
             attached_data_network_name=attached_data_network_name,
-            subscription_id=self._config.subscription_id,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -390,7 +390,7 @@ class AttachedDataNetworksOperations(object):
         :type attached_data_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AttachedDataNetwork, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.AttachedDataNetwork
+        :rtype: ~azure.mgmt.mobilenetwork.models.AttachedDataNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AttachedDataNetwork"]
@@ -401,11 +401,11 @@ class AttachedDataNetworksOperations(object):
 
         
         request = build_get_request(
+            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             packet_core_control_plane_name=packet_core_control_plane_name,
             packet_core_data_plane_name=packet_core_data_plane_name,
             attached_data_network_name=attached_data_network_name,
-            subscription_id=self._config.subscription_id,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -449,11 +449,11 @@ class AttachedDataNetworksOperations(object):
         _json = self._serialize.body(parameters, 'AttachedDataNetwork')
 
         request = build_create_or_update_request_initial(
+            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             packet_core_control_plane_name=packet_core_control_plane_name,
             packet_core_data_plane_name=packet_core_data_plane_name,
             attached_data_network_name=attached_data_network_name,
-            subscription_id=self._config.subscription_id,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -503,7 +503,7 @@ class AttachedDataNetworksOperations(object):
         :param attached_data_network_name: The name of the attached data network.
         :type attached_data_network_name: str
         :param parameters: Parameters supplied to the create or update attached data network operation.
-        :type parameters: ~mobile_network_management_client.models.AttachedDataNetwork
+        :type parameters: ~azure.mgmt.mobilenetwork.models.AttachedDataNetwork
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -514,8 +514,7 @@ class AttachedDataNetworksOperations(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either AttachedDataNetwork or the result of
          cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~mobile_network_management_client.models.AttachedDataNetwork]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mobilenetwork.models.AttachedDataNetwork]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -583,10 +582,10 @@ class AttachedDataNetworksOperations(object):
         :param attached_data_network_name: The name of the attached data network.
         :type attached_data_network_name: str
         :param parameters: Parameters supplied to update attached data network tags.
-        :type parameters: ~mobile_network_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AttachedDataNetwork, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.AttachedDataNetwork
+        :rtype: ~azure.mgmt.mobilenetwork.models.AttachedDataNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AttachedDataNetwork"]
@@ -600,11 +599,11 @@ class AttachedDataNetworksOperations(object):
         _json = self._serialize.body(parameters, 'TagsObject')
 
         request = build_update_tags_request(
+            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             packet_core_control_plane_name=packet_core_control_plane_name,
             packet_core_data_plane_name=packet_core_data_plane_name,
             attached_data_network_name=attached_data_network_name,
-            subscription_id=self._config.subscription_id,
             content_type=content_type,
             json=_json,
             template_url=self.update_tags.metadata['url'],
@@ -650,7 +649,7 @@ class AttachedDataNetworksOperations(object):
         :return: An iterator like instance of either AttachedDataNetworkListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~mobile_network_management_client.models.AttachedDataNetworkListResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.mobilenetwork.models.AttachedDataNetworkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AttachedDataNetworkListResult"]
@@ -662,10 +661,10 @@ class AttachedDataNetworksOperations(object):
             if not next_link:
                 
                 request = build_list_by_packet_core_data_plane_request(
+                    subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     packet_core_control_plane_name=packet_core_control_plane_name,
                     packet_core_data_plane_name=packet_core_data_plane_name,
-                    subscription_id=self._config.subscription_id,
                     template_url=self.list_by_packet_core_data_plane.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -674,10 +673,10 @@ class AttachedDataNetworksOperations(object):
             else:
                 
                 request = build_list_by_packet_core_data_plane_request(
+                    subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     packet_core_control_plane_name=packet_core_control_plane_name,
                     packet_core_data_plane_name=packet_core_data_plane_name,
-                    subscription_id=self._config.subscription_id,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

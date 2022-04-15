@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.StorageDataLake/preview/2020-10-02/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2021-06-08/DataLakeStorage.json
 output-folder: ../azure/storage/filedatalake/_generated
 namespace: azure.storage.filedatalake
 no-namespace-folders: true
@@ -64,4 +64,37 @@ directive:
   where: $["x-ms-paths"]["/{filesystem}?resource=filesystem"].get
   transform: >
     delete $["x-ms-pageable"];
+```
+
+### Remove x-ms-parameterized-host
+``` yaml
+directive:
+- from: swagger-document
+  where: $
+  transform: >
+    $["x-ms-parameterized-host"] = undefined;
+```
+
+### Add url parameter to each operation and add it to the url
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        // Don't apply to service operations (where path is just '/')
+        if (property !== '/' && !property.startsWith('/?')) {
+            if ($[property]["parameters"] === undefined)
+            {
+                $[property]["parameters"] = []
+            }
+            $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+    
+            var oldName = property;
+            var newName = '{url}' + property;
+            $[newName] = $[oldName];
+            delete $[oldName];
+        }
+    }
 ```

@@ -591,3 +591,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         
         with pytest.raises(ValueError):
             client = self.create_registry_client(containerregistry_endpoint, api_version = "2019-08-15")
+            
+    @acr_preparer()
+    def test_get_misspell_property(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+        properties = client.get_repository_properties(ALPINE)
+        
+        with self.assertWarns(DeprecationWarning):
+            last_udpated_on = properties.last_udpated_on
+        last_updated_on = properties.last_updated_on
+        assert last_udpated_on == last_updated_on

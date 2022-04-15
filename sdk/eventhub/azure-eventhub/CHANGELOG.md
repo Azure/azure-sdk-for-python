@@ -1,6 +1,12 @@
 # Release History
 
-## 5.9.0b2 (Unreleased)
+## 5.9.0b3 (Unreleased)
+
+### Other Changes
+
+- Updated `EventData` internals for interoperability with the Schema Registry Avro Encoder library.
+
+## 5.9.0b2 (2022-03-09)
 
 ### Breaking Changes
 
