@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
@@ -21,16 +21,16 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Feb 2022 14:02:14 GMT
+      - Fri, 15 Apr 2022 10:04:57 GMT
       ms-cv:
-      - Dcxcz9lSPEWDA0TYSvLKOQ.0
+      - snbmTVaN8keFksqLfZ3w0w.0
       request-context:
       - appId=
       strict-transport-security:
@@ -38,7 +38,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 27ms
+      - 26ms
     status:
       code: 201
       message: Created
@@ -56,24 +56,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2022-02-10T14:02:14.4703641+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-04-16T10:04:58.0098068+00:00"}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       content-length:
       - '804'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Feb 2022 14:02:14 GMT
+      - Fri, 15 Apr 2022 10:04:57 GMT
       ms-cv:
-      - WuV1+0bPSEGH+On2QKJmIw.0
+      - xvcZmZMB50mKEwWKHe84mA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -81,7 +81,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 30ms
+      - 46ms
     status:
       code: 200
       message: OK
@@ -97,7 +97,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
     method: POST
     uri: https://sanitized.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2022-06-01
   response:
@@ -105,12 +105,12 @@ interactions:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       date:
-      - Wed, 09 Feb 2022 14:02:14 GMT
+      - Fri, 15 Apr 2022 10:04:57 GMT
       ms-cv:
-      - Ztdt1UeAd0Gy5lrHTcBFlA.0
+      - JD4wx8vyWEKL9VYb5PeEAw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -118,7 +118,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 89ms
+      - 88ms
     status:
       code: 204
       message: No Content

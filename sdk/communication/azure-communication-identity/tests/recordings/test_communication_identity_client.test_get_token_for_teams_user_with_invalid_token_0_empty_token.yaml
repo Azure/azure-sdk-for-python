@@ -4,6 +4,10 @@ interactions:
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
       - '76'
       Content-Type:
@@ -11,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 15 Apr 2022 10:05:06 GMT
+      - Fri, 15 Apr 2022 10:04:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -21,16 +25,23 @@ interactions:
       string: '{"error": {"code": "InvalidAccessToken", "message": "Provided access
         token is not valid."}}'
     headers:
-      content-type: application/json
-      date: Fri, 15 Apr 2022 10:05:07 GMT
-      ms-cv: QfPqLxcms0qz6C34ug5weA.0
-      request-context: appId=
-      strict-transport-security: max-age=2592000
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 17ms
+      content-type:
+      - application/json
+      date:
+      - Fri, 15 Apr 2022 10:04:47 GMT
+      ms-cv:
+      - NU6dCtHyDESCmVpIfmlohA.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 19ms
     status:
       code: 401
       message: Unauthorized
-    url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
 version: 1

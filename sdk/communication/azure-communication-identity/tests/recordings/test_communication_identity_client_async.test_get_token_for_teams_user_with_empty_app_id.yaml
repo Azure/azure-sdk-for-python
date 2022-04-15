@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrW6wSs9iwS28v3lJyGnpD6raPetIhnRx6hHIRV5BKczLZvpByUXW95Xis-MIfIldG84RmE7YizSCtkj4YD232oJ2YUyppbfUvgbT55aV7OIFi1AtIe92jDvpdLRW8Izb7az7v-JfmHdQzRS5RGH8JO4RO5iRITej4z3a3gYKswRggAA;
-        fpc=AvONx5sQOyNPtr37js6EjtM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr1sIjzjmgsgWp5LCTanzZ_DjdA0ZYB35_k2R4maFArfFAahN5u9vtoYnYg4dbffhKYRUM0FIxY5u6PdzxLO_MYKIVU_dy9-306S316MMTJl8yL6wQc1Z09-VtmSNCSjCIhFuhSpdti6uPf1CJ1dTfC1C_WakZq3inRislYDGOe_AgAA;
+        fpc=Ao3Mq3VsYKpAkvWQAKKrHHg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.27.1
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 Apr 2022 10:05:07 GMT
+      - Fri, 15 Apr 2022 10:05:05 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AvONx5sQOyNPtr37js6EjtM; expires=Sun, 15-May-2022 10:05:08 GMT; path=/;
+      - fpc=Ao3Mq3VsYKpAkvWQAKKrHHg; expires=Sun, 15-May-2022 10:05:05 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -58,32 +58,32 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '2114'
+      - '2142'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 15 Apr 2022 10:05:08 GMT
+      - Fri, 15 Apr 2022 10:05:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"error": {"code": "InvalidAccessToken", "message": "Provided access
-        token is not valid."}}'
+      string: '{"error": {"code": "ValidationError", "message": "AppId: The AppId
+        field is required.", "target": "AppId"}}'
     headers:
       content-type: application/json
-      date: Fri, 15 Apr 2022 10:05:07 GMT
-      ms-cv: Owqs1JARSUeNZ+d3kzFxXg.0
+      date: Fri, 15 Apr 2022 10:05:06 GMT
+      ms-cv: t9RGs5M6AUyZpxZAn1Q6WQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 43ms
+      x-processing-time: 26ms
     status:
-      code: 401
-      message: Unauthorized
+      code: 400
+      message: Bad Request
     url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
 version: 1

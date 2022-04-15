@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:02:11 GMT
+      - Fri, 15 Apr 2022 10:04:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,16 +25,16 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Feb 2022 14:02:11 GMT
+      - Fri, 15 Apr 2022 10:04:56 GMT
       ms-cv:
-      - Yj8aFMyrbUGsSujRXh6jhg.0
+      - MBkYtWb/aUyTmhMYPxeuwA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 35ms
+      - 26ms
     status:
       code: 201
       message: Created
@@ -60,28 +60,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:02:12 GMT
+      - Fri, 15 Apr 2022 10:04:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2022-02-10T14:02:12.2627948+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-04-16T10:04:56.6994305+00:00"}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       content-length:
       - '804'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Feb 2022 14:02:12 GMT
+      - Fri, 15 Apr 2022 10:04:56 GMT
       ms-cv:
-      - +wDlnFQlFE6Evmj4cj7CNA.0
+      - FvEBwrkAb0K8n9ZDU4xMyw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 64ms
+      - 35ms
     status:
       code: 200
       message: OK
@@ -105,9 +105,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:02:12 GMT
+      - Fri, 15 Apr 2022 10:04:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -117,12 +117,12 @@ interactions:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       date:
-      - Wed, 09 Feb 2022 14:02:12 GMT
+      - Fri, 15 Apr 2022 10:04:56 GMT
       ms-cv:
-      - P8kXr4Yl0EOqfsEgJKPhLQ.0
+      - n4iSE6frrUSjtl8iQ38ZMQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -130,7 +130,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 105ms
+      - 118ms
     status:
       code: 204
       message: No Content

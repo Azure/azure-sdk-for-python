@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:01:58 GMT
+      - Fri, 15 Apr 2022 10:04:39 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,16 +25,16 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Feb 2022 14:01:57 GMT
+      - Fri, 15 Apr 2022 10:04:38 GMT
       ms-cv:
-      - 5u2VhF0a1EaZinpUqK+P7g.0
+      - gwRqwleJ3kaK7H37lyYevg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -58,9 +58,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:01:58 GMT
+      - Fri, 15 Apr 2022 10:04:39 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -70,12 +70,12 @@ interactions:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       date:
-      - Wed, 09 Feb 2022 14:01:58 GMT
+      - Fri, 15 Apr 2022 10:04:38 GMT
       ms-cv:
-      - giC6Py7Xm0qaNNO+rEaEmw.0
+      - 3KkgRSEh6U6xVgrOVYp++A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -83,7 +83,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 112ms
+      - 124ms
     status:
       code: 204
       message: No Content

@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:02:28 GMT
+      - Fri, 15 Apr 2022 10:05:15 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -21,15 +21,15 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01, 2022-06-01
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Wed, 09 Feb 2022 14:02:28 GMT
-      ms-cv: IK5EXQbZ706BO2zVZDD7ig.0
+      date: Fri, 15 Apr 2022 10:05:15 GMT
+      ms-cv: 2/CNPE47z0yG9ZactRt3cA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 42ms
+      x-processing-time: 27ms
     status:
       code: 201
       message: Created
@@ -44,9 +44,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:02:28 GMT
+      - Fri, 15 Apr 2022 10:05:16 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -57,13 +57,13 @@ interactions:
         field is required.", "target": "Scopes"}}'
     headers:
       content-type: application/json
-      date: Wed, 09 Feb 2022 14:02:28 GMT
-      ms-cv: zHL6XooTCkS8g7Fzf7kegQ.0
+      date: Fri, 15 Apr 2022 10:05:15 GMT
+      ms-cv: AQZNgVBlv0u3r0Mw7DoocQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 17ms
+      x-processing-time: 20ms
     status:
       code: 400
       message: Bad Request

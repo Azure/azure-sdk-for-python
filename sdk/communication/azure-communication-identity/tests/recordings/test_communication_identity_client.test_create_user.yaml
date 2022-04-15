@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:01:53 GMT
+      - Fri, 15 Apr 2022 10:04:36 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,16 +25,16 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01, 2022-06-01
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Feb 2022 14:01:54 GMT
+      - Fri, 15 Apr 2022 10:04:36 GMT
       ms-cv:
-      - GeVFT02cN0Wzok+fxRn/sQ.0
+      - jhGLrREa1UO4KfF1xs0d5A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 59ms
+      - 26ms
     status:
       code: 201
       message: Created

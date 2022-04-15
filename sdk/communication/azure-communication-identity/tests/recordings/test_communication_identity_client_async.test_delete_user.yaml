@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:02:17 GMT
+      - Fri, 15 Apr 2022 10:05:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -21,11 +21,11 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01, 2022-06-01
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Wed, 09 Feb 2022 14:02:18 GMT
-      ms-cv: bM68TxInn0yY/dkw0hlOZw.0
+      date: Fri, 15 Apr 2022 10:05:01 GMT
+      ms-cv: RAxp3DBI10q/VKGwNaRZcw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
@@ -40,9 +40,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.0 (macOS-12.3-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 14:02:18 GMT
+      - Fri, 15 Apr 2022 10:05:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -52,13 +52,13 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01, 2022-06-01
-      date: Wed, 09 Feb 2022 14:02:18 GMT
-      ms-cv: 6jKDuULJPECWQBhWAZoy2g.0
+        2021-10-31-preview, 2021-11-01, 2022-06-01
+      date: Fri, 15 Apr 2022 10:05:01 GMT
+      ms-cv: R4YdyzdvbE+w/iXMTGNGQA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 103ms
+      x-processing-time: 146ms
     status:
       code: 204
       message: No Content
