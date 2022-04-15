@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from __future__ import annotations
 import base64
 import hashlib
 import json
@@ -35,7 +34,7 @@ OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
 def _is_tag(tag_or_digest):
     # type: (str) -> bool
     tag = tag_or_digest.split(":")
-    return not (len(tag) == 2 and tag[0].startswith(u"sha"))
+    return not (len(tag) == 2 and tag[0].startswith("sha"))
 
 
 def _clean(matches):

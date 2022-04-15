@@ -16,7 +16,14 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors, OCIManifest
-from ._helpers import _parse_next_link, _is_tag, SUPPORTED_API_VERSIONS, OCI_MANIFEST_MEDIA_TYPE, _is_tag, _serialize_manifest, _compute_digest
+from ._helpers import (
+    _compute_digest,
+    _is_tag,
+    _parse_next_link,
+    _serialize_manifest,
+    OCI_MANIFEST_MEDIA_TYPE,
+    SUPPORTED_API_VERSIONS,
+)
 from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties
 
 if TYPE_CHECKING:
@@ -741,14 +748,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 repository, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
-    
+
     @distributed_trace
-    def upload_manifest(self, repository: str, manifest: OCIManifest, *, tag: Optional[str]=None, **kwargs: Any):
+    def upload_manifest(
+        self, repository: str, manifest: "OCIManifest", *, tag: "Optional[str]"=None, **kwargs: "Any"
+    ) -> None:
         """Upload a manifest for an OCI artifact.
 
         :param str repository: Name of the repository
         :param manifest: The manifest to upload.
-        :type manifest: ~azure.containerregistry.models.OCIManifest 
+        :type manifest: ~azure.containerregistry.models.OCIManifest
         :keyword tag: Tag of the manifest.
         :paramtype tag: str
         :returns: None
@@ -759,10 +768,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             stream = _serialize_manifest(manifest)
             tag_or_digest = _compute_digest(stream)
         self._client.container_registry.create_manifest(
-            repository, tag_or_digest, stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs)
-        
+            name=repository, reference=tag_or_digest, payload=stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs
+        )
+
     @distributed_trace
-    def upload_manifest(self, repository: str, stream: IO, *, tag: Optional[str]=None, **kwargs: Any):
+    def upload_manifest(
+        self, repository: str, stream: "IO", *, tag: "Optional[str]"=None, **kwargs: "Any"
+    ) -> None:
         """Upload a manifest for an OCI artifact.
 
         :param str repository: Name of the repository
@@ -777,8 +789,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if tag:
             tag_or_digest = _compute_digest(stream)
         self._client.container_registry.create_manifest(
-            repository, tag_or_digest, stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs)
-        
+            name=repository, reference=tag_or_digest, payload=stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs
+        )
+
     @distributed_trace
     def upload_blob(self, repository, stream, **kwargs):
         # type: (str, IO, **Any) -> None
@@ -789,15 +802,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type stream: IO
         :returns: None
         :rtype: None
-        """     
+        """
         start_upload_respose = self._client.container_registry_blob.start_upload(
-            repository, cls=_return_response, **kwargs)
+            repository, cls=_return_response, **kwargs
+        )
         upload_chunk_response = self._client.container_registry_blob.upload_chunk(
-            start_upload_respose['Location'], stream, cls=_return_response, **kwargs)
+            start_upload_respose['Location'], stream, cls=_return_response, **kwargs
+        )
         digest = _compute_digest(stream)
         self._client.container_registry_blob.complete_upload(
-            digest, upload_chunk_response['Location'], stream, cls=_return_response, **kwargs)
-           
+            digest=digest, next_link=upload_chunk_response['Location'], value=stream, cls=_return_response, **kwargs
+        )
+
     @distributed_trace
     def download_manifest(self, repository, tag_or_digest, **kwargs):
         # type: (str, str, **Any) -> ManifestWrapper
@@ -808,8 +824,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: ManifestWrapper
         :rtype: ~container_registry.models.ManifestWrapper
         """
-        return self._client.container_registry.get_manifest(repository, tag_or_digest, OCI_MANIFEST_MEDIA_TYPE, **kwargs)
-    
+        return self._client.container_registry.get_manifest(
+            name=repository, reference=tag_or_digest, accept=OCI_MANIFEST_MEDIA_TYPE, **kwargs
+        )
+
     @distributed_trace
     def download_blob(self, repository, digest, **kwargs):
         # type: (str, str, **Any) -> IO | None
@@ -821,7 +839,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: IO or None
         """
         return self._client.container_registry_blob.get_blob(repository, digest, **kwargs)
-        
+
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
         # type: (str, str, **Any) -> None
@@ -848,7 +866,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
         self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-    
+
     @distributed_trace
     def delete_blob(self, repository, tag_or_digest, **kwargs):
         # type: (str, str, **Any) -> IO
