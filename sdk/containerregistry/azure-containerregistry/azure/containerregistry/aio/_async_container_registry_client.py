@@ -17,7 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
-from .._generated.models import AcrErrors
+from .._generated.models import AcrErrors, OCIManifest
 from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS, OCI_MANIFEST_MEDIA_TYPE, _is_tag, _serialize_manifest, _compute_digest
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 from .._container_registry_client import _return_response
@@ -25,7 +25,7 @@ from .._container_registry_client import _return_response
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from typing import Any, Dict, IO, Optional, Union
-    from .._generated.models import OCIManifest, ManifestWrapper
+    from .._generated.models import ManifestWrapper
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):

@@ -15,14 +15,14 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
-from ._generated.models import AcrErrors
+from ._generated.models import AcrErrors, OCIManifest
 from ._helpers import _parse_next_link, _is_tag, SUPPORTED_API_VERSIONS, OCI_MANIFEST_MEDIA_TYPE, _is_tag, _serialize_manifest, _compute_digest
 from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from typing import Any, Dict, IO, Optional, Union
-    from ._generated.models import OCIManifest, ManifestWrapper
+    from ._generated.models import ManifestWrapper
 
 def _return_response(response, _, response_header):
     return response_header
