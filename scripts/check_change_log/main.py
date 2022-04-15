@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     # get all azure-mgmt-package paths
     in_files = glob.glob(f'{docker_path}\sdk\*\*mgmt*')
-    for i in in_files[0:1]:
+    for i in in_files:
         t = i.split('\\\\')
         mgmt_path_list = t[0].split('\\')
         print(t)
