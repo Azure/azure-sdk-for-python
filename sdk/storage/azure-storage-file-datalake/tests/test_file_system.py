@@ -10,7 +10,7 @@ import unittest
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from azure.storage.filedatalake import(
     AccessPolicy,
@@ -20,6 +20,8 @@ from azure.storage.filedatalake import(
     PublicAccess,
     ResourceTypes,
     generate_account_sas)
+
+from azure.storage.blob import StorageErrorCode
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
 
@@ -710,12 +712,9 @@ class FileSystemTest(StorageTestCase):
             dir2_properties,
             raise_on_any_failure=False
         )
-        assert len(response) == 5
-        assert response[0].status_code == 202
-        assert response[1].status_code == 202
-        assert response[2].status_code == 202
-        assert response[3].status_code == 202
-        assert response[4].status_code == 202
+
+        # Assert
+        self.assertEqual(len(response), 0)
 
     @DataLakePreparer()
     def test_delete_files_with_failed_subrequest(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -756,15 +755,48 @@ class FileSystemTest(StorageTestCase):
             file2_properties,
             {'name': 'file3', 'etag': file3_etag},
             'dir1',  # dir1 is not empty
-            'dir8',  # dir 8 doesn't exist
+            'dir8',  # dir8 doesn't exist
             raise_on_any_failure=False
         )
-        assert len(response) == 5
-        assert response[0].status_code == 202
-        assert response[1].status_code == 202
-        assert response[2].status_code == 202
-        assert response[3].status_code == 409
-        assert response[4].status_code == 404
+        tuple1 = response[0]
+        tuple2 = response[1]
+
+        # Assert
+        self.assertEqual(len(response), 2)
+        self.assertEqual(tuple1[0], 'dir1')
+        self.assertEqual(tuple2[0], 'dir8')
+        self.assertEqual(tuple1[1].error_code, StorageErrorCode.directory_not_empty)
+        self.assertEqual(tuple2[1].error_code, StorageErrorCode.path_not_found)
+        self.assertEqual(tuple1[1].status_code, 409)
+        self.assertEqual(tuple2[1].status_code, 404)
+
+    @DataLakePreparer()
+    def test_serialized_error(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = self._create_file_system()
+        for i in range(0, 6):
+            file_system.create_directory("dir1{}")
+
+            # create a subdirectory under the current directory
+            subdir = file_system.get_directory_client("dir1{}").create_sub_directory("subdir")
+            subdir.create_sub_directory("subsub")
+
+
+            # create a file under the current directory
+            subdir.delete_directory()
+            file_client = subdir.create_file("file")
+            file_client.append_data(b"abced", 0, 5)
+            file_client.flush_data(5)
+
+        generator1 = file_system.get_paths(path="dir10/subdir", max_results=2, upn=True).by_page()
+
+        # Assert
+        try:
+            list(next(generator1))
+        except HttpResponseError as e:
+            self.assertEqual(e.error_code, StorageErrorCode.path_not_found)
+            self.assertEqual(e.status_code, 404)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
