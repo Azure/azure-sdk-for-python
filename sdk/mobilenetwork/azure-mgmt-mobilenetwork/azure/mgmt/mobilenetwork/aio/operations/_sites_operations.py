@@ -33,7 +33,7 @@ class SitesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -168,7 +168,7 @@ class SitesOperations:
         :type site_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Site, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.Site
+        :rtype: ~azure.mgmt.mobilenetwork.models.Site
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
@@ -275,7 +275,7 @@ class SitesOperations:
         :param site_name: The name of the mobile network site.
         :type site_name: str
         :param parameters: Parameters supplied to the create or update mobile network site operation.
-        :type parameters: ~mobile_network_management_client.models.Site
+        :type parameters: ~azure.mgmt.mobilenetwork.models.Site
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -285,7 +285,7 @@ class SitesOperations:
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Site or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~mobile_network_management_client.models.Site]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mobilenetwork.models.Site]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
@@ -349,10 +349,10 @@ class SitesOperations:
         :param site_name: The name of the mobile network site.
         :type site_name: str
         :param parameters: Parameters supplied to update network site tags.
-        :type parameters: ~mobile_network_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.mobilenetwork.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Site, or the result of cls(response)
-        :rtype: ~mobile_network_management_client.models.Site
+        :rtype: ~azure.mgmt.mobilenetwork.models.Site
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
@@ -411,7 +411,7 @@ class SitesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SiteListResult or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~mobile_network_management_client.models.SiteListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.SiteListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteListResult"]
