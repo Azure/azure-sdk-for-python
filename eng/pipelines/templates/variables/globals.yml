@@ -1,4 +1,5 @@
 variables:
-  PythonVersion: '3.6'
+  PythonVersion: '3.9'
   skipComponentGovernanceDetection: true
   AzureSDKCondaChannel: https://azuresdkconda.blob.core.windows.net/channel1/
+  Package.EnableSBOMSigning: true

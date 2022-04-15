@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,7 +13,8 @@ from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
-from asynctestcase import AsyncTextAnalyticsTest
+from devtools_testutils.aio import recorded_by_proxy_async
+from testcase import TextAnalyticsTest
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
@@ -27,24 +27,26 @@ from azure.ai.textanalytics import (
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 
-class TestHealth(AsyncTextAnalyticsTest):
+class TestHealth(TextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_no_single_input(self, client):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             async with client:
                 response = await (await client.begin_analyze_healthcare_entities("hello world", polling_interval=self._interval())).result()
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_passing_only_string(self, client):
         docs = [
-            u"Patient does not suffer from high blood pressure.",
-            u"Prescribed 100mg ibuprofen, taken twice daily.",
-            u""
+            "Patient does not suffer from high blood pressure.",
+            "Prescribed 100mg ibuprofen, taken twice daily.",
+            ""
         ]
 
         async with client:
@@ -55,13 +57,14 @@ class TestHealth(AsyncTextAnalyticsTest):
 
 
         for i in range(2):
-            self.assertIsNotNone(response[i].id)
-            self.assertIsNotNone(response[i].entities)
+            assert response[i].id is not None
+            assert response[i].entities is not None
 
-        self.assertTrue(response[2].is_error)
+        assert response[2].is_error
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_input_with_some_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
@@ -73,12 +76,13 @@ class TestHealth(AsyncTextAnalyticsTest):
             async for r in result:
                 response.append(r)
 
-        self.assertTrue(response[0].is_error)
-        self.assertTrue(response[1].is_error)
-        self.assertFalse(response[2].is_error)
+        assert response[0].is_error
+        assert response[1].is_error
+        assert not response[2].is_error
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 1001))  # Maximum number of documents per request is 1000
 
@@ -90,6 +94,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_payload_too_large(self, client):
         large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
             CORONARY ARTERY DISEASE | Signed | DIS | Admission Date: 5/22/2001 \
@@ -114,6 +119,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_out_of_order_ids(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -139,6 +145,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_show_stats_and_model_version(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -177,6 +184,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_whole_batch_language_hint_and_dict_input(self, client):
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
@@ -188,12 +196,13 @@ class TestHealth(AsyncTextAnalyticsTest):
             async for r in result:
                 response.append(r)
 
-        self.assertFalse(response[0].is_error)
-        self.assertFalse(response[1].is_error)
-        self.assertFalse(response[2].is_error)
+        assert not response[0].is_error
+        assert not response[1].is_error
+        assert not response[2].is_error
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_invalid_language_hint_method(self, client):
         docs = ["This should fail because we're passing in an invalid language hint"]
 
@@ -203,10 +212,11 @@ class TestHealth(AsyncTextAnalyticsTest):
             async for r in result:
                 response.append(r)
 
-        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+        assert response[0].error.code == 'UnsupportedLanguageCode'
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_invalid_language_hint_docs(self, client):
         docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
 
@@ -216,30 +226,30 @@ class TestHealth(AsyncTextAnalyticsTest):
             async for r in result:
                 response.append(r)
 
-        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+        assert response[0].error.code == 'UnsupportedLanguageCode'
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_user_agent(self, client):  # TODO: verify
         def callback(resp):
-            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()),
+            assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                VERSION, platform.python_version(), platform.platform()) in \
                 resp.http_request.headers["User-Agent"]
-            )
 
         docs = [{"id": "1", "text": "I will go to the park."}]
 
         async with client:
             poller = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-            self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                    VERSION, platform.python_version(), platform.platform()),
+            assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                    VERSION, platform.python_version(), platform.platform()) in \
                     poller._polling_method._initial_response.http_request.headers["User-Agent"]
-                )
 
             await poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_bad_model_version_error(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
@@ -250,11 +260,12 @@ class TestHealth(AsyncTextAnalyticsTest):
                 async for r in result:
                     response.append(r)
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "ModelVersionIncorrect")
-            self.assertIsNotNone(err.error.message)
+            assert err.error.code == "ModelVersionIncorrect"
+            assert err.error.message is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_document_errors(self, client):
         text = ""
         for _ in range(5121):
@@ -269,15 +280,16 @@ class TestHealth(AsyncTextAnalyticsTest):
             doc_results = []
             async for r in result:
                 doc_results.append(r)
-        self.assertEqual(doc_results[0].error.code, "InvalidDocument")
-        self.assertIsNotNone(doc_results[0].error.message)
-        self.assertEqual(doc_results[1].error.code, "UnsupportedLanguageCode")
-        self.assertIsNotNone(doc_results[1].error.message)
+        assert doc_results[0].error.code == "InvalidDocument"
+        assert doc_results[0].error.message is not None
+        assert doc_results[1].error.code == "UnsupportedLanguageCode"
+        assert doc_results[1].error.message is not None
         assert not doc_results[2].is_error
         assert doc_results[2].warnings
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_duplicate_ids_error(self, client):
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
@@ -286,11 +298,12 @@ class TestHealth(AsyncTextAnalyticsTest):
             async with client:
                 result = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidDocument")
-            self.assertIsNotNone(err.error.message)
+            assert err.error.code == "InvalidDocument"
+            assert err.error.message is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
@@ -303,61 +316,9 @@ class TestHealth(AsyncTextAnalyticsTest):
             )).result()
         assert res == "cls result"
 
-    """Commenting out multi page tests until service returns multiple pages"""
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer()
-    # async def test_multiple_pages_of_results_returned_successfully(self, client):
-    #     single_doc = "hello world"
-    #     docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
-    #     # Service now only accepts 10 documents for a job, and since the current default server-side value
-    #     # for records per page is 20, pagination logic will never be activated.  This is intended to change
-    #     # in the future but for now this test actually won't hit the pagination logic now.
-
-    #     async with client:
-    #         poller = await client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())
-    #         result = await poller.result()
-    #         response = []
-    #         async for r in result:
-    #             response.append(r)
-
-    #     self.assertEqual(len(docs), len(response))
-    #     self.assertIsNotNone(result.statistics)
-
-    #     for (idx, doc) in enumerate(response):
-    #         self.assertEqual(docs[idx]["id"], doc.id)
-
-    # @TextAnalyticsPreparer()
-    # @TextAnalyticsClientPreparer()
-    # async def test_multiple_pages_of_results_with_errors_returned_successfully(self, client):
-    #     single_doc = "hello world"
-    #     docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 9)))]
-    #     docs.append({"id": "9", "text": ""})
-    #     # Service now only accepts 10 documents for a job, and since the current default server-side value
-    #     # for records per page is 20, pagination logic will never be activated.  This is intended to change
-    #     # in the future but for now this test actually won't hit the pagination logic now.
-
-    #     async with client:
-    #         result = await (await client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())).result()
-    #         response = []
-    #         async for r in result:
-    #             response.append(r)
-
-    #         self.assertEqual(len(docs), len(response))
-    #         self.assertIsNotNone(result.statistics)
-
-    #         for (idx, doc) in enumerate(response):
-    #             self.assertEqual(docs[idx]["id"], doc.id)
-
-    #             if doc.id == "9":
-    #                 self.assertTrue(doc.is_error)
-
-    #             else:
-    #                 self.assertFalse(doc.is_error)
-    #                 self.assertIsNotNone(doc.statistics)
-
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_cancellation(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
@@ -372,17 +333,18 @@ class TestHealth(AsyncTextAnalyticsTest):
             except HttpResponseError:
                 pass # expected if the operation was already in a terminal state.
 
-
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
         poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"], polling_interval=self._interval())
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
-        self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
+        assert actual_string_index_type == "UnicodeCodePoint"
         await poller.result()
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_explicit_set_string_index_type(self, client):
         poller = await client.begin_analyze_healthcare_entities(
             documents=["Hello world"],
@@ -390,11 +352,12 @@ class TestHealth(AsyncTextAnalyticsTest):
             polling_interval=self._interval(),
         )
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
-        self.assertEqual(actual_string_index_type, "TextElements_v8")
+        assert actual_string_index_type == "TextElements_v8"
         await poller.result()
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_relations(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
             documents=["The patient was diagnosed with Parkinsons Disease (PD)"],
@@ -427,6 +390,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_normalized_text(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
             documents=["patients must have histologically confirmed NHL"],
@@ -446,6 +410,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_healthcare_assertion(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
             documents=["Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."],
@@ -463,6 +428,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_disable_service_logs(self, client):
         def callback(resp):
             # this is called for both the initial post
@@ -478,6 +444,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
     async def test_healthcare_continuation_token(self, client):
         async with client:
             initial_poller = await client.begin_analyze_healthcare_entities(

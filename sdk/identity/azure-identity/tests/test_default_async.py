@@ -315,3 +315,8 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
 def test_unexpected_kwarg():
     """the credential shouldn't raise when given an unexpected keyword argument"""
     DefaultAzureCredential(foo=42)
+
+
+def test_error_tenant_id():
+    with pytest.raises(TypeError):
+        DefaultAzureCredential(tenant_id="foo")

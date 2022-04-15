@@ -112,6 +112,7 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         # rehydrate a poller with a continuation token of a completed operation
         late_rehydrated = await client.begin_backup(self.container_uri, self.sas_token, continuation_token=token)
         assert late_rehydrated.status() == "Succeeded"
+        await late_rehydrated.wait()
 
         # restore the backup
         restore_poller = await client.begin_restore(backup_operation.folder_url, self.sas_token)

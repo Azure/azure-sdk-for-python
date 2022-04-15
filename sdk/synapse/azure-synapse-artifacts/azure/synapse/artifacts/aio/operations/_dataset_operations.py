@@ -144,13 +144,13 @@ class DatasetOperations:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _dataset = _models.DatasetResource(properties=properties)
-        json = self._serialize.body(_dataset, 'DatasetResource')
+        _json = self._serialize.body(_dataset, 'DatasetResource')
 
         request = build_create_or_update_dataset_request_initial(
             dataset_name=dataset_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             if_match=if_match,
             template_url=self._create_or_update_dataset_initial.metadata['url'],
         )
@@ -443,13 +443,13 @@ class DatasetOperations:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
 
         request = build_rename_dataset_request_initial(
             dataset_name=dataset_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self._rename_dataset_initial.metadata['url'],
         )
         request = _convert_request(request)

@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import pytest
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core.pipeline.transport import RequestsTransport
@@ -44,6 +45,20 @@ def test_decompress_plain_no_header(http_request):
     decoded = content.decode('utf-8')
     assert decoded == "test"
 
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_compress_plain_no_header_offline(port, http_request):
+    # thanks to Daisy Cisneros for this test!
+    # expect plain text
+    request = http_request(method="GET", url="http://localhost:{}/streams/string".format(port))
+    with RequestsTransport() as sender:
+        response = sender.send(request, stream=True)
+        response.raise_for_status()
+        data = response.stream_download(sender, decompress=False)
+        content = b"".join(list(data))
+        decoded = content.decode('utf-8')
+        assert decoded == "test"
+
+@pytest.mark.live_test_only
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_plain_no_header(http_request):
     # expect plain text

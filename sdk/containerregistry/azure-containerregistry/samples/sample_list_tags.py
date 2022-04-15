@@ -34,18 +34,16 @@ class ListTags(object):
         load_dotenv(find_dotenv())
 
     def list_tags(self):
-        # Create a new ContainerRegistryClient        
+        # Instantiate an instance of ContainerRegistryClient
         audience = "https://management.azure.com"
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential, audience=audience)
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-        manifest = client.get_manifest_properties("library/hello-world", "latest")
-        print(manifest.repository_name + ": ")
-        for tag in manifest.tags:
-            print(tag + "\n")
-
-        client.close()
+        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+            manifest = client.get_manifest_properties("library/hello-world", "latest")
+            print(manifest.repository_name + ": ")
+            # Iterate through all the tags
+            for tag in manifest.tags:
+                print(tag + "\n")
 
 
 if __name__ == "__main__":

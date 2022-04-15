@@ -63,7 +63,7 @@ for contact in issuer1.admin_contacts:
     print(contact.email)
     print(contact.phone)
 
-# Now we update the admnistrator contact for this issuer
+# Now we update the administrator contact for this issuer
 admin_contacts = [
     AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
 ]

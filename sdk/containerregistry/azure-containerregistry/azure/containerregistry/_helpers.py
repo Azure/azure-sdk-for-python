@@ -20,6 +20,10 @@ if TYPE_CHECKING:
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
+SUPPORTED_API_VERSIONS = [
+    "2019-08-15-preview",
+    "2021-07-01"
+]
 
 
 def _is_tag(tag_or_digest):

@@ -11,10 +11,12 @@ from ._perf_stress_test import PerfStressTest
 from ._random_stream import RandomStream, WriteStream, get_random_bytes
 from ._async_random_stream import AsyncRandomStream
 from ._batch_perf_test import BatchPerfTest
+from ._event_perf_test import EventPerfTest
 
 __all__ = [
     "PerfStressTest",
     "BatchPerfTest",
+    "EventPerfTest",
     "RandomStream",
     "WriteStream",
     "AsyncRandomStream",

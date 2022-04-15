@@ -9,7 +9,7 @@ import json
 import logging
 import time
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import (
     ApiVersion,
@@ -17,19 +17,22 @@ from azure.keyvault.keys import (
     KeyClient,
     KeyReleasePolicy,
     KeyRotationLifetimeAction,
+    KeyRotationPolicy,
     KeyRotationPolicyAction,
+    KeyType,
 )
 import pytest
 from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
+from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, is_public_cloud, KeysTestCase
 
 
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
-only_hsm_7_3_preview = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3_PREVIEW])
-only_vault_7_3_preview = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_hsm_7_3 = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3])
+only_vault_7_3 = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3])
+only_7_3 = get_decorator(api_versions=[ApiVersion.V7_3])
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
 
@@ -188,7 +191,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         # create ec key
         ec_key_name = self.get_resource_name("crud-ec-key")
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        ec_key = self._create_ec_key(client, enabled=True, key_name=ec_key_name, hardware_protected=True, tags=tags)
+        ec_key = self._create_ec_key(client, enabled=True, key_name=ec_key_name, hardware_protected=is_hsm, tags=tags)
         assert ec_key.properties.enabled
         assert tags == ec_key.properties.tags
         # create ec with curve
@@ -427,7 +430,10 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
@@ -458,7 +464,10 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
@@ -473,7 +482,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
 
         mock_handler.close()
 
-    @only_hsm_7_3_preview()
+    @only_hsm_7_3()
     @client_setup
     def test_get_random_bytes(self, client, **kwargs):
         assert client
@@ -488,7 +497,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @only_hsm_7_3_preview()
+    @only_7_3()
     @client_setup
     def test_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -506,7 +515,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         release_result = client.release_key(rsa_key_name, attestation)
         assert release_result.value
 
-    @only_hsm_7_3_preview()
+    @only_hsm_7_3()
     @client_setup
     def test_imported_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -524,7 +533,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         release_result = client.release_key(imported_key_name, attestation)
         assert release_result.value
 
-    @only_hsm_7_3_preview()
+    @only_7_3()
     @client_setup
     def test_update_release_policy(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -533,7 +542,12 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key = self._create_rsa_key(
             client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
-        assert key.properties.release_policy.encoded_policy
+
+        policy = json.loads(key.properties.release_policy.encoded_policy.decode())
+        claim_condition = policy["anyOf"][0]["anyOf"][0]["equals"]
+        # for some reason, claim_condition may be 'true' here for KV, but should be True here for MHSM
+        claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
+        assert claim_condition is True
 
         new_release_policy_json = {
             "anyOf": [
@@ -552,11 +566,51 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         policy_string = json.dumps(new_release_policy_json).encode()
         new_release_policy = KeyReleasePolicy(policy_string)
 
-        self._update_key_properties(client, key, new_release_policy)
+        updated_key = self._update_key_properties(client, key, new_release_policy)
+        updated_policy = json.loads(updated_key.properties.release_policy.encoded_policy.decode())
+        claim_condition = updated_policy["anyOf"][0]["anyOf"][0]["equals"]
+        claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
+        assert claim_condition is False
 
-    @only_vault_7_3_preview()
+    # Immutable policies aren't currently supported on Managed HSM
+    @only_vault_7_3()
+    @client_setup
+    def test_immutable_release_policy(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        release_policy = get_release_policy(attestation_uri, immutable=True)
+        key_name = self.get_resource_name("key-name")
+        key = self._create_rsa_key(
+            client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy.encoded_policy
+        assert key.properties.release_policy.immutable
+
+        new_release_policy_json = {
+            "anyOf": [
+                {
+                    "anyOf": [
+                        {
+                            "claim": "sdk-test",
+                            "equals": False
+                        }
+                    ],
+                    "authority": attestation_uri.rstrip("/") + "/"
+                }
+            ],
+            "version": "1.0.0"
+        }
+        policy_string = json.dumps(new_release_policy_json).encode()
+        new_release_policy = KeyReleasePolicy(policy_string, immutable=True)
+
+        with pytest.raises(HttpResponseError):
+            self._update_key_properties(client, key, new_release_policy)
+
+    @only_vault_7_3()
     @client_setup
     def test_key_rotation(self, client, **kwargs):
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         key = self._create_rsa_key(client, key_name)
         rotated_key = client.rotate_key(key_name)
@@ -566,37 +620,71 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
-    @only_vault_7_3_preview()
+    @only_vault_7_3()
     @client_setup
     def test_key_rotation_policy(self, client, **kwargs):
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name)
 
-        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
-        updated_policy = client.update_key_rotation_policy(key_name, lifetime_actions=actions)
+        # ensure passing an empty policy with no kwargs doesn't raise an error
+        client.update_key_rotation_policy(key_name, KeyRotationPolicy())
+
+        # updating a rotation policy with an empty policy and override
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
+        updated_policy = client.update_key_rotation_policy(key_name, KeyRotationPolicy(), lifetime_actions=actions)
         fetched_policy = client.get_key_rotation_policy(key_name)
         assert updated_policy.expires_in is None
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
-        updated_policy_actions = updated_policy.lifetime_actions[0]
-        fetched_policy_actions = fetched_policy.lifetime_actions[0]
-        assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
+        updated_policy_actions = None
+        for i in range(len(updated_policy.lifetime_actions)):
+            if updated_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                updated_policy_actions = updated_policy.lifetime_actions[i]
+        assert updated_policy_actions, "Specified rotation policy action not found in updated policy"
+        assert updated_policy_actions.action == KeyRotationPolicyAction.rotate
         assert updated_policy_actions.time_after_create == "P2M"
         assert updated_policy_actions.time_before_expiry is None
+
+        fetched_policy_actions = None
+        for i in range(len(fetched_policy.lifetime_actions)):
+            if fetched_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                fetched_policy_actions = fetched_policy.lifetime_actions[i]
+        assert fetched_policy_actions, "Specified rotation policy action not found in fetched policy"
         _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
 
-        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
-        new_policy = client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
-        new_fetched_policy = client.get_key_rotation_policy(key_name)
+        # updating with a round-tripped policy and overriding expires_in
+        new_policy = client.update_key_rotation_policy(key_name, policy=updated_policy, expires_in="P90D")
         assert new_policy.expires_in == "P90D"
-        _assert_rotation_policies_equal(new_policy, new_fetched_policy)
 
-        new_policy_actions = new_policy.lifetime_actions[0]
-        new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
-        assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
-        assert new_policy_actions.time_after_create is None
-        assert new_policy_actions.time_before_expiry == "P30D"
-        _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
+        new_policy_actions = None
+        for i in range(len(new_policy.lifetime_actions)):
+            if new_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
+                new_policy_actions = new_policy.lifetime_actions[i]
+        _assert_lifetime_actions_equal(updated_policy_actions, new_policy_actions)
+
+        # updating with a round-tripped policy and overriding lifetime_actions
+        newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P60D")]
+        newest_policy = client.update_key_rotation_policy(key_name, policy=new_policy, lifetime_actions=newest_actions)
+        newest_fetched_policy = client.get_key_rotation_policy(key_name)
+        assert newest_policy.expires_in == "P90D"
+        _assert_rotation_policies_equal(newest_policy, newest_fetched_policy)
+
+        newest_policy_actions = None
+        for i in range(len(newest_policy.lifetime_actions)):
+            if newest_policy.lifetime_actions[i].action == KeyRotationPolicyAction.notify:
+                newest_policy_actions = newest_policy.lifetime_actions[i]
+        assert newest_policy_actions.action == KeyRotationPolicyAction.notify
+        assert newest_policy_actions.time_after_create is None
+        assert newest_policy_actions.time_before_expiry == "P60D"
+
+        newest_fetched_policy_actions = None
+        for i in range(len(newest_fetched_policy.lifetime_actions)):
+            if newest_fetched_policy.lifetime_actions[i].action == KeyRotationPolicyAction.notify:
+                newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[i]
+        _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
 
     @all_api_versions()
     @client_setup
@@ -619,7 +707,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         assert "RSA-OAEP" == result.algorithm
         assert plaintext == result.plaintext
 
-        # try ommitting the key version
+        # try omitting the key version
         crypto_client = client.get_cryptography_client(key_name)
         # both clients should use the same generated client
         assert client._client == crypto_client._client
@@ -654,3 +742,15 @@ def test_custom_hook_policy():
 
     client = KeyClient("...", object(), custom_hook_policy=CustomHookPolicy())
     assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
+
+
+def test_case_insensitive_key_type():
+    """Ensure a KeyType can be created regardless of casing since the service can create keys with non-standard casing.
+    See https://github.com/Azure/azure-sdk-for-python/issues/22797
+    """
+    # KeyType with all upper-case value
+    assert KeyType("rsa") == KeyType.rsa
+    # KeyType with all lower-case value
+    assert KeyType("OCT") == KeyType.oct
+    # KeyType with mixed-case value
+    assert KeyType("oct-hsm") == KeyType.oct_hsm

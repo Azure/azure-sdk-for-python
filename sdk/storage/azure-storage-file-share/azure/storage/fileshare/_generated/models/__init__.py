@@ -11,6 +11,7 @@ try:
     from ._models_py3 import ClearRange
     from ._models_py3 import CopyFileSmbInfo
     from ._models_py3 import CorsRule
+    from ._models_py3 import DestinationLeaseAccessConditions
     from ._models_py3 import DirectoryItem
     from ._models_py3 import FileHTTPHeaders
     from ._models_py3 import FileItem
@@ -33,6 +34,7 @@ try:
     from ._models_py3 import ShareStats
     from ._models_py3 import SignedIdentifier
     from ._models_py3 import SmbMultichannel
+    from ._models_py3 import SourceLeaseAccessConditions
     from ._models_py3 import SourceModifiedAccessConditions
     from ._models_py3 import StorageError
     from ._models_py3 import StorageServiceProperties
@@ -41,6 +43,7 @@ except (SyntaxError, ImportError):
     from ._models import ClearRange  # type: ignore
     from ._models import CopyFileSmbInfo  # type: ignore
     from ._models import CorsRule  # type: ignore
+    from ._models import DestinationLeaseAccessConditions  # type: ignore
     from ._models import DirectoryItem  # type: ignore
     from ._models import FileHTTPHeaders  # type: ignore
     from ._models import FileItem  # type: ignore
@@ -63,6 +66,7 @@ except (SyntaxError, ImportError):
     from ._models import ShareStats  # type: ignore
     from ._models import SignedIdentifier  # type: ignore
     from ._models import SmbMultichannel  # type: ignore
+    from ._models import SourceLeaseAccessConditions  # type: ignore
     from ._models import SourceModifiedAccessConditions  # type: ignore
     from ._models import StorageError  # type: ignore
     from ._models import StorageServiceProperties  # type: ignore
@@ -70,6 +74,7 @@ except (SyntaxError, ImportError):
 from ._azure_file_storage_enums import (
     CopyStatusType,
     DeleteSnapshotsOptionType,
+    FileLastWrittenMode,
     FileRangeWriteType,
     LeaseDurationType,
     LeaseStateType,
@@ -87,6 +92,7 @@ __all__ = [
     'ClearRange',
     'CopyFileSmbInfo',
     'CorsRule',
+    'DestinationLeaseAccessConditions',
     'DirectoryItem',
     'FileHTTPHeaders',
     'FileItem',
@@ -109,11 +115,13 @@ __all__ = [
     'ShareStats',
     'SignedIdentifier',
     'SmbMultichannel',
+    'SourceLeaseAccessConditions',
     'SourceModifiedAccessConditions',
     'StorageError',
     'StorageServiceProperties',
     'CopyStatusType',
     'DeleteSnapshotsOptionType',
+    'FileLastWrittenMode',
     'FileRangeWriteType',
     'LeaseDurationType',
     'LeaseStateType',

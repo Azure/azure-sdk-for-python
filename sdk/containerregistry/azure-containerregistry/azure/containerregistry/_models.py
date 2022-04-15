@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any, List
 
@@ -22,24 +23,24 @@ if TYPE_CHECKING:
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
-    """Represents properties of a registry artifact
+    """Represents properties of a registry artifact.
 
-    :ivar bool can_delete: Delete Permissions for an artifact
-    :ivar bool can_write: Delete Permissions for an artifact
-    :ivar bool can_read: Delete Permissions for an artifact
-    :ivar bool can_list: Delete Permissions for an artifact
-    :ivar architecture: CPU Architecture of an artifact
+    :ivar bool can_delete: Delete Permissions for an artifact.
+    :ivar bool can_write: Write Permissions for an artifact.
+    :ivar bool can_read: Read Permissions for an artifact.
+    :ivar bool can_list: List Permissions for an artifact.
+    :ivar architecture: CPU Architecture of an artifact.
     :vartype architecture: ~azure.containerregistry.ArtifactArchitecture
-    :ivar created_on: Time and date an artifact was created
+    :ivar created_on: Time and date an artifact was created.
     :vartype created_on: ~datetime.datetime
-    :ivar str digest: Digest for the artifact
-    :ivar last_updated_on: Time and date an artifact was last updated
-    :vartype last_updated_on: datetime.datetime
-    :ivar operating_system: Operating system for the artifact
+    :ivar str digest: Digest for the artifact.
+    :ivar last_updated_on: Time and date an artifact was last updated.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar operating_system: Operating system for the artifact.
     :vartype operating_system: ~azure.containerregistry.ArtifactOperatingSystem
-    :ivar str repository_name: Repository name the artifact belongs to
-    :ivar str size: Size of the artifact
-    :ivar List[str] tags: Tags associated with a registry artifact
+    :ivar str repository_name: Repository name the artifact belongs to.
+    :ivar str size_in_bytes: Size of the artifact.
+    :ivar List[str] tags: Tags associated with a registry artifact.
     """
 
     def __init__(self, **kwargs):
@@ -54,7 +55,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
         self._repository_name = kwargs.get("repository_name", None)
         self._registry = kwargs.get("registry", None)
-        self._size = kwargs.get("size", None)
+        self._size_in_bytes = kwargs.get("size_in_bytes", None)
         self._tags = kwargs.get("tags", None)
         self.can_delete = kwargs.get("can_delete")
         self.can_read = kwargs.get("can_read")
@@ -70,7 +71,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             operating_system=generated.operating_system,
-            size=generated.size,
+            size_in_bytes=generated.size,
             tags=generated.tags,
             can_delete=generated.can_delete,
             can_read=generated.can_read,
@@ -120,9 +121,9 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         return self._repository_name
 
     @property
-    def size(self):
+    def size_in_bytes(self):
         # type: () -> int
-        return self._size
+        return self._size_in_bytes
 
     @property
     def tags(self):
@@ -150,19 +151,19 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
 
 
 class RepositoryProperties(object):
-    """Model for storing properties of a single repository
+    """Represents properties of a single repository.
 
-    :ivar bool can_delete: Delete Permissions for an artifact
-    :ivar bool can_write: Delete Permissions for an artifact
-    :ivar bool can_read: Delete Permissions for an artifact
-    :ivar bool can_list: Delete Permissions for an artifact
+    :ivar bool can_delete: Delete Permissions for a repository.
+    :ivar bool can_write: Write Permissions for a repository.
+    :ivar bool can_read: Read Permissions for a repository.
+    :ivar bool can_list: List Permissions for a repository.
     :ivar created_on: Time the repository was created
-    :vartype created_on: datetime.datetime
-    :ivar last_updated_on: Time the repository was last updated
-    :vartype last_updated_on: datetime.datetime
-    :ivar int manifest_count: Number of manifest in the repository
-    :ivar str name: Name of the repository
-    :ivar int tag_count: Number of tags associated with the repository
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Time the repository was last updated.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar int manifest_count: Number of manifest in the repository.
+    :ivar str name: Name of the repository.
+    :ivar int tag_count: Number of tags associated with the repository.
     """
 
     def __init__(self, **kwargs):
@@ -200,13 +201,21 @@ class RepositoryProperties(object):
             can_list=self.can_list,
         )
 
+    def __getattr__(self, name):
+        if name == "last_udpated_on":
+            warnings.warn(
+                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", # pylint: disable=line-too-long
+                DeprecationWarning)
+            return self.last_updated_on
+        return super().__getattr__(self, name) # pylint: disable=no-member
+
     @property
     def created_on(self):
         # type: () -> datetime
         return self._created_on
 
     @property
-    def last_udpated_on(self):
+    def last_updated_on(self):
         # type: () -> datetime
         return self._last_updated_on
 
@@ -226,34 +235,20 @@ class RepositoryProperties(object):
         return self._tag_count
 
 
-class ManifestOrder(str, Enum):
-    """Enum for ordering registry artifacts"""
-
-    LAST_UPDATE_TIME_DESCENDING = "timedesc"
-    LAST_UPDATE_TIME_ASCENDING = "timeasc"
-
-
-class TagOrder(str, Enum):
-    """Enum for ordering tags"""
-
-    LAST_UPDATE_TIME_DESCENDING = "timedesc"
-    LAST_UPDATE_TIME_ASCENDING = "timeasc"
-
-
 class ArtifactTagProperties(object):
-    """Model for storing properties of a single tag
+    """Represents properties of a single tag
 
-    :ivar bool can_delete: Delete Permissions for an artifact
-    :ivar bool can_write: Delete Permissions for an artifact
-    :ivar bool can_read: Delete Permissions for an artifact
-    :ivar bool can_list: Delete Permissions for an artifact
-    :ivar created_on: Time the tag was created
-    :vartype created_on: datetime.datetime
-    :ivar str digest: Digest for the tag
-    :ivar last_updated_on: Time the tag was last updated
-    :vartype last_updated_on: datetime.datetime
-    :ivar str name: Name of the image the tag corresponds to
-    :ivar str repository: Repository the tag belongs to
+    :ivar bool can_delete: Delete Permissions for a tag.
+    :ivar bool can_write: Write Permissions for a tag.
+    :ivar bool can_read: Read Permissions for a tag.
+    :ivar bool can_list: List Permissions for a tag.
+    :ivar created_on: Time the tag was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar str digest: Digest for the tag.
+    :ivar last_updated_on: Time the tag was last updated.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar str name: Name of the image the tag corresponds to.
+    :ivar str repository: Repository the tag belongs to.
     """
 
     def __init__(self, **kwargs):

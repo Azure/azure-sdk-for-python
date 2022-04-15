@@ -1,8 +1,68 @@
-## 4.3.0b1 (Unreleased)
-**New features**
-- Added language native async i/o client
+## Release History
 
-## 4.2.0 (2020-10-08)
+### 4.3.0b5 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.3.0b4 (2022-04-07)
+
+#### Features Added
+- Added support for AAD authentication for the async client.
+- Added support for AAD authentication for the sync client.
+
+#### Other Changes
+- Changed `_set_partition_key` return typehint in async client.
+
+### 4.3.0b3 (2022-03-10)
+
+>[WARNING]
+>The default `Session` consistency bugfix will impact customers whose database accounts have a `Bounded Staleness` or `Strong`
+> consistency level, and were previously not sending `Session` as a consistency_level parameter when initializing
+> their clients.
+> Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
+  consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
+> Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) 
+> for more details on consistency levels, or the README section on this change [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#note-on-client-consistency-levels).
+
+#### Features Added
+- Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
+  to make use of the **preview** CosmosDB integrated cache functionality.
+  Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
+- Added support for split-proof queries for the async client
+
+### Bugs fixed
+- Default consistency level for the sync and async clients is no longer `Session` and will instead be set to the 
+  consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
+  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency
+  will need to pass it explicitly if their account consistency is different than `Session`.
+  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
+- Fixed invalid request body being sent when passing in `serverScript` body parameter to replace operations for trigger, sproc and udf resources.
+- Moved `is_system_key` logic in async client.
+- Fixed TypeErrors not being thrown when passing in invalid connection retry policies to the client.
+
+### 4.3.0b2 (2022-01-25)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+We will also be removing support for Python 3.6 and will only support Python 3.7+ starting December 2022.
+
+#### Features Added
+- Added support for split-proof queries for the sync client.
+
+#### Other Changes
+- Added async user agent for async client.
+
+### 4.3.0b1 (2021-12-14)
+
+#### Features Added
+- Added language native async i/o client.
+
+### 4.2.0 (2020-10-08)
 
 **Bug fixes**
 - Fixed bug where continuation token is not honored when query_iterable is used to get results by page. Issue #13265.
@@ -11,7 +71,7 @@
 **New features**
 - Added support for passing partitionKey while querying changefeed. Issue #11689.
 
-## 4.1.0 (2020-08-10)
+### 4.1.0 (2020-08-10)
 
 - Added deprecation warning for "lazy" indexing mode. The backend no longer allows creating containers with this mode and will set them to consistent instead.
 
@@ -26,7 +86,7 @@
 - Fixed error raised when a non string ID is used in an item. It now raises TypeError rather than AttributeError. Issue #11793 - thank you @Rabbit994.
 
 
-## 4.0.0 (2020-05-20)
+### 4.0.0 (2020-05-20)
 
 - Stable release.
 - Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.

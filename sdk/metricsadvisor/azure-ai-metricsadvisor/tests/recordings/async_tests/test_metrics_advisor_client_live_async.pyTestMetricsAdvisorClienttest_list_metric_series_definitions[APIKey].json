@@ -1,0 +1,765 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "43",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "672df6be-5e0d-11ec-b883-6245b51668de"
+      },
+      "RequestBody": "{\u0022activeSince\u0022: \u00222021-01-01T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3efd811d-d890-4456-9e1c-ad87ab298f50",
+        "Content-Length": "2250",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "110",
+        "X-Request-ID": "3efd811d-d890-4456-9e1c-ad87ab298f50"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Cairo"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "__SUM__"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Seoul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Miami"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Miami"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Miami"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Miami"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Istanbul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Seoul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Tianjin"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Cairo"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Cairo"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "__SUM__"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Beijing"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Mumbai"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Cairo"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Karachi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Seoul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Miami"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Tianjin"
+            }
+          }
+        ],
+        "@nextLink": "https://fakeendpoint.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query?$maxpagesize=20\u0026$skip=20"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query?$maxpagesize=20\u0026$skip=20",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "43",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "67457f43-5e0d-11ec-8ad9-6245b51668de"
+      },
+      "RequestBody": "{\u0022activeSince\u0022: \u00222021-01-01T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3d70de46-3248-471a-a316-22103f955cbc",
+        "Content-Length": "2284",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "134",
+        "X-Request-ID": "3d70de46-3248-471a-a316-22103f955cbc"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Delhi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Beijing"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Tianjin"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "__SUM__"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Istanbul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Beijing"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "__SUM__"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Karachi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "New York"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "New York"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Cairo"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Delhi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "New York"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Seoul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Tianjin"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Cairo"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Mumbai"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Miami"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Delhi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Seoul"
+            }
+          }
+        ],
+        "@nextLink": "https://fakeendpoint.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query?$maxpagesize=20\u0026$skip=40"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query?$maxpagesize=20\u0026$skip=40",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "43",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "675f1027-5e0d-11ec-a670-6245b51668de"
+      },
+      "RequestBody": "{\u0022activeSince\u0022: \u00222021-01-01T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "a77cc6e5-0569-427c-9ef9-42427f0d05c7",
+        "Content-Length": "2279",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "133",
+        "X-Request-ID": "a77cc6e5-0569-427c-9ef9-42427f0d05c7"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Delhi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Seoul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Istanbul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Seoul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Mumbai"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "New York"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Beijing"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Karachi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Mumbai"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Istanbul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Cairo"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "New York"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Karachi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Delhi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Seoul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "__SUM__"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Istanbul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "__SUM__"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "__SUM__"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "__SUM__"
+            }
+          }
+        ],
+        "@nextLink": "https://fakeendpoint.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query?$maxpagesize=20\u0026$skip=60"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query?$maxpagesize=20\u0026$skip=60",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "43",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "6778ab7b-5e0d-11ec-bce1-6245b51668de"
+      },
+      "RequestBody": "{\u0022activeSince\u0022: \u00222021-01-01T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "83db59a5-1232-48ea-95b2-65331ad7c475",
+        "Content-Length": "2258",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "109",
+        "X-Request-ID": "83db59a5-1232-48ea-95b2-65331ad7c475"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Beijing"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Karachi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Mumbai"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Consumer)",
+              "region": "Beijing"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Istanbul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Cairo"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Miami"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Karachi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Tianjin"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Istanbul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Delhi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Office Products",
+              "region": "Tianjin"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "New York"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Miami"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Delhi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Beijing"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "Mumbai"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Shoes Handbags \u0026 Sunglasses",
+              "region": "New York"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Delhi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "New York"
+            }
+          }
+        ],
+        "@nextLink": "https://fakeendpoint.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query?$maxpagesize=20\u0026$skip=80"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/series/query?$maxpagesize=20\u0026$skip=80",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "43",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "678f2c56-5e0d-11ec-91e0-6245b51668de"
+      },
+      "RequestBody": "{\u0022activeSince\u0022: \u00222021-01-01T00:00:00.000Z\u0022}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "4fa2ae40-1191-462f-b054-824dd0205f0c",
+        "Content-Length": "837",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:40 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "112",
+        "X-Request-ID": "4fa2ae40-1191-462f-b054-824dd0205f0c"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Mumbai"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Tianjin"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Handmade",
+              "region": "Beijing"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Grocery \u0026 Gourmet Food",
+              "region": "Karachi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Istanbul"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Electronics (Accessories)",
+              "region": "Tianjin"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "Home \u0026 Garden",
+              "region": "Karachi"
+            }
+          },
+          {
+            "metricId": "metrics_advisor_metric_id",
+            "dimension": {
+              "category": "__SUM__",
+              "region": "Mumbai"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

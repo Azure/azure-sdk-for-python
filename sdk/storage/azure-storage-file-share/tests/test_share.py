@@ -64,6 +64,10 @@ class StorageShareTest(StorageTestCase):
         except:
             pass
         return share_client
+
+    def _create_share_if_not_exists(self, prefix=TEST_SHARE_PREFIX, **kwargs):
+        share_client = self._get_share_reference(prefix)
+        return share_client.create_share_if_not_exists(**kwargs)
     
     def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
         for l in self.fsc.list_shares(include_snapshots=True):
@@ -626,6 +630,7 @@ class StorageShareTest(StorageTestCase):
         self.assertIsNotNone(shares[0].provisioned_ingress_mbps)
         self.assertIsNotNone(shares[0].provisioned_egress_mbps)
         self.assertIsNotNone(shares[0].next_allowed_quota_downgrade_time)
+        self.assertIsNotNone(shares[0].provisioned_bandwidth)
         self._delete_shares()
 
     @FileSharePreparer()
@@ -881,6 +886,7 @@ class StorageShareTest(StorageTestCase):
         self.assertIsNotNone(props.provisioned_ingress_mbps)
         self.assertIsNotNone(props.provisioned_egress_mbps)
         self.assertIsNotNone(props.next_allowed_quota_downgrade_time)
+        self.assertIsNotNone(props.provisioned_bandwidth)
         self._delete_shares()
 
     @FileSharePreparer()

@@ -1,0 +1,44 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/?restype=service\u0026comp=properties",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "273",
+        "Content-Type": "application/xml",
+        "Date": "Mon, 18 Oct 2021 23:46:30 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "9e09205a-306d-11ec-b3b8-5cf37093a909",
+        "x-ms-date": "Mon, 18 Oct 2021 23:46:30 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CStorageServiceProperties\u003E\u003CMinuteMetrics\u003E\u003CVersion\u003E1.0\u003C/Version\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CIncludeAPIs\u003Etrue\u003C/IncludeAPIs\u003E\u003CRetentionPolicy\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CDays\u003E366\u003C/Days\u003E\u003C/RetentionPolicy\u003E\u003C/MinuteMetrics\u003E\u003C/StorageServiceProperties\u003E"
+      ],
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "327",
+        "Content-Type": "application/xml",
+        "Date": "Mon, 18 Oct 2021 23:46:24 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-client-request-id": "9e09205a-306d-11ec-b3b8-5cf37093a909",
+        "x-ms-error-code": "InvalidXmlDocument",
+        "x-ms-request-id": "122ba289-2002-0083-517a-c46fbf000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": [
+        "\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003Cm:error xmlns:m=\u0022http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\u0022\u003E\u003Cm:code\u003EInvalidXmlDocument\u003C/m:code\u003E\u003Cm:message xml:lang=\u0022en-US\u0022\u003EXML specified is not syntactically valid.\n",
+        "RequestId:122ba289-2002-0083-517a-c46fbf000000\n",
+        "Time:2021-10-18T23:46:24.4999295Z\u003C/m:message\u003E\u003C/m:error\u003E"
+      ]
+    }
+  ],
+  "Variables": {}
+}

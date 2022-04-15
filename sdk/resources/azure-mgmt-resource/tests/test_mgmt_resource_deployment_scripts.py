@@ -13,12 +13,11 @@ import unittest
 
 import azure.core.exceptions
 import azure.mgmt.resource
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
+class TestMgmtResourceDeploymentScript(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtResourceDeploymentScriptTest, self).setUp()
+    def setup_method(self, method):
         self.script_client = self.create_mgmt_client(
             azure.mgmt.resource.DeploymentScriptsClient,
             api_version="2019-10-01-preview"
@@ -31,8 +30,9 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
             )
 
     @RandomNameResourceGroupPreparer()
+    @recorded_by_proxy
     def test_deployment_scripts(self, resource_group, location):
-        SUBSCRIPTION = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION = self.get_settings_value("SUBSCRIPTION_ID")
         script_name = "scripttest"
         identity_name = "uai"
 

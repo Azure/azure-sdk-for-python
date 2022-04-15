@@ -10,14 +10,15 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING,
     TypeVar, Type)
+import warnings
 
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import quote, unquote  # type: ignore
-
 import six
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -56,7 +57,7 @@ from ._upload_helpers import (
     upload_append_blob,
     upload_page_blob, _any_conditions)
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
-    DelimitedJsonDialect, DelimitedTextDialect
+    DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient
 
@@ -65,6 +66,7 @@ if TYPE_CHECKING:
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
         ContentSettings,
+        ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
         SequenceNumberAction
@@ -177,7 +179,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
@@ -337,7 +339,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -571,7 +573,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -1408,7 +1410,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+        # type: (ImmutabilityPolicy, **Any) -> Dict[str, str]
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1866,37 +1868,52 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if 'source_lease' in kwargs:
             source_lease = kwargs.pop('source_lease')
             try:
-                headers['x-ms-source-lease-id'] = source_lease.id # type: str
+                headers['x-ms-source-lease-id'] = source_lease.id
             except AttributeError:
                 headers['x-ms-source-lease-id'] = source_lease
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
+        tags = kwargs.pop('tags', None)
+
+        # Options only available for sync copy
         requires_sync = kwargs.pop('requires_sync', None)
         encryption_scope_str = kwargs.pop('encryption_scope', None)
         source_authorization = kwargs.pop('source_authorization', None)
+        # If tags is a str, interpret that as copy_source_tags
+        copy_source_tags = isinstance(tags, str)
 
-        if not requires_sync and encryption_scope_str:
-            raise ValueError("Encryption_scope is only supported for sync copy, please specify requires_sync=True")
-        if source_authorization and incremental_copy:
-            raise ValueError("Source authorization tokens are not applicable for incremental copying.")
-        #
+        if incremental_copy:
+            if source_authorization:
+                raise ValueError("Source authorization tokens are not applicable for incremental copying.")
+            if copy_source_tags:
+                raise ValueError("Copying source tags is not applicable for incremental copying.")
+
         # TODO: refactor start_copy_from_url api in _blob_client.py. Call _generated/_blob_operations.py copy_from_url
         #  when requires_sync=True is set.
         #  Currently both sync copy and async copy are calling _generated/_blob_operations.py start_copy_from_url.
         #  As sync copy diverges more from async copy, more problem will surface.
-        if encryption_scope_str:
-            headers.update({'x-ms-encryption-scope': encryption_scope_str})
-
         if requires_sync is True:
             headers['x-ms-requires-sync'] = str(requires_sync)
+            if encryption_scope_str:
+                headers['x-ms-encryption-scope'] = encryption_scope_str
             if source_authorization:
                 headers['x-ms-copy-source-authorization'] = source_authorization
+            if copy_source_tags:
+                headers['x-ms-copy-source-tag-option'] = tags
         else:
+            if encryption_scope_str:
+                raise ValueError(
+                    "Encryption_scope is only supported for sync copy, please specify requires_sync=True")
             if source_authorization:
-                raise ValueError("Source authorization tokens are only applicable for synchronous copy operations.")
+                raise ValueError(
+                    "Source authorization tokens are only supported for sync copy, please specify requires_sync=True")
+            if copy_source_tags:
+                raise ValueError(
+                    "Copying source tags is only supported for sync copy, please specify requires_sync=True")
+
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
-        blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
+        blob_tags_string = serialize_blob_tags_header(tags) if not copy_source_tags else None
 
         immutability_policy = kwargs.pop('immutability_policy', None)
         if immutability_policy:
@@ -1985,11 +2002,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_).
+
+            The (case-sensitive) literal "COPY" can instead be passed to copy tags from the source blob.
+            This option is only available when `incremental_copy=False` and `requires_sync=True`.
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: dict(str, str) or Literal["COPY"]
         :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
             Specifies the immutability policy of a blob, blob snapshot or blob version.
 
@@ -2879,7 +2899,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
-        """Returns the list of valid page ranges for a Page Blob or snapshot
+        """DEPRECATED: Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
         :param int offset:
@@ -2934,6 +2954,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
+        warnings.warn(
+            "get_page_ranges is deprecated, use list_page_ranges instead",
+            DeprecationWarning
+        )
+
         options = self._get_page_ranges_options(
             offset=offset,
             length=length,
@@ -2947,6 +2972,92 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
+
+    @distributed_trace
+    def list_page_ranges(
+            self,
+            *,
+            offset: Optional[int] = None,
+            length: Optional[int] = None,
+            previous_snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            **kwargs: Any
+        ) -> ItemPaged[PageRange]:
+        """Returns the list of valid page ranges for a Page Blob or snapshot
+        of a page blob. If `previous_snapshot` is specified, the result will be
+        a diff of changes between the target blob and the previous snapshot.
+
+        :keyword int offset:
+            Start of byte range to use for getting valid page ranges.
+            If no length is given, all bytes after the offset will be searched.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :keyword int length:
+            Number of bytes to use for getting valid page ranges.
+            If length is given, offset must be provided.
+            This range will return valid page ranges from the offset start up to
+            the specified length.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the length must be a modulus of
+            512.
+        :keyword previous_snapshot:
+            A snapshot value that specifies that the response will contain only pages that were changed
+            between target blob and previous snapshot. Changed pages include both updated and cleared
+            pages. The target blob may be a snapshot, as long as the snapshot specified by `previous_snapshot`
+            is the older of the two.
+        :paramtype previous_snapshot: str or Dict[str, Any]
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
+        :keyword int results_per_page:
+            The maximum number of page ranges to retrieve per API call.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) of PageRange.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.PageRange]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        options = self._get_page_ranges_options(
+            offset=offset,
+            length=length,
+            previous_snapshot_diff=previous_snapshot,
+            **kwargs)
+
+        if previous_snapshot:
+            command = partial(
+                self._client.page_blob.get_page_ranges_diff,
+                **options)
+        else:
+            command = partial(
+                self._client.page_blob.get_page_ranges,
+                **options)
+        return ItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=PageRangePaged)
 
     @distributed_trace
     def get_page_range_diff_for_managed_disk(

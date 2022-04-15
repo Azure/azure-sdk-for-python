@@ -8,8 +8,10 @@
 
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
+
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
@@ -334,6 +336,8 @@ class ShareProperties(DictMixin):
     :ivar int remaining_retention_days:
         To indicate how many remaining days the deleted share will be kept.
         This is a service returned value, and the value will be set when list shared including deleted ones.
+    :ivar int provisioned_bandwidth:
+        Provisioned bandwidth in megabits/second. Only applicable to premium file accounts.
     :ivar ~azure.storage.fileshare.models.ShareRootSquash or str root_squash:
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
     :ivar list(str) protocols:
@@ -356,6 +360,7 @@ class ShareProperties(DictMixin):
         self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
+        self.provisioned_bandwidth = kwargs.get('x-ms-share-provisioned-bandwidth-mibps')
         self.lease = LeaseProperties(**kwargs)
         self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
             if kwargs.get('x-ms-enabled-protocols', None) else None
@@ -378,6 +383,7 @@ class ShareProperties(DictMixin):
         props.provisioned_egress_mbps = generated.properties.provisioned_egress_m_bps
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_m_bps
         props.provisioned_iops = generated.properties.provisioned_iops
+        props.provisioned_bandwidth = generated.properties.provisioned_bandwidth_mi_bps
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
             if generated.properties.enabled_protocols else None
@@ -736,7 +742,7 @@ class FileProperties(DictMixin):
         return props
 
 
-class ShareProtocols(str, Enum):
+class ShareProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enabled protocols on the share"""
     SMB = "SMB"
     NFS = "NFS"
@@ -881,13 +887,17 @@ class ShareSasPermissions(object):
         an account SAS instead.
     :param bool list:
         List files and directories in the share.
+    :param bool create:
+        Create a new file in the share, or copy a file to a new file in the share.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False):  # pylint: disable=redefined-builtin
+    def __init__(self, read=False, write=False, delete=False, list=False, create=False):  # pylint: disable=redefined-builtin
         self.read = read
+        self.create = create
         self.write = write
         self.delete = delete
         self.list = list
         self._str = (('r' if self.read else '') +
+                     ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('l' if self.list else ''))
@@ -900,21 +910,22 @@ class ShareSasPermissions(object):
     def from_string(cls, permission):
         """Create a ShareSasPermissions from a string.
 
-        To specify read, write, delete, or list permissions you need only to
+        To specify read, create, write, delete, or list permissions you need only to
         include the first letter of the word in the string. E.g. For read and
         write permissions, you would provide a string "rw".
 
-        :param str permission: The string which dictates the read, write,
+        :param str permission: The string which dictates the read, create, write,
             delete, or list permissions
         :return: A ShareSasPermissions object
         :rtype: ~azure.storage.fileshare.ShareSasPermissions
         """
         p_read = 'r' in permission
+        p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_list = 'l' in permission
 
-        parsed = cls(p_read, p_write, p_delete, p_list)
+        parsed = cls(p_read, p_write, p_delete, p_list, p_create)
 
         return parsed
 

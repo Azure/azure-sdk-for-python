@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -38,17 +37,17 @@ async def sample_list_translations_async():
         operations = client.list_translation_statuses()  # type: AsyncItemPaged[TranslationStatus]
 
         async for operation in operations:
-            print("ID: {}".format(operation.id))
-            print("Status: {}".format(operation.status))
-            print("Created on: {}".format(operation.created_on))
-            print("Last updated on: {}".format(operation.last_updated_on))
-            print("Total number of operations on documents: {}".format(operation.documents_total_count))
-            print("Total number of characters charged: {}".format(operation.total_characters_charged))
+            print(f"ID: {operation.id}")
+            print(f"Status: {operation.status}")
+            print(f"Created on: {operation.created_on}")
+            print(f"Last updated on: {operation.last_updated_on}")
+            print(f"Total number of operations on documents: {operation.documents_total_count}")
+            print(f"Total number of characters charged: {operation.total_characters_charged}")
 
             print("\nOf total documents...")
-            print("{} failed".format(operation.documents_failed_count))
-            print("{} succeeded".format(operation.documents_succeeded_count))
-            print("{} canceled\n".format(operation.documents_canceled_count))
+            print(f"{operation.documents_failed_count} failed")
+            print(f"{operation.documents_succeeded_count} succeeded")
+            print(f"{operation.documents_canceled_count} canceled\n")
     # [END list_translations_async]
 
 
@@ -56,5 +55,4 @@ async def main():
     await sample_list_translations_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

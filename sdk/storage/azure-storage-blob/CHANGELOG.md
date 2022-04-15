@@ -1,14 +1,75 @@
 # Release History
 
-## 12.10.0b2 (Unreleased)
+## 12.12.0b1 (2022-04-14)
 
 ### Features Added
+- Added support for service version 2021-06-08.
+- Added a new paginated method for listing page ranges, `list_page_ranges()`. This replaces `get_page_ranges()` which has been deprecated.
+- Added support for copying source blob tags with `start_copy_from_url()` by specifying `"COPY"` for the `tags` keyword.
 
-### Breaking Changes
+## 12.11.0 (2022-03-29)
+
+**Warning** This release involves a bug fix that may change the behavior for some users. In previous versions,
+the `tag` parameter on`BlobSasPermissions` defaulted to `True` meaning a Blob SAS URL would include the `t` permission
+by default. This was not the intended behavior. This release adjusts `BlobSasPermission` so the `tag` permission will
+default to `False`, like all other permissions.
 
 ### Bugs Fixed
+- Fixed a bug in `BlobSasPermissions` where the `tag` permission had a default value of `True` and
+therefore was being added to the SAS token by default.
 
-### Other Changes
+## 12.10.0 (2022-03-08)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Stable release of preview features
+- Added support for service version 2021-02-12, 2021-04-10.
+- Account level SAS tokens now supports two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+- Encryption Scope is now supported for Sync Blob Copy (`copy_from_url()`).
+- Encryption Scope is now supported as a SAS permission.
+- Added support for blob names containing invalid XML characters. 
+  Previously \uFFFE and \uFFFF would fail if present in blob name.
+- Added support for listing system containers with get_blob_containers().
+- Added support for `find_blobs_by_tags()` on a container.
+- Added support for `Find (f)` container SAS permission.
+
+### Bugs Fixed
+- Added all missing Service SAS permissions.
+- Fixed a bug that prevented `upload_blob()` from working with an OS pipe
+reader stream on Linux. (#23131)
+
+## 12.10.0b4 (2022-02-24)
+
+### Features Added
+- Updated clients to support both SAS and OAuth together.
+- Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
+
+### Bugs Fixed
+- Addressed a few `mypy` typing hint errors.
+
+## 12.10.0b3 (2022-02-08)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+- Added support for service version 2021-04-10.
+- Added support for `find_blobs_by_tags()` on a container.
+- Added support for `Find (f)` container SAS permission.
+
+### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+
+## 12.10.0b2 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12
+- Added support for blob names container invalid XML characters. Previously \uFFFE and \uFFFF would fail if present in blob name.
+- Added support for listing system containers with get_blob_containers().
+
+### Bugs Fixed
+- BlobPrefix for aio operations is now exposed to be imported, previously it was private.
 
 ## 12.10.0b1 (2021-11-08)
 **New Features**

@@ -5,7 +5,7 @@
 1. A non-Azure Windows or Linux VM.
 2. Administrator privileges on the VM.
 3. An Azure Key Vault.
-4. Python 2.7 and 3.5+
+4. Python 3.6+
 
 ### Install Azure Arc on the VM
 
@@ -14,7 +14,7 @@
 1. Create an Azure Arc server resource on the [Azure Portal](https://portal.azure.com) (at the time of writing, the
 resource is named "Servers - Azure Arc").
 2. Choose to add an existing server using an interactive script.
-3. When creating the resource, fill in your desired subscription, resource group, and region for the VM. Choose the 
+3. When creating the resource, fill in your desired subscription, resource group, and region for the VM. Choose the
 operating system of your existing VM.
 4. No other configuration is necessary. You can go to the "Download and run script" tab and download the script shown.
 5. Once the script has been downloaded, run the script on your machine with administrator privileges.
@@ -31,11 +31,11 @@ sudo setfacl -m "g::r-x" /var/opt/azcmagent/tokens/
 
 ## Give the Azure Arc VM access to the key vault
 
-For the tests to pass, the VM will need secret management permissions in your key vault. 
+For the tests to pass, the VM will need secret management permissions in your key vault.
 
 1. Go to your key vault resource in the [Azure Portal](https://portal.azure.com).
-2. Go to the vault's "Access policies" page, and click "Add Access Policy". 
-3. Using the secret management template, select your Arc VM resource as the principal. 
+2. Go to the vault's "Access policies" page, and click "Add Access Policy".
+3. Using the secret management template, select your Arc VM resource as the principal.
 4. Click "Add".
 5. Don't forget to click "Save" at the top of the access policies page after the policy is added.
 
@@ -54,7 +54,7 @@ Install `requirements.txt`:
 ```
 pip install -r requirements.txt
 ```
-Run the managed identity tests, using the below command once with Python 2.7 and once with Python 3.5+:
+Run the managed identity tests, using the below command with Python 3.6+:
 ```
 pytest -k managed_identity_live
 ```

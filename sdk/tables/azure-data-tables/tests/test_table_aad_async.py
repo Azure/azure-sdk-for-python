@@ -9,7 +9,8 @@ import pytest
 from datetime import datetime
 import sys
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.data.tables.aio import TableServiceClient, TableClient
 
@@ -29,8 +30,9 @@ from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
 
 
-class TableTestAsync(AzureTestCase, AsyncTableTestCase):
+class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_create_table(self, tables_storage_account_name):
         try:
             account_url = self.account_url(tables_storage_account_name, "table")
@@ -49,6 +51,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await ts.delete_table(table_name)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_query_list_tables(self, tables_storage_account_name):
         try:
             account_url = self.account_url(tables_storage_account_name, "table")
@@ -80,6 +83,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
                 await ts.delete_table(table.name)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_create_table_tc(self, tables_storage_account_name):
         try:
             account_url = self.account_url(tables_storage_account_name, "table")
@@ -101,6 +105,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await ts.delete_table(table_name)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_service_properties(self, tables_storage_account_name):
         try:
             account_url = self.account_url(tables_storage_account_name, "table")
@@ -126,6 +131,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await ts.delete_table(table_name)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_table_service_stats(self, tables_storage_account_name):
         tsc = TableServiceClient(
             self.account_url(tables_storage_account_name, "table"), credential=self.get_token_credential()
@@ -134,6 +140,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         self._assert_stats_default(stats)
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_insert_entity_dictionary(self, tables_storage_account_name):
 
         await self._set_up(tables_storage_account_name, self.get_token_credential())
@@ -146,6 +153,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_query_user_filter(self, tables_storage_account_name):
 
         await self._set_up(tables_storage_account_name, self.get_token_credential())
@@ -166,7 +174,13 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_batch_all_operations_together(self, tables_storage_account_name):
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
+
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
 
@@ -234,6 +248,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_access_policy_error(self, tables_storage_account_name):
         account_url = self.account_url(tables_storage_account_name, "table")
         table_name = self._get_table_reference()
@@ -246,6 +261,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await table_client.set_table_access_policy(signed_identifiers={})
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_delete_entities(self, tables_storage_account_name):
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
@@ -259,6 +275,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_query_user_filter(self, tables_storage_account_name):
 
         await self._set_up(tables_storage_account_name, self.get_token_credential())
@@ -278,6 +295,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_aad_list_entities(self, tables_storage_account_name):
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
@@ -294,6 +312,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_merge_entity(self, tables_storage_account_name):
         await self._set_up(tables_storage_account_name, self.get_token_credential())
         try:

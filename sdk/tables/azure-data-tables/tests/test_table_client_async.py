@@ -7,10 +7,12 @@ from azure.core.credentials import AzureNamedKeyCredential
 import pytest
 import platform
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.data.tables.aio import TableServiceClient, TableClient
+from azure.data.tables import TableTransactionError
 from azure.data.tables._version import VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -27,9 +29,10 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint'}
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint'}
 
 
-class TestTableClient(AzureTestCase, AsyncTableTestCase):
+class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_user_agent_default_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -49,6 +52,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
             count += 1
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_user_agent_custom_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -85,6 +89,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
             count += 1
 
     @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -99,6 +104,39 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         count = 0
         async for table in tables:
             count += 1
+    
+    @pytest.mark.live_test_only
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):
+        endpoint = self.account_url(tables_storage_account_name, "table")
+
+        # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
+        invalid_table_names = ["1table", "a"*2, "a"*64, "a//", "my_table"]
+        for invalid_name in invalid_table_names:
+            client = TableClient(
+                endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+            async with client:
+                with pytest.raises(ValueError) as error:
+                    await client.create_table()
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    await client.create_entity({'PartitionKey': 'foo', 'RowKey': 'bar'})
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    await client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    await client.delete_entity("PK", "RK")
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    await client.get_table_access_policy()
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    batch = []
+                    batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+                    await client.submit_transaction(batch)
+                assert 'Storage table names must be alphanumeric' in str(error.value)
 
 
 class TestTableClientUnit(AsyncTableTestCase):
@@ -421,12 +459,14 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service.credential.named_key.name == self.tables_storage_account_name
             assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
+            assert service.scheme == 'http'
 
         service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
@@ -434,6 +474,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token.signature)
         assert service.account_name == "custom"
@@ -441,6 +482,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
     @pytest.mark.asyncio
     async def test_create_table_client_with_complete_table_url_async(self):
@@ -463,18 +505,6 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.scheme == 'https'
         assert service.table_name == 'bar'
         assert service.account_name == self.tables_storage_account_name
-
-    @pytest.mark.asyncio
-    async def test_create_table_client_with_invalid_name_async(self):
-        # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format("storage_account_name")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."in str(excinfo)
 
     @pytest.mark.asyncio
     async def test_error_with_malformed_conn_str_async(self):
@@ -547,6 +577,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert client.credential.named_key.key == azurite_credential.named_key.key
         assert client.credential.named_key.name == azurite_credential.named_key.name
         assert not client._cosmos_endpoint
+        assert client.scheme == 'https'
 
         client = TableServiceClient.from_connection_string(http_connstr)
         assert client.account_name == "devstoreaccount1"
@@ -556,6 +587,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert client.credential.named_key.key == self.tables_primary_storage_account_key
         assert client.credential.named_key.name == "devstoreaccount1"
         assert not client._cosmos_endpoint
+        assert client.scheme == 'http'
 
         client = TableServiceClient.from_connection_string(https_connstr)
         assert client.account_name == "devstoreaccount1"
@@ -565,6 +597,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert client.credential.named_key.key == self.tables_primary_storage_account_key
         assert client.credential.named_key.name == "devstoreaccount1"
         assert not client._cosmos_endpoint
+        assert client.scheme == 'https'
 
         table = TableClient(account_url, "tablename", credential=azurite_credential)
         assert table.account_name == "myaccount"
@@ -575,6 +608,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.key == azurite_credential.named_key.key
         assert table.credential.named_key.name == azurite_credential.named_key.name
         assert not table._cosmos_endpoint
+        assert table.scheme == 'https'
 
         table = TableClient.from_connection_string(http_connstr, "tablename")
         assert table.account_name == "devstoreaccount1"
@@ -585,6 +619,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.key == self.tables_primary_storage_account_key
         assert table.credential.named_key.name == "devstoreaccount1"
         assert not table._cosmos_endpoint
+        assert table.scheme == 'http'
 
         table = TableClient.from_connection_string(https_connstr, "tablename")
         assert table.account_name == "devstoreaccount1"
@@ -595,6 +630,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.key == self.tables_primary_storage_account_key
         assert table.credential.named_key.name == "devstoreaccount1"
         assert not table._cosmos_endpoint
+        assert table.scheme == 'https'
 
         table_url = "https://127.0.0.1:10002/myaccount/Tables('tablename')"
         table = TableClient.from_table_url(table_url, credential=azurite_credential)
@@ -606,3 +642,4 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.key == azurite_credential.named_key.key
         assert table.credential.named_key.name == azurite_credential.named_key.name
         assert not table._cosmos_endpoint
+        assert table.scheme == 'https'

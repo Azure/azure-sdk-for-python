@@ -74,22 +74,32 @@ stages:
                 runOnce:
                   deploy:
                     steps:
-                      - checkout: none
+                      - checkout: self
                       - download: current
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
 
                       - task: UsePythonVersion@0
+                        inputs:
+                          versionSpec: '3.9'
 
                       - script: |
                           set -e
-                          pip install twine readme-renderer[md]
-                        displayName: Install Twine
+                          pip install -r eng/release_requirements.txt
+                          pip install tools/azure-sdk-tools
+                        displayName: Install Release Dependencies
+
+                      - task: PythonScript@0
+                        displayName: Verify Dependency Presence
+                        condition: and(succeeded(), ne(variables['Skip.VerifyDependencies'], 'true'))
+                        inputs:
+                          scriptPath: 'scripts/devops_tasks/verify_dependencies_present.py'
+                          arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
 
                       - task: TwineAuthenticate@1
                         displayName: 'Authenticate to registry: pypi.org'
                         inputs:
-                          pythonUploadServiceConnection: 'pypi.org - azure-sdk'
+                          pythonUploadServiceConnection: 'PyPI Upload (azure-sdk token)'
 
                       - task: TwineAuthenticate@0
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'

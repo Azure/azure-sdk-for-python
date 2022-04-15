@@ -18,10 +18,10 @@ from ._monitor_management_client_enums import *
 class AzureMonitorMetricsDestination(msrest.serialization.Model):
     """Azure Monitor Metrics destination.
 
-    :param name: A friendly name for the destination.
+    :ivar name: A friendly name for the destination.
      This name should be unique across all destinations (regardless of type) within the data
      collection rule.
-    :type name: str
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -34,6 +34,12 @@ class AzureMonitorMetricsDestination(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
         super(AzureMonitorMetricsDestination, self).__init__(**kwargs)
         self.name = name
 
@@ -59,6 +65,8 @@ class ConfigurationAccessEndpointSpec(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ConfigurationAccessEndpointSpec, self).__init__(**kwargs)
         self.endpoint = None
 
@@ -68,19 +76,19 @@ class DataCollectionEndpoint(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param description: Description of the data collection endpoint.
-    :type description: str
-    :param immutable_id: The immutable ID of this data collection endpoint resource. This property
+    :ivar description: Description of the data collection endpoint.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection endpoint resource. This property
      is READ-ONLY.
-    :type immutable_id: str
-    :param configuration_access: The endpoint used by agents to access their configuration.
-    :type configuration_access:
+    :vartype immutable_id: str
+    :ivar configuration_access: The endpoint used by agents to access their configuration.
+    :vartype configuration_access:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointConfigurationAccess
-    :param logs_ingestion: The endpoint used by clients to ingest logs.
-    :type logs_ingestion:
+    :ivar logs_ingestion: The endpoint used by clients to ingest logs.
+    :vartype logs_ingestion:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointLogsIngestion
-    :param network_acls: Network access control rules for the endpoints.
-    :type network_acls:
+    :ivar network_acls: Network access control rules for the endpoints.
+    :vartype network_acls:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointNetworkAcls
     :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Possible
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
@@ -111,6 +119,22 @@ class DataCollectionEndpoint(msrest.serialization.Model):
         network_acls: Optional["DataCollectionEndpointNetworkAcls"] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description of the data collection endpoint.
+        :paramtype description: str
+        :keyword immutable_id: The immutable ID of this data collection endpoint resource. This
+         property is READ-ONLY.
+        :paramtype immutable_id: str
+        :keyword configuration_access: The endpoint used by agents to access their configuration.
+        :paramtype configuration_access:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointConfigurationAccess
+        :keyword logs_ingestion: The endpoint used by clients to ingest logs.
+        :paramtype logs_ingestion:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointLogsIngestion
+        :keyword network_acls: Network access control rules for the endpoints.
+        :paramtype network_acls:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointNetworkAcls
+        """
         super(DataCollectionEndpoint, self).__init__(**kwargs)
         self.description = description
         self.immutable_id = immutable_id
@@ -141,6 +165,8 @@ class DataCollectionEndpointConfigurationAccess(ConfigurationAccessEndpointSpec)
         self,
         **kwargs
     ):
+        """
+        """
         super(DataCollectionEndpointConfigurationAccess, self).__init__(**kwargs)
 
 
@@ -165,6 +191,8 @@ class LogsIngestionEndpointSpec(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LogsIngestionEndpointSpec, self).__init__(**kwargs)
         self.endpoint = None
 
@@ -190,15 +218,17 @@ class DataCollectionEndpointLogsIngestion(LogsIngestionEndpointSpec):
         self,
         **kwargs
     ):
+        """
+        """
         super(DataCollectionEndpointLogsIngestion, self).__init__(**kwargs)
 
 
 class NetworkRuleSet(msrest.serialization.Model):
     """Definition of the network rules.
 
-    :param public_network_access: The configuration to set whether network access from public
+    :ivar public_network_access: The configuration to set whether network access from public
      internet to the endpoints are allowed. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or
+    :vartype public_network_access: str or
      ~$(python-base-namespace).v2021_04_01.models.KnownPublicNetworkAccessOptions
     """
 
@@ -212,6 +242,12 @@ class NetworkRuleSet(msrest.serialization.Model):
         public_network_access: Optional[Union[str, "KnownPublicNetworkAccessOptions"]] = None,
         **kwargs
     ):
+        """
+        :keyword public_network_access: The configuration to set whether network access from public
+         internet to the endpoints are allowed. Possible values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownPublicNetworkAccessOptions
+        """
         super(NetworkRuleSet, self).__init__(**kwargs)
         self.public_network_access = public_network_access
 
@@ -219,9 +255,9 @@ class NetworkRuleSet(msrest.serialization.Model):
 class DataCollectionEndpointNetworkAcls(NetworkRuleSet):
     """Network access control rules for the endpoints.
 
-    :param public_network_access: The configuration to set whether network access from public
+    :ivar public_network_access: The configuration to set whether network access from public
      internet to the endpoints are allowed. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or
+    :vartype public_network_access: str or
      ~$(python-base-namespace).v2021_04_01.models.KnownPublicNetworkAccessOptions
     """
 
@@ -235,6 +271,12 @@ class DataCollectionEndpointNetworkAcls(NetworkRuleSet):
         public_network_access: Optional[Union[str, "KnownPublicNetworkAccessOptions"]] = None,
         **kwargs
     ):
+        """
+        :keyword public_network_access: The configuration to set whether network access from public
+         internet to the endpoints are allowed. Possible values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownPublicNetworkAccessOptions
+        """
         super(DataCollectionEndpointNetworkAcls, self).__init__(public_network_access=public_network_access, **kwargs)
 
 
@@ -245,12 +287,12 @@ class DataCollectionEndpointResource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: The kind of the resource. Possible values include: "Linux", "Windows".
-    :type kind: str or
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: The kind of the resource. Possible values include: "Linux", "Windows".
+    :vartype kind: str or
      ~$(python-base-namespace).v2021_04_01.models.KnownDataCollectionEndpointResourceKind
     :ivar id: Fully qualified ID of the resource.
     :vartype id: str
@@ -263,19 +305,19 @@ class DataCollectionEndpointResource(msrest.serialization.Model):
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointResourceSystemData
-    :param description: Description of the data collection endpoint.
-    :type description: str
-    :param immutable_id: The immutable ID of this data collection endpoint resource. This property
+    :ivar description: Description of the data collection endpoint.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection endpoint resource. This property
      is READ-ONLY.
-    :type immutable_id: str
-    :param configuration_access: The endpoint used by agents to access their configuration.
-    :type configuration_access:
+    :vartype immutable_id: str
+    :ivar configuration_access: The endpoint used by agents to access their configuration.
+    :vartype configuration_access:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointConfigurationAccess
-    :param logs_ingestion: The endpoint used by clients to ingest logs.
-    :type logs_ingestion:
+    :ivar logs_ingestion: The endpoint used by clients to ingest logs.
+    :vartype logs_ingestion:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointLogsIngestion
-    :param network_acls: Network access control rules for the endpoints.
-    :type network_acls:
+    :ivar network_acls: Network access control rules for the endpoints.
+    :vartype network_acls:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointNetworkAcls
     :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Possible
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
@@ -323,6 +365,29 @@ class DataCollectionEndpointResource(msrest.serialization.Model):
         network_acls: Optional["DataCollectionEndpointNetworkAcls"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword kind: The kind of the resource. Possible values include: "Linux", "Windows".
+        :paramtype kind: str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownDataCollectionEndpointResourceKind
+        :keyword description: Description of the data collection endpoint.
+        :paramtype description: str
+        :keyword immutable_id: The immutable ID of this data collection endpoint resource. This
+         property is READ-ONLY.
+        :paramtype immutable_id: str
+        :keyword configuration_access: The endpoint used by agents to access their configuration.
+        :paramtype configuration_access:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointConfigurationAccess
+        :keyword logs_ingestion: The endpoint used by clients to ingest logs.
+        :paramtype logs_ingestion:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointLogsIngestion
+        :keyword network_acls: Network access control rules for the endpoints.
+        :paramtype network_acls:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointNetworkAcls
+        """
         super(DataCollectionEndpointResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -345,10 +410,11 @@ class DataCollectionEndpointResourceListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. A list of resources.
-    :type value: list[~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointResource]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Required. A list of resources.
+    :vartype value:
+     list[~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointResource]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -367,6 +433,13 @@ class DataCollectionEndpointResourceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. A list of resources.
+        :paramtype value:
+         list[~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointResource]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(DataCollectionEndpointResourceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -377,19 +450,19 @@ class DataCollectionEndpointResourceProperties(DataCollectionEndpoint):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param description: Description of the data collection endpoint.
-    :type description: str
-    :param immutable_id: The immutable ID of this data collection endpoint resource. This property
+    :ivar description: Description of the data collection endpoint.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection endpoint resource. This property
      is READ-ONLY.
-    :type immutable_id: str
-    :param configuration_access: The endpoint used by agents to access their configuration.
-    :type configuration_access:
+    :vartype immutable_id: str
+    :ivar configuration_access: The endpoint used by agents to access their configuration.
+    :vartype configuration_access:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointConfigurationAccess
-    :param logs_ingestion: The endpoint used by clients to ingest logs.
-    :type logs_ingestion:
+    :ivar logs_ingestion: The endpoint used by clients to ingest logs.
+    :vartype logs_ingestion:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointLogsIngestion
-    :param network_acls: Network access control rules for the endpoints.
-    :type network_acls:
+    :ivar network_acls: Network access control rules for the endpoints.
+    :vartype network_acls:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointNetworkAcls
     :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Possible
      values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed".
@@ -420,26 +493,43 @@ class DataCollectionEndpointResourceProperties(DataCollectionEndpoint):
         network_acls: Optional["DataCollectionEndpointNetworkAcls"] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description of the data collection endpoint.
+        :paramtype description: str
+        :keyword immutable_id: The immutable ID of this data collection endpoint resource. This
+         property is READ-ONLY.
+        :paramtype immutable_id: str
+        :keyword configuration_access: The endpoint used by agents to access their configuration.
+        :paramtype configuration_access:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointConfigurationAccess
+        :keyword logs_ingestion: The endpoint used by clients to ingest logs.
+        :paramtype logs_ingestion:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointLogsIngestion
+        :keyword network_acls: Network access control rules for the endpoints.
+        :paramtype network_acls:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionEndpointNetworkAcls
+        """
         super(DataCollectionEndpointResourceProperties, self).__init__(description=description, immutable_id=immutable_id, configuration_access=configuration_access, logs_ingestion=logs_ingestion, network_acls=network_acls, **kwargs)
 
 
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or
+     ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -462,6 +552,23 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -474,20 +581,21 @@ class SystemData(msrest.serialization.Model):
 class DataCollectionEndpointResourceSystemData(SystemData):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or
+     ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -510,6 +618,23 @@ class DataCollectionEndpointResourceSystemData(SystemData):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(DataCollectionEndpointResourceSystemData, self).__init__(created_by=created_by, created_by_type=created_by_type, created_at=created_at, last_modified_by=last_modified_by, last_modified_by_type=last_modified_by_type, last_modified_at=last_modified_at, **kwargs)
 
 
@@ -518,18 +643,20 @@ class DataCollectionRule(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param description: Description of the data collection rule.
-    :type description: str
+    :ivar description: Description of the data collection rule.
+    :vartype description: str
     :ivar immutable_id: The immutable ID of this data collection rule. This property is READ-ONLY.
     :vartype immutable_id: str
-    :param data_sources: The specification of data sources.
+    :ivar data_sources: The specification of data sources.
      This property is optional and can be omitted if the rule is meant to be used via direct calls
      to the provisioned endpoint.
-    :type data_sources: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
-    :param destinations: The specification of destinations.
-    :type destinations: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
-    :param data_flows: The specification of data flows.
-    :type data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
+    :vartype data_sources:
+     ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
+    :ivar destinations: The specification of destinations.
+    :vartype destinations:
+     ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
+    :ivar data_flows: The specification of data flows.
+    :vartype data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
     :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
@@ -559,6 +686,20 @@ class DataCollectionRule(msrest.serialization.Model):
         data_flows: Optional[List["DataFlow"]] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description of the data collection rule.
+        :paramtype description: str
+        :keyword data_sources: The specification of data sources.
+         This property is optional and can be omitted if the rule is meant to be used via direct calls
+         to the provisioned endpoint.
+        :paramtype data_sources:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
+        :keyword destinations: The specification of destinations.
+        :paramtype destinations:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
+        :keyword data_flows: The specification of data flows.
+        :paramtype data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
+        """
         super(DataCollectionRule, self).__init__(**kwargs)
         self.description = description
         self.immutable_id = None
@@ -573,14 +714,14 @@ class DataCollectionRuleAssociation(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param description: Description of the association.
-    :type description: str
-    :param data_collection_rule_id: The resource ID of the data collection rule that is to be
+    :ivar description: Description of the association.
+    :vartype description: str
+    :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
      associated.
-    :type data_collection_rule_id: str
-    :param data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
+    :vartype data_collection_rule_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
      be associated.
-    :type data_collection_endpoint_id: str
+    :vartype data_collection_endpoint_id: str
     :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
@@ -606,6 +747,16 @@ class DataCollectionRuleAssociation(msrest.serialization.Model):
         data_collection_endpoint_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description of the association.
+        :paramtype description: str
+        :keyword data_collection_rule_id: The resource ID of the data collection rule that is to be
+         associated.
+        :paramtype data_collection_rule_id: str
+        :keyword data_collection_endpoint_id: The resource ID of the data collection endpoint that is
+         to be associated.
+        :paramtype data_collection_endpoint_id: str
+        """
         super(DataCollectionRuleAssociation, self).__init__(**kwargs)
         self.description = description
         self.data_collection_rule_id = data_collection_rule_id
@@ -629,14 +780,14 @@ class DataCollectionRuleAssociationProxyOnlyResource(msrest.serialization.Model)
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleAssociationProxyOnlyResourceSystemData
-    :param description: Description of the association.
-    :type description: str
-    :param data_collection_rule_id: The resource ID of the data collection rule that is to be
+    :ivar description: Description of the association.
+    :vartype description: str
+    :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
      associated.
-    :type data_collection_rule_id: str
-    :param data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
+    :vartype data_collection_rule_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
      be associated.
-    :type data_collection_endpoint_id: str
+    :vartype data_collection_endpoint_id: str
     :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
@@ -672,6 +823,16 @@ class DataCollectionRuleAssociationProxyOnlyResource(msrest.serialization.Model)
         data_collection_endpoint_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description of the association.
+        :paramtype description: str
+        :keyword data_collection_rule_id: The resource ID of the data collection rule that is to be
+         associated.
+        :paramtype data_collection_rule_id: str
+        :keyword data_collection_endpoint_id: The resource ID of the data collection endpoint that is
+         to be associated.
+        :paramtype data_collection_endpoint_id: str
+        """
         super(DataCollectionRuleAssociationProxyOnlyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -689,11 +850,11 @@ class DataCollectionRuleAssociationProxyOnlyResourceListResult(msrest.serializat
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. A list of resources.
-    :type value:
+    :ivar value: Required. A list of resources.
+    :vartype value:
      list[~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleAssociationProxyOnlyResource]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -712,6 +873,13 @@ class DataCollectionRuleAssociationProxyOnlyResourceListResult(msrest.serializat
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. A list of resources.
+        :paramtype value:
+         list[~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleAssociationProxyOnlyResource]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(DataCollectionRuleAssociationProxyOnlyResourceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -722,14 +890,14 @@ class DataCollectionRuleAssociationProxyOnlyResourceProperties(DataCollectionRul
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param description: Description of the association.
-    :type description: str
-    :param data_collection_rule_id: The resource ID of the data collection rule that is to be
+    :ivar description: Description of the association.
+    :vartype description: str
+    :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
      associated.
-    :type data_collection_rule_id: str
-    :param data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
+    :vartype data_collection_rule_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
      be associated.
-    :type data_collection_endpoint_id: str
+    :vartype data_collection_endpoint_id: str
     :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
@@ -755,26 +923,37 @@ class DataCollectionRuleAssociationProxyOnlyResourceProperties(DataCollectionRul
         data_collection_endpoint_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description of the association.
+        :paramtype description: str
+        :keyword data_collection_rule_id: The resource ID of the data collection rule that is to be
+         associated.
+        :paramtype data_collection_rule_id: str
+        :keyword data_collection_endpoint_id: The resource ID of the data collection endpoint that is
+         to be associated.
+        :paramtype data_collection_endpoint_id: str
+        """
         super(DataCollectionRuleAssociationProxyOnlyResourceProperties, self).__init__(description=description, data_collection_rule_id=data_collection_rule_id, data_collection_endpoint_id=data_collection_endpoint_id, **kwargs)
 
 
 class DataCollectionRuleAssociationProxyOnlyResourceSystemData(SystemData):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or
+     ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -797,22 +976,39 @@ class DataCollectionRuleAssociationProxyOnlyResourceSystemData(SystemData):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(DataCollectionRuleAssociationProxyOnlyResourceSystemData, self).__init__(created_by=created_by, created_by_type=created_by_type, created_at=created_at, last_modified_by=last_modified_by, last_modified_by_type=last_modified_by_type, last_modified_at=last_modified_at, **kwargs)
 
 
 class DataSourcesSpec(msrest.serialization.Model):
     """Specification of data sources that will be collected.
 
-    :param performance_counters: The list of performance counter data source configurations.
-    :type performance_counters:
+    :ivar performance_counters: The list of performance counter data source configurations.
+    :vartype performance_counters:
      list[~$(python-base-namespace).v2021_04_01.models.PerfCounterDataSource]
-    :param windows_event_logs: The list of Windows Event Log data source configurations.
-    :type windows_event_logs:
+    :ivar windows_event_logs: The list of Windows Event Log data source configurations.
+    :vartype windows_event_logs:
      list[~$(python-base-namespace).v2021_04_01.models.WindowsEventLogDataSource]
-    :param syslog: The list of Syslog data source configurations.
-    :type syslog: list[~$(python-base-namespace).v2021_04_01.models.SyslogDataSource]
-    :param extensions: The list of Azure VM extension data source configurations.
-    :type extensions: list[~$(python-base-namespace).v2021_04_01.models.ExtensionDataSource]
+    :ivar syslog: The list of Syslog data source configurations.
+    :vartype syslog: list[~$(python-base-namespace).v2021_04_01.models.SyslogDataSource]
+    :ivar extensions: The list of Azure VM extension data source configurations.
+    :vartype extensions: list[~$(python-base-namespace).v2021_04_01.models.ExtensionDataSource]
     """
 
     _attribute_map = {
@@ -831,6 +1027,18 @@ class DataSourcesSpec(msrest.serialization.Model):
         extensions: Optional[List["ExtensionDataSource"]] = None,
         **kwargs
     ):
+        """
+        :keyword performance_counters: The list of performance counter data source configurations.
+        :paramtype performance_counters:
+         list[~$(python-base-namespace).v2021_04_01.models.PerfCounterDataSource]
+        :keyword windows_event_logs: The list of Windows Event Log data source configurations.
+        :paramtype windows_event_logs:
+         list[~$(python-base-namespace).v2021_04_01.models.WindowsEventLogDataSource]
+        :keyword syslog: The list of Syslog data source configurations.
+        :paramtype syslog: list[~$(python-base-namespace).v2021_04_01.models.SyslogDataSource]
+        :keyword extensions: The list of Azure VM extension data source configurations.
+        :paramtype extensions: list[~$(python-base-namespace).v2021_04_01.models.ExtensionDataSource]
+        """
         super(DataSourcesSpec, self).__init__(**kwargs)
         self.performance_counters = performance_counters
         self.windows_event_logs = windows_event_logs
@@ -842,16 +1050,16 @@ class DataCollectionRuleDataSources(DataSourcesSpec):
     """The specification of data sources. 
 This property is optional and can be omitted if the rule is meant to be used via direct calls to the provisioned endpoint.
 
-    :param performance_counters: The list of performance counter data source configurations.
-    :type performance_counters:
+    :ivar performance_counters: The list of performance counter data source configurations.
+    :vartype performance_counters:
      list[~$(python-base-namespace).v2021_04_01.models.PerfCounterDataSource]
-    :param windows_event_logs: The list of Windows Event Log data source configurations.
-    :type windows_event_logs:
+    :ivar windows_event_logs: The list of Windows Event Log data source configurations.
+    :vartype windows_event_logs:
      list[~$(python-base-namespace).v2021_04_01.models.WindowsEventLogDataSource]
-    :param syslog: The list of Syslog data source configurations.
-    :type syslog: list[~$(python-base-namespace).v2021_04_01.models.SyslogDataSource]
-    :param extensions: The list of Azure VM extension data source configurations.
-    :type extensions: list[~$(python-base-namespace).v2021_04_01.models.ExtensionDataSource]
+    :ivar syslog: The list of Syslog data source configurations.
+    :vartype syslog: list[~$(python-base-namespace).v2021_04_01.models.SyslogDataSource]
+    :ivar extensions: The list of Azure VM extension data source configurations.
+    :vartype extensions: list[~$(python-base-namespace).v2021_04_01.models.ExtensionDataSource]
     """
 
     _attribute_map = {
@@ -870,16 +1078,29 @@ This property is optional and can be omitted if the rule is meant to be used via
         extensions: Optional[List["ExtensionDataSource"]] = None,
         **kwargs
     ):
+        """
+        :keyword performance_counters: The list of performance counter data source configurations.
+        :paramtype performance_counters:
+         list[~$(python-base-namespace).v2021_04_01.models.PerfCounterDataSource]
+        :keyword windows_event_logs: The list of Windows Event Log data source configurations.
+        :paramtype windows_event_logs:
+         list[~$(python-base-namespace).v2021_04_01.models.WindowsEventLogDataSource]
+        :keyword syslog: The list of Syslog data source configurations.
+        :paramtype syslog: list[~$(python-base-namespace).v2021_04_01.models.SyslogDataSource]
+        :keyword extensions: The list of Azure VM extension data source configurations.
+        :paramtype extensions: list[~$(python-base-namespace).v2021_04_01.models.ExtensionDataSource]
+        """
         super(DataCollectionRuleDataSources, self).__init__(performance_counters=performance_counters, windows_event_logs=windows_event_logs, syslog=syslog, extensions=extensions, **kwargs)
 
 
 class DestinationsSpec(msrest.serialization.Model):
     """Specification of destinations that can be used in data flows.
 
-    :param log_analytics: List of Log Analytics destinations.
-    :type log_analytics: list[~$(python-base-namespace).v2021_04_01.models.LogAnalyticsDestination]
-    :param azure_monitor_metrics: Azure Monitor Metrics destination.
-    :type azure_monitor_metrics:
+    :ivar log_analytics: List of Log Analytics destinations.
+    :vartype log_analytics:
+     list[~$(python-base-namespace).v2021_04_01.models.LogAnalyticsDestination]
+    :ivar azure_monitor_metrics: Azure Monitor Metrics destination.
+    :vartype azure_monitor_metrics:
      ~$(python-base-namespace).v2021_04_01.models.DestinationsSpecAzureMonitorMetrics
     """
 
@@ -895,6 +1116,14 @@ class DestinationsSpec(msrest.serialization.Model):
         azure_monitor_metrics: Optional["DestinationsSpecAzureMonitorMetrics"] = None,
         **kwargs
     ):
+        """
+        :keyword log_analytics: List of Log Analytics destinations.
+        :paramtype log_analytics:
+         list[~$(python-base-namespace).v2021_04_01.models.LogAnalyticsDestination]
+        :keyword azure_monitor_metrics: Azure Monitor Metrics destination.
+        :paramtype azure_monitor_metrics:
+         ~$(python-base-namespace).v2021_04_01.models.DestinationsSpecAzureMonitorMetrics
+        """
         super(DestinationsSpec, self).__init__(**kwargs)
         self.log_analytics = log_analytics
         self.azure_monitor_metrics = azure_monitor_metrics
@@ -903,10 +1132,11 @@ class DestinationsSpec(msrest.serialization.Model):
 class DataCollectionRuleDestinations(DestinationsSpec):
     """The specification of destinations.
 
-    :param log_analytics: List of Log Analytics destinations.
-    :type log_analytics: list[~$(python-base-namespace).v2021_04_01.models.LogAnalyticsDestination]
-    :param azure_monitor_metrics: Azure Monitor Metrics destination.
-    :type azure_monitor_metrics:
+    :ivar log_analytics: List of Log Analytics destinations.
+    :vartype log_analytics:
+     list[~$(python-base-namespace).v2021_04_01.models.LogAnalyticsDestination]
+    :ivar azure_monitor_metrics: Azure Monitor Metrics destination.
+    :vartype azure_monitor_metrics:
      ~$(python-base-namespace).v2021_04_01.models.DestinationsSpecAzureMonitorMetrics
     """
 
@@ -922,6 +1152,14 @@ class DataCollectionRuleDestinations(DestinationsSpec):
         azure_monitor_metrics: Optional["DestinationsSpecAzureMonitorMetrics"] = None,
         **kwargs
     ):
+        """
+        :keyword log_analytics: List of Log Analytics destinations.
+        :paramtype log_analytics:
+         list[~$(python-base-namespace).v2021_04_01.models.LogAnalyticsDestination]
+        :keyword azure_monitor_metrics: Azure Monitor Metrics destination.
+        :paramtype azure_monitor_metrics:
+         ~$(python-base-namespace).v2021_04_01.models.DestinationsSpecAzureMonitorMetrics
+        """
         super(DataCollectionRuleDestinations, self).__init__(log_analytics=log_analytics, azure_monitor_metrics=azure_monitor_metrics, **kwargs)
 
 
@@ -932,12 +1170,12 @@ class DataCollectionRuleResource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: The kind of the resource. Possible values include: "Linux", "Windows".
-    :type kind: str or
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: The kind of the resource. Possible values include: "Linux", "Windows".
+    :vartype kind: str or
      ~$(python-base-namespace).v2021_04_01.models.KnownDataCollectionRuleResourceKind
     :ivar id: Fully qualified ID of the resource.
     :vartype id: str
@@ -950,18 +1188,20 @@ class DataCollectionRuleResource(msrest.serialization.Model):
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data:
      ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResourceSystemData
-    :param description: Description of the data collection rule.
-    :type description: str
+    :ivar description: Description of the data collection rule.
+    :vartype description: str
     :ivar immutable_id: The immutable ID of this data collection rule. This property is READ-ONLY.
     :vartype immutable_id: str
-    :param data_sources: The specification of data sources.
+    :ivar data_sources: The specification of data sources.
      This property is optional and can be omitted if the rule is meant to be used via direct calls
      to the provisioned endpoint.
-    :type data_sources: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
-    :param destinations: The specification of destinations.
-    :type destinations: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
-    :param data_flows: The specification of data flows.
-    :type data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
+    :vartype data_sources:
+     ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
+    :ivar destinations: The specification of destinations.
+    :vartype destinations:
+     ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
+    :ivar data_flows: The specification of data flows.
+    :vartype data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
     :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
@@ -1008,6 +1248,27 @@ class DataCollectionRuleResource(msrest.serialization.Model):
         data_flows: Optional[List["DataFlow"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword kind: The kind of the resource. Possible values include: "Linux", "Windows".
+        :paramtype kind: str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownDataCollectionRuleResourceKind
+        :keyword description: Description of the data collection rule.
+        :paramtype description: str
+        :keyword data_sources: The specification of data sources.
+         This property is optional and can be omitted if the rule is meant to be used via direct calls
+         to the provisioned endpoint.
+        :paramtype data_sources:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
+        :keyword destinations: The specification of destinations.
+        :paramtype destinations:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
+        :keyword data_flows: The specification of data flows.
+        :paramtype data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
+        """
         super(DataCollectionRuleResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -1030,10 +1291,10 @@ class DataCollectionRuleResourceListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. A list of resources.
-    :type value: list[~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: Required. A list of resources.
+    :vartype value: list[~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -1052,6 +1313,12 @@ class DataCollectionRuleResourceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. A list of resources.
+        :paramtype value: list[~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(DataCollectionRuleResourceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1062,18 +1329,20 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param description: Description of the data collection rule.
-    :type description: str
+    :ivar description: Description of the data collection rule.
+    :vartype description: str
     :ivar immutable_id: The immutable ID of this data collection rule. This property is READ-ONLY.
     :vartype immutable_id: str
-    :param data_sources: The specification of data sources.
+    :ivar data_sources: The specification of data sources.
      This property is optional and can be omitted if the rule is meant to be used via direct calls
      to the provisioned endpoint.
-    :type data_sources: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
-    :param destinations: The specification of destinations.
-    :type destinations: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
-    :param data_flows: The specification of data flows.
-    :type data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
+    :vartype data_sources:
+     ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
+    :ivar destinations: The specification of destinations.
+    :vartype destinations:
+     ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
+    :ivar data_flows: The specification of data flows.
+    :vartype data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
     :ivar provisioning_state: The resource provisioning state. Possible values include: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed".
     :vartype provisioning_state: str or
@@ -1103,26 +1372,41 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
         data_flows: Optional[List["DataFlow"]] = None,
         **kwargs
     ):
+        """
+        :keyword description: Description of the data collection rule.
+        :paramtype description: str
+        :keyword data_sources: The specification of data sources.
+         This property is optional and can be omitted if the rule is meant to be used via direct calls
+         to the provisioned endpoint.
+        :paramtype data_sources:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDataSources
+        :keyword destinations: The specification of destinations.
+        :paramtype destinations:
+         ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleDestinations
+        :keyword data_flows: The specification of data flows.
+        :paramtype data_flows: list[~$(python-base-namespace).v2021_04_01.models.DataFlow]
+        """
         super(DataCollectionRuleResourceProperties, self).__init__(description=description, data_sources=data_sources, destinations=destinations, data_flows=data_flows, **kwargs)
 
 
 class DataCollectionRuleResourceSystemData(SystemData):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or
+     ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1145,16 +1429,34 @@ class DataCollectionRuleResourceSystemData(SystemData):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~$(python-base-namespace).v2021_04_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(DataCollectionRuleResourceSystemData, self).__init__(created_by=created_by, created_by_type=created_by_type, created_at=created_at, last_modified_by=last_modified_by, last_modified_by_type=last_modified_by_type, last_modified_at=last_modified_at, **kwargs)
 
 
 class DataFlow(msrest.serialization.Model):
     """Definition of which streams are sent to which destinations.
 
-    :param streams: List of streams for this data flow.
-    :type streams: list[str or ~$(python-base-namespace).v2021_04_01.models.KnownDataFlowStreams]
-    :param destinations: List of destinations for this data flow.
-    :type destinations: list[str]
+    :ivar streams: List of streams for this data flow.
+    :vartype streams: list[str or
+     ~$(python-base-namespace).v2021_04_01.models.KnownDataFlowStreams]
+    :ivar destinations: List of destinations for this data flow.
+    :vartype destinations: list[str]
     """
 
     _attribute_map = {
@@ -1169,6 +1471,13 @@ class DataFlow(msrest.serialization.Model):
         destinations: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword streams: List of streams for this data flow.
+        :paramtype streams: list[str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownDataFlowStreams]
+        :keyword destinations: List of destinations for this data flow.
+        :paramtype destinations: list[str]
+        """
         super(DataFlow, self).__init__(**kwargs)
         self.streams = streams
         self.destinations = destinations
@@ -1177,10 +1486,10 @@ class DataFlow(msrest.serialization.Model):
 class DestinationsSpecAzureMonitorMetrics(AzureMonitorMetricsDestination):
     """Azure Monitor Metrics destination.
 
-    :param name: A friendly name for the destination.
+    :ivar name: A friendly name for the destination.
      This name should be unique across all destinations (regardless of type) within the data
      collection rule.
-    :type name: str
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -1193,6 +1502,12 @@ class DestinationsSpecAzureMonitorMetrics(AzureMonitorMetricsDestination):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
         super(DestinationsSpecAzureMonitorMetrics, self).__init__(name=name, **kwargs)
 
 
@@ -1221,6 +1536,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -1264,6 +1581,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -1275,8 +1594,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponseCommonV2(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~$(python-base-namespace).v2021_04_01.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~$(python-base-namespace).v2021_04_01.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -1289,6 +1608,10 @@ class ErrorResponseCommonV2(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~$(python-base-namespace).v2021_04_01.models.ErrorDetail
+        """
         super(ErrorResponseCommonV2, self).__init__(**kwargs)
         self.error = error
 
@@ -1299,22 +1622,22 @@ Collected from either Windows and Linux machines, depending on which extension i
 
     All required parameters must be populated in order to send to Azure.
 
-    :param streams: List of streams that this data source will be sent to.
+    :ivar streams: List of streams that this data source will be sent to.
      A stream indicates what schema will be used for this data and usually what table in Log
      Analytics the data will be sent to.
-    :type streams: list[str or
+    :vartype streams: list[str or
      ~$(python-base-namespace).v2021_04_01.models.KnownExtensionDataSourceStreams]
-    :param extension_name: Required. The name of the VM extension.
-    :type extension_name: str
-    :param extension_settings: The extension settings. The format is specific for particular
+    :ivar extension_name: Required. The name of the VM extension.
+    :vartype extension_name: str
+    :ivar extension_settings: The extension settings. The format is specific for particular
      extension.
-    :type extension_settings: any
-    :param input_data_sources: The list of data sources this extension needs data from.
-    :type input_data_sources: list[str]
-    :param name: A friendly name for the data source.
+    :vartype extension_settings: any
+    :ivar input_data_sources: The list of data sources this extension needs data from.
+    :vartype input_data_sources: list[str]
+    :ivar name: A friendly name for the data source.
      This name should be unique across all data sources (regardless of type) within the data
      collection rule.
-    :type name: str
+    :vartype name: str
     """
 
     _validation = {
@@ -1339,6 +1662,24 @@ Collected from either Windows and Linux machines, depending on which extension i
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data and usually what table in Log
+         Analytics the data will be sent to.
+        :paramtype streams: list[str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownExtensionDataSourceStreams]
+        :keyword extension_name: Required. The name of the VM extension.
+        :paramtype extension_name: str
+        :keyword extension_settings: The extension settings. The format is specific for particular
+         extension.
+        :paramtype extension_settings: any
+        :keyword input_data_sources: The list of data sources this extension needs data from.
+        :paramtype input_data_sources: list[str]
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
         super(ExtensionDataSource, self).__init__(**kwargs)
         self.streams = streams
         self.extension_name = extension_name
@@ -1352,14 +1693,14 @@ class LogAnalyticsDestination(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param workspace_resource_id: The resource ID of the Log Analytics workspace.
-    :type workspace_resource_id: str
+    :ivar workspace_resource_id: The resource ID of the Log Analytics workspace.
+    :vartype workspace_resource_id: str
     :ivar workspace_id: The Customer ID of the Log Analytics workspace.
     :vartype workspace_id: str
-    :param name: A friendly name for the destination.
+    :ivar name: A friendly name for the destination.
      This name should be unique across all destinations (regardless of type) within the data
      collection rule.
-    :type name: str
+    :vartype name: str
     """
 
     _validation = {
@@ -1379,6 +1720,14 @@ class LogAnalyticsDestination(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword workspace_resource_id: The resource ID of the Log Analytics workspace.
+        :paramtype workspace_resource_id: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
         super(LogAnalyticsDestination, self).__init__(**kwargs)
         self.workspace_resource_id = workspace_resource_id
         self.workspace_id = None
@@ -1389,23 +1738,23 @@ class PerfCounterDataSource(msrest.serialization.Model):
     """Definition of which performance counters will be collected and how they will be collected by this data collection rule.
 Collected from both Windows and Linux machines where the counter is present.
 
-    :param streams: List of streams that this data source will be sent to.
+    :ivar streams: List of streams that this data source will be sent to.
      A stream indicates what schema will be used for this data and usually what table in Log
      Analytics the data will be sent to.
-    :type streams: list[str or
+    :vartype streams: list[str or
      ~$(python-base-namespace).v2021_04_01.models.KnownPerfCounterDataSourceStreams]
-    :param sampling_frequency_in_seconds: The number of seconds between consecutive counter
+    :ivar sampling_frequency_in_seconds: The number of seconds between consecutive counter
      measurements (samples).
-    :type sampling_frequency_in_seconds: int
-    :param counter_specifiers: A list of specifier names of the performance counters you want to
+    :vartype sampling_frequency_in_seconds: int
+    :ivar counter_specifiers: A list of specifier names of the performance counters you want to
      collect.
      Use a wildcard (*) to collect a counter for all instances.
      To get a list of performance counters on Windows, run the command 'typeperf'.
-    :type counter_specifiers: list[str]
-    :param name: A friendly name for the data source.
+    :vartype counter_specifiers: list[str]
+    :ivar name: A friendly name for the data source.
      This name should be unique across all data sources (regardless of type) within the data
      collection rule.
-    :type name: str
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -1424,6 +1773,25 @@ Collected from both Windows and Linux machines where the counter is present.
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data and usually what table in Log
+         Analytics the data will be sent to.
+        :paramtype streams: list[str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownPerfCounterDataSourceStreams]
+        :keyword sampling_frequency_in_seconds: The number of seconds between consecutive counter
+         measurements (samples).
+        :paramtype sampling_frequency_in_seconds: int
+        :keyword counter_specifiers: A list of specifier names of the performance counters you want to
+         collect.
+         Use a wildcard (*) to collect a counter for all instances.
+         To get a list of performance counters on Windows, run the command 'typeperf'.
+        :paramtype counter_specifiers: list[str]
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
         super(PerfCounterDataSource, self).__init__(**kwargs)
         self.streams = streams
         self.sampling_frequency_in_seconds = sampling_frequency_in_seconds
@@ -1434,8 +1802,8 @@ Collected from both Windows and Linux machines where the counter is present.
 class ResourceForUpdate(msrest.serialization.Model):
     """Definition of ARM tracked top level resource properties for update operation.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -1448,6 +1816,10 @@ class ResourceForUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(ResourceForUpdate, self).__init__(**kwargs)
         self.tags = tags
 
@@ -1456,21 +1828,21 @@ class SyslogDataSource(msrest.serialization.Model):
     """Definition of which syslog data will be collected and how it will be collected.
 Only collected from Linux machines.
 
-    :param streams: List of streams that this data source will be sent to.
+    :ivar streams: List of streams that this data source will be sent to.
      A stream indicates what schema will be used for this data and usually what table in Log
      Analytics the data will be sent to.
-    :type streams: list[str or
+    :vartype streams: list[str or
      ~$(python-base-namespace).v2021_04_01.models.KnownSyslogDataSourceStreams]
-    :param facility_names: The list of facility names.
-    :type facility_names: list[str or
+    :ivar facility_names: The list of facility names.
+    :vartype facility_names: list[str or
      ~$(python-base-namespace).v2021_04_01.models.KnownSyslogDataSourceFacilityNames]
-    :param log_levels: The log levels to collect.
-    :type log_levels: list[str or
+    :ivar log_levels: The log levels to collect.
+    :vartype log_levels: list[str or
      ~$(python-base-namespace).v2021_04_01.models.KnownSyslogDataSourceLogLevels]
-    :param name: A friendly name for the data source.
+    :ivar name: A friendly name for the data source.
      This name should be unique across all data sources (regardless of type) within the data
      collection rule.
-    :type name: str
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -1489,6 +1861,23 @@ Only collected from Linux machines.
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data and usually what table in Log
+         Analytics the data will be sent to.
+        :paramtype streams: list[str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownSyslogDataSourceStreams]
+        :keyword facility_names: The list of facility names.
+        :paramtype facility_names: list[str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownSyslogDataSourceFacilityNames]
+        :keyword log_levels: The log levels to collect.
+        :paramtype log_levels: list[str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownSyslogDataSourceLogLevels]
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
         super(SyslogDataSource, self).__init__(**kwargs)
         self.streams = streams
         self.facility_names = facility_names
@@ -1500,17 +1889,17 @@ class WindowsEventLogDataSource(msrest.serialization.Model):
     """Definition of which Windows Event Log events will be collected and how they will be collected.
 Only collected from Windows machines.
 
-    :param streams: List of streams that this data source will be sent to.
+    :ivar streams: List of streams that this data source will be sent to.
      A stream indicates what schema will be used for this data and usually what table in Log
      Analytics the data will be sent to.
-    :type streams: list[str or
+    :vartype streams: list[str or
      ~$(python-base-namespace).v2021_04_01.models.KnownWindowsEventLogDataSourceStreams]
-    :param x_path_queries: A list of Windows Event Log queries in XPATH format.
-    :type x_path_queries: list[str]
-    :param name: A friendly name for the data source.
+    :ivar x_path_queries: A list of Windows Event Log queries in XPATH format.
+    :vartype x_path_queries: list[str]
+    :ivar name: A friendly name for the data source.
      This name should be unique across all data sources (regardless of type) within the data
      collection rule.
-    :type name: str
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -1527,6 +1916,19 @@ Only collected from Windows machines.
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data and usually what table in Log
+         Analytics the data will be sent to.
+        :paramtype streams: list[str or
+         ~$(python-base-namespace).v2021_04_01.models.KnownWindowsEventLogDataSourceStreams]
+        :keyword x_path_queries: A list of Windows Event Log queries in XPATH format.
+        :paramtype x_path_queries: list[str]
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
         super(WindowsEventLogDataSource, self).__init__(**kwargs)
         self.streams = streams
         self.x_path_queries = x_path_queries

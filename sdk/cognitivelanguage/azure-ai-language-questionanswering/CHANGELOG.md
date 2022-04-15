@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+* Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.1.0b1 (2022-02-08)
+
+### Features Added
+* Added `QuestionAnsweringProjectsClient` for managing Qna projects. Performing project operations such as create, delete, export, and import project, as well as knowledge sources operations such as adding or listing knowledge sources, Qnas, and synonyms.
 
 ## 1.0.0 (2021-11-03)
 

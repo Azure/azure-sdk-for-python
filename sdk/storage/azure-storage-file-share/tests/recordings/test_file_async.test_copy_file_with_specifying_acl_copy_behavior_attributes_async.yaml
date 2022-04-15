@@ -2,12 +2,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:02 GMT
+      - Tue, 15 Mar 2022 18:46:19 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare53de216a?restype=share
   response:
@@ -15,31 +17,26 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 12 Feb 2020 19:23:02 GMT
-      etag: '"0x8D7AFF0FAA686BF"'
-      last-modified: Wed, 12 Feb 2020 19:23:02 GMT
+      date: Tue, 15 Mar 2022 18:46:19 GMT
+      etag: '"0x8DA06B4181F00B9"'
+      last-modified: Tue, 15 Mar 2022 18:46:19 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare53de216a
-        - restype=share
-        - ''
+    url: https://jalauzoncanary.file.core.windows.net/utshare53de216a?restype=share
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:02 GMT
+      - Tue, 15 Mar 2022 18:46:19 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -51,7 +48,7 @@ interactions:
       x-ms-type:
       - file
       x-ms-version:
-      - '2019-07-07'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare53de216a/file53de216a
   response:
@@ -59,45 +56,40 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 12 Feb 2020 19:23:02 GMT
-      etag: '"0x8D7AFF0FACD3430"'
-      last-modified: Wed, 12 Feb 2020 19:23:03 GMT
+      date: Tue, 15 Mar 2022 18:46:19 GMT
+      etag: '"0x8DA06B4183F4238"'
+      last-modified: Tue, 15 Mar 2022 18:46:19 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-02-12T19:23:03.0978608Z'
-      x-ms-file-creation-time: '2020-02-12T19:23:03.0978608Z'
+      x-ms-file-change-time: '2022-03-15T18:46:19.7025336Z'
+      x-ms-file-creation-time: '2022-03-15T18:46:19.7025336Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2020-02-12T19:23:03.0978608Z'
+      x-ms-file-last-write-time: '2022-03-15T18:46:19.7025336Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 4485082972441276519*10853357836431137001
+      x-ms-file-permission-key: 8725144154719613152*15111010650564761710
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare53de216a/file53de216a
-        - ''
-        - ''
+    url: https://jalauzoncanary.file.core.windows.net/utshare53de216a/file53de216a
 - request:
     body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '1024'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:03 GMT
+      - Tue, 15 Mar 2022 18:46:19 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
-      - '2019-07-07'
+      - '2021-06-08'
       x-ms-write:
       - update
     method: PUT
@@ -108,46 +100,81 @@ interactions:
     headers:
       content-length: '0'
       content-md5: yaNM/IXZgmmMasifdgcavQ==
-      date: Wed, 12 Feb 2020 19:23:02 GMT
-      etag: '"0x8D7AFF0FAD376E0"'
-      last-modified: Wed, 12 Feb 2020 19:23:03 GMT
+      date: Tue, 15 Mar 2022 18:46:19 GMT
+      etag: '"0x8DA06B418488FAF"'
+      last-modified: Tue, 15 Mar 2022 18:46:19 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-last-write-time: '2022-03-15T18:46:19.7634991Z'
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare53de216a/file53de216a
-        - comp=range
-        - ''
+    url: https://jalauzoncanary.file.core.windows.net/utshare53de216a/file53de216a?comp=range
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-copy-source:
-      - https://pyacrstorageepk37kc36v76.file.core.windows.net/utshare53de216a/file53de216a
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:03 GMT
+      - Tue, 15 Mar 2022 18:46:19 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utshare53de216a/file53de216a
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '1024'
+      content-type: application/octet-stream
+      date: Tue, 15 Mar 2022 18:46:19 GMT
+      etag: '"0x8DA06B418488FAF"'
+      last-modified: Tue, 15 Mar 2022 18:46:19 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2022-03-15T18:46:19.7634991Z'
+      x-ms-file-creation-time: '2022-03-15T18:46:19.7025336Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2022-03-15T18:46:19.7634991Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 8725144154719613152*15111010650564761710
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-type: File
+      x-ms-version: '2021-06-08'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.file.core.windows.net/utshare53de216a/file53de216a
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-copy-source:
+      - https://storagename.file.core.windows.net/utshare53de216a/file53de216a
+      x-ms-date:
+      - Tue, 15 Mar 2022 18:46:19 GMT
       x-ms-file-attributes:
       - Temporary|NoScrubData
-      x-ms-file-copy-ignore-read-only:
+      x-ms-file-copy-ignore-readonly:
       - 'true'
       x-ms-file-creation-time:
-      - '2017-05-10T17:52:33.9551860Z'
+      - '2022-03-15T17:46:19.7025330Z'
       x-ms-file-last-write-time:
-      - ''
+      - '2022-03-15T17:46:19.7634990Z'
       x-ms-file-permission:
       - O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)
       x-ms-file-permission-copy-mode:
       - override
       x-ms-version:
-      - '2019-07-07'
+      - '2021-06-08'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare53de216a/file1copy
   response:
@@ -155,33 +182,28 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 12 Feb 2020 19:23:02 GMT
-      etag: '"0x8D7AFF0FB04C928"'
-      last-modified: Wed, 12 Feb 2020 19:23:03 GMT
+      date: Tue, 15 Mar 2022 18:46:22 GMT
+      etag: '"0x8DA06B41A5A0BC9"'
+      last-modified: Tue, 15 Mar 2022 18:46:23 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-id: f3d8efd8-a4a1-4d1b-9713-c0e86f36349a
+      x-ms-copy-id: 2579aaa9-b834-4c6e-b7df-9966cb90cdb2
       x-ms-copy-status: success
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2021-06-08'
     status:
       code: 202
       message: Accepted
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare53de216a/file1copy
-        - ''
-        - ''
+    url: https://jalauzoncanary.file.core.windows.net/utshare53de216a/file1copy
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:03 GMT
+      - Tue, 15 Mar 2022 18:46:23 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2021-06-08'
     method: HEAD
     uri: https://storagename.file.core.windows.net/utshare53de216a/file1copy
   response:
@@ -190,51 +212,44 @@ interactions:
     headers:
       content-length: '1024'
       content-type: application/octet-stream
-      date: Wed, 12 Feb 2020 19:23:02 GMT
-      etag: '"0x8D7AFF0FB04C928"'
-      last-modified: Wed, 12 Feb 2020 19:23:03 GMT
+      date: Tue, 15 Mar 2022 18:46:22 GMT
+      etag: '"0x8DA06B41A5A0BC9"'
+      last-modified: Tue, 15 Mar 2022 18:46:23 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-completion-time: Wed, 12 Feb 2020 19:23:03 GMT
-      x-ms-copy-id: f3d8efd8-a4a1-4d1b-9713-c0e86f36349a
+      x-ms-copy-completion-time: Tue, 15 Mar 2022 18:46:21 GMT
+      x-ms-copy-id: 2579aaa9-b834-4c6e-b7df-9966cb90cdb2
       x-ms-copy-progress: 1024/1024
-      x-ms-copy-source: https://pyacrstorageepk37kc36v76.file.core.windows.net/utshare53de216a/file53de216a
+      x-ms-copy-source: https://storagename.file.core.windows.net/utshare53de216a/file53de216a
       x-ms-copy-status: success
       x-ms-file-attributes: Archive | Temporary | NoScrubData
-      x-ms-file-change-time: '2020-02-12T19:23:03.4621224Z'
-      x-ms-file-creation-time: '2017-05-10T17:52:33.9551860Z'
+      x-ms-file-change-time: '2022-03-15T18:46:23.2335305Z'
+      x-ms-file-creation-time: '2022-03-15T17:46:19.7025330Z'
       x-ms-file-id: '13835093239654252544'
-      x-ms-file-last-write-time: '2020-02-12T19:23:03.4621224Z'
+      x-ms-file-last-write-time: '2022-03-15T17:46:19.7634990Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 8409138443601726556*10853357836431137001
+      x-ms-file-permission-key: 3717868340301450459*15111010650564761710
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
       x-ms-type: File
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2021-06-08'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare53de216a/file1copy
-        - ''
-        - ''
+    url: https://jalauzoncanary.file.core.windows.net/utshare53de216a/file1copy
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:03 GMT
+      - Tue, 15 Mar 2022 18:46:23 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2019-07-07'
+      - '2021-06-08'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare53de216a/file1copy
   response:
@@ -245,36 +260,29 @@ interactions:
       content-length: '1024'
       content-range: bytes 0-1023/1024
       content-type: application/octet-stream
-      date: Wed, 12 Feb 2020 19:23:02 GMT
-      etag: '"0x8D7AFF0FB04C928"'
-      last-modified: Wed, 12 Feb 2020 19:23:03 GMT
+      date: Tue, 15 Mar 2022 18:46:22 GMT
+      etag: '"0x8DA06B41A5A0BC9"'
+      last-modified: Tue, 15 Mar 2022 18:46:23 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-completion-time: Wed, 12 Feb 2020 19:23:03 GMT
-      x-ms-copy-id: f3d8efd8-a4a1-4d1b-9713-c0e86f36349a
+      x-ms-copy-completion-time: Tue, 15 Mar 2022 18:46:21 GMT
+      x-ms-copy-id: 2579aaa9-b834-4c6e-b7df-9966cb90cdb2
       x-ms-copy-progress: 1024/1024
-      x-ms-copy-source: https://pyacrstorageepk37kc36v76.file.core.windows.net/utshare53de216a/file53de216a
+      x-ms-copy-source: https://storagename.file.core.windows.net/utshare53de216a/file53de216a
       x-ms-copy-status: success
       x-ms-file-attributes: Archive | Temporary | NoScrubData
-      x-ms-file-change-time: '2020-02-12T19:23:03.4621224Z'
-      x-ms-file-creation-time: '2017-05-10T17:52:33.9551860Z'
+      x-ms-file-change-time: '2022-03-15T18:46:23.2335305Z'
+      x-ms-file-creation-time: '2022-03-15T17:46:19.7025330Z'
       x-ms-file-id: '13835093239654252544'
-      x-ms-file-last-write-time: '2020-02-12T19:23:03.4621224Z'
+      x-ms-file-last-write-time: '2022-03-15T17:46:19.7634990Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 8409138443601726556*10853357836431137001
+      x-ms-file-permission-key: 3717868340301450459*15111010650564761710
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
       x-ms-type: File
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2021-06-08'
     status:
       code: 206
       message: Partial Content
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare53de216a/file1copy
-        - ''
-        - ''
+    url: https://jalauzoncanary.file.core.windows.net/utshare53de216a/file1copy
 version: 1

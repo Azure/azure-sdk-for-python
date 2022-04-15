@@ -73,7 +73,7 @@ def retry_hook(settings, **kwargs):
         settings['hook'](retry_count=settings['count'] - 1, location_mode=settings['mode'], **kwargs)
 
 
-def is_retry(response, mode):
+def is_retry(response, mode):   # pylint: disable=too-many-return-statements
     """Is this method/status code retryable? (Based on allowlists and control
     variables such as the number of total retries to allow, whether to
     respect the Retry-After header, whether this header is present, and
@@ -97,6 +97,12 @@ def is_retry(response, mode):
         if status in [501, 505]:
             return False
         return True
+    # retry if invalid content md5
+    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        computed_md5 = response.http_request.headers.get('content-md5', None) or \
+                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+        if response.http_response.headers['content-md5'] != computed_md5:
+            return True
     return False
 
 
@@ -109,6 +115,12 @@ def urljoin(base_url, stub_url):
 class QueueMessagePolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
+        # Hack to fix generated code adding '/messages' after SAS parameters
+        includes_messages = request.http_request.url.endswith('/messages')
+        if includes_messages:
+            request.http_request.url = request.http_request.url[:-(len('/messages'))]
+            request.http_request.url = urljoin(request.http_request.url, 'messages')
+
         message_id = request.context.options.pop('queue_message_id', None)
         if message_id:
             request.http_request.url = urljoin(

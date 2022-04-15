@@ -7,13 +7,27 @@ trigger:
     exclude:
     - '*'
 
+# avoid being triggered as part of CI check
+pr:
+  branches:
+    exclude:
+    - '*'
+
+
+schedules:
+  - cron: "0 16 * * *"
+    displayName: Daily Statistics
+    branches:
+      include:
+      - main
+    always: true
 
 jobs:
 - job: ReleaseSdkStatus
   displayName: ReleaseSdkStatus Python 3.8
-  timeoutInMinutes: 30
+  timeoutInMinutes: 300
   strategy:
-    maxParallel: 3
+    maxParallel: 1
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
@@ -33,12 +47,14 @@ jobs:
         git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/file-storage
         mkdir azure-rest-api-specs
         git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
+        mkdir sdk-repo
+        git clone https://github.com/Azure/azure-sdk-for-python.git $(pwd)/sdk-repo
 
         # import env variable
-        export CONN_STR=$(ENV_CONN_STR)
-        export FILE=$(ENV_FILE)
         export TOKEN=$(USR_TOKEN)
         export SWAGGER_REPO=$(pwd)/azure-rest-api-specs
+        export SDK_REPO=$(pwd)/sdk-repo
+        export SKIP_COVERAGE=$(SKIP_COVERAGE)
 
         # create virtual env
         python -m venv venv-sdk
