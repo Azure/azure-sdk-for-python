@@ -1126,12 +1126,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
-        # type: (str, Optional[Dict[str, str]], bool, Any) -> Any
-        """Copies a blob asynchronously.
+        # type: (str, Optional[Dict[str, str]], bool, Any) -> Dict[str, Union[str, datetime]]
+        """Copies a blob from the given URL.
 
-        This operation returns a copy operation
-        object that can be used to wait on the completion of the operation,
-        as well as check status or abort the copy operation.
+        This operation returns a dictionary containing `copy_status` and `copy_id`,
+        which be used to check the status of the copy or abort the copy operation.
+        `copy_status` will be 'success' if the copy completed synchronously or
+        'pending' if the copy has been started asynchronously. Set `requires_sync`
+        to True to force the copy to be synchronous. For asynchronous copies, the
+        status can be checked by polling the :func:`get_blob_properties` method and
+        checking the copy status.
         The Blob service copies blobs on a best-effort basis.
 
         The source blob for a copy operation may be a block blob, an append blob,
@@ -1153,10 +1157,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         When copying from an append blob, all committed blocks are copied. At the
         end of the copy operation, the destination blob will have the same committed
         block count as the source.
-
-        For all blob types, you can call status() on the returned polling object
-        to check the status of the copy operation, or wait() to block until the
-        operation is complete. The final blob will be committed when the copy completes.
 
         :param str source_url:
             A URL of up to 2 KB in length that specifies a file or blob.
