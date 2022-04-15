@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, overload
+from typing import TYPE_CHECKING, Any, IO, Optional, overload, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -24,7 +24,7 @@ from .._container_registry_client import _return_response
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from typing import Any, Dict, IO, Optional, Union
+    from typing import Dict
     from .._generated.models import ManifestWrapper
 
 
@@ -741,7 +741,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
     
     @distributed_trace_async
-    async def upload_manifest(self, repository: str, manifest: OCIManifest, *, tag: Optional[str]=None, **kwargs: "Any"):
+    async def upload_manifest(self, repository: str, manifest: OCIManifest, *, tag: Optional[str]=None, **kwargs: Any):
         """Upload a manifest for an OCI artifact.
 
         :param str repository: Name of the repository
@@ -760,7 +760,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag_or_digest, stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs)
         
     @distributed_trace_async
-    async def upload_manifest(self, repository: str, stream: IO, *, tag: Optional[str]=None, **kwargs: "Any"):
+    async def upload_manifest(self, repository: str, stream: IO, *, tag: Optional[str]=None, **kwargs: Any):
         """Upload a manifest for an OCI artifact.
 
         :param str repository: Name of the repository
