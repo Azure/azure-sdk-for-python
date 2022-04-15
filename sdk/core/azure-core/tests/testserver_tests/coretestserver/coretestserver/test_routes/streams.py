@@ -55,12 +55,6 @@ def iterable():
 def error():
     return Response(stream_json_error(), status=400)
 
-@streams_api.route('/string', methods=['GET'])
-def string():
-    return Response(
-        streaming_test(), status=200, mimetype="text/plain"
-    )
-
 @streams_api.route('/compressed', methods=['GET'])
 def compressed():
     return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
