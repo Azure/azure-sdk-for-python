@@ -752,13 +752,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def upload_manifest(
-        self, repository: str, manifest: "OCIManifest", *, tag: "Optional[str]"=None, **kwargs: "Any"
+        self, repository: str, manifest: "Union['OCIManifest', IO]", *, tag: "Optional[str]" = None, **kwargs: "Any"
     ) -> None:
         """Upload a manifest for an OCI artifact.
 
         :param str repository: Name of the repository
         :param manifest: The manifest to upload.
-        :type manifest: ~azure.containerregistry.models.OCIManifest
+        :type manifest: ~azure.containerregistry.models.OCIManifest or IO
         :keyword tag: Tag of the manifest.
         :paramtype tag: str
         :returns: None
@@ -766,28 +766,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         tag_or_digest = tag
         if tag:
-            stream = _serialize_manifest(manifest)
+            stream = manifest
+            if isinstance(manifest, OCIManifest):
+                stream = _serialize_manifest(manifest)
             tag_or_digest = _compute_digest(stream)
-        await self._client.container_registry.create_manifest(
-            repository, tag_or_digest, stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs)
 
-    @distributed_trace_async
-    async def upload_manifest(
-        self, repository: str, stream: "IO", *, tag: "Optional[str]"=None, **kwargs: "Any"
-    ) -> None:
-        """Upload a manifest for an OCI artifact.
-
-        :param str repository: Name of the repository
-        :param stream: The manifest to upload.
-        :type stream: IO
-        :keyword tag: Tag of the manifest.
-        :paramtype tag: str
-        :returns: None
-        :rtype: None
-        """
-        tag_or_digest = tag
-        if tag:
-            tag_or_digest = _compute_digest(stream)
         await self._client.container_registry.create_manifest(
             repository, tag_or_digest, stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs)
 
