@@ -73,7 +73,6 @@ if __name__ == '__main__':
     for i in in_files:
         t = i.split('\\\\')
         mgmt_path_list = t[0].split('\\')
-        print(t)
         package_name = mgmt_path_list[3]
         service_name = mgmt_path_list[5]
 
