@@ -1,0 +1,585 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3/create?api-version=2016-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "97",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:34 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "WWW-Authenticate": "Bearer authorization=\u0022https://login.windows.net/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://vault.azure.net\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "Unauthorized",
+          "message": "AKV10000: Request is missing a Bearer or PoP token."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:34 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAgAAADng69kOAAAAwSDpKQQAAABE4OvZDgAAAA; expires=Sun, 15-May-2022 21:54:35 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAgAAADng69kOAAAAwSDpKQQAAABE4OvZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:34 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAgAAADng69kOAAAAwSDpKQQAAABE4OvZDgAAAA; expires=Sun, 15-May-2022 21:54:35 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12651.5 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3/create?api-version=2016-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "14",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "678",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:34 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3145;da_age=9084;rd_age=9084;brd_age=8867;ra_notif_age=3724;dec_lev=1;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "key": {
+          "kid": "https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3/1beca7c6eebb4fbeba2f69a92c1737c1",
+          "kty": "RSA",
+          "key_ops": [
+            "encrypt",
+            "decrypt",
+            "sign",
+            "verify",
+            "wrapKey",
+            "unwrapKey"
+          ],
+          "n": "04OHmc4u5b9s7Zg9jwQhW2jU5FZdqk07hDxstNgAaTbiqCtivoXD8jLjSWwRgks-mei_9D2AWg3kpLC_Q7Y3Ls9GRNbW27NaK1tnmWfXNzMP8pfycju6DL3bpjlCIMFKdEeWqxRadOGd6GjRzSRhVumq1_RI7CxAxJ8L1787LzXzHq3pWjqJ5hE4F1FONkxDwrq-eIsW-zdECRwUDe9Mu_JVuXlYq4Ao-GAg307A6es-RR0_NgAXiTq4QxunOksgCu-uewpON1af7wq9ochXkzj7Ls-xJSZby9ED8Tj7y1yhWrNfBn_v57HkBKLafkcqj6aK28_shdRjTTBBlYIk6Q",
+          "e": "AQAB"
+        },
+        "attributes": {
+          "enabled": true,
+          "created": 1650059675,
+          "updated": 1650059675,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3/backup?api-version=2016-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "9334",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:35 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3145;da_age=9084;rd_age=9084;brd_age=8867;ra_notif_age=3724;dec_lev=1;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "value": "JkF6dXJlS2V5VmF1bHRLZXlCYWNrdXBWMS5taWNyb3NvZnQuY29tZXlKcmFXUWlPaUl5WVdabU5tRmhNUzAzTm1Ka0xUUTBZVGN0WVRjek5DMDJaalZoWkRCaU5XRTRPVGdpTENKaGJHY2lPaUpTVTBFdFQwRkZVQzB5TlRZaUxDSmxibU1pT2lKQk1qVTJRMEpETFVoVE5URXlJbjAuZnRqTmkxSjFhQjhhZUtkb3lfTV80c2RacXE2N21FZXM2VDNtWm1saFJPcTdrMXVZZlFlVmtiV0xpbHdiZm5qdkxGVmpZbllPd2JlS1JiRDRvQzlrVVJIRFROVDNvR2dhbm96eGFoM20tWlJTbHNqSmlEQlREZl9mX1NjZTRnYUUyQzhDaEZkekE2SXYweENtd0tuNGRmMjI0VWllYnVkeTRtZExzbnN4Y2l1SWhTUkNXQkg1Nms5WXJueEY1UEZ0Y1RUQ2NUbTFHM25pN2lQQVBRODFEWWFuMXFlN1UyWEtaVGNpMDVTLURXYkpTc0E5RE1HbFpUbTNHOGRRNm01V1BGS2hQc3M3dmNETTB1ZkFBZ2U3ME1wb1FQa0lUTDZaaFNxZ0lMY2h0VlJDODJuVmhYaVd4VWNGenMydHZxaDlNQ3hPUkdVTTBuWG9HbHhoOFJjbXlnLlhZRTVnN09iRmNNNWxvd0hBSWpsN3cuamdtS1FhVmh0V1FwWkxuZGFsRVJJelpNMF9PVkh1Q2pQejFQZkdKOHlBR3RVc0FnbEI2TVNocHdMUjc0Q2F1SVZpalZkb2FQRTN1M1BxaFhCWkVkWWRoc1dCdHRkVmpWMnJRSEF2RjRNMWExVGktTWVSRDFUbWtUdkF0ZWVBbS1fbW5SOFMxUUlld0ZWb0FJMXNSTkFzOTNUODlwd2Znb1JkSk9lLURUZFdOeWJSOW52N0VpNk1oSmszMVVmRnpKU2syN21fZldyVjJBODloeGE1UERaWXpZamdqaXZUNEZIemtYZ3ZnZDNWMG5OTVZqaGdQbng2TWNCZWVTdkh4bzY3cl90TlV2ZFlKQ2F0VDMxaHhsNE10c1otQk5YQ1NhaW9nOFlRdUdhUEc4ZTZNejJIeU40T19JTTJ1TDBZRU1ld0xaQkJxamxieFdhME90SS1JZDZMOHVScUV1WVd0MWdtZWFjZkFXSjdEbVNxTVVpcTAwTGgwajVma2gwT0RwR0p4RHduTEFOVDhOVVQ1TnhEcFpCeV9CY2tsV1NvNXZhLTRHVHFRNGhRUFE5U2hTb2RGeFItZ3ppWDdvaXRzWTB3X0tSdFZNaDhfZ053emN2Uy1qTXlueVFDM09FYWx2Tk1MTkR6OW90Q3FNTGZFZ2d4MmZ2MXJsT1VPYnNZRDdMT1ROeUxkeGxzc2c2V3QyZi00OWhCemJTbkhlMzlrRzRUbVRUUnJKQUE0MUg1WVltenJjRDVXTzdnWTRkLUQwYUd6TUZFMGJ0U0E2NzlwQXVNdHNZLWtuQzdVOEFRRmRCUzdCR3BiY2RQUkthY1o5bzZHcnZVU1F4Vmg4NGdCTGM3dXNqNy01QXQ0OVFBTFlmSnBLVXVIOHZjeU9XWHFubWI2TTBRaG1RZkVjcVB1QkVQVURyY2d0bE0zOTBjb0s4QkpOaU1EWVBwTXEydFRnQVJRaHQza2tFOXR0MXhaTkNHQUM3Z2ROMzZOMDd4OEtEWWR0Y3UtSl8xendMYVp3dXBZNGwyT0NIbUR4OEJfNVRFbVpKbGYtWi00SVRCeHQwanVqV3NkeUxCTUFSOEE5OGNjNU4wa0VfZldQNDRVRnBRYnljblhfeGVpaXowWkQ1WG9DVW9LREx3aEk2cVBva0R6aW9qMmVtWGxpZ2VNemlPUWJkMjBnN3ZvaHZQWGNhekFWMHkteTJGMDJSOGV6ck1LYlphc25WckVGT1pIRVU0eFpZN3hSYTQySmdGRnQ4SHUxcmxLVHdDM2lUbUdEVGVCb3NoZ2NTU3BPOXJHMS1sSjRRTUdSWi1Jd0NxZGRkTGk3NVlsRGNNSU11b0RKSzlIVC1ob3ZYczNibUg1OEVoOVVtSURhajJjVk1ra1NFMUNVVTJKRnUyYXZYc3AxS0ptTGo0ZzdWTkhxdnpzX05yV0liTFExWjZSS19TUXJWenNGUVg3b1lpdFZGcExSblBMTFltLUZPY0g3SUltSkxwTEFLQldHT2dtWlRvNm5XUDRjdGJxaUFqc3E1bWt4Mlo2NExRZlFJTC12aHhNU0l6ZENWeHFGenhfV3BRUGQtS0h6T2hraVU2TTkybE1XUUJfelZ1cGxhTEVBMWUwMVN4bVc3TFJTdk53UjVzNWJycjg1c1Y0Z3FCbnh6ZzhtLXBWeVlwaG45ZFU0bGdZeHVXaXh2RG1mdXduRTJxNVpGbU9NTWpxb05uMjM4ZjFlVkdBaVNRdTVNSUo0b0RtNnZoZ2d6Wm1VN1NSYUd1U0RIZWNha2dYbWJ0aFlyZWtMaTk2Sjg1ajRhb3d0bzhEaGh4YzJBYXZhdHA0TzJqQ05xaHJxajN0dlFxSWtReVpUM1c0OE1MVWctd3kzeEdnSHFfNzk3OHBUeHdKa004OXZPME9rMmk2YWJkR1cxSEVGMU9Rdi1mZlE2RE43YlZSQS1nNlUtdHRWUGxlWTYtY0JlWXJTc3Z1V0VNcEVZU25Cb2VlRm10a3N6am5tQ1RVM3FQTnpOS0MyU0JDYWpRY2VHanl6ak11d2dhU2tiYzc4dEp5RzlvcTBucDR3Y0Fqa1pkV25sZ1pEb3NZUjdvV3F1bHN6R2U3VlVFR3lUUTA2WFdHLXZ3TkxaSzE0aFZzX3RYbld1QnlCN0JFWkhNMzJzTG8wTFZRTS1DUHdqSnFiTVpMYU5qeEw2QUxpOTlCZE5TeUQxYm9YUnNWTV9SUDZ0Z1RudVpacHZVQS1Vc3U2ZllJZFVNRFhOTzV4bHJ1c19mQlEwbkZlOWwwd0JLbU11V25HNUJmcmtvZWlPZmN4bVg4aE54WG5Nc1BnWV9BVXczSHg5aXJMb0JLaUlrdzh5cDMwQjJYZHZ4aDFmTVBYTkpUOWlxUG81Wm8wd0pzbFZxYV9QNWxCR2s0cWRHQ3Zxb0N1Z1RxcW9xdm8tNVZTc1Y3em4teEV4NFhua3hyOVpueENVNkU1azNSSWk1c2h2R3E1enJhWjgtM3F1T0xkcU1GYVNwRDBOZUhUNFhOZFZKcVl4S1hUNlFRcHVpQWZ4WGUtUUdSMWtZdjk0WXRsYWR3N1V6ZHhySEt2OEFRanVmbHF6emZ0LVJjRmlMSVVHM0NveWJMNFJVeXRFU09Ua1kyMnNlb3FOZVFMcHd6M3h5TkYxc2tfS0dRUFVKQllMeGFPWFF5bG1nQ1RnSjEtVHhOem80cVVWekw3ZVZkYnhsLXdvdnVwbDZlRWF6bHNET25aZENMcl9seFoxNkU2Z3ZxRTdaS3BmRTlGZ3VHT1I4eFdiaHp6ZWtaYVlGdldFMGFueDg1MUtYdmZldklEYW9QbGJFZ0tkX2N3RVoxdWtPZ25UZjNPRnFxSzNfc3Itb2hacERGU3R4dTZsNkNzaFlIM1ppcGV2NnZIaGN4ZjBxNDhEeWZmTGhDbm92QXRzaXFnc0lfUHdWWFpzR2FBOGJyZ3hCRVVtd21Fc3hZVE44SHJUenpGQzNYLXFFYnMwT0x1NXNoVzJKZG5WNFdqT1lHbmotZGxxRHp2Y1ZxYU5wVkhLdmRhV2sza19JR1U0QWRXSmVaa2NSclR4a1d2elNtZFhGR0IyTUxidmk0TzFubnBDclM5a1FCdDNHV0thdThBNXYxX1lpM3M2U20yZkpsTlI1cWlsNlZZVkVpajBmMWJNN3pYVjlYZEpreGE3UktTR1hoVURXWERVRnI3TmhLemtpY043N2xWRWsyTUQyUjZzWXVsc0JPc1BEc2tMQXUwS3NFSG1xQVowU3p3amIyUVZiUXJqOFI3QXRGMkItajNUODdtNWpZTmdTak1OOE9pckNhaDhjeTFfZHR0NWdSZHp0dXBVQUhyY1hWX3hOQ0Fwd1ZPOFhpaEN1VHpCaG9faUtlcnNxV0Q5LTJqWDg1UVd3ZEM3TGxIMTA1bGx3c2otS2QwM3NtenJnNTlqUU5HNmRKc0FVZlRPazBEQmVkU2JkbThTc0dONjh3Mk1ZNDZTLUxKUTFkYUpKZnhjZHBpR1lHcHk1LUpmZ0JocXFkYmxtVGx4MEY2ak16a3BEZW5iZWRQbTJxMkV5LU1Cc2dGQ0JibldLVFQ3XzF3VE9URXFXeEtLbDgxbGRMamIycmlJWk1uZmUyN01kTk00MU9lVHRxam1wcXBDWEd3N21PdU9jN3FkSGV6REFGd1luM0lkZjZvTTV6a3dDdTI2QXc1Uml2SDZsdGZNdEpxdzRteU9QVW9wbl80YjdRdmFqUjh5OFlGdHo0aU16Wmg3dVNuc2hNY0Z3cnhsZm82NFRjbDJheTNxM3IyUUI2MzhPUkZaaHgtc3JNUU9EVlR0YWRjUW5aT2s2WmxhZ1ctbEhpS0Q3bVVRMkVKYnhBd3I2X2FUMlczUVExSWNYdEZ3VjFUUE4tMGpBT2pLSG54MjRRV0RoV3E5NVRfNXNsMm9FRF9hMVhKbnNWUHRXNGl6QlQwSy1nUEN3cGhtSHhJbTF1R3VVSXItT3A3cUZsUllIRTR4VF9hclkzaWxtWG1sVzZfdklUaHlTOTJLYkFNdWVEb3dfaHladmg4VHI0dW9Xc0lPM0Y3WFJBY0w2RFB3UnVRcGVpNnRrYzVkT19nRU5IR09BREhNQXRjdkZDWlA2ME50N2N0YWdVM29xNzJIcFFKRHJhM1RwVEVVRWxoZk5fdzBIQUVwemszTGlTbHBuckdYUzFQcTgyaWZkdzR1WmYtbFVVdDRCbmU1MFM4aWMySnlEQ0g2NHZ4WFNxSXZYaW9YdEx4dUF4RndCUExYZWJ2b3dpeDBJWVl5OHlyZDc4T3RvTGJGZ3JtYXVKdVpfcHlwWEhKWlN4dzI0Ml9jMVVmNldRM2JNZTFGcVh0akYxYWhwWUx1Tm1sdmRhamlkY0hDWG5Hb2hLeC1PYzlqS2R1NEM5Y2l1RmkyQ2JNQlJXMnhRcS1Dc2ZTREFwd1BIX0dSOHhHcmxjbjVnS1ZhTU9TQVh6WVdnakZteGN0V2JERGZhSXBEZmstUWNvekJwWUY0UnlXNm5jY2xoSnJZaWJHWS1WNEZFaUlwSE1DMlQxaXYxTVliNENIU3dtMUtGSHBKTjUxVnNPUmFJV0tQY2FRM05uTFJzWHFPMVBiTEt1eHZyRzdobzhtMlFFdUg5TXJUUnktc25XTFdTbWRwNWFrcHNhMGxFdUtOQkQ2RFFJcWhHMUNCTGh3MHVkSDYwY3d2dkNoelhXMlZaSVZVOXV5ZE1wNXlLOWJlNmlJeTlldXEzeTU1S09xMTBvcHBWNXZ1MG14d2dqcUZVc19lOHA1ei1LcC1pRUxiczNrOV9KSTZYeUlib1ZkWi0xUFFaWUpFNEgzUVp0ZmdXU0xKcGlUSXRUMEl5RWZzS3pFVjdnd0FZT040ZDB6VkhWTFpkMUN0YWhrVHVPUzlldFU3cUlLOEx0MVB2RkJWRXR3X0hxaDBhYm5IcFAtbnk1ODdldjM5SUhnRC1OMXJhODBtaWtyY0RnN1BJQjlUX3BiamFLZEQ4eFVkVnlsOEFGaXYwUy1PR2VOS2ltWVhERGJUdUl4UmNSSk9LbnFPMDFGeC1weVdRTkJjRThPMHRpQjNwdEs3cl80UkhlSGFpSnBXanpaZWgzSFRxbmNNZHZkeWFoQ3FfaE51Rkh4Q0Y5akpidmo5eGlIMVhMM0ljU2tUbEVELVFfZVM0aHNoY2RBc19Sb2ZSU0dLdm96WTdwamRtZ2FscE9JVXpxZG12dE5CQVQ0X1Rib19tQlh5eEZadGN1d1F5MnZTbXhEUm11N3ltU2c0NkxuTDZVdzZrdjBkZFAyblo4MUs3Ykk0Skl0OUlMdTk5cFlwdjVFSFMwdjE0Q2RYMExFT2R3R1NFM3kyVnpsTDNyVFAzb00zVEJRM2t1UVUydnN4NGRsR3JrbEgzTkNqc0p0TjA1Mjl5RTZIcUhKTVQ0UGh3NzRTUFBISW0tRG9UQ0JmRHc3TW9jR3F5eVdnWTd0UjI5MEV6VHNjLUhtc3UwZjlQYVpJWE4tNkszZ1BobmhzNUJPdFExUk85T1J6YVdDa0NSaVlLR2lVOFk5Z2R2MTF0VDhhS1BPR1F1Xy00ZnhsZmxTRzRoaTVxanR6MjkycDl3WGQyck5XNlpHUFZ1Nk1YZmwzZDNRaFB1bDN1STJ2MHkyRzZuUVhrakI0RFl1MnlUREF0dGxnMHNyc0U1anpud3VuWkdMSG9kUlZnYWpWN0Z2ZXB4TEVoMkJBalN4cGNXbG45dDVHTDNGVDB1X0E3a1pVaVRySFpINlYySXJIR1M5Yy1HMWVySzhoSTk1UWxCbHBWdXktVzBiUVlxOERDQXpWM3BtczdIS19WTDRhYVJacUJzMlcxZC1rVGN3UGhRSmVNd0YwM0NuVERGUm41RnlCQ3BpM3V2TzhHNUpZRWliOTdsNVRaY0NhM0JUVFFvcEpLNkdkdUt3YmpRYVRtRXBxb2NCX3lvbnNPQUVwWUFXZE04emdqdGRjNmZuSWpZbmFtWllMY0tiOWFiRmtuMDJHWjFGZXpZb1FsMm9RVVhVX3E5RnllNkxNbFJKNHJmWVFLYXBoNXlmUEFoeEFJZlpmXzl2WVp2RnpsYTdTTGVYVkYtWF9aMjc4U0JaSF9pSWo0T1loeE1ldkgySGR0RTJIMmJQeFdfMlNBZjlLX25BUXFjUUJXVUpVNHgwV0s4Q1Y3ZHZ3a0xxbTQtUTh5UUJaaUdSeldpVExxS1g4bWdBQ0FZaE5tVFltcU5aUXJhLTAtR3p3a3ZkMFpTTWVZWTFSQ0dkVFg4VWRFbDhrZ0htc05rZjhPQXRtekRJNVdpRXdCakg1WWFyQzV6SkhmTXdZNWVMVjExMTM0RTlhS041bHJLejBxOGljb2x1UnpwZ0dwRjdENGtXWHBBWVBtYnlZSllsYTBPSVZsVmw5U3dQanNaUGsxUC0tYXM5d2hmellza3hYb19KSFhYdlUtZmRoSFd6OWpFN2JRN2FKSU9JUmdGdGp1cVRMSkdYZGhVLVI1QmVLZV9HbkZCYlY4M2tyMm5sYVBwYlhzTnQ1d3pSU09SQ1lzcElsZ250U284eTM2d1FlYzQ4SnBQT3IxaF9RWnZTVmxnRk04cDZQaTNxdjVzb0dkTE9oa0FITDNrcG14NlhBVUU3b3p5WlU5Z25xeDg0MmVSRUt5NmxSZ2JKb184RktGdXQxai1TeXJBbUtQc25uT1lQVzU4Y3ZDdWZCQW1sa25oRS1FNl93dDNqUU9jR2RPNHJXLTNoay1UTnJ4R190MTZrRExRVDRwQ2pDbWFtS21Hd1hIYk9uaVdfVVMzZHRMMmFzM0JTSEplLWdXQ3Z4TUJudFctM0U2UXhtNFhMVG9rVmM0WHlDZVJRU1d2dldubTJmOTBTcURpbmpXbUV3MVJzNmRjTW91RTVPektvZy16djRxUW9kLWFIdHhIQUF3VmF5TnNNTnItNFIwOU4xNnRBT09YdGlGRV9MMkd0S2F2UjdadkIxbTFKN1gwUllhQkJGZTloVHdkMTJUTEFxQzRSNktqV0VZOXlqM21VRGZxV1ZpekRiYXhFY2YtR04xVkdCekpyb2d6cHU2cG5nTmdueWZrWHdNU29MRVZWWXhOeTFwX1NsUHR3aS1oWENXeU9IcDVnako4S3g3QjVGajNXeW92amh1TDE5dG9LUnItQk9ZODNsSVN1QlY4SXh1cDlMR184ejRNR2pRTFhiejBxN2VQWGc4Nk1ZQkJnYXFJM3ZjSnFNazRfZ3NEdHBJU2NVWGVHZzNaNmVrdWFJcHpKRmdjR1ZPakx0dkE0OGVwb1pGM2gwS2d0S291NGlNb0V1ZE5VN0o0Q3k2NTI3SzVuRmJteWtScUxoZUpNcjc4NVpBMkdSR3REZDdXdXFOTHBNYkM4MmhfeGtBaC1HVG82WHh2V3o5STFaQmZST3U0MFJOUTdBRW1nX2cwTkFZZjNrenE2Vm13dUpOU2RPV0s1TnlRREFnUDRySEFmei15SDRUcmVLeUFRNjZfdHROSHlldHlsTjF1R0s5QU40UzNmVGh0Sk5MMEZrbWVENWNxYU85ODl2Q3UzX2JadHlkeWEwcjE2c0NHdXBMMU1wbWMxMXgybHVfc2h5SW5HcGpwNDlUQnRzc01wbnJZNDVnN2x2emVoQjVXaVlWc1pFQ1J6N2VEZVZ1MWhnYnEtSHIwZThhYldHVFhlekYxcDIzdThBXzlILW9YVTVoZHJHSTVIMU9PbkVwVFlKQmpjWm1WMXBzOVVSdjZFNHdEeER2QWlkenAtcDRveE4wMDFEWXVtR1FwalBtVVE1ajN2VVFXN1NaVVNya2YxTFJYYi1ab0RXQ28yQ0dfclpsaEV1cjRkQlBwUy1LNVk4NGY1bk1oMVpNZGYydjQ3OHF5ZS11ZlNIMFRLTktYc1ZuVmhEUTFTVzBnTGxoN2MzbEMzLUw0NkZzQUFDSENfcFNqVEppeTJCZW92TVJzUDhfVkRvV2NUd28wOFJKeGs1ZFFoZzNGaUxMRVlkRmRNcGcxUVVIdDFXS05HbmY2RTdzNF9qbWVEaDNWcG9xSzlnTjBzTGFUSnZDam5ocnNYcDVydDhGWUhXT1hlR0dSUHc0ZDE4MnpmTE0tMmRjSFNzVE9NR3JXWDFkTVE5anN4WDVPZmhsMnFOSDRwd0NsaHZpeVJiM2JCNUNtTU9FZ2FwNC0yS1JNMUhmcVVBVVVOZzA4QXRTR2JZNG5tTllYS3JaS1B3aU5LVTBDNE1ldzRwUmdac2lMRHRCbFkxMFpTR09DNkgwejR5RzVDclR6ZFZ2dWpoT3RGTVU4N1pmX1JiYWhlTVZCUjRXczNBRDdVWXdGZmlSYXBVak90M1oxRGJGcXRiOEo2VGVSZDVtRUNvekV5NW9JV002OUhDUkw2a2xzX0xpMjE5WVRGSFhBTmtZVE1HS0JvSWk5YTFCdnlTUXM5NzRCZ3EtOXpUdWd0ZlFtU0s2WVp2Tk05cElicmtLQXhHVzZzNGt5U3h5blc2TEFJTTlvbTBmUFVLWkNMWV8wZVNVeDJodzUxN3hpX0ZnSS1iU0lGWmcuT1FWN1NVbGFSM3hYekU4NGRPeWhCR2V6UjM5ZjE5NTR1aGF1NHZNY2dxRQ"
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3?api-version=2016-10-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "821",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:35 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3145;da_age=9084;rd_age=9084;brd_age=8867;ra_notif_age=3724;dec_lev=1;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "recoveryId": "https://vaultname.vault.azure.net/deletedkeys/livekvtestkeybaka7192bf3",
+        "deletedDate": 1650059676,
+        "scheduledPurgeDate": 1650664476,
+        "key": {
+          "kid": "https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3/1beca7c6eebb4fbeba2f69a92c1737c1",
+          "kty": "RSA",
+          "key_ops": [
+            "encrypt",
+            "decrypt",
+            "sign",
+            "verify",
+            "wrapKey",
+            "unwrapKey"
+          ],
+          "n": "04OHmc4u5b9s7Zg9jwQhW2jU5FZdqk07hDxstNgAaTbiqCtivoXD8jLjSWwRgks-mei_9D2AWg3kpLC_Q7Y3Ls9GRNbW27NaK1tnmWfXNzMP8pfycju6DL3bpjlCIMFKdEeWqxRadOGd6GjRzSRhVumq1_RI7CxAxJ8L1787LzXzHq3pWjqJ5hE4F1FONkxDwrq-eIsW-zdECRwUDe9Mu_JVuXlYq4Ao-GAg307A6es-RR0_NgAXiTq4QxunOksgCu-uewpON1af7wq9ochXkzj7Ls-xJSZby9ED8Tj7y1yhWrNfBn_v57HkBKLafkcqj6aK28_shdRjTTBBlYIk6Q",
+          "e": "AQAB"
+        },
+        "attributes": {
+          "enabled": true,
+          "created": 1650059675,
+          "updated": 1650059675,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/deletedkeys/livekvtestkeybaka7192bf3?api-version=2016-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:35 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3145;da_age=9084;rd_age=9084;brd_age=8867;ra_notif_age=3725;dec_lev=1;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "KeyNotFound",
+          "message": "Deleted Key not found: livekvtestkeybaka7192bf3"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/deletedkeys/livekvtestkeybaka7192bf3?api-version=2016-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:37 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3147;da_age=9086;rd_age=9086;brd_age=8870;ra_notif_age=3727;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "KeyNotFound",
+          "message": "Deleted Key not found: livekvtestkeybaka7192bf3"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/deletedkeys/livekvtestkeybaka7192bf3?api-version=2016-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "821",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:40 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3149;da_age=9088;rd_age=9088;brd_age=8872;ra_notif_age=3729;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "recoveryId": "https://vaultname.vault.azure.net/deletedkeys/livekvtestkeybaka7192bf3",
+        "deletedDate": 1650059676,
+        "scheduledPurgeDate": 1650664476,
+        "key": {
+          "kid": "https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3/1beca7c6eebb4fbeba2f69a92c1737c1",
+          "kty": "RSA",
+          "key_ops": [
+            "encrypt",
+            "decrypt",
+            "sign",
+            "verify",
+            "wrapKey",
+            "unwrapKey"
+          ],
+          "n": "04OHmc4u5b9s7Zg9jwQhW2jU5FZdqk07hDxstNgAaTbiqCtivoXD8jLjSWwRgks-mei_9D2AWg3kpLC_Q7Y3Ls9GRNbW27NaK1tnmWfXNzMP8pfycju6DL3bpjlCIMFKdEeWqxRadOGd6GjRzSRhVumq1_RI7CxAxJ8L1787LzXzHq3pWjqJ5hE4F1FONkxDwrq-eIsW-zdECRwUDe9Mu_JVuXlYq4Ao-GAg307A6es-RR0_NgAXiTq4QxunOksgCu-uewpON1af7wq9ochXkzj7Ls-xJSZby9ED8Tj7y1yhWrNfBn_v57HkBKLafkcqj6aK28_shdRjTTBBlYIk6Q",
+          "e": "AQAB"
+        },
+        "attributes": {
+          "enabled": true,
+          "created": 1650059675,
+          "updated": 1650059675,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/deletedkeys/livekvtestkeybaka7192bf3?api-version=2016-10-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Fri, 15 Apr 2022 21:54:40 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3149;da_age=9088;rd_age=9088;brd_age=8872;ra_notif_age=3729;dec_lev=1;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/keys/restore?api-version=2016-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "9335",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "value": "JkF6dXJlS2V5VmF1bHRLZXlCYWNrdXBWMS5taWNyb3NvZnQuY29tZXlKcmFXUWlPaUl5WVdabU5tRmhNUzAzTm1Ka0xUUTBZVGN0WVRjek5DMDJaalZoWkRCaU5XRTRPVGdpTENKaGJHY2lPaUpTVTBFdFQwRkZVQzB5TlRZaUxDSmxibU1pT2lKQk1qVTJRMEpETFVoVE5URXlJbjAuZnRqTmkxSjFhQjhhZUtkb3lfTV80c2RacXE2N21FZXM2VDNtWm1saFJPcTdrMXVZZlFlVmtiV0xpbHdiZm5qdkxGVmpZbllPd2JlS1JiRDRvQzlrVVJIRFROVDNvR2dhbm96eGFoM20tWlJTbHNqSmlEQlREZl9mX1NjZTRnYUUyQzhDaEZkekE2SXYweENtd0tuNGRmMjI0VWllYnVkeTRtZExzbnN4Y2l1SWhTUkNXQkg1Nms5WXJueEY1UEZ0Y1RUQ2NUbTFHM25pN2lQQVBRODFEWWFuMXFlN1UyWEtaVGNpMDVTLURXYkpTc0E5RE1HbFpUbTNHOGRRNm01V1BGS2hQc3M3dmNETTB1ZkFBZ2U3ME1wb1FQa0lUTDZaaFNxZ0lMY2h0VlJDODJuVmhYaVd4VWNGenMydHZxaDlNQ3hPUkdVTTBuWG9HbHhoOFJjbXlnLlhZRTVnN09iRmNNNWxvd0hBSWpsN3cuamdtS1FhVmh0V1FwWkxuZGFsRVJJelpNMF9PVkh1Q2pQejFQZkdKOHlBR3RVc0FnbEI2TVNocHdMUjc0Q2F1SVZpalZkb2FQRTN1M1BxaFhCWkVkWWRoc1dCdHRkVmpWMnJRSEF2RjRNMWExVGktTWVSRDFUbWtUdkF0ZWVBbS1fbW5SOFMxUUlld0ZWb0FJMXNSTkFzOTNUODlwd2Znb1JkSk9lLURUZFdOeWJSOW52N0VpNk1oSmszMVVmRnpKU2syN21fZldyVjJBODloeGE1UERaWXpZamdqaXZUNEZIemtYZ3ZnZDNWMG5OTVZqaGdQbng2TWNCZWVTdkh4bzY3cl90TlV2ZFlKQ2F0VDMxaHhsNE10c1otQk5YQ1NhaW9nOFlRdUdhUEc4ZTZNejJIeU40T19JTTJ1TDBZRU1ld0xaQkJxamxieFdhME90SS1JZDZMOHVScUV1WVd0MWdtZWFjZkFXSjdEbVNxTVVpcTAwTGgwajVma2gwT0RwR0p4RHduTEFOVDhOVVQ1TnhEcFpCeV9CY2tsV1NvNXZhLTRHVHFRNGhRUFE5U2hTb2RGeFItZ3ppWDdvaXRzWTB3X0tSdFZNaDhfZ053emN2Uy1qTXlueVFDM09FYWx2Tk1MTkR6OW90Q3FNTGZFZ2d4MmZ2MXJsT1VPYnNZRDdMT1ROeUxkeGxzc2c2V3QyZi00OWhCemJTbkhlMzlrRzRUbVRUUnJKQUE0MUg1WVltenJjRDVXTzdnWTRkLUQwYUd6TUZFMGJ0U0E2NzlwQXVNdHNZLWtuQzdVOEFRRmRCUzdCR3BiY2RQUkthY1o5bzZHcnZVU1F4Vmg4NGdCTGM3dXNqNy01QXQ0OVFBTFlmSnBLVXVIOHZjeU9XWHFubWI2TTBRaG1RZkVjcVB1QkVQVURyY2d0bE0zOTBjb0s4QkpOaU1EWVBwTXEydFRnQVJRaHQza2tFOXR0MXhaTkNHQUM3Z2ROMzZOMDd4OEtEWWR0Y3UtSl8xendMYVp3dXBZNGwyT0NIbUR4OEJfNVRFbVpKbGYtWi00SVRCeHQwanVqV3NkeUxCTUFSOEE5OGNjNU4wa0VfZldQNDRVRnBRYnljblhfeGVpaXowWkQ1WG9DVW9LREx3aEk2cVBva0R6aW9qMmVtWGxpZ2VNemlPUWJkMjBnN3ZvaHZQWGNhekFWMHkteTJGMDJSOGV6ck1LYlphc25WckVGT1pIRVU0eFpZN3hSYTQySmdGRnQ4SHUxcmxLVHdDM2lUbUdEVGVCb3NoZ2NTU3BPOXJHMS1sSjRRTUdSWi1Jd0NxZGRkTGk3NVlsRGNNSU11b0RKSzlIVC1ob3ZYczNibUg1OEVoOVVtSURhajJjVk1ra1NFMUNVVTJKRnUyYXZYc3AxS0ptTGo0ZzdWTkhxdnpzX05yV0liTFExWjZSS19TUXJWenNGUVg3b1lpdFZGcExSblBMTFltLUZPY0g3SUltSkxwTEFLQldHT2dtWlRvNm5XUDRjdGJxaUFqc3E1bWt4Mlo2NExRZlFJTC12aHhNU0l6ZENWeHFGenhfV3BRUGQtS0h6T2hraVU2TTkybE1XUUJfelZ1cGxhTEVBMWUwMVN4bVc3TFJTdk53UjVzNWJycjg1c1Y0Z3FCbnh6ZzhtLXBWeVlwaG45ZFU0bGdZeHVXaXh2RG1mdXduRTJxNVpGbU9NTWpxb05uMjM4ZjFlVkdBaVNRdTVNSUo0b0RtNnZoZ2d6Wm1VN1NSYUd1U0RIZWNha2dYbWJ0aFlyZWtMaTk2Sjg1ajRhb3d0bzhEaGh4YzJBYXZhdHA0TzJqQ05xaHJxajN0dlFxSWtReVpUM1c0OE1MVWctd3kzeEdnSHFfNzk3OHBUeHdKa004OXZPME9rMmk2YWJkR1cxSEVGMU9Rdi1mZlE2RE43YlZSQS1nNlUtdHRWUGxlWTYtY0JlWXJTc3Z1V0VNcEVZU25Cb2VlRm10a3N6am5tQ1RVM3FQTnpOS0MyU0JDYWpRY2VHanl6ak11d2dhU2tiYzc4dEp5RzlvcTBucDR3Y0Fqa1pkV25sZ1pEb3NZUjdvV3F1bHN6R2U3VlVFR3lUUTA2WFdHLXZ3TkxaSzE0aFZzX3RYbld1QnlCN0JFWkhNMzJzTG8wTFZRTS1DUHdqSnFiTVpMYU5qeEw2QUxpOTlCZE5TeUQxYm9YUnNWTV9SUDZ0Z1RudVpacHZVQS1Vc3U2ZllJZFVNRFhOTzV4bHJ1c19mQlEwbkZlOWwwd0JLbU11V25HNUJmcmtvZWlPZmN4bVg4aE54WG5Nc1BnWV9BVXczSHg5aXJMb0JLaUlrdzh5cDMwQjJYZHZ4aDFmTVBYTkpUOWlxUG81Wm8wd0pzbFZxYV9QNWxCR2s0cWRHQ3Zxb0N1Z1RxcW9xdm8tNVZTc1Y3em4teEV4NFhua3hyOVpueENVNkU1azNSSWk1c2h2R3E1enJhWjgtM3F1T0xkcU1GYVNwRDBOZUhUNFhOZFZKcVl4S1hUNlFRcHVpQWZ4WGUtUUdSMWtZdjk0WXRsYWR3N1V6ZHhySEt2OEFRanVmbHF6emZ0LVJjRmlMSVVHM0NveWJMNFJVeXRFU09Ua1kyMnNlb3FOZVFMcHd6M3h5TkYxc2tfS0dRUFVKQllMeGFPWFF5bG1nQ1RnSjEtVHhOem80cVVWekw3ZVZkYnhsLXdvdnVwbDZlRWF6bHNET25aZENMcl9seFoxNkU2Z3ZxRTdaS3BmRTlGZ3VHT1I4eFdiaHp6ZWtaYVlGdldFMGFueDg1MUtYdmZldklEYW9QbGJFZ0tkX2N3RVoxdWtPZ25UZjNPRnFxSzNfc3Itb2hacERGU3R4dTZsNkNzaFlIM1ppcGV2NnZIaGN4ZjBxNDhEeWZmTGhDbm92QXRzaXFnc0lfUHdWWFpzR2FBOGJyZ3hCRVVtd21Fc3hZVE44SHJUenpGQzNYLXFFYnMwT0x1NXNoVzJKZG5WNFdqT1lHbmotZGxxRHp2Y1ZxYU5wVkhLdmRhV2sza19JR1U0QWRXSmVaa2NSclR4a1d2elNtZFhGR0IyTUxidmk0TzFubnBDclM5a1FCdDNHV0thdThBNXYxX1lpM3M2U20yZkpsTlI1cWlsNlZZVkVpajBmMWJNN3pYVjlYZEpreGE3UktTR1hoVURXWERVRnI3TmhLemtpY043N2xWRWsyTUQyUjZzWXVsc0JPc1BEc2tMQXUwS3NFSG1xQVowU3p3amIyUVZiUXJqOFI3QXRGMkItajNUODdtNWpZTmdTak1OOE9pckNhaDhjeTFfZHR0NWdSZHp0dXBVQUhyY1hWX3hOQ0Fwd1ZPOFhpaEN1VHpCaG9faUtlcnNxV0Q5LTJqWDg1UVd3ZEM3TGxIMTA1bGx3c2otS2QwM3NtenJnNTlqUU5HNmRKc0FVZlRPazBEQmVkU2JkbThTc0dONjh3Mk1ZNDZTLUxKUTFkYUpKZnhjZHBpR1lHcHk1LUpmZ0JocXFkYmxtVGx4MEY2ak16a3BEZW5iZWRQbTJxMkV5LU1Cc2dGQ0JibldLVFQ3XzF3VE9URXFXeEtLbDgxbGRMamIycmlJWk1uZmUyN01kTk00MU9lVHRxam1wcXBDWEd3N21PdU9jN3FkSGV6REFGd1luM0lkZjZvTTV6a3dDdTI2QXc1Uml2SDZsdGZNdEpxdzRteU9QVW9wbl80YjdRdmFqUjh5OFlGdHo0aU16Wmg3dVNuc2hNY0Z3cnhsZm82NFRjbDJheTNxM3IyUUI2MzhPUkZaaHgtc3JNUU9EVlR0YWRjUW5aT2s2WmxhZ1ctbEhpS0Q3bVVRMkVKYnhBd3I2X2FUMlczUVExSWNYdEZ3VjFUUE4tMGpBT2pLSG54MjRRV0RoV3E5NVRfNXNsMm9FRF9hMVhKbnNWUHRXNGl6QlQwSy1nUEN3cGhtSHhJbTF1R3VVSXItT3A3cUZsUllIRTR4VF9hclkzaWxtWG1sVzZfdklUaHlTOTJLYkFNdWVEb3dfaHladmg4VHI0dW9Xc0lPM0Y3WFJBY0w2RFB3UnVRcGVpNnRrYzVkT19nRU5IR09BREhNQXRjdkZDWlA2ME50N2N0YWdVM29xNzJIcFFKRHJhM1RwVEVVRWxoZk5fdzBIQUVwemszTGlTbHBuckdYUzFQcTgyaWZkdzR1WmYtbFVVdDRCbmU1MFM4aWMySnlEQ0g2NHZ4WFNxSXZYaW9YdEx4dUF4RndCUExYZWJ2b3dpeDBJWVl5OHlyZDc4T3RvTGJGZ3JtYXVKdVpfcHlwWEhKWlN4dzI0Ml9jMVVmNldRM2JNZTFGcVh0akYxYWhwWUx1Tm1sdmRhamlkY0hDWG5Hb2hLeC1PYzlqS2R1NEM5Y2l1RmkyQ2JNQlJXMnhRcS1Dc2ZTREFwd1BIX0dSOHhHcmxjbjVnS1ZhTU9TQVh6WVdnakZteGN0V2JERGZhSXBEZmstUWNvekJwWUY0UnlXNm5jY2xoSnJZaWJHWS1WNEZFaUlwSE1DMlQxaXYxTVliNENIU3dtMUtGSHBKTjUxVnNPUmFJV0tQY2FRM05uTFJzWHFPMVBiTEt1eHZyRzdobzhtMlFFdUg5TXJUUnktc25XTFdTbWRwNWFrcHNhMGxFdUtOQkQ2RFFJcWhHMUNCTGh3MHVkSDYwY3d2dkNoelhXMlZaSVZVOXV5ZE1wNXlLOWJlNmlJeTlldXEzeTU1S09xMTBvcHBWNXZ1MG14d2dqcUZVc19lOHA1ei1LcC1pRUxiczNrOV9KSTZYeUlib1ZkWi0xUFFaWUpFNEgzUVp0ZmdXU0xKcGlUSXRUMEl5RWZzS3pFVjdnd0FZT040ZDB6VkhWTFpkMUN0YWhrVHVPUzlldFU3cUlLOEx0MVB2RkJWRXR3X0hxaDBhYm5IcFAtbnk1ODdldjM5SUhnRC1OMXJhODBtaWtyY0RnN1BJQjlUX3BiamFLZEQ4eFVkVnlsOEFGaXYwUy1PR2VOS2ltWVhERGJUdUl4UmNSSk9LbnFPMDFGeC1weVdRTkJjRThPMHRpQjNwdEs3cl80UkhlSGFpSnBXanpaZWgzSFRxbmNNZHZkeWFoQ3FfaE51Rkh4Q0Y5akpidmo5eGlIMVhMM0ljU2tUbEVELVFfZVM0aHNoY2RBc19Sb2ZSU0dLdm96WTdwamRtZ2FscE9JVXpxZG12dE5CQVQ0X1Rib19tQlh5eEZadGN1d1F5MnZTbXhEUm11N3ltU2c0NkxuTDZVdzZrdjBkZFAyblo4MUs3Ykk0Skl0OUlMdTk5cFlwdjVFSFMwdjE0Q2RYMExFT2R3R1NFM3kyVnpsTDNyVFAzb00zVEJRM2t1UVUydnN4NGRsR3JrbEgzTkNqc0p0TjA1Mjl5RTZIcUhKTVQ0UGh3NzRTUFBISW0tRG9UQ0JmRHc3TW9jR3F5eVdnWTd0UjI5MEV6VHNjLUhtc3UwZjlQYVpJWE4tNkszZ1BobmhzNUJPdFExUk85T1J6YVdDa0NSaVlLR2lVOFk5Z2R2MTF0VDhhS1BPR1F1Xy00ZnhsZmxTRzRoaTVxanR6MjkycDl3WGQyck5XNlpHUFZ1Nk1YZmwzZDNRaFB1bDN1STJ2MHkyRzZuUVhrakI0RFl1MnlUREF0dGxnMHNyc0U1anpud3VuWkdMSG9kUlZnYWpWN0Z2ZXB4TEVoMkJBalN4cGNXbG45dDVHTDNGVDB1X0E3a1pVaVRySFpINlYySXJIR1M5Yy1HMWVySzhoSTk1UWxCbHBWdXktVzBiUVlxOERDQXpWM3BtczdIS19WTDRhYVJacUJzMlcxZC1rVGN3UGhRSmVNd0YwM0NuVERGUm41RnlCQ3BpM3V2TzhHNUpZRWliOTdsNVRaY0NhM0JUVFFvcEpLNkdkdUt3YmpRYVRtRXBxb2NCX3lvbnNPQUVwWUFXZE04emdqdGRjNmZuSWpZbmFtWllMY0tiOWFiRmtuMDJHWjFGZXpZb1FsMm9RVVhVX3E5RnllNkxNbFJKNHJmWVFLYXBoNXlmUEFoeEFJZlpmXzl2WVp2RnpsYTdTTGVYVkYtWF9aMjc4U0JaSF9pSWo0T1loeE1ldkgySGR0RTJIMmJQeFdfMlNBZjlLX25BUXFjUUJXVUpVNHgwV0s4Q1Y3ZHZ3a0xxbTQtUTh5UUJaaUdSeldpVExxS1g4bWdBQ0FZaE5tVFltcU5aUXJhLTAtR3p3a3ZkMFpTTWVZWTFSQ0dkVFg4VWRFbDhrZ0htc05rZjhPQXRtekRJNVdpRXdCakg1WWFyQzV6SkhmTXdZNWVMVjExMTM0RTlhS041bHJLejBxOGljb2x1UnpwZ0dwRjdENGtXWHBBWVBtYnlZSllsYTBPSVZsVmw5U3dQanNaUGsxUC0tYXM5d2hmellza3hYb19KSFhYdlUtZmRoSFd6OWpFN2JRN2FKSU9JUmdGdGp1cVRMSkdYZGhVLVI1QmVLZV9HbkZCYlY4M2tyMm5sYVBwYlhzTnQ1d3pSU09SQ1lzcElsZ250U284eTM2d1FlYzQ4SnBQT3IxaF9RWnZTVmxnRk04cDZQaTNxdjVzb0dkTE9oa0FITDNrcG14NlhBVUU3b3p5WlU5Z25xeDg0MmVSRUt5NmxSZ2JKb184RktGdXQxai1TeXJBbUtQc25uT1lQVzU4Y3ZDdWZCQW1sa25oRS1FNl93dDNqUU9jR2RPNHJXLTNoay1UTnJ4R190MTZrRExRVDRwQ2pDbWFtS21Hd1hIYk9uaVdfVVMzZHRMMmFzM0JTSEplLWdXQ3Z4TUJudFctM0U2UXhtNFhMVG9rVmM0WHlDZVJRU1d2dldubTJmOTBTcURpbmpXbUV3MVJzNmRjTW91RTVPektvZy16djRxUW9kLWFIdHhIQUF3VmF5TnNNTnItNFIwOU4xNnRBT09YdGlGRV9MMkd0S2F2UjdadkIxbTFKN1gwUllhQkJGZTloVHdkMTJUTEFxQzRSNktqV0VZOXlqM21VRGZxV1ZpekRiYXhFY2YtR04xVkdCekpyb2d6cHU2cG5nTmdueWZrWHdNU29MRVZWWXhOeTFwX1NsUHR3aS1oWENXeU9IcDVnako4S3g3QjVGajNXeW92amh1TDE5dG9LUnItQk9ZODNsSVN1QlY4SXh1cDlMR184ejRNR2pRTFhiejBxN2VQWGc4Nk1ZQkJnYXFJM3ZjSnFNazRfZ3NEdHBJU2NVWGVHZzNaNmVrdWFJcHpKRmdjR1ZPakx0dkE0OGVwb1pGM2gwS2d0S291NGlNb0V1ZE5VN0o0Q3k2NTI3SzVuRmJteWtScUxoZUpNcjc4NVpBMkdSR3REZDdXdXFOTHBNYkM4MmhfeGtBaC1HVG82WHh2V3o5STFaQmZST3U0MFJOUTdBRW1nX2cwTkFZZjNrenE2Vm13dUpOU2RPV0s1TnlRREFnUDRySEFmei15SDRUcmVLeUFRNjZfdHROSHlldHlsTjF1R0s5QU40UzNmVGh0Sk5MMEZrbWVENWNxYU85ODl2Q3UzX2JadHlkeWEwcjE2c0NHdXBMMU1wbWMxMXgybHVfc2h5SW5HcGpwNDlUQnRzc01wbnJZNDVnN2x2emVoQjVXaVlWc1pFQ1J6N2VEZVZ1MWhnYnEtSHIwZThhYldHVFhlekYxcDIzdThBXzlILW9YVTVoZHJHSTVIMU9PbkVwVFlKQmpjWm1WMXBzOVVSdjZFNHdEeER2QWlkenAtcDRveE4wMDFEWXVtR1FwalBtVVE1ajN2VVFXN1NaVVNya2YxTFJYYi1ab0RXQ28yQ0dfclpsaEV1cjRkQlBwUy1LNVk4NGY1bk1oMVpNZGYydjQ3OHF5ZS11ZlNIMFRLTktYc1ZuVmhEUTFTVzBnTGxoN2MzbEMzLUw0NkZzQUFDSENfcFNqVEppeTJCZW92TVJzUDhfVkRvV2NUd28wOFJKeGs1ZFFoZzNGaUxMRVlkRmRNcGcxUVVIdDFXS05HbmY2RTdzNF9qbWVEaDNWcG9xSzlnTjBzTGFUSnZDam5ocnNYcDVydDhGWUhXT1hlR0dSUHc0ZDE4MnpmTE0tMmRjSFNzVE9NR3JXWDFkTVE5anN4WDVPZmhsMnFOSDRwd0NsaHZpeVJiM2JCNUNtTU9FZ2FwNC0yS1JNMUhmcVVBVVVOZzA4QXRTR2JZNG5tTllYS3JaS1B3aU5LVTBDNE1ldzRwUmdac2lMRHRCbFkxMFpTR09DNkgwejR5RzVDclR6ZFZ2dWpoT3RGTVU4N1pmX1JiYWhlTVZCUjRXczNBRDdVWXdGZmlSYXBVak90M1oxRGJGcXRiOEo2VGVSZDVtRUNvekV5NW9JV002OUhDUkw2a2xzX0xpMjE5WVRGSFhBTmtZVE1HS0JvSWk5YTFCdnlTUXM5NzRCZ3EtOXpUdWd0ZlFtU0s2WVp2Tk05cElicmtLQXhHVzZzNGt5U3h5blc2TEFJTTlvbTBmUFVLWkNMWV8wZVNVeDJodzUxN3hpX0ZnSS1iU0lGWmcuT1FWN1NVbGFSM3hYekU4NGRPeWhCR2V6UjM5ZjE5NTR1aGF1NHZNY2dxRQ"
+      },
+      "StatusCode": 409,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "616",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:40 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3149;da_age=9088;rd_age=9088;brd_age=8872;ra_notif_age=3729;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "Conflict",
+          "message": "There was a conflict restoring the key \u0027https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3/1beca7c6eebb4fbeba2f69a92c1737c1\u0027. This can happen if either: a second key with the same name was created after the first key was deleted; thus trying to restore a key whose name is already in use. To fix this, rename the second key to something else so that the restore works. The second probable cause of this exception is when multiple operations are performed in parallel against the key. To avoid this error, perform operations against a key in a sequential manner."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://vaultname.vault.azure.net/keys/restore?api-version=2016-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "9335",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "value": "JkF6dXJlS2V5VmF1bHRLZXlCYWNrdXBWMS5taWNyb3NvZnQuY29tZXlKcmFXUWlPaUl5WVdabU5tRmhNUzAzTm1Ka0xUUTBZVGN0WVRjek5DMDJaalZoWkRCaU5XRTRPVGdpTENKaGJHY2lPaUpTVTBFdFQwRkZVQzB5TlRZaUxDSmxibU1pT2lKQk1qVTJRMEpETFVoVE5URXlJbjAuZnRqTmkxSjFhQjhhZUtkb3lfTV80c2RacXE2N21FZXM2VDNtWm1saFJPcTdrMXVZZlFlVmtiV0xpbHdiZm5qdkxGVmpZbllPd2JlS1JiRDRvQzlrVVJIRFROVDNvR2dhbm96eGFoM20tWlJTbHNqSmlEQlREZl9mX1NjZTRnYUUyQzhDaEZkekE2SXYweENtd0tuNGRmMjI0VWllYnVkeTRtZExzbnN4Y2l1SWhTUkNXQkg1Nms5WXJueEY1UEZ0Y1RUQ2NUbTFHM25pN2lQQVBRODFEWWFuMXFlN1UyWEtaVGNpMDVTLURXYkpTc0E5RE1HbFpUbTNHOGRRNm01V1BGS2hQc3M3dmNETTB1ZkFBZ2U3ME1wb1FQa0lUTDZaaFNxZ0lMY2h0VlJDODJuVmhYaVd4VWNGenMydHZxaDlNQ3hPUkdVTTBuWG9HbHhoOFJjbXlnLlhZRTVnN09iRmNNNWxvd0hBSWpsN3cuamdtS1FhVmh0V1FwWkxuZGFsRVJJelpNMF9PVkh1Q2pQejFQZkdKOHlBR3RVc0FnbEI2TVNocHdMUjc0Q2F1SVZpalZkb2FQRTN1M1BxaFhCWkVkWWRoc1dCdHRkVmpWMnJRSEF2RjRNMWExVGktTWVSRDFUbWtUdkF0ZWVBbS1fbW5SOFMxUUlld0ZWb0FJMXNSTkFzOTNUODlwd2Znb1JkSk9lLURUZFdOeWJSOW52N0VpNk1oSmszMVVmRnpKU2syN21fZldyVjJBODloeGE1UERaWXpZamdqaXZUNEZIemtYZ3ZnZDNWMG5OTVZqaGdQbng2TWNCZWVTdkh4bzY3cl90TlV2ZFlKQ2F0VDMxaHhsNE10c1otQk5YQ1NhaW9nOFlRdUdhUEc4ZTZNejJIeU40T19JTTJ1TDBZRU1ld0xaQkJxamxieFdhME90SS1JZDZMOHVScUV1WVd0MWdtZWFjZkFXSjdEbVNxTVVpcTAwTGgwajVma2gwT0RwR0p4RHduTEFOVDhOVVQ1TnhEcFpCeV9CY2tsV1NvNXZhLTRHVHFRNGhRUFE5U2hTb2RGeFItZ3ppWDdvaXRzWTB3X0tSdFZNaDhfZ053emN2Uy1qTXlueVFDM09FYWx2Tk1MTkR6OW90Q3FNTGZFZ2d4MmZ2MXJsT1VPYnNZRDdMT1ROeUxkeGxzc2c2V3QyZi00OWhCemJTbkhlMzlrRzRUbVRUUnJKQUE0MUg1WVltenJjRDVXTzdnWTRkLUQwYUd6TUZFMGJ0U0E2NzlwQXVNdHNZLWtuQzdVOEFRRmRCUzdCR3BiY2RQUkthY1o5bzZHcnZVU1F4Vmg4NGdCTGM3dXNqNy01QXQ0OVFBTFlmSnBLVXVIOHZjeU9XWHFubWI2TTBRaG1RZkVjcVB1QkVQVURyY2d0bE0zOTBjb0s4QkpOaU1EWVBwTXEydFRnQVJRaHQza2tFOXR0MXhaTkNHQUM3Z2ROMzZOMDd4OEtEWWR0Y3UtSl8xendMYVp3dXBZNGwyT0NIbUR4OEJfNVRFbVpKbGYtWi00SVRCeHQwanVqV3NkeUxCTUFSOEE5OGNjNU4wa0VfZldQNDRVRnBRYnljblhfeGVpaXowWkQ1WG9DVW9LREx3aEk2cVBva0R6aW9qMmVtWGxpZ2VNemlPUWJkMjBnN3ZvaHZQWGNhekFWMHkteTJGMDJSOGV6ck1LYlphc25WckVGT1pIRVU0eFpZN3hSYTQySmdGRnQ4SHUxcmxLVHdDM2lUbUdEVGVCb3NoZ2NTU3BPOXJHMS1sSjRRTUdSWi1Jd0NxZGRkTGk3NVlsRGNNSU11b0RKSzlIVC1ob3ZYczNibUg1OEVoOVVtSURhajJjVk1ra1NFMUNVVTJKRnUyYXZYc3AxS0ptTGo0ZzdWTkhxdnpzX05yV0liTFExWjZSS19TUXJWenNGUVg3b1lpdFZGcExSblBMTFltLUZPY0g3SUltSkxwTEFLQldHT2dtWlRvNm5XUDRjdGJxaUFqc3E1bWt4Mlo2NExRZlFJTC12aHhNU0l6ZENWeHFGenhfV3BRUGQtS0h6T2hraVU2TTkybE1XUUJfelZ1cGxhTEVBMWUwMVN4bVc3TFJTdk53UjVzNWJycjg1c1Y0Z3FCbnh6ZzhtLXBWeVlwaG45ZFU0bGdZeHVXaXh2RG1mdXduRTJxNVpGbU9NTWpxb05uMjM4ZjFlVkdBaVNRdTVNSUo0b0RtNnZoZ2d6Wm1VN1NSYUd1U0RIZWNha2dYbWJ0aFlyZWtMaTk2Sjg1ajRhb3d0bzhEaGh4YzJBYXZhdHA0TzJqQ05xaHJxajN0dlFxSWtReVpUM1c0OE1MVWctd3kzeEdnSHFfNzk3OHBUeHdKa004OXZPME9rMmk2YWJkR1cxSEVGMU9Rdi1mZlE2RE43YlZSQS1nNlUtdHRWUGxlWTYtY0JlWXJTc3Z1V0VNcEVZU25Cb2VlRm10a3N6am5tQ1RVM3FQTnpOS0MyU0JDYWpRY2VHanl6ak11d2dhU2tiYzc4dEp5RzlvcTBucDR3Y0Fqa1pkV25sZ1pEb3NZUjdvV3F1bHN6R2U3VlVFR3lUUTA2WFdHLXZ3TkxaSzE0aFZzX3RYbld1QnlCN0JFWkhNMzJzTG8wTFZRTS1DUHdqSnFiTVpMYU5qeEw2QUxpOTlCZE5TeUQxYm9YUnNWTV9SUDZ0Z1RudVpacHZVQS1Vc3U2ZllJZFVNRFhOTzV4bHJ1c19mQlEwbkZlOWwwd0JLbU11V25HNUJmcmtvZWlPZmN4bVg4aE54WG5Nc1BnWV9BVXczSHg5aXJMb0JLaUlrdzh5cDMwQjJYZHZ4aDFmTVBYTkpUOWlxUG81Wm8wd0pzbFZxYV9QNWxCR2s0cWRHQ3Zxb0N1Z1RxcW9xdm8tNVZTc1Y3em4teEV4NFhua3hyOVpueENVNkU1azNSSWk1c2h2R3E1enJhWjgtM3F1T0xkcU1GYVNwRDBOZUhUNFhOZFZKcVl4S1hUNlFRcHVpQWZ4WGUtUUdSMWtZdjk0WXRsYWR3N1V6ZHhySEt2OEFRanVmbHF6emZ0LVJjRmlMSVVHM0NveWJMNFJVeXRFU09Ua1kyMnNlb3FOZVFMcHd6M3h5TkYxc2tfS0dRUFVKQllMeGFPWFF5bG1nQ1RnSjEtVHhOem80cVVWekw3ZVZkYnhsLXdvdnVwbDZlRWF6bHNET25aZENMcl9seFoxNkU2Z3ZxRTdaS3BmRTlGZ3VHT1I4eFdiaHp6ZWtaYVlGdldFMGFueDg1MUtYdmZldklEYW9QbGJFZ0tkX2N3RVoxdWtPZ25UZjNPRnFxSzNfc3Itb2hacERGU3R4dTZsNkNzaFlIM1ppcGV2NnZIaGN4ZjBxNDhEeWZmTGhDbm92QXRzaXFnc0lfUHdWWFpzR2FBOGJyZ3hCRVVtd21Fc3hZVE44SHJUenpGQzNYLXFFYnMwT0x1NXNoVzJKZG5WNFdqT1lHbmotZGxxRHp2Y1ZxYU5wVkhLdmRhV2sza19JR1U0QWRXSmVaa2NSclR4a1d2elNtZFhGR0IyTUxidmk0TzFubnBDclM5a1FCdDNHV0thdThBNXYxX1lpM3M2U20yZkpsTlI1cWlsNlZZVkVpajBmMWJNN3pYVjlYZEpreGE3UktTR1hoVURXWERVRnI3TmhLemtpY043N2xWRWsyTUQyUjZzWXVsc0JPc1BEc2tMQXUwS3NFSG1xQVowU3p3amIyUVZiUXJqOFI3QXRGMkItajNUODdtNWpZTmdTak1OOE9pckNhaDhjeTFfZHR0NWdSZHp0dXBVQUhyY1hWX3hOQ0Fwd1ZPOFhpaEN1VHpCaG9faUtlcnNxV0Q5LTJqWDg1UVd3ZEM3TGxIMTA1bGx3c2otS2QwM3NtenJnNTlqUU5HNmRKc0FVZlRPazBEQmVkU2JkbThTc0dONjh3Mk1ZNDZTLUxKUTFkYUpKZnhjZHBpR1lHcHk1LUpmZ0JocXFkYmxtVGx4MEY2ak16a3BEZW5iZWRQbTJxMkV5LU1Cc2dGQ0JibldLVFQ3XzF3VE9URXFXeEtLbDgxbGRMamIycmlJWk1uZmUyN01kTk00MU9lVHRxam1wcXBDWEd3N21PdU9jN3FkSGV6REFGd1luM0lkZjZvTTV6a3dDdTI2QXc1Uml2SDZsdGZNdEpxdzRteU9QVW9wbl80YjdRdmFqUjh5OFlGdHo0aU16Wmg3dVNuc2hNY0Z3cnhsZm82NFRjbDJheTNxM3IyUUI2MzhPUkZaaHgtc3JNUU9EVlR0YWRjUW5aT2s2WmxhZ1ctbEhpS0Q3bVVRMkVKYnhBd3I2X2FUMlczUVExSWNYdEZ3VjFUUE4tMGpBT2pLSG54MjRRV0RoV3E5NVRfNXNsMm9FRF9hMVhKbnNWUHRXNGl6QlQwSy1nUEN3cGhtSHhJbTF1R3VVSXItT3A3cUZsUllIRTR4VF9hclkzaWxtWG1sVzZfdklUaHlTOTJLYkFNdWVEb3dfaHladmg4VHI0dW9Xc0lPM0Y3WFJBY0w2RFB3UnVRcGVpNnRrYzVkT19nRU5IR09BREhNQXRjdkZDWlA2ME50N2N0YWdVM29xNzJIcFFKRHJhM1RwVEVVRWxoZk5fdzBIQUVwemszTGlTbHBuckdYUzFQcTgyaWZkdzR1WmYtbFVVdDRCbmU1MFM4aWMySnlEQ0g2NHZ4WFNxSXZYaW9YdEx4dUF4RndCUExYZWJ2b3dpeDBJWVl5OHlyZDc4T3RvTGJGZ3JtYXVKdVpfcHlwWEhKWlN4dzI0Ml9jMVVmNldRM2JNZTFGcVh0akYxYWhwWUx1Tm1sdmRhamlkY0hDWG5Hb2hLeC1PYzlqS2R1NEM5Y2l1RmkyQ2JNQlJXMnhRcS1Dc2ZTREFwd1BIX0dSOHhHcmxjbjVnS1ZhTU9TQVh6WVdnakZteGN0V2JERGZhSXBEZmstUWNvekJwWUY0UnlXNm5jY2xoSnJZaWJHWS1WNEZFaUlwSE1DMlQxaXYxTVliNENIU3dtMUtGSHBKTjUxVnNPUmFJV0tQY2FRM05uTFJzWHFPMVBiTEt1eHZyRzdobzhtMlFFdUg5TXJUUnktc25XTFdTbWRwNWFrcHNhMGxFdUtOQkQ2RFFJcWhHMUNCTGh3MHVkSDYwY3d2dkNoelhXMlZaSVZVOXV5ZE1wNXlLOWJlNmlJeTlldXEzeTU1S09xMTBvcHBWNXZ1MG14d2dqcUZVc19lOHA1ei1LcC1pRUxiczNrOV9KSTZYeUlib1ZkWi0xUFFaWUpFNEgzUVp0ZmdXU0xKcGlUSXRUMEl5RWZzS3pFVjdnd0FZT040ZDB6VkhWTFpkMUN0YWhrVHVPUzlldFU3cUlLOEx0MVB2RkJWRXR3X0hxaDBhYm5IcFAtbnk1ODdldjM5SUhnRC1OMXJhODBtaWtyY0RnN1BJQjlUX3BiamFLZEQ4eFVkVnlsOEFGaXYwUy1PR2VOS2ltWVhERGJUdUl4UmNSSk9LbnFPMDFGeC1weVdRTkJjRThPMHRpQjNwdEs3cl80UkhlSGFpSnBXanpaZWgzSFRxbmNNZHZkeWFoQ3FfaE51Rkh4Q0Y5akpidmo5eGlIMVhMM0ljU2tUbEVELVFfZVM0aHNoY2RBc19Sb2ZSU0dLdm96WTdwamRtZ2FscE9JVXpxZG12dE5CQVQ0X1Rib19tQlh5eEZadGN1d1F5MnZTbXhEUm11N3ltU2c0NkxuTDZVdzZrdjBkZFAyblo4MUs3Ykk0Skl0OUlMdTk5cFlwdjVFSFMwdjE0Q2RYMExFT2R3R1NFM3kyVnpsTDNyVFAzb00zVEJRM2t1UVUydnN4NGRsR3JrbEgzTkNqc0p0TjA1Mjl5RTZIcUhKTVQ0UGh3NzRTUFBISW0tRG9UQ0JmRHc3TW9jR3F5eVdnWTd0UjI5MEV6VHNjLUhtc3UwZjlQYVpJWE4tNkszZ1BobmhzNUJPdFExUk85T1J6YVdDa0NSaVlLR2lVOFk5Z2R2MTF0VDhhS1BPR1F1Xy00ZnhsZmxTRzRoaTVxanR6MjkycDl3WGQyck5XNlpHUFZ1Nk1YZmwzZDNRaFB1bDN1STJ2MHkyRzZuUVhrakI0RFl1MnlUREF0dGxnMHNyc0U1anpud3VuWkdMSG9kUlZnYWpWN0Z2ZXB4TEVoMkJBalN4cGNXbG45dDVHTDNGVDB1X0E3a1pVaVRySFpINlYySXJIR1M5Yy1HMWVySzhoSTk1UWxCbHBWdXktVzBiUVlxOERDQXpWM3BtczdIS19WTDRhYVJacUJzMlcxZC1rVGN3UGhRSmVNd0YwM0NuVERGUm41RnlCQ3BpM3V2TzhHNUpZRWliOTdsNVRaY0NhM0JUVFFvcEpLNkdkdUt3YmpRYVRtRXBxb2NCX3lvbnNPQUVwWUFXZE04emdqdGRjNmZuSWpZbmFtWllMY0tiOWFiRmtuMDJHWjFGZXpZb1FsMm9RVVhVX3E5RnllNkxNbFJKNHJmWVFLYXBoNXlmUEFoeEFJZlpmXzl2WVp2RnpsYTdTTGVYVkYtWF9aMjc4U0JaSF9pSWo0T1loeE1ldkgySGR0RTJIMmJQeFdfMlNBZjlLX25BUXFjUUJXVUpVNHgwV0s4Q1Y3ZHZ3a0xxbTQtUTh5UUJaaUdSeldpVExxS1g4bWdBQ0FZaE5tVFltcU5aUXJhLTAtR3p3a3ZkMFpTTWVZWTFSQ0dkVFg4VWRFbDhrZ0htc05rZjhPQXRtekRJNVdpRXdCakg1WWFyQzV6SkhmTXdZNWVMVjExMTM0RTlhS041bHJLejBxOGljb2x1UnpwZ0dwRjdENGtXWHBBWVBtYnlZSllsYTBPSVZsVmw5U3dQanNaUGsxUC0tYXM5d2hmellza3hYb19KSFhYdlUtZmRoSFd6OWpFN2JRN2FKSU9JUmdGdGp1cVRMSkdYZGhVLVI1QmVLZV9HbkZCYlY4M2tyMm5sYVBwYlhzTnQ1d3pSU09SQ1lzcElsZ250U284eTM2d1FlYzQ4SnBQT3IxaF9RWnZTVmxnRk04cDZQaTNxdjVzb0dkTE9oa0FITDNrcG14NlhBVUU3b3p5WlU5Z25xeDg0MmVSRUt5NmxSZ2JKb184RktGdXQxai1TeXJBbUtQc25uT1lQVzU4Y3ZDdWZCQW1sa25oRS1FNl93dDNqUU9jR2RPNHJXLTNoay1UTnJ4R190MTZrRExRVDRwQ2pDbWFtS21Hd1hIYk9uaVdfVVMzZHRMMmFzM0JTSEplLWdXQ3Z4TUJudFctM0U2UXhtNFhMVG9rVmM0WHlDZVJRU1d2dldubTJmOTBTcURpbmpXbUV3MVJzNmRjTW91RTVPektvZy16djRxUW9kLWFIdHhIQUF3VmF5TnNNTnItNFIwOU4xNnRBT09YdGlGRV9MMkd0S2F2UjdadkIxbTFKN1gwUllhQkJGZTloVHdkMTJUTEFxQzRSNktqV0VZOXlqM21VRGZxV1ZpekRiYXhFY2YtR04xVkdCekpyb2d6cHU2cG5nTmdueWZrWHdNU29MRVZWWXhOeTFwX1NsUHR3aS1oWENXeU9IcDVnako4S3g3QjVGajNXeW92amh1TDE5dG9LUnItQk9ZODNsSVN1QlY4SXh1cDlMR184ejRNR2pRTFhiejBxN2VQWGc4Nk1ZQkJnYXFJM3ZjSnFNazRfZ3NEdHBJU2NVWGVHZzNaNmVrdWFJcHpKRmdjR1ZPakx0dkE0OGVwb1pGM2gwS2d0S291NGlNb0V1ZE5VN0o0Q3k2NTI3SzVuRmJteWtScUxoZUpNcjc4NVpBMkdSR3REZDdXdXFOTHBNYkM4MmhfeGtBaC1HVG82WHh2V3o5STFaQmZST3U0MFJOUTdBRW1nX2cwTkFZZjNrenE2Vm13dUpOU2RPV0s1TnlRREFnUDRySEFmei15SDRUcmVLeUFRNjZfdHROSHlldHlsTjF1R0s5QU40UzNmVGh0Sk5MMEZrbWVENWNxYU85ODl2Q3UzX2JadHlkeWEwcjE2c0NHdXBMMU1wbWMxMXgybHVfc2h5SW5HcGpwNDlUQnRzc01wbnJZNDVnN2x2emVoQjVXaVlWc1pFQ1J6N2VEZVZ1MWhnYnEtSHIwZThhYldHVFhlekYxcDIzdThBXzlILW9YVTVoZHJHSTVIMU9PbkVwVFlKQmpjWm1WMXBzOVVSdjZFNHdEeER2QWlkenAtcDRveE4wMDFEWXVtR1FwalBtVVE1ajN2VVFXN1NaVVNya2YxTFJYYi1ab0RXQ28yQ0dfclpsaEV1cjRkQlBwUy1LNVk4NGY1bk1oMVpNZGYydjQ3OHF5ZS11ZlNIMFRLTktYc1ZuVmhEUTFTVzBnTGxoN2MzbEMzLUw0NkZzQUFDSENfcFNqVEppeTJCZW92TVJzUDhfVkRvV2NUd28wOFJKeGs1ZFFoZzNGaUxMRVlkRmRNcGcxUVVIdDFXS05HbmY2RTdzNF9qbWVEaDNWcG9xSzlnTjBzTGFUSnZDam5ocnNYcDVydDhGWUhXT1hlR0dSUHc0ZDE4MnpmTE0tMmRjSFNzVE9NR3JXWDFkTVE5anN4WDVPZmhsMnFOSDRwd0NsaHZpeVJiM2JCNUNtTU9FZ2FwNC0yS1JNMUhmcVVBVVVOZzA4QXRTR2JZNG5tTllYS3JaS1B3aU5LVTBDNE1ldzRwUmdac2lMRHRCbFkxMFpTR09DNkgwejR5RzVDclR6ZFZ2dWpoT3RGTVU4N1pmX1JiYWhlTVZCUjRXczNBRDdVWXdGZmlSYXBVak90M1oxRGJGcXRiOEo2VGVSZDVtRUNvekV5NW9JV002OUhDUkw2a2xzX0xpMjE5WVRGSFhBTmtZVE1HS0JvSWk5YTFCdnlTUXM5NzRCZ3EtOXpUdWd0ZlFtU0s2WVp2Tk05cElicmtLQXhHVzZzNGt5U3h5blc2TEFJTTlvbTBmUFVLWkNMWV8wZVNVeDJodzUxN3hpX0ZnSS1iU0lGWmcuT1FWN1NVbGFSM3hYekU4NGRPeWhCR2V6UjM5ZjE5NTR1aGF1NHZNY2dxRQ"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "678",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 21:54:50 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
+        "x-ms-keyvault-rbac-cache": "ra_age=3160;da_age=9099;rd_age=9099;brd_age=8882;ra_notif_age=3739;dec_lev=0;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.358.1"
+      },
+      "ResponseBody": {
+        "key": {
+          "kid": "https://vaultname.vault.azure.net/keys/livekvtestkeybaka7192bf3/1beca7c6eebb4fbeba2f69a92c1737c1",
+          "kty": "RSA",
+          "key_ops": [
+            "encrypt",
+            "decrypt",
+            "sign",
+            "verify",
+            "wrapKey",
+            "unwrapKey"
+          ],
+          "n": "04OHmc4u5b9s7Zg9jwQhW2jU5FZdqk07hDxstNgAaTbiqCtivoXD8jLjSWwRgks-mei_9D2AWg3kpLC_Q7Y3Ls9GRNbW27NaK1tnmWfXNzMP8pfycju6DL3bpjlCIMFKdEeWqxRadOGd6GjRzSRhVumq1_RI7CxAxJ8L1787LzXzHq3pWjqJ5hE4F1FONkxDwrq-eIsW-zdECRwUDe9Mu_JVuXlYq4Ao-GAg307A6es-RR0_NgAXiTq4QxunOksgCu-uewpON1af7wq9ochXkzj7Ls-xJSZby9ED8Tj7y1yhWrNfBn_v57HkBKLafkcqj6aK28_shdRjTTBBlYIk6Q",
+          "e": "AQAB"
+        },
+        "attributes": {
+          "enabled": true,
+          "created": 1650059675,
+          "updated": 1650059675,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

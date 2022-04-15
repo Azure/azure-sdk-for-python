@@ -11,31 +11,30 @@ from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 from azure.keyvault.keys import KeyReleasePolicy
 from azure.keyvault.keys._shared import HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
-from devtools_testutils import AzureTestCase
-from parameterized import parameterized, param
-import pytest
+from devtools_testutils import AzureRecordedTestCase
 from six.moves.urllib_parse import urlparse
+import pytest
 
 
-def client_setup(testcase_func):
-    """decorator that creates a client to be passed in to a test method"""
+# def client_setup(testcase_func):
+#     """decorator that creates a client to be passed in to a test method"""
 
-    @functools.wraps(testcase_func)
-    def wrapper(test_class_instance, api_version, is_hsm=False, **kwargs):
-        test_class_instance._skip_if_not_configured(api_version, is_hsm)
-        endpoint_url = test_class_instance.managed_hsm_url if is_hsm else test_class_instance.vault_url
-        client = test_class_instance.create_key_client(endpoint_url, api_version=api_version, **kwargs)
+#     @functools.wraps(testcase_func)
+#     def wrapper(test_class_instance, api_version, is_hsm=False, **kwargs):
+#         test_class_instance._skip_if_not_configured(api_version, is_hsm)
+#         endpoint_url = test_class_instance.managed_hsm_url if is_hsm else test_class_instance.vault_url
+#         client = test_class_instance.create_key_client(endpoint_url, api_version=api_version, **kwargs)
 
-        if kwargs.get("is_async"):
-            import asyncio
+#         if kwargs.get("is_async"):
+#             import asyncio
 
-            coroutine = testcase_func(test_class_instance, client, is_hsm=is_hsm)
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(coroutine)
-        else:
-            testcase_func(test_class_instance, client, is_hsm=is_hsm)
+#             coroutine = testcase_func(test_class_instance, client, is_hsm=is_hsm)
+#             loop = asyncio.get_event_loop()
+#             loop.run_until_complete(coroutine)
+#         else:
+#             testcase_func(test_class_instance, client, is_hsm=is_hsm)
 
-    return wrapper
+#     return wrapper
 
 
 def get_attestation_token(attestation_uri):
@@ -47,11 +46,17 @@ def get_attestation_token(attestation_uri):
 
 def get_decorator(only_hsm=False, only_vault=False, api_versions=None, **kwargs):
     """returns a test decorator for test parameterization"""
+    # params = [
+    #     param(api_version=p[0], is_hsm=p[1], **kwargs)
+    #     for p in get_test_parameters(only_hsm, only_vault, api_versions=api_versions)
+    # ]
+    # return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
+
     params = [
-        param(api_version=p[0], is_hsm=p[1], **kwargs)
+        pytest.param(p[0],p[1], id=p[0] + ("_mhsm" if p[1] else "_vault" ))
         for p in get_test_parameters(only_hsm, only_vault, api_versions=api_versions)
     ]
-    return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
+    return params
 
 
 def get_release_policy(attestation_uri, **kwargs):
@@ -87,41 +92,59 @@ def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     return combinations
 
 
-def suffixed_test_name(testcase_func, param_num, param):
-    api_version = param.kwargs.get("api_version")
-    suffix = "mhsm" if param.kwargs.get("is_hsm") else "vault"
-    return "{}_{}_{}".format(
-        testcase_func.__name__, parameterized.to_safe_name(api_version), parameterized.to_safe_name(suffix)
-    )
+# def suffixed_test_name(testcase_func, param_num, param):
+#     api_version = param.kwargs.get("api_version")
+#     suffix = "mhsm" if param.kwargs.get("is_hsm") else "vault"
+#     return "{}_{}_{}".format(
+#         testcase_func.__name__, parameterized.to_safe_name(api_version), parameterized.to_safe_name(suffix)
+#     )
 
 
 def is_public_cloud():
     return (".microsoftonline.com" in os.getenv('AZURE_AUTHORITY_HOST', ''))
 
     
-class KeysTestCase(AzureTestCase):
-    def setUp(self, *args, **kwargs):
+class KeysClientPreparer(AzureRecordedTestCase):
+    def __init__(self, *args, **kwargs):
         vault_playback_url = "https://vaultname.vault.azure.net"
         hsm_playback_url = "https://managedhsmname.managedhsm.azure.net"
 
         if self.is_live:
             self.vault_url = os.environ["AZURE_KEYVAULT_URL"]
-            self._scrub_url(real_url=self.vault_url, playback_url=vault_playback_url)
+            # self._scrub_url(real_url=self.vault_url, playback_url=vault_playback_url)
 
             self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
-            if self.managed_hsm_url:
-                self._scrub_url(real_url=self.managed_hsm_url, playback_url=hsm_playback_url)
+            # if self.managed_hsm_url:
+            #     self._scrub_url(real_url=self.managed_hsm_url, playback_url=hsm_playback_url)
         else:
             self.vault_url = vault_playback_url
             self.managed_hsm_url = hsm_playback_url
 
         self._set_mgmt_settings_real_values()
-        super(KeysTestCase, self).setUp(*args, **kwargs)
 
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(KeysTestCase, self).tearDown()
+    def __call__(self, fn):
+        def _preparer(test_class, api_version, is_hsm, **kwargs):
+            if not is_hsm:
+                is_hsm = False
+            #self._skip_if_not_configured(api_version, is_hsm)
+            endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
+            client = self.create_key_client(endpoint_url, api_version=api_version, **kwargs)
+
+            with client:
+                fn(test_class, client, is_hsm=is_hsm, managed_hsm_url = self.managed_hsm_url, vault_url = self.vault_url)
+
+            # if kwargs.get("is_async"):
+            #     import asyncio
+
+            #     coroutine = testcase_func(test_class_instance, client, is_hsm=is_hsm)
+            #     loop = asyncio.get_event_loop()
+            #     loop.run_until_complete(coroutine)
+            # else:
+            
+
+        return _preparer
+        
+
 
     def create_key_client(self, vault_uri, **kwargs):
         if kwargs.pop("is_async", False):
@@ -155,10 +178,10 @@ class KeysTestCase(AzureTestCase):
             return real_uri
         return playback_uri
 
-    def _scrub_url(self, real_url, playback_url):
-        real = urlparse(real_url)
-        playback = urlparse(playback_url)
-        self.scrubber.register_name_pair(real.netloc, playback.netloc)
+    # def _scrub_url(self, real_url, playback_url):
+    #     real = urlparse(real_url)
+    #     playback = urlparse(playback_url)
+    #     super.scrubber.register_name_pair(real.netloc, playback.netloc)
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:

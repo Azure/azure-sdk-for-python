@@ -1,0 +1,2059 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-server-latency": "1"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 22:23:29 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAQAAAL3j69kOAAAAwSDpKQUAAADI4-vZDgAAAA; expires=Sun, 15-May-2022 22:23:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12651.5 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAQAAAL3j69kOAAAAwSDpKQUAAADI4-vZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 Apr 2022 22:23:29 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAQAAAL3j69kOAAAAwSDpKQUAAADI4-vZDgAAAA; expires=Sun, 15-May-2022 22:23:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "254"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061410,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061410
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/70dd6452269306a803c51d0a62687638",
+          "kty": "RSA-HSM",
+          "n": "sLO1RYW3lDhnqbzqbzC0O6-J4UdQVdcECesJY3714jliduE10PY3EC6zqv81mskK6g51aMrp1bnip0BIYBPVb1F90QQraA1qvzDSeRc_yRqU6vq2WPyS7fjTxG9XOFDweI1kCQxZeJ5j8TSWjhL-XkknOU23v-iZGEeZ5yEXblmOP1jhyCUYhhQ1qA5jo-2NAvnckpOE_DvfIbGEySRJXh_3B_TpyBVlUHsncYAFeowW9IubwBa8V3J8w3t_zeFMrAXfdAJBdnRtRDTRTxXhxJGE7CBSvpkBifdO_VKq39jDnZBC3YcXBuA0ckMsWegY9VBuSU3w6gGaZCViT8ZuMw"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "260"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061412,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061412
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/f06a7fde1f804b541f4ad142928d5f93",
+          "kty": "RSA-HSM",
+          "n": "mkktH41XAjOt8Gn6LpGUN-2bQHvP0Gyj8kMNxsAJdFPw9vH-X8dQaY4hmltID0TH5DydwUSeedlE3MTzWvSc7BgYwqJPTIv5dwCQjegnIVDIPw6MZhunXxJuacxqlS-h5mUf2buDeEddOeltfGPXk_ndbm0eSXlZH3D3OdZQBGvzvRLXYrqzVRdY9mXY2nSMihP151dytx8mfEZhWc6NjJuc8n9RV9WNGqrqqYKd6vLndLjiVVMFHwGGKS4fY5ipkOJK-jsKS3qgNZ_np-6kMTxTWKt6oOHNnjzGU6avINo14RajNBNbQ3ZGrJdmuFirJ2uZG7gjHfP2NvhO0foyww"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "277"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061415,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061415
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/8278534109aa42122ab8b0b5f5be1c1a",
+          "kty": "RSA-HSM",
+          "n": "l5zT0qtwAm8cFH1t_iS5NzSkfKEViPgsvOPnCCHkFbSEW0sh5X27RCNXIo0OPRTz8iWj_XqIL4YH_Dx21yWlKcmEnVY7PTGnd_G02-kAb2H1teBqo5GbhVWS62bvy2rcX_0Vyp5-_X4gNFvOIuYrhA6Om9BXkkwi43ZgMHDDcKnTJqtHmNGsV4L_AhQCJ7-KYhpDXYXXHOnc3FTdWpG9JVp3M9N_WJikR5i1RjJ55cHxKDvRIi9fV7l6G5uDnh0cYoxKFeacB6mxgFGYgNCPxbDAX0We62CGNdHO4_4jB-KgdvylGdUz4DVukpxpKDI8yZGgHdaq0La3cdWTPc1osQ"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "273"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061417,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061417
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/0e9bf33012480f123e7adae7349067b9",
+          "kty": "RSA-HSM",
+          "n": "td0fm4bpBzdsri-Aw0Z8Esp6SI4S2AZZLZE1WlSTjdvznvVp33ra6tKpeTeU_8uW3GzS4PAtgmvga17yVxP5O98KWYEQxeLrmXZ1vkjTcGRYz3eWySIEMz0gjVx-gyaczTRLjsIIAk8WrwYvSUOoRTiSvd3qI5Z2rvexHdFnLlr2Vu10J-iVc-ZSW86dKHvNuc4TG3GTLp9Z-Xbp4R5BpM0goiHuy3C0-vfSLylqix2PIfAIRBNwiPFfCLv288flooNCtJbVgYQeTEbOFH5iyu6YXFu_NAB8ZolQBBpDEaMQeyGxcirp9PCW0S4dlcVzqZff89UIy_fQkWt8iofbpw"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "285"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061420,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061420
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/5c79c2eefa1e4ee9147b964253033fdb",
+          "kty": "RSA-HSM",
+          "n": "jRrl1rzNDzZHYFzJbDL7OoWpJh1xMzsjGI43RBCzhUeDHhFQ9FKcZHCnhePp2GHmGwnG_onnMO0c5jyYu30kCwmRm77p1dIZiY8Qeqc1lBLWGC4G7IeJmFPrCWXURuZvD6WDoFn18LraEghTILJErE_R4SyQf3WJTOzkgrXsrZRqm_rH3AzK07v01rktrPPtPVowiy1mjNd9I_r5wRjXPs6mU11sHMX8ewkIuwhwUP5RLHYMbWQZcO8e2HrfX4a50ZUNOiobY01mFDLiqScAGB3DZYIdWDZioJyW8hkJ4P7zyAYnHXpnpU7tStxwA2TDcxSTZ2yx7njcx2jb5nEZTw"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "244"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061422,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061422
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/92843516520b07c03f52808bd693754c",
+          "kty": "RSA-HSM",
+          "n": "r9cXy5icy5d2pgXiyRWTBEaqsOszncrjqgt4MEPRX8oketwtE7LlkxUKH58tjU0h3ut33as5Z5uFB1UxwNL9-3m04Bk6mk2n5iAX0We_pV6Db3m4qgc9RNFFDOYvn7hm25VVd-zfy0B1v4JB-QRGntLTjQtoGbzc8-bxLOGreHRlpmHl2CnayIV_SPkI-S9vMMzlcIopXKqL4ma6naX_atWTRUd9QNJzkzuRFrE1jGU6j5zG637D4H9Q3vi5RSQvofdwdLWYLWZVhXPn6RLXmMNbEmcZsdQyqEqDitsSb0RiXmScIbw5bTtet6kFH_tYT3wO1Mqe8ok3PgiQRC2-jw"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "270"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061424,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061424
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "decrypt",
+            "encrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/8425570aa8d000d08656d9e6f53d5d10",
+          "kty": "RSA-HSM",
+          "n": "kfqHjhc9BwJd2wdGrDgUJvf2Ppln30P4Ov8XiWCZQ1vwEMIvd7xaJr_cQ8txGt9TR1cjRac5wS4HS9akK-PZRCWAxZqj-hSZ9JZNsB6q1tzRbrE9x5UclCEGlNEmYmBZjF0FFMZ28O0RRZE28j2Mmh7nYE5RhoPTr1ZXnni7ahVR-lRvIyfU5t9G58_oVMhVGXrrlzuMFZIh1MV1bJNhY-Jsfgi2Qfggiyc1RqafzOWR419nddMxZ2EoDtNnXe8QwlK60MkvPwTltdb2JOvxK4frhuerg0hll2lqJhrjNc5y2gpjewrvqCF5lxAPNJWH7sjLnDwxxIjpCJJHoSnD8w"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "170"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061410,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061410
+        },
+        "deletedDate": 1650061425,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "encrypt",
+            "decrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/70dd6452269306a803c51d0a62687638",
+          "kty": "RSA-HSM",
+          "n": "sLO1RYW3lDhnqbzqbzC0O6-J4UdQVdcECesJY3714jliduE10PY3EC6zqv81mskK6g51aMrp1bnip0BIYBPVb1F90QQraA1qvzDSeRc_yRqU6vq2WPyS7fjTxG9XOFDweI1kCQxZeJ5j8TSWjhL-XkknOU23v-iZGEeZ5yEXblmOP1jhyCUYhhQ1qA5jo-2NAvnckpOE_DvfIbGEySRJXh_3B_TpyBVlUHsncYAFeowW9IubwBa8V3J8w3t_zeFMrAXfdAJBdnRtRDTRTxXhxJGE7CBSvpkBifdO_VKq39jDnZBC3YcXBuA0ckMsWegY9VBuSU3w6gGaZCViT8ZuMw"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c",
+        "scheduledPurgeDate": 1650666225
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "29"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061410,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061410
+        },
+        "deletedDate": 1650061425,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/70dd6452269306a803c51d0a62687638",
+          "kty": "RSA-HSM",
+          "n": "sLO1RYW3lDhnqbzqbzC0O6-J4UdQVdcECesJY3714jliduE10PY3EC6zqv81mskK6g51aMrp1bnip0BIYBPVb1F90QQraA1qvzDSeRc_yRqU6vq2WPyS7fjTxG9XOFDweI1kCQxZeJ5j8TSWjhL-XkknOU23v-iZGEeZ5yEXblmOP1jhyCUYhhQ1qA5jo-2NAvnckpOE_DvfIbGEySRJXh_3B_TpyBVlUHsncYAFeowW9IubwBa8V3J8w3t_zeFMrAXfdAJBdnRtRDTRTxXhxJGE7CBSvpkBifdO_VKq39jDnZBC3YcXBuA0ckMsWegY9VBuSU3w6gGaZCViT8ZuMw"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c",
+        "scheduledPurgeDate": 1650666225
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "164"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061412,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061412
+        },
+        "deletedDate": 1650061425,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "encrypt",
+            "decrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/f06a7fde1f804b541f4ad142928d5f93",
+          "kty": "RSA-HSM",
+          "n": "mkktH41XAjOt8Gn6LpGUN-2bQHvP0Gyj8kMNxsAJdFPw9vH-X8dQaY4hmltID0TH5DydwUSeedlE3MTzWvSc7BgYwqJPTIv5dwCQjegnIVDIPw6MZhunXxJuacxqlS-h5mUf2buDeEddOeltfGPXk_ndbm0eSXlZH3D3OdZQBGvzvRLXYrqzVRdY9mXY2nSMihP151dytx8mfEZhWc6NjJuc8n9RV9WNGqrqqYKd6vLndLjiVVMFHwGGKS4fY5ipkOJK-jsKS3qgNZ_np-6kMTxTWKt6oOHNnjzGU6avINo14RajNBNbQ3ZGrJdmuFirJ2uZG7gjHfP2NvhO0foyww"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c",
+        "scheduledPurgeDate": 1650666225
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "31"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061412,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061412
+        },
+        "deletedDate": 1650061425,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/f06a7fde1f804b541f4ad142928d5f93",
+          "kty": "RSA-HSM",
+          "n": "mkktH41XAjOt8Gn6LpGUN-2bQHvP0Gyj8kMNxsAJdFPw9vH-X8dQaY4hmltID0TH5DydwUSeedlE3MTzWvSc7BgYwqJPTIv5dwCQjegnIVDIPw6MZhunXxJuacxqlS-h5mUf2buDeEddOeltfGPXk_ndbm0eSXlZH3D3OdZQBGvzvRLXYrqzVRdY9mXY2nSMihP151dytx8mfEZhWc6NjJuc8n9RV9WNGqrqqYKd6vLndLjiVVMFHwGGKS4fY5ipkOJK-jsKS3qgNZ_np-6kMTxTWKt6oOHNnjzGU6avINo14RajNBNbQ3ZGrJdmuFirJ2uZG7gjHfP2NvhO0foyww"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c",
+        "scheduledPurgeDate": 1650666225
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "188"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061415,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061415
+        },
+        "deletedDate": 1650061425,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "encrypt",
+            "decrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/8278534109aa42122ab8b0b5f5be1c1a",
+          "kty": "RSA-HSM",
+          "n": "l5zT0qtwAm8cFH1t_iS5NzSkfKEViPgsvOPnCCHkFbSEW0sh5X27RCNXIo0OPRTz8iWj_XqIL4YH_Dx21yWlKcmEnVY7PTGnd_G02-kAb2H1teBqo5GbhVWS62bvy2rcX_0Vyp5-_X4gNFvOIuYrhA6Om9BXkkwi43ZgMHDDcKnTJqtHmNGsV4L_AhQCJ7-KYhpDXYXXHOnc3FTdWpG9JVp3M9N_WJikR5i1RjJ55cHxKDvRIi9fV7l6G5uDnh0cYoxKFeacB6mxgFGYgNCPxbDAX0We62CGNdHO4_4jB-KgdvylGdUz4DVukpxpKDI8yZGgHdaq0La3cdWTPc1osQ"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c",
+        "scheduledPurgeDate": 1650666225
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "28"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061415,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061415
+        },
+        "deletedDate": 1650061425,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/8278534109aa42122ab8b0b5f5be1c1a",
+          "kty": "RSA-HSM",
+          "n": "l5zT0qtwAm8cFH1t_iS5NzSkfKEViPgsvOPnCCHkFbSEW0sh5X27RCNXIo0OPRTz8iWj_XqIL4YH_Dx21yWlKcmEnVY7PTGnd_G02-kAb2H1teBqo5GbhVWS62bvy2rcX_0Vyp5-_X4gNFvOIuYrhA6Om9BXkkwi43ZgMHDDcKnTJqtHmNGsV4L_AhQCJ7-KYhpDXYXXHOnc3FTdWpG9JVp3M9N_WJikR5i1RjJ55cHxKDvRIi9fV7l6G5uDnh0cYoxKFeacB6mxgFGYgNCPxbDAX0We62CGNdHO4_4jB-KgdvylGdUz4DVukpxpKDI8yZGgHdaq0La3cdWTPc1osQ"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c",
+        "scheduledPurgeDate": 1650666225
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "176"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061417,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061417
+        },
+        "deletedDate": 1650061426,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "encrypt",
+            "decrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/0e9bf33012480f123e7adae7349067b9",
+          "kty": "RSA-HSM",
+          "n": "td0fm4bpBzdsri-Aw0Z8Esp6SI4S2AZZLZE1WlSTjdvznvVp33ra6tKpeTeU_8uW3GzS4PAtgmvga17yVxP5O98KWYEQxeLrmXZ1vkjTcGRYz3eWySIEMz0gjVx-gyaczTRLjsIIAk8WrwYvSUOoRTiSvd3qI5Z2rvexHdFnLlr2Vu10J-iVc-ZSW86dKHvNuc4TG3GTLp9Z-Xbp4R5BpM0goiHuy3C0-vfSLylqix2PIfAIRBNwiPFfCLv288flooNCtJbVgYQeTEbOFH5iyu6YXFu_NAB8ZolQBBpDEaMQeyGxcirp9PCW0S4dlcVzqZff89UIy_fQkWt8iofbpw"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c",
+        "scheduledPurgeDate": 1650666226
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "28"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061417,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061417
+        },
+        "deletedDate": 1650061426,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/0e9bf33012480f123e7adae7349067b9",
+          "kty": "RSA-HSM",
+          "n": "td0fm4bpBzdsri-Aw0Z8Esp6SI4S2AZZLZE1WlSTjdvznvVp33ra6tKpeTeU_8uW3GzS4PAtgmvga17yVxP5O98KWYEQxeLrmXZ1vkjTcGRYz3eWySIEMz0gjVx-gyaczTRLjsIIAk8WrwYvSUOoRTiSvd3qI5Z2rvexHdFnLlr2Vu10J-iVc-ZSW86dKHvNuc4TG3GTLp9Z-Xbp4R5BpM0goiHuy3C0-vfSLylqix2PIfAIRBNwiPFfCLv288flooNCtJbVgYQeTEbOFH5iyu6YXFu_NAB8ZolQBBpDEaMQeyGxcirp9PCW0S4dlcVzqZff89UIy_fQkWt8iofbpw"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c",
+        "scheduledPurgeDate": 1650666226
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "174"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061420,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061420
+        },
+        "deletedDate": 1650061426,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "encrypt",
+            "decrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/5c79c2eefa1e4ee9147b964253033fdb",
+          "kty": "RSA-HSM",
+          "n": "jRrl1rzNDzZHYFzJbDL7OoWpJh1xMzsjGI43RBCzhUeDHhFQ9FKcZHCnhePp2GHmGwnG_onnMO0c5jyYu30kCwmRm77p1dIZiY8Qeqc1lBLWGC4G7IeJmFPrCWXURuZvD6WDoFn18LraEghTILJErE_R4SyQf3WJTOzkgrXsrZRqm_rH3AzK07v01rktrPPtPVowiy1mjNd9I_r5wRjXPs6mU11sHMX8ewkIuwhwUP5RLHYMbWQZcO8e2HrfX4a50ZUNOiobY01mFDLiqScAGB3DZYIdWDZioJyW8hkJ4P7zyAYnHXpnpU7tStxwA2TDcxSTZ2yx7njcx2jb5nEZTw"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c",
+        "scheduledPurgeDate": 1650666226
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "28"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061420,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061420
+        },
+        "deletedDate": 1650061426,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/5c79c2eefa1e4ee9147b964253033fdb",
+          "kty": "RSA-HSM",
+          "n": "jRrl1rzNDzZHYFzJbDL7OoWpJh1xMzsjGI43RBCzhUeDHhFQ9FKcZHCnhePp2GHmGwnG_onnMO0c5jyYu30kCwmRm77p1dIZiY8Qeqc1lBLWGC4G7IeJmFPrCWXURuZvD6WDoFn18LraEghTILJErE_R4SyQf3WJTOzkgrXsrZRqm_rH3AzK07v01rktrPPtPVowiy1mjNd9I_r5wRjXPs6mU11sHMX8ewkIuwhwUP5RLHYMbWQZcO8e2HrfX4a50ZUNOiobY01mFDLiqScAGB3DZYIdWDZioJyW8hkJ4P7zyAYnHXpnpU7tStxwA2TDcxSTZ2yx7njcx2jb5nEZTw"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c",
+        "scheduledPurgeDate": 1650666226
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "165"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061422,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061422
+        },
+        "deletedDate": 1650061427,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "encrypt",
+            "decrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/92843516520b07c03f52808bd693754c",
+          "kty": "RSA-HSM",
+          "n": "r9cXy5icy5d2pgXiyRWTBEaqsOszncrjqgt4MEPRX8oketwtE7LlkxUKH58tjU0h3ut33as5Z5uFB1UxwNL9-3m04Bk6mk2n5iAX0We_pV6Db3m4qgc9RNFFDOYvn7hm25VVd-zfy0B1v4JB-QRGntLTjQtoGbzc8-bxLOGreHRlpmHl2CnayIV_SPkI-S9vMMzlcIopXKqL4ma6naX_atWTRUd9QNJzkzuRFrE1jGU6j5zG637D4H9Q3vi5RSQvofdwdLWYLWZVhXPn6RLXmMNbEmcZsdQyqEqDitsSb0RiXmScIbw5bTtet6kFH_tYT3wO1Mqe8ok3PgiQRC2-jw"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c",
+        "scheduledPurgeDate": 1650666227
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "32"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061422,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061422
+        },
+        "deletedDate": 1650061427,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/92843516520b07c03f52808bd693754c",
+          "kty": "RSA-HSM",
+          "n": "r9cXy5icy5d2pgXiyRWTBEaqsOszncrjqgt4MEPRX8oketwtE7LlkxUKH58tjU0h3ut33as5Z5uFB1UxwNL9-3m04Bk6mk2n5iAX0We_pV6Db3m4qgc9RNFFDOYvn7hm25VVd-zfy0B1v4JB-QRGntLTjQtoGbzc8-bxLOGreHRlpmHl2CnayIV_SPkI-S9vMMzlcIopXKqL4ma6naX_atWTRUd9QNJzkzuRFrE1jGU6j5zG637D4H9Q3vi5RSQvofdwdLWYLWZVhXPn6RLXmMNbEmcZsdQyqEqDitsSb0RiXmScIbw5bTtet6kFH_tYT3wO1Mqe8ok3PgiQRC2-jw"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c",
+        "scheduledPurgeDate": 1650666227
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "201"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061424,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061424
+        },
+        "deletedDate": 1650061427,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "encrypt",
+            "decrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/8425570aa8d000d08656d9e6f53d5d10",
+          "kty": "RSA-HSM",
+          "n": "kfqHjhc9BwJd2wdGrDgUJvf2Ppln30P4Ov8XiWCZQ1vwEMIvd7xaJr_cQ8txGt9TR1cjRac5wS4HS9akK-PZRCWAxZqj-hSZ9JZNsB6q1tzRbrE9x5UclCEGlNEmYmBZjF0FFMZ28O0RRZE28j2Mmh7nYE5RhoPTr1ZXnni7ahVR-lRvIyfU5t9G58_oVMhVGXrrlzuMFZIh1MV1bJNhY-Jsfgi2Qfggiyc1RqafzOWR419nddMxZ2EoDtNnXe8QwlK60MkvPwTltdb2JOvxK4frhuerg0hll2lqJhrjNc5y2gpjewrvqCF5lxAPNJWH7sjLnDwxxIjpCJJHoSnD8w"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c",
+        "scheduledPurgeDate": 1650666227
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "864",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "29"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061424,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061424
+        },
+        "deletedDate": 1650061427,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/8425570aa8d000d08656d9e6f53d5d10",
+          "kty": "RSA-HSM",
+          "n": "kfqHjhc9BwJd2wdGrDgUJvf2Ppln30P4Ov8XiWCZQ1vwEMIvd7xaJr_cQ8txGt9TR1cjRac5wS4HS9akK-PZRCWAxZqj-hSZ9JZNsB6q1tzRbrE9x5UclCEGlNEmYmBZjF0FFMZ28O0RRZE28j2Mmh7nYE5RhoPTr1ZXnni7ahVR-lRvIyfU5t9G58_oVMhVGXrrlzuMFZIh1MV1bJNhY-Jsfgi2Qfggiyc1RqafzOWR419nddMxZ2EoDtNnXe8QwlK60MkvPwTltdb2JOvxK4frhuerg0hll2lqJhrjNc5y2gpjewrvqCF5lxAPNJWH7sjLnDwxxIjpCJJHoSnD8w"
+        },
+        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c",
+        "scheduledPurgeDate": 1650666227
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "4080",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "33"
+      },
+      "ResponseBody": {
+        "nextLink": "00000000-0000-0000-0000-000000000000deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-Sklwb0FObnRjOUpjQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650058982,
+              "enabled": true,
+              "exp": 2524723200,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650058985
+            },
+            "deletedDate": 1650058986,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestcrud-rsa-key3e722c4f",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestcrud-rsa-key3e722c4f",
+            "scheduledPurgeDate": 1650663786,
+            "tags": {
+              "foo": "updated tag"
+            }
+          },
+          {
+            "attributes": {
+              "created": 1650059031,
+              "enabled": true,
+              "exp": 2524723200,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650059035
+            },
+            "deletedDate": 1650059035,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestcrud-rsa-key3e642c4e",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestcrud-rsa-key3e642c4e",
+            "scheduledPurgeDate": 1650663835,
+            "tags": {
+              "foo": "updated tag"
+            }
+          },
+          {
+            "attributes": {
+              "created": 1650060465,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060465
+            },
+            "deletedDate": 1650060479,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey0e11a2b63",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey0e11a2b63",
+            "scheduledPurgeDate": 1650665279
+          },
+          {
+            "attributes": {
+              "created": 1650060467,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060467
+            },
+            "deletedDate": 1650060480,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey1e11a2b63",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey1e11a2b63",
+            "scheduledPurgeDate": 1650665280
+          },
+          {
+            "attributes": {
+              "created": 1650060470,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060470
+            },
+            "deletedDate": 1650060480,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey2e11a2b63",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey2e11a2b63",
+            "scheduledPurgeDate": 1650665280
+          },
+          {
+            "attributes": {
+              "created": 1650060472,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060472
+            },
+            "deletedDate": 1650060480,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey3e11a2b63",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey3e11a2b63",
+            "scheduledPurgeDate": 1650665280
+          },
+          {
+            "attributes": {
+              "created": 1650060474,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060474
+            },
+            "deletedDate": 1650060481,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey4e11a2b63",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey4e11a2b63",
+            "scheduledPurgeDate": 1650665281
+          },
+          {
+            "attributes": {
+              "created": 1650060477,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060477
+            },
+            "deletedDate": 1650060481,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey5e11a2b63",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey5e11a2b63",
+            "scheduledPurgeDate": 1650665281
+          },
+          {
+            "attributes": {
+              "created": 1650060479,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060479
+            },
+            "deletedDate": 1650060482,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey6e11a2b63",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey6e11a2b63",
+            "scheduledPurgeDate": 1650665282
+          },
+          {
+            "attributes": {
+              "created": 1650060538,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060538
+            },
+            "deletedDate": 1650060553,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey0e10c2b62",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey0e10c2b62",
+            "scheduledPurgeDate": 1650665353
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys?api-version=7.3\u0026maxresults=25\u0026$skiptoken=K1JJRDp-Sklwb0FObnRjOUpjQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "3956",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "37"
+      },
+      "ResponseBody": {
+        "nextLink": "00000000-0000-0000-0000-000000000000deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-Sklwb0FObnRjOUp3QUFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650060540,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060540
+            },
+            "deletedDate": 1650060553,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey1e10c2b62",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey1e10c2b62",
+            "scheduledPurgeDate": 1650665353
+          },
+          {
+            "attributes": {
+              "created": 1650060543,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060543
+            },
+            "deletedDate": 1650060553,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey2e10c2b62",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey2e10c2b62",
+            "scheduledPurgeDate": 1650665353
+          },
+          {
+            "attributes": {
+              "created": 1650060545,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060545
+            },
+            "deletedDate": 1650060554,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey3e10c2b62",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey3e10c2b62",
+            "scheduledPurgeDate": 1650665354
+          },
+          {
+            "attributes": {
+              "created": 1650060547,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060547
+            },
+            "deletedDate": 1650060554,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey4e10c2b62",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey4e10c2b62",
+            "scheduledPurgeDate": 1650665354
+          },
+          {
+            "attributes": {
+              "created": 1650060550,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060550
+            },
+            "deletedDate": 1650060554,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey5e10c2b62",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey5e10c2b62",
+            "scheduledPurgeDate": 1650665354
+          },
+          {
+            "attributes": {
+              "created": 1650060552,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650060552
+            },
+            "deletedDate": 1650060555,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey6e10c2b62",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey6e10c2b62",
+            "scheduledPurgeDate": 1650665355
+          },
+          {
+            "attributes": {
+              "created": 1650061410,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650061410
+            },
+            "deletedDate": 1650061425,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c",
+            "scheduledPurgeDate": 1650666225
+          },
+          {
+            "attributes": {
+              "created": 1650061412,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650061412
+            },
+            "deletedDate": 1650061425,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c",
+            "scheduledPurgeDate": 1650666225
+          },
+          {
+            "attributes": {
+              "created": 1650061415,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650061415
+            },
+            "deletedDate": 1650061425,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c",
+            "scheduledPurgeDate": 1650666225
+          },
+          {
+            "attributes": {
+              "created": 1650061417,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650061417
+            },
+            "deletedDate": 1650061426,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c",
+            "scheduledPurgeDate": 1650666226
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys?api-version=7.3\u0026maxresults=25\u0026$skiptoken=K1JJRDp-Sklwb0FObnRjOUp3QUFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1145",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "32"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "attributes": {
+              "created": 1650061420,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650061420
+            },
+            "deletedDate": 1650061426,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c",
+            "scheduledPurgeDate": 1650666226
+          },
+          {
+            "attributes": {
+              "created": 1650061422,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650061422
+            },
+            "deletedDate": 1650061427,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c",
+            "scheduledPurgeDate": 1650666227
+          },
+          {
+            "attributes": {
+              "created": 1650061424,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650061424
+            },
+            "deletedDate": 1650061427,
+            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c",
+            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c",
+            "scheduledPurgeDate": 1650666227
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c/recover?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "110"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061410,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061410
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/70dd6452269306a803c51d0a62687638",
+          "kty": "RSA-HSM",
+          "n": "sLO1RYW3lDhnqbzqbzC0O6-J4UdQVdcECesJY3714jliduE10PY3EC6zqv81mskK6g51aMrp1bnip0BIYBPVb1F90QQraA1qvzDSeRc_yRqU6vq2WPyS7fjTxG9XOFDweI1kCQxZeJ5j8TSWjhL-XkknOU23v-iZGEeZ5yEXblmOP1jhyCUYhhQ1qA5jo-2NAvnckpOE_DvfIbGEySRJXh_3B_TpyBVlUHsncYAFeowW9IubwBa8V3J8w3t_zeFMrAXfdAJBdnRtRDTRTxXhxJGE7CBSvpkBifdO_VKq39jDnZBC3YcXBuA0ckMsWegY9VBuSU3w6gGaZCViT8ZuMw"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c/recover?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "113"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061412,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061412
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/f06a7fde1f804b541f4ad142928d5f93",
+          "kty": "RSA-HSM",
+          "n": "mkktH41XAjOt8Gn6LpGUN-2bQHvP0Gyj8kMNxsAJdFPw9vH-X8dQaY4hmltID0TH5DydwUSeedlE3MTzWvSc7BgYwqJPTIv5dwCQjegnIVDIPw6MZhunXxJuacxqlS-h5mUf2buDeEddOeltfGPXk_ndbm0eSXlZH3D3OdZQBGvzvRLXYrqzVRdY9mXY2nSMihP151dytx8mfEZhWc6NjJuc8n9RV9WNGqrqqYKd6vLndLjiVVMFHwGGKS4fY5ipkOJK-jsKS3qgNZ_np-6kMTxTWKt6oOHNnjzGU6avINo14RajNBNbQ3ZGrJdmuFirJ2uZG7gjHfP2NvhO0foyww"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c/recover?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "119"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061415,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061415
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/8278534109aa42122ab8b0b5f5be1c1a",
+          "kty": "RSA-HSM",
+          "n": "l5zT0qtwAm8cFH1t_iS5NzSkfKEViPgsvOPnCCHkFbSEW0sh5X27RCNXIo0OPRTz8iWj_XqIL4YH_Dx21yWlKcmEnVY7PTGnd_G02-kAb2H1teBqo5GbhVWS62bvy2rcX_0Vyp5-_X4gNFvOIuYrhA6Om9BXkkwi43ZgMHDDcKnTJqtHmNGsV4L_AhQCJ7-KYhpDXYXXHOnc3FTdWpG9JVp3M9N_WJikR5i1RjJ55cHxKDvRIi9fV7l6G5uDnh0cYoxKFeacB6mxgFGYgNCPxbDAX0We62CGNdHO4_4jB-KgdvylGdUz4DVukpxpKDI8yZGgHdaq0La3cdWTPc1osQ"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c/recover?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "124"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061417,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061417
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/0e9bf33012480f123e7adae7349067b9",
+          "kty": "RSA-HSM",
+          "n": "td0fm4bpBzdsri-Aw0Z8Esp6SI4S2AZZLZE1WlSTjdvznvVp33ra6tKpeTeU_8uW3GzS4PAtgmvga17yVxP5O98KWYEQxeLrmXZ1vkjTcGRYz3eWySIEMz0gjVx-gyaczTRLjsIIAk8WrwYvSUOoRTiSvd3qI5Z2rvexHdFnLlr2Vu10J-iVc-ZSW86dKHvNuc4TG3GTLp9Z-Xbp4R5BpM0goiHuy3C0-vfSLylqix2PIfAIRBNwiPFfCLv288flooNCtJbVgYQeTEbOFH5iyu6YXFu_NAB8ZolQBBpDEaMQeyGxcirp9PCW0S4dlcVzqZff89UIy_fQkWt8iofbpw"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c/recover?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "129"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061420,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061420
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/5c79c2eefa1e4ee9147b964253033fdb",
+          "kty": "RSA-HSM",
+          "n": "jRrl1rzNDzZHYFzJbDL7OoWpJh1xMzsjGI43RBCzhUeDHhFQ9FKcZHCnhePp2GHmGwnG_onnMO0c5jyYu30kCwmRm77p1dIZiY8Qeqc1lBLWGC4G7IeJmFPrCWXURuZvD6WDoFn18LraEghTILJErE_R4SyQf3WJTOzkgrXsrZRqm_rH3AzK07v01rktrPPtPVowiy1mjNd9I_r5wRjXPs6mU11sHMX8ewkIuwhwUP5RLHYMbWQZcO8e2HrfX4a50ZUNOiobY01mFDLiqScAGB3DZYIdWDZioJyW8hkJ4P7zyAYnHXpnpU7tStxwA2TDcxSTZ2yx7njcx2jb5nEZTw"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c/recover?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "119"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061422,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061422
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/92843516520b07c03f52808bd693754c",
+          "kty": "RSA-HSM",
+          "n": "r9cXy5icy5d2pgXiyRWTBEaqsOszncrjqgt4MEPRX8oketwtE7LlkxUKH58tjU0h3ut33as5Z5uFB1UxwNL9-3m04Bk6mk2n5iAX0We_pV6Db3m4qgc9RNFFDOYvn7hm25VVd-zfy0B1v4JB-QRGntLTjQtoGbzc8-bxLOGreHRlpmHl2CnayIV_SPkI-S9vMMzlcIopXKqL4ma6naX_atWTRUd9QNJzkzuRFrE1jGU6j5zG637D4H9Q3vi5RSQvofdwdLWYLWZVhXPn6RLXmMNbEmcZsdQyqEqDitsSb0RiXmScIbw5bTtet6kFH_tYT3wO1Mqe8ok3PgiQRC2-jw"
+        }
+      }
+    },
+    {
+      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c/recover?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "721",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "117"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650061424,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650061424
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "wrapKey"
+          ],
+          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/8425570aa8d000d08656d9e6f53d5d10",
+          "kty": "RSA-HSM",
+          "n": "kfqHjhc9BwJd2wdGrDgUJvf2Ppln30P4Ov8XiWCZQ1vwEMIvd7xaJr_cQ8txGt9TR1cjRac5wS4HS9akK-PZRCWAxZqj-hSZ9JZNsB6q1tzRbrE9x5UclCEGlNEmYmBZjF0FFMZ28O0RRZE28j2Mmh7nYE5RhoPTr1ZXnni7ahVR-lRvIyfU5t9G58_oVMhVGXrrlzuMFZIh1MV1bJNhY-Jsfgi2Qfggiyc1RqafzOWR419nddMxZ2EoDtNnXe8QwlK60MkvPwTltdb2JOvxK4frhuerg0hll2lqJhrjNc5y2gpjewrvqCF5lxAPNJWH7sjLnDwxxIjpCJJHoSnD8w"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
