@@ -530,7 +530,7 @@ def test_send_failure_cases(connection_str):
             producer.send_event(EventData('back pressure event1'), partition_id='0')
             producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
             future = executor.submit(producer.flush, timeout=1)
-            time.sleep(5)
+            time.sleep(10)
             producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.release()
             future.result()
 

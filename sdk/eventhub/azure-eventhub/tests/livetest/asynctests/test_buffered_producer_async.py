@@ -537,7 +537,7 @@ async def test_send_failure_cases(connection_str):
             await producer.send_event(EventData('back pressure event1'), partition_id='0')
             await producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.acquire()
             future = asyncio.ensure_future(producer.flush(timeout=1))
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
             producer._buffered_producer_dispatcher._buffered_producers["0"]._not_full.release()
             await future
             future.result()

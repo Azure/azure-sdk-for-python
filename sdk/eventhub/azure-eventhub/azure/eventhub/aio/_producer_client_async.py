@@ -57,7 +57,7 @@ class EventHubProducerClient(ClientBaseAsync):
      or ~azure.core.credentials.AzureNamedKeyCredential
     :keyword bool buffered_mode: If True, the producer client will collect events in a buffer, efficiently batch,
      then publish. Default is False.
-    :keyword on_success: The callback to be called once a batch has successfully published.
+    :keyword on_success: The callback to be called once a batch has been successfully published.
      The callback takes two parameters:
         - `events`: The list of events that have been successfully published
         - `partition_id`: The partition id that the events in the list have been published to.
@@ -396,7 +396,7 @@ class EventHubProducerClient(ClientBaseAsync):
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool buffered_mode: If True, the producer client will collect events in a buffer, efficiently batch,
          then publish. Default is False.
-        :keyword on_success: The callback to be called once a batch has successfully published.
+        :keyword on_success: The callback to be called once a batch has been successfully published.
          The callback takes two parameters:
             - `events`: The list of events that have been successfully published
             - `partition_id`: The partition id that the events in the list have been published to.
