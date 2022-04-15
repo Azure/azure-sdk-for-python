@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 # These examples are ingested by the documentation system, and are
 # displayed in the SDK reference documentation. When editing these
 # example snippets, take into consideration how this might affect

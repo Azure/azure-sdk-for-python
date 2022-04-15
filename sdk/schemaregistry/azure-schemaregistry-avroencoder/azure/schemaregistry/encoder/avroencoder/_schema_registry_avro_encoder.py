@@ -229,7 +229,7 @@ class AvroEncoder(object):
             raw_input_schema=raw_input_schema,
             schema_id=schema_id,
             message_type=message_type,
-            **kwargs
+            **kwargs,
         )
 
     def decode(

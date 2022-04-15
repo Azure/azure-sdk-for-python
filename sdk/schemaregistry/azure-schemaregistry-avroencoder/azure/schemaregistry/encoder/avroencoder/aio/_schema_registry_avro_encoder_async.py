@@ -214,7 +214,7 @@ class AvroEncoder(object):
             raw_input_schema=raw_input_schema,
             schema_id=schema_id,
             message_type=message_type,
-            **kwargs
+            **kwargs,
         )
 
     async def decode(
@@ -248,12 +248,12 @@ class AvroEncoder(object):
         schema_id, content = validate_message(message)
 
         cache_misses = (
-            self._get_schema.cache_info().misses    # pylint: disable=no-value-for-parameter disable=no-member
+            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
         )
         request_options = request_options or {}
         schema_definition = await self._get_schema(schema_id, **request_options)
         new_cache_misses = (
-            self._get_schema.cache_info().misses    # pylint: disable=no-value-for-parameter disable=no-member
+            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
         )
         if new_cache_misses > cache_misses:
             cache_info = (

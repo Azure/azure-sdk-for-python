@@ -9,23 +9,21 @@ import logging
 from opentelemetry.sdk._logs import (
     LogEmitterProvider,
     OTLPHandler,
+    get_log_emitter_provider,
     set_log_emitter_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
-log_emitter_provider = LogEmitterProvider()
-set_log_emitter_provider(log_emitter_provider)
-
+set_log_emitter_provider(LogEmitterProvider())
 exporter = AzureMonitorLogExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
-
-log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
-handler = OTLPHandler()
+get_log_emitter_provider().add_log_processor(BatchLogProcessor(exporter))
 
 # Attach OTel handler to namespaced logger
+handler = OTLPHandler()
 logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 logger.setLevel(logging.NOTSET)

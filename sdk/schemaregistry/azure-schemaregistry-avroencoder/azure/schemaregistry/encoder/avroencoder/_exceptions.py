@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
+
 class InvalidSchemaError(ValueError):
     """Error during schema validation.
     :param str message: The message object stringified as 'message' attribute
@@ -33,10 +34,12 @@ class InvalidSchemaError(ValueError):
     :ivar dict details: The error details related to the schema. Depending on the error,
      this may include information like: `schema_id`, `schema_definition`, `message_content`.
     """
+
     def __init__(self, message, *args, **kwargs):
         self.message = str(message)
         self.details = kwargs.pop("details", {})
         super(InvalidSchemaError, self).__init__(self.message, *args)
+
 
 class InvalidContentError(ValueError):
     """Error during encoding or decoding content with a schema.
@@ -47,6 +50,7 @@ class InvalidContentError(ValueError):
     :ivar dict details: The error details. Depending on the error, this may include information like:
         `schema_id`, `schema_definition`, `message_content`.
     """
+
     def __init__(self, message, *args, **kwargs):
         self.message = str(message)
         self.details = kwargs.pop("details", {})
