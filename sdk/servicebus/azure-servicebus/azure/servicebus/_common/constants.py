@@ -5,7 +5,9 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 
+
 from uamqp import constants, types
+from azure.core import CaseInsensitiveEnumMeta
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -167,11 +169,11 @@ MAX_DURATION_VALUE = 922337203685477
 MAX_ABSOLUTE_EXPIRY_TIME = 253402243199000
 MESSAGE_STATE_NAME = b"x-opt-message-state"
 
-class ServiceBusReceiveMode(str, Enum):
+class ServiceBusReceiveMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PEEK_LOCK = "peeklock"
     RECEIVE_AND_DELETE = "receiveanddelete"
 
-class ServiceBusMessageState(int, Enum):
+class ServiceBusMessageState(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE = 0
     DEFERRED = 1
     SCHEDULED = 2
@@ -183,11 +185,11 @@ ServiceBusToAMQPReceiveModeMap = {
 }
 
 
-class ServiceBusSessionFilter(Enum):
+class ServiceBusSessionFilter(Enum, metaclass=CaseInsensitiveEnumMeta):
     NEXT_AVAILABLE = 0
 
 
-class ServiceBusSubQueue(str, Enum):
+class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEAD_LETTER = "deadletter"
     TRANSFER_DEAD_LETTER = "transferdeadletter"
 
