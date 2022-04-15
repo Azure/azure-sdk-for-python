@@ -12,6 +12,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.data.tables.aio import TableServiceClient, TableClient
+from azure.data.tables import TableTransactionError
 from azure.data.tables._version import VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -103,6 +104,39 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         count = 0
         async for table in tables:
             count += 1
+    
+    @pytest.mark.live_test_only
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):
+        endpoint = self.account_url(tables_storage_account_name, "table")
+
+        # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
+        invalid_table_names = ["1table", "a"*2, "a"*64, "a//", "my_table"]
+        for invalid_name in invalid_table_names:
+            client = TableClient(
+                endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+            async with client:
+                with pytest.raises(ValueError) as error:
+                    await client.create_table()
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    await client.create_entity({'PartitionKey': 'foo', 'RowKey': 'bar'})
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    await client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    await client.delete_entity("PK", "RK")
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    await client.get_table_access_policy()
+                assert 'Storage table names must be alphanumeric' in str(error.value)
+                with pytest.raises(ValueError) as error:
+                    batch = []
+                    batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+                    await client.submit_transaction(batch)
+                assert 'Storage table names must be alphanumeric' in str(error.value)
 
 
 class TestTableClientUnit(AsyncTableTestCase):
@@ -471,18 +505,6 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.scheme == 'https'
         assert service.table_name == 'bar'
         assert service.account_name == self.tables_storage_account_name
-
-    @pytest.mark.asyncio
-    async def test_create_table_client_with_invalid_name_async(self):
-        # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format("storage_account_name")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."in str(excinfo)
 
     @pytest.mark.asyncio
     async def test_error_with_malformed_conn_str_async(self):

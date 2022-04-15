@@ -3,6 +3,6 @@
 -e ../../../tools/azure-devtools
 -e ../../cognitiveservices/azure-mgmt-cognitiveservices
 -e ../../identity/azure-identity
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 ../../nspkg/azure-ai-nspkg
 ../../nspkg/azure-ai-language-nspkg

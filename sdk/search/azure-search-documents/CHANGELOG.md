@@ -1,5 +1,16 @@
 # Release History
 
+## 11.3.0b9 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.
+
+### Other Changes
+
 ## 11.3.0b8 (2022-03-08)
 
 ### Features Added

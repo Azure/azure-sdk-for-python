@@ -30,7 +30,7 @@ def stream_json_error():
 
 def streaming_test():
     yield b"test"
-    
+
 def stream_compressed_header_error():
     yield b'test'
 
@@ -60,12 +60,11 @@ def string():
     return Response(
         streaming_test(), status=200, mimetype="text/plain"
     )
-    
+
 @streams_api.route('/compressed', methods=['GET'])
 def compressed():
-    return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})\
+    return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
 
 @streams_api.route('/decompress_header', methods=['GET'])
 def decompress_header():
     return Response(stream_decompress_header(), status=200, headers={"Content-Encoding": "gzip"})
-    

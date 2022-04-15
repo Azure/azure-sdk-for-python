@@ -34,7 +34,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b3 - Latest beta release | 2.0, 2.1, 2022-01-30-preview
+|3.2.0b4 - Latest beta release | 2.0, 2.1, 2022-01-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -544,7 +544,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 
 account_info = document_model_admin_client.get_account_info()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
-    account_info.model_count, account_info.model_limit
+    account_info.document_model_count, account_info.document_model_limit
 ))
 
 # Here we get a paged list of all of our models

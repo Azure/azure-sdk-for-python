@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -18,23 +18,18 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_rerun_trigger_instance_request(
-    trigger_name,  # type: str
-    run_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    run_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -65,11 +60,10 @@ def build_rerun_trigger_instance_request(
 
 
 def build_cancel_trigger_instance_request(
-    trigger_name,  # type: str
-    run_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    run_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -100,9 +94,11 @@ def build_cancel_trigger_instance_request(
 
 
 def build_query_trigger_runs_by_workspace_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -125,10 +121,11 @@ def build_query_trigger_runs_by_workspace_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class TriggerRunOperations(object):
     """TriggerRunOperations operations.
 
@@ -154,11 +151,10 @@ class TriggerRunOperations(object):
     @distributed_trace
     def rerun_trigger_instance(
         self,
-        trigger_name,  # type: str
-        run_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        trigger_name: str,
+        run_id: str,
+        **kwargs: Any
+    ) -> None:
         """Rerun single trigger instance by runId.
 
         :param trigger_name: The trigger name.
@@ -211,11 +207,10 @@ class TriggerRunOperations(object):
     @distributed_trace
     def cancel_trigger_instance(
         self,
-        trigger_name,  # type: str
-        run_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        trigger_name: str,
+        run_id: str,
+        **kwargs: Any
+    ) -> None:
         """Cancel single trigger instance by runId.
 
         :param trigger_name: The trigger name.
@@ -268,10 +263,9 @@ class TriggerRunOperations(object):
     @distributed_trace
     def query_trigger_runs_by_workspace(
         self,
-        filter_parameters,  # type: "_models.RunFilterParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.TriggerRunsQueryResponse"
+        filter_parameters: "_models.RunFilterParameters",
+        **kwargs: Any
+    ) -> "_models.TriggerRunsQueryResponse":
         """Query trigger runs.
 
         :param filter_parameters: Parameters to filter the pipeline run.
