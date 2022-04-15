@@ -22,10 +22,10 @@ class BotServiceConnectionsTestCase(AzureMgmtTestCase):
         display_name = "this is a test bot"
         description= "this is a description for a test bot"
         endpoint = "https://bing.com/messages/"
-        msa_app_id = "056d9ad9-17a9-4cc7-aebb-43bf6f293a08"
-        developer_app_insight_key = '59513bad-10a7-4d41-b4d0-b1c34c6af512'
-        developer_app_insights_api_key = 'w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv11'
-        developer_app_insights_application_id = 'cf03484e-3fdb-4b5e-9ad7-94bde32e5a11'
+        msa_app_id = ""
+        developer_app_insight_key = ''
+        developer_app_insights_api_key = ''
+        developer_app_insights_application_id = ''
         bot = self.client.bots.create(
             resource_group_name = self.resource_group_name,
             resource_name = self.resource_name,
@@ -63,7 +63,7 @@ class BotServiceConnectionsTestCase(AzureMgmtTestCase):
                 client_id='clientId',
                 client_secret='clientSecret',
                 scopes='read,write',
-                service_provider_id='00ea67de-bfc6-4f45-9ede-083899596b7b',
+                service_provider_id='',
                 parameters=[ConnectionSettingParameter(key='key1', value='value1')]
             )
         )
