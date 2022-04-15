@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 21:33:08 GMT
+      - Thu, 14 Apr 2022 20:16:05 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -17,32 +17,30 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Mar 2022 21:33:08 GMT
-      etag: '"0x8DA0794909CC998"'
-      last-modified: Wed, 16 Mar 2022 21:33:08 GMT
+      date: Thu, 14 Apr 2022 20:16:04 GMT
+      etag: '"0x8DA1E539B0A96B4"'
+      last-modified: Thu, 14 Apr 2022 20:16:05 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-06-08'
     status:
       code: 201
       message: Created
-    url: https://jalauzoncanary.blob.core.windows.net/utfilesystem200e0f1c?restype=container&timeout=5
+    url: https://jalauzoncanaryadls.blob.core.windows.net/utfilesystem200e0f1c?restype=container&timeout=5
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 21:33:08 GMT
+      - Thu, 14 Apr 2022 20:16:05 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
       - MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=
       x-ms-encryption-key-sha256:
       - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
-      x-ms-properties:
-      - ''
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -52,9 +50,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Mar 2022 21:33:08 GMT
-      etag: '"0x8DA079490CB1B28"'
-      last-modified: Wed, 16 Mar 2022 21:33:09 GMT
+      date: Thu, 14 Apr 2022 20:16:05 GMT
+      etag: '"0x8DA1E539B315333"'
+      last-modified: Thu, 14 Apr 2022 20:16:06 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-server-encrypted: 'true'
@@ -62,24 +60,22 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://jalauzoncanary.dfs.core.windows.net/utfilesystem200e0f1c/directory200e0f1c?resource=directory
+    url: https://jalauzoncanaryadls.dfs.core.windows.net/utfilesystem200e0f1c/directory200e0f1c?resource=directory
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 21:33:09 GMT
+      - Thu, 14 Apr 2022 20:16:06 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
       - MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=
       x-ms-encryption-key-sha256:
       - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
-      x-ms-properties:
-      - ''
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -89,9 +85,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Mar 2022 21:33:08 GMT
-      etag: '"0x8DA079490D3F37F"'
-      last-modified: Wed, 16 Mar 2022 21:33:09 GMT
+      date: Thu, 14 Apr 2022 20:16:05 GMT
+      etag: '"0x8DA1E539B3C8458"'
+      last-modified: Thu, 14 Apr 2022 20:16:06 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-server-encrypted: 'true'
@@ -99,7 +95,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://jalauzoncanary.dfs.core.windows.net/utfilesystem200e0f1c/directory200e0f1c%2Ffile200e0f1c?resource=file
+    url: https://jalauzoncanaryadls.dfs.core.windows.net/utfilesystem200e0f1c/directory200e0f1c%2Ffile200e0f1c?resource=file
 - request:
     body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
@@ -110,9 +106,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 21:33:09 GMT
+      - Thu, 14 Apr 2022 20:16:06 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -128,7 +124,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Mar 2022 21:33:09 GMT
+      date: Thu, 14 Apr 2022 20:16:05 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-server-encrypted: 'true'
@@ -136,18 +132,18 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://jalauzoncanary.dfs.core.windows.net/utfilesystem200e0f1c/directory200e0f1c%2Ffile200e0f1c?action=append&position=0
+    url: https://jalauzoncanaryadls.dfs.core.windows.net/utfilesystem200e0f1c/directory200e0f1c%2Ffile200e0f1c?action=append&position=0
 - request:
     body: null
     headers:
       Accept:
       - application/json
-      If-None-Match:
-      - '*'
+      If-Match:
+      - '"0x8DA1E539B3C8458"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 21:33:09 GMT
+      - Thu, 14 Apr 2022 20:16:06 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -163,9 +159,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Mar 2022 21:33:09 GMT
-      etag: '"0x8DA079491251507"'
-      last-modified: Wed, 16 Mar 2022 21:33:09 GMT
+      date: Thu, 14 Apr 2022 20:16:05 GMT
+      etag: '"0x8DA1E539B512615"'
+      last-modified: Thu, 14 Apr 2022 20:16:06 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-server-encrypted: 'true'
@@ -173,16 +169,16 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://jalauzoncanary.dfs.core.windows.net/utfilesystem200e0f1c/directory200e0f1c%2Ffile200e0f1c?action=flush&position=1024&close=true
+    url: https://jalauzoncanaryadls.dfs.core.windows.net/utfilesystem200e0f1c/directory200e0f1c%2Ffile200e0f1c?action=flush&position=1024&close=true
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 21:33:09 GMT
+      - Thu, 14 Apr 2022 20:16:06 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -203,19 +199,23 @@ interactions:
       content-length: '1024'
       content-range: bytes 0-1023/1024
       content-type: application/octet-stream
-      date: Wed, 16 Mar 2022 21:33:09 GMT
-      etag: '"0x8DA079491251507"'
-      last-modified: Wed, 16 Mar 2022 21:33:09 GMT
+      date: Thu, 14 Apr 2022 20:16:05 GMT
+      etag: '"0x8DA1E539B512615"'
+      last-modified: Thu, 14 Apr 2022 20:16:06 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Wed, 16 Mar 2022 21:33:09 GMT
+      x-ms-creation-time: Thu, 14 Apr 2022 20:16:06 GMT
       x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-group: $superuser
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
+      x-ms-owner: $superuser
+      x-ms-permissions: rw-r-----
+      x-ms-resource-type: file
       x-ms-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
     status:
       code: 206
       message: Partial Content
-    url: https://jalauzoncanary.blob.core.windows.net/utfilesystem200e0f1c/directory200e0f1c/file200e0f1c
+    url: https://jalauzoncanaryadls.blob.core.windows.net/utfilesystem200e0f1c/directory200e0f1c/file200e0f1c
 version: 1
