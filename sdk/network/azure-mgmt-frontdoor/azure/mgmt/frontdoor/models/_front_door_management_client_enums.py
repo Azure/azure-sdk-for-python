@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the action to take on rule match.
     """
 
@@ -35,28 +20,28 @@ class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOG = "Log"
     REDIRECT = "Redirect"
 
-class AggregationInterval(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AggregationInterval(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The aggregation interval of the Timeseries
     """
 
     HOURLY = "Hourly"
     DAILY = "Daily"
 
-class Availability(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Availability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the name is available.
     """
 
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
 
-class BackendEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BackendEnabledState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to enable use of this backend. Permitted values are 'Enabled' or 'Disabled'
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class CustomHttpsProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CustomHttpsProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning status of Custom Https of the frontendEndpoint.
     """
 
@@ -66,7 +51,7 @@ class CustomHttpsProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str,
     DISABLED = "Disabled"
     FAILED = "Failed"
 
-class CustomHttpsProvisioningSubstate(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CustomHttpsProvisioningSubstate(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning substate shows the progress of custom HTTPS enabling/disabling process step by
     step.
     """
@@ -82,7 +67,7 @@ class CustomHttpsProvisioningSubstate(with_metaclass(_CaseInsensitiveEnumMeta, s
     DELETING_CERTIFICATE = "DeletingCertificate"
     CERTIFICATE_DELETED = "CertificateDeleted"
 
-class CustomRuleEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CustomRuleEnabledState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if the custom rule is in enabled or disabled state. Defaults to Enabled if not
     specified.
     """
@@ -90,14 +75,14 @@ class CustomRuleEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class DynamicCompressionEnabled(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DynamicCompressionEnabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to use dynamic compression for cached content
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of endpoint
     """
 
@@ -106,7 +91,7 @@ class EndpointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CDN = "CDN"
     ATM = "ATM"
 
-class EnforceCertificateNameCheckEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EnforceCertificateNameCheckEnabledState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to enforce certificate name check on HTTPS requests to all backend pools. No effect on
     non-HTTPS requests.
     """
@@ -114,20 +99,20 @@ class EnforceCertificateNameCheckEnabledState(with_metaclass(_CaseInsensitiveEnu
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class FrontDoorCertificateSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorCertificateSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the source of the SSL certificate
     """
 
     AZURE_KEY_VAULT = "AzureKeyVault"
     FRONT_DOOR = "FrontDoor"
 
-class FrontDoorCertificateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorCertificateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the type of the certificate used for secure connections to a frontendEndpoint
     """
 
     DEDICATED = "Dedicated"
 
-class FrontDoorEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorEnabledState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Operational status of the Front Door load balancer. Permitted values are 'Enabled' or
     'Disabled'
     """
@@ -135,7 +120,7 @@ class FrontDoorEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class FrontDoorForwardingProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorForwardingProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Protocol this rule will use when forwarding traffic to backends.
     """
 
@@ -143,21 +128,21 @@ class FrontDoorForwardingProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     HTTPS_ONLY = "HttpsOnly"
     MATCH_REQUEST = "MatchRequest"
 
-class FrontDoorHealthProbeMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorHealthProbeMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Configures which HTTP method to use to probe the backends defined under backendPools.
     """
 
     GET = "GET"
     HEAD = "HEAD"
 
-class FrontDoorProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Accepted protocol schemes.
     """
 
     HTTP = "Http"
     HTTPS = "Https"
 
-class FrontDoorQuery(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorQuery(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Treatment of URL query terms when forming the cache key.
     """
 
@@ -166,7 +151,7 @@ class FrontDoorQuery(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STRIP_ONLY = "StripOnly"
     STRIP_ALL_EXCEPT = "StripAllExcept"
 
-class FrontDoorRedirectProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorRedirectProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The protocol of the destination to where the traffic is redirected
     """
 
@@ -174,7 +159,7 @@ class FrontDoorRedirectProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     HTTPS_ONLY = "HttpsOnly"
     MATCH_REQUEST = "MatchRequest"
 
-class FrontDoorRedirectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorRedirectType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The redirect type the rule will use when redirecting traffic.
     """
 
@@ -183,7 +168,7 @@ class FrontDoorRedirectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     TEMPORARY_REDIRECT = "TemporaryRedirect"
     PERMANENT_REDIRECT = "PermanentRedirect"
 
-class FrontDoorResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorResourceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Resource status of the Front Door or Front Door SubResource.
     """
 
@@ -194,13 +179,13 @@ class FrontDoorResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     DISABLED = "Disabled"
     DELETING = "Deleting"
 
-class FrontDoorTlsProtocolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class FrontDoorTlsProtocolType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the TLS extension protocol that is used for secure delivery
     """
 
     SERVER_NAME_INDICATION = "ServerNameIndication"
 
-class HeaderActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HeaderActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Which type of manipulation to apply to the header.
     """
 
@@ -208,7 +193,7 @@ class HeaderActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETE = "Delete"
     OVERWRITE = "Overwrite"
 
-class HealthProbeEnabled(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HealthProbeEnabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to enable health probes to be made against backends defined under backendPools. Health
     probes can only be disabled if there is a single enabled backend in single enabled backend
     pool.
@@ -217,20 +202,20 @@ class HealthProbeEnabled(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class LatencyScorecardAggregationInterval(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LatencyScorecardAggregationInterval(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DAILY = "Daily"
     WEEKLY = "Weekly"
     MONTHLY = "Monthly"
 
-class ManagedRuleEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedRuleEnabledState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if the managed rule is in enabled or disabled state.
     """
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class ManagedRuleExclusionMatchVariable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedRuleExclusionMatchVariable(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The variable type to be excluded.
     """
 
@@ -240,7 +225,7 @@ class ManagedRuleExclusionMatchVariable(with_metaclass(_CaseInsensitiveEnumMeta,
     REQUEST_BODY_POST_ARG_NAMES = "RequestBodyPostArgNames"
     REQUEST_BODY_JSON_ARG_NAMES = "RequestBodyJsonArgNames"
 
-class ManagedRuleExclusionSelectorMatchOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedRuleExclusionSelectorMatchOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Comparison operator to apply to the selector when specifying which elements in the collection
     this exclusion applies to.
     """
@@ -251,7 +236,7 @@ class ManagedRuleExclusionSelectorMatchOperator(with_metaclass(_CaseInsensitiveE
     ENDS_WITH = "EndsWith"
     EQUALS_ANY = "EqualsAny"
 
-class ManagedRuleSetActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManagedRuleSetActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the action to take when a managed rule set score threshold is met.
     """
 
@@ -259,7 +244,7 @@ class ManagedRuleSetActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     LOG = "Log"
     REDIRECT = "Redirect"
 
-class MatchProcessingBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MatchProcessingBehavior(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """If this rule is a match should the rules engine continue running the remaining rules or stop.
     If not present, defaults to Continue.
     """
@@ -267,7 +252,7 @@ class MatchProcessingBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     CONTINUE_ENUM = "Continue"
     STOP = "Stop"
 
-class MatchVariable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MatchVariable(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Request variable to compare with.
     """
 
@@ -281,7 +266,7 @@ class MatchVariable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COOKIES = "Cookies"
     SOCKET_ADDR = "SocketAddr"
 
-class MinimumTLSVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MinimumTLSVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The minimum TLS version required from the clients to establish an SSL handshake with Front
     Door.
     """
@@ -289,7 +274,7 @@ class MinimumTLSVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONE0 = "1.0"
     ONE2 = "1.2"
 
-class NetworkExperimentResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkExperimentResourceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Defines the server side resource status
     """
 
@@ -300,16 +285,15 @@ class NetworkExperimentResourceState(with_metaclass(_CaseInsensitiveEnumMeta, st
     DISABLED = "Disabled"
     DELETING = "Deleting"
 
-class NetworkOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the Azure async operation. Possible values are: 'InProgress', 'Succeeded', and
-    'Failed'.
+class NetworkOperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of the Azure async operation.
     """
 
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class Operator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Operator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Comparison type to use for matching with the variable value.
     """
 
@@ -326,28 +310,28 @@ class Operator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENDS_WITH = "EndsWith"
     REG_EX = "RegEx"
 
-class PolicyEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyEnabledState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if the policy is in enabled or disabled state. Defaults to Enabled if not specified.
     """
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class PolicyMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if it is in detection mode or prevention mode at policy level.
     """
 
     PREVENTION = "Prevention"
     DETECTION = "Detection"
 
-class PolicyRequestBodyCheck(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyRequestBodyCheck(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if policy managed rules will inspect the request body content.
     """
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class PolicyResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyResourceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Resource status of the policy.
     """
 
@@ -358,7 +342,7 @@ class PolicyResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
     DELETING = "Deleting"
 
-class PrivateEndpointStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The Approval status for the connection to the Private Link
     """
 
@@ -368,21 +352,21 @@ class PrivateEndpointStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
 
-class ResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of Front Door resource used in CheckNameAvailability.
     """
 
     MICROSOFT_NETWORK_FRONT_DOORS = "Microsoft.Network/frontDoors"
     MICROSOFT_NETWORK_FRONT_DOORS_FRONTEND_ENDPOINTS = "Microsoft.Network/frontDoors/frontendEndpoints"
 
-class RoutingRuleEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoutingRuleEnabledState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class RulesEngineMatchVariable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RulesEngineMatchVariable(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Match Variable
     """
 
@@ -399,7 +383,7 @@ class RulesEngineMatchVariable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     REQUEST_BODY = "RequestBody"
     REQUEST_SCHEME = "RequestScheme"
 
-class RulesEngineOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RulesEngineOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes operator to apply to the match condition.
     """
 
@@ -415,21 +399,21 @@ class RulesEngineOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BEGINS_WITH = "BeginsWith"
     ENDS_WITH = "EndsWith"
 
-class RuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RuleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes type of rule.
     """
 
     MATCH_RULE = "MatchRule"
     RATE_LIMIT_RULE = "RateLimitRule"
 
-class SessionAffinityEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SessionAffinityEnabledState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to allow session affinity on this host. Valid options are 'Enabled' or 'Disabled'
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the pricing tier.
     """
 
@@ -437,19 +421,19 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_AZURE_FRONT_DOOR = "Standard_AzureFrontDoor"
     PREMIUM_AZURE_FRONT_DOOR = "Premium_AzureFrontDoor"
 
-class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class State(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the Experiment
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class TimeseriesAggregationInterval(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TimeseriesAggregationInterval(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     HOURLY = "Hourly"
     DAILY = "Daily"
 
-class TimeseriesType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TimeseriesType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of Timeseries
     """
 
@@ -458,7 +442,7 @@ class TimeseriesType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LATENCY_P75 = "LatencyP75"
     LATENCY_P95 = "LatencyP95"
 
-class Transform(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Transform(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes what transforms are applied before matching
     """
 
@@ -469,7 +453,7 @@ class Transform(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     URL_ENCODE = "UrlEncode"
     REMOVE_NULLS = "RemoveNulls"
 
-class TransformType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TransformType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes what transforms applied before matching.
     """
 

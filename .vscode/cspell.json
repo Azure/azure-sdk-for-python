@@ -109,12 +109,14 @@
   "words": [
     "aad",
     "aadclient",
+    "AADSTS",
     "addinivalue",
     "adfs",
     "adls",
     "aiohttp",
     "amqp",
     "apim",
+    "Asal",
     "asyncio",
     "avroencoder",
     "azcmagent",
@@ -167,6 +169,7 @@
     "hexlify",
     "himds",
     "hmac",
+    "howto",
     "illumos",
     "imds",
     "inotify",
@@ -239,6 +242,7 @@
     "parameterizing",
     "pytz",
     "pywin",
+    "pyversion",
     "RAGRS",
     "rdbms",
     "reauthenticated",
@@ -406,6 +410,12 @@
         "currsize",
         "unpartial",
         "alru"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
+      "words": [
+        "undoc"
       ]
     }
   ],
