@@ -8,12 +8,14 @@
 from enum import Enum
 import uuid
 from typing import Any, Optional, List
+from azure.core import CaseInsensitiveEnumMeta
 
 from ._helpers import construct_iso8601, process_row
 from ._generated.models import (
     BatchQueryRequest as InternalLogQueryRequest,
     BatchQueryResponse,
 )
+
 
 
 class LogsTable(object):
@@ -272,7 +274,7 @@ class LogsQueryResult(object):
         )
 
 
-class MetricNamespaceClassification(str, Enum):
+class MetricNamespaceClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of namespace"""
 
     PLATFORM = "Platform"
@@ -318,7 +320,7 @@ class MetricNamespace(object):
         )
 
 
-class MetricClass(str, Enum):
+class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The class of the metric."""
 
     AVAILABILITY = "Availability"
@@ -548,7 +550,7 @@ class MetricAvailability(object):
         return cls(granularity=generated.time_grain, retention=generated.retention)
 
 
-class MetricAggregationType(str, Enum):
+class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The aggregation type of the metric."""
 
     NONE = "None"
@@ -559,7 +561,7 @@ class MetricAggregationType(str, Enum):
     TOTAL = "Total"
 
 
-class MetricUnit(str, Enum):
+class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit of the metric."""
 
     COUNT = "Count"
@@ -625,7 +627,7 @@ class LogsQueryPartialResult(object):
         )
 
 
-class LogsQueryStatus(str, Enum):
+class LogsQueryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the result object."""
 
     PARTIAL = "PartialError"
