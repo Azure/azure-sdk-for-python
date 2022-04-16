@@ -2,13 +2,9 @@
 
 ## 4.5.1 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
-
-### Other Changes
+- Fixed error that could occur when fetching a key rotation policy that has no defined
+  `lifetime_actions`.
 
 ## 4.5.0 (2022-03-28)
 
