@@ -256,9 +256,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             parsed_url.netloc.rstrip('/'),
             account_path,
             parsed_url.query)
+
+        msg_invalid_url = "Invalid URL. Provide a blob_url with a valid blob and container name."
         if len(path_blob) <= 1:
-            raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
+            raise ValueError(msg_invalid_url)
         container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])
+        if not container_name or not blob_name:
+            raise ValueError(msg_invalid_url)
 
         path_snapshot, _ = parse_query(parsed_url.query)
         if snapshot:
