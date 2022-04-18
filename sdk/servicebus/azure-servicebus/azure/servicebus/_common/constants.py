@@ -184,7 +184,7 @@ ServiceBusToAMQPReceiveModeMap = {
 }
 
 
-class ServiceBusSessionFilter(Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServiceBusSessionFilter(Enum):
     NEXT_AVAILABLE = 0
 
 
