@@ -242,6 +242,7 @@
     "parameterizing",
     "pytz",
     "pywin",
+    "pyversion",
     "RAGRS",
     "rdbms",
     "reauthenticated",
@@ -409,6 +410,12 @@
         "currsize",
         "unpartial",
         "alru"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
+      "words": [
+        "undoc"
       ]
     }
   ],

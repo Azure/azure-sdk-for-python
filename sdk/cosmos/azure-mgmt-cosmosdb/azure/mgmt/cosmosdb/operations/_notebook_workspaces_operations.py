@@ -35,7 +35,7 @@ def build_list_by_database_account_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces')
@@ -71,7 +71,7 @@ def build_get_request(
     notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}')
@@ -113,7 +113,7 @@ def build_create_or_update_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}')
@@ -154,7 +154,7 @@ def build_delete_request_initial(
     notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}')
@@ -191,7 +191,7 @@ def build_list_connection_info_request(
     notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}/listConnectionInfo')
@@ -228,7 +228,7 @@ def build_regenerate_auth_token_request_initial(
     notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}/regenerateAuthToken')
@@ -265,7 +265,7 @@ def build_start_request_initial(
     notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}/start')

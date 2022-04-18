@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -22,26 +22,20 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    domain_topic_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    domain_topic_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{domainTopicName}')
@@ -72,14 +66,13 @@ def build_get_request(
 
 
 def build_create_or_update_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    domain_topic_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    domain_topic_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{domainTopicName}')
@@ -110,14 +103,13 @@ def build_create_or_update_request_initial(
 
 
 def build_delete_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    domain_topic_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    domain_topic_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{domainTopicName}')
     path_format_arguments = {
@@ -142,16 +134,15 @@ def build_delete_request_initial(
 
 
 def build_list_by_domain_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics')
@@ -183,7 +174,6 @@ def build_list_by_domain_request(
         **kwargs
     )
 
-# fmt: on
 class DomainTopicsOperations(object):
     """DomainTopicsOperations operations.
 
@@ -209,12 +199,11 @@ class DomainTopicsOperations(object):
     @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_topic_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DomainTopic"
+        resource_group_name: str,
+        domain_name: str,
+        domain_topic_name: str,
+        **kwargs: Any
+    ) -> "_models.DomainTopic":
         """Get a domain topic.
 
         Get properties of a domain topic.
@@ -266,12 +255,11 @@ class DomainTopicsOperations(object):
 
     def _create_or_update_initial(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_topic_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DomainTopic"
+        resource_group_name: str,
+        domain_name: str,
+        domain_topic_name: str,
+        **kwargs: Any
+    ) -> "_models.DomainTopic":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -309,12 +297,11 @@ class DomainTopicsOperations(object):
     @distributed_trace
     def begin_create_or_update(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_topic_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.DomainTopic"]
+        resource_group_name: str,
+        domain_name: str,
+        domain_topic_name: str,
+        **kwargs: Any
+    ) -> LROPoller["_models.DomainTopic"]:
         """Create or update a domain topic.
 
         Asynchronously creates or updates a new domain topic with the specified parameters.
@@ -380,12 +367,11 @@ class DomainTopicsOperations(object):
 
     def _delete_initial(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_topic_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        domain_name: str,
+        domain_topic_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -419,12 +405,11 @@ class DomainTopicsOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_topic_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        resource_group_name: str,
+        domain_name: str,
+        domain_topic_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete a domain topic.
 
         Delete existing domain topic.
@@ -487,13 +472,12 @@ class DomainTopicsOperations(object):
     @distributed_trace
     def list_by_domain(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.DomainTopicsListResult"]
+        resource_group_name: str,
+        domain_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.DomainTopicsListResult"]:
         """List domain topics.
 
         List all the topics in a domain.

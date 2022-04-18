@@ -7,7 +7,7 @@ import requests
 from typing import TYPE_CHECKING
 
 from .config import PROXY_URL
-from .helpers import get_recording_id, is_live_and_not_recording
+from .helpers import get_recording_id, is_live, is_live_and_not_recording
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional
@@ -235,7 +235,7 @@ def _send_matcher_request(matcher, headers, parameters=None):
     :param dict headers: Any matcher headers, as a dictionary.
     """
 
-    if is_live_and_not_recording():
+    if is_live():
         return
 
     headers_to_send = {"x-abstraction-identifier": matcher}

@@ -2028,7 +2028,6 @@ class ManagedCluster(Resource, Components1Q1Og48SchemasManagedclusterAllof1):
         self.type = None
         self.location = location
         self.tags = tags
-        self.sku = sku
 
 
 class ManagedClusterAADProfile(msrest.serialization.Model):
