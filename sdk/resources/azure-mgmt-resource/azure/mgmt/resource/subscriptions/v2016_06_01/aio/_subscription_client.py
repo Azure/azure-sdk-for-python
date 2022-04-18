@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import SubscriptionClientConfiguration
@@ -22,7 +23,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 class SubscriptionClient(SubscriptionClientOperationsMixin):
-    """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
+    """All resource groups and resources exist within subscriptions. These operation enable you get
+    information about your subscriptions and tenants. A tenant is a dedicated instance of Azure
+    Active Directory (Azure AD) for your organization.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.resource.subscriptions.v2016_06_01.aio.operations.Operations
@@ -34,8 +37,11 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):
      azure.mgmt.resource.subscriptions.v2016_06_01.aio.operations.TenantsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2016-06-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
