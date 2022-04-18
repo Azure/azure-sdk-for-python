@@ -172,7 +172,7 @@ class ServiceBusReceiveMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PEEK_LOCK = "peeklock"
     RECEIVE_AND_DELETE = "receiveanddelete"
 
-class ServiceBusMessageState(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServiceBusMessageState(int, Enum):
     ACTIVE = 0
     DEFERRED = 1
     SCHEDULED = 2
