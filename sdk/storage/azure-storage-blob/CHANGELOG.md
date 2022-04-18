@@ -1,10 +1,17 @@
 # Release History
 
-## 12.12.0b1 (Unreleased)
+## 12.##.## (Unreleased)
+
+### Bugs Fixed:
+- fixes a bug in `BlobClient.from_blob_url()` such that users will receive a more helpful error
+message if they pass an incorrect URL without a full `/container/blob` path.
+
+## 12.12.0b1 (2022-04-14)
 
 ### Features Added
 - Added support for service version 2021-06-08.
-- Added support for `create_container_if_not_exists()` for `BlobContainerClient`
+- Added a new paginated method for listing page ranges, `list_page_ranges()`. This replaces `get_page_ranges()` which has been deprecated.
+- Added support for copying source blob tags with `start_copy_from_url()` by specifying `"COPY"` for the `tags` keyword.
 
 ## 12.11.0 (2022-03-29)
 

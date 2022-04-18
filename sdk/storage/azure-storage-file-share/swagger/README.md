@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-04-10/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-06-08/file.json
 output-folder: ../azure/storage/fileshare/_generated
 namespace: azure.storage.fileshare
 no-namespace-folders: true
@@ -55,6 +55,10 @@ directive:
     $.format = "str";
 - from: swagger-document
   where: $["x-ms-paths"]..responses..headers["x-ms-file-creation-time"]
+  transform: >
+    $.format = "str";
+- from: swagger-document
+  where: $.parameters.FileChangeTime
   transform: >
     $.format = "str";
 ```

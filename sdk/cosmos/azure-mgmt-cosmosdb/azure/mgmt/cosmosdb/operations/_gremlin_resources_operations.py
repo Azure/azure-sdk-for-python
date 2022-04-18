@@ -35,7 +35,7 @@ def build_list_gremlin_databases_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases')
@@ -71,7 +71,7 @@ def build_get_gremlin_database_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}')
@@ -113,7 +113,7 @@ def build_create_update_gremlin_database_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}')
@@ -154,7 +154,7 @@ def build_delete_gremlin_database_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}')
     path_format_arguments = {
@@ -185,7 +185,7 @@ def build_get_gremlin_database_throughput_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/default')
@@ -227,7 +227,7 @@ def build_update_gremlin_database_throughput_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/default')
@@ -268,7 +268,7 @@ def build_migrate_gremlin_database_to_autoscale_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/default/migrateToAutoscale')
@@ -305,7 +305,7 @@ def build_migrate_gremlin_database_to_manual_throughput_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/default/migrateToManualThroughput')
@@ -342,7 +342,7 @@ def build_list_gremlin_graphs_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs')
@@ -380,7 +380,7 @@ def build_get_gremlin_graph_request(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}')
@@ -424,7 +424,7 @@ def build_create_update_gremlin_graph_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}')
@@ -467,7 +467,7 @@ def build_delete_gremlin_graph_request_initial(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}')
     path_format_arguments = {
@@ -500,7 +500,7 @@ def build_get_gremlin_graph_throughput_request(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/throughputSettings/default')
@@ -544,7 +544,7 @@ def build_update_gremlin_graph_throughput_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/throughputSettings/default')
@@ -587,7 +587,7 @@ def build_migrate_gremlin_graph_to_autoscale_request_initial(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/throughputSettings/default/migrateToAutoscale')
@@ -626,7 +626,7 @@ def build_migrate_gremlin_graph_to_manual_throughput_request_initial(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/throughputSettings/default/migrateToManualThroughput')
@@ -670,7 +670,7 @@ def build_retrieve_continuous_backup_information_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/retrieveContinuousBackupInformation')

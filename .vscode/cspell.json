@@ -155,6 +155,7 @@
     "encryptor",
     "engsys",
     "envname",
+    "evals",
     "fileno",
     "fqdns",
     "fstat",
@@ -242,6 +243,7 @@
     "parameterizing",
     "pytz",
     "pywin",
+    "pyversion",
     "RAGRS",
     "rdbms",
     "reauthenticated",
@@ -261,6 +263,7 @@
     "setfacl",
     "signalr",
     "signup",
+    "simplifiable",
     "skipif",
     "skus",
     "southcentralus",
@@ -409,6 +412,12 @@
         "currsize",
         "unpartial",
         "alru"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
+      "words": [
+        "undoc"
       ]
     }
   ],

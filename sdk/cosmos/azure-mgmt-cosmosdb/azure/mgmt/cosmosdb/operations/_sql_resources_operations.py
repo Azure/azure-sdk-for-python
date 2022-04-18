@@ -35,7 +35,7 @@ def build_list_sql_databases_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases')
@@ -71,7 +71,7 @@ def build_get_sql_database_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}')
@@ -113,7 +113,7 @@ def build_create_update_sql_database_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}')
@@ -154,7 +154,7 @@ def build_delete_sql_database_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}')
     path_format_arguments = {
@@ -185,7 +185,7 @@ def build_get_sql_database_throughput_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default')
@@ -227,7 +227,7 @@ def build_update_sql_database_throughput_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default')
@@ -268,7 +268,7 @@ def build_migrate_sql_database_to_autoscale_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default/migrateToAutoscale')
@@ -305,7 +305,7 @@ def build_migrate_sql_database_to_manual_throughput_request_initial(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default/migrateToManualThroughput')
@@ -342,7 +342,7 @@ def build_list_client_encryption_keys_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys')
@@ -380,7 +380,7 @@ def build_get_client_encryption_key_request(
     client_encryption_key_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}')
@@ -424,7 +424,7 @@ def build_create_update_client_encryption_key_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}')
@@ -466,7 +466,7 @@ def build_list_sql_containers_request(
     database_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers')
@@ -504,7 +504,7 @@ def build_get_sql_container_request(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}')
@@ -548,7 +548,7 @@ def build_create_update_sql_container_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}')
@@ -591,7 +591,7 @@ def build_delete_sql_container_request_initial(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}')
     path_format_arguments = {
@@ -616,6 +616,54 @@ def build_delete_sql_container_request_initial(
     )
 
 
+def build_list_sql_container_partition_merge_request_initial(
+    subscription_id: str,
+    resource_group_name: str,
+    account_name: str,
+    database_name: str,
+    container_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    api_version = "2022-02-15-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/partitionMerge')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "accountName": _SERIALIZER.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+        "databaseName": _SERIALIZER.url("database_name", database_name, 'str'),
+        "containerName": _SERIALIZER.url("container_name", container_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        json=json,
+        content=content,
+        **kwargs
+    )
+
+
 def build_get_sql_container_throughput_request(
     subscription_id: str,
     resource_group_name: str,
@@ -624,7 +672,7 @@ def build_get_sql_container_throughput_request(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default')
@@ -668,7 +716,7 @@ def build_update_sql_container_throughput_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default')
@@ -711,7 +759,7 @@ def build_migrate_sql_container_to_autoscale_request_initial(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/migrateToAutoscale')
@@ -750,7 +798,7 @@ def build_migrate_sql_container_to_manual_throughput_request_initial(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/migrateToManualThroughput')
@@ -789,7 +837,7 @@ def build_list_sql_stored_procedures_request(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures')
@@ -829,7 +877,7 @@ def build_get_sql_stored_procedure_request(
     stored_procedure_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures/{storedProcedureName}')
@@ -875,7 +923,7 @@ def build_create_update_sql_stored_procedure_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures/{storedProcedureName}')
@@ -920,7 +968,7 @@ def build_delete_sql_stored_procedure_request_initial(
     stored_procedure_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures/{storedProcedureName}')
     path_format_arguments = {
@@ -954,7 +1002,7 @@ def build_list_sql_user_defined_functions_request(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions')
@@ -994,7 +1042,7 @@ def build_get_sql_user_defined_function_request(
     user_defined_function_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions/{userDefinedFunctionName}')
@@ -1040,7 +1088,7 @@ def build_create_update_sql_user_defined_function_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions/{userDefinedFunctionName}')
@@ -1085,7 +1133,7 @@ def build_delete_sql_user_defined_function_request_initial(
     user_defined_function_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions/{userDefinedFunctionName}')
     path_format_arguments = {
@@ -1119,7 +1167,7 @@ def build_list_sql_triggers_request(
     container_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers')
@@ -1159,7 +1207,7 @@ def build_get_sql_trigger_request(
     trigger_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers/{triggerName}')
@@ -1205,7 +1253,7 @@ def build_create_update_sql_trigger_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers/{triggerName}')
@@ -1250,7 +1298,7 @@ def build_delete_sql_trigger_request_initial(
     trigger_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers/{triggerName}')
     path_format_arguments = {
@@ -1283,7 +1331,7 @@ def build_get_sql_role_definition_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleDefinitions/{roleDefinitionId}')
@@ -1325,7 +1373,7 @@ def build_create_update_sql_role_definition_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleDefinitions/{roleDefinitionId}')
@@ -1366,7 +1414,7 @@ def build_delete_sql_role_definition_request_initial(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleDefinitions/{roleDefinitionId}')
@@ -1402,7 +1450,7 @@ def build_list_sql_role_definitions_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleDefinitions')
@@ -1438,7 +1486,7 @@ def build_get_sql_role_assignment_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleAssignments/{roleAssignmentId}')
@@ -1480,7 +1528,7 @@ def build_create_update_sql_role_assignment_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleAssignments/{roleAssignmentId}')
@@ -1521,7 +1569,7 @@ def build_delete_sql_role_assignment_request_initial(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleAssignments/{roleAssignmentId}')
@@ -1557,7 +1605,7 @@ def build_list_sql_role_assignments_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleAssignments')
@@ -1599,7 +1647,7 @@ def build_retrieve_continuous_backup_information_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/retrieveContinuousBackupInformation')
@@ -3069,6 +3117,137 @@ class SqlResourcesOperations(object):
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_delete_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}'}  # type: ignore
+
+    def _list_sql_container_partition_merge_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        merge_parameters: "_models.MergeParameters",
+        **kwargs: Any
+    ) -> Optional["_models.PhysicalPartitionStorageInfoCollection"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PhysicalPartitionStorageInfoCollection"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(merge_parameters, 'MergeParameters')
+
+        request = build_list_sql_container_partition_merge_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            content_type=content_type,
+            json=_json,
+            template_url=self._list_sql_container_partition_merge_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PhysicalPartitionStorageInfoCollection', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _list_sql_container_partition_merge_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/partitionMerge'}  # type: ignore
+
+
+    @distributed_trace
+    def begin_list_sql_container_partition_merge(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        merge_parameters: "_models.MergeParameters",
+        **kwargs: Any
+    ) -> LROPoller["_models.PhysicalPartitionStorageInfoCollection"]:
+        """Merges the partitions of a SQL Container.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param container_name: Cosmos DB container name.
+        :type container_name: str
+        :param merge_parameters: The parameters for the merge operation.
+        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either PhysicalPartitionStorageInfoCollection or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhysicalPartitionStorageInfoCollection"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._list_sql_container_partition_merge_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                database_name=database_name,
+                container_name=container_name,
+                merge_parameters=merge_parameters,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('PhysicalPartitionStorageInfoCollection', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_list_sql_container_partition_merge.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/partitionMerge'}  # type: ignore
 
     @distributed_trace
     def get_sql_container_throughput(
