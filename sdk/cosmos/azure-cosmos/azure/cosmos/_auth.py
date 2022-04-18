@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,11 +36,11 @@ def GetAuthorizationHeader(
     warnings.warn("This method has been deprecated and will be removed from the SDK in a future release.",
                   DeprecationWarning)
 
-    return _get_authorization_header(
+    return get_authorization_header(
         cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers)
 
 
-def _get_authorization_header(
+def get_authorization_header(
         cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.
