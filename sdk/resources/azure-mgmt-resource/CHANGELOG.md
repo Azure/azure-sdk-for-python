@@ -1,5 +1,12 @@
 # Release History
 
+## 21.1.0b1 (2022-04-18)
+
+**Features**
+
+  - Added operation group ChangeResourceOperations
+  - Added operation group ChangeResourcesOperations
+
 ## 21.0.0 (2022-03-22)
 
 **Features**
