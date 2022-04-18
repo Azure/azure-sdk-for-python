@@ -47,6 +47,7 @@ import logging
 from threading import Lock
 
 import certifi
+import websockets
 
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
@@ -457,7 +458,6 @@ class _AbstractTransport(object):
         else:
             encoded_channel = struct.pack('>H', channel)
             data = header + encoded_channel + performative
-
         self.write(data)
 
     def negotiate(self, encode, decode):
@@ -664,6 +664,8 @@ class WebSocketTransport(_AbstractTransport):
     def __init__(self, host, port=WEBSOCKET_PORT,   connect_timeout=None, ssl=None, **kwargs
         ):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
+        self._connect_timeout = connect_timeout
+        self._host = host
         super().__init__(
             host, port, connect_timeout, **kwargs
             )
@@ -671,7 +673,6 @@ class WebSocketTransport(_AbstractTransport):
         self._http_proxy = kwargs.get('http_proxy', None)
 
     def connect(self):
-
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
         if self._http_proxy:
             http_proxy_host = self._http_proxy['proxy_hostname']
@@ -684,9 +685,9 @@ class WebSocketTransport(_AbstractTransport):
             from websocket import create_connection
             # TODO: transform ssl to sslopt
             self.ws = create_connection(
-                url="wss://{}/$servicebus/websocket/".format("testeh.servicebus.windows.net"),
+                url="wss://{}/$servicebus/websocket/".format(self._host),
                 subprotocols=['AMQPWSB10'],
-                timeout=9999,
+                timeout=self._connect_timeout,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
@@ -701,29 +702,21 @@ class WebSocketTransport(_AbstractTransport):
         
         length = 0
         view = buffer or memoryview(bytearray(n))
-        rbuf = self._read_buffer
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
+        n -= nbytes
         try:
-            while length < n:
+            while n:
                 data = self.ws.recv()
-                try:
-                    data = bytes(data, 'utf-8')
-                except TypeError:
-                    pass
 
-                if len(data) + length < n:
-                    for i in range(len(data)):
-                        view[length+i] = data[i]
-                    length += len(data)
+                if len(data) <= n:
+                    view[length: length + len(data)] = data
+                    n -= len(data)
                 else:
-                    for i in range(n-length):
-                        view[length+i] = data[i]
-                    rbuf.write(data[n-length:])
-                    length = n
-            print('done with while loop')
+                    view[length: length + n] = data[0:n]
+                    self._read_buffer = BytesIO(data[n:])
+                    n = 0
         except:
-            self._read_buffer = rbuf
             raise
         return view
 
@@ -734,6 +727,12 @@ class WebSocketTransport(_AbstractTransport):
     def _write(self, s):
         """Completely write a string to the peer."""
         try:
-            self.ws.send(s)
-        except:
-            raise
+            """
+            ABNF, OPCODE_BINARY = 0x2
+            See http://tools.ietf.org/html/rfc5234
+            http://tools.ietf.org/html/rfc6455#section-5.2
+            """
+            from websocket import ABNF
+            self.ws.send(s, opcode=ABNF.OPCODE_BINARY)
+        except ImportError:
+            raise ValueError("Please install websocket-client library to use websocket transport.")
