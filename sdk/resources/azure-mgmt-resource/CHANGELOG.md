@@ -1,5 +1,17 @@
 # Release History
 
+## 21.1.0b1 (2022-04-18)
+
+**Features**
+
+  - Added operation group ChangeResourceOperations
+  - Added operation group ChangeResourcesOperations
+  - Combined operation files into one.
+
+**Fixes**
+
+  - Fixed duplicated query parameters in pageable operation(for more details, see https://github.com/Azure/azure-sdk-for-python/issues/23828)
+
 ## 21.0.0 (2022-03-22)
 
 **Features**

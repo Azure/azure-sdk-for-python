@@ -6,9 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._policy_assignments_operations import PolicyAssignmentsOperations
-from ._policy_definitions_operations import PolicyDefinitionsOperations
-from ._policy_set_definitions_operations import PolicySetDefinitionsOperations
+from ._operations import PolicyAssignmentsOperations
+from ._operations import PolicyDefinitionsOperations
+from ._operations import PolicySetDefinitionsOperations
 
 __all__ = [
     'PolicyAssignmentsOperations',
