@@ -62,7 +62,7 @@ class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
             assert isinstance(top_intent_object, LUISTargetIntentResult)
             assert top_intent_object.target_kind == "luis"
             # assert intent and entities
-            top_intent = "RestaurantReservation.Reserve"
+            top_intent = "Reserve"
             luis_result = top_intent_object.result["prediction"]
             assert luis_result["topIntent"] == top_intent
             assert len(luis_result["intents"]) > 0
