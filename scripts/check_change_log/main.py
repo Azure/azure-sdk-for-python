@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
             # generate code_report
             cmd_cl1 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  {service_name} --version={last_version}"'
-            cmd_cl2 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report {service_name} --version={version}"'
+            cmd_cl2 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report {service_name} --version={older_version}"'
             last_code_report_info = create_code_report(cmd_cl1)
             code_report_info = create_code_report(cmd_cl2)
 
@@ -99,7 +99,7 @@ if __name__ == '__main__':
             # write a txt to save change_log
             change_log_foldor_path = str(env) + r"\Change_Log"
             create_foldor(change_log_foldor_path)
-            write_txt(change_log_foldor_path, service_name, result_text, last_version, version)
+            write_txt(change_log_foldor_path, service_name, result_text, last_version, older_version)
         else:
             continue
 
