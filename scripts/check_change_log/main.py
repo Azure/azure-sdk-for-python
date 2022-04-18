@@ -30,12 +30,12 @@ def create_foldor(name):
     else:
         print("foldor has been created")
 
-def write_txt(foldor, text_name, text, last_version, old_version):
-    path = foldor + f"\{text_name}" + " " + last_version + "-" + old_version + r".txt"
+def write_txt(foldor, text_name, text, last_version, older_version):
+    path = foldor + f"\{text_name}" + " " + last_version + "-" + older_version + r".txt"
     with open(file=path, mode="w", encoding="utf-8") as file:
 
         file.write(text)
-    print("txt create successful")
+    print("change_log.txt create successful")
 
 def create_code_report(cmd):
     info = sp.Popen(cmd,
@@ -78,7 +78,7 @@ if __name__ == '__main__':
         client = PyPIClient()
         versions = [str(v) for v in client.get_ordered_versions(f"{service_name}")]
         if len(versions) >= 2:
-            version = versions[-2]
+            older_version = versions[-2]
             last_version = versions[-1]
 
             # generate code_report
