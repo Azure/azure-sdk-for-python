@@ -520,6 +520,7 @@ def test_send_failure_cases(connection_str):
     with EventHubProducerClient.from_connection_string(
             connection_str, buffered_mode=True, on_success=on_success, on_error=on_error
     ) as producer:
+        producer._max_wait_time = 0  # disable background flush
         # init the underlying producer
         producer.send_event(EventData('data'), partition_id="0")
         producer.flush()

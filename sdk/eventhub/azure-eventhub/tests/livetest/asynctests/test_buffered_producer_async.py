@@ -527,6 +527,7 @@ async def test_send_failure_cases(connection_str):
             on_success=on_success,
             on_error=on_error
     ) as producer:
+        producer._max_wait_time = 0  # disable background flush
         # init the underlying producer
         await producer.send_event(EventData('data'), partition_id="0")
         await producer.flush()
