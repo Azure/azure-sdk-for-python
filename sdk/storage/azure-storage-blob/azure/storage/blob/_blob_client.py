@@ -241,23 +241,28 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         account_path = ""
         if ".core." in parsed_url.netloc:
             # .core. is indicating non-customized url. Blob name with directory info can also be parsed.
-            path_blob = parsed_url.path.lstrip('/').split('/', 1)
+            path_blob = parsed_url.path.lstrip('/').split('/', maxsplit=1)
         elif "localhost" in parsed_url.netloc or "127.0.0.1" in parsed_url.netloc:
-            path_blob = parsed_url.path.lstrip('/').split('/', 2)
+            path_blob = parsed_url.path.lstrip('/').split('/', maxsplit=2)
             account_path += '/' + path_blob[0]
         else:
             # for customized url. blob name that has directory info cannot be parsed.
             path_blob = parsed_url.path.lstrip('/').split('/')
             if len(path_blob) > 2:
                 account_path = "/" + "/".join(path_blob[:-2])
+
         account_url = "{}://{}{}?{}".format(
             parsed_url.scheme,
             parsed_url.netloc.rstrip('/'),
             account_path,
             parsed_url.query)
+
+        msg_invalid_url = "Invalid URL. Provide a blob_url with a valid blob and container name."
+        if len(path_blob) <= 1:
+            raise ValueError(msg_invalid_url)
         container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])
         if not container_name or not blob_name:
-            raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
+            raise ValueError(msg_invalid_url)
 
         path_snapshot, _ = parse_query(parsed_url.query)
         if snapshot:
@@ -1941,11 +1946,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @distributed_trace
     def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
         # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Union[str, datetime]]
-        """Copies a blob asynchronously.
+        """Copies a blob from the given URL.
 
-        This operation returns a copy operation
-        object that can be used to wait on the completion of the operation,
-        as well as check status or abort the copy operation.
+        This operation returns a dictionary containing `copy_status` and `copy_id`,
+        which can be used to check the status of or abort the copy operation.
+        `copy_status` will be 'success' if the copy completed synchronously or
+        'pending' if the copy has been started asynchronously. For asynchronous copies,
+        the status can be checked by polling the :func:`get_blob_properties` method and
+        checking the copy status. Set `requires_sync` to True to force the copy to be synchronous.
         The Blob service copies blobs on a best-effort basis.
 
         The source blob for a copy operation may be a block blob, an append blob,
@@ -1967,10 +1975,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         When copying from an append blob, all committed blocks are copied. At the
         end of the copy operation, the destination blob will have the same committed
         block count as the source.
-
-        For all blob types, you can call status() on the returned polling object
-        to check the status of the copy operation, or wait() to block until the
-        operation is complete. The final blob will be committed when the copy completes.
 
         :param str source_url:
             A URL of up to 2 KB in length that specifies a file or blob.
