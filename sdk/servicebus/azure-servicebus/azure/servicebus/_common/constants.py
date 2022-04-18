@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 
-
 from uamqp import constants, types
 from azure.core import CaseInsensitiveEnumMeta
 
