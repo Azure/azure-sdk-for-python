@@ -513,7 +513,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [service_bus_overview]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview
 [queue_status_codes]: https://docs.microsoft.com/rest/api/servicebus/create-queue#response-codes
 [service_bus_docs]: https://docs.microsoft.com/azure/service-bus/
-[service_bus_mgmt_docs]: https://docs.microsoft.com/python/api/overview/azure/servicebus/management?view=azure-python
+[service_bus_mgmt_docs]: https://docs.microsoft.com/python/api/azure-mgmt-servicebus/?view=azure-python
 [queue_concept]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview#queues
 [topic_concept]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview#topics
 [subscription_concept]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#topics-and-subscriptions

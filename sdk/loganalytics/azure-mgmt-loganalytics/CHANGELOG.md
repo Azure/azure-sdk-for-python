@@ -1,5 +1,18 @@
 # Release History
 
+## 13.0.0b4 (2022-04-08)
+
+**Fixes**
+
+  - Reverted change about client name
+
+## 13.0.0b3 (2022-04-07)
+
+**Features**
+
+  - Added operation group QueriesOperations
+  - Added operation group QueryPacksOperations
+
 ## 13.0.0b2 (2022-02-14)
 
 **Features**

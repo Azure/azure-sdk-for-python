@@ -8,7 +8,7 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '271'
+      - '270'
       Content-Type:
       - application/json
       User-Agent:
@@ -18,22 +18,21 @@ interactions:
   response:
     body:
       string: '{"kind":"CustomConversationResult","results":{"query":"Send an email
-        to Carol about the tomorrow''s demo","prediction":{"topIntent":"EmailIntent","projectKind":"workflow","intents":{"EmailIntent":{"confidenceScore":0.9318673,"targetKind":"conversation","result":{"query":"Send
-        an email to Carol about the tomorrow''s demo","prediction":{"intents":[{"category":"SendEmail","confidenceScore":0.99994856},{"category":"Forward","confidenceScore":3.8603193E-05},{"category":"AddFlag","confidenceScore":3.830757E-06},{"category":"SearchMessages","confidenceScore":2.8891448E-06},{"category":"Confirm","confidenceScore":2.1230276E-06},{"category":"Reply","confidenceScore":1.506443E-06},{"category":"AddMore","confidenceScore":9.303157E-07},{"category":"CheckMessages","confidenceScore":8.9035467E-07},{"category":"QueryLastText","confidenceScore":2.485766E-07},{"category":"Cancel","confidenceScore":1.8692687E-07},{"category":"ShowNext","confidenceScore":7.9404124E-08},{"category":"ReadAloud","confidenceScore":7.020071E-08},{"category":"None","confidenceScore":5.6591706E-08},{"category":"Delete","confidenceScore":2.9716455E-08},{"category":"ShowPrevious","confidenceScore":1.6835317E-08}],"entities":[{"category":"ContactName","text":"Carol","offset":17,"length":5,"confidenceScore":1,"resolutions":[],"extraInformation":[]},{"category":"Date","text":"tomorrow","offset":33,"length":8,"confidenceScore":1,"resolutions":[{"resolutionKind":"DateTimeResolution","dateTimeSubKind":"Date","timex":"2022-03-31","value":"2022-03-31"}],"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"datetime.date"}]},{"category":"StartTime","text":"tomorrow","offset":33,"length":8,"confidenceScore":1,"resolutions":[{"resolutionKind":"DateTimeResolution","dateTimeSubKind":"Date","timex":"2022-03-31","value":"2022-03-31"}],"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"datetime.date"}]},{"category":"EmailSubject","text":"tomorrow''s
-        demo","offset":33,"length":15,"confidenceScore":1,"resolutions":[],"extraInformation":[]}],"topIntent":"SendEmail","projectKind":"conversation"}}},"RestaurantIntent":{"confidenceScore":0.6352559,"targetKind":"luis"},"ChitChat-QnA":{"confidenceScore":0.5937791,"targetKind":"question_answering"},"None":{"confidenceScore":0.15089184,"targetKind":"non_linked"}}}}}'
+        to Carol about the tomorrow''s demo","prediction":{"topIntent":"EmailIntent","projectKind":"workflow","intents":{"EmailIntent":{"confidenceScore":0.78807205,"targetKind":"conversation","result":{"query":"Send
+        an email to Carol about the tomorrow''s demo","prediction":{"intents":[{"category":"Setup","confidenceScore":0.6254007},{"category":"Play","confidenceScore":0.20336723},{"category":"Send","confidenceScore":0.13618475},{"category":"Read","confidenceScore":0.01904324},{"category":"Call","confidenceScore":0.00859508},{"category":"Set","confidenceScore":0.0033787973},{"category":"Find","confidenceScore":0.0028723886},{"category":"Open","confidenceScore":0.0010411387},{"category":"None","confidenceScore":0.00011662581}],"entities":[{"category":"Contact","text":"Carol","offset":17,"length":5,"confidenceScore":1,"resolutions":[],"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"person.name"}]},{"category":"MeetingDate","text":"tomorrow","offset":33,"length":8,"confidenceScore":1,"resolutions":[{"resolutionKind":"DateTimeResolution","dateTimeSubKind":"Date","timex":"2022-04-17","value":"2022-04-17"}],"extraInformation":[{"extraInformationKind":"EntitySubtype","value":"datetime.date"}]}],"topIntent":"Setup","projectKind":"conversation"}}},"RestaurantIntent":{"confidenceScore":0.63531023,"targetKind":"luis"},"ChitChat-QnA":{"confidenceScore":0.5959919,"targetKind":"question_answering"},"None":{"confidenceScore":0.15094617,"targetKind":"non_linked"}}}}}'
     headers:
-      apim-request-id: 3635c772-3de7-4571-9794-0223fc62bd77
+      apim-request-id: 83ec00c0-8b5c-4f2c-b576-c9aa4fa465bb
       cache-control: no-store, proxy-revalidate, no-cache, max-age=0, private
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Mar 2022 15:03:59 GMT
+      date: Sat, 16 Apr 2022 00:58:31 GMT
       pragma: no-cache
-      request-id: 3635c772-3de7-4571-9794-0223fc62bd77
+      request-id: 83ec00c0-8b5c-4f2c-b576-c9aa4fa465bb
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '509'
+      x-envoy-upstream-service-time: '139'
     status:
       code: 200
       message: OK
-    url: https://westeurope.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-03-01-preview
+    url: https://languagesdktest.cognitiveservices.azure.com/language/:analyze-conversations?api-version=2022-03-01-preview
 version: 1

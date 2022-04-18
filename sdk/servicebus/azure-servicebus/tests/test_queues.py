@@ -120,7 +120,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_by_queue_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -204,6 +204,128 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver.peek_messages()
 
             assert count == 10
+
+            def sub_test_releasing_messages():
+                # test releasing messages when prefetch is 1 and link credits are issue dynamically
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+                with sender, receiver:
+                    # send 10 msgs to queue first
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+
+                    # issue 30 link credits, client should consume 10 msgs from the service
+                    # leaving 20 credits on the wire
+                    received_msgs = receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        receiver.complete_message(msg)
+                    assert len(received_msgs) == 10
+
+                    # send 20 more messages, those messages would arrive at the client while the program is sleeping
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                    time.sleep(15)  # sleep > message expiration time
+
+                    # issue 20 link credits, client should consume 20 msgs from the service, leaving no link credits
+                    received_msgs = receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 0  # release would not increase delivery count
+                        receiver.complete_message(msg)
+                    assert len(received_msgs) == 20
+
+            def sub_test_releasing_messages_iterator():
+                # test nested iterator scenario
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+                with sender, receiver:
+                    # send 10 msgs to queue first
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    first_time = True
+                    iterator_recv_cnt = 0
+                    # iterator + receive batch
+                    for msg in receiver:
+                        assert msg.delivery_count == 0  # release would not increase delivery count
+                        receiver.complete_message(msg)
+                        iterator_recv_cnt += 1
+                        if first_time:
+                            received_msgs = receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                            for sub_msg in received_msgs:
+                                assert sub_msg.delivery_count == 0
+                                receiver.complete_message(sub_msg)
+                            assert len(received_msgs) == 9
+                            sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                            time.sleep(15)  # sleep > message expiration time
+                            received_msgs = receiver.receive_messages(max_message_count=5, max_wait_time=5)
+                            for sub_msg in received_msgs:
+                                assert sub_msg.delivery_count == 0  # release would not increase delivery count
+                                receiver.complete_message(sub_msg)
+                            assert len(received_msgs) == 5
+                            first_time = False
+                    assert iterator_recv_cnt == 16  # 1 + 15
+                    # iterator + iterator
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    outter_recv_cnt = 0
+                    inner_recv_cnt = 0
+                    for msg in receiver:
+                        assert msg.delivery_count == 0
+                        outter_recv_cnt += 1
+                        receiver.complete_message(msg)
+                        for sub_msg in receiver:
+                            assert sub_msg.delivery_count == 0
+                            inner_recv_cnt += 1
+                            receiver.complete_message(sub_msg)
+                            if inner_recv_cnt == 5:
+                                time.sleep(15)
+                                break
+                    assert outter_recv_cnt == 1
+                    outter_recv_cnt = 0
+                    for msg in receiver:
+                        assert msg.delivery_count == 0
+                        outter_recv_cnt += 1
+                        receiver.complete_message(msg)
+                    assert outter_recv_cnt == 4
+
+            def sub_test_non_releasing_messages():
+                # test not releasing messages when prefetch is not 1
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+
+                def _hack_disable_receive_context_message_received(self, message):
+                    # pylint: disable=protected-access
+                    self._handler._was_message_received = True
+                    self._handler._received_messages.put(message)
+
+                with sender, receiver:
+                    # send 10 msgs to queue first
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    receiver._handler.message_handler.on_message_received = types.MethodType(
+                        _hack_disable_receive_context_message_received, receiver)
+                    # issue 30 link credits, client should consume 10 msgs from the service
+                    # leaving 20 credits on the wire
+                    received_msgs = receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        receiver.complete_message(msg)
+
+                    # send 20 more messages, those messages would arrive at the client while the program is sleeping
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                    time.sleep(15)  # sleep > message expiration time
+
+                    # issue 20 link credits, client should consume 20 msgs from the service, leaving no link credits
+                    received_msgs = receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    assert len(received_msgs) == 20
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 0
+                        with pytest.raises(ServiceBusError):
+                            receiver.complete_message(msg)
+
+                    # re-received message with delivery count increased
+                    received_msgs = receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 1
+                        receiver.complete_message(msg)
+                    assert len(received_msgs) == 20
+
+            sub_test_releasing_messages()
+            sub_test_releasing_messages_iterator()
+            sub_test_non_releasing_messages()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2449,21 +2571,25 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     def test_queue_receive_iterator_resume_after_link_detach(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
 
         def hack_iter_next_mock_error(self):
-            self._open()
-            # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
-            if self.execution_times == 1:
-                from uamqp.errors import LinkDetach
-                from uamqp.constants import ErrorCodes
-                self.execution_times += 1
-                self.error_raised = True
-                raise LinkDetach(ErrorCodes.LinkDetachForced)
-            else:
-                self.execution_times += 1
-            if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter()
-            uamqp_message = next(self._message_iter)
-            message = self._build_message(uamqp_message)
-            return message
+            try:
+                self._receive_context.set()
+                self._open()
+                # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
+                if self.execution_times == 1:
+                    from uamqp.errors import LinkDetach
+                    from uamqp.constants import ErrorCodes
+                    self.execution_times += 1
+                    self.error_raised = True
+                    raise LinkDetach(ErrorCodes.LinkDetachForced)
+                else:
+                    self.execution_times += 1
+                if not self._message_iter:
+                    self._message_iter = self._handler.receive_messages_iter()
+                uamqp_message = next(self._message_iter)
+                message = self._build_message(uamqp_message)
+                return message
+            finally:
+                self._receive_context.clear()
 
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
