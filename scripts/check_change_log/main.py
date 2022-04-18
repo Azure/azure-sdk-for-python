@@ -68,7 +68,7 @@ if __name__ == '__main__':
     sp.call(f'docker exec -it Change_log /bin/bash -c  "python _/scripts/dev_setup.py -p azure-core"  ')
 
     # get all azure-mgmt-package paths
-    in_files = glob.glob(f'{docker_path}\sdk\*\*mgmt*')
+    in_files = glob.glob(str(Path(f'{docker_path}/sdk/*/azure-mgmt-*')))
     for i in in_files[0:1]:
         t = i.split('\\\\')
         mgmt_path_list = t[0].split('\\')
