@@ -21,12 +21,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._workspace_managed_sql_server_extended_blob_auditing_policies_operations import build_create_or_update_request_initial, build_get_request, build_list_by_workspace_request
+from ...operations._workspace_managed_sql_server_dedicated_sql_minimal_tls_settings_operations import build_get_request, build_list_request, build_update_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
-    """WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations async operations.
+class WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations:
+    """WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,82 +47,15 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
         self._deserialize = deserializer
         self._config = config
 
-    @distributed_trace_async
-    async def get(
+    async def _update_initial(
         self,
         resource_group_name: str,
         workspace_name: str,
-        blob_auditing_policy_name: Union[str, "_models.BlobAuditingPolicyName"],
+        dedicated_sq_lminimal_tls_settings_name: Union[str, "_models.DedicatedSQLMinimalTlsSettingsName"],
+        parameters: "_models.DedicatedSQLminimalTlsSettings",
         **kwargs: Any
-    ) -> "_models.ExtendedServerBlobAuditingPolicy":
-        """Get server's extended blob auditing policy.
-
-        Get a workspace SQL server's extended blob auditing policy.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
-        :type workspace_name: str
-        :param blob_auditing_policy_name: The name of the blob auditing policy.
-        :type blob_auditing_policy_name: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyName
-        :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExtendedServerBlobAuditingPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.synapse.models.ExtendedServerBlobAuditingPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtendedServerBlobAuditingPolicy"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2021-06-01")  # type: str
-
-        
-        request = build_get_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            blob_auditing_policy_name=blob_auditing_policy_name,
-            api_version=api_version,
-            template_url=self.get.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('ExtendedServerBlobAuditingPolicy', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/extendedAuditingSettings/{blobAuditingPolicyName}"}  # type: ignore
-
-
-    async def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        blob_auditing_policy_name: Union[str, "_models.BlobAuditingPolicyName"],
-        parameters: "_models.ExtendedServerBlobAuditingPolicy",
-        **kwargs: Any
-    ) -> Optional["_models.ExtendedServerBlobAuditingPolicy"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ExtendedServerBlobAuditingPolicy"]]
+    ) -> Optional["_models.DedicatedSQLminimalTlsSettings"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DedicatedSQLminimalTlsSettings"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -131,17 +64,17 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
         api_version = kwargs.pop('api_version', "2021-06-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(parameters, 'ExtendedServerBlobAuditingPolicy')
+        _json = self._serialize.body(parameters, 'DedicatedSQLminimalTlsSettings')
 
-        request = build_create_or_update_request_initial(
+        request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            blob_auditing_policy_name=blob_auditing_policy_name,
+            dedicated_sq_lminimal_tls_settings_name=dedicated_sq_lminimal_tls_settings_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_initial.metadata['url'],
+            template_url=self._update_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -159,37 +92,39 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ExtendedServerBlobAuditingPolicy', pipeline_response)
+            deserialized = self._deserialize('DedicatedSQLminimalTlsSettings', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/extendedAuditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/dedicatedSQLminimalTlsSettings/{dedicatedSQLminimalTlsSettingsName}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def begin_create_or_update(
+    async def begin_update(
         self,
         resource_group_name: str,
         workspace_name: str,
-        blob_auditing_policy_name: Union[str, "_models.BlobAuditingPolicyName"],
-        parameters: "_models.ExtendedServerBlobAuditingPolicy",
+        dedicated_sq_lminimal_tls_settings_name: Union[str, "_models.DedicatedSQLMinimalTlsSettingsName"],
+        parameters: "_models.DedicatedSQLminimalTlsSettings",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.ExtendedServerBlobAuditingPolicy"]:
-        """Create or Update server's extended blob auditing policy.
+    ) -> AsyncLROPoller["_models.DedicatedSQLminimalTlsSettings"]:
+        """Update server's tls settings.
 
-        Create or Update a workspace managed sql server's extended blob auditing policy.
+        Update workspace managed sql server's minimal tls settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param blob_auditing_policy_name: The name of the blob auditing policy.
-        :type blob_auditing_policy_name: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyName
-        :param parameters: Properties of extended blob auditing policy.
-        :type parameters: ~azure.mgmt.synapse.models.ExtendedServerBlobAuditingPolicy
+        :param dedicated_sq_lminimal_tls_settings_name: The name of the dedicated sql minimal tls
+         settings.
+        :type dedicated_sq_lminimal_tls_settings_name: str or
+         ~azure.mgmt.synapse.models.DedicatedSQLMinimalTlsSettingsName
+        :param parameters: minimal tls settings.
+        :type parameters: ~azure.mgmt.synapse.models.DedicatedSQLminimalTlsSettings
         :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
@@ -201,26 +136,26 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ExtendedServerBlobAuditingPolicy or
+        :return: An instance of AsyncLROPoller that returns either DedicatedSQLminimalTlsSettings or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.synapse.models.ExtendedServerBlobAuditingPolicy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.synapse.models.DedicatedSQLminimalTlsSettings]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2021-06-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtendedServerBlobAuditingPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedSQLminimalTlsSettings"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(
+            raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
-                blob_auditing_policy_name=blob_auditing_policy_name,
+                dedicated_sq_lminimal_tls_settings_name=dedicated_sq_lminimal_tls_settings_name,
                 parameters=parameters,
                 api_version=api_version,
                 content_type=content_type,
@@ -231,7 +166,7 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('ExtendedServerBlobAuditingPolicy', pipeline_response)
+            deserialized = self._deserialize('DedicatedSQLminimalTlsSettings', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -249,18 +184,87 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/extendedAuditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/dedicatedSQLminimalTlsSettings/{dedicatedSQLminimalTlsSettingsName}"}  # type: ignore
+
+    @distributed_trace_async
+    async def get(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        dedicated_sq_lminimal_tls_settings_name: str,
+        **kwargs: Any
+    ) -> "_models.DedicatedSQLminimalTlsSettings":
+        """Get server's minimal tls settings.
+
+        Get workspace managed sql server's minimal tls settings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace.
+        :type workspace_name: str
+        :param dedicated_sq_lminimal_tls_settings_name: The name of the dedicated sql minimal tls
+         settings.
+        :type dedicated_sq_lminimal_tls_settings_name: str
+        :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DedicatedSQLminimalTlsSettings, or the result of cls(response)
+        :rtype: ~azure.mgmt.synapse.models.DedicatedSQLminimalTlsSettings
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedSQLminimalTlsSettings"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2021-06-01")  # type: str
+
+        
+        request = build_get_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            dedicated_sq_lminimal_tls_settings_name=dedicated_sq_lminimal_tls_settings_name,
+            api_version=api_version,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('DedicatedSQLminimalTlsSettings', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/dedicatedSQLminimalTlsSettings/{dedicatedSQLminimalTlsSettingsName}"}  # type: ignore
+
 
     @distributed_trace
-    def list_by_workspace(
+    def list(
         self,
         resource_group_name: str,
         workspace_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ExtendedServerBlobAuditingPolicyListResult"]:
-        """List server's extended blob auditing policies.
+    ) -> AsyncIterable["_models.DedicatedSQLminimalTlsSettingsListResult"]:
+        """List workspace server's minimal tls settings.
 
-        List workspace managed sql server's extended blob auditing policies.
+        List workspace managed sql server's minimal tls settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -270,15 +274,15 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ExtendedServerBlobAuditingPolicyListResult or the
+        :return: An iterator like instance of either DedicatedSQLminimalTlsSettingsListResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.synapse.models.ExtendedServerBlobAuditingPolicyListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.synapse.models.DedicatedSQLminimalTlsSettingsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2021-06-01")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtendedServerBlobAuditingPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedSQLminimalTlsSettingsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -286,19 +290,19 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_workspace_request(
+                request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     api_version=api_version,
-                    template_url=self.list_by_workspace.metadata['url'],
+                    template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_workspace_request(
+                request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
@@ -311,7 +315,7 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ExtendedServerBlobAuditingPolicyListResult", pipeline_response)
+            deserialized = self._deserialize("DedicatedSQLminimalTlsSettingsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -329,7 +333,8 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -337,4 +342,4 @@ class WorkspaceManagedSqlServerExtendedBlobAuditingPoliciesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_workspace.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/extendedAuditingSettings"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/dedicatedSQLminimalTlsSettings"}  # type: ignore
