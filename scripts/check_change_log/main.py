@@ -84,12 +84,12 @@ if __name__ == '__main__':
             # generate code_report
             cmd_cl1 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  {service_name} --version={last_version}"'
             cmd_cl2 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report {service_name} --version={version}"'
-            last_info = create_code_report(cmd_cl1)
-            info = create_code_report(cmd_cl2)
+            last_code_report_info = create_code_report(cmd_cl1)
+            code_report_info = create_code_report(cmd_cl2)
 
             # get code_report path
-            last_route = find_report_name(last_info)
-            route = find_report_name(info)
+            last_route = find_report_name(last_code_report_info)
+            route = find_report_name(code_report_info)
 
             # use change_log on these two code_reports
             result_text = sp.getoutput(
