@@ -1331,7 +1331,7 @@ class StorageFileTest(StorageTestCase):
         # to make sure the attributes are the same as the set ones
         self.assertEqual(file_creation_time, dest_prop['creation_time'])
         self.assertEqual(file_last_write_time, dest_prop['last_write_time'])
-        self.assertEqual(file_last_write_time, dest_prop['change_time'])
+        self.assertEqual(file_change_time, dest_prop['change_time'])
         self.assertIn('Temporary', dest_prop['file_attributes'])
         self.assertIn('NoScrubData', dest_prop['file_attributes'])
 
