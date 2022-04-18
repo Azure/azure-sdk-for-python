@@ -1117,7 +1117,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_by_queue_client_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
@@ -1234,7 +1234,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_by_queue_client_conn_str_receive_handler_with_auto_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
@@ -1945,7 +1945,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message_2nd_received_cnt = 0
                 while message_1st_received_cnt < 20 or message_2nd_received_cnt < 20:
                     messages = []
-                    for message in receiver._get_streaming_message_iter(max_wait_time=5):
+                    for message in receiver._get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
                     if not messages:
                         break

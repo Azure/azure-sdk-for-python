@@ -64,9 +64,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send_messages(message)
 
             with pytest.raises(ServiceBusError):
-                await sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)._open_with_retry()
+                await sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)._open_with_retry()
 
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=10)
             count = 0
             async for message in receiver:
                 print_message(_logger, message)
@@ -85,9 +85,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send_messages(message)
 
             with pytest.raises(ServiceBusError):
-                await sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)._open_with_retry()
+                await sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)._open_with_retry()
 
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=10)
             count = 0
             async for message in receiver:
                 print_message(_logger, message)
