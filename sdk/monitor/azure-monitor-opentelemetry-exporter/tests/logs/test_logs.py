@@ -52,7 +52,6 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_text = "WARNING",
                 trace_flags = None,
                 severity_number = SeverityNumber.WARN,
-                name = None,
                 body = "Test message",
                 resource = Resource.create(
                     attributes={"asd":"test_resource"}
@@ -71,7 +70,6 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_text = "EXCEPTION",
                 trace_flags = None,
                 severity_number = SeverityNumber.FATAL,
-                name = None,
                 body = "Test message",
                 resource = Resource.create(
                     attributes={"asd":"test_resource"}
