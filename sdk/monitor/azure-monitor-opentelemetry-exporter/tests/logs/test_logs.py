@@ -20,7 +20,10 @@ from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
     _get_log_export_result,
     _get_severity_level,
 )
-from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
+from azure.monitor.opentelemetry.exporter._utils import (
+    azure_monitor_context,
+    ns_to_iso_str,
+)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -200,6 +203,8 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data)
         record = self._log_data.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
         self.assertEqual(envelope.data.base_type, 'MessageData')
         self.assertEqual(envelope.data.base_data.message, record.body)
         self.assertEqual(envelope.data.base_data.severity_level, 2)
@@ -208,7 +213,10 @@ class TestAzureLogExporter(unittest.TestCase):
     def test_log_to_envelope_exception(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
-        self.assertEqual(envelope.data.base_type, 'TelemetryExceptionData')
+        record = self._log_data.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, 'ExceptionData')
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)

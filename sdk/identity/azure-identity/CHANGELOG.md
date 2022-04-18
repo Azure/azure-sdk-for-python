@@ -1,5 +1,17 @@
 # Release History
 
+## 1.10.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Bumped msal-extensions version to 1.0.0    ([#23927](https://github.com/Azure/azure-sdk-for-python/issues/23927))
+
 ## 1.10.0b1 (2022-04-07)
 
 ### Features Added
