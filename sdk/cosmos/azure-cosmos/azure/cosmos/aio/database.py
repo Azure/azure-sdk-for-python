@@ -145,15 +145,15 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def create_container(
-            self,
-            id,  # type: str  # pylint: disable=redefined-builtin
-            partition_key,  # type: Any
-            indexing_policy=None,  # type: Optional[Dict[str, Any]]
-            default_ttl=None,  # type: Optional[int]
-            offer_throughput=None,  # type: Optional[int]
-            unique_key_policy=None,  # type: Optional[Dict[str, Any]]
-            conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
-            **kwargs  # type: Any
+        self,
+        id,  # type: str  # pylint: disable=redefined-builtin
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[int]
+        unique_key_policy=None,  # type: Optional[Dict[str, Any]]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
         """Create a new container with the given ID (name).
@@ -235,15 +235,15 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def create_container_if_not_exists(
-            self,
-            id,  # type: str  # pylint: disable=redefined-builtin
-            partition_key,  # type: Any
-            indexing_policy=None,  # type: Optional[Dict[str, Any]]
-            default_ttl=None,  # type: Optional[int]
-            offer_throughput=None,  # type: Optional[int]
-            unique_key_policy=None,  # type: Optional[Dict[str, Any]]
-            conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
-            **kwargs  # type: Any
+        self,
+        id,  # type: str  # pylint: disable=redefined-builtin
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[int]
+        unique_key_policy=None,  # type: Optional[Dict[str, Any]]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
         """Create a container if it does not exist already.
@@ -321,9 +321,9 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def list_containers(
-            self,
-            max_item_count=None,
-            **kwargs
+        self,
+        max_item_count=None,
+        **kwargs
     ):
         # type: (Optional[int], Optional[bool], Any) -> AsyncItemPaged[Dict[str, Any]]
         """List the containers in the database.
@@ -359,11 +359,11 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def query_containers(
-            self,
-            query=None,  # type: Optional[str]
-            parameters=None,  # type: Optional[List[Dict[str, Any]]]
-            max_item_count=None,  # type: Optional[int]
-            **kwargs  # type: Any
+        self,
+        query=None,  # type: Optional[str]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """List the properties for containers in the current database.
@@ -396,13 +396,13 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def replace_container(
-            self,
-            container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
-            partition_key,  # type: Any
-            indexing_policy=None,  # type: Optional[Dict[str, Any]]
-            default_ttl=None,  # type: Optional[int]
-            conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
-            **kwargs  # type: Any
+        self,
+        container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
         """Reset the properties of the container.
@@ -468,9 +468,9 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def delete_container(
-            self,
-            container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
-            **kwargs  # type: Any
+        self,
+        container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Delete a container.
@@ -568,11 +568,11 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def query_users(
-            self,
-            query,  # type: str
-            parameters=None,  # type: Optional[List[Dict[str, Any]]]
-            max_item_count=None,  # type: Optional[int]
-            **kwargs  # type: Any
+        self,
+        query,  # type: str
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Return all users matching the given `query`.
@@ -631,10 +631,10 @@ class DatabaseProxy(object):
 
     @distributed_trace_async
     async def replace_user(
-            self,
-            user,  # type: Union[str, UserProxy, Dict[str, Any]]
-            body,  # type: Dict[str, Any]
-            **kwargs  # type: Any
+        self,
+        user,  # type: Union[str, UserProxy, Dict[str, Any]]
+        body,  # type: Dict[str, Any]
+        **kwargs  # type: Any
     ):
         # type: (...) -> UserProxy
         """Replaces the specified user if it exists in the container.

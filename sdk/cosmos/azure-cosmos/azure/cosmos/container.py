@@ -112,11 +112,11 @@ class ContainerProxy(object):
 
     @distributed_trace
     def read(
-            self,
-            populate_query_metrics=None,  # type: Optional[bool]
-            populate_partition_key_range_statistics=None,  # type: Optional[bool]
-            populate_quota_info=None,  # type: Optional[bool]
-            **kwargs  # type: Any
+        self,
+        populate_query_metrics=None,  # type: Optional[bool]
+        populate_partition_key_range_statistics=None,  # type: Optional[bool]
+        populate_quota_info=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Read the container properties.
@@ -154,12 +154,12 @@ class ContainerProxy(object):
 
     @distributed_trace
     def read_item(
-            self,
-            item,  # type: Union[str, Dict[str, Any]]
-            partition_key,  # type: Any
-            populate_query_metrics=None,  # type: Optional[bool]
-            post_trigger_include=None,  # type: Optional[str]
-            **kwargs  # type: Any
+        self,
+        item,  # type: Union[str, Dict[str, Any]]
+        partition_key,  # type: Any
+        populate_query_metrics=None,  # type: Optional[bool]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Get the item identified by `item`.
@@ -212,10 +212,10 @@ class ContainerProxy(object):
 
     @distributed_trace
     def read_all_items(
-            self,
-            max_item_count=None,  # type: Optional[int]
-            populate_query_metrics=None,  # type: Optional[bool]
-            **kwargs  # type: Any
+        self,
+        max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List all the items in the container.
@@ -256,12 +256,12 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_items_change_feed(
-            self,
-            partition_key_range_id=None,  # type: Optional[str]
-            is_start_from_beginning=False,  # type: bool
-            continuation=None,  # type: Optional[str]
-            max_item_count=None,  # type: Optional[int]
-            **kwargs  # type: Any
+        self,
+        partition_key_range_id=None,  # type: Optional[str]
+        is_start_from_beginning=False,  # type: bool
+        continuation=None,  # type: Optional[str]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -303,15 +303,15 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_items(
-            self,
-            query,  # type: str
-            parameters=None,  # type: Optional[List[Dict[str, object]]]
-            partition_key=None,  # type: Optional[Any]
-            enable_cross_partition_query=None,  # type: Optional[bool]
-            max_item_count=None,  # type: Optional[int]
-            enable_scan_in_query=None,  # type: Optional[bool]
-            populate_query_metrics=None,  # type: Optional[bool]
-            **kwargs  # type: Any
+        self,
+        query,  # type: str
+        parameters=None,  # type: Optional[List[Dict[str, object]]]
+        partition_key=None,  # type: Optional[Any]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        max_item_count=None,  # type: Optional[int]
+        enable_scan_in_query=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Return all results matching the given `query`.
@@ -396,13 +396,13 @@ class ContainerProxy(object):
 
     @distributed_trace
     def replace_item(
-            self,
-            item,  # type: Union[str, Dict[str, Any]]
-            body,  # type: Dict[str, Any]
-            populate_query_metrics=None,  # type: Optional[bool]
-            pre_trigger_include=None,  # type: Optional[str]
-            post_trigger_include=None,  # type: Optional[str]
-            **kwargs  # type: Any
+        self,
+        item,  # type: Union[str, Dict[str, Any]]
+        body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Replaces the specified item if it exists in the container.
@@ -445,12 +445,12 @@ class ContainerProxy(object):
 
     @distributed_trace
     def upsert_item(
-            self,
-            body,  # type: Dict[str, Any]
-            populate_query_metrics=None,  # type: Optional[bool]
-            pre_trigger_include=None,  # type: Optional[str]
-            post_trigger_include=None,  # type: Optional[str]
-            **kwargs  # type: Any
+        self,
+        body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Insert or update the specified item.
@@ -494,13 +494,13 @@ class ContainerProxy(object):
 
     @distributed_trace
     def create_item(
-            self,
-            body,  # type: Dict[str, Any]
-            populate_query_metrics=None,  # type: Optional[bool]
-            pre_trigger_include=None,  # type: Optional[str]
-            post_trigger_include=None,  # type: Optional[str]
-            indexing_directive=None,  # type: Optional[Any]
-            **kwargs  # type: Any
+        self,
+        body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        indexing_directive=None,  # type: Optional[Any]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Create an item in the container.
@@ -546,13 +546,13 @@ class ContainerProxy(object):
 
     @distributed_trace
     def delete_item(
-            self,
-            item,  # type: Union[Dict[str, Any], str]
-            partition_key,  # type: Any
-            populate_query_metrics=None,  # type: Optional[bool]
-            pre_trigger_include=None,  # type: Optional[str]
-            post_trigger_include=None,  # type: Optional[str]
-            **kwargs  # type: Any
+        self,
+        item,  # type: Union[Dict[str, Any], str]
+        partition_key,  # type: Any
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Delete the specified item from the container.
@@ -701,13 +701,13 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_conflicts(
-            self,
-            query,  # type: str
-            parameters=None,  # type: Optional[List[str]]
-            enable_cross_partition_query=None,  # type: Optional[bool]
-            partition_key=None,  # type: Optional[Any]
-            max_item_count=None,  # type: Optional[int]
-            **kwargs  # type: Any
+        self,
+        query,  # type: str
+        parameters=None,  # type: Optional[List[str]]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        partition_key=None,  # type: Optional[Any]
+        max_item_count=None,  # type: Optional[int]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Return all conflicts matching a given `query`.
