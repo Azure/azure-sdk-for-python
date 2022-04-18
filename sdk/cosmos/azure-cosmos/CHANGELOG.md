@@ -1,5 +1,10 @@
 ## Release History
 
+### 4.3.0b5 (Unreleased)
+
+#### Other Changes
+- Added pylint disable option to API version kwarg.
+
 ### 4.3.0b4 (2022-04-07)
 
 #### Features Added
