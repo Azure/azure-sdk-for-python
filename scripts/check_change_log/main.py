@@ -30,8 +30,8 @@ def create_foldor(name):
     else:
         print("foldor has been created")
 
-def write_txt(foldor, text_name, text, version1, version2):
-    path = foldor + f"\{text_name}" + " " + version1 + "-" + version2 + r".txt"
+def write_txt(foldor, text_name, text, last_version, old_version):
+    path = foldor + f"\{text_name}" + " " + last_version + "-" + old_version + r".txt"
     with open(file=path, mode="w", encoding="utf-8") as file:
 
         file.write(text)
