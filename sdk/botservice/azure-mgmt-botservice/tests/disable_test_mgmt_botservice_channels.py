@@ -23,10 +23,10 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         display_name = "this is a test bot"
         description= "this is a description for a test bot"
         endpoint = "https://bing.com/messages/"
-        msa_app_id = "056d9ad9-17a9-4cc7-aebb-43bf6f293a08"
-        developer_app_insight_key = '59513bad-10a7-4d41-b4d0-b1c34c6af511'
-        developer_app_insights_api_key = 'w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv11'
-        developer_app_insights_application_id = 'cf03484e-3fdb-4b5e-9ad7-94bde32e5a19'
+        msa_app_id = ""
+        developer_app_insight_key = ''
+        developer_app_insights_api_key = ''
+        developer_app_insights_application_id = ''
         bot = self.client.bots.create(
             resource_group_name = self.resource_group_name,
             resource_name = self.resource_name,
@@ -109,7 +109,7 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         channel = EmailChannel(
             properties = EmailChannelProperties(
                 email_address = 'swagatm2@outlook.com',
-                password = 'Botuser123@',
+                password = '',
                 is_enabled = True
             )
         )
@@ -127,7 +127,7 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         self.resource_group_name = resource_group.name
         channel = TelegramChannel(
             properties = TelegramChannelProperties(
-                access_token = '520413022:AAF12lBf6s4tSqntaXEZnvrn6XOVrjQ6YN4',
+                access_token = '',
                 is_enabled = True,
             )
         )
@@ -145,8 +145,8 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         channel = SmsChannel(
             properties = SmsChannelProperties(
                 phone = '+15153258725',
-                account_sid = 'AC421cab6999e0c8c0d1a90c6643db8f05',
-                auth_token = '507d2f4f9a832fdd042d05c500b3a88f',
+                account_sid = '',
+                auth_token = '',
                 is_enabled = True,
                 is_validated = False 
             )
