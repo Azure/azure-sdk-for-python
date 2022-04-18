@@ -61,10 +61,10 @@ class BufferedProducer:
                 self._last_send_time = time.time()
                 self._check_max_wait_time_future = asyncio.ensure_future(self.check_max_wait_time_worker())
 
-    async def stop(self, flush=True, timeout=None, raise_error=False):
+    async def stop(self, flush=True, timeout_time=None, raise_error=False):
         self._running = False
         if flush:
-            await self.flush(timeout=timeout, raise_error=raise_error)
+            await self.flush(timeout_time=timeout_time, raise_error=raise_error)
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
@@ -88,11 +88,10 @@ class BufferedProducer:
                 )
         await self._producer.close()
 
-    async def put_events(self, events, timeout=None):
+    async def put_events(self, events, timeout_time=None):
         # Put single event or EventDataBatch into the queue.
         # This method would raise OperationTimeout if the queue does not have enough space for the input and
         # flush cannot finish in timeout.
-        timeout_time = time.time() + timeout if timeout else None
         try:
             new_events_len = len(events)
         except TypeError:
@@ -105,7 +104,7 @@ class BufferedProducer:
                 new_events_len
             )
             # flush the buffer
-            await self.flush(timeout=timeout)
+            await self.flush(timeout_time=timeout_time)
 
         async with self._not_full:
             if timeout_time and time.time() > timeout_time:
@@ -144,11 +143,10 @@ class BufferedProducer:
 
         return wrapper_callback
 
-    async def flush(self, timeout=None, raise_error=True):
+    async def flush(self, timeout_time=None, raise_error=True):
         # pylint: disable=protected-access
         # try flushing all the buffered batch within given time
         _LOGGER.info("Partition: %r started flushing.", self.partition_id)
-        timeout_time = time.time() + timeout if timeout else None
         async with self._not_empty:
             if self._cur_batch:  # if there is batch, enqueue it to the buffer first
                 self._buffered_queue.put(self._cur_batch)

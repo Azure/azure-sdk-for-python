@@ -61,11 +61,10 @@ class BufferedProducer:
                 self._last_send_time = time.time()
                 self._check_max_wait_time_future = self._executor.submit(self.check_max_wait_time_worker)
 
-    def stop(self, flush=True, timeout=None, raise_error=False):
+    def stop(self, flush=True, timeout_time=None, raise_error=False):
         self._running = False
-        timeout_time = time.time() + timeout if timeout else None
         if flush:
-            self.flush(timeout=timeout, raise_error=raise_error)
+            self.flush(timeout_time=timeout_time, raise_error=raise_error)
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
@@ -74,7 +73,7 @@ class BufferedProducer:
                     self._cur_buffered_len
                 )
         if self._check_max_wait_time_future:
-            remain_timeout = timeout_time - time.time() if timeout else None
+            remain_timeout = timeout_time - time.time() if timeout_time else None
             try:
                 with self._not_empty:
                     # in the stop procedure, calling notify to give check_max_wait_time_future a chance to stop
@@ -89,11 +88,10 @@ class BufferedProducer:
                 )
         self._producer.close()
 
-    def put_events(self, events, timeout=None):
+    def put_events(self, events, timeout_time=None):
         # Put single event or EventDataBatch into the queue.
         # This method would raise OperationTimeout if the queue does not have enough space for the input and
         # flush cannot finish in timeout.
-        timeout_time = time.time() + timeout if timeout else None
         with self._not_full:
             try:
                 new_events_len = len(events)
@@ -107,7 +105,7 @@ class BufferedProducer:
                     new_events_len
                 )
                 # flush the buffer
-                self.flush(timeout=timeout)
+                self.flush(timeout_time=timeout_time)
 
             if timeout_time and time.time() > timeout_time:
                 raise OperationTimeoutError("Failed to enqueue events into buffer due to timeout.")
@@ -145,11 +143,10 @@ class BufferedProducer:
 
         return wrapper_callback
 
-    def flush(self, timeout=None, raise_error=True):
+    def flush(self, timeout_time=None, raise_error=True):
         # pylint: disable=protected-access
         # try flushing all the buffered batch within given time
         _LOGGER.info("Partition: %r started flushing.", self.partition_id)
-        timeout_time = time.time() + timeout if timeout else None
         with self._not_empty:
             if self._cur_batch:  # if there is batch, enqueue it to the buffer first
                 self._buffered_queue.put(self._cur_batch)

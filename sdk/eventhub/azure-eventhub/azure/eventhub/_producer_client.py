@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
+import time
 from typing import (
     Any,
     Union,
@@ -260,21 +261,26 @@ class EventHubProducerClient(ClientBase):
         if len(batch) == 0:
             return
 
+        timeout = kwargs.get("timeout")
+        timeout_time = time.time() + timeout if timeout else None
+
         self._buffered_send(
             event_data_batch,
             partition_id=pid,
             partition_key=pkey,
-            timeout=kwargs.get("timeout")
+            timeout_time=timeout_time
         )
 
     def _buffered_send_event(self, event, **kwargs):
         partition_key = kwargs.get("partition_key")
         set_event_partition_key(event, partition_key)
+        timeout = kwargs.get("timeout")
+        timeout_time = time.time() + timeout if timeout else None
         self._buffered_send(
             event,
             partition_id=kwargs.get("partition_id"),
             partition_key=partition_key,
-            timeout=kwargs.get("timeout")
+            timeout_time=timeout_time
         )
 
     def _get_partitions(self):
@@ -734,7 +740,9 @@ class EventHubProducerClient(ClientBase):
          in buffered mode.
         """
         if self._buffered_mode and self._buffered_producer_dispatcher:
-            self._buffered_producer_dispatcher.flush(timeout=kwargs.get("timeout"))
+            timeout = kwargs.get("timeout")
+            timeout_time = time.time() + timeout if timeout else None
+            self._buffered_producer_dispatcher.flush(timeout_time=timeout_time)
 
     def close(
         self,
@@ -764,7 +772,9 @@ class EventHubProducerClient(ClientBase):
         """
         with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                self._buffered_producer_dispatcher.close(flush=flush, timeout=kwargs.get("timeout"), raise_error=True)
+                timeout = kwargs.get("timeout")
+                timeout_time = time.time() + timeout if timeout else None
+                self._buffered_producer_dispatcher.close(flush=flush, timeout_time=timeout_time, raise_error=True)
                 self._buffered_producer_dispatcher = None
 
             for pid in self._producers:

@@ -63,11 +63,11 @@ class BufferedProducerDispatcher:
             return self._partition_resolver.get_partition_id_by_partition_key(partition_key)
         return self._partition_resolver.get_next_partition_id()
 
-    def enqueue_events(self, events, *, partition_id=None, partition_key=None, timeout=None):
+    def enqueue_events(self, events, *, partition_id=None, partition_key=None, timeout_time=None):
         pid = self._get_partition_id(partition_id, partition_key)
         with self._lock:
             try:
-                self._buffered_producers[pid].put_events(events, timeout)
+                self._buffered_producers[pid].put_events(events, timeout_time)
             except KeyError:
                 buffered_producer = BufferedProducer(
                     self._create_producer(pid),
@@ -82,15 +82,15 @@ class BufferedProducerDispatcher:
                 )
                 buffered_producer.start()
                 self._buffered_producers[pid] = buffered_producer
-                buffered_producer.put_events(events, timeout)
+                buffered_producer.put_events(events, timeout_time)
 
-    def flush(self, timeout=None):
+    def flush(self, timeout_time=None):
         # flush all the buffered producer, the method will block until finishes or times out
         with self._lock:
             futures = []
             for pid, producer in self._buffered_producers.items():
                 # call each producer's flush method
-                futures.append((pid, self._executor.submit(producer.flush, timeout=timeout)))
+                futures.append((pid, self._executor.submit(producer.flush, timeout_time=timeout_time)))
 
             # gather results
             exc_results = {}
@@ -110,7 +110,7 @@ class BufferedProducerDispatcher:
                         " Exception details are {!r}".format(exc_results.keys(), exc_results)
             )
 
-    def close(self, *, flush=True, timeout=None, raise_error=False):
+    def close(self, *, flush=True, timeout_time=None, raise_error=False):
 
         futures = []
         # stop all buffered producers
@@ -118,7 +118,7 @@ class BufferedProducerDispatcher:
             futures.append((pid, self._executor.submit(
                 producer.stop,
                 flush=flush,
-                timeout=timeout,
+                timeout_time=timeout_time,
                 raise_error=raise_error
             )))
 
