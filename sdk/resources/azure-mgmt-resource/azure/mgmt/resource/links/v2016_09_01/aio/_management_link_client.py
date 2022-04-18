@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import ManagementLinkClientConfiguration
@@ -22,7 +23,10 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 class ManagementLinkClient:
-    """Azure resources can be linked together to form logical relationships. You can establish links between resources belonging to different resource groups. However, all the linked resources must belong to the same subscription. Each resource can be linked to 50 other resources. If any of the linked resources are deleted or moved, the link owner must clean up the remaining link.
+    """Azure resources can be linked together to form logical relationships. You can establish links
+    between resources belonging to different resource groups. However, all the linked resources
+    must belong to the same subscription. Each resource can be linked to 50 other resources. If any
+    of the linked resources are deleted or moved, the link owner must clean up the remaining link.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.resource.links.v2016_09_01.aio.operations.Operations
@@ -33,8 +37,11 @@ class ManagementLinkClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2016-09-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
