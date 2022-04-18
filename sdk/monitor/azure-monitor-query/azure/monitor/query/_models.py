@@ -17,7 +17,6 @@ from ._generated.models import (
 )
 
 
-
 class LogsTable(object):
     """Contains the columns and rows for one table in a query response.
 
