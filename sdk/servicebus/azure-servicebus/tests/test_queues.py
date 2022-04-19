@@ -497,7 +497,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages(message)
     
             messages = []
-            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
                 for message in receiver:
                     messages.append(message)
                     receiver.complete_message(message)
@@ -527,7 +527,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              max_wait_time=5, 
+                                              max_wait_time=10,
                                               receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
             
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -1131,7 +1131,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             renewer = AutoLockRenewer()
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                                 max_wait_time=5, 
+                                                 max_wait_time=10,
                                                  receive_mode=ServiceBusReceiveMode.PEEK_LOCK, 
                                                  prefetch_count=10) as receiver:
                 for message in receiver:
@@ -1173,7 +1173,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages(message)
 
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                                 max_wait_time=5,
+                                                 max_wait_time=10,
                                                  receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                                                  prefetch_count=10) as receiver:
                 received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
@@ -1194,10 +1194,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages(message)
 
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                                 max_wait_time=5,
+                                                 max_wait_time=10,
                                                  receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                                                  prefetch_count=3) as receiver:
-                received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
+                received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=10)
                 for msg in received_msgs:
                     renewer.register(receiver, msg, max_lock_renewal_duration=30)
                 time.sleep(10)
@@ -1216,10 +1216,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages(message)
 
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                                 max_wait_time=5,
+                                                 max_wait_time=10,
                                                  receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                                                  prefetch_count=3) as receiver:
-                received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
+                received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=10)
                 for msg in received_msgs:
                     renewer.register(receiver, msg, max_lock_renewal_duration=30)
                 time.sleep(10)
@@ -2322,7 +2322,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
             with sender, receiver:
                 # negative settlement via receiver link
-                sender.send_messages(ServiceBusMessage("body"), timeout=5)
+                sender.send_messages(ServiceBusMessage("body"), timeout=10)
                 message = receiver.receive_messages()[0]
                 message.message.accept = types.MethodType(_hack_amqp_message_complete, message.message)
                 receiver.complete_message(message)  # settle via mgmt link
@@ -2335,7 +2335,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 finally:
                     uamqp.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
 
-                sender.send_messages(ServiceBusMessage("body"), timeout=5)
+                sender.send_messages(ServiceBusMessage("body"), timeout=10)
 
                 message = receiver.receive_messages()[0]
 
