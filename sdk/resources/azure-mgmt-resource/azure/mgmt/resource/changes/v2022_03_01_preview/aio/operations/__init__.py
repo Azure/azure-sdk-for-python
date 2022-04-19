@@ -6,10 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import ChangeResourcesOperations
-from ._operations import ChangeResourceOperations
+from ._operations import ChangesOperations
 
 __all__ = [
-    'ChangeResourcesOperations',
-    'ChangeResourceOperations',
+    'ChangesOperations',
 ]
