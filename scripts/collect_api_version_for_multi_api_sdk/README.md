@@ -14,4 +14,4 @@ python main.py
 ```
 
 ### Tip
-if you don't want to load result to github,you could comment out the `upload_to_github` function in Line 200 from main.py.
+if you don't want to upload result to github, you could comment out the `upload_to_github` function in `main.py` before running it.
