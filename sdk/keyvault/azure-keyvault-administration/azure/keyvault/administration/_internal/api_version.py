@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
-
-class ApiVersion(str, Enum):
+# pylint:disable=enum-must-be-uppercase
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
