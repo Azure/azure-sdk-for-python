@@ -1,17 +1,17 @@
 {
-    "chosen_version": "2021-03-25-preview",
-    "total_api_version_list": ["2021-03-25-preview"],
+    "chosen_version": "2022-03-10",
+    "total_api_version_list": ["2022-03-10"],
     "client": {
         "name": "HybridComputeManagementClient",
         "filename": "_hybrid_compute_management_client",
         "description": "The Hybrid Compute Management Client.",
-        "base_url": "\u0027https://management.azure.com\u0027",
-        "custom_base_url": null,
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"HybridComputeManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"HybridComputeManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"HybridComputeManagementClientConfiguration\"], \"._operations_mixin\": [\"HybridComputeManagementClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"HybridComputeManagementClientConfiguration\"], \"._operations_mixin\": [\"HybridComputeManagementClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -54,7 +54,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url=None,  # type: Optional[str]",
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -74,7 +74,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url: Optional[str] = None,",
+                    "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -91,11 +91,10 @@
     "config": {
         "credential": true,
         "credential_scopes": ["https://management.azure.com/.default"],
-        "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null,
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
         "machines": "MachinesOperations",
@@ -104,5 +103,35 @@
         "private_link_scopes": "PrivateLinkScopesOperations",
         "private_link_resources": "PrivateLinkResourcesOperations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations"
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.polling\": [\"LROPoller\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.polling\": [\"AsyncLROPoller\"]}}}",
+        "operations": {
+            "_upgrade_extensions_initial" : {
+                "sync": {
+                    "signature": "def _upgrade_extensions_initial(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name,  # type: str\n    machine_name,  # type: str\n    extension_upgrade_parameters,  # type: \"_models.MachineExtensionUpgrade\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
+                    "doc": "\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param machine_name: The name of the hybrid machine.\n:type machine_name: str\n:param extension_upgrade_parameters: Parameters supplied to the Upgrade Extensions operation.\n:type extension_upgrade_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpgrade\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def _upgrade_extensions_initial(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name: str,\n    machine_name: str,\n    extension_upgrade_parameters: \"_models.MachineExtensionUpgrade\",\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param machine_name: The name of the hybrid machine.\n:type machine_name: str\n:param extension_upgrade_parameters: Parameters supplied to the Upgrade Extensions operation.\n:type extension_upgrade_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpgrade\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, machine_name, extension_upgrade_parameters"
+            },
+            "begin_upgrade_extensions" : {
+                "sync": {
+                    "signature": "def begin_upgrade_extensions(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name,  # type: str\n    machine_name,  # type: str\n    extension_upgrade_parameters,  # type: \"_models.MachineExtensionUpgrade\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e LROPoller[None]\n",
+                    "doc": "\"\"\"The operation to Upgrade Machine Extensions.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param machine_name: The name of the hybrid machine.\n:type machine_name: str\n:param extension_upgrade_parameters: Parameters supplied to the Upgrade Extensions operation.\n:type extension_upgrade_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpgrade\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be ARMPolling. Pass in False for this\n operation to not poll, or pass in your own initialized polling object for a personal polling\n strategy.\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def begin_upgrade_extensions(  # pylint: disable=inconsistent-return-statements\n    self,\n    resource_group_name: str,\n    machine_name: str,\n    extension_upgrade_parameters: \"_models.MachineExtensionUpgrade\",\n    **kwargs: Any\n) -\u003e AsyncLROPoller[None]:\n",
+                    "doc": "\"\"\"The operation to Upgrade Machine Extensions.\n\n:param resource_group_name: The name of the resource group. The name is case insensitive.\n:type resource_group_name: str\n:param machine_name: The name of the hybrid machine.\n:type machine_name: str\n:param extension_upgrade_parameters: Parameters supplied to the Upgrade Extensions operation.\n:type extension_upgrade_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpgrade\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for\n this operation to not poll, or pass in your own initialized polling object for a personal\n polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, machine_name, extension_upgrade_parameters"
+            }
+        }
     }
 }

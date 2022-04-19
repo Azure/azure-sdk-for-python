@@ -6,27 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AssessmentModeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the assessment mode.
+    """
+
+    IMAGE_DEFAULT = "ImageDefault"
+    AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
+
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
 
@@ -35,11 +27,20 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class InstanceViewTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InstanceViewTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     INSTANCE_VIEW = "instanceView"
 
-class PublicNetworkAccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PatchModeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the patch mode.
+    """
+
+    IMAGE_DEFAULT = "ImageDefault"
+    AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
+    AUTOMATIC_BY_OS = "AutomaticByOS"
+    MANUAL = "Manual"
+
+class PublicNetworkAccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The network access policy to determine if Azure Arc agents can use public Azure Arc service
     endpoints. Defaults to disabled (access to Azure Arc services only via private link).
     """
@@ -51,7 +52,7 @@ class PublicNetworkAccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: endpoints. The agents must use the private link.
     DISABLED = "Disabled"
 
-class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StatusLevelTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The level code.
     """
 
@@ -59,7 +60,7 @@ class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     ERROR = "Error"
 
-class StatusTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StatusTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the hybrid machine agent.
     """
 
