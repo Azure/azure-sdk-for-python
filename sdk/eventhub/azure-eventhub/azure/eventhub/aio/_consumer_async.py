@@ -152,6 +152,8 @@ class EventHubConsumer(
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
             link_properties=self._link_properties,
+            transport_type=self._client._config.transport_type, # pylint:disable=protected-access
+            http_proxy=self._client._config.http_proxy, # pylint:disable=protected-access
             retry_policy=self._retry_policy,
             client_name=self._name,
             receive_settle_mode=pyamqp_constants.ReceiverSettleMode.First,

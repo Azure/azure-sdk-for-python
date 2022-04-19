@@ -74,9 +74,9 @@ class SASLTransport(SSLTransport):
     def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
-        super().__init__(host, port, connect_timeout, ssl, **kwargs)
+        super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
-    def negotiate(self):  
+    def negotiate(self):
         with self.block():
             self.write(SASL_HEADER_FRAME)
             _, returned_header = self.receive_frame()
@@ -104,7 +104,7 @@ class SASLTransport(SSLTransport):
 
 class SASLTransportWithWebSocket(WebSocketTransport):
 
-    def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
         http_proxy = kwargs.pop('http_proxy', None)

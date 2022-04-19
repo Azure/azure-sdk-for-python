@@ -661,7 +661,7 @@ def Transport(host, connect_timeout=None, ssl=False, **kwargs):
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
 class WebSocketTransport(_AbstractTransport):
-    def __init__(self, host, port=WEBSOCKET_PORT,   connect_timeout=None, ssl=None, **kwargs
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
         ):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
@@ -705,19 +705,16 @@ class WebSocketTransport(_AbstractTransport):
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-        try:
-            while n:
-                data = self.ws.recv()
+        while n:
+            data = self.ws.recv()
 
-                if len(data) <= n:
-                    view[length: length + len(data)] = data
-                    n -= len(data)
-                else:
-                    view[length: length + n] = data[0:n]
-                    self._read_buffer = BytesIO(data[n:])
-                    n = 0
-        except:
-            raise
+            if len(data) <= n:
+                view[length: length + len(data)] = data
+                n -= len(data)
+            else:
+                view[length: length + n] = data[0:n]
+                self._read_buffer = BytesIO(data[n:])
+                n = 0
         return view
 
     def _shutdown_transport(self):

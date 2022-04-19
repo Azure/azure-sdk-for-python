@@ -16,7 +16,7 @@ from enum import Enum
 import asyncio
 
 from ._transport_async import AsyncTransport
-from ._sasl_async import SASLTransport
+from ._sasl_async import SASLTransport, SASLTransportWithWebSocket
 from ._session_async import Session
 from ..performatives import OpenFrame, CloseFrame
 from .._connection import get_local_timeout
@@ -27,7 +27,8 @@ from ..constants import (
     MAX_CHANNELS,
     HEADER_FRAME,
     ConnectionState,
-    EMPTY_FRAME
+    EMPTY_FRAME,
+    TransportType,
 )
 
 from ..error import (
@@ -58,11 +59,16 @@ class Connection(object):
     :param list(str) offered_capabilities: The extension capabilities the sender supports.
     :param list(str) desired_capabilities: The extension capabilities the sender may use if the receiver supports
     :param dict properties: Connection properties.
+    :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket.
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
     """
 
     def __init__(self, endpoint, **kwargs):
         parsed_url = urlparse(endpoint)
         self.hostname = parsed_url.hostname
+        self._transport_type = kwargs.pop('transport_type')
         if parsed_url.port:
             self.port = parsed_url.port
         elif parsed_url.scheme == 'amqps':
@@ -75,11 +81,18 @@ class Connection(object):
         if transport:
             self.transport = transport
         elif 'sasl_credential' in kwargs:
-            self.transport = SASLTransport(
-                host=parsed_url.netloc,
-                credential=kwargs['sasl_credential'],
-                **kwargs
-            )
+            if self._transport_type is TransportType.AmqpOverWebsocket:
+                self._transport = SASLTransportWithWebSocket(
+                    host=parsed_url.netloc,
+                    credential=kwargs['sasl_credential'],
+                    **kwargs
+                )
+            else:
+                self._transport = SASLTransport(
+                    host=parsed_url.netloc,
+                    credential=kwargs['sasl_credential'],
+                    **kwargs
+                )
         else:
             self.transport = AsyncTransport(parsed_url.netloc, **kwargs)
         self._container_id = kwargs.get('container_id') or str(uuid.uuid4())

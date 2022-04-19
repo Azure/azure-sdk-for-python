@@ -201,7 +201,9 @@ class AMQPClientAsync(AMQPClientSync):
                 channel_max=self._channel_max,
                 idle_timeout=self._idle_timeout,
                 properties=self._properties,
-                network_trace=self._network_trace
+                network_trace=self._network_trace,
+                transport_type=self._transport_type,
+                http_proxy=self._http_proxy
             )
             await self._connection.open()
         if not self._session:

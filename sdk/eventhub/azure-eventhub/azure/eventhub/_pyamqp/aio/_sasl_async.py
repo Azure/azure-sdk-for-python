@@ -7,9 +7,9 @@
 import struct
 from enum import Enum
 
-from ._transport_async import AsyncTransport
+from ._transport_async import AsyncTransport, WebSocketTransportAsync
 from ..types import AMQPTypes, TYPE, VALUE
-from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME
+from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME, WEBSOCKET_PORT
 from .._transport import AMQPS_PORT
 from ..performatives import (
     SASLOutcome,
@@ -104,3 +104,20 @@ class SASLTransport(AsyncTransport):
             return
         else:
             raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
+
+class SASLTransportWithWebSocket(SASLTransport):
+
+    def __init__(
+        self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
+        ): # pylint: disable=super-init-not-called
+        self.credential = credential
+        ssl = ssl or True
+        http_proxy = kwargs.pop('http_proxy', None)
+        self._transport = WebSocketTransportAsync(
+            host,
+            port=WEBSOCKET_PORT,
+            connect_timeout=connect_timeout,
+            ssl=ssl,
+            http_proxy=http_proxy,
+            **kwargs
+        )

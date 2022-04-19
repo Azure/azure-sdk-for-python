@@ -49,7 +49,7 @@ import certifi
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
-from ..constants import TLS_HEADER_FRAME
+from ..constants import TLS_HEADER_FRAME, WEBSOCKET_PORT
 from .._transport import (
     AMQP_FRAME,
     get_errno,
@@ -59,7 +59,8 @@ from .._transport import (
     SIGNED_INT_MAX,
     _UNAVAIL,
     set_cloexec,
-    AMQP_PORT
+    AMQP_PORT,
+    WebSocketTransport
 )
 
 
@@ -412,3 +413,48 @@ class AsyncTransport(object):
         if returned_header[1] == TLS_HEADER_FRAME:
             raise ValueError("Mismatching TLS header protocol. Excpected: {}, received: {}".format(
                 TLS_HEADER_FRAME, returned_header[1]))
+
+
+class WebSocketTransport(WebSocketTransport):
+    async def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
+        """Read exactly n bytes from the peer."""
+        
+        length = 0
+        view = buffer or memoryview(bytearray(n))
+        nbytes = self._read_buffer.readinto(view)
+        length += nbytes
+        n -= nbytes
+        while n:
+            data = await asyncio.get_event_loop().run_in_executor(
+                None, self.ws.recv
+                )
+
+            if len(data) <= n:
+                view[length: length + len(data)] = data
+                n -= len(data)
+            else:
+                view[length: length + n] = data[0:n]
+                self._read_buffer = BytesIO(data[n:])
+                n = 0
+        return view
+
+    async def _shutdown_transport(self):
+        """Do any preliminary work in shutting down the connection."""
+        await asyncio.get_event_loop().run_in_executor(
+                    None, self.ws.close
+                    )
+
+    async def _write(self, s):
+        """Completely write a string to the peer."""
+        try:
+            """
+            ABNF, OPCODE_BINARY = 0x2
+            See http://tools.ietf.org/html/rfc5234
+            http://tools.ietf.org/html/rfc6455#section-5.2
+            """
+            from websocket import ABNF
+            await asyncio.get_event_loop().run_in_executor(
+                    None, self.ws.recv, s, opcode=ABNF.OPCODE_BINARY
+                    )
+        except ImportError:
+            raise ValueError("Please install websocket-client library to use websocket transport.")

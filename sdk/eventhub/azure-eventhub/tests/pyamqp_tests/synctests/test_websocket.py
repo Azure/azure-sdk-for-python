@@ -5,8 +5,7 @@
 
 import pytest
 
-from azure.eventhub import TransportType
-from azure.eventhub._pyamqp import authentication, ReceiveClient
+from azure.eventhub._pyamqp import authentication, ReceiveClient, TransportType
 
 def test_event_hubs_client_web_socket(live_eventhub):
     uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
@@ -23,5 +22,5 @@ def test_event_hubs_client_web_socket(live_eventhub):
         live_eventhub['consumer_group'],
         live_eventhub['partition'])
 
-    with ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, timeout=5000, prefetch=50) as receive_client:
+    with ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, debug=False, timeout=5000, prefetch=50, transport_type=TransportType.AmqpOverWebsocket) as receive_client:
         receive_client.receive_message_batch(max_batch_size=10)
