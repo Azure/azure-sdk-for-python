@@ -68,57 +68,8 @@ class SASLExternalCredential(object):
     def start(self):
         return b''
 
-
-class SASLTransport(SSLTransport):
-
-    def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
-        self.credential = credential
-        ssl = ssl or True
-        super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
-
-    def negotiate(self):
-        with self.block():
-            self.write(SASL_HEADER_FRAME)
-            _, returned_header = self.receive_frame()
-            if returned_header[1] != SASL_HEADER_FRAME:
-                raise ValueError("Mismatching AMQP header protocol. Expected: {}, received: {}".format(
-                    SASL_HEADER_FRAME, returned_header[1]))
-
-            _, supported_mechansisms = self.receive_frame(verify_frame_type=1)
-            if self.credential.mechanism not in supported_mechansisms[1][0]:  # sasl_server_mechanisms
-                raise ValueError("Unsupported SASL credential type: {}".format(self.credential.mechanism))
-            sasl_init = SASLInit(
-                mechanism=self.credential.mechanism,
-                initial_response=self.credential.start(),
-                hostname=self.host)
-            self.send_frame(0, sasl_init, frame_type=_SASL_FRAME_TYPE)
-
-            _, next_frame = self.receive_frame(verify_frame_type=1)
-            frame_type, fields = next_frame
-            if frame_type != 0x00000044:  # SASLOutcome
-                raise NotImplementedError("Unsupported SASL challenge")
-            if fields[0] == SASLCode.Ok:  # code
-                return
-            else:
-                raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
-
-class SASLTransportWithWebSocket(WebSocketTransport):
-
-    def __init__(self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
-        self.credential = credential
-        ssl = ssl or True
-        http_proxy = kwargs.pop('http_proxy', None)
-        self._transport = WebSocketTransport(
-            host,
-            port=WEBSOCKET_PORT,
-            connect_timeout=connect_timeout,
-            ssl=ssl,
-            http_proxy=http_proxy,
-            **kwargs
-        )
-        super().__init__(host, port, connect_timeout, ssl, **kwargs)
-
-    def negotiate(self):  
+class SASLTransportMixin():
+    def _negotiate(self):
         self.write(SASL_HEADER_FRAME)
         _, returned_header = self.receive_frame()
         if returned_header[1] != SASL_HEADER_FRAME:
@@ -142,3 +93,33 @@ class SASLTransportWithWebSocket(WebSocketTransport):
             return
         else:
             raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
+
+class SASLTransport(SSLTransport, SASLTransportMixin):
+
+    def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
+        self.credential = credential
+        ssl = ssl or True
+        super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+
+    def negotiate(self):
+        with self.block():
+            self._negotiate()
+
+class SASLTransportWithWebSocket(WebSocketTransport, SASLTransportMixin):
+
+    def __init__(self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
+        self.credential = credential
+        ssl = ssl or True
+        http_proxy = kwargs.pop('http_proxy', None)
+        self._transport = WebSocketTransport(
+            host,
+            port=WEBSOCKET_PORT,
+            connect_timeout=connect_timeout,
+            ssl=ssl,
+            http_proxy=http_proxy,
+            **kwargs
+        )
+        super().__init__(host, port, connect_timeout, ssl, **kwargs)
+
+    def negotiate(self):  
+        self._negotiate()
