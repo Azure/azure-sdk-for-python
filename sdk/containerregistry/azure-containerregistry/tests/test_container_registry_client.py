@@ -601,3 +601,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             last_udpated_on = properties.last_udpated_on
         last_updated_on = properties.last_updated_on
         assert last_udpated_on == last_updated_on
+    
+    @acr_preparer()
+    def test_upload_manifest(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        client = self.create_registry_client(containerregistry_endpoint)
+        
+        client.upload_manifest(repo, manifest)

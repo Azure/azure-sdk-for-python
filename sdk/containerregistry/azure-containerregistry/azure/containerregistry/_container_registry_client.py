@@ -759,17 +759,21 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param manifest: The manifest to upload.
         :type manifest: ~azure.containerregistry.models.OCIManifest or IO
         :keyword tag: Tag of the manifest.
-        :paramtype tag: str
+        :paramtype tag: str or None
         :returns: None
         :rtype: None
+        :raises ValueError: If the parameter repository or manifest is None.
         """
+        if (repository or manifest) is None:
+            raise ValueError("The parameter repository and manifest cannot be None.")
+
         tag_or_digest = tag
-        if tag:
+        if tag is None:
             stream = manifest
             if isinstance(manifest, OCIManifest):
                 stream = _serialize_manifest(manifest)
             tag_or_digest = _compute_digest(stream)
-        
+
         self._client.container_registry.create_manifest(
             name=repository, reference=tag_or_digest, payload=stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs
         )
@@ -784,7 +788,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type stream: IO
         :returns: None
         :rtype: None
+        :raises ValueError: If the parameter repository or stream is None.
         """
+        if (repository or stream) is None:
+            raise ValueError("The parameter repository and stream cannot be None.")
+
         start_upload_respose = self._client.container_registry_blob.start_upload(
             repository, cls=_return_response, **kwargs
         )
@@ -805,7 +813,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag_or_digest: The manifest to upload.
         :returns: ManifestWrapper
         :rtype: ~container_registry.models.ManifestWrapper
+        :raises ValueError: If the parameter repository or tag_or_digest is None.
         """
+        if repository or tag_or_digest is None:
+            raise ValueError("The parameter repository and tag_or_digest cannot be None.")
+
         return self._client.container_registry.get_manifest(
             name=repository, reference=tag_or_digest, accept=OCI_MANIFEST_MEDIA_TYPE, **kwargs
         )
@@ -819,7 +831,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str digest: The digest of the blob to download.
         :returns: IO or None
         :rtype: IO or None
+        :raises ValueError: If the parameter repository or digest is None.
         """
+        if repository or digest is None:
+            raise ValueError("The parameter repository and digest cannot be None.")
+
         return self._client.container_registry_blob.get_blob(repository, digest, **kwargs)
 
     @distributed_trace

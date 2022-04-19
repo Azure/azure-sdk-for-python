@@ -12,7 +12,8 @@ import six
 import time
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import _is_tag
+from azure.containerregistry._helpers import _is_tag, OCI_MANIFEST_MEDIA_TYPE
+from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
@@ -206,7 +207,20 @@ class ContainerRegistryTestClass(AzureTestCase):
 
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
-
+    
+    def create_oci_manifest(self):
+        config1 = Descriptor(
+            media_type=OCI_MANIFEST_MEDIA_TYPE,
+            digest="d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+            size=171
+        )
+        config2 = Descriptor(
+            media_type="application/vnd.oci.image.layer.v1.tar",
+            digest="654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+            size=28,
+            annotations=Annotations(title="artifact.txt")
+        )
+        return OCIManifest(config=config1, schema_version=2, layers=[config2])
 
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:
@@ -222,7 +236,6 @@ def get_authority(endpoint):
         logger.warning("Germany Authority:")
         return AzureAuthorityHosts.AZURE_GERMANY
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
-
 
 def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
@@ -305,7 +318,6 @@ def import_image(authority, repository, tags):
 
     while not result.done():
         pass
-
 
 @pytest.fixture(scope="session")
 def load_registry():

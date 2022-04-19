@@ -5,11 +5,13 @@
 # ------------------------------------
 import base64
 import hashlib
-import json
 import re
 import time
 import pickle
+import json
 from typing import TYPE_CHECKING
+from io import BufferedReader, BytesIO, StringIO
+from msrest import Serializer
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -131,10 +133,26 @@ def _parse_exp_time(raw_token):
 
     return time.time()
 
+
+class OCIManifestEncder(json.JSONEncoder):
+    def default(self, o):
+        return o.__dict__
+
+
 def _serialize_manifest(manifest):
     # type: (OCIManifest) -> IO
-    return pickle.dumps(manifest)
+    data = json.dumps(manifest.serialize()).encode('utf-8')
+    # BufferedReader()
+    # return manifest.serialize()
+    # data = pickle.dumps(manifest)
+    # view = BytesIO(data).getbuffer()
+    # bytes = BytesIO(data).getvalue()
+    return BytesIO(data)
+    # return BufferedReader(data)
 
 def _compute_digest(stream):
     # type: (IO) -> str
-    return hashlib.sha256(stream).digest().decode()
+    # bytes_value = stream.getvalue()
+    # dict_val = json.loads(str_value)
+    # res = hashlib.sha256(bytes_value)
+    return "sha256:" + hashlib.sha256(stream.read()).hexdigest()
