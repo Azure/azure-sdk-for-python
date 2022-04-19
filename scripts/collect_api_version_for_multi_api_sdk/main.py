@@ -67,7 +67,7 @@ class CollectApiVersion:
                     self.package_api_version[package_name].update(api_version)
 
     def get_multiapi_from_rest_api(self):
-        # Find multi API mapping to {'microsoft.insights': {'azure-mgmt-applicationinsights'}}
+        # map provider to package name, like: {'microsoft.insights': {'azure-mgmt-applicationinsights'}}
         url_path = SOURCE_FILE['rest-api-specification']
         git_path = url_path.split('main/')[-1]
         service_paths = self.rest_repo.get_contents(git_path)
