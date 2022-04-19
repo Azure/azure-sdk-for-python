@@ -105,7 +105,7 @@ class SASLTransport(AsyncTransport):
         else:
             raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
 
-class SASLTransportWithWebSocket(SASLTransport):
+class SASLWithWebSocket(SASLTransport):
 
     def __init__(
         self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs

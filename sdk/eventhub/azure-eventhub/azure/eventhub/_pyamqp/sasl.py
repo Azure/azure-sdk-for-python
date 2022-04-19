@@ -105,7 +105,7 @@ class SASLTransport(SSLTransport, SASLTransportMixin):
         with self.block():
             self._negotiate()
 
-class SASLTransportWithWebSocket(WebSocketTransport, SASLTransportMixin):
+class SASLWithWebSocket(WebSocketTransport, SASLTransportMixin):
 
     def __init__(self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential

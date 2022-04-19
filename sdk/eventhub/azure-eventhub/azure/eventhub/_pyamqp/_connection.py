@@ -12,7 +12,7 @@ import socket
 from ssl import SSLError
 
 from ._transport import Transport
-from .sasl import SASLTransport, SASLTransportWithWebSocket
+from .sasl import SASLTransport, SASLWithWebSocket
 from .session import Session
 from .performatives import OpenFrame, CloseFrame
 from .constants import (
@@ -101,18 +101,12 @@ class Connection(object):
         if transport:
             self._transport = transport
         elif 'sasl_credential' in kwargs:
-            if self._transport_type is TransportType.AmqpOverWebsocket:
-                self._transport = SASLTransportWithWebSocket(
-                    host=parsed_url.netloc,
-                    credential=kwargs['sasl_credential'],
-                    **kwargs
-                )
-            else:
-                self._transport = SASLTransport(
-                    host=parsed_url.netloc,
-                    credential=kwargs['sasl_credential'],
-                    **kwargs
-                )
+            func = SASLWithWebSocket if self._transport_type is TransportType.AmqpOverWebsocket else SASLTransport
+            self._transport = func(
+                host=parsed_url.netloc,
+                credential=kwargs['sasl_credential'],
+                **kwargs
+            )
         else:
             self._transport = Transport(parsed_url.netloc, **kwargs)
 
