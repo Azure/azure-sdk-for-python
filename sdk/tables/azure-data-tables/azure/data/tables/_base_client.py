@@ -205,7 +205,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         return self._client._config.version  # pylint: disable=protected-access
 
 
-class TablesBaseClient(AccountHostsMixin):
+class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
