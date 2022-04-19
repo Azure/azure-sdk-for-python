@@ -265,5 +265,3 @@ class _MessageDelivery:
         self.reason = None
         self.delivery = None
         self.error = None
-
-__all__ = ['Message']
