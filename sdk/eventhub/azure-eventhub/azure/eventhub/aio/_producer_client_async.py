@@ -71,16 +71,14 @@ class EventHubProducerClient(ClientBaseAsync):
         - `events`: The list of events that failed to be published,
         - `partition_id`: The partition id that the events in the list have been tried to be published to and
         - `error`: The exception related to the sending failure.
-     If `buffered_mode` is False, errors will be handled as follows:
+     If `buffered_mode` is False, `on_error` callback is optional and errors will be handled as follows:
         - If an `on_error` callback is passed during the producer client instantiation,
             then error information will be passed to the `on_error` callback, which will then be called.
         - If an `on_error` callback is not passed in during client instantiation,
             then the error will be raised by default.
-     If `buffered_mode` is True, errors will be handled as follows:
-        - If an `on_error` callback is passed during the producer client instantiation,
-            then the `on_error` callback will be called when events fail to send.
-        - If an `on_error` callback is not passed in during client instantiation,
-            then an error will be raised if the events fail to enqueue within the given timeout.
+     If `buffered_mode` is True, `on_error` callback is required and errors will be handled as follows:
+        - If events fail to enqueue within the given timeout, then an error will be directly raised.
+        - If events fail to send after enqueuing successfully, the `on_error` callback will be called.
     :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]]
     :keyword int max_buffer_length: Buffered mode only.
      The total number of events per partition that can be buffered before a flush will be triggered.
@@ -420,16 +418,14 @@ class EventHubProducerClient(ClientBaseAsync):
             - `events`: The list of events that failed to be published,
             - `partition_id`: The partition id that the events in the list have been tried to be published to and
             - `error`: The exception related to the sending failure.
-         If `buffered_mode` is False, errors will be handled as follows:
+         If `buffered_mode` is False, `on_error` callback is optional and errors will be handled as follows:
             - If an `on_error` callback is passed during the producer client instantiation,
                 then error information will be passed to the `on_error` callback, which will then be called.
             - If an `on_error` callback is not passed in during client instantiation,
                 then the error will be raised by default.
-         If `buffered_mode` is True, errors will be handled as follows:
-            - If an `on_error` callback is passed during the producer client instantiation,
-                then the `on_error` callback will be called when events fail to send.
-            - If an `on_error` callback is not passed in during client instantiation,
-                then an error will be raised if the events fail to enqueue within the given timeout.
+         If `buffered_mode` is True, `on_error` callback is required and errors will be handled as follows:
+            - If events fail to enqueue within the given timeout, then an error will be directly raised.
+            - If events fail to send after enqueuing successfully, the `on_error` callback will be called.
         :paramtype on_error: Optional[Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]]
         :keyword int max_buffer_length: Buffered mode only.
          The total number of events per partition that can be buffered before a flush will be triggered.
@@ -512,17 +508,15 @@ class EventHubProducerClient(ClientBaseAsync):
         If the `EventHubProducerClient` is configured to run in buffered mode, the method will enqueue the event
         into local buffer and return. The producer will do automatic batching and sending in the background.
 
-        If `buffered_mode` is False, errors will be handled as follows:
+         If `buffered_mode` is False, `on_error` callback is optional and errors will be handled as follows:
             - If an `on_error` callback is passed during the producer client instantiation,
                 then error information will be passed to the `on_error` callback, which will then be called.
             - If an `on_error` callback is not passed in during client instantiation,
                 then the error will be raised by default.
 
-        If `buffered_mode` is True, errors will be handled as follows:
-            - If an `on_error` callback is passed during the producer client instantiation,
-                then the `on_error` callback will be called when events fail to send.
-            - If an `on_error` callback is not passed in during client instantiation,
-                then an error will be raised if the events fail to enqueue within the given timeout.
+         If `buffered_mode` is True, `on_error` callback is required and errors will be handled as follows:
+            - If events fail to enqueue within the given timeout, then an error will be directly raised.
+            - If events fail to send after enqueuing successfully, the `on_error` callback will be called.
 
         :param event_data: The `EventData` object to be sent.
         :type event_data: Union[~azure.eventhub.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage]
