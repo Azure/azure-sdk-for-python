@@ -186,8 +186,8 @@ def print_check(cmd):
     subprocess.check_call(cmd, shell=True)
 
 def upload_to_github():
-    print_exec('git add sdk/')
-    print_exec('git commit -m \"code and test\"')
+    print_exec('git add .')
+    print_exec('git commit -m \"update json files\"')
     print_check('git push origin HEAD -f')
 
 if __name__ == '__main__':
