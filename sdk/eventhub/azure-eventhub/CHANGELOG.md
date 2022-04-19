@@ -1,6 +1,6 @@
 # Release History
 
-## 5.9.0b3 (2022-04-19)
+## 5.9.0b3 (2022-04-20)
 
 ### Features Added
 
