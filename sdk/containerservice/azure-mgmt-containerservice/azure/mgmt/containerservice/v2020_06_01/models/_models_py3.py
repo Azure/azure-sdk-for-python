@@ -1678,7 +1678,6 @@ class ManagedCluster(Resource, BaseManagedCluster):
         self.type = None
         self.location = location
         self.tags = tags
-        self.sku = sku
 
 
 class ManagedClusterAADProfile(msrest.serialization.Model):

@@ -1,5 +1,25 @@
 # Release History
 
+## 19.0.0 (2022-04-15)
+
+**Features**
+
+  - Added operation ManagedClustersOperations.begin_rotate_service_account_signing_keys
+  - Model AgentPool has a new parameter current_orchestrator_version
+  - Model ManagedCluster has a new parameter creation_data
+  - Model ManagedCluster has a new parameter ingress_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter current_orchestrator_version
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter current_orchestrator_version
+  - Model ManagedClusterHTTPProxyConfig has a new parameter effective_no_proxy
+  - Model ManagedClusterSecurityProfile has a new parameter workload_identity
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter tags
+  - Operation AgentPoolsOperations.begin_delete has a new parameter ignore_pod_disruption_budget
+  - Operation ManagedClustersOperations.begin_delete has a new parameter ignore_pod_disruption_budget
+
 ## 18.0.0 (2022-03-23)
 
 **Features**

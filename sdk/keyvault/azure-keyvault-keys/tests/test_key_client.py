@@ -21,6 +21,7 @@ from azure.keyvault.keys import (
     KeyRotationPolicyAction,
     KeyType,
 )
+from azure.keyvault.keys._generated.v7_3.models import KeyRotationPolicy as _KeyRotationPolicy
 import pytest
 from six import byte2int
 
@@ -754,3 +755,11 @@ def test_case_insensitive_key_type():
     assert KeyType("OCT") == KeyType.oct
     # KeyType with mixed-case value
     assert KeyType("oct-hsm") == KeyType.oct_hsm
+
+
+def test_empty_rotation_policy_actions():
+    """Regression test: make sure a KeyRotationPolicy can be created with a response that has None properties"""
+    generated_policy = _KeyRotationPolicy()
+    assert generated_policy.lifetime_actions is None
+    policy = KeyRotationPolicy._from_generated(generated_policy)
+    assert policy.lifetime_actions == []

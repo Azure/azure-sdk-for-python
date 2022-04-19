@@ -3,7 +3,7 @@
 ### 4.3.0b5 (Unreleased)
 
 #### Breaking Changes
-- Method signatures have been updated to use keyword arguments instead of positional arguments for most options.
+- Method signatures have been updated to use keyword arguments instead of positional arguments for most method options.
 
 ### 4.3.0b4 (2022-04-07)
 
