@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-11-15-preview",
-    "total_api_version_list": ["2021-11-15-preview"],
+    "chosen_version": "2022-02-15-preview",
+    "total_api_version_list": ["2022-02-15-preview"],
     "client": {
         "name": "CosmosDBManagementClient",
         "filename": "_cosmos_db_management_client",
