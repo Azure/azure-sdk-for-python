@@ -11,13 +11,6 @@ from ._models import (
 )
 
 
-def is_language_api(api_version):
-    """Language API is date-based
-    """
-    import re
-    return re.search(r'\d{4}-\d{2}-\d{2}', api_version)
-
-
 def _validate_input(documents, hint, whole_input_hint):
     """Validate that batch input has either all string docs
     or dict/DetectLanguageInput/TextDocumentInput, not a mix of both.
@@ -88,21 +81,21 @@ def _validate_input(documents, hint, whole_input_hint):
 
 
 def _determine_action_type(action):  # pylint: disable=too-many-return-statements
-    if action.__class__.__name__ == "EntitiesTask":
+    if action.__class__.__name__ in ["EntitiesTask", "EntitiesLROTask"]:
         return _AnalyzeActionsType.RECOGNIZE_ENTITIES
-    if action.__class__.__name__ == "PiiTask":
+    if action.__class__.__name__ in ["PiiTask", "PiiLROTask"]:
         return _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-    if action.__class__.__name__ == "EntityLinkingTask":
+    if action.__class__.__name__ in ["EntityLinkingTask", "EntityLinkingLROTask"]:
         return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-    if action.__class__.__name__ == "SentimentAnalysisTask":
+    if action.__class__.__name__ in ["SentimentAnalysisTask", "SentimentAnalysisLROTask"]:
         return _AnalyzeActionsType.ANALYZE_SENTIMENT
-    if action.__class__.__name__ == "ExtractiveSummarizationTask":
+    if action.__class__.__name__ == "ExtractiveSummarizationLROTask":
         return _AnalyzeActionsType.EXTRACT_SUMMARY
-    if action.__class__.__name__ == "CustomEntitiesTask":
+    if action.__class__.__name__ == "CustomEntitiesLROTask":
         return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
-    if action.__class__.__name__ == "CustomSingleClassificationTask":
+    if action.__class__.__name__ == "CustomSingleLabelClassificationLROTask":
         return _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
-    if action.__class__.__name__ == "CustomMultiClassificationTask":
+    if action.__class__.__name__ == "CustomMultiLabelClassificationLROTask":
         return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 

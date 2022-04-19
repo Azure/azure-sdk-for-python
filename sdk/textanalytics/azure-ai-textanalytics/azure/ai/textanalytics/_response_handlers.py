@@ -37,7 +37,7 @@ from ._models import (
     RecognizeCustomEntitiesResult,
     SingleCategoryClassifyResult,
     MultiCategoryClassifyResult,
-    ActionPointerKind
+    ActionPointerKind,
 )
 
 
@@ -412,7 +412,8 @@ def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object
     deserialization_callback = _get_deserialization_callback_from_task_type(
         current_task_type
     )
-    property_name = _get_property_name_from_task_type(current_task_type)
+    # language api compat
+    property_name = "items" if hasattr(returned_tasks, "items") else _get_property_name_from_task_type(current_task_type)
     try:
         response_task_to_deserialize = \
             next(task for task in getattr(returned_tasks, property_name) if task.task_name == task_name)
@@ -465,11 +466,14 @@ def lro_get_next_page(
     except AttributeError:
         pass
 
+    # FIXME language api compat?
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
     if "showStats" in query_params:
         query_params.pop("showStats")
+    if "api-version" in query_params:  # language api compat
+        query_params.pop("api-version")
     query_params["show_stats"] = show_stats
 
     return lro_status_callback(job_id, **query_params)

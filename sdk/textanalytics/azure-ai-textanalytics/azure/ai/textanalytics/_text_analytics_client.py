@@ -22,7 +22,6 @@ from ._request_handlers import (
     _validate_input,
     _determine_action_type,
     _check_string_index_type_arg,
-    is_language_api
 )
 from ._version import DEFAULT_API_VERSION
 from ._response_handlers import (
@@ -36,8 +35,6 @@ from ._response_handlers import (
     healthcare_paged_result,
     analyze_paged_result,
 )
-
-from ._models import _AnalyzeActionsType
 
 from ._lro import (
     TextAnalyticsOperationResourcePolling,
@@ -68,6 +65,8 @@ from ._models import (
     SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
+    _AnalyzeActionsType,
+    is_language_api
 )
 
 if TYPE_CHECKING:
@@ -937,17 +936,19 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return process_http_response_error(error)
 
     def _analyze_result_callback(
-        self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
+        self, doc_id_order, task_order, raw_response, deserialized, headers, show_stats=False
     ):
-        analyze_result = self._client.models(
-            api_version=self._api_version
-        ).AnalyzeJobState.deserialize(raw_response)
+
+        if deserialized is None:
+            models = self._client.models(api_version=self._api_version)
+            response_cls = models.AnalyzeTextJobState if is_language_api(self._api_version) else models.AnalyzeJobState
+            deserialized = response_cls.deserialize(raw_response)
         return analyze_paged_result(
             doc_id_order,
             task_order,
-            self._client.analyze_status,
+            self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.analyze_status,
             raw_response,
-            analyze_result,
+            deserialized,
             headers,
             show_stats=show_stats,
         )
@@ -1087,9 +1088,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token
             )
 
-        docs = self._client.models(
-            api_version=self._api_version
-        ).MultiLanguageBatchInput(
+        models = self._client.models(api_version=self._api_version)
+
+        input_model_cls = \
+            models.MultiLanguageAnalysisInput if is_language_api(self._api_version) else models.MultiLanguageBatchInput
+        docs = input_model_cls(
             documents=_validate_input(documents, "language", language)
         )
         doc_id_order = [doc.get("id") for doc in docs.documents]
@@ -1103,9 +1106,40 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
         try:
-            analyze_tasks = self._client.models(
-                api_version=self._api_version
-            ).JobManifestTasks(
+            if is_language_api(self._api_version):
+                return self._client.begin_analyze_text_submit_job(
+                    body=models.AnalyzeTextJobsInput(
+                        analysis_input=docs,
+                        display_name=display_name,
+                        tasks=generated_tasks
+                    ),
+                    cls=kwargs.pop(
+                        "cls",
+                        partial(
+                            self._analyze_result_callback,
+                            doc_id_order,
+                            task_order,
+                            show_stats=show_stats,
+                        ),
+                    ),
+                    polling=AnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        task_id_order=task_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    **kwargs
+                )
+
+            # v3.1
+            analyze_tasks = models.JobManifestTasks(
                 entity_recognition_tasks=[
                     a for a in generated_tasks
                     if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
@@ -1143,9 +1177,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     if _determine_action_type(a) == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                 ],
             )
-            analyze_body = self._client.models(
-                api_version=self._api_version
-            ).AnalyzeBatchInput(
+            analyze_body = models.AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
             return self._client.begin_analyze(

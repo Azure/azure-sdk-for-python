@@ -39,6 +39,8 @@ async def lro_get_next_page_async(
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
     if "showStats" in query_params:
         query_params.pop("showStats")
+    if "api-version" in query_params:  # language api compat
+        query_params.pop("api-version")
     query_params["show_stats"] = show_stats
 
     return await lro_status_callback(job_id, **query_params)

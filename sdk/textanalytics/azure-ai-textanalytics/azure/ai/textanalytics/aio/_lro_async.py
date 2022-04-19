@@ -15,9 +15,9 @@ from azure.core.polling._async_poller import PollingReturnType
 from .._lro import TextAnalyticsOperationResourcePolling
 
 
-_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
+_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallySucceeded"])
 _FAILED = frozenset(["failed"])
-_SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
+_SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallySucceeded"])
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
@@ -101,7 +101,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
 
     @property
     def _current_body(self):
-        from .._generated.models import JobMetadata
+        from .._generated.models import JobMetadata # FIXME
 
         return JobMetadata.deserialize(self._pipeline_response)
 
@@ -244,7 +244,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def _current_body(self):
-        from .._generated.models import AnalyzeJobMetadata
+        from .._generated.models import AnalyzeJobMetadata # FIXME
 
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
