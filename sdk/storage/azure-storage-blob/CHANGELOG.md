@@ -1,5 +1,13 @@
 # Release History
 
+## 12.12.0 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed:
+- Fixed a bug in `BlobClient.from_blob_url()` such that users will receive a more helpful error
+message if they pass an incorrect URL without a full `/container/blob` path.
+
 ## 12.12.0b1 (2022-04-14)
 
 ### Features Added

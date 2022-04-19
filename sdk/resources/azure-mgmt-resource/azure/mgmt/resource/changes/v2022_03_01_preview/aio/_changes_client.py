@@ -16,7 +16,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import ChangesClientConfiguration
-from .operations import ChangeResourceOperations, ChangeResourcesOperations
+from .operations import ChangesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,12 +25,9 @@ if TYPE_CHECKING:
 class ChangesClient:
     """The Resource Changes Client.
 
-    :ivar change_resources: ChangeResourcesOperations operations
-    :vartype change_resources:
-     azure.mgmt.resource.changes.v2022_03_01_preview.aio.operations.ChangeResourcesOperations
-    :ivar change_resource: ChangeResourceOperations operations
-    :vartype change_resource:
-     azure.mgmt.resource.changes.v2022_03_01_preview.aio.operations.ChangeResourceOperations
+    :ivar changes: ChangesOperations operations
+    :vartype changes:
+     azure.mgmt.resource.changes.v2022_03_01_preview.aio.operations.ChangesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
@@ -57,8 +54,7 @@ class ChangesClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.change_resources = ChangeResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.change_resource = ChangeResourceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.changes = ChangesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
