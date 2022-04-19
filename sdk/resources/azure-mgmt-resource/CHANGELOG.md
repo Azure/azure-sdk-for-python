@@ -9,13 +9,6 @@
   - Added operation TemplateSpecsOperations.get_built_in
   - Added operation TemplateSpecsOperations.list_built_ins
   - Added operation group ChangesOperations
-
-## 21.1.0b1 (2022-04-18)
-
-**Features**
-
-  - Added operation group ChangeResourceOperations
-  - Added operation group ChangeResourcesOperations
   - Combined operation files into one.
 
 **Fixes**
