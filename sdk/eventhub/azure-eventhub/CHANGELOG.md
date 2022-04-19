@@ -1,13 +1,13 @@
 # Release History
 
-## 5.9.0b3 (Unreleased)
+## 5.9.0b3 (2022-04-19)
 
 ### Features Added
 
 - Introduced new method `send_event` to `EventHubProducerClient` which allows sending single `EventData` or `AmqpAnnotatedMessage`.
-- Introduced buffered mode sending to `EventHubProducerClient` which is intended to allow for efficient publishing of events 
+- Introduced buffered mode sending to `EventHubProducerClient` which is intended to allow for efficient publishing of events
  without having to explicitly manage batches in the application.
-  - The constructor of `EventHubProducerClient` and `from_connection_string` method now takes the following new keyword arguments 
+  - The constructor of `EventHubProducerClient` and `from_connection_string` method now takes the following new keyword arguments
    for configuration:
     - `buffered_mode`: The flag to enable/disable buffered mode sending.
     - `on_success`: The callback to be called once events have been successfully published.
