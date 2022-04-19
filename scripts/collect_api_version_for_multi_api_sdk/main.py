@@ -2,6 +2,8 @@ import os
 import re
 import json
 import logging
+import subprocess
+
 import yaml
 from pathlib import Path
 from typing import Any, Set
@@ -16,6 +18,7 @@ _LOG = logging.getLogger()
 SOURCE_FILE = {
     'azure-cli': 'https://github.com/Azure/azure-cli/blob/dev/src/azure-cli-core/azure/cli/core/profiles/_shared.py',
     'rest-api-profiles': 'https://github.com/Azure/azure-rest-api-specs/tree/main/profiles/definitions',
+    'rest-api-profile': 'https://github.com/Azure/azure-rest-api-specs/tree/main/profile',
     'rest-api-specification': 'https://github.com/Azure/azure-rest-api-specs/tree/main/specification'
 }
 
@@ -29,7 +32,8 @@ class CollectApiVersion:
         self.github = Github(os.getenv('TOKEN'))
         self.package_api_version = {}
         self.rest_repo = self.github.get_repo('Azure/azure-rest-api-specs')
-        self.multi_api_version = {}
+        self.multi_api_version_from_profiles = {}
+        self.multi_api_version_from_profile = {}
         self.namespace_mapping_package = {}
 
     def get_api_version_from_azure_cli(self):
@@ -91,7 +95,17 @@ class CollectApiVersion:
                 else:
                     self.namespace_mapping_package[n].add(package_name)
 
-    def get_api_version_from_rest_api(self):
+    def find_versions_from_json(self, namespace, version, multi_api_version):
+        if self.namespace_mapping_package.get(namespace):
+            for p in self.namespace_mapping_package.get(namespace):
+                if not multi_api_version.get(p):
+                    multi_api_version[p] = set(version.keys())
+                else:
+                    multi_api_version[p].update(set(version.keys()))
+
+
+    def get_api_version_from_rest_api_profiles(self):
+        self.get_multiapi_from_rest_api()
         # Find api version mapping to {'azure-mgmt-msi': {'2018-11-30'}}
         url_path = SOURCE_FILE['rest-api-profiles']
         git_path = url_path.split('main/')[-1]
@@ -103,20 +117,23 @@ class CollectApiVersion:
             # Convert to JSON format
             content_dict = yaml.load(profiles_content, Loader=yaml.FullLoader)
             for namespace, version in content_dict[file_name]['resources'].items():
-                if self.namespace_mapping_package.get(namespace):
-                    for p in self.namespace_mapping_package.get(namespace):
-                        p = p.replace(r'.', '-')
-                        if not self.multi_api_version.get(p):
-                            self.multi_api_version[p] = set(version.keys())
-                        else:
-                            self.multi_api_version[p].update(set(version.keys()))
+                self.find_versions_from_json(namespace, version, self.multi_api_version_from_profiles)
 
-    def merge_to_package_api_version(self):
-        # eg: change them like azure.mgmt.resource to azure-mgmt-resource
-        self.package_api_version = {k.replace('.', '-'): v for k, v in self.package_api_version.items()}
-
-        for k, v in self.multi_api_version.items():
-            self.package_api_version[k] = self.package_api_version[k] | v if self.package_api_version.get(k) else v
+    def get_api_version_from_rest_api_profile(self):
+        if not self.namespace_mapping_package:
+            self.get_multiapi_from_rest_api()
+        # Find api version mapping to {'azure-mgmt-msi': {'2018-11-30'}}
+        url_path = SOURCE_FILE['rest-api-profile']
+        git_path = url_path.split('main/')[-1]
+        file_paths = self.rest_repo.get_contents(git_path)
+        for file in file_paths:
+            if '.json' not in file.name:
+                continue
+            file_name, file_contents = file.name.replace('.json', ''), file.decoded_content
+            content_dict = json.loads(file_contents.decode())
+            resource_manager = 'resource-manager' if content_dict.get('resource-manager') else 'resourcemanager'
+            for namespace, version in content_dict[resource_manager].items():
+                self.find_versions_from_json(namespace, version, self.multi_api_version_from_profile)
 
     @staticmethod
     def extract_api_version(api_version_info: Any) -> Set[str]:
@@ -128,25 +145,50 @@ class CollectApiVersion:
 
         return set(re.findall('\d{4}-\d{2}-\d{2}[-a-z]*', api_version))
 
-    def output(self):
-        # output service and api version
-        json_out = {k: sorted(self.package_api_version[k], reverse=True) for k in self.package_api_version}
-        with open('package_api_version.json', 'w') as file_out:
+    @staticmethod
+    def write_file(file_name, content):
+        json_out = {k: sorted(content[k], reverse=True) for k in content}
+        with open(file_name, 'w') as file_out:
             json.dump(json_out, file_out, indent=4)
 
-        # output readme.md
-        files_name = '  \n'.join(list(SOURCE_FILE.values()))
-        content = f'The data is collected from the following files:  \n{files_name}'
-        with open('README.md', 'w') as file_out:
-            file_out.write(content)
+    def output(self):
+        # eg: change them like azure.mgmt.resource to azure-mgmt-resource
+        self.package_api_version = {k.replace('.', '-'): v for k, v in self.package_api_version.items()}
+        # output service and api version from cli
+        self.write_file('package_api_version_from_cli.json', self.package_api_version)
+        # output service and api version from profiles
+        self.write_file('package_api_version_from_profiles.json', self.multi_api_version_from_profiles)
+        # output service and api version from profile
+        self.write_file('package_api_version_from_profile.json', self.multi_api_version_from_profile)
+
+        # merge multi_api_version_from_profiles to package_api_version
+        for k, v in self.multi_api_version_from_profiles.items():
+            self.package_api_version[k] = self.package_api_version[k] | v if self.package_api_version.get(k) else v
+        # merge multi_api_version_from_profile to package_api_version
+        for k, v in self.multi_api_version_from_profile.items():
+            self.package_api_version[k] = self.package_api_version[k] | v if self.package_api_version.get(k) else v
+        # output all services and api versions
+        self.write_file('package_api_version_all.json', self.package_api_version)
+
 
     def run(self):
         self.get_api_version_from_azure_cli()
-        self.get_multiapi_from_rest_api()
-        self.get_api_version_from_rest_api()
-        self.merge_to_package_api_version()
+        self.get_api_version_from_rest_api_profiles()
+        self.get_api_version_from_rest_api_profile()
         self.output()
 
+def print_exec(cmd):
+    _LOG.info('==' + cmd + ' ==\n')
+    subprocess.call(cmd, shell=True)
+
+def print_check(cmd):
+    _LOG.info('==' + cmd + ' ==\n')
+    subprocess.check_call(cmd, shell=True)
+
+def upload_to_github():
+    print_exec('git add sdk/')
+    print_exec('git commit -m \"code and test\"')
+    print_check('git push origin HEAD -f')
 
 if __name__ == '__main__':
     main_logger = logging.getLogger()
@@ -155,3 +197,4 @@ if __name__ == '__main__':
 
     instance = CollectApiVersion()
     instance.run()
+    upload_to_github()
