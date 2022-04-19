@@ -8,7 +8,7 @@ import time
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
+from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase, _HttpChallenge
 
 from .._tools_async import await_result
 
@@ -128,3 +128,35 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
     def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300
+
+
+class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
+    """Adds a bearer token Authorization header to requests, for the tenant provided in authorization challenges.
+
+    See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
+    authentication challenges.
+
+    :param credential: The credential.
+    :type credential: ~azure.core.TokenCredential
+    :param str scopes: Lets you specify the type of access needed.
+    :raises: :class:`~azure.core.exceptions.ServiceRequestError`
+    """
+
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+        """Authorize request according to an authentication challenge
+
+        This method is called when the resource provider responds 401 with a WWW-Authenticate header.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
+        :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
+        :returns: a bool indicating whether the policy should send the request
+        """
+        try:
+            challenge = _HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
+            # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+        except ValueError:
+            return False
+
+        await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+        return True

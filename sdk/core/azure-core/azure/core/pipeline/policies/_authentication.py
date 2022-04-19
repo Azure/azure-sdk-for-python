@@ -252,7 +252,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         return
 
 
-class MultitenantTokenCredentialPolicy(BearerTokenCredentialPolicy):
+class MultitenantCredentialPolicy(BearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authorization challenges.
 
     See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
@@ -280,10 +280,7 @@ class MultitenantTokenCredentialPolicy(BearerTokenCredentialPolicy):
         except ValueError:
             return False
 
-        body = request.context.pop("key_vault_request_data", None)
-        request.http_request.set_text_body(body)  # no-op when text is None
         self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
-
         return True
 
 
