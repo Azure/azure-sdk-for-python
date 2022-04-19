@@ -17,6 +17,9 @@ PORT = 5672
 # default port for AMQP over Websocket
 WEBSOCKET_PORT = 443
 
+# subprotocol for AMQP over Websocket
+AMQP_WS_SUBPROTOCOL = 'AMQPWSB10'
+
 #: The IANA assigned port number for secure AMQP (amqps).The standard AMQP port number that has been assigned
 #: by IANA for secure TCP using TLS. Implementations listening on this port should NOT expect a protocol
 #: handshake before TLS is negotiated.

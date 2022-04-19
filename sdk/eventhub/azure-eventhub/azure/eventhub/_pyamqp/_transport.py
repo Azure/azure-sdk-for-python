@@ -52,7 +52,7 @@ import websockets
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
-from .constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, TransportType
+from .constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, TransportType, AMQP_WS_SUBPROTOCOL
 
 
 try:
@@ -685,7 +685,7 @@ class WebSocketTransport(_AbstractTransport):
             from websocket import create_connection
             self.ws = create_connection(
                 url="wss://{}/$servicebus/websocket/".format(self._host),
-                subprotocols=['AMQPWSB10'],
+                subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,

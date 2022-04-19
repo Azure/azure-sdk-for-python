@@ -415,7 +415,7 @@ class AsyncTransport(object):
                 TLS_HEADER_FRAME, returned_header[1]))
 
 
-class WebSocketTransport(WebSocketTransport):
+class WebSocketTransportAsync(WebSocketTransport):
     async def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
         

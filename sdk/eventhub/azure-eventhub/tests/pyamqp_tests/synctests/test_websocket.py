@@ -5,7 +5,8 @@
 
 import pytest
 
-from azure.eventhub._pyamqp import authentication, ReceiveClient, TransportType
+from azure.eventhub._pyamqp import authentication, ReceiveClient
+from azure.eventhub._pyamqp.constants import TransportType
 
 def test_event_hubs_client_web_socket(live_eventhub):
     uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
