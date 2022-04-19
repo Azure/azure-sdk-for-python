@@ -45,11 +45,13 @@ from azure.core.exceptions import (
 
 from ._base import HTTPPolicy, RequestHistory
 from . import _utils
+from ..._enum_meta import CaseInsensitiveEnumMeta
 
 
 _LOGGER = logging.getLogger(__name__)
 
-class RetryMode(str, Enum):
+# pylint: disable=enum-must-be-uppercase
+class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Exponential = 'exponential'
     Fixed = 'fixed'
 
@@ -85,7 +87,6 @@ class RetryPolicyBase(object):
 
     def configure_retries(self, options):
         """Configures the retry settings.
-
         :param options: keyword arguments from context.
         :return: A dict containing settings and history for retries.
         :rtype: dict
@@ -104,7 +105,6 @@ class RetryPolicyBase(object):
 
     def get_backoff_time(self, settings):
         """Returns the current backoff time.
-
         :param dict settings: The retry settings.
         :return: The current backoff value.
         :rtype: float
@@ -122,7 +122,6 @@ class RetryPolicyBase(object):
 
     def parse_retry_after(self, retry_after):
         """Helper to parse Retry-After and get value in seconds.
-
         :param str retry_after: Retry-After header
         :rtype: float
         """
@@ -130,7 +129,6 @@ class RetryPolicyBase(object):
 
     def get_retry_after(self, response):
         """Get the value of Retry-After in seconds.
-
         :param response: The PipelineResponse object
         :type response: ~azure.core.pipeline.PipelineResponse
         :return: Value of Retry-After in seconds.
@@ -153,7 +151,6 @@ class RetryPolicyBase(object):
     def _is_method_retryable(self, settings, request, response=None):
         """Checks if a given HTTP method should be retried upon, depending if
         it is included on the method allowlist.
-
         :param dict settings: The retry settings.
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
@@ -172,19 +169,15 @@ class RetryPolicyBase(object):
 
     def is_retry(self, settings, response):
         """Checks if method/status code is retryable.
-
         Based on allowlists and control variables such as the number of
         total retries to allow, whether to respect the Retry-After header,
         whether this header is present, and whether the returned status
         code is on the list of status codes to be retried upon on the
         presence of the aforementioned header.
-
         The behavior is:
         -	If status_code < 400: don't retry
         -	Else if Retry-After present: retry
         -	Else: retry based on the safe status code list ([408, 429, 500, 502, 503, 504])
-
-
         :param dict settings: The retry settings.
         :param response: The PipelineResponse object
         :type response: ~azure.core.pipeline.PipelineResponse
@@ -202,7 +195,6 @@ class RetryPolicyBase(object):
 
     def is_exhausted(self, settings):
         """Checks if any retries left.
-
         :param dict settings: the retry settings
         :return: False if have more retries. True if retries exhausted.
         :rtype: bool
@@ -216,7 +208,6 @@ class RetryPolicyBase(object):
 
     def increment(self, settings, response=None, error=None):
         """Increment the retry counters.
-
         :param settings: The retry settings.
         :param response: A pipeline response object.
         :type response: ~azure.core.pipeline.PipelineResponse
@@ -282,7 +273,6 @@ class RetryPolicyBase(object):
 
     def update_context(self, context, retry_settings):
         """Updates retry history in pipeline context.
-
         :param context: The pipeline context.
         :type context: ~azure.core.pipeline.PipelineContext
         :param retry_settings: The retry settings.
@@ -339,37 +329,26 @@ class RetryPolicyBase(object):
 
 class RetryPolicy(RetryPolicyBase, HTTPPolicy):
     """A retry policy.
-
     The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
-
     :keyword int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
-
     :keyword int retry_connect: How many connection-related errors to retry on.
      These are errors raised before the request is sent to the remote server,
      which we assume has not triggered the server to process the request. Default value is 3.
-
     :keyword int retry_read: How many times to retry on read errors.
      These errors are raised after the request was sent to the server, so the
      request may have side-effects. Default value is 3.
-
     :keyword int retry_status: How many times to retry on bad status codes. Default value is 3.
-
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      In fixed mode, retry policy will alwasy sleep for {backoff factor}.
      In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
-
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-
     :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
-
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
-
     .. admonition:: Example:
-
         .. literalinclude:: ../samples/test_example_sync.py
             :start-after: [START retry_policy]
             :end-before: [END retry_policy]
@@ -379,7 +358,6 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
     """
     def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
-
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         :param transport: The HTTP transport type.
@@ -392,7 +370,6 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
 
     def _sleep_backoff(self, settings, transport):
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
-
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
         """
@@ -403,12 +380,10 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
 
     def sleep(self, settings, transport, response=None):
         """Sleep between retry attempts.
-
         This method will respect a server's ``Retry-After`` response header
         and sleep the duration of the time requested. If that is not present, it
         will use an exponential backoff. By default, the backoff factor is 0 and
         this method will return immediately.
-
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
         :param response: The PipelineResponse object.
@@ -422,7 +397,6 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
 
     def send(self, request):
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
-
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: Returns the PipelineResponse or raises error if maximum retries exceeded.

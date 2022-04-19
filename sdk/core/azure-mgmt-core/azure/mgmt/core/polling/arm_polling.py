@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 from typing import TYPE_CHECKING, Optional, Union
+from azure.core import CaseInsensitiveEnumMeta
 
 from azure.core.polling.base_polling import (
     LongRunningOperation,
@@ -50,13 +51,13 @@ if TYPE_CHECKING:
     PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
 
 
-class _LroOption(str, Enum):
+class _LroOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Known LRO options from Swagger."""
 
     FINAL_STATE_VIA = "final-state-via"
 
 
-class _FinalStateViaOption(str, Enum):
+class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible final-state-via options."""
 
     AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
@@ -77,7 +78,6 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
     def get_final_get_url(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
-
         :rtype: str
         """
         if (
@@ -93,7 +93,6 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
 
 class BodyContentPolling(LongRunningOperation):
     """Poll based on the body content.
-
     Implement a ARM resource poller (using provisioning state).
     """
 
@@ -116,7 +115,6 @@ class BodyContentPolling(LongRunningOperation):
     def get_final_get_url(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
-
         :rtype: str
         """
         return None
@@ -124,7 +122,6 @@ class BodyContentPolling(LongRunningOperation):
     def set_initial_status(self, pipeline_response):
         # type: (PipelineResponseType) -> str
         """Process first response after initiating long running operation.
-
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
         """
         self._initial_response = pipeline_response
@@ -147,7 +144,6 @@ class BodyContentPolling(LongRunningOperation):
     def _get_provisioning_state(response):
         # type: (ResponseType) -> Optional[str]
         """Attempt to get provisioning state from resource.
-
         :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
         :returns: Status if found, else 'None'.
         """
@@ -160,7 +156,6 @@ class BodyContentPolling(LongRunningOperation):
         # type: (PipelineResponseType) -> str
         """Process the latest status update retrieved from the same URL as
         the previous request.
-
         :param azure.core.pipeline.PipelineResponse response: latest REST call response.
         :raises: BadResponse if status not 200 or 204.
         """
