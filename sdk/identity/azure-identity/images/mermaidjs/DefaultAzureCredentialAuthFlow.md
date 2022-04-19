@@ -17,9 +17,9 @@ flowchart LR;
     end;
 
     %% Define styles for credential type boxes
-    classDef deployed fill:#71AD4C, stroke:#71AD4C;
-    classDef developer fill:#EB7C39, stroke:#EB7C39;
-    classDef interactive fill:#A6A6A6, stroke:#A6A6A6;
+    classDef deployed fill:#95C37E, stroke:#71AD4C;
+    classDef developer fill:#F5AF6F, stroke:#EB7C39;
+    classDef interactive fill:#A5A5A5, stroke:#828282;
 
     %% Add API ref links to credential type boxes
     click A "https://docs.microsoft.com/python/api/azure-identity/azure.identity.environmentcredential?view=azure-python" _blank;
