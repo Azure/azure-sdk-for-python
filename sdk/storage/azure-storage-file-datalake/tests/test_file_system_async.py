@@ -19,6 +19,7 @@ from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirect
 from azure.storage.filedatalake import(
     AccessPolicy,
     AccountSasPermissions,
+    DirectorySasPermissions,
     FileSystemSasPermissions,
     PublicAccess,
     ResourceTypes,
