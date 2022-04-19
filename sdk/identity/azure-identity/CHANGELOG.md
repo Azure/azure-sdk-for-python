@@ -1,12 +1,6 @@
 # Release History
 
-## 1.10.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.10.0 (Unreleased)
 
 ### Other Changes
 
