@@ -15,28 +15,31 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
-from ._configuration import ChangesClientConfiguration
-from .operations import ChangesOperations
+from ._configuration import TemplateSpecsClientConfiguration
+from .operations import TemplateSpecVersionsOperations, TemplateSpecsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class ChangesClient:
-    """The Resource Changes Client.
+class TemplateSpecsClient:
+    """The APIs listed in this specification can be used to manage Template Spec resources through the
+    Azure Resource Manager.
 
-    :ivar changes: ChangesOperations operations
-    :vartype changes:
-     azure.mgmt.resource.changes.v2022_03_01_preview.aio.operations.ChangesOperations
+    :ivar template_specs: TemplateSpecsOperations operations
+    :vartype template_specs:
+     azure.mgmt.resource.templatespecs.v2022_02_01.aio.operations.TemplateSpecsOperations
+    :ivar template_spec_versions: TemplateSpecVersionsOperations operations
+    :vartype template_spec_versions:
+     azure.mgmt.resource.templatespecs.v2022_02_01.aio.operations.TemplateSpecVersionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
-     00000000-0000-0000-0000-000000000000).
+    :param subscription_id: Subscription Id which forms part of the URI for every service call.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-02-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -47,14 +50,15 @@ class ChangesClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ChangesClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = TemplateSpecsClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.changes = ChangesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.template_specs = TemplateSpecsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.template_spec_versions = TemplateSpecVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
@@ -86,7 +90,7 @@ class ChangesClient:
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ChangesClient":
+    async def __aenter__(self) -> "TemplateSpecsClient":
         await self._client.__aenter__()
         return self
 
