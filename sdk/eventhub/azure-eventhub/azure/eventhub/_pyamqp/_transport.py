@@ -47,7 +47,6 @@ import logging
 from threading import Lock
 
 import certifi
-import websockets
 
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from ._encode import encode_frame
