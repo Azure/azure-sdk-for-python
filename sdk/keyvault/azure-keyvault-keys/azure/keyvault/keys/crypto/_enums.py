@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from dataclasses import make_dataclass
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
