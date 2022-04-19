@@ -24,6 +24,9 @@ from ._security_admin_configurations_operations import SecurityAdminConfiguratio
 from ._admin_rule_collections_operations import AdminRuleCollectionsOperations
 from ._admin_rules_operations import AdminRulesOperations
 from ._network_security_perimeters_operations import NetworkSecurityPerimetersOperations
+from ._nsp_profiles_operations import NspProfilesOperations
+from ._nsp_access_rules_operations import NspAccessRulesOperations
+from ._nsp_associations_operations import NspAssociationsOperations
 from ._perimeter_associable_resource_types_operations import PerimeterAssociableResourceTypesOperations
 
 __all__ = [
@@ -45,5 +48,8 @@ __all__ = [
     'AdminRuleCollectionsOperations',
     'AdminRulesOperations',
     'NetworkSecurityPerimetersOperations',
+    'NspProfilesOperations',
+    'NspAccessRulesOperations',
+    'NspAssociationsOperations',
     'PerimeterAssociableResourceTypesOperations',
 ]
