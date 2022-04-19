@@ -2,6 +2,23 @@
 
 ## 5.9.0b3 (Unreleased)
 
+### Features Added
+
+- Introduced new method `send_event` to `EventHubProducerClient` which allows sending single `EventData` or `AmqpAnnotatedMessage`.
+- Introduced buffered mode sending to `EventHubProducerClient` which is intended to allow for efficient publishing of events 
+ without having to explicitly manage batches in the application.
+  - The constructor of `EventHubProducerClient` and `from_connection_string` method now takes the following new keyword arguments 
+   for configuration:
+    - `buffered_mode`: The flag to enable/disable buffered mode sending.
+    - `on_success`: The callback to be called once events have been successfully published.
+    - `on_error`: The callback to be called once events have failed to be published.
+    - `max_buffer_length`: The total number of events per partition that can be buffered before a flush will be triggered.
+    - `max_wait_time`: The amount of time to wait for a batch to be built with events in the buffer before publishing.
+  - Introduced new method `EventHubProducerClient.flush` which flushes events in the buffer to be sent immediately.
+  - Introduced new method `EventHubProducerClient.get_buffered_event_count` which returns the number of events that are buffered and waiting to be published for a given partition.
+  - Introduced new property `EventHubProducerClient.total_buffered_event_count` which returns the total number of events that are currently buffered and waiting to be published, across all partitions.
+  - Introduced new boolean keyword argument `flush` to `EventHubProducerClient.close` which indicates whether to flush the buffer or not while closing.
+
 ### Other Changes
 
 - Updated `EventData` internals for interoperability with the Schema Registry Avro Encoder library.
