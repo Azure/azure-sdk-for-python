@@ -82,18 +82,18 @@ if __name__ == '__main__':
             last_version = versions[-1]
 
             # generate code_report
-            cmd_cl1 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  {service_name} --version={last_version}"'
-            cmd_cl2 = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report {service_name} --version={older_version}"'
-            last_code_report_info = create_code_report(cmd_cl1)
-            code_report_info = create_code_report(cmd_cl2)
+            cmd_last_version = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  {service_name} --version={last_version}"'
+            cmd_older_version = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report {service_name} --version={older_version}"'
+            last_code_report_info = create_code_report(cmd_last_version)
+            older_code_report_info = create_code_report(cmd_older_version)
 
             # get code_report path
-            last_route = find_report_name(last_code_report_info)
-            route = find_report_name(code_report_info)
+            route_last_version = find_report_name(last_code_report_info)
+            route_older_version = find_report_name(older_code_report_info)
 
             # use change_log on these two code_reports
             result_text = sp.getoutput(
-                fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route} {last_route}"')
+                fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route_older_version} {route_last_version}"')
             print(result_text)
 
             # write a txt to save change_log
