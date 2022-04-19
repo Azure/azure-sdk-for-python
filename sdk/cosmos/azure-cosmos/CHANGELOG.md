@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+- Made `auth.py` a private file, making the GetAuthorizationMethod no longer public
 
 ### 4.3.0b4 (2022-04-07)
 
