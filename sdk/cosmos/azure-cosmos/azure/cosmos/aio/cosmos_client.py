@@ -207,7 +207,7 @@ class CosmosClient(object):
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.aio.DatabaseProxy
@@ -231,7 +231,7 @@ class CosmosClient(object):
 
         result = await self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
 
     @distributed_trace_async
@@ -258,7 +258,7 @@ class CosmosClient(object):
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -268,10 +268,8 @@ class CosmosClient(object):
             await database_proxy.read(**kwargs)
             return database_proxy
         except CosmosResourceNotFoundError:
-            offer_throughput = kwargs.pop('offer_throughput', None)
             return await self.create_database(
                 id,
-                offer_throughput=offer_throughput,
                 **kwargs
             )
 
