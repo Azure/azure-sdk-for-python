@@ -46,7 +46,7 @@ class ApiProperties(msrest.serialization.Model):
     """ApiProperties.
 
     :ivar server_version: Describes the ServerVersion of an a MongoDB account. Possible values
-     include: "3.2", "3.6", "4.0".
+     include: "3.2", "3.6", "4.0", "4.2".
     :vartype server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
     """
 
@@ -62,7 +62,7 @@ class ApiProperties(msrest.serialization.Model):
     ):
         """
         :keyword server_version: Describes the ServerVersion of an a MongoDB account. Possible values
-         include: "3.2", "3.6", "4.0".
+         include: "3.2", "3.6", "4.0", "4.2".
         :paramtype server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
         """
         super(ApiProperties, self).__init__(**kwargs)
@@ -1873,6 +1873,67 @@ class Certificate(msrest.serialization.Model):
         self.pem = pem
 
 
+class ClientEncryptionIncludedPath(msrest.serialization.Model):
+    """.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar path: Required. Path that needs to be encrypted.
+    :vartype path: str
+    :ivar client_encryption_key_id: Required. The identifier of the Client Encryption Key to be
+     used to encrypt the path.
+    :vartype client_encryption_key_id: str
+    :ivar encryption_type: Required. The type of encryption to be performed. Eg - Deterministic,
+     Randomized.
+    :vartype encryption_type: str
+    :ivar encryption_algorithm: Required. The encryption algorithm which will be used. Eg -
+     AEAD_AES_256_CBC_HMAC_SHA256.
+    :vartype encryption_algorithm: str
+    """
+
+    _validation = {
+        'path': {'required': True},
+        'client_encryption_key_id': {'required': True},
+        'encryption_type': {'required': True},
+        'encryption_algorithm': {'required': True},
+    }
+
+    _attribute_map = {
+        'path': {'key': 'path', 'type': 'str'},
+        'client_encryption_key_id': {'key': 'clientEncryptionKeyId', 'type': 'str'},
+        'encryption_type': {'key': 'encryptionType', 'type': 'str'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        path: str,
+        client_encryption_key_id: str,
+        encryption_type: str,
+        encryption_algorithm: str,
+        **kwargs
+    ):
+        """
+        :keyword path: Required. Path that needs to be encrypted.
+        :paramtype path: str
+        :keyword client_encryption_key_id: Required. The identifier of the Client Encryption Key to be
+         used to encrypt the path.
+        :paramtype client_encryption_key_id: str
+        :keyword encryption_type: Required. The type of encryption to be performed. Eg - Deterministic,
+         Randomized.
+        :paramtype encryption_type: str
+        :keyword encryption_algorithm: Required. The encryption algorithm which will be used. Eg -
+         AEAD_AES_256_CBC_HMAC_SHA256.
+        :paramtype encryption_algorithm: str
+        """
+        super(ClientEncryptionIncludedPath, self).__init__(**kwargs)
+        self.path = path
+        self.client_encryption_key_id = client_encryption_key_id
+        self.encryption_type = encryption_type
+        self.encryption_algorithm = encryption_algorithm
+
+
 class ClientEncryptionKeyCreateUpdateParameters(msrest.serialization.Model):
     """Parameters to create and update ClientEncryptionKey.
 
@@ -2096,6 +2157,48 @@ class ClientEncryptionKeysListResult(msrest.serialization.Model):
         """
         super(ClientEncryptionKeysListResult, self).__init__(**kwargs)
         self.value = None
+
+
+class ClientEncryptionPolicy(msrest.serialization.Model):
+    """Cosmos DB client encryption policy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar included_paths: Required. Paths of the item that need encryption along with path-specific
+     settings.
+    :vartype included_paths: list[~azure.mgmt.cosmosdb.models.ClientEncryptionIncludedPath]
+    :ivar policy_format_version: Version of the client encryption policy definition. Please note,
+     user passed value is ignored. Default policy version is 1.
+    :vartype policy_format_version: int
+    """
+
+    _validation = {
+        'included_paths': {'required': True},
+    }
+
+    _attribute_map = {
+        'included_paths': {'key': 'includedPaths', 'type': '[ClientEncryptionIncludedPath]'},
+        'policy_format_version': {'key': 'policyFormatVersion', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        included_paths: List["ClientEncryptionIncludedPath"],
+        policy_format_version: Optional[int] = 1,
+        **kwargs
+    ):
+        """
+        :keyword included_paths: Required. Paths of the item that need encryption along with
+         path-specific settings.
+        :paramtype included_paths: list[~azure.mgmt.cosmosdb.models.ClientEncryptionIncludedPath]
+        :keyword policy_format_version: Version of the client encryption policy definition. Please
+         note, user passed value is ignored. Default policy version is 1.
+        :paramtype policy_format_version: int
+        """
+        super(ClientEncryptionPolicy, self).__init__(**kwargs)
+        self.included_paths = included_paths
+        self.policy_format_version = policy_format_version
 
 
 class ClusterKey(msrest.serialization.Model):
@@ -3068,6 +3171,8 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     :ivar migration_state: The object representing the state of the migration between the backup
      policies.
     :vartype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+    :ivar continuous_mode_properties: Configuration values for continuous mode backup.
+    :vartype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
     """
 
     _validation = {
@@ -3077,21 +3182,53 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'migration_state': {'key': 'migrationState', 'type': 'BackupPolicyMigrationState'},
+        'continuous_mode_properties': {'key': 'continuousModeProperties', 'type': 'ContinuousModeProperties'},
     }
 
     def __init__(
         self,
         *,
         migration_state: Optional["BackupPolicyMigrationState"] = None,
+        continuous_mode_properties: Optional["ContinuousModeProperties"] = None,
         **kwargs
     ):
         """
         :keyword migration_state: The object representing the state of the migration between the backup
          policies.
         :paramtype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+        :keyword continuous_mode_properties: Configuration values for continuous mode backup.
+        :paramtype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
         """
         super(ContinuousModeBackupPolicy, self).__init__(migration_state=migration_state, **kwargs)
         self.type = 'Continuous'  # type: str
+        self.continuous_mode_properties = continuous_mode_properties
+
+
+class ContinuousModeProperties(msrest.serialization.Model):
+    """Configuration values for periodic mode backup.
+
+    :ivar tier: Enum to indicate type of Continuos backup mode. Possible values include:
+     "Continuous7Days", "Continuous30Days".
+    :vartype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
+    """
+
+    _attribute_map = {
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tier: Optional[Union[str, "ContinuousTier"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword tier: Enum to indicate type of Continuos backup mode. Possible values include:
+         "Continuous7Days", "Continuous30Days".
+        :paramtype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
+        """
+        super(ContinuousModeProperties, self).__init__(**kwargs)
+        self.tier = tier
 
 
 class CorsPolicy(msrest.serialization.Model):
@@ -6602,12 +6739,15 @@ class KeyWrapMetadata(msrest.serialization.Model):
     :vartype type: str
     :ivar value: Reference / link to the KeyEncryptionKey.
     :vartype value: str
+    :ivar algorithm: Algorithm used in wrapping and unwrapping of the data encryption key.
+    :vartype algorithm: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
+        'algorithm': {'key': 'algorithm', 'type': 'str'},
     }
 
     def __init__(
@@ -6616,6 +6756,7 @@ class KeyWrapMetadata(msrest.serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         value: Optional[str] = None,
+        algorithm: Optional[str] = None,
         **kwargs
     ):
         """
@@ -6625,11 +6766,14 @@ class KeyWrapMetadata(msrest.serialization.Model):
         :paramtype type: str
         :keyword value: Reference / link to the KeyEncryptionKey.
         :paramtype value: str
+        :keyword algorithm: Algorithm used in wrapping and unwrapping of the data encryption key.
+        :paramtype algorithm: str
         """
         super(KeyWrapMetadata, self).__init__(**kwargs)
         self.name = name
         self.type = type
         self.value = value
+        self.algorithm = algorithm
 
 
 class ListBackups(msrest.serialization.Model):
@@ -7170,6 +7314,31 @@ class MaterializedViewsBuilderServiceResourceProperties(ServiceResourcePropertie
         super(MaterializedViewsBuilderServiceResourceProperties, self).__init__(additional_properties=additional_properties, instance_size=instance_size, instance_count=instance_count, **kwargs)
         self.service_type = 'MaterializedViewsBuilder'  # type: str
         self.locations = None
+
+
+class MergeParameters(msrest.serialization.Model):
+    """The properties of an Azure Cosmos DB merge operations.
+
+    :ivar is_dry_run: Specifies whether the operation is a real merge operation or a simulation.
+    :vartype is_dry_run: bool
+    """
+
+    _attribute_map = {
+        'is_dry_run': {'key': 'isDryRun', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        is_dry_run: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword is_dry_run: Specifies whether the operation is a real merge operation or a simulation.
+        :paramtype is_dry_run: bool
+        """
+        super(MergeParameters, self).__init__(**kwargs)
+        self.is_dry_run = is_dry_run
 
 
 class Metric(msrest.serialization.Model):
@@ -9262,6 +9431,67 @@ class Permission(msrest.serialization.Model):
         self.not_data_actions = not_data_actions
 
 
+class PhysicalPartitionStorageInfo(msrest.serialization.Model):
+    """The storage of a physical partition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique identifier of the partition.
+    :vartype id: str
+    :ivar storage_in_kb: The storage in KB for the physical partition.
+    :vartype storage_in_kb: float
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'storage_in_kb': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'storage_in_kb': {'key': 'storageInKB', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PhysicalPartitionStorageInfo, self).__init__(**kwargs)
+        self.id = None
+        self.storage_in_kb = None
+
+
+class PhysicalPartitionStorageInfoCollection(msrest.serialization.Model):
+    """List of physical partitions and their properties returned by a merge operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar physical_partition_storage_info_collection: List of physical partitions and their
+     properties.
+    :vartype physical_partition_storage_info_collection:
+     list[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfo]
+    """
+
+    _validation = {
+        'physical_partition_storage_info_collection': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'physical_partition_storage_info_collection': {'key': 'physicalPartitionStorageInfoCollection', 'type': '[PhysicalPartitionStorageInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PhysicalPartitionStorageInfoCollection, self).__init__(**kwargs)
+        self.physical_partition_storage_info_collection = None
+
+
 class Resource(msrest.serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
@@ -9686,6 +9916,9 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
     :vartype account_name: str
     :ivar creation_time: The creation time of the restorable database account (ISO-8601 format).
     :vartype creation_time: ~datetime.datetime
+    :ivar oldest_restorable_time: The least recent time at which the database account can be
+     restored to (ISO-8601 format).
+    :vartype oldest_restorable_time: ~datetime.datetime
     :ivar deletion_time: The time at which the restorable database account has been deleted
      (ISO-8601 format).
     :vartype deletion_time: ~datetime.datetime
@@ -9712,6 +9945,7 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
         'location': {'key': 'location', 'type': 'str'},
         'account_name': {'key': 'properties.accountName', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'oldest_restorable_time': {'key': 'properties.oldestRestorableTime', 'type': 'iso-8601'},
         'deletion_time': {'key': 'properties.deletionTime', 'type': 'iso-8601'},
         'api_type': {'key': 'properties.apiType', 'type': 'str'},
         'restorable_locations': {'key': 'properties.restorableLocations', 'type': '[RestorableLocationResource]'},
@@ -9723,6 +9957,7 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
         location: Optional[str] = None,
         account_name: Optional[str] = None,
         creation_time: Optional[datetime.datetime] = None,
+        oldest_restorable_time: Optional[datetime.datetime] = None,
         deletion_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -9733,6 +9968,9 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
         :paramtype account_name: str
         :keyword creation_time: The creation time of the restorable database account (ISO-8601 format).
         :paramtype creation_time: ~datetime.datetime
+        :keyword oldest_restorable_time: The least recent time at which the database account can be
+         restored to (ISO-8601 format).
+        :paramtype oldest_restorable_time: ~datetime.datetime
         :keyword deletion_time: The time at which the restorable database account has been deleted
          (ISO-8601 format).
         :paramtype deletion_time: ~datetime.datetime
@@ -9744,6 +9982,7 @@ class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
         self.location = location
         self.account_name = account_name
         self.creation_time = creation_time
+        self.oldest_restorable_time = oldest_restorable_time
         self.deletion_time = deletion_time
         self.api_type = None
         self.restorable_locations = None
@@ -10479,6 +10718,8 @@ class SqlContainerResource(msrest.serialization.Model):
     :vartype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :ivar conflict_resolution_policy: The conflict resolution policy for the container.
     :vartype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :ivar client_encryption_policy: The client encryption policy for the container.
+    :vartype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
     :ivar analytical_storage_ttl: Analytical TTL.
     :vartype analytical_storage_ttl: long
     """
@@ -10494,6 +10735,7 @@ class SqlContainerResource(msrest.serialization.Model):
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'client_encryption_policy': {'key': 'clientEncryptionPolicy', 'type': 'ClientEncryptionPolicy'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
     }
 
@@ -10506,6 +10748,7 @@ class SqlContainerResource(msrest.serialization.Model):
         default_ttl: Optional[int] = None,
         unique_key_policy: Optional["UniqueKeyPolicy"] = None,
         conflict_resolution_policy: Optional["ConflictResolutionPolicy"] = None,
+        client_encryption_policy: Optional["ClientEncryptionPolicy"] = None,
         analytical_storage_ttl: Optional[int] = None,
         **kwargs
     ):
@@ -10525,6 +10768,8 @@ class SqlContainerResource(msrest.serialization.Model):
         :paramtype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
         :keyword conflict_resolution_policy: The conflict resolution policy for the container.
         :paramtype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+        :keyword client_encryption_policy: The client encryption policy for the container.
+        :paramtype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
         :keyword analytical_storage_ttl: Analytical TTL.
         :paramtype analytical_storage_ttl: long
         """
@@ -10535,6 +10780,7 @@ class SqlContainerResource(msrest.serialization.Model):
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.client_encryption_policy = client_encryption_policy
         self.analytical_storage_ttl = analytical_storage_ttl
 
 
@@ -10560,6 +10806,8 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
     :vartype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :ivar conflict_resolution_policy: The conflict resolution policy for the container.
     :vartype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :ivar client_encryption_policy: The client encryption policy for the container.
+    :vartype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
     :ivar analytical_storage_ttl: Analytical TTL.
     :vartype analytical_storage_ttl: long
     :ivar rid: A system generated property. A unique identifier.
@@ -10589,6 +10837,7 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'client_encryption_policy': {'key': 'clientEncryptionPolicy', 'type': 'ClientEncryptionPolicy'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
         'rid': {'key': '_rid', 'type': 'str'},
         'ts': {'key': '_ts', 'type': 'float'},
@@ -10605,6 +10854,7 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
         default_ttl: Optional[int] = None,
         unique_key_policy: Optional["UniqueKeyPolicy"] = None,
         conflict_resolution_policy: Optional["ConflictResolutionPolicy"] = None,
+        client_encryption_policy: Optional["ClientEncryptionPolicy"] = None,
         analytical_storage_ttl: Optional[int] = None,
         **kwargs
     ):
@@ -10624,16 +10874,19 @@ class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperti
         :paramtype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
         :keyword conflict_resolution_policy: The conflict resolution policy for the container.
         :paramtype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+        :keyword client_encryption_policy: The client encryption policy for the container.
+        :paramtype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
         :keyword analytical_storage_ttl: Analytical TTL.
         :paramtype analytical_storage_ttl: long
         """
-        super(RestorableSqlContainerPropertiesResourceContainer, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, analytical_storage_ttl=analytical_storage_ttl, **kwargs)
+        super(RestorableSqlContainerPropertiesResourceContainer, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, client_encryption_policy=client_encryption_policy, analytical_storage_ttl=analytical_storage_ttl, **kwargs)
         self.id = id
         self.indexing_policy = indexing_policy
         self.partition_key = partition_key
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.client_encryption_policy = client_encryption_policy
         self.analytical_storage_ttl = analytical_storage_ttl
         self.self_property = None
         self.rid = None
@@ -11485,6 +11738,8 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
     :vartype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :ivar conflict_resolution_policy: The conflict resolution policy for the container.
     :vartype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :ivar client_encryption_policy: The client encryption policy for the container.
+    :vartype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
     :ivar analytical_storage_ttl: Analytical TTL.
     :vartype analytical_storage_ttl: long
     :ivar rid: A system generated property. A unique identifier.
@@ -11510,6 +11765,7 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'client_encryption_policy': {'key': 'clientEncryptionPolicy', 'type': 'ClientEncryptionPolicy'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
         'rid': {'key': '_rid', 'type': 'str'},
         'ts': {'key': '_ts', 'type': 'float'},
@@ -11525,6 +11781,7 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
         default_ttl: Optional[int] = None,
         unique_key_policy: Optional["UniqueKeyPolicy"] = None,
         conflict_resolution_policy: Optional["ConflictResolutionPolicy"] = None,
+        client_encryption_policy: Optional["ClientEncryptionPolicy"] = None,
         analytical_storage_ttl: Optional[int] = None,
         **kwargs
     ):
@@ -11544,16 +11801,19 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
         :paramtype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
         :keyword conflict_resolution_policy: The conflict resolution policy for the container.
         :paramtype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+        :keyword client_encryption_policy: The client encryption policy for the container.
+        :paramtype client_encryption_policy: ~azure.mgmt.cosmosdb.models.ClientEncryptionPolicy
         :keyword analytical_storage_ttl: Analytical TTL.
         :paramtype analytical_storage_ttl: long
         """
-        super(SqlContainerGetPropertiesResource, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, analytical_storage_ttl=analytical_storage_ttl, **kwargs)
+        super(SqlContainerGetPropertiesResource, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, client_encryption_policy=client_encryption_policy, analytical_storage_ttl=analytical_storage_ttl, **kwargs)
         self.id = id
         self.indexing_policy = indexing_policy
         self.partition_key = partition_key
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.client_encryption_policy = client_encryption_policy
         self.analytical_storage_ttl = analytical_storage_ttl
         self.rid = None
         self.ts = None

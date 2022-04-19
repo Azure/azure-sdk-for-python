@@ -291,12 +291,14 @@ class KeyRotationLifetimeAction(object):
     :param action: The action that will be executed.
     :type action: ~azure.keyvault.keys.KeyRotationPolicyAction or str
 
-    :keyword str time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
+    :keyword time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
         For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
         information on ISO 8601 durations.
-    :keyword str time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
+    :paramtype time_after_create: Optional[str]
+    :keyword time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
         For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
         information on ISO 8601 durations.
+    :paramtype time_before_expiry: Optional[str]
     """
 
     def __init__(self, action, **kwargs):
@@ -319,29 +321,35 @@ class KeyRotationLifetimeAction(object):
 class KeyRotationPolicy(object):
     """The key rotation policy that belongs to a key.
 
-    :ivar str id: The identifier of the key rotation policy.
+    :ivar id: The identifier of the key rotation policy.
+    :vartype id: Optional[str]
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
     :vartype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
-    :ivar str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO 8601
+    :ivar expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO 8601
         duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for
         more information on ISO 8601 durations.
+    :vartype expires_in: Optional[str]
     :ivar created_on: When the policy was created, in UTC
-    :vartype created_on: ~datetime.datetime
+    :vartype created_on: Optional[~datetime.datetime]
     :ivar updated_on: When the policy was last updated, in UTC
-    :vartype updated_on: ~datetime.datetime
+    :vartype updated_on: Optional[~datetime.datetime]
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         self.id = kwargs.get("policy_id", None)
-        self.lifetime_actions = kwargs.get("lifetime_actions", None)
+        self.lifetime_actions = kwargs.get("lifetime_actions", [])
         self.expires_in = kwargs.get("expires_in", None)
         self.created_on = kwargs.get("created_on", None)
         self.updated_on = kwargs.get("updated_on", None)
 
     @classmethod
     def _from_generated(cls, policy):
-        lifetime_actions = [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]  # pylint:disable=protected-access
+        lifetime_actions = (
+            []
+            if policy.lifetime_actions is None
+            else [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]  # pylint:disable=protected-access
+        )
         if policy.attributes:
             return cls(
                 policy_id=policy.id,

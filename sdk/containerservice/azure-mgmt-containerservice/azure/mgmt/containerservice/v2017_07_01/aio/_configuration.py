@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class ContainerServiceClientConfiguration(Configuration):
+class ContainerServiceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ContainerServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -26,7 +26,8 @@ class ContainerServiceClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
+     subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     """
 
