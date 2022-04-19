@@ -683,7 +683,6 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection
-            # TODO: transform ssl to sslopt
             self.ws = create_connection(
                 url="wss://{}/$servicebus/websocket/".format(self._host),
                 subprotocols=['AMQPWSB10'],
