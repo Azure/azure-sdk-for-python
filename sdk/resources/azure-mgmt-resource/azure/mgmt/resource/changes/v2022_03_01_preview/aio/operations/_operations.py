@@ -19,12 +19,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operations import build_change_resource_get_request, build_change_resources_list_request
+from ...operations._operations import build_changes_get_request, build_changes_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ChangeResourcesOperations:
-    """ChangeResourcesOperations async operations.
+class ChangesOperations:
+    """ChangesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -87,7 +87,7 @@ class ChangeResourcesOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_change_resources_list_request(
+                request = build_changes_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     resource_provider_namespace=resource_provider_namespace,
@@ -103,7 +103,7 @@ class ChangeResourcesOperations:
 
             else:
                 
-                request = build_change_resources_list_request(
+                request = build_changes_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     resource_provider_namespace=resource_provider_namespace,
@@ -145,27 +145,6 @@ class ChangeResourcesOperations:
             get_next, extract_data
         )
     list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/changes"}  # type: ignore
-class ChangeResourceOperations:
-    """ChangeResourceOperations async operations.
-
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.changes.v2022_03_01_preview.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    """
-
-    models = _models
-
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
 
     @distributed_trace_async
     async def get(
@@ -203,7 +182,7 @@ class ChangeResourceOperations:
         api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
 
         
-        request = build_change_resource_get_request(
+        request = build_changes_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             resource_provider_namespace=resource_provider_namespace,

@@ -96,29 +96,16 @@ class ChangesClient(MultiApiClientMixin, _SDKClient):
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
-    def change_resource(self):
+    def changes(self):
         """Instance depends on the API version:
 
-           * 2022-03-01-preview: :class:`ChangeResourceOperations<azure.mgmt.resource.changes.v2022_03_01_preview.operations.ChangeResourceOperations>`
+           * 2022-03-01-preview: :class:`ChangesOperations<azure.mgmt.resource.changes.v2022_03_01_preview.operations.ChangesOperations>`
         """
-        api_version = self._get_api_version('change_resource')
+        api_version = self._get_api_version('changes')
         if api_version == '2022-03-01-preview':
-            from .v2022_03_01_preview.operations import ChangeResourceOperations as OperationClass
+            from .v2022_03_01_preview.operations import ChangesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'change_resource'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def change_resources(self):
-        """Instance depends on the API version:
-
-           * 2022-03-01-preview: :class:`ChangeResourcesOperations<azure.mgmt.resource.changes.v2022_03_01_preview.operations.ChangeResourcesOperations>`
-        """
-        api_version = self._get_api_version('change_resources')
-        if api_version == '2022-03-01-preview':
-            from .v2022_03_01_preview.operations import ChangeResourcesOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'change_resources'".format(api_version))
+            raise ValueError("API version {} does not have operation group 'changes'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):
