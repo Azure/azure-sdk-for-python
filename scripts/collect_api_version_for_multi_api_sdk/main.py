@@ -122,7 +122,7 @@ class CollectApiVersion:
     def get_api_version_from_rest_api_profile(self):
         if not self.namespace_mapping_package:
             self.get_multiapi_from_rest_api()
-        # Find api version mapping to {'azure-mgmt-msi': {'2018-11-30'}}
+        # map package name to api version like {'azure-mgmt-msi': {'2018-11-30'}}
         url_path = SOURCE_FILE['rest-api-profile']
         git_path = url_path.split('main/')[-1]
         file_paths = self.rest_repo.get_contents(git_path)
