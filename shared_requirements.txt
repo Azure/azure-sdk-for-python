@@ -113,7 +113,7 @@ mock
 typing
 typing-extensions
 msal<2.0.0,>=1.12.0
-msal-extensions~=1.0.0
+msal-extensions<2.0.0,>=1.0.0
 msrest>=0.6.21
 msrestazure<2.0.0,>=0.4.32
 azure-mgmt-core<2.0.0,>=1.3.0
