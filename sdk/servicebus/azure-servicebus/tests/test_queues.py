@@ -719,7 +719,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages(message)
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              max_wait_time=5, 
+                                              max_wait_time=10,
                                               receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
                 count = 0
                 for message in receiver:
@@ -731,7 +731,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert count == 10
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                        max_wait_time=5) as receiver:
+                                        max_wait_time=10) as receiver:
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
@@ -741,7 +741,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             count = 0
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                               sub_queue = ServiceBusSubQueue.DEAD_LETTER,
-                                              max_wait_time=5) as receiver:
+                                              max_wait_time=10) as receiver:
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
