@@ -171,7 +171,7 @@ $ python sample_servicebus_receive.py
 
 ### Azure Storage Blob Create Container
 
-The following sample assumes that you have setup Azure Blob [storage](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal).
+The following sample assumes that you have setup Azure Blob [storage](https://docs.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `AZURE_STORAGE_CONNECTION_STRING` environment variable
@@ -190,7 +190,7 @@ $ python sample_storage_blob.py
 
 ### Azure CosmosDb Create Db/Container
 
-The following sample assumes that you have setup Azure CosmosDb [account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal).
+The following sample assumes that you have setup Azure CosmosDb [account](https://docs.microsoft.com/azure/cosmos-db/sql/create-cosmosdb-resources-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `ACCOUNT_URI` environment variable
