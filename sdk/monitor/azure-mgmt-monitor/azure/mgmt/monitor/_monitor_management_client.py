@@ -11,10 +11,11 @@
 
 from typing import TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import MonitorManagementClientConfiguration
 
@@ -65,7 +66,6 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             'alert_rule_incidents': '2016-03-01',
             'alert_rules': '2016-03-01',
             'autoscale_settings': '2015-04-01',
-            'baseline': '2018-09-01',
             'baselines': '2019-03-01',
             'data_collection_endpoints': '2021-04-01',
             'data_collection_rule_associations': '2021-04-01',
@@ -79,7 +79,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             'management_group_diagnostic_settings': '2021-05-01-preview',
             'metric_alerts': '2018-03-01',
             'metric_alerts_status': '2018-03-01',
-            'metric_baseline': '2018-09-01',
+            'metric_baseline': '2017-11-01-preview',
             'metric_definitions': '2018-01-01',
             'metric_namespaces': '2017-12-01-preview',
             'metrics': '2018-01-01',
@@ -339,19 +339,6 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def baseline(self):
-        """Instance depends on the API version:
-
-           * 2018-09-01: :class:`BaselineOperations<azure.mgmt.monitor.v2018_09_01.operations.BaselineOperations>`
-        """
-        api_version = self._get_api_version('baseline')
-        if api_version == '2018-09-01':
-            from .v2018_09_01.operations import BaselineOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'baseline'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
     def baselines(self):
         """Instance depends on the API version:
 
@@ -549,13 +536,10 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2017-11-01-preview: :class:`MetricBaselineOperations<azure.mgmt.monitor.v2017_11_01_preview.operations.MetricBaselineOperations>`
-           * 2018-09-01: :class:`MetricBaselineOperations<azure.mgmt.monitor.v2018_09_01.operations.MetricBaselineOperations>`
         """
         api_version = self._get_api_version('metric_baseline')
         if api_version == '2017-11-01-preview':
             from .v2017_11_01_preview.operations import MetricBaselineOperations as OperationClass
-        elif api_version == '2018-09-01':
-            from .v2018_09_01.operations import MetricBaselineOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'metric_baseline'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

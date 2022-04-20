@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-import warnings
+from typing import Any, Callable, Dict, Optional, TypeVar
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -16,7 +17,6 @@ from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
@@ -38,36 +38,37 @@ def build_get_request(
     aggregation: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-05-01-preview"
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics')
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "autoscaleSettingName": _SERIALIZER.url("autoscale_setting_name", autoscale_setting_name, 'str'),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['timespan'] = _SERIALIZER.query("timespan", timespan, 'str')
-    query_parameters['interval'] = _SERIALIZER.query("interval", interval, 'duration')
-    query_parameters['metricNamespace'] = _SERIALIZER.query("metric_namespace", metric_namespace, 'str')
-    query_parameters['metricName'] = _SERIALIZER.query("metric_name", metric_name, 'str')
-    query_parameters['aggregation'] = _SERIALIZER.query("aggregation", aggregation, 'str')
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['timespan'] = _SERIALIZER.query("timespan", timespan, 'str')
+    _query_parameters['interval'] = _SERIALIZER.query("interval", interval, 'duration')
+    _query_parameters['metricNamespace'] = _SERIALIZER.query("metric_namespace", metric_namespace, 'str')
+    _query_parameters['metricName'] = _SERIALIZER.query("metric_name", metric_name, 'str')
+    _query_parameters['aggregation'] = _SERIALIZER.query("aggregation", aggregation, 'str')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -135,11 +136,14 @@ class PredictiveMetricOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             autoscale_setting_name=autoscale_setting_name,
+            api_version=api_version,
             timespan=timespan,
             interval=interval,
             metric_namespace=metric_namespace,
@@ -150,7 +154,11 @@ class PredictiveMetricOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -165,5 +173,5 @@ class PredictiveMetricOperations(object):
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics'}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics"}  # type: ignore
 

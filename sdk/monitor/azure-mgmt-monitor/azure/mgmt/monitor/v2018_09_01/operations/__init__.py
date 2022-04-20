@@ -7,11 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._action_groups_operations import ActionGroupsOperations
-from ._metric_baseline_operations import MetricBaselineOperations
-from ._baseline_operations import BaselineOperations
 
 __all__ = [
     'ActionGroupsOperations',
-    'MetricBaselineOperations',
-    'BaselineOperations',
 ]

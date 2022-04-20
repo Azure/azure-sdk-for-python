@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-import warnings
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -65,23 +64,24 @@ class MetricsOperations:
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param timespan: The timespan of the query. It is a string with the following format
-         'startDateTime_ISO/endDateTime_ISO'.
+         'startDateTime_ISO/endDateTime_ISO'. Default value is None.
         :type timespan: str
-        :param interval: The interval (i.e. timegrain) of the query.
+        :param interval: The interval (i.e. timegrain) of the query. Default value is None.
         :type interval: ~datetime.timedelta
         :param metricnames: The names of the metrics (comma separated) to retrieve. Special case: If a
          metricname itself has a comma in it then use %2 to indicate it. Eg: 'Metric,Name1' should be
-         **'Metric%2Name1'**.
+         **'Metric%2Name1'**. Default value is None.
         :type metricnames: str
-        :param aggregation: The list of aggregation types (comma separated) to retrieve.
+        :param aggregation: The list of aggregation types (comma separated) to retrieve. Default value
+         is None.
         :type aggregation: str
         :param top: The maximum number of records to retrieve.
          Valid only if $filter is specified.
-         Defaults to 10.
+         Defaults to 10. Default value is None.
         :type top: int
         :param orderby: The aggregation to use for sorting results and the direction of the sort.
          Only one order can be specified.
-         Examples: sum asc.
+         Examples: sum asc. Default value is None.
         :type orderby: str
         :param filter: The **$filter** is used to reduce the set of metric data returned. Example:
          Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or
@@ -94,12 +94,13 @@ class MetricsOperations:
          Instead of using $filter= "dim (test) 1 eq '\ *' " use **$filter= "dim %2528test%2529 1 eq '*\
          ' "\ ** When dimension name is **\ dim (test) 3\ ** and dimension value is **\ dim3 (test) val\
          ** Instead of using $filter= "dim (test) 3 eq 'dim3 (test) val' " use **\ $filter= "dim
-         %2528test%2529 3 eq 'dim3 %2528test%2529 val' "**.
+         %2528test%2529 3 eq 'dim3 %2528test%2529 val' "**. Default value is None.
         :type filter: str
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details.
+         operation. See the operation's description for details. Default value is None.
         :type result_type: str or ~$(python-base-namespace).v2018_01_01.models.ResultType
-        :param metricnamespace: Metric namespace to query metric definitions for.
+        :param metricnamespace: Metric namespace to query metric definitions for. Default value is
+         None.
         :type metricnamespace: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Response, or the result of cls(response)
@@ -112,9 +113,12 @@ class MetricsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2018-01-01")  # type: str
+
         
         request = build_list_request(
             resource_uri=resource_uri,
+            api_version=api_version,
             timespan=timespan,
             interval=interval,
             metricnames=metricnames,
@@ -129,7 +133,11 @@ class MetricsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -144,5 +152,5 @@ class MetricsOperations:
 
         return deserialized
 
-    list.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/metrics'}  # type: ignore
+    list.metadata = {'url': "/{resourceUri}/providers/Microsoft.Insights/metrics"}  # type: ignore
 
