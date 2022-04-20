@@ -454,7 +454,7 @@ class WebSocketTransportAsync(WebSocketTransport):
             """
             from websocket import ABNF
             await asyncio.get_event_loop().run_in_executor(
-                    None, self.ws.recv, s, opcode=ABNF.OPCODE_BINARY
+                    None, self.ws.send, s, ABNF.OPCODE_BINARY
                     )
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
