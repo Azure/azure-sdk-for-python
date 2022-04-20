@@ -88,7 +88,8 @@ def _build_connection_policy(kwargs):
 
     return policy
 
-class CosmosClient(object):
+
+class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """A client-side logical representation of an Azure Cosmos DB account.
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
@@ -109,12 +110,7 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(  # pylint: disable=client-accepts-api-version-keyword
-            self,
-            url,
-            credential,
-            consistency_level=None,
-            **kwargs):
+    def __init__(self, url, credential, consistency_level=None, **kwargs):
         # type: (str, Any, Optional[str], Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
