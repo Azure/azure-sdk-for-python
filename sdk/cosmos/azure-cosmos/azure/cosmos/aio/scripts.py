@@ -197,7 +197,7 @@ class ScriptsProxy(object):
     async def execute_stored_procedure(
         self,
         sproc: Union[str, Dict[str, Any]],
-        partition_key: Optional[Union[str, int, float, bool]] = None,
+        partition_key: Optional[str] = None,
         params: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -207,9 +207,8 @@ class ScriptsProxy(object):
 
         :param sproc: The ID (name) or dict representing the stored procedure to be executed.
         :type sproc: Union[str, Dict[str, Any]]
-        :param partition_key: Specifies the partition key to indicate which partition the stored procedure should
+        :param Optional[str] partition_key: Specifies the partition key to indicate which partition the stored procedure should
             execute on.
-        :type partition_key: Optional[Union[str, int, float, bool]]
         :param params: List of parameters to be passed to the stored procedure to be executed.
         :type params: Optional[List[Dict[str, Any]]]
         :keyword bool enable_script_logging: Enables or disables script logging for the current request.
