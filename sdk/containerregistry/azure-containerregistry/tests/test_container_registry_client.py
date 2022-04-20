@@ -4,9 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from azure.core import credentials
-import pytest
+from io import BytesIO
+import json
 import os
+import pytest
 import six
 
 from azure.containerregistry import (
@@ -603,7 +604,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         assert last_udpated_on == last_updated_on
     
     @acr_preparer()
-    def test_upload_manifest(self, containerregistry_endpoint):
+    def test_upload_oci_manifest(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         client = self.create_registry_client(containerregistry_endpoint)
@@ -611,11 +612,42 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client.upload_manifest(repo, manifest)
     
     @acr_preparer()
+    def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        manifest_bytes = json.dumps(manifest.serialize()).encode("utf-8")
+        manifest_stream = BytesIO(manifest_bytes)
+        
+        client = self.create_registry_client(containerregistry_endpoint)
+        
+        client.upload_manifest(repo, manifest_stream)
+    
+    @acr_preparer()
+    def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        client = self.create_registry_client(containerregistry_endpoint)
+        
+        self.upload_manifest_prerequisites()
+        client.upload_manifest(repo, manifest, tag="")
+        
+    @acr_preparer()
+    def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        manifest_bytes = json.dumps(manifest.serialize()).encode("utf-8")
+        manifest_stream = BytesIO(manifest_bytes)
+        client = self.create_registry_client(containerregistry_endpoint)
+        
+        self.upload_manifest_prerequisites()
+        client.upload_manifest(repo, manifest_stream, tag="")
+    
+    @acr_preparer()
     def test_upload_blob(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         client = self.create_registry_client(containerregistry_endpoint)
         
         blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
-        path = os.path().join(os.getcwd(), "data", "oci-artifact", blob)
+        path = os.path.join(os.getcwd(), "tests", "data", "oci_artifact", blob)
         
         client.upload_blob(repo, open(path, "rb"))

@@ -790,7 +790,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type data: IO
         :returns: None
         :rtype: None
-        :raises ValueError: If the parameter repository or stream is None.
+        :raises ValueError: If the parameter repository or data is None.
         """
         if repository is None or data is None:
             raise ValueError("The parameter repository and data cannot be None.")
@@ -813,7 +813,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Download the manifest for an OCI artifact.
 
         :param str repository: Name of the repository
-        :param str tag_or_digest: The manifest to upload.
+        :param str tag_or_digest: The tag or digest of the manifest to download.
         :returns: ManifestWrapper
         :rtype: ~container_registry.models.ManifestWrapper
         :raises ValueError: If the parameter repository or tag_or_digest is None.

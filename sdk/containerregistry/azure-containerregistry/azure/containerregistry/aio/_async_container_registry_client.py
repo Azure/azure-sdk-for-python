@@ -764,34 +764,46 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: None
         :rtype: None
         """
+        if repository is None or manifest is None:
+            raise ValueError("The parameter repository and manifest cannot be None.")
+
+        data = manifest
+        if isinstance(manifest, OCIManifest):
+            data = _serialize_manifest(manifest)
         tag_or_digest = tag
-        if tag:
-            stream = manifest
-            if isinstance(manifest, OCIManifest):
-                stream = _serialize_manifest(manifest)
-            tag_or_digest = _compute_digest(stream)
+        if tag is None:
+            tag_or_digest = _compute_digest(data)
+
+        data.seek(0)
 
         await self._client.container_registry.create_manifest(
-            repository, tag_or_digest, stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs)
+            name=repository, reference=tag_or_digest, payload=data, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs)
 
     @distributed_trace_async
-    async def upload_blob(self, repository, stream, **kwargs):
+    async def upload_blob(self, repository, data, **kwargs):
         # type: (str, IO, **Any) -> None
         """Upload an artifact blob.
 
         :param str repository: Name of the repository
-        :param stream: The manifest to upload.
-        :type stream: IO
+        :param data: The blob to upload.
+        :type data: IO
         :returns: None
         :rtype: None
         """
+        if repository is None or data is None:
+            raise ValueError("The parameter repository and data cannot be None.")
+
         start_upload_response = await self._client.container_registry_blob.start_upload(
-            repository, cls=_return_response, **kwargs)
+            repository, cls=_return_response, **kwargs
+        )
         upload_chunk_response = await self._client.container_registry_blob.upload_chunk(
-            start_upload_response['Location'], stream, cls=_return_response, **kwargs)
-        digest = _compute_digest(stream)
+            start_upload_response['Location'], data, cls=_return_response, **kwargs
+        )
+        digest = _compute_digest(data)
+        data.seek(0)
         await self._client.container_registry_blob.complete_upload(
-            digest, upload_chunk_response['Location'], stream, cls=_return_response, **kwargs)
+            digest=digest, next_link=upload_chunk_response['Location'], value=data, cls=_return_response, **kwargs
+        )
 
     @distributed_trace_async
     async def download_manifest(self, repository, tag_or_digest, **kwargs):
@@ -799,12 +811,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Download the manifest for an OCI artifact.
 
         :param str repository: Name of the repository
-        :param str tag_or_digest: The manifest to upload.
+        :param str tag_or_digest: The tag or digest of the manifest to download.
         :returns: ManifestWrapper
         :rtype: ~container_registry.models.ManifestWrapper
         """
+        if repository is None or tag_or_digest is None:
+            raise ValueError("The parameter repository and tag_or_digest cannot be None.")
+
         return await self._client.container_registry.get_manifest(
-            repository, tag_or_digest, OCI_MANIFEST_MEDIA_TYPE, **kwargs)
+            repository, tag_or_digest, OCI_MANIFEST_MEDIA_TYPE, **kwargs
+        )
 
     @distributed_trace_async
     async def download_blob(self, repository, digest, **kwargs):
@@ -816,6 +832,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: IO or None
         :rtype: IO or None
         """
+        if repository is None or digest is None:
+            raise ValueError("The parameter repository and digest cannot be None.")
+
         return await self._client.container_registry_blob.get_blob(repository, digest, **kwargs)
 
     @distributed_trace_async

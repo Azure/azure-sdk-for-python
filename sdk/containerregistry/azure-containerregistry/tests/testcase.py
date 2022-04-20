@@ -210,15 +210,15 @@ class ContainerRegistryTestClass(AzureTestCase):
     
     def create_oci_manifest(self):
         config1 = Descriptor(
-            media_type=OCI_MANIFEST_MEDIA_TYPE,
-            digest="d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+            media_type="application/vnd.acme.rocket.config",
+            digest="sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
             size=171
         )
         config2 = Descriptor(
             media_type="application/vnd.oci.image.layer.v1.tar",
-            digest="654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+            digest="sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
             size=28,
-            annotations=Annotations(title="artifact.txt")
+            annotations=Annotations(name="artifact.txt")
         )
         return OCIManifest(config=config1, schema_version=2, layers=[config2])
 
