@@ -450,7 +450,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10, receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
 
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
@@ -700,7 +700,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             deferred_messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10, receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
 
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(3):
@@ -716,7 +716,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             assert count == 3
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10, receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
                 with pytest.raises(ServiceBusError):
                     deferred = await receiver.receive_deferred_messages([3, 4])
 

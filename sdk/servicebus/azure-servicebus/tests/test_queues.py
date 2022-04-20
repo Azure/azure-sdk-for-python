@@ -159,7 +159,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=0)
 
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)
 
             assert len(receiver.receive_deferred_messages([])) == 0
             with pytest.raises(ValueError):
