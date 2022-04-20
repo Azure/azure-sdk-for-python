@@ -2334,6 +2334,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     assert message.state == ServiceBusMessageState.ACTIVE
                     deferred_messages.append(message.sequence_number)
                     await receiver.defer_message(message)
+                await asyncio.sleep(5)
                 if deferred_messages:
                     received_deferred_msg = await receiver.receive_deferred_messages(
                         sequence_numbers=deferred_messages

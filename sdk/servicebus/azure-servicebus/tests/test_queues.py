@@ -2035,7 +2035,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)
 
             with sender, receiver:
                 sender.send_messages([ServiceBusMessage("message1"), ServiceBusMessage("message2")])
