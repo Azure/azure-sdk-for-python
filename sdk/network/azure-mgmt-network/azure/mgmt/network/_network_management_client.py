@@ -11,10 +11,11 @@
 
 from typing import TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import NetworkManagementClientConfiguration
 from ._operations_mixin import NetworkManagementClientOperationsMixin
@@ -24,7 +25,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -78,6 +78,9 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             'network_manager_effective_security_admin_rules': '2021-02-01-preview',
             'network_managers': '2021-02-01-preview',
             'network_security_perimeters': '2021-02-01-preview',
+            'nsp_access_rules': '2021-02-01-preview',
+            'nsp_associations': '2021-02-01-preview',
+            'nsp_profiles': '2021-02-01-preview',
             'p2_svpn_server_configurations': '2019-07-01',
             'perimeter_associable_resource_types': '2021-02-01-preview',
             'security_admin_configurations': '2021-02-01-preview',
@@ -93,12 +96,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
         api_version=None, # type: Optional[str]
-        base_url=None,  # type: Optional[str]
+        base_url="https://management.azure.com",  # type: str
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = NetworkManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(NetworkManagementClient, self).__init__(
@@ -4860,6 +4861,45 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2021_05_01.operations import NetworkWatchersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_watchers'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nsp_access_rules(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NspAccessRulesOperations<azure.mgmt.network.v2021_02_01_preview.operations.NspAccessRulesOperations>`
+        """
+        api_version = self._get_api_version('nsp_access_rules')
+        if api_version == '2021-02-01-preview':
+            from .v2021_02_01_preview.operations import NspAccessRulesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'nsp_access_rules'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nsp_associations(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NspAssociationsOperations<azure.mgmt.network.v2021_02_01_preview.operations.NspAssociationsOperations>`
+        """
+        api_version = self._get_api_version('nsp_associations')
+        if api_version == '2021-02-01-preview':
+            from .v2021_02_01_preview.operations import NspAssociationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'nsp_associations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nsp_profiles(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NspProfilesOperations<azure.mgmt.network.v2021_02_01_preview.operations.NspProfilesOperations>`
+        """
+        api_version = self._get_api_version('nsp_profiles')
+        if api_version == '2021-02-01-preview':
+            from .v2021_02_01_preview.operations import NspProfilesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'nsp_profiles'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property

@@ -1,5 +1,18 @@
 # Release History
 
+## 20.0.0 (2022-04-20)
+
+**Features**
+
+  - Added operation PerimeterAssociableResourceTypesOperations.list
+  - Added operation group NspAccessRulesOperations
+  - Added operation group NspAssociationsOperations
+  - Added operation group NspProfilesOperations
+
+**Breaking changes**
+
+  - Removed operation PerimeterAssociableResourceTypesOperations.get
+
 ## 19.3.0 (2021-11-05)
 
 **Features**
