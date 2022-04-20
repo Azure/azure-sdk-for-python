@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class PolicyClientConfiguration(Configuration):
+class PolicyClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for PolicyClient.
 
     Note that all parameters used to create this instance are saved as instance

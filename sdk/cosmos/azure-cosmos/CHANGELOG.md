@@ -9,7 +9,9 @@
 #### Bugs Fixed
 
 #### Other Changes
-- Made `auth.py` a private file, making the GetAuthorizationMethod no longer public
+- Marked the GetAuthorizationMethod for deprecation since it will no longer public in a future release.
+- Added samples showing how to configure retry options for both the sync and async clients.
+- Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
 
 ### 4.3.0b4 (2022-04-07)
 
