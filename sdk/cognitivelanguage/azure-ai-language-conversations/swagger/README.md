@@ -42,13 +42,23 @@ modelerfour:
   lenient-model-deduplication: true
 ```
 
-### Remove intermediary object from analyze operation call
+
+### Rename 'duplicate schema' errors in 'Task State'
 
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/:analyze-conversations"]["post"]
+      where: $["definitions"]["TaskState"]["properties"]
       transform: >
-          $["operationId"] = "analyzeConversation";
+        $["status"]["x-ms-enum"]["name"] = "TaskStateEnum";
 ```
 
+### Rename 'duplicate schema' errors in 'Job State'
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["JobState"]["properties"]
+      transform: >
+        $["status"]["x-ms-enum"]["name"] = "JobStateEnum";
+```
