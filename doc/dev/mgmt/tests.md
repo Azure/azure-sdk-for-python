@@ -198,32 +198,47 @@ Notes:
 ### Example 2: Basic preparer usage
 
 ```python
-from azure.mgmt.sql import SqlManagementClient
+import azure.mgmt.search
 from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
-class TestExampleSqlServer(AzureMgmtRecordedTestCase):
+class TestMgmtSearch(AzureMgmtRecordedTestCase):
+
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(SqlManagementClient)
+        self.client = self.create_mgmt_client(
+            azure.mgmt.search.SearchManagementClient
+        )
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
-    def test_create_sql_server(self, resource_group, location):
-        test_server_name = self.get_resource_name('testsqlserver')
-        server_creation = self.client.servers.create_or_update(
+    def test_search_services(self, resource_group, location):
+        account_name = self.get_resource_name(''ptvstestsearch')
+
+        service = self.client.services.begin_create_or_update(
             resource_group.name,
-            test_server_name,
+            account_name,
             {
                 'location': location,
-                'version': '12.0',
-                'administrator_login': 'mysecretname',
-                'administrator_login_password': 'HusH_Sec4et'
+                'replica_count': 1,
+                'partition_count': 1,
+                'hosting_mode': 'Default',
+                'sku': {
+                    'name': 'standard'
+                }
             }
+        ).result()
+
+        availability = self.client.services.check_name_availability(account_name)
+        assert not availability.is_name_available
+        assert availability.reason == "AlreadyExists"
+
+        service = self.client.services.get(
+            resource_group.name,
+            service.name
         )
-        server = server_creation.result()
-        assert server.name == test_server_name
+        assert service.name == account_name
 ```
 
-This test creates a SQL server and confirms that its name is set correctly. Because a SQL server must be created in a resource group, the test uses a `ResourceGroupPreparer` to create a group for use in the test.
+This test creates a Search server and confirms that its name is set correctly. Because a Search server must be created in a resource group, the test uses a `ResourceGroupPreparer` to create a group for use in the test.
 
 Preparers are [decorators][decorators] that "wrap" a test method, transparently replacing it with another function that has some additional functionality before and after it's run. For example, the `@ResourceGroupPreparer` decorator adds the following to the wrapped method:
 * creates a resource group
@@ -236,51 +251,61 @@ Notes:
 3. Why not use a preparer in Example 1, above?
 
     Preparers are only for *auxiliary* resources that aren't part of the main focus of the test. In example 1, we want to test the actual creation and naming of the resource group, so those operations are part of the test.
-    By contrast, in example 2, the subject of the test is the SQL server management operations; the resource group is just a prerequisite for those operations.  We only want this test to fail if something is wrong with the SQL server creation.
+    By contrast, in example 2, the subject of the test is the Search management operations; the resource group is just a prerequisite for those operations.  We only want this test to fail if something is wrong with the Search server creation.
     If there's something wrong with the resource group creation, there should be a dedicated test for that.
 
 ### Example 3: More complicated preparer usage
 
 ```python
-from azure.mgmt.media import MediaServicesManagementClient
+import azure.mgmt.batch
+from azure.mgmt.batch import models
+
+from azure_devtools.scenario_tests.recording_processors import GeneralNameReplacer
 from devtools_testutils import (
-    AzureRecordedTestCase, ResourceGroupPreparer, StorageAccountPreparer, FakeResource, recorded_by_proxy
+    AzureMgmtRecordedTestCase, recorded_by_proxy,
+    ResourceGroupPreparer,
+    StorageAccountPreparer
 )
 
-FAKE_STORAGE_ID = 'STORAGE-FAKE-ID'
-FAKE_STORAGE = FakeResource(name='teststorage', id=FAKE_STORAGE_ID)
+AZURE_ARM_ENDPOINT = "https://centraluseuap.management.azure.com"
+AZURE_LOCATION = 'eastus'
 
-class ExampleMediaServiceTestCase(AzureRecordedTestCase):
+class TestMgmtBatch(AzureMgmtRecordedTestCase):
+    scrubber = GeneralNameReplacer()
+
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(MediaServicesManagementClient)
+        self.mgmt_batch_client = self.create_mgmt_client(
+            azure.mgmt.batch.BatchManagementClient,
+            base_url=AZURE_ARM_ENDPOINT)
 
-    @ResourceGroupPreparer(parameter_name='group')
-    @StorageAccountPreparer(playback_fake_resource=FAKE_STORAGE,
-                            name_prefix='testmedia',
-                            resource_group_parameter_name='group')
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @StorageAccountPreparer(name_prefix='batch', location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_media_service(self, group, location, storage_account):
-        test_media_name = self.get_resource_name('pymediatest')
-        media_obj = self.client.media_service.create(
-            group.name,
-            test_media_name,
-            {
-                'location': location,
-                'storage_accounts': [{
-                    'id': storage_account.id,
-                    'is_primary': True,
-                }]
-            }
+    def test_mgmt_batch_applications(self, resource_group, location, storage_account, storage_account_key):
+        # Test Create Account with Auto-Storage
+        storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
+            self.get_settings_value("SUBSCRIPTION_ID"),
+            resource_group.name,
+            storage_account.name
         )
+        batch_account = models.BatchAccountCreateParameters(
+            location=location,
+            auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
+        )
+        account_name = "testbatch"
+        account_setup = self.mgmt_batch_client.batch_account.begin_create(
+            resource_group.name,
+            account_name,
+            batch_account).result()
+        assert account_setup.name == account_name
 
-        assert media_obj.name == test_media_name
 ```
 
-This test creates a media service and confirms that its name is set correctly.
+This test creates a batch account and confirms that its name is set correctly.
 
 Notes:
 
-1. Here, we want to test creation of a media service, which requires a storage account. We want to use a preparer for this, but creation of a storage account itself needs a resource group. So we need both a `ResourceGroupPreparer` and a `StorageAccountPreparer`, in that order.
+1. Here, we want to test creation of a batch account, which requires a storage account. We want to use a preparer for this, but creation of a storage account itself needs a resource group. So we need both a `ResourceGroupPreparer` and a `StorageAccountPreparer`, in that order.
 2. Both preparers are customized. We pass a `parameter_name` keyword argument of `group` to `ResourceGroupPreparer`, and as a result the resource group is passed into the test method through the `group` parameter (rather than the default `resource_group`). Then, because `StorageAccountPreparer` needs a resource group, we need to let it know about the modified parameter name. We do so with the `resource_group_parameter_name` argument. Finally, we pass a `name_prefix` to `StorageAccountPreparer`. The names it generates by default include the fully qualified test name, and so tend to be longer than is allowed for storage accounts. You'll probably always need to use `name_prefix` with `StorageAccountPreparer`.
 3. We want to ensure that the group retrieved by `get_properties` has a `kind` of `BlobStorage`. We create a `FakeStorageAccount` object with that attribute and pass it to `StorageAccountPreparer`, and also pass the `kind` keyword argument to `StorageAccountPreparer` so that it will be passed through when a storage account is prepared for real.
 4. Similarly to how a resource group parameter is added by `ResourceGroupPreparer`, `StorageAccountPreparer` passes the model object for the created storage account as the `storage_account` parameter, and that parameter's name can be customized. `StorageAccountPreparer` also creates an account access key and passes it into the test method through a parameter whose name is formed by appending `_key` to the name of the parameter for the account itself.
@@ -288,34 +313,42 @@ Notes:
 ### Example 4: Different endpoint than public Azure (China, Dogfood, etc.)
 
 ```python
-from azure.mgmt.sql import SqlManagementClient
-from devtools_testutils import AzureRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
+import azure.mgmt.search
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 _CUSTOM_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
 
-class ExampleSqlServerTestCase(AzureRecordedTestCase):
+class TestMgmtSearch(AzureMgmtRecordedTestCase):
+
     def setup_method(self, method):
         self.client = self.create_mgmt_client(
-            SqlManagementClient,
+            azure.mgmt.search.SearchManagementClient,
             base_url=_CUSTOM_ENDPOINT
         )
 
     @ResourceGroupPreparer(client_kwargs={'base_url':_CUSTOM_ENDPOINT})
     @recorded_by_proxy
-    def test_create_sql_server(self, resource_group, location):
-        test_server_name = self.get_resource_name('testsqlserver')
-        server_creation = self.client.servers.create_or_update(
+    def test_search_services(self, resource_group, location):
+        account_name = self.get_resource_name(''ptvstestsearch')
+
+        service = self.client.services.begin_create_or_update(
             resource_group.name,
-            test_server_name,
+            account_name,
             {
                 'location': location,
-                'version': '12.0',
-                'administrator_login': 'mysecretname',
-                'administrator_login_password': 'HusH_Sec4et'
+                'replica_count': 1,
+                'partition_count': 1,
+                'hosting_mode': 'Default',
+                'sku': {
+                    'name': 'standard'
+                }
             }
-        )
-        server = server_creation.result()
-        assert server.name == test_server_name
+        ).result()
+
+        availability = self.client.services.check_name_availability(account_name)
+        assert not availability.is_name_available
+        assert availability.reason == "AlreadyExists"
+        assert service.name == account_name
 ```
 
 <!-- LINKS -->
