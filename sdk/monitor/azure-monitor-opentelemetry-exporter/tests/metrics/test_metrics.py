@@ -278,6 +278,8 @@ class TestAzureMetricExporter(unittest.TestCase):
                 aggregation_temporality=AggregationTemporality.DELTA,
                 bucket_counts=[0,3,4],
                 explicit_bounds=[0,5,10,0],
+                max=18,
+                min=1,
                 start_time_unix_nano=1646865018558419456,
                 time_unix_nano=1646865018558419457,
                 sum=31,

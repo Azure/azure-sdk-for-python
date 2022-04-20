@@ -1,6 +1,16 @@
 # Release History
 
-## 4.5.1 (2022-04-19)
+## 4.5.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.5.1 (2022-04-18)
 
 ### Bugs Fixed
 - Fixed error that could occur when fetching a key rotation policy that has no defined
