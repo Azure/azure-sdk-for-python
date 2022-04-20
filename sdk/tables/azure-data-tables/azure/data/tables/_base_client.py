@@ -39,7 +39,12 @@ from ._constants import (
     STORAGE_OAUTH_SCOPE,
     SERVICE_HOST_BASE,
 )
-from ._error import RequestTooLargeError, TableTransactionError, _decode_error
+from ._error import (
+    RequestTooLargeError,
+    TableTransactionError,
+    _decode_error,
+    _validate_tablename_error
+)
 from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
@@ -200,7 +205,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         return self._client._config.version  # pylint: disable=protected-access
 
 
-class TablesBaseClient(AccountHostsMixin):
+class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
@@ -256,8 +261,8 @@ class TablesBaseClient(AccountHostsMixin):
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-    def _batch_send(self, *reqs, **kwargs):
-        # type: (List[HttpRequest], Any) -> List[Mapping[str, Any]]
+    def _batch_send(self, table_name, *reqs, **kwargs):
+        # type: (str, List[HttpRequest], Any) -> List[Mapping[str, Any]]
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
@@ -290,7 +295,9 @@ class TablesBaseClient(AccountHostsMixin):
                 error_message="The transaction request was too large",
                 error_type=RequestTooLargeError)
         if response.status_code != 202:
-            raise _decode_error(response)
+            decoded = _decode_error(response)
+            _validate_tablename_error(decoded, table_name)
+            raise decoded
 
         parts = list(response.parts())
         error_parts = [p for p in parts if not 200 <= p.status_code < 300]
@@ -300,10 +307,12 @@ class TablesBaseClient(AccountHostsMixin):
                     response,
                     error_message="The transaction request was too large",
                     error_type=RequestTooLargeError)
-            raise _decode_error(
+            decoded = _decode_error(
                 response=error_parts[0],
                 error_type=TableTransactionError
             )
+            _validate_tablename_error(decoded, table_name)
+            raise decoded
         return [extract_batch_part_metadata(p) for p in parts]
 
     def close(self):

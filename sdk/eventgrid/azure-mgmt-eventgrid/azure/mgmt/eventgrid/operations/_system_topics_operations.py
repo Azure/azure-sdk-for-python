@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -22,25 +22,20 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    system_topic_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    system_topic_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}')
@@ -70,15 +65,17 @@ def build_get_request(
 
 
 def build_create_or_update_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    system_topic_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    subscription_id: str,
+    resource_group_name: str,
+    system_topic_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-12-01"
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}')
@@ -105,18 +102,19 @@ def build_create_or_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    system_topic_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    system_topic_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}')
     path_format_arguments = {
@@ -140,15 +138,17 @@ def build_delete_request_initial(
 
 
 def build_update_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    system_topic_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    subscription_id: str,
+    resource_group_name: str,
+    system_topic_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-12-01"
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics/{systemTopicName}')
@@ -175,19 +175,20 @@ def build_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_by_subscription_request(
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/systemTopics')
@@ -219,15 +220,14 @@ def build_list_by_subscription_request(
 
 
 def build_list_by_resource_group_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/systemTopics')
@@ -258,7 +258,6 @@ def build_list_by_resource_group_request(
         **kwargs
     )
 
-# fmt: on
 class SystemTopicsOperations(object):
     """SystemTopicsOperations operations.
 
@@ -284,11 +283,10 @@ class SystemTopicsOperations(object):
     @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        system_topic_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SystemTopic"
+        resource_group_name: str,
+        system_topic_name: str,
+        **kwargs: Any
+    ) -> "_models.SystemTopic":
         """Get a system topic.
 
         Get properties of a system topic.
@@ -337,12 +335,11 @@ class SystemTopicsOperations(object):
 
     def _create_or_update_initial(
         self,
-        resource_group_name,  # type: str
-        system_topic_name,  # type: str
-        system_topic_info,  # type: "_models.SystemTopic"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SystemTopic"
+        resource_group_name: str,
+        system_topic_name: str,
+        system_topic_info: "_models.SystemTopic",
+        **kwargs: Any
+    ) -> "_models.SystemTopic":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -388,12 +385,11 @@ class SystemTopicsOperations(object):
     @distributed_trace
     def begin_create_or_update(
         self,
-        resource_group_name,  # type: str
-        system_topic_name,  # type: str
-        system_topic_info,  # type: "_models.SystemTopic"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.SystemTopic"]
+        resource_group_name: str,
+        system_topic_name: str,
+        system_topic_info: "_models.SystemTopic",
+        **kwargs: Any
+    ) -> LROPoller["_models.SystemTopic"]:
         """Create a system topic.
 
         Asynchronously creates a new system topic with the specified parameters.
@@ -461,11 +457,10 @@ class SystemTopicsOperations(object):
 
     def _delete_initial(
         self,
-        resource_group_name,  # type: str
-        system_topic_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        system_topic_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -498,11 +493,10 @@ class SystemTopicsOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        resource_group_name,  # type: str
-        system_topic_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        resource_group_name: str,
+        system_topic_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete a system topic.
 
         Delete existing system topic.
@@ -561,12 +555,11 @@ class SystemTopicsOperations(object):
 
     def _update_initial(
         self,
-        resource_group_name,  # type: str
-        system_topic_name,  # type: str
-        system_topic_update_parameters,  # type: "_models.SystemTopicUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SystemTopic"
+        resource_group_name: str,
+        system_topic_name: str,
+        system_topic_update_parameters: "_models.SystemTopicUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.SystemTopic":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -612,12 +605,11 @@ class SystemTopicsOperations(object):
     @distributed_trace
     def begin_update(
         self,
-        resource_group_name,  # type: str
-        system_topic_name,  # type: str
-        system_topic_update_parameters,  # type: "_models.SystemTopicUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.SystemTopic"]
+        resource_group_name: str,
+        system_topic_name: str,
+        system_topic_update_parameters: "_models.SystemTopicUpdateParameters",
+        **kwargs: Any
+    ) -> LROPoller["_models.SystemTopic"]:
         """Update a system topic.
 
         Asynchronously updates a system topic with the specified parameters.
@@ -686,11 +678,10 @@ class SystemTopicsOperations(object):
     @distributed_trace
     def list_by_subscription(
         self,
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.SystemTopicsListResult"]
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.SystemTopicsListResult"]:
         """List system topics under an Azure subscription.
 
         List all the system topics under an Azure subscription.
@@ -770,12 +761,11 @@ class SystemTopicsOperations(object):
     @distributed_trace
     def list_by_resource_group(
         self,
-        resource_group_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.SystemTopicsListResult"]
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.SystemTopicsListResult"]:
         """List system topics under a resource group.
 
         List all the system topics under a resource group.

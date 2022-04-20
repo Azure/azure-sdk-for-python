@@ -2,7 +2,7 @@
 
 Azure Schema Registry is a schema repository service hosted by Azure Event Hubs, providing schema storage, versioning,
 and management. This package provides an Avro encoder capable of encoding and decoding payloads containing
-Schema Registry schema identifiers and Avro-encoded data.
+Schema Registry schema identifiers and Avro-encoded content.
 
 [Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_avro_samples] | [Changelog][change_log]
 
@@ -23,7 +23,7 @@ pip install azure-schemaregistry-avroencoder azure-identity
 ### Prerequisites:
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
-* [Azure Schema Registry][schemaregistry_service]
+* [Azure Schema Registry][schemaregistry_service] - [Here is the quickstart guide][quickstart_guide] to create a Schema Registry group using the Azure portal.
 * Python 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
@@ -70,13 +70,13 @@ content type with schema ID. Uses [SchemaRegistryClient][schemaregistry_client] 
 
 Support has been added to certain Azure Messaging SDK model classes for interoperability with the `AvroEncoder`. These models are subtypes of the `MessageType` protocol defined under the `azure.schemaregistry.encoder.avroencoder` namespace. Currently, the supported model classes are:
 
-- `azure.eventhub.EventData` for `azure-eventhub==5.9.0b1`
+- `azure.eventhub.EventData` for `azure-eventhub==5.9.0b3`
 
 ### Message format
 
-If a message type that follows the MessageType protocol is provided to the encoder, it will encode the corresponding data and content type properties as follows:
+If a message type that follows the MessageType protocol is provided to the encoder, it will encode the corresponding content and content type properties as follows:
 
-- `data`: Avro payload (in general, format-specific payload)
+- `content`: Avro payload (in general, format-specific payload)
   - Avro Binary Encoding
   - NOT Avro Object Container File, which includes the schema and defeats the
     purpose of this encoder to move the schema out of the message payload and
@@ -86,8 +86,8 @@ If a message type that follows the MessageType protocol is provided to the encod
   - `avro/binary` is the format indicator
   - `<schema ID>` is the hexadecimal representation of GUID, same format and byte order as the string from the Schema Registry service.
 
-If message type or callback function is not provided, and by default, the encoder will create the following dict:
-`{"data": <Avro encoded payload>, "content_type": 'avro/binary+<schema ID>' }`
+If message type is not provided, and by default, the encoder will create the following dict:
+`{"content": <Avro encoded payload>, "content_type": 'avro/binary+<schema ID>' }`
 
 ## Examples
 
@@ -100,8 +100,8 @@ The following sections provide several code snippets covering some of the most c
 
 ### Encoding
 
-Use `AvroEncoder.encode` method to encode dict data with the given Avro schema.
-The method will use a schema previously registered to the Schema Registry service and keep the schema cached for future encoding usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `encode` method by instantiating the `AvroEncoder` with the keyword argument `auto_register_schemas=True`.
+Use `AvroEncoder.encode` method to encode dict content with the given Avro schema.
+The method will use a schema previously registered to the Schema Registry service and keep the schema cached for future encoding usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `encode` method by instantiating the `AvroEncoder` with the keyword argument `auto_register=True`.
 
 ```python
 import os
@@ -132,20 +132,20 @@ schema_register_client.register(group_name, name, definition, format)
 encoder = AvroEncoder(client=schema_registry_client, group_name=group_name)
 
 with encoder:
-    dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
-    event_data = encoder.encode(dict_data, schema=definition, message_type=EventData)
+    dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
+    event_data = encoder.encode(dict_content, schema=definition, message_type=EventData)
 
     # OR
 
-    metadata_dict = encoder.encode(dict_data, schema=definition)
-    event_data = EventData.from_message_data(metadata_dict["data"], metadata_dict["content_type"])
+    message_content_dict = encoder.encode(dict_content, schema=definition)
+    event_data = EventData.from_message_content(message_content_dict["content"], message_content_dict["content_type"])
 ```
 
 ### Decoding
 
-Use `AvroEncoder.decode` method to decode the bytes value into dict data by either:
+Use `AvroEncoder.decode` method to decode the bytes value into dict content by either:
  - Passing in a message object that is a subtype of the MessageType protocol.
- - Passing in a dict with keys `data`(type bytes) and `content_type` (type string).
+ - Passing in a dict with keys `content`(type bytes) and `content_type` (type string).
 The method automatically retrieves the schema from the Schema Registry Service and keeps the schema cached for future decoding usage.
 
 ```python
@@ -163,19 +163,19 @@ encoder = AvroEncoder(client=schema_registry_client, group_name=group_name)
 
 with encoder:
     # event_data is an EventData object with Avro encoded body
-    decoded_data = encoder.decode(event_data)
+    decoded_content = encoder.decode(event_data)
 
     # OR 
 
-    encoded_bytes = b'<data_encoded_by_azure_schema_registry_avro_encoder>'
+    encoded_bytes = b'<content_encoded_by_azure_schema_registry_avro_encoder>'
     content_type = 'avro/binary+<schema_id_of_corresponding_schema>'
-    data_dict = {"data": encoded_bytes, "content_type": content_type}
-    decoded_data = encoder.decode(data_dict)
+    content_dict = {"content": encoded_bytes, "content_type": content_type}
+    decoded_content = encoder.decode(content_dict)
 ```
 
 ### Event Hubs Sending Integration
 
-Integration with [Event Hubs][eventhubs_repo] to send encoded Avro dict data as the body of EventData.
+Integration with [Event Hubs][eventhubs_repo] to send encoded Avro dict content as the body of EventData.
 
 ```python
 import os
@@ -202,7 +202,7 @@ definition = """
 }"""
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-avro_encoder = AvroEncoder(client=schema_registry_client, group_name=group_name, auto_register_schemas=True)
+avro_encoder = AvroEncoder(client=schema_registry_client, group_name=group_name, auto_register=True)
 
 eventhub_producer = EventHubProducerClient.from_connection_string(
     conn_str=eventhub_connection_str,
@@ -211,15 +211,15 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
 
 with eventhub_producer, avro_encoder:
     event_data_batch = eventhub_producer.create_batch()
-    dict_data = {"name": "Bob", "favorite_number": 7, "favorite_color": "red"}
-    event_data = avro_encoder.encode(dict_data, schema=definition, message_type=EventData)
+    dict_content = {"name": "Bob", "favorite_number": 7, "favorite_color": "red"}
+    event_data = avro_encoder.encode(dict_content, schema=definition, message_type=EventData)
     event_data_batch.add(event_data)
     eventhub_producer.send_batch(event_data_batch)
 ```
 
 ### Event Hubs Receiving Integration
 
-Integration with [Event Hubs][eventhubs_repo] to receive `EventData` and decoded raw bytes into Avro dict data.
+Integration with [Event Hubs][eventhubs_repo] to receive `EventData` and decoded raw bytes into Avro dict content.
 
 ```python
 import os
@@ -244,7 +244,7 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 )
 
 def on_event(partition_context, event):
-    decoded_data = avro_encoder.decode(event)
+    decoded_content = avro_encoder.decode(event)
 
 with eventhub_consumer, avro_encoder:
     eventhub_consumer.receive(on_event=on_event, starting_position="-1")
@@ -288,7 +288,7 @@ encoder = AvroEncoder(client=schema_registry_client, group_name="<your-group-nam
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```py
-encoder.encode(dict_data, schema=schema_definition, logging_enable=True)
+encoder.encode(dict_content, schema=schema_definition, logging_enable=True)
 ```
 
 ## Next steps
@@ -327,3 +327,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
+[quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry

@@ -86,6 +86,31 @@ class StorageDirectoryTest(StorageTestCase):
         self.assertTrue(created)
 
     @FileSharePreparer()
+    def test_create_directory_set_smb_properties(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        directory_client = share_client.get_directory_client('dir1')
+        file_attributes = NTFSAttributes(read_only=True, directory=True)
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
+
+        # Act
+        directory_client.create_directory(
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time)
+        directory_properties = directory_client.get_directory_properties()
+
+        # Assert
+        self.assertIsNotNone(directory_properties)
+        self.assertEqual(file_creation_time, directory_properties.creation_time)
+        self.assertEqual(file_last_write_time, directory_properties.last_write_time)
+        self.assertEqual(file_change_time, directory_properties.change_time)
+        self.assertIn('ReadOnly', directory_properties.file_attributes)
+        self.assertIn('Directory', directory_properties.file_attributes)
+
+    @FileSharePreparer()
     def test_create_subdirectories(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -351,20 +376,26 @@ class StorageDirectoryTest(StorageTestCase):
         permission_key = directory_properties_on_creation.permission_key
         last_write_time = directory_properties_on_creation.last_write_time
         creation_time = directory_properties_on_creation.creation_time
+        change_time = directory_properties_on_creation.change_time
 
         new_last_write_time = last_write_time + timedelta(hours=1)
         new_creation_time = creation_time + timedelta(hours=1)
+        new_change_time = change_time + timedelta(hours=1)
 
         # Act
-        directory_client.set_http_headers(file_attributes='None', file_creation_time=new_creation_time,
-                                          file_last_write_time=new_last_write_time,
-                                          permission_key=permission_key)
+        directory_client.set_http_headers(
+            file_attributes='None',
+            file_creation_time=new_creation_time,
+            file_last_write_time=new_last_write_time,
+            file_change_time=new_change_time,
+            permission_key=permission_key)
         directory_properties = directory_client.get_directory_properties()
 
         # Assert
         self.assertIsNotNone(directory_properties)
         self.assertEqual(directory_properties.creation_time, new_creation_time)
         self.assertEqual(directory_properties.last_write_time, new_last_write_time)
+        self.assertEqual(directory_properties.change_time, new_change_time)
 
     @FileSharePreparer()
     def test_list_subdirectories_and_files(self, storage_account_name, storage_account_key):
@@ -652,13 +683,15 @@ class StorageDirectoryTest(StorageTestCase):
         file_attributes = NTFSAttributes(read_only=True, directory=True)
         file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
         file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
+        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000)
 
         # Act
         new_directory = source_directory.rename_directory(
             'dir2',
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time)
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time)
 
         # Assert
         props = new_directory.get_directory_properties()
@@ -667,6 +700,7 @@ class StorageDirectoryTest(StorageTestCase):
         self.assertEqual(str(file_attributes), props.file_attributes.replace(' ', ''))
         self.assertEqual(file_creation_time, props.creation_time)
         self.assertEqual(file_last_write_time, props.last_write_time)
+        self.assertEqual(file_change_time, props.change_time)
 
     @FileSharePreparer()
     def test_rename_directory_dest_lease(self, storage_account_name, storage_account_key):
@@ -681,7 +715,7 @@ class StorageDirectoryTest(StorageTestCase):
         # Act
         new_directory = source_directory.rename_directory(
             dest_directory.directory_path + '/' + dest_file.file_name,
-            overwrite=True, lease=lease)
+            overwrite=True, destination_lease=lease)
 
         # Assert
         props = new_directory.get_directory_properties()

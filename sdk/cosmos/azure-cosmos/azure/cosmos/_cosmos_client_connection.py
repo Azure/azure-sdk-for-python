@@ -58,10 +58,9 @@ from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
+from ._auth_policy import CosmosBearerTokenCredentialPolicy
 
 ClassType = TypeVar("ClassType")
-
-
 # pylint: disable=protected-access
 
 
@@ -116,9 +115,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self.master_key = None
         self.resource_tokens = None
+        self.aad_credentials = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
             self.resource_tokens = auth.get("resourceTokens")
+            self.aad_credentials = auth.get("clientSecretCredential")
 
             if auth.get("permissionFeed"):
                 self.resource_tokens = {}
@@ -141,7 +142,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        # Keeps the latest response headers from server.
+        # Keeps the latest response headers from the server.
         self.last_response_headers = None
 
         self._useMultipleWriteLocations = False
@@ -176,12 +177,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self._user_agent = _utils.get_user_agent()
 
+        credentials_policy = None
+        if self.aad_credentials:
+            scopes = base.create_scope_from_url(self.url_connection)
+            credentials_policy = CosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes)
+
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
+            credentials_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),

@@ -1,5 +1,18 @@
 # Release History
 
+## 7.0.0b4 (2022-04-14)
+
+**Features**
+
+  - Added operation MongoDBResourcesOperations.begin_list_mongo_db_collection_partition_merge
+  - Added operation SqlResourcesOperations.begin_list_sql_container_partition_merge
+  - Model ContinuousModeBackupPolicy has a new parameter continuous_mode_properties
+  - Model KeyWrapMetadata has a new parameter algorithm
+  - Model RestorableDatabaseAccountGetResult has a new parameter oldest_restorable_time
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter client_encryption_policy
+  - Model SqlContainerGetPropertiesResource has a new parameter client_encryption_policy
+  - Model SqlContainerResource has a new parameter client_encryption_policy
+
 ## 7.0.0b3 (2022-02-18)
 
 **Features**

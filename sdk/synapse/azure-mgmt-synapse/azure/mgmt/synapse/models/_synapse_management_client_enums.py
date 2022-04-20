@@ -208,6 +208,10 @@ class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FRIDAY = "Friday"
     SATURDAY = "Saturday"
 
+class DedicatedSQLMinimalTlsSettingsName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    DEFAULT = "default"
+
 class DefaultPrincipalsModificationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The default principals modification kind
     """
