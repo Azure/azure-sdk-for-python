@@ -135,7 +135,6 @@ class TestCommunicationTokenCredential(TestCase):
                 # check that next refresh is always scheduled
                 assert credential._timer is not None
 
-    #@pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_minutes = 10
         token_validity_minutes = 60
@@ -202,7 +201,7 @@ class TestCommunicationTokenCredential(TestCase):
 
 
     def test_exit_cancels_timer(self):
-        refresher = MagicMock(return_value=self.sample_token)
+        refresher = MagicMock(return_value=create_access_token(self.sample_token))
         credential = CommunicationTokenCredential(
              self.expired_token,token_refresher=refresher, proactive_refresh=True)
         with credential:

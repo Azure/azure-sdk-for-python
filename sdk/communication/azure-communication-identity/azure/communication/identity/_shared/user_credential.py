@@ -37,6 +37,7 @@ class CommunicationTokenCredential(object):
         self._timer = None
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
+        self._threads = []
 
     def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
@@ -98,6 +99,7 @@ class CommunicationTokenCredential(object):
         if timespan <= TIMEOUT_MAX:
             self._timer = Timer(timespan, self._update_token_and_reschedule)
             self._timer.start()
+            self._threads.append(self._timer)
 
     def _wait_till_lock_owner_finishes_refreshing(self):
         self._lock.release()
@@ -126,6 +128,10 @@ class CommunicationTokenCredential(object):
         self.close()
 
     def close(self) -> None:
+        while self._threads:
+            tr = self._threads.pop()
+            tr.cancel()
+            tr.join()
         if self._timer is not None:
             self._timer.cancel()
         self._timer = None
