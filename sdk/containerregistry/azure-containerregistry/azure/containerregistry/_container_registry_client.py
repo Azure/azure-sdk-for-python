@@ -764,44 +764,47 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: None
         :raises ValueError: If the parameter repository or manifest is None.
         """
-        if (repository or manifest) is None:
+        if repository is None or manifest is None:
             raise ValueError("The parameter repository and manifest cannot be None.")
 
+        data = manifest
+        if isinstance(manifest, OCIManifest):
+            data = _serialize_manifest(manifest)
         tag_or_digest = tag
         if tag is None:
-            stream = manifest
-            if isinstance(manifest, OCIManifest):
-                stream = _serialize_manifest(manifest)
-            tag_or_digest = _compute_digest(stream)
+            tag_or_digest = _compute_digest(data)
 
+        data.seek(0)
+        
         self._client.container_registry.create_manifest(
-            name=repository, reference=tag_or_digest, payload=stream, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs
+            name=repository, reference=tag_or_digest, payload=data, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs
         )
 
     @distributed_trace
-    def upload_blob(self, repository, stream, **kwargs):
+    def upload_blob(self, repository, data, **kwargs):
         # type: (str, IO, **Any) -> None
         """Upload an artifact blob.
 
         :param str repository: Name of the repository
-        :param stream: The manifest to upload.
-        :type stream: IO
+        :param data: The blob to upload.
+        :type data: IO
         :returns: None
         :rtype: None
         :raises ValueError: If the parameter repository or stream is None.
         """
-        if (repository or stream) is None:
-            raise ValueError("The parameter repository and stream cannot be None.")
+        if repository is None or data is None:
+            raise ValueError("The parameter repository and data cannot be None.")
 
         start_upload_respose = self._client.container_registry_blob.start_upload(
             repository, cls=_return_response, **kwargs
         )
         upload_chunk_response = self._client.container_registry_blob.upload_chunk(
-            start_upload_respose['Location'], stream, cls=_return_response, **kwargs
+            start_upload_respose['Location'], data, cls=_return_response, **kwargs
         )
-        digest = _compute_digest(stream)
+        digest = _compute_digest(data)
+        data.seek(0)
         self._client.container_registry_blob.complete_upload(
-            digest=digest, next_link=upload_chunk_response['Location'], value=stream, cls=_return_response, **kwargs
+            digest=digest, next_link=upload_chunk_response['Location'], value=data, cls=_return_response, **kwargs
         )
 
     @distributed_trace
@@ -815,7 +818,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~container_registry.models.ManifestWrapper
         :raises ValueError: If the parameter repository or tag_or_digest is None.
         """
-        if repository or tag_or_digest is None:
+        if repository is None or tag_or_digest is None:
             raise ValueError("The parameter repository and tag_or_digest cannot be None.")
 
         return self._client.container_registry.get_manifest(
@@ -833,7 +836,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: IO or None
         :raises ValueError: If the parameter repository or digest is None.
         """
-        if repository or digest is None:
+        if repository is None or digest is None:
             raise ValueError("The parameter repository and digest cannot be None.")
 
         return self._client.container_registry_blob.get_blob(repository, digest, **kwargs)

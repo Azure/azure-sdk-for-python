@@ -6,8 +6,8 @@
 from datetime import datetime
 from azure.core import credentials
 import pytest
+import os
 import six
-import time
 
 from azure.containerregistry import (
     RepositoryProperties,
@@ -609,3 +609,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
         
         client.upload_manifest(repo, manifest)
+    
+    @acr_preparer()
+    def test_upload_blob(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        client = self.create_registry_client(containerregistry_endpoint)
+        
+        blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
+        path = os.path().join(os.getcwd(), "data", "oci-artifact", blob)
+        
+        client.upload_blob(repo, open(path, "rb"))

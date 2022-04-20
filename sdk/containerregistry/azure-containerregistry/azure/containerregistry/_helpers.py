@@ -7,11 +7,9 @@ import base64
 import hashlib
 import re
 import time
-import pickle
 import json
 from typing import TYPE_CHECKING
-from io import BufferedReader, BytesIO, StringIO
-from msrest import Serializer
+from io import BytesIO
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -38,7 +36,6 @@ def _is_tag(tag_or_digest):
     tag = tag_or_digest.split(":")
     return not (len(tag) == 2 and tag[0].startswith("sha"))
 
-
 def _clean(matches):
     # type: (List[str]) -> None
     """This method removes empty strings and commas from the regex matching of the Challenge header"""
@@ -54,7 +51,6 @@ def _clean(matches):
         except ValueError:
             return
 
-
 def _parse_challenge(header):
     # type: (str) -> Dict[str, str]
     """Parse challenge header into service and scope"""
@@ -69,7 +65,6 @@ def _parse_challenge(header):
             ret[matches[i]] = matches[i + 1]
 
     return ret
-
 
 def _parse_next_link(link_string):
     # type: (str) -> str
@@ -87,7 +82,6 @@ def _parse_next_link(link_string):
     if not link_string:
         return None
     return link_string[1 : link_string.find(">")]
-
 
 def _enforce_https(request):
     # type: (PipelineRequest) -> None
@@ -107,17 +101,14 @@ def _enforce_https(request):
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
 
-
 def _host_only(url):
     # type: (str) -> str
     return urlparse(url).netloc
-
 
 def _strip_alg(digest):
     if len(digest.split(":")) == 2:
         return digest.split(":")[1]
     return digest
-
 
 def _parse_exp_time(raw_token):
     # type: (bytes) -> float
@@ -133,26 +124,12 @@ def _parse_exp_time(raw_token):
 
     return time.time()
 
-
-class OCIManifestEncder(json.JSONEncoder):
-    def default(self, o):
-        return o.__dict__
-
-
 def _serialize_manifest(manifest):
     # type: (OCIManifest) -> IO
     data = json.dumps(manifest.serialize()).encode('utf-8')
-    # BufferedReader()
-    # return manifest.serialize()
-    # data = pickle.dumps(manifest)
-    # view = BytesIO(data).getbuffer()
-    # bytes = BytesIO(data).getvalue()
     return BytesIO(data)
-    # return BufferedReader(data)
 
-def _compute_digest(stream):
+def _compute_digest(data):
     # type: (IO) -> str
-    # bytes_value = stream.getvalue()
-    # dict_val = json.loads(str_value)
-    # res = hashlib.sha256(bytes_value)
-    return "sha256:" + hashlib.sha256(stream.read()).hexdigest()
+    data.seek(0)
+    return "sha256:" + hashlib.sha256(data.read()).hexdigest()
