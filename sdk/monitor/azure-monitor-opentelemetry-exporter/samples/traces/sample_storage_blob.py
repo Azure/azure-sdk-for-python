@@ -32,7 +32,7 @@ span_processor = BatchSpanProcessor(
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
-# Example with Servicebus SDKs
+# Example with BlobStorage SDKs
 from azure.storage.blob import BlobServiceClient
 
 connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
