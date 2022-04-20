@@ -36,7 +36,7 @@ if TYPE_CHECKING:
     from ._generated.models import DigitalTwinsModelData
 
 
-class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
+class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,client-accepts-api-version-keyword
     """Creates an instance of the Digital Twins client.
 
     :param str endpoint: The URL endpoint of an Azure search service
