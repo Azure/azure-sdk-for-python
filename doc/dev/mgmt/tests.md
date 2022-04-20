@@ -52,14 +52,14 @@ There are several ways to authenticate to Azure, but to be able to record test H
 ### Get a token with Active Directory application and service principal
 
 Follow this detailed tutorial to set up an Active Directory application and service principal:
-https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/
+https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal
 
 To use the credentials from Python, you need:
 * Application ID (a.k.a. client ID)
 * Authentication key (a.k.a. client secret)
 * Tenant ID
 * Subscription ID from the Azure portal
-[This section of the above tutorial](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
+[This section of the above tutorial](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal#get-tenant-and-app-id-values-for-signing-in) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
 
 The recommended practice is to store these three values in environment variables called `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET`. To set an environment variable use the following commands:
 ```Shell
@@ -69,17 +69,25 @@ export AZURE_TENANT_ID=<value>      # Linux shell only
 ```
 *** Note: when setting these variables, do not wrap the value in quotation marks ***
 
-You are now able to log in from Python using OAuth.
+You are now able to log in from Python using OAuth. Before use, you need to run the `pip install azure-identity` command to install it.
 You can test with this code:
 ```python
 import os
-from azure.common.credentials import ServicePrincipalCredentials
+from azure.identity import ClientSecretCredential
 
-credentials = ServicePrincipalCredentials(
+credentials = ClientSecretCredential(
     client_id = os.environ['AZURE_CLIENT_ID'],
     secret = os.environ['AZURE_CLIENT_SECRET'],
     tenant = os.environ['AZURE_TENANT_ID']
 )
+```
+Or you can use `DefaultAzureCredential`, which we prefer. 
+You can test with this code:
+```python
+import os
+from azure.identity import DefaultAzureCredential
+
+credentials = DefaultAzureCredential()
 ```
 
 ## Providing credentials to the tests
@@ -90,21 +98,9 @@ In live mode, you need to use real credentials like those you obtained in the pr
 Then make the following changes:
 
 * Change the value of the `SUBSCRIPTION_ID` constant to your subscription ID. (If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal][azure_portal].)
-* Change the `get_credentials()` function to construct and return a `UserPassCredentials` (Don't forget to make sure the necessary imports are present as well!).
+* Change the `get_azure_core_credential()` function to construct and return a `ClientSecretCredential`:
 ```python
-def get_credentials(**kwargs):
-    import os
-    from azure.common.credentials import ServicePrincipalCredentials
-
-    return ServicePrincipalCredentials(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant = os.environ['AZURE_TENANT_ID']
-    )
-```
-* Change the `get_azure_core_credentials()` function to construct and return a `ClientSecretCredential`:
-```python
-def get_azure_core_credentials(**kwargs):
+def get_azure_core_credential(**kwargs):
     from azure.identity import ClientSecretCredential
     import os
     return ClientSecretCredential(
@@ -112,6 +108,12 @@ def get_azure_core_credentials(**kwargs):
         client_secret = os.environ['AZURE_CLIENT_SECRET'],
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
+```
+* Or you could use the `get_credential()` function to construct and return a `DefaultAzureCredential`:
+```
+def get_credential(**kwargs):
+    from azure.identity import DefaultAzureCredential
+    return DefaultAzureCredential()
 ```
 These two methods are used by the authentication methods within `AzureTestCase` to provide the correct credential for your client class, you do not need to call these methods directly. Authenticating clients will be discussed further in the [examples](#writing-management-plane-test) section.
 
@@ -158,18 +160,18 @@ Management plane SDKs are those that are formatted `azure-mgmt-xxxx`, otherwise 
 
 ### Tips: 
 After the migration of the test proxy, `conftests.py` needs to be configured under the tests folder.<br/>
-For a sample about `conftest.py`, see [conftest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/advisor/azure-mgmt-advisor/tests/conftest.py). <br/>
-For more information about test proxy, see [TestProxy][testproxy].
+* For a sample about `conftest.py`, see [conftest.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/advisor/azure-mgmt-advisor/tests/conftest.py). <br/>
+* For more information about test proxy, see [TestProxy][testproxy].
 
 ### Example 1: Basic Azure service interaction and recording
 
 ```python
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class ExampleResourceGroupTestCase(AzureRecordedTestCase):
+class TestExampleResourceGroup(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ResourceManagementClient)
     
@@ -187,9 +189,9 @@ class ExampleResourceGroupTestCase(AzureRecordedTestCase):
 This simple test creates a resource group and checks that its name is assigned correctly.
 
 Notes:
-1. This test inherits all necessary behavior for HTTP recording and playback described previously in this document from its `AzureMgmtTestCase` superclass. You don't need to do anything special to implement it.
-2. The `get_resource_name()` helper method of `AzureRecordedTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducability and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
-3. The `create_mgmt_client()` helper method of `AzureRecordedTestCase` creates a client object using the credentials from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
+1. This test inherits all necessary behavior for HTTP recording and playback described previously in this document from its `AzureMgmtRecordedTestCase` superclass. You don't need to do anything special to implement it.
+2. The `get_resource_name()` helper method of `AzureMgmtRecordedTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducability and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
+3. The `create_mgmt_client()` helper method of `AzureMgmtRecordedTestCase` creates a client object using the credentials from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
 4. While the test cleans up the resource group it creates, you will need to manually delete any resources you've created independent of the test framework. But if you need something like a resource group as a prerequisite for what you're actually trying to test, you should use a "preparer" as demonstrated in the following two examples. Preparers will create and clean up helper resources for you.
 
 
@@ -197,9 +199,9 @@ Notes:
 
 ```python
 from azure.mgmt.sql import SqlManagementClient
-from devtools_testutils import AzureRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
-class ExampleSqlServerTestCase(AzureRecordedTestCase):
+class TestExampleSqlServer(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(SqlManagementClient)
 
