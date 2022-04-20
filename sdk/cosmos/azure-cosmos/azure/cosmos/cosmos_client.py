@@ -162,8 +162,13 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level=None, **kwargs):
-        # type: (str, Any, Optional[str], Any) -> None # pylint: disable=client-accepts-api-version-keyword
+    def __init__(  # pylint: disable=client-accepts-api-version-keyword
+            self,
+            url,
+            credential,
+            consistency_level=None,
+            **kwargs):
+        # type: (str, Any, Optional[str], Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
