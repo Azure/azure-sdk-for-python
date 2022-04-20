@@ -410,7 +410,7 @@ class DatabaseProxy(object):
     async def replace_container(
             self,
             container: Union[str, ContainerProxy, Dict[str, Any]],
-            partition_key: PartitionKey,
+            partition_key: Union[str, int, float, bool],
             **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
@@ -422,7 +422,7 @@ class DatabaseProxy(object):
             :class:`ContainerProxy` instance of the container to be replaced.
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
-        :type partition_key: ~azure.cosmos.partition_key.PartitionKey
+        :type partition_key: Union[str, int, float, bool]
         :keyword Dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.

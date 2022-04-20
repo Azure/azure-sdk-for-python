@@ -210,15 +210,15 @@ class ContainerProxy(object):
     async def read_item(
             self,
             item: Union[str, Dict[str, Any]],
-            partition_key: str,
+            partition_key: Union[str, int, float, bool],
             **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
         :type item: Union[str, Dict[str, Any]]
-        :param str partition_key: Partition key for the item to retrieve.
-        
+        :param partition_key: Partition key for the item to retrieve.
+        :type partition_key: Union[str, int, float, bool]
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -314,7 +314,7 @@ class ContainerProxy(object):
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
         :type parameters: Optional[List[Dict[str, Any]]]
-        :param str partition_key: Specifies the partition key value for the item. If none is provided,
+        :param partition_key: Specifies the partition key value for the item. If none is provided,
             a cross-partition query will be executed.
         :type partition_key: Optional[Union[str, int, float, bool]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -400,7 +400,8 @@ class ContainerProxy(object):
             beginning (true) or from current (false). By default it's start from current (false).
         :keyword str continuation: e_tag value to be used as continuation for reading change feed.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword str partition_key: partition key at which ChangeFeed requests are targeted.
+        :keyword partition_key: partition key at which ChangeFeed requests are targeted.
+        :paramtype partition_key: Union[str, int, float, bool]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], Any]
         :returns: An AsyncItemPaged of items (dicts).
@@ -530,7 +531,7 @@ class ContainerProxy(object):
     async def delete_item(
             self,
             item: Union[str, Dict[str, Any]],
-            partition_key: str,
+            partition_key: Union[str, int, float, bool],
             **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -539,7 +540,8 @@ class ContainerProxy(object):
 
         :param item: The ID (name) or dict representing item to be deleted.
         :type item: Union[str, Dict[str, Any]]
-        :param str partition_key: Specifies the partition key value for the item.
+        :param partition_key: Specifies the partition key value for the item.
+        :type partition_key: Union[str, int, float, bool]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -671,8 +673,9 @@ class ContainerProxy(object):
         :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :type parameters: Optional[List[Dict[str, Any]]]
-        :param str partition_key: Specifies the partition key value for the item. If none is passed in, a
+        :param partition_key: Specifies the partition key value for the item. If none is passed in, a
             cross partition query will be executed.
+        :type partition_key: Union[str, int, float, bool]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], Any]
@@ -703,14 +706,15 @@ class ContainerProxy(object):
     async def read_conflict(
             self,
             conflict: Union[str, Dict[str, Any]],
-            partition_key: str,
+            partition_key: Union[str, int, float, bool],
             **kwargs: Any,
     ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :type conflict: Union[str, Dict[str, Any]]
-        :param str partition_key: Partition key for the conflict to retrieve.
+        :param partition_key: Partition key for the conflict to retrieve.
+        :type partition_key: Union[str, int, float, bool]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
@@ -731,7 +735,7 @@ class ContainerProxy(object):
     async def delete_conflict(
             self,
             conflict: Union[str, Dict[str, Any]],
-            partition_key: str,
+            partition_key: Union[str, int, float, bool],
             **kwargs: Any,
     ) -> None:
         """Delete a specified conflict from the container.
@@ -740,7 +744,8 @@ class ContainerProxy(object):
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :type conflict: Union[str, Dict[str, Any]]
-        :param str partition_key: Partition key for the conflict to retrieve.
+        :param partition_key: Partition key for the conflict to retrieve.
+        :type partition_key: Union[str, int, float, bool]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], None], Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
