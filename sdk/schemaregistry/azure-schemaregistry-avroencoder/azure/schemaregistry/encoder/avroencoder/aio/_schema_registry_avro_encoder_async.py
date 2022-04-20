@@ -151,13 +151,13 @@ class AvroEncoder(object):
 
     async def encode(
         self,
-        content,
+        content: Mapping[str, Any],
         *,
-        schema,
-        message_type=None,
-        request_options=None,
-        **kwargs,
-    ):
+        schema: str,
+        message_type: Optional[Type[MessageTypeT]] = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> Union[MessageTypeT, MessageContent]:
 
         """
         Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string

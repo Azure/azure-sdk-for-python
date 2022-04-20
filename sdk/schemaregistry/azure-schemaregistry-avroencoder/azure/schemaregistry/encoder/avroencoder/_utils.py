@@ -18,6 +18,9 @@ from ._message_protocol import (  # pylint: disable=import-error
 from ._constants import (  # pylint: disable=import-error
     AVRO_MIME_TYPE,
 )
+from ._schema_registry_avro_encoder import (  # pylint: disable=import-error
+    MessageTypeT
+)
 
 if TYPE_CHECKING:
     from ._apache_avro_encoder import (  # pylint: disable=import-error
@@ -37,9 +40,9 @@ def create_message_content(
     content: Mapping[str, Any],
     raw_input_schema: str,
     schema_id: str,
-    message_type: Optional[Type[MessageType]] = None,
+    message_type: Optional[Type["MessageTypeT"]] = None,
     **kwargs: Any,
-) -> Union[MessageType, MessageContent]:
+) -> Union["MessageTypeT", MessageContent]:
     content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
     try:
@@ -61,7 +64,7 @@ def create_message_content(
 
     if message_type:
         try:
-            return message_type.from_message_content(payload, content_type, **kwargs)
+            return cast(MessageTypeT, message_type.from_message_content(payload, content_type, **kwargs))
         except AttributeError as exc:
             raise TypeError(
                 f"""Cannot set content and content type on model object. The content model
