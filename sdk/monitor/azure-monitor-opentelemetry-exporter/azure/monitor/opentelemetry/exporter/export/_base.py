@@ -73,6 +73,7 @@ class BaseExporter:
             max_size=50 * 1024 * 1024,  # Maximum size in bytes.
             maintenance_period=60,  # Maintenance interval in seconds.
             retention_period=7 * 24 * 60 * 60,  # Retention period in seconds
+            name="{} Storage".format(self.__class__.__name__),
         )
 
     def _transmit_from_storage(self) -> None:
