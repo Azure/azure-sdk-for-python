@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, Union, cast, TypeVar
 from avro.errors import SchemaResolutionException  # type: ignore
 
 from ._exceptions import (  # pylint: disable=import-error
@@ -18,14 +18,13 @@ from ._message_protocol import (  # pylint: disable=import-error
 from ._constants import (  # pylint: disable=import-error
     AVRO_MIME_TYPE,
 )
-from ._schema_registry_avro_encoder import (  # pylint: disable=import-error
-    MessageTypeT
-)
 
 if TYPE_CHECKING:
     from ._apache_avro_encoder import (  # pylint: disable=import-error
         ApacheAvroObjectEncoder as AvroObjectEncoder,
     )
+
+MessageTypeT = TypeVar("MessageTypeT", bound=MessageType)
 
 
 def validate_schema(avro_encoder: "AvroObjectEncoder", raw_input_schema: str):
@@ -40,9 +39,9 @@ def create_message_content(
     content: Mapping[str, Any],
     raw_input_schema: str,
     schema_id: str,
-    message_type: Optional[Type["MessageTypeT"]] = None,
+    message_type: Optional[Type[MessageTypeT]] = None,
     **kwargs: Any,
-) -> Union["MessageTypeT", MessageContent]:
+) -> Union[MessageTypeT, MessageContent]:
     content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
     try:

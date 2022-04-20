@@ -30,6 +30,7 @@ from .._utils import (  # pylint: disable=import-error
     create_message_content,
     validate_message,
     decode_content,
+    MessageTypeT
 )
 from ._async_lru import alru_cache  # pylint: disable=import-error
 from .._message_protocol import (
@@ -39,7 +40,6 @@ from .._message_protocol import (
 from .._apache_avro_encoder import (
     ApacheAvroObjectEncoder as AvroObjectEncoder,
 )  # pylint: disable=import-error
-from .._schema_registry_avro_encoder import MessageTypeT  # pylint: disable=import-error
 
 if TYPE_CHECKING:
     from azure.schemaregistry.aio import SchemaRegistryClient

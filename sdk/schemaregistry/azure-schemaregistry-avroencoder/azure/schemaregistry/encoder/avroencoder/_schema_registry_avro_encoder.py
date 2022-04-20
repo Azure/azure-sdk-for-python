@@ -33,7 +33,6 @@ from typing import (
     Optional,
     Type,
     overload,
-    TypeVar,
     Union,
 )
 from ._utils import (  # pylint: disable=import-error
@@ -41,6 +40,7 @@ from ._utils import (  # pylint: disable=import-error
     create_message_content,
     validate_message,
     decode_content,
+    MessageTypeT
 )
 
 from ._apache_avro_encoder import (  # pylint: disable=import-error
@@ -55,8 +55,6 @@ if TYPE_CHECKING:
     from azure.schemaregistry import SchemaRegistryClient
 
 _LOGGER = logging.getLogger(__name__)
-
-MessageTypeT = TypeVar("MessageTypeT", bound=MessageType)
 
 
 class AvroEncoder(object):
