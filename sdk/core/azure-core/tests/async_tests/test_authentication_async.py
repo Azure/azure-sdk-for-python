@@ -11,7 +11,11 @@ from unittest.mock import Mock
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import (
+    AsyncBearerTokenCredentialPolicy,
+    AsyncMultitenantCredentialPolicy,
+    SansIOHTTPPolicy,
+)
 import pytest
 
 pytestmark = pytest.mark.asyncio
@@ -220,6 +224,77 @@ async def test_bearer_policy_calls_sansio_methods(http_request):
     assert transport.send.call_count == 2
     policy.on_challenge.assert_called_once()
     policy.on_exception.assert_called_once_with(policy.request)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_multitenant_policy_uses_scopes_and_tenant(http_request):
+    """The policy's token requests should pass the parsed scope and tenant ID from the challenge"""
+
+    async def test_with_challenge(challenge, expected_scope, expected_tenant):
+        expected_token = "expected_token"
+
+        class Requests:
+            count = 0
+
+        class TokenRequests:
+            count = 0
+
+        async def send(request):
+            Requests.count += 1
+            if Requests.count == 1:
+                # first request triggers a 401 response w/ auth challenge
+                return challenge
+            elif Requests.count == 2:
+                # second request should be authorized according to challenge and have the expected content
+                assert expected_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            raise ValueError("unexpected request")
+
+        async def get_token(*scopes, **kwargs):
+            assert len(scopes) == 1
+            TokenRequests.count += 1
+            if TokenRequests.count == 1:
+                # first request uses the scope given to the policy, and no tenant ID
+                assert scopes[0] != expected_scope
+                assert kwargs.get("tenant_id") is None
+            elif TokenRequests.count == 2:
+                # second request should use the scope and tenant ID specified in the auth challenge
+                assert scopes[0] == expected_scope
+                assert kwargs.get("tenant_id") == expected_tenant
+            else:
+                raise ValueError("unexpected token request")
+            return AccessToken(expected_token, 0)
+
+        credential = Mock(get_token=Mock(wraps=get_token))
+        policy = AsyncMultitenantCredentialPolicy(credential, "scope")
+        pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
+        await pipeline.run(http_request("GET", "https://localhost"))
+
+    tenant = "tenant-id"
+    endpoint = f"https://authority.net/{tenant}/oauth2/authorize"
+    resource = "https://challenge.resource"
+    scope = f"{resource}/.default"
+
+    # this challenge separates the authorization server and resource with commas in the WWW-Authenticate header
+    challenge_with_commas = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource="{resource}"'},
+    )
+    await test_with_challenge(challenge_with_commas, scope, tenant)
+
+    # this challenge separates the authorization server and resource with only spaces in the WWW-Authenticate header
+    challenge_without_commas = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": f'Bearer authorization={endpoint} resource={resource}'},
+    )
+    await test_with_challenge(challenge_without_commas, scope, tenant)
+
+    # this challenge gives an AADv2 scope, ending with "/.default", instead of an AADv1 resource
+    challenge_with_scope = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": f'Bearer authorization={endpoint} scope={scope}'},
+    )
+    await test_with_challenge(challenge_with_scope, scope, tenant)
 
 
 def get_completed_future(result=None):
