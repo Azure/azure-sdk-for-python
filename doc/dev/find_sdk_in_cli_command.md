@@ -85,4 +85,4 @@ The same, the `create_or_update` function is [here](https://github.com/Azure/azu
 
 Finally, you also could find the usage of function by Azure doc, like [this](https://docs.microsoft.com/en-us/azure/developer/python/sdk/examples/azure-sdk-example-resource-group#3-write-code-to-provision-a-resource-group).
 
-
+Feel free to contact Azure SDK team at any time through any channels. We are passionate to build the world-class cloud product.
