@@ -1,14 +1,7 @@
+{{- include "stress-test-addons.chaos-wrapper.tpl" (list . "stress.python-sb-network") -}}
+{{- define "stress.python-sb-network" -}}
 apiVersion: chaos-mesh.org/v1alpha1
 kind: Schedule
-metadata:
-  name: '{{ .Release.Name }}-{{ .Release.Revision }}'
-  namespace: {{ .Release.Namespace }}
-  annotations:
-    experiment.chaos-mesh.org/pause: 'true'
-  labels:
-    scenario: 'stress'
-    release: '{{ .Release.Name }}'
-    revision: '{{ .Release.Revision }}'
 spec:
   schedule: '@every 30s'
   type: 'NetworkChaos'
@@ -30,3 +23,4 @@ spec:
     loss:
       loss: '100'
       correlation: '100'
+{{- end -}}
