@@ -49,7 +49,6 @@ from azure.storage.blob._generated.models import RehydratePriority
 
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
-from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -2811,66 +2810,5 @@ class StorageCommonBlobTest(StorageTestCase):
             blob.set_legal_hold(False)
             blob.delete_blob()
             mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
-
-    @BlobPreparer()
-    def test_download_progress_single_get(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
-        data = b'a' * 5 * 1024
-        blob = self._create_blob(data=data)
-
-        progress = ProgressTracker(len(data), len(data))
-
-        # Act
-        blob_client = BlobClient(
-            self.account_url(storage_account_name, 'blob'),
-            self.container_name, blob.blob_name,
-            credential=storage_account_key)
-
-        blob_client.download_blob(progress_callback=progress.assert_progress).readall()
-
-        # Assert
-        progress.assert_complete()
-
-    @BlobPreparer()
-    def test_download_progress_chunked_non_parallel(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
-        data = b'a' * 5 * 1024
-        blob = self._create_blob(data=data)
-
-        progress = ProgressTracker(len(data), 1024)
-
-        # Act
-        blob_client = BlobClient(
-            self.account_url(storage_account_name, 'blob'),
-            self.container_name, blob.blob_name,
-            credential=storage_account_key,
-            max_single_get_size=1024, max_chunk_get_size=1024)
-
-        blob_client.download_blob(max_concurrency=1, progress_callback=progress.assert_progress).readall()
-
-        # Assert
-        progress.assert_complete()
-
-    @pytest.mark.live_test_only
-    @BlobPreparer()
-    def test_download_progress_chunked_parallel(self, storage_account_name, storage_account_key):
-        # parallel tests introduce random order of requests, can only run live
-        self._setup(storage_account_name, storage_account_key)
-        data = b'a' * 5 * 1024
-        blob = self._create_blob(data=data)
-
-        progress = ProgressTracker(len(data), 1024)
-
-        # Act
-        blob_client = BlobClient(
-            self.account_url(storage_account_name, 'blob'),
-            self.container_name, blob.blob_name,
-            credential=storage_account_key,
-            max_single_get_size=1024, max_chunk_get_size=1024)
-
-        blob_client.download_blob(max_concurrency=3, progress_callback=progress.assert_progress).readall()
-
-        # Assert
-        progress.assert_complete()
 
 # ------------------------------------------------------------------------------
