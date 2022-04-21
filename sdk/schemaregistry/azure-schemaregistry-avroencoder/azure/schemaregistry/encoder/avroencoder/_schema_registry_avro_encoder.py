@@ -40,7 +40,7 @@ from ._utils import (  # pylint: disable=import-error
     create_message_content,
     validate_message,
     decode_content,
-    MessageTypeT
+    MessageType
 )
 
 from ._apache_avro_encoder import (  # pylint: disable=import-error
@@ -48,7 +48,6 @@ from ._apache_avro_encoder import (  # pylint: disable=import-error
 )
 from ._message_protocol import (  # pylint: disable=import-error
     MessageContent,
-    MessageType,
 )
 
 if TYPE_CHECKING:
@@ -144,10 +143,10 @@ class AvroEncoder(object):
         content: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Type[MessageTypeT],
+        message_type: Type[MessageType],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageTypeT:
+    ) -> MessageType:
         ...
 
     @overload
@@ -167,10 +166,10 @@ class AvroEncoder(object):
         content: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Optional[Type[MessageTypeT]] = None,
+        message_type: Optional[Type[MessageType]] = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> Union[MessageTypeT, MessageContent]:
+    ) -> Union[MessageType, MessageContent]:
         """
         Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
          and the schema ID corresponding to given schema. If provided with a MessageType subtype, encoded content

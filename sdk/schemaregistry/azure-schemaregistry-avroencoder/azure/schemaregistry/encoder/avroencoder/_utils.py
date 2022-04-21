@@ -13,7 +13,7 @@ from ._exceptions import (  # pylint: disable=import-error
 )
 from ._message_protocol import (  # pylint: disable=import-error
     MessageContent,
-    MessageType,
+    MessageType as MessageTypeProtocol,
 )
 from ._constants import (  # pylint: disable=import-error
     AVRO_MIME_TYPE,
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
         ApacheAvroObjectEncoder as AvroObjectEncoder,
     )
 
-MessageTypeT = TypeVar("MessageTypeT", bound=MessageType)
+MessageType = TypeVar("MessageType", bound=MessageTypeProtocol)
 
 
 def validate_schema(avro_encoder: "AvroObjectEncoder", raw_input_schema: str):
@@ -39,9 +39,9 @@ def create_message_content(
     content: Mapping[str, Any],
     raw_input_schema: str,
     schema_id: str,
-    message_type: Optional[Type[MessageTypeT]] = None,
+    message_type: Optional[Type[MessageType]] = None,
     **kwargs: Any,
-) -> Union[MessageTypeT, MessageContent]:
+) -> Union[MessageType, MessageContent]:
     content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
     try:
@@ -63,7 +63,7 @@ def create_message_content(
 
     if message_type:
         try:
-            return cast(MessageTypeT, message_type.from_message_content(payload, content_type, **kwargs))
+            return cast(MessageType, message_type.from_message_content(payload, content_type, **kwargs))
         except AttributeError as exc:
             raise TypeError(
                 f"""Cannot set content and content type on model object. The content model
