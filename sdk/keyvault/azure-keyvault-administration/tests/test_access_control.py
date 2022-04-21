@@ -3,42 +3,21 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import uuid
 import time
+import uuid
 
-from azure.core.credentials import AccessToken
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
-from azure.keyvault.administration._internal import HttpChallengeCache
-import pytest
-from six.moves.urllib_parse import urlparse
+from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
 
-from _shared.helpers import mock
 from _shared.test_case import KeyVaultTestCase
+from _test_case import AdministrationTestCase, access_control_client_setup, get_decorator
 
 
-@pytest.mark.usefixtures("managed_hsm")
-class AccessControlTests(KeyVaultTestCase):
+all_api_versions = get_decorator()
+
+
+class AccessControlTests(AdministrationTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super(AccessControlTests, self).__init__(*args, match_body=False, **kwargs)
-
-    def setUp(self, *args, **kwargs):
-        if self.is_live:
-            real = urlparse(self.managed_hsm["url"])
-            playback = urlparse(self.managed_hsm["playback_url"])
-            self.scrubber.register_name_pair(real.netloc, playback.netloc)
-        super(AccessControlTests, self).setUp(*args, **kwargs)
-
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(AccessControlTests, self).tearDown()
-
-    @property
-    def credential(self):
-        if self.is_live:
-            return DefaultAzureCredential()
-        return mock.Mock(get_token=lambda *_, **__: AccessToken("secret", time.time() + 3600))
 
     def get_replayable_uuid(self, replay_value):
         if self.is_live:
@@ -55,9 +34,9 @@ class AccessControlTests(KeyVaultTestCase):
             return value
         return replay_value
 
-    def test_role_definitions(self):
-        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
-
+    @all_api_versions()
+    @access_control_client_setup
+    def test_role_definitions(self, client):
         # list initial role definitions
         scope = KeyVaultRoleScope.GLOBAL
         original_definitions = [d for d in client.list_role_definitions(scope)]
@@ -68,8 +47,8 @@ class AccessControlTests(KeyVaultTestCase):
         definition_name = self.get_replayable_uuid("definition-name")
         permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = client.set_role_definition(
-            role_scope=scope,
-            role_definition_name=definition_name,
+            scope=scope,
+            name=definition_name,
             role_name=role_name,
             description="test",
             permissions=permissions
@@ -87,7 +66,7 @@ class AccessControlTests(KeyVaultTestCase):
             KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
         ]
         updated_definition = client.set_role_definition(
-            role_scope=scope, role_definition_name=definition_name, permissions=permissions
+            scope=scope, name=definition_name, permissions=permissions
         )
         assert updated_definition.role_name == ""
         assert updated_definition.description == ""
@@ -101,18 +80,19 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(matching_definitions) == 1
 
         # get custom role definition
-        definition = client.get_role_definition(role_scope=scope, role_definition_name=definition_name)
+        definition = client.get_role_definition(scope=scope, name=definition_name)
         assert_role_definitions_equal(definition, updated_definition)
 
         # delete custom role definition
-        deleted_definition = client.delete_role_definition(scope, definition_name)
-        assert_role_definitions_equal(deleted_definition, definition)
+        client.delete_role_definition(scope, definition_name)
 
-        assert not any(d.id == deleted_definition.id for d in client.list_role_definitions(scope))
+        assert not any(d.id == definition.id for d in client.list_role_definitions(scope))
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
-    def test_role_assignment(self):
-        client = KeyVaultAccessControlClient(self.managed_hsm["url"], self.credential)
-
+    @all_api_versions()
+    @access_control_client_setup
+    def test_role_assignment(self, client):
         scope = KeyVaultRoleScope.GLOBAL
         definitions = [d for d in client.list_role_definitions(scope)]
 
@@ -121,7 +101,7 @@ class AccessControlTests(KeyVaultTestCase):
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
 
-        created = client.create_role_assignment(scope, definition.id, principal_id, role_assignment_name=name)
+        created = client.create_role_assignment(scope, definition.id, principal_id, name=name)
         assert created.name == name
         assert created.properties.principal_id == principal_id
         assert created.properties.role_definition_id == definition.id
@@ -141,13 +121,11 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(matching_assignments) == 1
 
         # delete the assignment
-        deleted = client.delete_role_assignment(scope, created.name)
-        assert deleted.name == created.name
-        assert deleted.role_assignment_id == created.role_assignment_id
-        assert deleted.properties.scope == scope
-        assert deleted.properties.role_definition_id == created.properties.role_definition_id
+        client.delete_role_assignment(scope, created.name)
 
         assert not any(a.role_assignment_id == created.role_assignment_id for a in client.list_role_assignments(scope))
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
 
 def assert_role_definitions_equal(d1, d2):

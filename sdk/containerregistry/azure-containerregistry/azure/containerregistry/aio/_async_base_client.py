@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from azure.core.pipeline.transport import AsyncHttpTransport
 
@@ -15,38 +15,40 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerRegistryApiVersion(str, Enum):
+class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """Container Registry API version supported by this package"""
 
     V0_PREVIEW = ""
 
 
-class ContainerRegistryBaseClient(object):
-    """Base class for ContainerRegistryClient, ContainerRepository, and RegistryArtifact
+class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-version-keyword
+    """Base class for ContainerRegistryClient
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: AAD Token for authenticating requests with Azure
-    :type credential: :class:`~azure.identity.DefaultTokenCredential`
-
+    :type credential: ~azure.identity.DefaultTokenCredential
+    :keyword credential_scopes: URL for credential authentication if different from the default
+    :paramtype credential_scopes: List[str]
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs) -> None:
-        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
+    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs) -> None:
+        self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
-            authentication_policy=auth_policy,
-            credential_scopes="https://management.core.windows.net/.default",
+            authentication_policy=self._auth_policy,
             **kwargs
         )
 
     async def __aenter__(self):
+        await self._auth_policy.__aenter__()
         await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
+        await self._auth_policy.__aexit__(*args)
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:

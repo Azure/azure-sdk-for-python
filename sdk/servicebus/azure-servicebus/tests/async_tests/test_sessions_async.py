@@ -78,6 +78,27 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             assert count == 3
 
+            session_id = ""
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(3):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), session_id=session_id)
+                    await sender.send_messages(message)
+
+            with pytest.raises(ServiceBusError):
+                await sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)._open_with_retry()
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5)
+            count = 0
+            async for message in receiver:
+                print_message(_logger, message)
+                assert message.session_id == session_id
+                count += 1
+                await receiver.complete_message(message)
+
+            await receiver.close()
+
+            assert count == 3
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -157,6 +178,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
@@ -164,7 +186,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=5)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=10)
             with pytest.raises(OperationTimeoutError):
                 await receiver._open_with_retry()
 
@@ -794,8 +816,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 renewer.register(receiver, receiver.session, max_lock_renewal_duration=140)
-                messages.extend(await receiver.receive_messages(max_wait_time=120))
-                messages.extend(await receiver.receive_messages(max_wait_time=5))
+                messages.extend(await receiver.receive_messages(max_wait_time=115))
+                messages.extend(await receiver.receive_messages(max_wait_time=10))
                 try:
                     assert len(messages) == 0
                 except AssertionError:
@@ -913,6 +935,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug")
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
@@ -978,6 +1001,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)

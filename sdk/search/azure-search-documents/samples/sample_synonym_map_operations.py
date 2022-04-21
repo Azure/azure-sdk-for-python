@@ -40,6 +40,19 @@ def create_synonym_map():
     print("Create new Synonym Map 'test-syn-map succeeded")
     # [END create_synonym_map]
 
+def create_synonym_map_from_file():
+    # [START create_synonym_map_from_file]
+    from os.path import dirname, join, realpath
+    CWD = dirname(realpath(__file__))
+    file_path = join(CWD, "synonym_map.txt")
+    with open(file_path, "r") as f:
+        solr_format_synonyms = f.read()
+        synonyms = solr_format_synonyms.split("\n")
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=synonyms)
+        result = client.create_synonym_map(synonym_map)
+        print("Create new Synonym Map 'test-syn-map succeeded")
+    # [END create_synonym_map_from_file]
+
 def get_synonym_maps():
     # [START get_synonym_maps]
     result = client.get_synonym_maps()

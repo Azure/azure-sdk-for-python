@@ -45,7 +45,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkResources"]:
         """Returns the list of private link resources that need to be created for Backup and SiteRecovery.
 
@@ -66,7 +66,7 @@ class PrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -123,7 +123,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         vault_name: str,
         private_link_resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResource":
         """Returns a specified private link resource that need to be created for Backup and SiteRecovery.
 
@@ -146,7 +146,7 @@ class PrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2016-06-01"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL

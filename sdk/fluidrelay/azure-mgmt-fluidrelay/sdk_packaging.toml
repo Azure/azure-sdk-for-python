@@ -1,0 +1,7 @@
+[packaging]
+package_name = "azure-mgmt-fluidrelay"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Fluid Relay Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true

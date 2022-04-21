@@ -17,7 +17,7 @@ from .._generated.aio._azure_communication_sms_service import AzureCommunication
 from .._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
 from .._version import SDK_MONIKER
 
-class SmsClient(object):
+class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Sms gateway asynchronously.
 
     This client provides operations to send an SMS via a phone number.
@@ -44,7 +44,7 @@ class SmsClient(object):
                 "invalid credential from connection string.")
 
         self._endpoint = endpoint
-        self._authentication_policy = get_authentication_policy(endpoint, credential, is_async=True)
+        self._authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
 
         self._sms_service_client = AzureCommunicationSMSService(
             self._endpoint,

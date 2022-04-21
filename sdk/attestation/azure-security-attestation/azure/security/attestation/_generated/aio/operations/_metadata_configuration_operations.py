@@ -41,18 +41,18 @@ class MetadataConfigurationOperations:
 
     async def get(
         self,
-        **kwargs
-    ) -> object:
+        **kwargs: Any
+    ) -> Any:
         """Retrieves the OpenID Configuration data for the Azure Attestation Service.
 
         Retrieves metadata about the attestation signing keys in use by the attestation service.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

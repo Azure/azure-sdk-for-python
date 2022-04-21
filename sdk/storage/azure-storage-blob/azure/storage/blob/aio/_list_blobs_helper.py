@@ -5,6 +5,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from .._deserialize import get_blob_properties_from_generated_code
@@ -154,10 +158,14 @@ class BlobPrefixPaged(BlobPropertiesPaged):
     def _build_item(self, item):
         item = super(BlobPrefixPaged, self)._build_item(item)
         if isinstance(item, GenBlobPrefix):
+            if item.name.encoded:
+                name = unquote(item.name.content)
+            else:
+                name = item.name.content
             return BlobPrefix(
                 self._command,
                 container=self.container,
-                prefix=item.name,
+                prefix=name,
                 results_per_page=self.results_per_page,
                 location_mode=self.location_mode)
         return item

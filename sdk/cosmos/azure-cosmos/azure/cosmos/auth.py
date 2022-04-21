@@ -25,14 +25,12 @@
 import base64
 from hashlib import sha256
 import hmac
-
-import six
-
+import urllib.parse
 from . import http_constants
 
 
 def GetAuthorizationHeader(
-    cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.
 
@@ -52,18 +50,18 @@ def GetAuthorizationHeader(
         resource_id_or_fullname = resource_id_or_fullname.lower()
 
     if cosmos_client_connection.master_key:
-        return __GetAuthorizationTokenUsingMasterKey(
+        return __get_authorization_token_using_master_key(
             verb, resource_id_or_fullname, resource_type, headers, cosmos_client_connection.master_key
         )
     if cosmos_client_connection.resource_tokens:
-        return __GetAuthorizationTokenUsingResourceTokens(
+        return __get_authorization_token_using_resource_token(
             cosmos_client_connection.resource_tokens, path, resource_id_or_fullname
         )
 
     return None
 
 
-def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resource_type, headers, master_key):
+def __get_authorization_token_using_master_key(verb, resource_id_or_fullname, resource_type, headers, master_key):
     """Gets the authorization token using `master_key.
 
     :param str verb:
@@ -89,22 +87,16 @@ def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resourc
         http_date=headers.get(http_constants.HttpHeaders.HttpDate, "").lower(),
     )
 
-    if six.PY2:
-        body = text.decode("utf-8")
-        digest = hmac.new(key, body, sha256).digest()
-        signature = digest.encode("base64")
-    else:
-        # python 3 support
-        body = text.encode("utf-8")
-        digest = hmac.new(key, body, sha256).digest()
-        signature = base64.encodebytes(digest).decode("utf-8")
+    body = text.encode("utf-8")
+    digest = hmac.new(key, body, sha256).digest()
+    signature = base64.encodebytes(digest).decode("utf-8")
 
     master_token = "master"
     token_version = "1.0"
     return "type={type}&ver={ver}&sig={sig}".format(type=master_token, ver=token_version, sig=signature[:-1])
 
 
-def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_id_or_fullname):
+def __get_authorization_token_using_resource_token(resource_tokens, path, resource_id_or_fullname):
     """Get the authorization token using `resource_tokens`.
 
     :param dict resource_tokens:
@@ -118,9 +110,10 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
         # For database account access(through GetDatabaseAccount API), path and
         # resource_id_or_fullname are '', so in this case we return the first token to be
         # used for creating the auth header as the service will accept any token in this case
-        path = six.moves.urllib.parse.unquote(path)
+        path = urllib.parse.unquote(path)
         if not path and not resource_id_or_fullname:
-            return next(six.itervalues(resource_tokens))
+            for value in resource_tokens.values():
+                return value
 
         if resource_tokens.get(resource_id_or_fullname):
             return resource_tokens[resource_id_or_fullname]
@@ -144,7 +137,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
 
         # Get the last resource id or resource name from the path and get it's token from resource_tokens
         for i in range(len(path_parts), 1, -1):
-            segment = path_parts[i-1]
+            segment = path_parts[i - 1]
             sub_path = "/".join(path_parts[:i])
             if not segment in resource_types and sub_path in resource_tokens:
                 return resource_tokens[sub_path]

@@ -23,9 +23,15 @@ EXCLUDED_PACKAGE_VERSIONS = {
     'azure-cosmos': '3.2.0',
     'azure-servicebus': '0.50.3',
     'azure-eventgrid': '1.3.0',
-    'azure-schemaregistry-avroserializer': '1.0.0b1',
+    'azure-schemaregistry-avroserializer': '1.0.0b3',
     'azure-storage-blob-changefeed' : '12.0.0b2',
-    'azure-storage-file-datalake': '12.2.0b1'
+    'azure-storage-file-datalake': '12.2.0b1',
+    'azure-communication-identity': '1.0.0',
+    'azure-communication-phonenumbers': '1.0.0',
+    'azure-communication-sms': '1.0.0',
+    'azure-search-documents': '11.2.0b3',
+    'azure-ai-language-questionanswering': '1.0.0b1',
+    'azure-monitor-opentelemetry-exporter': '1.0.0b5'
 }
 
 # This method identifies release tag for latest or oldest released version of a given package

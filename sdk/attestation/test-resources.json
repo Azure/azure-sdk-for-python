@@ -16,6 +16,13 @@
         "description": "The location of the resource. By default, this is the same as the resource group."
       }
     },
+    "storageEndpointSuffix": {
+      "type": "string",
+      "defaultValue": "core.windows.net",
+      "metadata": {
+          "description": "The url suffix to use when accessing the storage data plane."
+      }
+    },
     "isolatedSigningCertificate": {
       "type": "string",
       "defaultValue": ""
@@ -47,7 +54,7 @@
       "type": "Microsoft.Attestation/attestationProviders",
       "apiVersion": "2020-10-01",
       "name": "[variables('aadTenantName')]",
-      "location": "[parameters('location')]",
+      "location": "[parameters('location')]"
     },
     {
       "type": "Microsoft.Attestation/attestationProviders",
@@ -58,6 +65,10 @@
     }
   ],
   "outputs": {
+    "ATTESTATION_STORAGE_ENDPOINT_SUFFIX": {
+        "type": "string",
+        "value": "[parameters('storageEndpointSuffix')]"
+    },
     "ATTESTATION_ISOLATED_URL": {
       "type": "string",
       "value": "[variables('isolatedUri')]"

@@ -18,6 +18,8 @@ class HeadersMixin(object):
 
     def _merge_client_headers(self, headers):
         # type(Optional[dict]) -> dict
+        if self._aad:
+            return headers
         headers = headers or {}
         combined = self._headers
         combined.update(headers)

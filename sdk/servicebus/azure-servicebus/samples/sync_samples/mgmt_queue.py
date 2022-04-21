@@ -14,8 +14,6 @@ Example to show managing queue entities under a ServiceBus Namespace, including
     - List queues under the given ServiceBus Namespace
 """
 
-# pylint: disable=C0111
-
 import os
 import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient
@@ -66,12 +64,15 @@ def get_and_update_queue(servicebus_mgmt_client):
 
 def get_queue_runtime_properties(servicebus_mgmt_client):
     print("-- Get Queue Runtime Properties")
-    get_queue_runtime_properties = servicebus_mgmt_client.get_queue_runtime_properties(QUEUE_NAME)
-    print("Queue Name:", get_queue_runtime_properties.name)
+    queue_runtime_properties = servicebus_mgmt_client.get_queue_runtime_properties(QUEUE_NAME)
+    print("Queue Name:", queue_runtime_properties.name)
     print("Queue Runtime Properties:")
-    print("Updated at:", get_queue_runtime_properties.updated_at_utc)
-    print("Size in Bytes:", get_queue_runtime_properties.size_in_bytes)
-    print("Message Count:", get_queue_runtime_properties.total_message_count)
+    print("Updated at:", queue_runtime_properties.updated_at_utc)
+    print("Size in Bytes:", queue_runtime_properties.size_in_bytes)
+    print("Message Count:", queue_runtime_properties.total_message_count)
+    print("Active Message Count:", queue_runtime_properties.active_message_count)
+    print("Scheduled Message Count:", queue_runtime_properties.scheduled_message_count)
+    print("Dead-letter Message Count:", queue_runtime_properties.dead_letter_message_count)
     print("Please refer to QueueRuntimeProperties from complete available runtime properties.")
     print("")
 

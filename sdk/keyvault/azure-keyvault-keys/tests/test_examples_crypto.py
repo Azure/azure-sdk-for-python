@@ -8,7 +8,7 @@ from _shared.test_case import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-all_api_versions = get_decorator(vault_only=True)
+all_api_versions = get_decorator(only_vault=True)
 
 
 class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
@@ -35,7 +35,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         crypto_client = CryptographyClient(key_id, credential)
         # [END create_client]
 
-        client = CryptographyClient(key, credential)
+        client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
         # [START encrypt]
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
@@ -60,7 +60,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
-        client = CryptographyClient(key, credential)
+        client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
         key_bytes = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
@@ -87,7 +87,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
-        client = CryptographyClient(key, credential)
+        client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
         # [START sign]
         import hashlib

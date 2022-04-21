@@ -7,11 +7,36 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
 from ._kusto_management_client_enums import *
+
+
+class AcceptedAudiences(msrest.serialization.Model):
+    """Represents an accepted audience trusted by the cluster.
+
+    :ivar value: GUID or valid URL representing an accepted audience.
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: GUID or valid URL representing an accepted audience.
+        :paramtype value: str
+        """
+        super(AcceptedAudiences, self).__init__(**kwargs)
+        self.value = value
 
 
 class Resource(msrest.serialization.Model):
@@ -45,6 +70,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -82,6 +109,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -98,26 +127,27 @@ class AttachedDatabaseConfiguration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
-    :param database_name: The name of the database which you would like to attach, use * if you
-     want to follow all current and future databases.
-    :type database_name: str
-    :param cluster_resource_id: The resource id of the cluster where the databases you would like
-     to attach reside.
-    :type cluster_resource_id: str
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
+    :ivar database_name: The name of the database which you would like to attach, use * if you want
+     to follow all current and future databases.
+    :vartype database_name: str
+    :ivar cluster_resource_id: The resource id of the cluster where the databases you would like to
+     attach reside.
+    :vartype cluster_resource_id: str
     :ivar attached_database_names: The list of databases from the clusterResourceId which are
      currently attached to the cluster.
     :vartype attached_database_names: list[str]
-    :param default_principals_modification_kind: The default principals modification kind. Possible
+    :ivar default_principals_modification_kind: The default principals modification kind. Possible
      values include: "Union", "Replace", "None".
-    :type default_principals_modification_kind: str or
-     ~azure.mgmt.kusto.models.DefaultPrincipalsModificationKind
-    :param table_level_sharing_properties: Table level sharing specifications.
-    :type table_level_sharing_properties: ~azure.mgmt.kusto.models.TableLevelSharingProperties
+    :vartype default_principals_modification_kind: str or
+     ~kusto_management_client.models.DefaultPrincipalsModificationKind
+    :ivar table_level_sharing_properties: Table level sharing specifications.
+    :vartype table_level_sharing_properties:
+     ~kusto_management_client.models.TableLevelSharingProperties
     """
 
     _validation = {
@@ -151,6 +181,23 @@ class AttachedDatabaseConfiguration(ProxyResource):
         table_level_sharing_properties: Optional["TableLevelSharingProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword database_name: The name of the database which you would like to attach, use * if you
+         want to follow all current and future databases.
+        :paramtype database_name: str
+        :keyword cluster_resource_id: The resource id of the cluster where the databases you would like
+         to attach reside.
+        :paramtype cluster_resource_id: str
+        :keyword default_principals_modification_kind: The default principals modification kind.
+         Possible values include: "Union", "Replace", "None".
+        :paramtype default_principals_modification_kind: str or
+         ~kusto_management_client.models.DefaultPrincipalsModificationKind
+        :keyword table_level_sharing_properties: Table level sharing specifications.
+        :paramtype table_level_sharing_properties:
+         ~kusto_management_client.models.TableLevelSharingProperties
+        """
         super(AttachedDatabaseConfiguration, self).__init__(**kwargs)
         self.location = location
         self.provisioning_state = None
@@ -164,8 +211,8 @@ class AttachedDatabaseConfiguration(ProxyResource):
 class AttachedDatabaseConfigurationListResult(msrest.serialization.Model):
     """The list attached database configurations operation response.
 
-    :param value: The list of attached database configurations.
-    :type value: list[~azure.mgmt.kusto.models.AttachedDatabaseConfiguration]
+    :ivar value: The list of attached database configurations.
+    :vartype value: list[~kusto_management_client.models.AttachedDatabaseConfiguration]
     """
 
     _attribute_map = {
@@ -178,8 +225,53 @@ class AttachedDatabaseConfigurationListResult(msrest.serialization.Model):
         value: Optional[List["AttachedDatabaseConfiguration"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of attached database configurations.
+        :paramtype value: list[~kusto_management_client.models.AttachedDatabaseConfiguration]
+        """
         super(AttachedDatabaseConfigurationListResult, self).__init__(**kwargs)
         self.value = value
+
+
+class AttachedDatabaseConfigurationsCheckNameRequest(msrest.serialization.Model):
+    """The result returned from a AttachedDatabaseConfigurations check name availability request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. Attached database resource name.
+    :vartype name: str
+    :ivar type: The type of resource, for instance
+     Microsoft.Kusto/clusters/attachedDatabaseConfigurations. Has constant value:
+     "Microsoft.Kusto/clusters/attachedDatabaseConfigurations".
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Kusto/clusters/attachedDatabaseConfigurations"
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        **kwargs
+    ):
+        """
+        :keyword name: Required. Attached database resource name.
+        :paramtype name: str
+        """
+        super(AttachedDatabaseConfigurationsCheckNameRequest, self).__init__(**kwargs)
+        self.name = name
 
 
 class AzureCapacity(msrest.serialization.Model):
@@ -187,15 +279,14 @@ class AzureCapacity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scale_type: Required. Scale type. Possible values include: "automatic", "manual",
-     "none".
-    :type scale_type: str or ~azure.mgmt.kusto.models.AzureScaleType
-    :param minimum: Required. Minimum allowed capacity.
-    :type minimum: int
-    :param maximum: Required. Maximum allowed capacity.
-    :type maximum: int
-    :param default: Required. The default capacity that would be used.
-    :type default: int
+    :ivar scale_type: Required. Scale type. Possible values include: "automatic", "manual", "none".
+    :vartype scale_type: str or ~kusto_management_client.models.AzureScaleType
+    :ivar minimum: Required. Minimum allowed capacity.
+    :vartype minimum: int
+    :ivar maximum: Required. Maximum allowed capacity.
+    :vartype maximum: int
+    :ivar default: Required. The default capacity that would be used.
+    :vartype default: int
     """
 
     _validation = {
@@ -221,6 +312,17 @@ class AzureCapacity(msrest.serialization.Model):
         default: int,
         **kwargs
     ):
+        """
+        :keyword scale_type: Required. Scale type. Possible values include: "automatic", "manual",
+         "none".
+        :paramtype scale_type: str or ~kusto_management_client.models.AzureScaleType
+        :keyword minimum: Required. Minimum allowed capacity.
+        :paramtype minimum: int
+        :keyword maximum: Required. Maximum allowed capacity.
+        :paramtype maximum: int
+        :keyword default: Required. The default capacity that would be used.
+        :paramtype default: int
+        """
         super(AzureCapacity, self).__init__(**kwargs)
         self.scale_type = scale_type
         self.minimum = minimum
@@ -231,12 +333,12 @@ class AzureCapacity(msrest.serialization.Model):
 class AzureResourceSku(msrest.serialization.Model):
     """Azure resource SKU definition.
 
-    :param resource_type: Resource Namespace and Type.
-    :type resource_type: str
-    :param sku: The SKU details.
-    :type sku: ~azure.mgmt.kusto.models.AzureSku
-    :param capacity: The number of instances of the cluster.
-    :type capacity: ~azure.mgmt.kusto.models.AzureCapacity
+    :ivar resource_type: Resource Namespace and Type.
+    :vartype resource_type: str
+    :ivar sku: The SKU details.
+    :vartype sku: ~kusto_management_client.models.AzureSku
+    :ivar capacity: The number of instances of the cluster.
+    :vartype capacity: ~kusto_management_client.models.AzureCapacity
     """
 
     _attribute_map = {
@@ -253,6 +355,14 @@ class AzureResourceSku(msrest.serialization.Model):
         capacity: Optional["AzureCapacity"] = None,
         **kwargs
     ):
+        """
+        :keyword resource_type: Resource Namespace and Type.
+        :paramtype resource_type: str
+        :keyword sku: The SKU details.
+        :paramtype sku: ~kusto_management_client.models.AzureSku
+        :keyword capacity: The number of instances of the cluster.
+        :paramtype capacity: ~kusto_management_client.models.AzureCapacity
+        """
         super(AzureResourceSku, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.sku = sku
@@ -264,19 +374,24 @@ class AzureSku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. SKU name. Possible values include: "Standard_DS13_v2+1TB_PS",
-     "Standard_DS13_v2+2TB_PS", "Standard_DS14_v2+3TB_PS", "Standard_DS14_v2+4TB_PS",
-     "Standard_D13_v2", "Standard_D14_v2", "Standard_L8s", "Standard_L16s", "Standard_L8s_v2",
-     "Standard_L16s_v2", "Standard_D11_v2", "Standard_D12_v2", "Standard_L4s", "Dev(No
-     SLA)_Standard_D11_v2", "Standard_E64i_v3", "Standard_E80ids_v4", "Standard_E2a_v4",
+    :ivar name: Required. SKU name. Possible values include: "Dev(No SLA)_Standard_D11_v2", "Dev(No
+     SLA)_Standard_E2a_v4", "Standard_D11_v2", "Standard_D12_v2", "Standard_D13_v2",
+     "Standard_D14_v2", "Standard_D32d_v4", "Standard_D16d_v5", "Standard_D32d_v5",
+     "Standard_DS13_v2+1TB_PS", "Standard_DS13_v2+2TB_PS", "Standard_DS14_v2+3TB_PS",
+     "Standard_DS14_v2+4TB_PS", "Standard_L4s", "Standard_L8s", "Standard_L16s", "Standard_L8s_v2",
+     "Standard_L16s_v2", "Standard_E64i_v3", "Standard_E80ids_v4", "Standard_E2a_v4",
      "Standard_E4a_v4", "Standard_E8a_v4", "Standard_E16a_v4", "Standard_E8as_v4+1TB_PS",
-     "Standard_E8as_v4+2TB_PS", "Standard_E16as_v4+3TB_PS", "Standard_E16as_v4+4TB_PS", "Dev(No
-     SLA)_Standard_E2a_v4".
-    :type name: str or ~azure.mgmt.kusto.models.AzureSkuName
-    :param capacity: The number of instances of the cluster.
-    :type capacity: int
-    :param tier: Required. SKU tier. Possible values include: "Basic", "Standard".
-    :type tier: str or ~azure.mgmt.kusto.models.AzureSkuTier
+     "Standard_E8as_v4+2TB_PS", "Standard_E16as_v4+3TB_PS", "Standard_E16as_v4+4TB_PS",
+     "Standard_E8as_v5+1TB_PS", "Standard_E8as_v5+2TB_PS", "Standard_E16as_v5+3TB_PS",
+     "Standard_E16as_v5+4TB_PS", "Standard_E2ads_v5", "Standard_E4ads_v5", "Standard_E8ads_v5",
+     "Standard_E16ads_v5", "Standard_E8s_v4+1TB_PS", "Standard_E8s_v4+2TB_PS",
+     "Standard_E16s_v4+3TB_PS", "Standard_E16s_v4+4TB_PS", "Standard_E8s_v5+1TB_PS",
+     "Standard_E8s_v5+2TB_PS", "Standard_E16s_v5+3TB_PS", "Standard_E16s_v5+4TB_PS".
+    :vartype name: str or ~kusto_management_client.models.AzureSkuName
+    :ivar capacity: The number of instances of the cluster.
+    :vartype capacity: int
+    :ivar tier: Required. SKU tier. Possible values include: "Basic", "Standard".
+    :vartype tier: str or ~kusto_management_client.models.AzureSkuTier
     """
 
     _validation = {
@@ -298,6 +413,26 @@ class AzureSku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. SKU name. Possible values include: "Dev(No SLA)_Standard_D11_v2",
+         "Dev(No SLA)_Standard_E2a_v4", "Standard_D11_v2", "Standard_D12_v2", "Standard_D13_v2",
+         "Standard_D14_v2", "Standard_D32d_v4", "Standard_D16d_v5", "Standard_D32d_v5",
+         "Standard_DS13_v2+1TB_PS", "Standard_DS13_v2+2TB_PS", "Standard_DS14_v2+3TB_PS",
+         "Standard_DS14_v2+4TB_PS", "Standard_L4s", "Standard_L8s", "Standard_L16s", "Standard_L8s_v2",
+         "Standard_L16s_v2", "Standard_E64i_v3", "Standard_E80ids_v4", "Standard_E2a_v4",
+         "Standard_E4a_v4", "Standard_E8a_v4", "Standard_E16a_v4", "Standard_E8as_v4+1TB_PS",
+         "Standard_E8as_v4+2TB_PS", "Standard_E16as_v4+3TB_PS", "Standard_E16as_v4+4TB_PS",
+         "Standard_E8as_v5+1TB_PS", "Standard_E8as_v5+2TB_PS", "Standard_E16as_v5+3TB_PS",
+         "Standard_E16as_v5+4TB_PS", "Standard_E2ads_v5", "Standard_E4ads_v5", "Standard_E8ads_v5",
+         "Standard_E16ads_v5", "Standard_E8s_v4+1TB_PS", "Standard_E8s_v4+2TB_PS",
+         "Standard_E16s_v4+3TB_PS", "Standard_E16s_v4+4TB_PS", "Standard_E8s_v5+1TB_PS",
+         "Standard_E8s_v5+2TB_PS", "Standard_E16s_v5+3TB_PS", "Standard_E16s_v5+4TB_PS".
+        :paramtype name: str or ~kusto_management_client.models.AzureSkuName
+        :keyword capacity: The number of instances of the cluster.
+        :paramtype capacity: int
+        :keyword tier: Required. SKU tier. Possible values include: "Basic", "Standard".
+        :paramtype tier: str or ~kusto_management_client.models.AzureSkuTier
+        """
         super(AzureSku, self).__init__(**kwargs)
         self.name = name
         self.capacity = capacity
@@ -309,12 +444,12 @@ class CheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Resource name.
-    :type name: str
-    :param type: Required. The type of resource, for instance Microsoft.Kusto/clusters/databases.
+    :ivar name: Required. Resource name.
+    :vartype name: str
+    :ivar type: Required. The type of resource, for instance Microsoft.Kusto/clusters/databases.
      Possible values include: "Microsoft.Kusto/clusters/databases",
      "Microsoft.Kusto/clusters/attachedDatabaseConfigurations".
-    :type type: str or ~azure.mgmt.kusto.models.Type
+    :vartype type: str or ~kusto_management_client.models.Type
     """
 
     _validation = {
@@ -334,6 +469,14 @@ class CheckNameRequest(msrest.serialization.Model):
         type: Union[str, "Type"],
         **kwargs
     ):
+        """
+        :keyword name: Required. Resource name.
+        :paramtype name: str
+        :keyword type: Required. The type of resource, for instance Microsoft.Kusto/clusters/databases.
+         Possible values include: "Microsoft.Kusto/clusters/databases",
+         "Microsoft.Kusto/clusters/attachedDatabaseConfigurations".
+        :paramtype type: str or ~kusto_management_client.models.Type
+        """
         super(CheckNameRequest, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -342,16 +485,16 @@ class CheckNameRequest(msrest.serialization.Model):
 class CheckNameResult(msrest.serialization.Model):
     """The result returned from a check name availability request.
 
-    :param name_available: Specifies a Boolean value that indicates if the name is available.
-    :type name_available: bool
-    :param name: The name that was checked.
-    :type name: str
-    :param message: Message indicating an unavailable name due to a conflict, or a description of
+    :ivar name_available: Specifies a Boolean value that indicates if the name is available.
+    :vartype name_available: bool
+    :ivar name: The name that was checked.
+    :vartype name: str
+    :ivar message: Message indicating an unavailable name due to a conflict, or a description of
      the naming rules that are violated.
-    :type message: str
-    :param reason: Message providing the reason why the given name is invalid. Possible values
+    :vartype message: str
+    :ivar reason: Message providing the reason why the given name is invalid. Possible values
      include: "Invalid", "AlreadyExists".
-    :type reason: str or ~azure.mgmt.kusto.models.Reason
+    :vartype reason: str or ~kusto_management_client.models.Reason
     """
 
     _attribute_map = {
@@ -370,6 +513,18 @@ class CheckNameResult(msrest.serialization.Model):
         reason: Optional[Union[str, "Reason"]] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Specifies a Boolean value that indicates if the name is available.
+        :paramtype name_available: bool
+        :keyword name: The name that was checked.
+        :paramtype name: str
+        :keyword message: Message indicating an unavailable name due to a conflict, or a description of
+         the naming rules that are violated.
+        :paramtype message: str
+        :keyword reason: Message providing the reason why the given name is invalid. Possible values
+         include: "Invalid", "AlreadyExists".
+        :paramtype reason: str or ~kusto_management_client.models.Reason
+        """
         super(CheckNameResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.name = name
@@ -380,17 +535,17 @@ class CheckNameResult(msrest.serialization.Model):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from Kusto.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for displaying in a
-     user interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for displaying in a user
+     interface.
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.kusto.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~kusto_management_client.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -409,6 +564,19 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for displaying in a
+         user interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~kusto_management_client.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -431,10 +599,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -459,6 +627,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -479,53 +653,83 @@ class Cluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param sku: Required. The SKU of the cluster.
-    :type sku: ~azure.mgmt.kusto.models.AzureSku
-    :param zones: The availability zones of the cluster.
-    :type zones: list[str]
-    :param identity: The identity of the cluster, if configured.
-    :type identity: ~azure.mgmt.kusto.models.Identity
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar sku: Required. The SKU of the cluster.
+    :vartype sku: ~kusto_management_client.models.AzureSku
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~kusto_management_client.models.SystemData
+    :ivar zones: The availability zones of the cluster.
+    :vartype zones: list[str]
+    :ivar identity: The identity of the cluster, if configured.
+    :vartype identity: ~kusto_management_client.models.Identity
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar state: The state of the resource. Possible values include: "Creating", "Unavailable",
      "Running", "Deleting", "Deleted", "Stopping", "Stopped", "Starting", "Updating".
-    :vartype state: str or ~azure.mgmt.kusto.models.State
+    :vartype state: str or ~kusto_management_client.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
     :ivar uri: The cluster URI.
     :vartype uri: str
     :ivar data_ingestion_uri: The cluster data ingestion URI.
     :vartype data_ingestion_uri: str
     :ivar state_reason: The reason for the cluster's current state.
     :vartype state_reason: str
-    :param trusted_external_tenants: The cluster's external tenants.
-    :type trusted_external_tenants: list[~azure.mgmt.kusto.models.TrustedExternalTenant]
-    :param optimized_autoscale: Optimized auto scale definition.
-    :type optimized_autoscale: ~azure.mgmt.kusto.models.OptimizedAutoscale
-    :param enable_disk_encryption: A boolean value that indicates if the cluster's disks are
+    :ivar trusted_external_tenants: The cluster's external tenants.
+    :vartype trusted_external_tenants: list[~kusto_management_client.models.TrustedExternalTenant]
+    :ivar optimized_autoscale: Optimized auto scale definition.
+    :vartype optimized_autoscale: ~kusto_management_client.models.OptimizedAutoscale
+    :ivar enable_disk_encryption: A boolean value that indicates if the cluster's disks are
      encrypted.
-    :type enable_disk_encryption: bool
-    :param enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+    :vartype enable_disk_encryption: bool
+    :ivar enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
      enabled.
-    :type enable_streaming_ingest: bool
-    :param virtual_network_configuration: Virtual network definition.
-    :type virtual_network_configuration: ~azure.mgmt.kusto.models.VirtualNetworkConfiguration
-    :param key_vault_properties: KeyVault properties for the cluster encryption.
-    :type key_vault_properties: ~azure.mgmt.kusto.models.KeyVaultProperties
-    :param enable_purge: A boolean value that indicates if the purge operations are enabled.
-    :type enable_purge: bool
+    :vartype enable_streaming_ingest: bool
+    :ivar virtual_network_configuration: Virtual network definition.
+    :vartype virtual_network_configuration:
+     ~kusto_management_client.models.VirtualNetworkConfiguration
+    :ivar key_vault_properties: KeyVault properties for the cluster encryption.
+    :vartype key_vault_properties: ~kusto_management_client.models.KeyVaultProperties
+    :ivar enable_purge: A boolean value that indicates if the purge operations are enabled.
+    :vartype enable_purge: bool
     :ivar language_extensions: List of the cluster's language extensions.
-    :vartype language_extensions: ~azure.mgmt.kusto.models.LanguageExtensionsList
-    :param enable_double_encryption: A boolean value that indicates if double encryption is
-     enabled.
-    :type enable_double_encryption: bool
-    :param engine_type: The engine type. Possible values include: "V2", "V3". Default value: "V3".
-    :type engine_type: str or ~azure.mgmt.kusto.models.EngineType
+    :vartype language_extensions: ~kusto_management_client.models.LanguageExtensionsList
+    :ivar enable_double_encryption: A boolean value that indicates if double encryption is enabled.
+    :vartype enable_double_encryption: bool
+    :ivar public_network_access: Public network access to the cluster is enabled by default. When
+     disabled, only private endpoint connection to the cluster is allowed. Possible values include:
+     "Enabled", "Disabled". Default value: "Enabled".
+    :vartype public_network_access: str or ~kusto_management_client.models.PublicNetworkAccess
+    :ivar allowed_ip_range_list: The list of ips in the format of CIDR allowed to connect to the
+     cluster.
+    :vartype allowed_ip_range_list: list[str]
+    :ivar engine_type: The engine type. Possible values include: "V2", "V3". Default value: "V3".
+    :vartype engine_type: str or ~kusto_management_client.models.EngineType
+    :ivar accepted_audiences: The cluster's accepted audiences.
+    :vartype accepted_audiences: list[~kusto_management_client.models.AcceptedAudiences]
+    :ivar enable_auto_stop: A boolean value that indicates if the cluster could be automatically
+     stopped (due to lack of data or no activity for many days).
+    :vartype enable_auto_stop: bool
+    :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+     "Enabled", "Disabled". Default value: "Disabled".
+    :vartype restrict_outbound_network_access: str or
+     ~kusto_management_client.models.ClusterNetworkAccessFlag
+    :ivar allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from
+     Cluster.
+    :vartype allowed_fqdn_list: list[str]
+    :ivar public_ip_type: Indicates what public IP type to create - IPv4 (default), or DualStack
+     (both IPv4 and IPv6). Possible values include: "IPv4", "DualStack". Default value: "IPv4".
+    :vartype public_ip_type: str or ~kusto_management_client.models.PublicIPType
+    :ivar virtual_cluster_graduation_properties: Virtual Cluster graduation properties.
+    :vartype virtual_cluster_graduation_properties: str
+    :ivar private_endpoint_connections: A list of private endpoint connections.
+    :vartype private_endpoint_connections:
+     list[~kusto_management_client.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -534,6 +738,7 @@ class Cluster(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
+        'system_data': {'readonly': True},
         'etag': {'readonly': True},
         'state': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -541,6 +746,7 @@ class Cluster(TrackedResource):
         'data_ingestion_uri': {'readonly': True},
         'state_reason': {'readonly': True},
         'language_extensions': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -550,6 +756,7 @@ class Cluster(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'AzureSku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'zones': {'key': 'zones', 'type': '[str]'},
         'identity': {'key': 'identity', 'type': 'Identity'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -567,7 +774,16 @@ class Cluster(TrackedResource):
         'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
         'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
         'enable_double_encryption': {'key': 'properties.enableDoubleEncryption', 'type': 'bool'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'allowed_ip_range_list': {'key': 'properties.allowedIpRangeList', 'type': '[str]'},
         'engine_type': {'key': 'properties.engineType', 'type': 'str'},
+        'accepted_audiences': {'key': 'properties.acceptedAudiences', 'type': '[AcceptedAudiences]'},
+        'enable_auto_stop': {'key': 'properties.enableAutoStop', 'type': 'bool'},
+        'restrict_outbound_network_access': {'key': 'properties.restrictOutboundNetworkAccess', 'type': 'str'},
+        'allowed_fqdn_list': {'key': 'properties.allowedFqdnList', 'type': '[str]'},
+        'public_ip_type': {'key': 'properties.publicIPType', 'type': 'str'},
+        'virtual_cluster_graduation_properties': {'key': 'properties.virtualClusterGraduationProperties', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -586,11 +802,81 @@ class Cluster(TrackedResource):
         key_vault_properties: Optional["KeyVaultProperties"] = None,
         enable_purge: Optional[bool] = False,
         enable_double_encryption: Optional[bool] = False,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = "Enabled",
+        allowed_ip_range_list: Optional[List[str]] = None,
         engine_type: Optional[Union[str, "EngineType"]] = "V3",
+        accepted_audiences: Optional[List["AcceptedAudiences"]] = None,
+        enable_auto_stop: Optional[bool] = True,
+        restrict_outbound_network_access: Optional[Union[str, "ClusterNetworkAccessFlag"]] = "Disabled",
+        allowed_fqdn_list: Optional[List[str]] = None,
+        public_ip_type: Optional[Union[str, "PublicIPType"]] = "IPv4",
+        virtual_cluster_graduation_properties: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword sku: Required. The SKU of the cluster.
+        :paramtype sku: ~kusto_management_client.models.AzureSku
+        :keyword zones: The availability zones of the cluster.
+        :paramtype zones: list[str]
+        :keyword identity: The identity of the cluster, if configured.
+        :paramtype identity: ~kusto_management_client.models.Identity
+        :keyword trusted_external_tenants: The cluster's external tenants.
+        :paramtype trusted_external_tenants:
+         list[~kusto_management_client.models.TrustedExternalTenant]
+        :keyword optimized_autoscale: Optimized auto scale definition.
+        :paramtype optimized_autoscale: ~kusto_management_client.models.OptimizedAutoscale
+        :keyword enable_disk_encryption: A boolean value that indicates if the cluster's disks are
+         encrypted.
+        :paramtype enable_disk_encryption: bool
+        :keyword enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+         enabled.
+        :paramtype enable_streaming_ingest: bool
+        :keyword virtual_network_configuration: Virtual network definition.
+        :paramtype virtual_network_configuration:
+         ~kusto_management_client.models.VirtualNetworkConfiguration
+        :keyword key_vault_properties: KeyVault properties for the cluster encryption.
+        :paramtype key_vault_properties: ~kusto_management_client.models.KeyVaultProperties
+        :keyword enable_purge: A boolean value that indicates if the purge operations are enabled.
+        :paramtype enable_purge: bool
+        :keyword enable_double_encryption: A boolean value that indicates if double encryption is
+         enabled.
+        :paramtype enable_double_encryption: bool
+        :keyword public_network_access: Public network access to the cluster is enabled by default.
+         When disabled, only private endpoint connection to the cluster is allowed. Possible values
+         include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access: str or ~kusto_management_client.models.PublicNetworkAccess
+        :keyword allowed_ip_range_list: The list of ips in the format of CIDR allowed to connect to the
+         cluster.
+        :paramtype allowed_ip_range_list: list[str]
+        :keyword engine_type: The engine type. Possible values include: "V2", "V3". Default value:
+         "V3".
+        :paramtype engine_type: str or ~kusto_management_client.models.EngineType
+        :keyword accepted_audiences: The cluster's accepted audiences.
+        :paramtype accepted_audiences: list[~kusto_management_client.models.AcceptedAudiences]
+        :keyword enable_auto_stop: A boolean value that indicates if the cluster could be automatically
+         stopped (due to lack of data or no activity for many days).
+        :paramtype enable_auto_stop: bool
+        :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access.
+         Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+         "Enabled", "Disabled". Default value: "Disabled".
+        :paramtype restrict_outbound_network_access: str or
+         ~kusto_management_client.models.ClusterNetworkAccessFlag
+        :keyword allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from
+         Cluster.
+        :paramtype allowed_fqdn_list: list[str]
+        :keyword public_ip_type: Indicates what public IP type to create - IPv4 (default), or DualStack
+         (both IPv4 and IPv6). Possible values include: "IPv4", "DualStack". Default value: "IPv4".
+        :paramtype public_ip_type: str or ~kusto_management_client.models.PublicIPType
+        :keyword virtual_cluster_graduation_properties: Virtual Cluster graduation properties.
+        :paramtype virtual_cluster_graduation_properties: str
+        """
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
+        self.system_data = None
         self.zones = zones
         self.identity = identity
         self.etag = None
@@ -608,7 +894,16 @@ class Cluster(TrackedResource):
         self.enable_purge = enable_purge
         self.language_extensions = None
         self.enable_double_encryption = enable_double_encryption
+        self.public_network_access = public_network_access
+        self.allowed_ip_range_list = allowed_ip_range_list
         self.engine_type = engine_type
+        self.accepted_audiences = accepted_audiences
+        self.enable_auto_stop = enable_auto_stop
+        self.restrict_outbound_network_access = restrict_outbound_network_access
+        self.allowed_fqdn_list = allowed_fqdn_list
+        self.public_ip_type = public_ip_type
+        self.virtual_cluster_graduation_properties = virtual_cluster_graduation_properties
+        self.private_endpoint_connections = None
 
 
 class ClusterCheckNameRequest(msrest.serialization.Model):
@@ -618,9 +913,9 @@ class ClusterCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Cluster name.
-    :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters. Default value:
+    :ivar name: Required. Cluster name.
+    :vartype name: str
+    :ivar type: The type of resource, Microsoft.Kusto/clusters. Has constant value:
      "Microsoft.Kusto/clusters".
     :vartype type: str
     """
@@ -643,6 +938,10 @@ class ClusterCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Cluster name.
+        :paramtype name: str
+        """
         super(ClusterCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -650,8 +949,8 @@ class ClusterCheckNameRequest(msrest.serialization.Model):
 class ClusterListResult(msrest.serialization.Model):
     """The list Kusto clusters operation response.
 
-    :param value: The list of Kusto clusters.
-    :type value: list[~azure.mgmt.kusto.models.Cluster]
+    :ivar value: The list of Kusto clusters.
+    :vartype value: list[~kusto_management_client.models.Cluster]
     """
 
     _attribute_map = {
@@ -664,6 +963,10 @@ class ClusterListResult(msrest.serialization.Model):
         value: Optional[List["Cluster"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto clusters.
+        :paramtype value: list[~kusto_management_client.models.Cluster]
+        """
         super(ClusterListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -681,23 +984,25 @@ class ClusterPrincipalAssignment(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param principal_id: The principal ID assigned to the cluster principal. It can be a user
-     email, application ID, or security group name.
-    :type principal_id: str
-    :param role: Cluster principal role. Possible values include: "AllDatabasesAdmin",
+    :ivar principal_id: The principal ID assigned to the cluster principal. It can be a user email,
+     application ID, or security group name.
+    :vartype principal_id: str
+    :ivar role: Cluster principal role. Possible values include: "AllDatabasesAdmin",
      "AllDatabasesViewer".
-    :type role: str or ~azure.mgmt.kusto.models.ClusterPrincipalRole
-    :param tenant_id: The tenant id of the principal.
-    :type tenant_id: str
-    :param principal_type: Principal type. Possible values include: "App", "Group", "User".
-    :type principal_type: str or ~azure.mgmt.kusto.models.PrincipalType
+    :vartype role: str or ~kusto_management_client.models.ClusterPrincipalRole
+    :ivar tenant_id: The tenant id of the principal.
+    :vartype tenant_id: str
+    :ivar principal_type: Principal type. Possible values include: "App", "Group", "User".
+    :vartype principal_type: str or ~kusto_management_client.models.PrincipalType
     :ivar tenant_name: The tenant name of the principal.
     :vartype tenant_name: str
     :ivar principal_name: The principal name.
     :vartype principal_name: str
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
+    :ivar aad_object_id: The service principal object id in AAD (Azure active directory).
+    :vartype aad_object_id: str
     """
 
     _validation = {
@@ -707,6 +1012,7 @@ class ClusterPrincipalAssignment(ProxyResource):
         'tenant_name': {'readonly': True},
         'principal_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'aad_object_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -720,6 +1026,7 @@ class ClusterPrincipalAssignment(ProxyResource):
         'tenant_name': {'key': 'properties.tenantName', 'type': 'str'},
         'principal_name': {'key': 'properties.principalName', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'aad_object_id': {'key': 'properties.aadObjectId', 'type': 'str'},
     }
 
     def __init__(
@@ -731,6 +1038,18 @@ class ClusterPrincipalAssignment(ProxyResource):
         principal_type: Optional[Union[str, "PrincipalType"]] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: The principal ID assigned to the cluster principal. It can be a user
+         email, application ID, or security group name.
+        :paramtype principal_id: str
+        :keyword role: Cluster principal role. Possible values include: "AllDatabasesAdmin",
+         "AllDatabasesViewer".
+        :paramtype role: str or ~kusto_management_client.models.ClusterPrincipalRole
+        :keyword tenant_id: The tenant id of the principal.
+        :paramtype tenant_id: str
+        :keyword principal_type: Principal type. Possible values include: "App", "Group", "User".
+        :paramtype principal_type: str or ~kusto_management_client.models.PrincipalType
+        """
         super(ClusterPrincipalAssignment, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role = role
@@ -739,6 +1058,7 @@ class ClusterPrincipalAssignment(ProxyResource):
         self.tenant_name = None
         self.principal_name = None
         self.provisioning_state = None
+        self.aad_object_id = None
 
 
 class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
@@ -748,10 +1068,10 @@ class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Principal Assignment resource name.
-    :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters/principalAssignments.
-     Default value: "Microsoft.Kusto/clusters/principalAssignments".
+    :ivar name: Required. Principal Assignment resource name.
+    :vartype name: str
+    :ivar type: The type of resource, Microsoft.Kusto/clusters/principalAssignments. Has constant
+     value: "Microsoft.Kusto/clusters/principalAssignments".
     :vartype type: str
     """
 
@@ -773,6 +1093,10 @@ class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Principal Assignment resource name.
+        :paramtype name: str
+        """
         super(ClusterPrincipalAssignmentCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -780,8 +1104,8 @@ class ClusterPrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 class ClusterPrincipalAssignmentListResult(msrest.serialization.Model):
     """The list Kusto cluster principal assignments operation response.
 
-    :param value: The list of Kusto cluster principal assignments.
-    :type value: list[~azure.mgmt.kusto.models.ClusterPrincipalAssignment]
+    :ivar value: The list of Kusto cluster principal assignments.
+    :vartype value: list[~kusto_management_client.models.ClusterPrincipalAssignment]
     """
 
     _attribute_map = {
@@ -794,6 +1118,10 @@ class ClusterPrincipalAssignmentListResult(msrest.serialization.Model):
         value: Optional[List["ClusterPrincipalAssignment"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto cluster principal assignments.
+        :paramtype value: list[~kusto_management_client.models.ClusterPrincipalAssignment]
+        """
         super(ClusterPrincipalAssignmentListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -811,49 +1139,77 @@ class ClusterUpdate(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Resource location.
-    :type location: str
-    :param sku: The SKU of the cluster.
-    :type sku: ~azure.mgmt.kusto.models.AzureSku
-    :param identity: The identity of the cluster, if configured.
-    :type identity: ~azure.mgmt.kusto.models.Identity
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar sku: The SKU of the cluster.
+    :vartype sku: ~kusto_management_client.models.AzureSku
+    :ivar identity: The identity of the cluster, if configured.
+    :vartype identity: ~kusto_management_client.models.Identity
     :ivar state: The state of the resource. Possible values include: "Creating", "Unavailable",
      "Running", "Deleting", "Deleted", "Stopping", "Stopped", "Starting", "Updating".
-    :vartype state: str or ~azure.mgmt.kusto.models.State
+    :vartype state: str or ~kusto_management_client.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
     :ivar uri: The cluster URI.
     :vartype uri: str
     :ivar data_ingestion_uri: The cluster data ingestion URI.
     :vartype data_ingestion_uri: str
     :ivar state_reason: The reason for the cluster's current state.
     :vartype state_reason: str
-    :param trusted_external_tenants: The cluster's external tenants.
-    :type trusted_external_tenants: list[~azure.mgmt.kusto.models.TrustedExternalTenant]
-    :param optimized_autoscale: Optimized auto scale definition.
-    :type optimized_autoscale: ~azure.mgmt.kusto.models.OptimizedAutoscale
-    :param enable_disk_encryption: A boolean value that indicates if the cluster's disks are
+    :ivar trusted_external_tenants: The cluster's external tenants.
+    :vartype trusted_external_tenants: list[~kusto_management_client.models.TrustedExternalTenant]
+    :ivar optimized_autoscale: Optimized auto scale definition.
+    :vartype optimized_autoscale: ~kusto_management_client.models.OptimizedAutoscale
+    :ivar enable_disk_encryption: A boolean value that indicates if the cluster's disks are
      encrypted.
-    :type enable_disk_encryption: bool
-    :param enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+    :vartype enable_disk_encryption: bool
+    :ivar enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
      enabled.
-    :type enable_streaming_ingest: bool
-    :param virtual_network_configuration: Virtual network definition.
-    :type virtual_network_configuration: ~azure.mgmt.kusto.models.VirtualNetworkConfiguration
-    :param key_vault_properties: KeyVault properties for the cluster encryption.
-    :type key_vault_properties: ~azure.mgmt.kusto.models.KeyVaultProperties
-    :param enable_purge: A boolean value that indicates if the purge operations are enabled.
-    :type enable_purge: bool
+    :vartype enable_streaming_ingest: bool
+    :ivar virtual_network_configuration: Virtual network definition.
+    :vartype virtual_network_configuration:
+     ~kusto_management_client.models.VirtualNetworkConfiguration
+    :ivar key_vault_properties: KeyVault properties for the cluster encryption.
+    :vartype key_vault_properties: ~kusto_management_client.models.KeyVaultProperties
+    :ivar enable_purge: A boolean value that indicates if the purge operations are enabled.
+    :vartype enable_purge: bool
     :ivar language_extensions: List of the cluster's language extensions.
-    :vartype language_extensions: ~azure.mgmt.kusto.models.LanguageExtensionsList
-    :param enable_double_encryption: A boolean value that indicates if double encryption is
-     enabled.
-    :type enable_double_encryption: bool
-    :param engine_type: The engine type. Possible values include: "V2", "V3". Default value: "V3".
-    :type engine_type: str or ~azure.mgmt.kusto.models.EngineType
+    :vartype language_extensions: ~kusto_management_client.models.LanguageExtensionsList
+    :ivar enable_double_encryption: A boolean value that indicates if double encryption is enabled.
+    :vartype enable_double_encryption: bool
+    :ivar public_network_access: Public network access to the cluster is enabled by default. When
+     disabled, only private endpoint connection to the cluster is allowed. Possible values include:
+     "Enabled", "Disabled". Default value: "Enabled".
+    :vartype public_network_access: str or ~kusto_management_client.models.PublicNetworkAccess
+    :ivar allowed_ip_range_list: The list of ips in the format of CIDR allowed to connect to the
+     cluster.
+    :vartype allowed_ip_range_list: list[str]
+    :ivar engine_type: The engine type. Possible values include: "V2", "V3". Default value: "V3".
+    :vartype engine_type: str or ~kusto_management_client.models.EngineType
+    :ivar accepted_audiences: The cluster's accepted audiences.
+    :vartype accepted_audiences: list[~kusto_management_client.models.AcceptedAudiences]
+    :ivar enable_auto_stop: A boolean value that indicates if the cluster could be automatically
+     stopped (due to lack of data or no activity for many days).
+    :vartype enable_auto_stop: bool
+    :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+     "Enabled", "Disabled". Default value: "Disabled".
+    :vartype restrict_outbound_network_access: str or
+     ~kusto_management_client.models.ClusterNetworkAccessFlag
+    :ivar allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from
+     Cluster.
+    :vartype allowed_fqdn_list: list[str]
+    :ivar public_ip_type: Indicates what public IP type to create - IPv4 (default), or DualStack
+     (both IPv4 and IPv6). Possible values include: "IPv4", "DualStack". Default value: "IPv4".
+    :vartype public_ip_type: str or ~kusto_management_client.models.PublicIPType
+    :ivar virtual_cluster_graduation_properties: Virtual Cluster graduation properties.
+    :vartype virtual_cluster_graduation_properties: str
+    :ivar private_endpoint_connections: A list of private endpoint connections.
+    :vartype private_endpoint_connections:
+     list[~kusto_management_client.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -866,6 +1222,7 @@ class ClusterUpdate(Resource):
         'data_ingestion_uri': {'readonly': True},
         'state_reason': {'readonly': True},
         'language_extensions': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -890,7 +1247,16 @@ class ClusterUpdate(Resource):
         'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
         'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
         'enable_double_encryption': {'key': 'properties.enableDoubleEncryption', 'type': 'bool'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'allowed_ip_range_list': {'key': 'properties.allowedIpRangeList', 'type': '[str]'},
         'engine_type': {'key': 'properties.engineType', 'type': 'str'},
+        'accepted_audiences': {'key': 'properties.acceptedAudiences', 'type': '[AcceptedAudiences]'},
+        'enable_auto_stop': {'key': 'properties.enableAutoStop', 'type': 'bool'},
+        'restrict_outbound_network_access': {'key': 'properties.restrictOutboundNetworkAccess', 'type': 'str'},
+        'allowed_fqdn_list': {'key': 'properties.allowedFqdnList', 'type': '[str]'},
+        'public_ip_type': {'key': 'properties.publicIPType', 'type': 'str'},
+        'virtual_cluster_graduation_properties': {'key': 'properties.virtualClusterGraduationProperties', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
@@ -908,9 +1274,76 @@ class ClusterUpdate(Resource):
         key_vault_properties: Optional["KeyVaultProperties"] = None,
         enable_purge: Optional[bool] = False,
         enable_double_encryption: Optional[bool] = False,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = "Enabled",
+        allowed_ip_range_list: Optional[List[str]] = None,
         engine_type: Optional[Union[str, "EngineType"]] = "V3",
+        accepted_audiences: Optional[List["AcceptedAudiences"]] = None,
+        enable_auto_stop: Optional[bool] = True,
+        restrict_outbound_network_access: Optional[Union[str, "ClusterNetworkAccessFlag"]] = "Disabled",
+        allowed_fqdn_list: Optional[List[str]] = None,
+        public_ip_type: Optional[Union[str, "PublicIPType"]] = "IPv4",
+        virtual_cluster_graduation_properties: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword sku: The SKU of the cluster.
+        :paramtype sku: ~kusto_management_client.models.AzureSku
+        :keyword identity: The identity of the cluster, if configured.
+        :paramtype identity: ~kusto_management_client.models.Identity
+        :keyword trusted_external_tenants: The cluster's external tenants.
+        :paramtype trusted_external_tenants:
+         list[~kusto_management_client.models.TrustedExternalTenant]
+        :keyword optimized_autoscale: Optimized auto scale definition.
+        :paramtype optimized_autoscale: ~kusto_management_client.models.OptimizedAutoscale
+        :keyword enable_disk_encryption: A boolean value that indicates if the cluster's disks are
+         encrypted.
+        :paramtype enable_disk_encryption: bool
+        :keyword enable_streaming_ingest: A boolean value that indicates if the streaming ingest is
+         enabled.
+        :paramtype enable_streaming_ingest: bool
+        :keyword virtual_network_configuration: Virtual network definition.
+        :paramtype virtual_network_configuration:
+         ~kusto_management_client.models.VirtualNetworkConfiguration
+        :keyword key_vault_properties: KeyVault properties for the cluster encryption.
+        :paramtype key_vault_properties: ~kusto_management_client.models.KeyVaultProperties
+        :keyword enable_purge: A boolean value that indicates if the purge operations are enabled.
+        :paramtype enable_purge: bool
+        :keyword enable_double_encryption: A boolean value that indicates if double encryption is
+         enabled.
+        :paramtype enable_double_encryption: bool
+        :keyword public_network_access: Public network access to the cluster is enabled by default.
+         When disabled, only private endpoint connection to the cluster is allowed. Possible values
+         include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access: str or ~kusto_management_client.models.PublicNetworkAccess
+        :keyword allowed_ip_range_list: The list of ips in the format of CIDR allowed to connect to the
+         cluster.
+        :paramtype allowed_ip_range_list: list[str]
+        :keyword engine_type: The engine type. Possible values include: "V2", "V3". Default value:
+         "V3".
+        :paramtype engine_type: str or ~kusto_management_client.models.EngineType
+        :keyword accepted_audiences: The cluster's accepted audiences.
+        :paramtype accepted_audiences: list[~kusto_management_client.models.AcceptedAudiences]
+        :keyword enable_auto_stop: A boolean value that indicates if the cluster could be automatically
+         stopped (due to lack of data or no activity for many days).
+        :paramtype enable_auto_stop: bool
+        :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access.
+         Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+         "Enabled", "Disabled". Default value: "Disabled".
+        :paramtype restrict_outbound_network_access: str or
+         ~kusto_management_client.models.ClusterNetworkAccessFlag
+        :keyword allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from
+         Cluster.
+        :paramtype allowed_fqdn_list: list[str]
+        :keyword public_ip_type: Indicates what public IP type to create - IPv4 (default), or DualStack
+         (both IPv4 and IPv6). Possible values include: "IPv4", "DualStack". Default value: "IPv4".
+        :paramtype public_ip_type: str or ~kusto_management_client.models.PublicIPType
+        :keyword virtual_cluster_graduation_properties: Virtual Cluster graduation properties.
+        :paramtype virtual_cluster_graduation_properties: str
+        """
         super(ClusterUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -930,7 +1363,16 @@ class ClusterUpdate(Resource):
         self.enable_purge = enable_purge
         self.language_extensions = None
         self.enable_double_encryption = enable_double_encryption
+        self.public_network_access = public_network_access
+        self.allowed_ip_range_list = allowed_ip_range_list
         self.engine_type = engine_type
+        self.accepted_audiences = accepted_audiences
+        self.enable_auto_stop = enable_auto_stop
+        self.restrict_outbound_network_access = restrict_outbound_network_access
+        self.allowed_fqdn_list = allowed_fqdn_list
+        self.public_ip_type = public_ip_type
+        self.virtual_cluster_graduation_properties = virtual_cluster_graduation_properties
+        self.private_endpoint_connections = None
 
 
 class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
@@ -958,6 +1400,8 @@ class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalp
         self,
         **kwargs
     ):
+        """
+        """
         super(ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -981,11 +1425,11 @@ class Database(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the database.Constant filled by server.  Possible values
-     include: "ReadWrite", "ReadOnlyFollowing".
-    :type kind: str or ~azure.mgmt.kusto.models.Kind
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the database.Constant filled by server. Possible values include:
+     "ReadWrite", "ReadOnlyFollowing".
+    :vartype kind: str or ~kusto_management_client.models.Kind
     """
 
     _validation = {
@@ -1013,6 +1457,10 @@ class Database(ProxyResource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        """
         super(Database, self).__init__(**kwargs)
         self.location = location
         self.kind = 'Database'  # type: str
@@ -1021,8 +1469,8 @@ class Database(ProxyResource):
 class DatabaseListResult(msrest.serialization.Model):
     """The list Kusto databases operation response.
 
-    :param value: The list of Kusto databases.
-    :type value: list[~azure.mgmt.kusto.models.Database]
+    :ivar value: The list of Kusto databases.
+    :vartype value: list[~kusto_management_client.models.Database]
     """
 
     _attribute_map = {
@@ -1035,6 +1483,10 @@ class DatabaseListResult(msrest.serialization.Model):
         value: Optional[List["Database"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto databases.
+        :paramtype value: list[~kusto_management_client.models.Database]
+        """
         super(DatabaseListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1046,20 +1498,19 @@ class DatabasePrincipal(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param role: Required. Database principal role. Possible values include: "Admin", "Ingestor",
+    :ivar role: Required. Database principal role. Possible values include: "Admin", "Ingestor",
      "Monitor", "User", "UnrestrictedViewer", "Viewer".
-    :type role: str or ~azure.mgmt.kusto.models.DatabasePrincipalRole
-    :param name: Required. Database principal name.
-    :type name: str
-    :param type: Required. Database principal type. Possible values include: "App", "Group",
-     "User".
-    :type type: str or ~azure.mgmt.kusto.models.DatabasePrincipalType
-    :param fqn: Database principal fully qualified name.
-    :type fqn: str
-    :param email: Database principal email if exists.
-    :type email: str
-    :param app_id: Application id - relevant only for application principal type.
-    :type app_id: str
+    :vartype role: str or ~kusto_management_client.models.DatabasePrincipalRole
+    :ivar name: Required. Database principal name.
+    :vartype name: str
+    :ivar type: Required. Database principal type. Possible values include: "App", "Group", "User".
+    :vartype type: str or ~kusto_management_client.models.DatabasePrincipalType
+    :ivar fqn: Database principal fully qualified name.
+    :vartype fqn: str
+    :ivar email: Database principal email if exists.
+    :vartype email: str
+    :ivar app_id: Application id - relevant only for application principal type.
+    :vartype app_id: str
     :ivar tenant_name: The tenant name of the principal.
     :vartype tenant_name: str
     """
@@ -1092,6 +1543,22 @@ class DatabasePrincipal(msrest.serialization.Model):
         app_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword role: Required. Database principal role. Possible values include: "Admin", "Ingestor",
+         "Monitor", "User", "UnrestrictedViewer", "Viewer".
+        :paramtype role: str or ~kusto_management_client.models.DatabasePrincipalRole
+        :keyword name: Required. Database principal name.
+        :paramtype name: str
+        :keyword type: Required. Database principal type. Possible values include: "App", "Group",
+         "User".
+        :paramtype type: str or ~kusto_management_client.models.DatabasePrincipalType
+        :keyword fqn: Database principal fully qualified name.
+        :paramtype fqn: str
+        :keyword email: Database principal email if exists.
+        :paramtype email: str
+        :keyword app_id: Application id - relevant only for application principal type.
+        :paramtype app_id: str
+        """
         super(DatabasePrincipal, self).__init__(**kwargs)
         self.role = role
         self.name = name
@@ -1115,23 +1582,25 @@ class DatabasePrincipalAssignment(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param principal_id: The principal ID assigned to the database principal. It can be a user
+    :ivar principal_id: The principal ID assigned to the database principal. It can be a user
      email, application ID, or security group name.
-    :type principal_id: str
-    :param role: Database principal role. Possible values include: "Admin", "Ingestor", "Monitor",
+    :vartype principal_id: str
+    :ivar role: Database principal role. Possible values include: "Admin", "Ingestor", "Monitor",
      "User", "UnrestrictedViewer", "Viewer".
-    :type role: str or ~azure.mgmt.kusto.models.DatabasePrincipalRole
-    :param tenant_id: The tenant id of the principal.
-    :type tenant_id: str
-    :param principal_type: Principal type. Possible values include: "App", "Group", "User".
-    :type principal_type: str or ~azure.mgmt.kusto.models.PrincipalType
+    :vartype role: str or ~kusto_management_client.models.DatabasePrincipalRole
+    :ivar tenant_id: The tenant id of the principal.
+    :vartype tenant_id: str
+    :ivar principal_type: Principal type. Possible values include: "App", "Group", "User".
+    :vartype principal_type: str or ~kusto_management_client.models.PrincipalType
     :ivar tenant_name: The tenant name of the principal.
     :vartype tenant_name: str
     :ivar principal_name: The principal name.
     :vartype principal_name: str
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
+    :ivar aad_object_id: The service principal object id in AAD (Azure active directory).
+    :vartype aad_object_id: str
     """
 
     _validation = {
@@ -1141,6 +1610,7 @@ class DatabasePrincipalAssignment(ProxyResource):
         'tenant_name': {'readonly': True},
         'principal_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'aad_object_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1154,6 +1624,7 @@ class DatabasePrincipalAssignment(ProxyResource):
         'tenant_name': {'key': 'properties.tenantName', 'type': 'str'},
         'principal_name': {'key': 'properties.principalName', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'aad_object_id': {'key': 'properties.aadObjectId', 'type': 'str'},
     }
 
     def __init__(
@@ -1165,6 +1636,18 @@ class DatabasePrincipalAssignment(ProxyResource):
         principal_type: Optional[Union[str, "PrincipalType"]] = None,
         **kwargs
     ):
+        """
+        :keyword principal_id: The principal ID assigned to the database principal. It can be a user
+         email, application ID, or security group name.
+        :paramtype principal_id: str
+        :keyword role: Database principal role. Possible values include: "Admin", "Ingestor",
+         "Monitor", "User", "UnrestrictedViewer", "Viewer".
+        :paramtype role: str or ~kusto_management_client.models.DatabasePrincipalRole
+        :keyword tenant_id: The tenant id of the principal.
+        :paramtype tenant_id: str
+        :keyword principal_type: Principal type. Possible values include: "App", "Group", "User".
+        :paramtype principal_type: str or ~kusto_management_client.models.PrincipalType
+        """
         super(DatabasePrincipalAssignment, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.role = role
@@ -1173,6 +1656,7 @@ class DatabasePrincipalAssignment(ProxyResource):
         self.tenant_name = None
         self.principal_name = None
         self.provisioning_state = None
+        self.aad_object_id = None
 
 
 class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
@@ -1182,11 +1666,10 @@ class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Principal Assignment resource name.
-    :type name: str
-    :ivar type: Required. The type of resource,
-     Microsoft.Kusto/clusters/databases/principalAssignments. Default value:
-     "Microsoft.Kusto/clusters/databases/principalAssignments".
+    :ivar name: Required. Principal Assignment resource name.
+    :vartype name: str
+    :ivar type: The type of resource, Microsoft.Kusto/clusters/databases/principalAssignments. Has
+     constant value: "Microsoft.Kusto/clusters/databases/principalAssignments".
     :vartype type: str
     """
 
@@ -1208,6 +1691,10 @@ class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Principal Assignment resource name.
+        :paramtype name: str
+        """
         super(DatabasePrincipalAssignmentCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -1215,8 +1702,8 @@ class DatabasePrincipalAssignmentCheckNameRequest(msrest.serialization.Model):
 class DatabasePrincipalAssignmentListResult(msrest.serialization.Model):
     """The list Kusto database principal assignments operation response.
 
-    :param value: The list of Kusto database principal assignments.
-    :type value: list[~azure.mgmt.kusto.models.DatabasePrincipalAssignment]
+    :ivar value: The list of Kusto database principal assignments.
+    :vartype value: list[~kusto_management_client.models.DatabasePrincipalAssignment]
     """
 
     _attribute_map = {
@@ -1229,6 +1716,10 @@ class DatabasePrincipalAssignmentListResult(msrest.serialization.Model):
         value: Optional[List["DatabasePrincipalAssignment"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto database principal assignments.
+        :paramtype value: list[~kusto_management_client.models.DatabasePrincipalAssignment]
+        """
         super(DatabasePrincipalAssignmentListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1236,8 +1727,8 @@ class DatabasePrincipalAssignmentListResult(msrest.serialization.Model):
 class DatabasePrincipalListRequest(msrest.serialization.Model):
     """The list Kusto database principals operation request.
 
-    :param value: The list of Kusto database principals.
-    :type value: list[~azure.mgmt.kusto.models.DatabasePrincipal]
+    :ivar value: The list of Kusto database principals.
+    :vartype value: list[~kusto_management_client.models.DatabasePrincipal]
     """
 
     _attribute_map = {
@@ -1250,6 +1741,10 @@ class DatabasePrincipalListRequest(msrest.serialization.Model):
         value: Optional[List["DatabasePrincipal"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto database principals.
+        :paramtype value: list[~kusto_management_client.models.DatabasePrincipal]
+        """
         super(DatabasePrincipalListRequest, self).__init__(**kwargs)
         self.value = value
 
@@ -1257,8 +1752,8 @@ class DatabasePrincipalListRequest(msrest.serialization.Model):
 class DatabasePrincipalListResult(msrest.serialization.Model):
     """The list Kusto database principals operation response.
 
-    :param value: The list of Kusto database principals.
-    :type value: list[~azure.mgmt.kusto.models.DatabasePrincipal]
+    :ivar value: The list of Kusto database principals.
+    :vartype value: list[~kusto_management_client.models.DatabasePrincipal]
     """
 
     _attribute_map = {
@@ -1271,6 +1766,10 @@ class DatabasePrincipalListResult(msrest.serialization.Model):
         value: Optional[List["DatabasePrincipal"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto database principals.
+        :paramtype value: list[~kusto_management_client.models.DatabasePrincipal]
+        """
         super(DatabasePrincipalListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1278,8 +1777,8 @@ class DatabasePrincipalListResult(msrest.serialization.Model):
 class DatabaseStatistics(msrest.serialization.Model):
     """A class that contains database statistics information.
 
-    :param size: The database size - the total size of compressed data and index in bytes.
-    :type size: float
+    :ivar size: The database size - the total size of compressed data and index in bytes.
+    :vartype size: float
     """
 
     _attribute_map = {
@@ -1292,6 +1791,10 @@ class DatabaseStatistics(msrest.serialization.Model):
         size: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword size: The database size - the total size of compressed data and index in bytes.
+        :paramtype size: float
+        """
         super(DatabaseStatistics, self).__init__(**kwargs)
         self.size = size
 
@@ -1314,11 +1817,11 @@ class DataConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "IotHub".
-    :type kind: str or ~azure.mgmt.kusto.models.DataConnectionKind
+    :vartype kind: str or ~kusto_management_client.models.DataConnectionKind
     """
 
     _validation = {
@@ -1346,6 +1849,10 @@ class DataConnection(ProxyResource):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        """
         super(DataConnection, self).__init__(**kwargs)
         self.location = location
         self.kind = 'DataConnection'  # type: str
@@ -1358,10 +1865,10 @@ class DataConnectionCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Data Connection name.
-    :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters/databases/dataConnections.
-     Default value: "Microsoft.Kusto/clusters/databases/dataConnections".
+    :ivar name: Required. Data Connection name.
+    :vartype name: str
+    :ivar type: The type of resource, Microsoft.Kusto/clusters/databases/dataConnections. Has
+     constant value: "Microsoft.Kusto/clusters/databases/dataConnections".
     :vartype type: str
     """
 
@@ -1383,6 +1890,10 @@ class DataConnectionCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Data Connection name.
+        :paramtype name: str
+        """
         super(DataConnectionCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -1390,8 +1901,8 @@ class DataConnectionCheckNameRequest(msrest.serialization.Model):
 class DataConnectionListResult(msrest.serialization.Model):
     """The list Kusto data connections operation response.
 
-    :param value: The list of Kusto data connections.
-    :type value: list[~azure.mgmt.kusto.models.DataConnection]
+    :ivar value: The list of Kusto data connections.
+    :vartype value: list[~kusto_management_client.models.DataConnection]
     """
 
     _attribute_map = {
@@ -1404,6 +1915,10 @@ class DataConnectionListResult(msrest.serialization.Model):
         value: Optional[List["DataConnection"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto data connections.
+        :paramtype value: list[~kusto_management_client.models.DataConnection]
+        """
         super(DataConnectionListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1411,10 +1926,10 @@ class DataConnectionListResult(msrest.serialization.Model):
 class DataConnectionValidation(msrest.serialization.Model):
     """Class representing an data connection validation.
 
-    :param data_connection_name: The name of the data connection.
-    :type data_connection_name: str
-    :param properties: The data connection properties to validate.
-    :type properties: ~azure.mgmt.kusto.models.DataConnection
+    :ivar data_connection_name: The name of the data connection.
+    :vartype data_connection_name: str
+    :ivar properties: The data connection properties to validate.
+    :vartype properties: ~kusto_management_client.models.DataConnection
     """
 
     _attribute_map = {
@@ -1429,6 +1944,12 @@ class DataConnectionValidation(msrest.serialization.Model):
         properties: Optional["DataConnection"] = None,
         **kwargs
     ):
+        """
+        :keyword data_connection_name: The name of the data connection.
+        :paramtype data_connection_name: str
+        :keyword properties: The data connection properties to validate.
+        :paramtype properties: ~kusto_management_client.models.DataConnection
+        """
         super(DataConnectionValidation, self).__init__(**kwargs)
         self.data_connection_name = data_connection_name
         self.properties = properties
@@ -1437,8 +1958,8 @@ class DataConnectionValidation(msrest.serialization.Model):
 class DataConnectionValidationListResult(msrest.serialization.Model):
     """The list Kusto data connection validation result.
 
-    :param value: The list of Kusto data connection validation errors.
-    :type value: list[~azure.mgmt.kusto.models.DataConnectionValidationResult]
+    :ivar value: The list of Kusto data connection validation errors.
+    :vartype value: list[~kusto_management_client.models.DataConnectionValidationResult]
     """
 
     _attribute_map = {
@@ -1451,6 +1972,10 @@ class DataConnectionValidationListResult(msrest.serialization.Model):
         value: Optional[List["DataConnectionValidationResult"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto data connection validation errors.
+        :paramtype value: list[~kusto_management_client.models.DataConnectionValidationResult]
+        """
         super(DataConnectionValidationListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1458,8 +1983,8 @@ class DataConnectionValidationListResult(msrest.serialization.Model):
 class DataConnectionValidationResult(msrest.serialization.Model):
     """The result returned from a data connection validation request.
 
-    :param error_message: A message which indicates a problem in data connection validation.
-    :type error_message: str
+    :ivar error_message: A message which indicates a problem in data connection validation.
+    :vartype error_message: str
     """
 
     _attribute_map = {
@@ -1472,6 +1997,10 @@ class DataConnectionValidationResult(msrest.serialization.Model):
         error_message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword error_message: A message which indicates a problem in data connection validation.
+        :paramtype error_message: str
+        """
         super(DataConnectionValidationResult, self).__init__(**kwargs)
         self.error_message = error_message
 
@@ -1479,8 +2008,8 @@ class DataConnectionValidationResult(msrest.serialization.Model):
 class DiagnoseVirtualNetworkResult(msrest.serialization.Model):
     """DiagnoseVirtualNetworkResult.
 
-    :param findings: The list of network connectivity diagnostic finding.
-    :type findings: list[str]
+    :ivar findings: The list of network connectivity diagnostic finding.
+    :vartype findings: list[str]
     """
 
     _attribute_map = {
@@ -1493,8 +2022,69 @@ class DiagnoseVirtualNetworkResult(msrest.serialization.Model):
         findings: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword findings: The list of network connectivity diagnostic finding.
+        :paramtype findings: list[str]
+        """
         super(DiagnoseVirtualNetworkResult, self).__init__(**kwargs)
         self.findings = findings
+
+
+class EndpointDependency(msrest.serialization.Model):
+    """A domain name that a service is reached at, including details of the current connection status.
+
+    :ivar domain_name: The domain name of the dependency.
+    :vartype domain_name: str
+    :ivar endpoint_details: The ports used when connecting to DomainName.
+    :vartype endpoint_details: list[~kusto_management_client.models.EndpointDetail]
+    """
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'endpoint_details': {'key': 'endpointDetails', 'type': '[EndpointDetail]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        domain_name: Optional[str] = None,
+        endpoint_details: Optional[List["EndpointDetail"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword domain_name: The domain name of the dependency.
+        :paramtype domain_name: str
+        :keyword endpoint_details: The ports used when connecting to DomainName.
+        :paramtype endpoint_details: list[~kusto_management_client.models.EndpointDetail]
+        """
+        super(EndpointDependency, self).__init__(**kwargs)
+        self.domain_name = domain_name
+        self.endpoint_details = endpoint_details
+
+
+class EndpointDetail(msrest.serialization.Model):
+    """Current TCP connectivity information from the Kusto cluster to a single endpoint.
+
+    :ivar port: The port an endpoint is connected to.
+    :vartype port: int
+    """
+
+    _attribute_map = {
+        'port': {'key': 'port', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        port: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword port: The port an endpoint is connected to.
+        :paramtype port: int
+        """
+        super(EndpointDetail, self).__init__(**kwargs)
+        self.port = port
 
 
 class EventGridDataConnection(DataConnection):
@@ -1512,39 +2102,50 @@ class EventGridDataConnection(DataConnection):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "IotHub".
-    :type kind: str or ~azure.mgmt.kusto.models.DataConnectionKind
-    :param storage_account_resource_id: The resource ID of the storage account where the data
+    :vartype kind: str or ~kusto_management_client.models.DataConnectionKind
+    :ivar storage_account_resource_id: The resource ID of the storage account where the data
      resides.
-    :type storage_account_resource_id: str
-    :param event_hub_resource_id: The resource ID where the event grid is configured to send
-     events.
-    :type event_hub_resource_id: str
-    :param consumer_group: The event hub consumer group.
-    :type consumer_group: str
-    :param table_name: The table where the data should be ingested. Optionally the table
+    :vartype storage_account_resource_id: str
+    :ivar event_grid_resource_id: The resource ID of the event grid that is subscribed to the
+     storage account events.
+    :vartype event_grid_resource_id: str
+    :ivar event_hub_resource_id: The resource ID where the event grid is configured to send events.
+    :vartype event_hub_resource_id: str
+    :ivar consumer_group: The event hub consumer group.
+    :vartype consumer_group: str
+    :ivar table_name: The table where the data should be ingested. Optionally the table information
+     can be added to each message.
+    :vartype table_name: str
+    :ivar mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the mapping
      information can be added to each message.
-    :type table_name: str
-    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
-     mapping information can be added to each message.
-    :type mapping_rule_name: str
-    :param data_format: The data format of the message. Optionally the data format can be added to
+    :vartype mapping_rule_name: str
+    :ivar data_format: The data format of the message. Optionally the data format can be added to
      each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
      "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
      "W3CLOGFILE".
-    :type data_format: str or ~azure.mgmt.kusto.models.EventGridDataFormat
-    :param ignore_first_record: A Boolean value that, if set to true, indicates that ingestion
+    :vartype data_format: str or ~kusto_management_client.models.EventGridDataFormat
+    :ivar ignore_first_record: A Boolean value that, if set to true, indicates that ingestion
      should ignore the first record of every file.
-    :type ignore_first_record: bool
-    :param blob_storage_event_type: The name of blob storage event type to process. Possible values
+    :vartype ignore_first_record: bool
+    :ivar blob_storage_event_type: The name of blob storage event type to process. Possible values
      include: "Microsoft.Storage.BlobCreated", "Microsoft.Storage.BlobRenamed".
-    :type blob_storage_event_type: str or ~azure.mgmt.kusto.models.BlobStorageEventType
+    :vartype blob_storage_event_type: str or ~kusto_management_client.models.BlobStorageEventType
+    :ivar managed_identity_resource_id: The resource ID of a managed identity (system or user
+     assigned) to be used to authenticate with event hub and storage account.
+    :vartype managed_identity_resource_id: str
+    :ivar managed_identity_object_id: The object ID of managedIdentityResourceId.
+    :vartype managed_identity_object_id: str
+    :ivar database_routing: Indication for database routing information from the data connection,
+     by default only database routing information is allowed. Possible values include: "Single",
+     "Multi".
+    :vartype database_routing: str or ~kusto_management_client.models.DatabaseRouting
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
     """
 
     _validation = {
@@ -1552,6 +2153,7 @@ class EventGridDataConnection(DataConnection):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
+        'managed_identity_object_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1562,6 +2164,7 @@ class EventGridDataConnection(DataConnection):
         'location': {'key': 'location', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
+        'event_grid_resource_id': {'key': 'properties.eventGridResourceId', 'type': 'str'},
         'event_hub_resource_id': {'key': 'properties.eventHubResourceId', 'type': 'str'},
         'consumer_group': {'key': 'properties.consumerGroup', 'type': 'str'},
         'table_name': {'key': 'properties.tableName', 'type': 'str'},
@@ -1569,6 +2172,9 @@ class EventGridDataConnection(DataConnection):
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'ignore_first_record': {'key': 'properties.ignoreFirstRecord', 'type': 'bool'},
         'blob_storage_event_type': {'key': 'properties.blobStorageEventType', 'type': 'str'},
+        'managed_identity_resource_id': {'key': 'properties.managedIdentityResourceId', 'type': 'str'},
+        'managed_identity_object_id': {'key': 'properties.managedIdentityObjectId', 'type': 'str'},
+        'database_routing': {'key': 'properties.databaseRouting', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -1577,6 +2183,7 @@ class EventGridDataConnection(DataConnection):
         *,
         location: Optional[str] = None,
         storage_account_resource_id: Optional[str] = None,
+        event_grid_resource_id: Optional[str] = None,
         event_hub_resource_id: Optional[str] = None,
         consumer_group: Optional[str] = None,
         table_name: Optional[str] = None,
@@ -1584,11 +2191,53 @@ class EventGridDataConnection(DataConnection):
         data_format: Optional[Union[str, "EventGridDataFormat"]] = None,
         ignore_first_record: Optional[bool] = None,
         blob_storage_event_type: Optional[Union[str, "BlobStorageEventType"]] = None,
+        managed_identity_resource_id: Optional[str] = None,
+        database_routing: Optional[Union[str, "DatabaseRouting"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword storage_account_resource_id: The resource ID of the storage account where the data
+         resides.
+        :paramtype storage_account_resource_id: str
+        :keyword event_grid_resource_id: The resource ID of the event grid that is subscribed to the
+         storage account events.
+        :paramtype event_grid_resource_id: str
+        :keyword event_hub_resource_id: The resource ID where the event grid is configured to send
+         events.
+        :paramtype event_hub_resource_id: str
+        :keyword consumer_group: The event hub consumer group.
+        :paramtype consumer_group: str
+        :keyword table_name: The table where the data should be ingested. Optionally the table
+         information can be added to each message.
+        :paramtype table_name: str
+        :keyword mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+         mapping information can be added to each message.
+        :paramtype mapping_rule_name: str
+        :keyword data_format: The data format of the message. Optionally the data format can be added
+         to each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+         "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+         "W3CLOGFILE".
+        :paramtype data_format: str or ~kusto_management_client.models.EventGridDataFormat
+        :keyword ignore_first_record: A Boolean value that, if set to true, indicates that ingestion
+         should ignore the first record of every file.
+        :paramtype ignore_first_record: bool
+        :keyword blob_storage_event_type: The name of blob storage event type to process. Possible
+         values include: "Microsoft.Storage.BlobCreated", "Microsoft.Storage.BlobRenamed".
+        :paramtype blob_storage_event_type: str or ~kusto_management_client.models.BlobStorageEventType
+        :keyword managed_identity_resource_id: The resource ID of a managed identity (system or user
+         assigned) to be used to authenticate with event hub and storage account.
+        :paramtype managed_identity_resource_id: str
+        :keyword database_routing: Indication for database routing information from the data
+         connection, by default only database routing information is allowed. Possible values include:
+         "Single", "Multi".
+        :paramtype database_routing: str or ~kusto_management_client.models.DatabaseRouting
+        """
         super(EventGridDataConnection, self).__init__(location=location, **kwargs)
         self.kind = 'EventGrid'  # type: str
         self.storage_account_resource_id = storage_account_resource_id
+        self.event_grid_resource_id = event_grid_resource_id
         self.event_hub_resource_id = event_hub_resource_id
         self.consumer_group = consumer_group
         self.table_name = table_name
@@ -1596,6 +2245,9 @@ class EventGridDataConnection(DataConnection):
         self.data_format = data_format
         self.ignore_first_record = ignore_first_record
         self.blob_storage_event_type = blob_storage_event_type
+        self.managed_identity_resource_id = managed_identity_resource_id
+        self.managed_identity_object_id = None
+        self.database_routing = database_routing
         self.provisioning_state = None
 
 
@@ -1614,38 +2266,44 @@ class EventHubDataConnection(DataConnection):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "IotHub".
-    :type kind: str or ~azure.mgmt.kusto.models.DataConnectionKind
-    :param event_hub_resource_id: The resource ID of the event hub to be used to create a data
+    :vartype kind: str or ~kusto_management_client.models.DataConnectionKind
+    :ivar event_hub_resource_id: The resource ID of the event hub to be used to create a data
      connection.
-    :type event_hub_resource_id: str
-    :param consumer_group: The event hub consumer group.
-    :type consumer_group: str
-    :param table_name: The table where the data should be ingested. Optionally the table
+    :vartype event_hub_resource_id: str
+    :ivar consumer_group: The event hub consumer group.
+    :vartype consumer_group: str
+    :ivar table_name: The table where the data should be ingested. Optionally the table information
+     can be added to each message.
+    :vartype table_name: str
+    :ivar mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the mapping
      information can be added to each message.
-    :type table_name: str
-    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
-     mapping information can be added to each message.
-    :type mapping_rule_name: str
-    :param data_format: The data format of the message. Optionally the data format can be added to
+    :vartype mapping_rule_name: str
+    :ivar data_format: The data format of the message. Optionally the data format can be added to
      each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
      "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
      "W3CLOGFILE".
-    :type data_format: str or ~azure.mgmt.kusto.models.EventHubDataFormat
-    :param event_system_properties: System properties of the event hub.
-    :type event_system_properties: list[str]
-    :param compression: The event hub messages compression type. Possible values include: "None",
+    :vartype data_format: str or ~kusto_management_client.models.EventHubDataFormat
+    :ivar event_system_properties: System properties of the event hub.
+    :vartype event_system_properties: list[str]
+    :ivar compression: The event hub messages compression type. Possible values include: "None",
      "GZip". Default value: "None".
-    :type compression: str or ~azure.mgmt.kusto.models.Compression
+    :vartype compression: str or ~kusto_management_client.models.Compression
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
-    :param managed_identity_resource_id: The resource ID of a managed identity (system or user
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
+    :ivar managed_identity_resource_id: The resource ID of a managed identity (system or user
      assigned) to be used to authenticate with event hub.
-    :type managed_identity_resource_id: str
+    :vartype managed_identity_resource_id: str
+    :ivar managed_identity_object_id: The object ID of the managedIdentityResourceId.
+    :vartype managed_identity_object_id: str
+    :ivar database_routing: Indication for database routing information from the data connection,
+     by default only database routing information is allowed. Possible values include: "Single",
+     "Multi".
+    :vartype database_routing: str or ~kusto_management_client.models.DatabaseRouting
     """
 
     _validation = {
@@ -1654,6 +2312,7 @@ class EventHubDataConnection(DataConnection):
         'type': {'readonly': True},
         'kind': {'required': True},
         'provisioning_state': {'readonly': True},
+        'managed_identity_object_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1671,6 +2330,8 @@ class EventHubDataConnection(DataConnection):
         'compression': {'key': 'properties.compression', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_identity_resource_id': {'key': 'properties.managedIdentityResourceId', 'type': 'str'},
+        'managed_identity_object_id': {'key': 'properties.managedIdentityObjectId', 'type': 'str'},
+        'database_routing': {'key': 'properties.databaseRouting', 'type': 'str'},
     }
 
     def __init__(
@@ -1685,8 +2346,41 @@ class EventHubDataConnection(DataConnection):
         event_system_properties: Optional[List[str]] = None,
         compression: Optional[Union[str, "Compression"]] = "None",
         managed_identity_resource_id: Optional[str] = None,
+        database_routing: Optional[Union[str, "DatabaseRouting"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword event_hub_resource_id: The resource ID of the event hub to be used to create a data
+         connection.
+        :paramtype event_hub_resource_id: str
+        :keyword consumer_group: The event hub consumer group.
+        :paramtype consumer_group: str
+        :keyword table_name: The table where the data should be ingested. Optionally the table
+         information can be added to each message.
+        :paramtype table_name: str
+        :keyword mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+         mapping information can be added to each message.
+        :paramtype mapping_rule_name: str
+        :keyword data_format: The data format of the message. Optionally the data format can be added
+         to each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+         "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+         "W3CLOGFILE".
+        :paramtype data_format: str or ~kusto_management_client.models.EventHubDataFormat
+        :keyword event_system_properties: System properties of the event hub.
+        :paramtype event_system_properties: list[str]
+        :keyword compression: The event hub messages compression type. Possible values include: "None",
+         "GZip". Default value: "None".
+        :paramtype compression: str or ~kusto_management_client.models.Compression
+        :keyword managed_identity_resource_id: The resource ID of a managed identity (system or user
+         assigned) to be used to authenticate with event hub.
+        :paramtype managed_identity_resource_id: str
+        :keyword database_routing: Indication for database routing information from the data
+         connection, by default only database routing information is allowed. Possible values include:
+         "Single", "Multi".
+        :paramtype database_routing: str or ~kusto_management_client.models.DatabaseRouting
+        """
         super(EventHubDataConnection, self).__init__(location=location, **kwargs)
         self.kind = 'EventHub'  # type: str
         self.event_hub_resource_id = event_hub_resource_id
@@ -1698,6 +2392,8 @@ class EventHubDataConnection(DataConnection):
         self.compression = compression
         self.provisioning_state = None
         self.managed_identity_resource_id = managed_identity_resource_id
+        self.managed_identity_object_id = None
+        self.database_routing = database_routing
 
 
 class FollowerDatabaseDefinition(msrest.serialization.Model):
@@ -1707,12 +2403,12 @@ class FollowerDatabaseDefinition(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cluster_resource_id: Required. Resource id of the cluster that follows a database owned
+    :ivar cluster_resource_id: Required. Resource id of the cluster that follows a database owned
      by this cluster.
-    :type cluster_resource_id: str
-    :param attached_database_configuration_name: Required. Resource name of the attached database
+    :vartype cluster_resource_id: str
+    :ivar attached_database_configuration_name: Required. Resource name of the attached database
      configuration in the follower cluster.
-    :type attached_database_configuration_name: str
+    :vartype attached_database_configuration_name: str
     :ivar database_name: The database name owned by this cluster that was followed. * in case
      following all databases.
     :vartype database_name: str
@@ -1737,6 +2433,14 @@ class FollowerDatabaseDefinition(msrest.serialization.Model):
         attached_database_configuration_name: str,
         **kwargs
     ):
+        """
+        :keyword cluster_resource_id: Required. Resource id of the cluster that follows a database
+         owned by this cluster.
+        :paramtype cluster_resource_id: str
+        :keyword attached_database_configuration_name: Required. Resource name of the attached database
+         configuration in the follower cluster.
+        :paramtype attached_database_configuration_name: str
+        """
         super(FollowerDatabaseDefinition, self).__init__(**kwargs)
         self.cluster_resource_id = cluster_resource_id
         self.attached_database_configuration_name = attached_database_configuration_name
@@ -1746,8 +2450,8 @@ class FollowerDatabaseDefinition(msrest.serialization.Model):
 class FollowerDatabaseListResult(msrest.serialization.Model):
     """The list Kusto database principals operation response.
 
-    :param value: The list of follower database result.
-    :type value: list[~azure.mgmt.kusto.models.FollowerDatabaseDefinition]
+    :ivar value: The list of follower database result.
+    :vartype value: list[~kusto_management_client.models.FollowerDatabaseDefinition]
     """
 
     _attribute_map = {
@@ -1760,6 +2464,10 @@ class FollowerDatabaseListResult(msrest.serialization.Model):
         value: Optional[List["FollowerDatabaseDefinition"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of follower database result.
+        :paramtype value: list[~kusto_management_client.models.FollowerDatabaseDefinition]
+        """
         super(FollowerDatabaseListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -1775,16 +2483,16 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: Required. The type of managed identity used. The type 'SystemAssigned,
+    :ivar type: Required. The type of managed identity used. The type 'SystemAssigned,
      UserAssigned' includes both an implicitly created identity and a set of user-assigned
      identities. The type 'None' will remove all identities. Possible values include: "None",
      "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned".
-    :type type: str or ~azure.mgmt.kusto.models.IdentityType
-    :param user_assigned_identities: The list of user identities associated with the Kusto cluster.
+    :vartype type: str or ~kusto_management_client.models.IdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the Kusto cluster.
      The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :type user_assigned_identities: dict[str,
-     ~azure.mgmt.kusto.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
+    :vartype user_assigned_identities: dict[str,
+     ~kusto_management_client.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
     """
 
     _validation = {
@@ -1807,6 +2515,18 @@ class Identity(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required. The type of managed identity used. The type 'SystemAssigned,
+         UserAssigned' includes both an implicitly created identity and a set of user-assigned
+         identities. The type 'None' will remove all identities. Possible values include: "None",
+         "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned".
+        :paramtype type: str or ~kusto_management_client.models.IdentityType
+        :keyword user_assigned_identities: The list of user identities associated with the Kusto
+         cluster. The user identity dictionary key references will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        :paramtype user_assigned_identities: dict[str,
+         ~kusto_management_client.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -1829,34 +2549,38 @@ class IotHubDataConnection(DataConnection):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the endpoint for the data connection.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "IotHub".
-    :type kind: str or ~azure.mgmt.kusto.models.DataConnectionKind
-    :param iot_hub_resource_id: The resource ID of the Iot hub to be used to create a data
+    :vartype kind: str or ~kusto_management_client.models.DataConnectionKind
+    :ivar iot_hub_resource_id: The resource ID of the Iot hub to be used to create a data
      connection.
-    :type iot_hub_resource_id: str
-    :param consumer_group: The iot hub consumer group.
-    :type consumer_group: str
-    :param table_name: The table where the data should be ingested. Optionally the table
+    :vartype iot_hub_resource_id: str
+    :ivar consumer_group: The iot hub consumer group.
+    :vartype consumer_group: str
+    :ivar table_name: The table where the data should be ingested. Optionally the table information
+     can be added to each message.
+    :vartype table_name: str
+    :ivar mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the mapping
      information can be added to each message.
-    :type table_name: str
-    :param mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
-     mapping information can be added to each message.
-    :type mapping_rule_name: str
-    :param data_format: The data format of the message. Optionally the data format can be added to
+    :vartype mapping_rule_name: str
+    :ivar data_format: The data format of the message. Optionally the data format can be added to
      each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
      "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
      "W3CLOGFILE".
-    :type data_format: str or ~azure.mgmt.kusto.models.IotHubDataFormat
-    :param event_system_properties: System properties of the iot hub.
-    :type event_system_properties: list[str]
-    :param shared_access_policy_name: The name of the share access policy.
-    :type shared_access_policy_name: str
+    :vartype data_format: str or ~kusto_management_client.models.IotHubDataFormat
+    :ivar event_system_properties: System properties of the iot hub.
+    :vartype event_system_properties: list[str]
+    :ivar shared_access_policy_name: The name of the share access policy.
+    :vartype shared_access_policy_name: str
+    :ivar database_routing: Indication for database routing information from the data connection,
+     by default only database routing information is allowed. Possible values include: "Single",
+     "Multi".
+    :vartype database_routing: str or ~kusto_management_client.models.DatabaseRouting
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
     """
 
     _validation = {
@@ -1880,6 +2604,7 @@ class IotHubDataConnection(DataConnection):
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
         'shared_access_policy_name': {'key': 'properties.sharedAccessPolicyName', 'type': 'str'},
+        'database_routing': {'key': 'properties.databaseRouting', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -1894,8 +2619,37 @@ class IotHubDataConnection(DataConnection):
         data_format: Optional[Union[str, "IotHubDataFormat"]] = None,
         event_system_properties: Optional[List[str]] = None,
         shared_access_policy_name: Optional[str] = None,
+        database_routing: Optional[Union[str, "DatabaseRouting"]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword iot_hub_resource_id: The resource ID of the Iot hub to be used to create a data
+         connection.
+        :paramtype iot_hub_resource_id: str
+        :keyword consumer_group: The iot hub consumer group.
+        :paramtype consumer_group: str
+        :keyword table_name: The table where the data should be ingested. Optionally the table
+         information can be added to each message.
+        :paramtype table_name: str
+        :keyword mapping_rule_name: The mapping rule to be used to ingest the data. Optionally the
+         mapping information can be added to each message.
+        :paramtype mapping_rule_name: str
+        :keyword data_format: The data format of the message. Optionally the data format can be added
+         to each message. Possible values include: "MULTIJSON", "JSON", "CSV", "TSV", "SCSV", "SOHSV",
+         "PSV", "TXT", "RAW", "SINGLEJSON", "AVRO", "TSVE", "PARQUET", "ORC", "APACHEAVRO",
+         "W3CLOGFILE".
+        :paramtype data_format: str or ~kusto_management_client.models.IotHubDataFormat
+        :keyword event_system_properties: System properties of the iot hub.
+        :paramtype event_system_properties: list[str]
+        :keyword shared_access_policy_name: The name of the share access policy.
+        :paramtype shared_access_policy_name: str
+        :keyword database_routing: Indication for database routing information from the data
+         connection, by default only database routing information is allowed. Possible values include:
+         "Single", "Multi".
+        :paramtype database_routing: str or ~kusto_management_client.models.DatabaseRouting
+        """
         super(IotHubDataConnection, self).__init__(location=location, **kwargs)
         self.kind = 'IotHub'  # type: str
         self.iot_hub_resource_id = iot_hub_resource_id
@@ -1905,28 +2659,22 @@ class IotHubDataConnection(DataConnection):
         self.data_format = data_format
         self.event_system_properties = event_system_properties
         self.shared_access_policy_name = shared_access_policy_name
+        self.database_routing = database_routing
         self.provisioning_state = None
 
 
 class KeyVaultProperties(msrest.serialization.Model):
     """Properties of the key vault.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param key_name: Required. The name of the key vault key.
-    :type key_name: str
-    :param key_version: The version of the key vault key.
-    :type key_version: str
-    :param key_vault_uri: Required. The Uri of the key vault.
-    :type key_vault_uri: str
-    :param user_identity: The user assigned identity (ARM resource id) that has access to the key.
-    :type user_identity: str
+    :ivar key_name: The name of the key vault key.
+    :vartype key_name: str
+    :ivar key_version: The version of the key vault key.
+    :vartype key_version: str
+    :ivar key_vault_uri: The Uri of the key vault.
+    :vartype key_vault_uri: str
+    :ivar user_identity: The user assigned identity (ARM resource id) that has access to the key.
+    :vartype user_identity: str
     """
-
-    _validation = {
-        'key_name': {'required': True},
-        'key_vault_uri': {'required': True},
-    }
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'str'},
@@ -1938,12 +2686,23 @@ class KeyVaultProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        key_name: str,
-        key_vault_uri: str,
+        key_name: Optional[str] = None,
         key_version: Optional[str] = None,
+        key_vault_uri: Optional[str] = None,
         user_identity: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_name: The name of the key vault key.
+        :paramtype key_name: str
+        :keyword key_version: The version of the key vault key.
+        :paramtype key_version: str
+        :keyword key_vault_uri: The Uri of the key vault.
+        :paramtype key_vault_uri: str
+        :keyword user_identity: The user assigned identity (ARM resource id) that has access to the
+         key.
+        :paramtype user_identity: str
+        """
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_name = key_name
         self.key_version = key_version
@@ -1954,9 +2713,9 @@ class KeyVaultProperties(msrest.serialization.Model):
 class LanguageExtension(msrest.serialization.Model):
     """The language extension object.
 
-    :param language_extension_name: The language extension name. Possible values include: "PYTHON",
+    :ivar language_extension_name: The language extension name. Possible values include: "PYTHON",
      "R".
-    :type language_extension_name: str or ~azure.mgmt.kusto.models.LanguageExtensionName
+    :vartype language_extension_name: str or ~kusto_management_client.models.LanguageExtensionName
     """
 
     _attribute_map = {
@@ -1969,6 +2728,12 @@ class LanguageExtension(msrest.serialization.Model):
         language_extension_name: Optional[Union[str, "LanguageExtensionName"]] = None,
         **kwargs
     ):
+        """
+        :keyword language_extension_name: The language extension name. Possible values include:
+         "PYTHON", "R".
+        :paramtype language_extension_name: str or
+         ~kusto_management_client.models.LanguageExtensionName
+        """
         super(LanguageExtension, self).__init__(**kwargs)
         self.language_extension_name = language_extension_name
 
@@ -1976,8 +2741,8 @@ class LanguageExtension(msrest.serialization.Model):
 class LanguageExtensionsList(msrest.serialization.Model):
     """The list of language extension objects.
 
-    :param value: The list of language extensions.
-    :type value: list[~azure.mgmt.kusto.models.LanguageExtension]
+    :ivar value: The list of language extensions.
+    :vartype value: list[~kusto_management_client.models.LanguageExtension]
     """
 
     _attribute_map = {
@@ -1990,6 +2755,10 @@ class LanguageExtensionsList(msrest.serialization.Model):
         value: Optional[List["LanguageExtension"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of language extensions.
+        :paramtype value: list[~kusto_management_client.models.LanguageExtension]
+        """
         super(LanguageExtensionsList, self).__init__(**kwargs)
         self.value = value
 
@@ -1997,8 +2766,8 @@ class LanguageExtensionsList(msrest.serialization.Model):
 class ListResourceSkusResult(msrest.serialization.Model):
     """List of available SKUs for a Kusto Cluster.
 
-    :param value: The collection of available SKUs for an existing resource.
-    :type value: list[~azure.mgmt.kusto.models.AzureResourceSku]
+    :ivar value: The collection of available SKUs for an existing resource.
+    :vartype value: list[~kusto_management_client.models.AzureResourceSku]
     """
 
     _attribute_map = {
@@ -2011,21 +2780,171 @@ class ListResourceSkusResult(msrest.serialization.Model):
         value: Optional[List["AzureResourceSku"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of available SKUs for an existing resource.
+        :paramtype value: list[~kusto_management_client.models.AzureResourceSku]
+        """
         super(ListResourceSkusResult, self).__init__(**kwargs)
         self.value = value
+
+
+class ManagedPrivateEndpoint(ProxyResource):
+    """Class representing a managed private endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~kusto_management_client.models.SystemData
+    :ivar private_link_resource_id: The ARM resource ID of the resource for which the managed
+     private endpoint is created.
+    :vartype private_link_resource_id: str
+    :ivar private_link_resource_region: The region of the resource to which the managed private
+     endpoint is created.
+    :vartype private_link_resource_region: str
+    :ivar group_id: The groupId in which the managed private endpoint is created.
+    :vartype group_id: str
+    :ivar request_message: The user request message.
+    :vartype request_message: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
+        'private_link_resource_region': {'key': 'properties.privateLinkResourceRegion', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_link_resource_id: Optional[str] = None,
+        private_link_resource_region: Optional[str] = None,
+        group_id: Optional[str] = None,
+        request_message: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword private_link_resource_id: The ARM resource ID of the resource for which the managed
+         private endpoint is created.
+        :paramtype private_link_resource_id: str
+        :keyword private_link_resource_region: The region of the resource to which the managed private
+         endpoint is created.
+        :paramtype private_link_resource_region: str
+        :keyword group_id: The groupId in which the managed private endpoint is created.
+        :paramtype group_id: str
+        :keyword request_message: The user request message.
+        :paramtype request_message: str
+        """
+        super(ManagedPrivateEndpoint, self).__init__(**kwargs)
+        self.system_data = None
+        self.private_link_resource_id = private_link_resource_id
+        self.private_link_resource_region = private_link_resource_region
+        self.group_id = group_id
+        self.request_message = request_message
+        self.provisioning_state = None
+
+
+class ManagedPrivateEndpointListResult(msrest.serialization.Model):
+    """The list managed private endpoints operation response.
+
+    :ivar value: The list of managed private endpoints.
+    :vartype value: list[~kusto_management_client.models.ManagedPrivateEndpoint]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ManagedPrivateEndpoint]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["ManagedPrivateEndpoint"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of managed private endpoints.
+        :paramtype value: list[~kusto_management_client.models.ManagedPrivateEndpoint]
+        """
+        super(ManagedPrivateEndpointListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class ManagedPrivateEndpointsCheckNameRequest(msrest.serialization.Model):
+    """The result returned from a managedPrivateEndpoints check name availability request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. Managed private endpoint resource name.
+    :vartype name: str
+    :ivar type: The type of resource, for instance
+     Microsoft.Kusto/clusters/managedPrivateEndpoints. Has constant value:
+     "Microsoft.Kusto/clusters/managedPrivateEndpoints".
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Kusto/clusters/managedPrivateEndpoints"
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        **kwargs
+    ):
+        """
+        :keyword name: Required. Managed private endpoint resource name.
+        :paramtype name: str
+        """
+        super(ManagedPrivateEndpointsCheckNameRequest, self).__init__(**kwargs)
+        self.name = name
 
 
 class Operation(msrest.serialization.Model):
     """A REST API operation.
 
-    :param name: This is of the format {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that describes the operation.
-    :type display: ~azure.mgmt.kusto.models.OperationDisplay
-    :param origin: The intended executor of the operation.
-    :type origin: str
-    :param properties: Any object.
-    :type properties: object
+    :ivar name: This is of the format {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that describes the operation.
+    :vartype display: ~kusto_management_client.models.OperationDisplay
+    :ivar origin: The intended executor of the operation.
+    :vartype origin: str
+    :ivar properties: Any object.
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -2041,9 +2960,19 @@ class Operation(msrest.serialization.Model):
         name: Optional[str] = None,
         display: Optional["OperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword name: This is of the format {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that describes the operation.
+        :paramtype display: ~kusto_management_client.models.OperationDisplay
+        :keyword origin: The intended executor of the operation.
+        :paramtype origin: str
+        :keyword properties: Any object.
+        :paramtype properties: any
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -2054,14 +2983,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that describes the operation.
 
-    :param provider: Friendly name of the resource provider.
-    :type provider: str
-    :param operation: For example: read, write, delete.
-    :type operation: str
-    :param resource: The resource type on which the operation is performed.
-    :type resource: str
-    :param description: The friendly name of the operation.
-    :type description: str
+    :ivar provider: Friendly name of the resource provider.
+    :vartype provider: str
+    :ivar operation: For example: read, write, delete.
+    :vartype operation: str
+    :ivar resource: The resource type on which the operation is performed.
+    :vartype resource: str
+    :ivar description: The friendly name of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -2080,6 +3009,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Friendly name of the resource provider.
+        :paramtype provider: str
+        :keyword operation: For example: read, write, delete.
+        :paramtype operation: str
+        :keyword resource: The resource type on which the operation is performed.
+        :paramtype resource: str
+        :keyword description: The friendly name of the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.operation = operation
@@ -2090,10 +3029,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list REST API operations. It contains a list of operations and a URL nextLink to get the next set of results.
 
-    :param value: The list of operations supported by the resource provider.
-    :type value: list[~azure.mgmt.kusto.models.Operation]
-    :param next_link: The URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: The list of operations supported by the resource provider.
+    :vartype value: list[~kusto_management_client.models.Operation]
+    :ivar next_link: The URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -2108,6 +3047,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of operations supported by the resource provider.
+        :paramtype value: list[~kusto_management_client.models.Operation]
+        :keyword next_link: The URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -2124,21 +3069,24 @@ class OperationResult(msrest.serialization.Model):
     :vartype name: str
     :ivar status: status of the Operation result. Possible values include: "Succeeded", "Canceled",
      "Failed", "Running".
-    :vartype status: str or ~azure.mgmt.kusto.models.Status
-    :param start_time: The operation start time.
-    :type start_time: ~datetime.datetime
-    :param end_time: The operation end time.
-    :type end_time: ~datetime.datetime
-    :param percent_complete: Percentage completed.
-    :type percent_complete: float
-    :param code: The code of the error.
-    :type code: str
-    :param message: The error message.
-    :type message: str
-    :param operation_kind: The kind of the operation.
-    :type operation_kind: str
-    :param operation_state: The state of the operation.
-    :type operation_state: str
+    :vartype status: str or ~kusto_management_client.models.Status
+    :ivar start_time: The operation start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The operation end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar percent_complete: Percentage completed.
+    :vartype percent_complete: float
+    :ivar code: The code of the error.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar operation_kind: The kind of the operation.
+    :vartype operation_kind: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
+    :ivar operation_state: The state of the operation.
+    :vartype operation_state: str
     """
 
     _validation = {
@@ -2146,6 +3094,7 @@ class OperationResult(msrest.serialization.Model):
         'name': {'readonly': True},
         'status': {'readonly': True},
         'percent_complete': {'maximum': 100, 'minimum': 0},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2158,6 +3107,7 @@ class OperationResult(msrest.serialization.Model):
         'code': {'key': 'error.code', 'type': 'str'},
         'message': {'key': 'error.message', 'type': 'str'},
         'operation_kind': {'key': 'properties.operationKind', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'operation_state': {'key': 'properties.operationState', 'type': 'str'},
     }
 
@@ -2173,6 +3123,22 @@ class OperationResult(msrest.serialization.Model):
         operation_state: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword start_time: The operation start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The operation end time.
+        :paramtype end_time: ~datetime.datetime
+        :keyword percent_complete: Percentage completed.
+        :paramtype percent_complete: float
+        :keyword code: The code of the error.
+        :paramtype code: str
+        :keyword message: The error message.
+        :paramtype message: str
+        :keyword operation_kind: The kind of the operation.
+        :paramtype operation_kind: str
+        :keyword operation_state: The state of the operation.
+        :paramtype operation_state: str
+        """
         super(OperationResult, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -2183,6 +3149,7 @@ class OperationResult(msrest.serialization.Model):
         self.code = code
         self.message = message
         self.operation_kind = operation_kind
+        self.provisioning_state = None
         self.operation_state = operation_state
 
 
@@ -2191,15 +3158,15 @@ class OptimizedAutoscale(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Required. The version of the template defined, for instance 1.
-    :type version: int
-    :param is_enabled: Required. A boolean value that indicate if the optimized autoscale feature
-     is enabled or not.
-    :type is_enabled: bool
-    :param minimum: Required. Minimum allowed instances count.
-    :type minimum: int
-    :param maximum: Required. Maximum allowed instances count.
-    :type maximum: int
+    :ivar version: Required. The version of the template defined, for instance 1.
+    :vartype version: int
+    :ivar is_enabled: Required. A boolean value that indicate if the optimized autoscale feature is
+     enabled or not.
+    :vartype is_enabled: bool
+    :ivar minimum: Required. Minimum allowed instances count.
+    :vartype minimum: int
+    :ivar maximum: Required. Maximum allowed instances count.
+    :vartype maximum: int
     """
 
     _validation = {
@@ -2225,11 +3192,368 @@ class OptimizedAutoscale(msrest.serialization.Model):
         maximum: int,
         **kwargs
     ):
+        """
+        :keyword version: Required. The version of the template defined, for instance 1.
+        :paramtype version: int
+        :keyword is_enabled: Required. A boolean value that indicate if the optimized autoscale feature
+         is enabled or not.
+        :paramtype is_enabled: bool
+        :keyword minimum: Required. Minimum allowed instances count.
+        :paramtype minimum: int
+        :keyword maximum: Required. Maximum allowed instances count.
+        :paramtype maximum: int
+        """
         super(OptimizedAutoscale, self).__init__(**kwargs)
         self.version = version
         self.is_enabled = is_enabled
         self.minimum = minimum
         self.maximum = maximum
+
+
+class OutboundNetworkDependenciesEndpoint(ProxyResource):
+    """Endpoints accessed for a common purpose that the Kusto Service Environment requires outbound network access to.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar category: The type of service accessed by the Kusto Service Environment, e.g., Azure
+     Storage, Azure SQL Database, and Azure Active Directory.
+    :vartype category: str
+    :ivar endpoints: The endpoints that the Kusto Service Environment reaches the service at.
+    :vartype endpoints: list[~kusto_management_client.models.EndpointDependency]
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'endpoints': {'key': 'properties.endpoints', 'type': '[EndpointDependency]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[str] = None,
+        endpoints: Optional[List["EndpointDependency"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: The type of service accessed by the Kusto Service Environment, e.g., Azure
+         Storage, Azure SQL Database, and Azure Active Directory.
+        :paramtype category: str
+        :keyword endpoints: The endpoints that the Kusto Service Environment reaches the service at.
+        :paramtype endpoints: list[~kusto_management_client.models.EndpointDependency]
+        """
+        super(OutboundNetworkDependenciesEndpoint, self).__init__(**kwargs)
+        self.etag = None
+        self.category = category
+        self.endpoints = endpoints
+        self.provisioning_state = None
+
+
+class OutboundNetworkDependenciesEndpointListResult(msrest.serialization.Model):
+    """Collection of Outbound Environment Endpoints.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. Collection of resources.
+    :vartype value: list[~kusto_management_client.models.OutboundNetworkDependenciesEndpoint]
+    :ivar next_link: Link to next page of resources.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[OutboundNetworkDependenciesEndpoint]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["OutboundNetworkDependenciesEndpoint"],
+        **kwargs
+    ):
+        """
+        :keyword value: Required. Collection of resources.
+        :paramtype value: list[~kusto_management_client.models.OutboundNetworkDependenciesEndpoint]
+        """
+        super(OutboundNetworkDependenciesEndpointListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class PrivateEndpointConnection(ProxyResource):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~kusto_management_client.models.SystemData
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~kusto_management_client.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection State of the Private Endpoint
+     Connection.
+    :vartype private_link_service_connection_state:
+     ~kusto_management_client.models.PrivateLinkServiceConnectionStateProperty
+    :ivar group_id: Group id of the private endpoint.
+    :vartype group_id: str
+    :ivar provisioning_state: Provisioning state of the private endpoint.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'private_endpoint': {'readonly': True},
+        'group_id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
+        **kwargs
+    ):
+        """
+        :keyword private_link_service_connection_state: Connection State of the Private Endpoint
+         Connection.
+        :paramtype private_link_service_connection_state:
+         ~kusto_management_client.models.PrivateLinkServiceConnectionStateProperty
+        """
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.system_data = None
+        self.private_endpoint = None
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.group_id = None
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """A list of private endpoint connections.
+
+    :ivar value: Array of private endpoint connections.
+    :vartype value: list[~kusto_management_client.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Array of private endpoint connections.
+        :paramtype value: list[~kusto_management_client.models.PrivateEndpointConnection]
+        """
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateEndpointProperty(msrest.serialization.Model):
+    """Private endpoint which the connection belongs to.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PrivateEndpointProperty, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~kusto_management_client.models.SystemData
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource required zone names.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.system_data = None
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = None
+
+
+class PrivateLinkResourceListResult(msrest.serialization.Model):
+    """A list of private link resources.
+
+    :ivar value: Array of private link resources.
+    :vartype value: list[~kusto_management_client.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateLinkResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~kusto_management_client.models.PrivateLinkResource]
+        """
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
+    """Connection State of the Private Endpoint Connection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The private link service connection status.
+    :vartype status: str
+    :ivar description: The private link service connection description.
+    :vartype description: str
+    :ivar actions_required: Any action that is required beyond basic workflow (approve/ reject/
+     disconnect).
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: The private link service connection status.
+        :paramtype status: str
+        :keyword description: The private link service connection description.
+        :paramtype description: str
+        """
+        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = None
 
 
 class ReadOnlyFollowingDatabase(Database):
@@ -2247,22 +3571,21 @@ class ReadOnlyFollowingDatabase(Database):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the database.Constant filled by server.  Possible values
-     include: "ReadWrite", "ReadOnlyFollowing".
-    :type kind: str or ~azure.mgmt.kusto.models.Kind
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the database.Constant filled by server. Possible values include:
+     "ReadWrite", "ReadOnlyFollowing".
+    :vartype kind: str or ~kusto_management_client.models.Kind
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
     :ivar soft_delete_period: The time the data should be kept before it stops being accessible to
      queries in TimeSpan.
     :vartype soft_delete_period: ~datetime.timedelta
-    :param hot_cache_period: The time the data should be kept in cache for fast queries in
-     TimeSpan.
-    :type hot_cache_period: ~datetime.timedelta
+    :ivar hot_cache_period: The time the data should be kept in cache for fast queries in TimeSpan.
+    :vartype hot_cache_period: ~datetime.timedelta
     :ivar statistics: The statistics of the database.
-    :vartype statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
+    :vartype statistics: ~kusto_management_client.models.DatabaseStatistics
     :ivar leader_cluster_resource_id: The name of the leader cluster.
     :vartype leader_cluster_resource_id: str
     :ivar attached_database_configuration_name: The name of the attached database configuration
@@ -2271,7 +3594,7 @@ class ReadOnlyFollowingDatabase(Database):
     :ivar principals_modification_kind: The principals modification kind of the database. Possible
      values include: "Union", "Replace", "None".
     :vartype principals_modification_kind: str or
-     ~azure.mgmt.kusto.models.PrincipalsModificationKind
+     ~kusto_management_client.models.PrincipalsModificationKind
     """
 
     _validation = {
@@ -2309,6 +3632,13 @@ class ReadOnlyFollowingDatabase(Database):
         hot_cache_period: Optional[datetime.timedelta] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword hot_cache_period: The time the data should be kept in cache for fast queries in
+         TimeSpan.
+        :paramtype hot_cache_period: ~datetime.timedelta
+        """
         super(ReadOnlyFollowingDatabase, self).__init__(location=location, **kwargs)
         self.kind = 'ReadOnlyFollowing'  # type: str
         self.provisioning_state = None
@@ -2335,22 +3665,21 @@ class ReadWriteDatabase(Database):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param kind: Required. Kind of the database.Constant filled by server.  Possible values
-     include: "ReadWrite", "ReadOnlyFollowing".
-    :type kind: str or ~azure.mgmt.kusto.models.Kind
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar kind: Required. Kind of the database.Constant filled by server. Possible values include:
+     "ReadWrite", "ReadOnlyFollowing".
+    :vartype kind: str or ~kusto_management_client.models.Kind
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
-    :param soft_delete_period: The time the data should be kept before it stops being accessible to
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
+    :ivar soft_delete_period: The time the data should be kept before it stops being accessible to
      queries in TimeSpan.
-    :type soft_delete_period: ~datetime.timedelta
-    :param hot_cache_period: The time the data should be kept in cache for fast queries in
-     TimeSpan.
-    :type hot_cache_period: ~datetime.timedelta
+    :vartype soft_delete_period: ~datetime.timedelta
+    :ivar hot_cache_period: The time the data should be kept in cache for fast queries in TimeSpan.
+    :vartype hot_cache_period: ~datetime.timedelta
     :ivar statistics: The statistics of the database.
-    :vartype statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
+    :vartype statistics: ~kusto_management_client.models.DatabaseStatistics
     :ivar is_followed: Indicates whether the database is followed.
     :vartype is_followed: bool
     """
@@ -2386,6 +3715,16 @@ class ReadWriteDatabase(Database):
         hot_cache_period: Optional[datetime.timedelta] = None,
         **kwargs
     ):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword soft_delete_period: The time the data should be kept before it stops being accessible
+         to queries in TimeSpan.
+        :paramtype soft_delete_period: ~datetime.timedelta
+        :keyword hot_cache_period: The time the data should be kept in cache for fast queries in
+         TimeSpan.
+        :paramtype hot_cache_period: ~datetime.timedelta
+        """
         super(ReadWriteDatabase, self).__init__(location=location, **kwargs)
         self.kind = 'ReadWrite'  # type: str
         self.provisioning_state = None
@@ -2409,18 +3748,24 @@ class Script(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.kusto.models.SystemData
-    :param script_url: The url to the KQL script blob file.
-    :type script_url: str
-    :param script_url_sas_token: The SaS token.
-    :type script_url_sas_token: str
-    :param force_update_tag: A unique string. If changed the script will be applied again.
-    :type force_update_tag: str
-    :param continue_on_errors: Flag that indicates whether to continue if one of the command fails.
-    :type continue_on_errors: bool
+    :vartype system_data: ~kusto_management_client.models.SystemData
+    :ivar script_url: The url to the KQL script blob file. Must not be used together with
+     scriptContent property.
+    :vartype script_url: str
+    :ivar script_url_sas_token: The SaS token that provide read access to the file which contain
+     the script. Must be provided when using scriptUrl property.
+    :vartype script_url_sas_token: str
+    :ivar script_content: The script content. This property should be used when the script is
+     provide inline and not through file in a SA. Must not be used together with scriptUrl and
+     scriptUrlSasToken properties.
+    :vartype script_content: str
+    :ivar force_update_tag: A unique string. If changed the script will be applied again.
+    :vartype force_update_tag: str
+    :ivar continue_on_errors: Flag that indicates whether to continue if one of the command fails.
+    :vartype continue_on_errors: bool
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :vartype provisioning_state: str or ~kusto_management_client.models.ProvisioningState
     """
 
     _validation = {
@@ -2438,6 +3783,7 @@ class Script(ProxyResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'script_url': {'key': 'properties.scriptUrl', 'type': 'str'},
         'script_url_sas_token': {'key': 'properties.scriptUrlSasToken', 'type': 'str'},
+        'script_content': {'key': 'properties.scriptContent', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'continue_on_errors': {'key': 'properties.continueOnErrors', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -2448,14 +3794,33 @@ class Script(ProxyResource):
         *,
         script_url: Optional[str] = None,
         script_url_sas_token: Optional[str] = None,
+        script_content: Optional[str] = None,
         force_update_tag: Optional[str] = None,
         continue_on_errors: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword script_url: The url to the KQL script blob file. Must not be used together with
+         scriptContent property.
+        :paramtype script_url: str
+        :keyword script_url_sas_token: The SaS token that provide read access to the file which contain
+         the script. Must be provided when using scriptUrl property.
+        :paramtype script_url_sas_token: str
+        :keyword script_content: The script content. This property should be used when the script is
+         provide inline and not through file in a SA. Must not be used together with scriptUrl and
+         scriptUrlSasToken properties.
+        :paramtype script_content: str
+        :keyword force_update_tag: A unique string. If changed the script will be applied again.
+        :paramtype force_update_tag: str
+        :keyword continue_on_errors: Flag that indicates whether to continue if one of the command
+         fails.
+        :paramtype continue_on_errors: bool
+        """
         super(Script, self).__init__(**kwargs)
         self.system_data = None
         self.script_url = script_url
         self.script_url_sas_token = script_url_sas_token
+        self.script_content = script_content
         self.force_update_tag = force_update_tag
         self.continue_on_errors = continue_on_errors
         self.provisioning_state = None
@@ -2468,9 +3833,9 @@ class ScriptCheckNameRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Script name.
-    :type name: str
-    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters/databases/scripts. Default
+    :ivar name: Required. Script name.
+    :vartype name: str
+    :ivar type: The type of resource, Microsoft.Kusto/clusters/databases/scripts. Has constant
      value: "Microsoft.Kusto/clusters/databases/scripts".
     :vartype type: str
     """
@@ -2493,6 +3858,10 @@ class ScriptCheckNameRequest(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Script name.
+        :paramtype name: str
+        """
         super(ScriptCheckNameRequest, self).__init__(**kwargs)
         self.name = name
 
@@ -2500,8 +3869,8 @@ class ScriptCheckNameRequest(msrest.serialization.Model):
 class ScriptListResult(msrest.serialization.Model):
     """The list Kusto database script operation response.
 
-    :param value: The list of Kusto scripts.
-    :type value: list[~azure.mgmt.kusto.models.Script]
+    :ivar value: The list of Kusto scripts.
+    :vartype value: list[~kusto_management_client.models.Script]
     """
 
     _attribute_map = {
@@ -2514,6 +3883,10 @@ class ScriptListResult(msrest.serialization.Model):
         value: Optional[List["Script"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of Kusto scripts.
+        :paramtype value: list[~kusto_management_client.models.Script]
+        """
         super(ScriptListResult, self).__init__(**kwargs)
         self.value = value
 
@@ -2532,9 +3905,9 @@ class SkuDescription(msrest.serialization.Model):
     :ivar locations: The set of locations that the SKU is available.
     :vartype locations: list[str]
     :ivar location_info: Locations and zones.
-    :vartype location_info: list[~azure.mgmt.kusto.models.SkuLocationInfoItem]
+    :vartype location_info: list[~kusto_management_client.models.SkuLocationInfoItem]
     :ivar restrictions: The restrictions because of which SKU cannot be used.
-    :vartype restrictions: list[object]
+    :vartype restrictions: list[any]
     """
 
     _validation = {
@@ -2559,6 +3932,8 @@ class SkuDescription(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuDescription, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
@@ -2574,7 +3949,7 @@ class SkuDescriptionList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: SKU descriptions.
-    :vartype value: list[~azure.mgmt.kusto.models.SkuDescription]
+    :vartype value: list[~kusto_management_client.models.SkuDescription]
     """
 
     _validation = {
@@ -2589,6 +3964,8 @@ class SkuDescriptionList(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SkuDescriptionList, self).__init__(**kwargs)
         self.value = None
 
@@ -2598,10 +3975,10 @@ class SkuLocationInfoItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The available location of the SKU.
-    :type location: str
-    :param zones: The available zone of the SKU.
-    :type zones: list[str]
+    :ivar location: Required. The available location of the SKU.
+    :vartype location: str
+    :ivar zones: The available zone of the SKU.
+    :vartype zones: list[str]
     """
 
     _validation = {
@@ -2620,6 +3997,12 @@ class SkuLocationInfoItem(msrest.serialization.Model):
         zones: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The available location of the SKU.
+        :paramtype location: str
+        :keyword zones: The available zone of the SKU.
+        :paramtype zones: list[str]
+        """
         super(SkuLocationInfoItem, self).__init__(**kwargs)
         self.location = location
         self.zones = zones
@@ -2628,20 +4011,20 @@ class SkuLocationInfoItem(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.kusto.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~kusto_management_client.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.kusto.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~kusto_management_client.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -2664,6 +4047,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~kusto_management_client.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~kusto_management_client.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -2676,20 +4075,20 @@ class SystemData(msrest.serialization.Model):
 class TableLevelSharingProperties(msrest.serialization.Model):
     """Tables that will be included and excluded in the follower database.
 
-    :param tables_to_include: List of tables to include in the follower database.
-    :type tables_to_include: list[str]
-    :param tables_to_exclude: List of tables to exclude from the follower database.
-    :type tables_to_exclude: list[str]
-    :param external_tables_to_include: List of external tables to include in the follower database.
-    :type external_tables_to_include: list[str]
-    :param external_tables_to_exclude: List of external tables exclude from the follower database.
-    :type external_tables_to_exclude: list[str]
-    :param materialized_views_to_include: List of materialized views to include in the follower
+    :ivar tables_to_include: List of tables to include in the follower database.
+    :vartype tables_to_include: list[str]
+    :ivar tables_to_exclude: List of tables to exclude from the follower database.
+    :vartype tables_to_exclude: list[str]
+    :ivar external_tables_to_include: List of external tables to include in the follower database.
+    :vartype external_tables_to_include: list[str]
+    :ivar external_tables_to_exclude: List of external tables exclude from the follower database.
+    :vartype external_tables_to_exclude: list[str]
+    :ivar materialized_views_to_include: List of materialized views to include in the follower
      database.
-    :type materialized_views_to_include: list[str]
-    :param materialized_views_to_exclude: List of materialized views exclude from the follower
+    :vartype materialized_views_to_include: list[str]
+    :ivar materialized_views_to_exclude: List of materialized views exclude from the follower
      database.
-    :type materialized_views_to_exclude: list[str]
+    :vartype materialized_views_to_exclude: list[str]
     """
 
     _attribute_map = {
@@ -2712,6 +4111,24 @@ class TableLevelSharingProperties(msrest.serialization.Model):
         materialized_views_to_exclude: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword tables_to_include: List of tables to include in the follower database.
+        :paramtype tables_to_include: list[str]
+        :keyword tables_to_exclude: List of tables to exclude from the follower database.
+        :paramtype tables_to_exclude: list[str]
+        :keyword external_tables_to_include: List of external tables to include in the follower
+         database.
+        :paramtype external_tables_to_include: list[str]
+        :keyword external_tables_to_exclude: List of external tables exclude from the follower
+         database.
+        :paramtype external_tables_to_exclude: list[str]
+        :keyword materialized_views_to_include: List of materialized views to include in the follower
+         database.
+        :paramtype materialized_views_to_include: list[str]
+        :keyword materialized_views_to_exclude: List of materialized views exclude from the follower
+         database.
+        :paramtype materialized_views_to_exclude: list[str]
+        """
         super(TableLevelSharingProperties, self).__init__(**kwargs)
         self.tables_to_include = tables_to_include
         self.tables_to_exclude = tables_to_exclude
@@ -2724,8 +4141,8 @@ class TableLevelSharingProperties(msrest.serialization.Model):
 class TrustedExternalTenant(msrest.serialization.Model):
     """Represents a tenant ID that is trusted by the cluster.
 
-    :param value: GUID representing an external tenant.
-    :type value: str
+    :ivar value: GUID representing an external tenant.
+    :vartype value: str
     """
 
     _attribute_map = {
@@ -2738,6 +4155,10 @@ class TrustedExternalTenant(msrest.serialization.Model):
         value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: GUID representing an external tenant.
+        :paramtype value: str
+        """
         super(TrustedExternalTenant, self).__init__(**kwargs)
         self.value = value
 
@@ -2747,13 +4168,13 @@ class VirtualNetworkConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param subnet_id: Required. The subnet resource id.
-    :type subnet_id: str
-    :param engine_public_ip_id: Required. Engine service's public IP address resource id.
-    :type engine_public_ip_id: str
-    :param data_management_public_ip_id: Required. Data management's service public IP address
+    :ivar subnet_id: Required. The subnet resource id.
+    :vartype subnet_id: str
+    :ivar engine_public_ip_id: Required. Engine service's public IP address resource id.
+    :vartype engine_public_ip_id: str
+    :ivar data_management_public_ip_id: Required. Data management's service public IP address
      resource id.
-    :type data_management_public_ip_id: str
+    :vartype data_management_public_ip_id: str
     """
 
     _validation = {
@@ -2776,6 +4197,15 @@ class VirtualNetworkConfiguration(msrest.serialization.Model):
         data_management_public_ip_id: str,
         **kwargs
     ):
+        """
+        :keyword subnet_id: Required. The subnet resource id.
+        :paramtype subnet_id: str
+        :keyword engine_public_ip_id: Required. Engine service's public IP address resource id.
+        :paramtype engine_public_ip_id: str
+        :keyword data_management_public_ip_id: Required. Data management's service public IP address
+         resource id.
+        :paramtype data_management_public_ip_id: str
+        """
         super(VirtualNetworkConfiguration, self).__init__(**kwargs)
         self.subnet_id = subnet_id
         self.engine_public_ip_id = engine_public_ip_id

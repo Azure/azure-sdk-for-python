@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.polling import AsyncLROPoller
     from .._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
 
-class PhoneNumbersClient(object):
+class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
 
     This client provides operations to interact with the phone numbers service
@@ -50,7 +50,7 @@ class PhoneNumbersClient(object):
         self._endpoint = endpoint
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
-            authentication_policy=get_authentication_policy(endpoint, credential),
+            authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 

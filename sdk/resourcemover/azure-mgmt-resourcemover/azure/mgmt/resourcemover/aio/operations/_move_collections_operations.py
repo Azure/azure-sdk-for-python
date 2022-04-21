@@ -48,7 +48,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.MoveCollection"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MoveCollection":
         """Creates or updates a move collection.
 
@@ -121,7 +121,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.UpdateMoveCollectionRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MoveCollection":
         """Updates a move collection.
 
@@ -189,7 +189,7 @@ class MoveCollectionsOperations:
         self,
         resource_group_name: str,
         move_collection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatus"]]
         error_map = {
@@ -238,7 +238,7 @@ class MoveCollectionsOperations:
         self,
         resource_group_name: str,
         move_collection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatus"]:
         """Deletes a move collection.
 
@@ -248,8 +248,8 @@ class MoveCollectionsOperations:
         :type move_collection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatus or the result of cls(response)
@@ -305,7 +305,7 @@ class MoveCollectionsOperations:
         self,
         resource_group_name: str,
         move_collection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MoveCollection":
         """Gets the move collection.
 
@@ -364,7 +364,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.PrepareRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatus"]]
         error_map = {
@@ -422,7 +422,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.PrepareRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatus"]:
         """Initiates prepare for the set of resources included in the request body. The prepare operation
         is on the moveResources that are in the moveState 'PreparePending' or 'PrepareFailed', on a
@@ -438,8 +438,8 @@ class MoveCollectionsOperations:
         :type body: ~resource_mover_service_api.models.PrepareRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatus or the result of cls(response)
@@ -497,7 +497,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.ResourceMoveRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatus"]]
         error_map = {
@@ -555,7 +555,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.ResourceMoveRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatus"]:
         """Moves the set of resources included in the request body. The move operation is triggered after
         the moveResources are in the moveState 'MovePending' or 'MoveFailed', on a successful
@@ -571,8 +571,8 @@ class MoveCollectionsOperations:
         :type body: ~resource_mover_service_api.models.ResourceMoveRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatus or the result of cls(response)
@@ -630,7 +630,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.CommitRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatus"]]
         error_map = {
@@ -688,7 +688,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.CommitRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatus"]:
         """Commits the set of resources included in the request body. The commit operation is triggered on
         the moveResources in the moveState 'CommitPending' or 'CommitFailed', on a successful
@@ -704,8 +704,8 @@ class MoveCollectionsOperations:
         :type body: ~resource_mover_service_api.models.CommitRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatus or the result of cls(response)
@@ -763,7 +763,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.DiscardRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatus"]]
         error_map = {
@@ -821,7 +821,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.DiscardRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatus"]:
         """Discards the set of resources included in the request body. The discard operation is triggered
         on the moveResources in the moveState 'CommitPending' or 'DiscardFailed', on a successful
@@ -837,8 +837,8 @@ class MoveCollectionsOperations:
         :type body: ~resource_mover_service_api.models.DiscardRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatus or the result of cls(response)
@@ -895,7 +895,7 @@ class MoveCollectionsOperations:
         self,
         resource_group_name: str,
         move_collection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatus"]]
         error_map = {
@@ -944,7 +944,7 @@ class MoveCollectionsOperations:
         self,
         resource_group_name: str,
         move_collection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatus"]:
         """Computes, resolves and validate the dependencies of the moveResources in the move collection.
 
@@ -954,8 +954,8 @@ class MoveCollectionsOperations:
         :type move_collection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatus or the result of cls(response)
@@ -1012,7 +1012,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.BulkRemoveRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatus"]]
         error_map = {
@@ -1070,7 +1070,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         body: Optional["_models.BulkRemoveRequest"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatus"]:
         """Removes the set of move resources included in the request body from move collection. The
         orchestration is done by service. To aid the user to prerequisite the operation the client can
@@ -1084,8 +1084,8 @@ class MoveCollectionsOperations:
         :type body: ~resource_mover_service_api.models.BulkRemoveRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatus or the result of cls(response)
@@ -1140,7 +1140,7 @@ class MoveCollectionsOperations:
 
     def list_move_collections_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MoveCollectionResultList"]:
         """Get all Move Collections.
 
@@ -1209,7 +1209,7 @@ class MoveCollectionsOperations:
     def list_move_collections_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MoveCollectionResultList"]:
         """Get all Move Collections.
 
@@ -1283,7 +1283,7 @@ class MoveCollectionsOperations:
         resource_group_name: str,
         move_collection_name: str,
         source_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RequiredForResourcesCollection":
         """List of the move resources for which an arm resource is required for.
 

@@ -5,33 +5,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import asyncio
+import pytest
+import unittest
 import uuid
 from datetime import datetime, timedelta
 
-import pytest
-
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
-
 from azure.core import MatchConditions
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
+
+from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
+from azure.storage.filedatalake import(
+    AccessPolicy,
+    AccountSasPermissions,
+    DirectorySasPermissions,
+    FileSystemSasPermissions,
+    PublicAccess,
+    ResourceTypes,
+    generate_account_sas,
+    generate_file_system_sas)
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.filedatalake import generate_account_sas, ResourceTypes, AccountSasPermissions
-from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, generate_file_system_sas
-from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
-from azure.storage.filedatalake import PublicAccess
-from asynctestcase import (
-    StorageTestCase)
+from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-from azure.storage.filedatalake import FileSystemSasPermissions
-from testcase import DataLakePreparer
-
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
-
-
 # ------------------------------------------------------------------------------
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -48,7 +48,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class FileSystemTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
-        url = self._get_account_url(account_name)
+        url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key,
                                          transport=AiohttpTestTransport(), logging_enable=True)
         self.config = self.dsc._config
@@ -75,8 +75,13 @@ class FileSystemTest(StorageTestCase):
     async def _create_file_system(self, file_system_prefix=TEST_FILE_SYSTEM_PREFIX):
         return await self.dsc.create_file_system(self._get_file_system_reference(prefix=file_system_prefix))
 
-    # --Helpers-----------------------------------------------------------------
+    async def _to_list(self, async_iterator):
+        result = []
+        async for item in async_iterator:
+            result.append(item)
+        return result
 
+    # --Test cases for file system ---------------------------------------------
     @DataLakePreparer()
     async def test_create_file_system_async(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -85,6 +90,19 @@ class FileSystemTest(StorageTestCase):
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
+        created = await file_system_client.create_file_system()
+
+        # Assert
+        self.assertTrue(created)
+
+    @DataLakePreparer()
+    async def test_create_file_system_async_extra_backslash(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client = self.dsc.get_file_system_client(file_system_name + '/')
         created = await file_system_client.create_file_system()
 
         # Assert
@@ -218,7 +236,7 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_undelete_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
-        # Needs soft delete enabled account.
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -235,52 +253,18 @@ class FileSystemTest(StorageTestCase):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
-        restored_version = 0
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name,
-                                                                         filesystem.deleted_version,
-                                                                         new_name="restored" +
-                                                                                  name + str(restored_version))
-                restored_version += 1
+                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version)
 
                 # to make sure the deleted filesystem is restored
                 props = await restored_fs_client.get_file_system_properties()
                 self.assertIsNotNone(props)
 
     @DataLakePreparer()
-    async def test_restore_to_existing_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
-        # Needs soft delete enabled account.
-        if not self.is_playback():
-            return
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # get an existing filesystem
-        existing_name = self._get_file_system_reference(prefix="existing")
-        name = self._get_file_system_reference(prefix="filesystem")
-        existing_filesystem_client = await self.dsc.create_file_system(existing_name)
-        filesystem_client = await self.dsc.create_file_system(name)
-
-        # Act
-        await filesystem_client.delete_file_system()
-        # to make sure the filesystem deleted
-        with self.assertRaises(ResourceNotFoundError):
-            await filesystem_client.get_file_system_properties()
-
-        filesystem_list = []
-        async for fs in self.dsc.list_file_systems(include_deleted=True):
-            filesystem_list.append(fs)
-        self.assertTrue(len(filesystem_list) >= 1)
-
-        for filesystem in filesystem_list:
-            # find the deleted filesystem and restore it
-            if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                with self.assertRaises(HttpResponseError):
-                    await self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
-                                                        new_name=existing_filesystem_client.file_system_name)
-
-    @DataLakePreparer()
     async def test_restore_file_system_with_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        # TODO: Needs soft delete enabled account in ARM template.
         pytest.skip(
             "We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -304,13 +288,10 @@ class FileSystemTest(StorageTestCase):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
-        restored_version = 0
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
-                                                                    new_name="restored" + name + str(restored_version))
-                restored_version += 1
+                restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.deleted_version)
 
                 # to make sure the deleted filesystem is restored
                 props = await restored_fs_client.get_file_system_properties()
@@ -463,6 +444,44 @@ class FileSystemTest(StorageTestCase):
         self.assertEqual(len(paths), 6)
 
     @DataLakePreparer()
+    async def test_list_paths_create_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = await self._create_file_system()
+        file_client = await file_system.create_file('file1')
+
+        expires_on = datetime.utcnow() + timedelta(days=1)
+        await file_client.set_file_expiry("Absolute", expires_on=expires_on)
+
+        # Act
+        paths = []
+        async for path in file_system.get_paths(upn=True):
+            paths.append(path)
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        props = await file_client.get_file_properties()
+        # Properties do not include microseconds so let them vary by 1 second
+        self.assertAlmostEqual(props.creation_time, paths[0].creation_time, delta=timedelta(seconds=1))
+        self.assertAlmostEqual(props.expiry_time, paths[0].expiry_time, delta=timedelta(seconds=1))
+
+    @DataLakePreparer()
+    async def test_list_paths_no_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = await self._create_file_system()
+        await file_system.create_file('file1')
+
+        # Act
+        paths = []
+        async for path in file_system.get_paths(upn=True):
+            paths.append(path)
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        self.assertIsNone(paths[0].expiry_time)
+
+    @DataLakePreparer()
     async def test_list_paths_which_are_all_files_async(
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -476,6 +495,22 @@ class FileSystemTest(StorageTestCase):
             paths.append(path)
 
         self.assertEqual(len(paths), 6)
+
+    @DataLakePreparer()
+    async def test_list_system_filesystems_async(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
+        # Act
+        filesystems = []
+        async for fs in dsc.list_file_systems(include_system=True):
+            filesystems.append(fs)
+        # Assert
+        found = False
+        for fs in filesystems:
+            if fs.name == "$logs":
+                found = True
+        self.assertEqual(found, True)
 
     @DataLakePreparer()
     async def test_list_paths_with_max_per_page_async(
@@ -576,6 +611,7 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_get_deleted_paths(self, datalake_storage_account_name, datalake_storage_account_key):
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -611,12 +647,12 @@ class FileSystemTest(StorageTestCase):
         self.assertEqual(dir3_paths[0].name, 'dir3/file_in_dir3')
         self.assertEqual(dir3_paths[1].name, 'dir3/subdir/file_in_subdir')
 
-        paths_generator1 = file_system.list_deleted_paths(max_results=2).by_page()
+        paths_generator1 = file_system.list_deleted_paths(results_per_page=2).by_page()
         paths1 = []
         async for path in await paths_generator1.__anext__():
             paths1.append(path)
 
-        paths_generator2 = file_system.list_deleted_paths(max_results=4) \
+        paths_generator2 = file_system.list_deleted_paths(results_per_page=4) \
             .by_page(continuation_token=paths_generator1.continuation_token)
         paths2 = []
         async for path in await paths_generator2.__anext__():
@@ -674,7 +710,7 @@ class FileSystemTest(StorageTestCase):
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
-        url = self._get_account_url(datalake_storage_account_name)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential, logging_enable=True)
         file_system_name = self._get_file_system_reference()
@@ -710,7 +746,7 @@ class FileSystemTest(StorageTestCase):
     async def test_list_paths_using_file_sys_delegation_sas_async(
             self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        url = self._get_account_url(datalake_storage_account_name)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
         token_credential = self.generate_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential)
         file_system_name = self._get_file_system_reference()
@@ -757,9 +793,10 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_undelete_dir_with_version_id(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = await self._create_file_system("fs")
         dir_path = 'dir10'
         dir_client = await file_system_client.create_directory(dir_path)
@@ -772,9 +809,10 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_undelete_file_with_version_id(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = await self._create_file_system("fs")
         file_path = 'dir10/fileŇ'
         dir_client = await file_system_client.create_file(file_path)
@@ -784,6 +822,101 @@ class FileSystemTest(StorageTestCase):
         restored_file_client = await file_system_client._undelete_path(file_path, resp['deletion_id'])
         resp = await restored_file_client.get_file_properties()
         self.assertIsNotNone(resp)
+
+    # TODO: Add tests back once feature is complete.
+    # @DataLakePreparer()
+    # async def test_delete_files_simple_no_raise(self, datalake_storage_account_name, datalake_storage_account_key):
+    #     # Arrange
+    #     self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+    #     filesystem = await self._create_file_system("fs2")
+    #     data = b'hello world'
+
+    #     try:
+    #         # create file1
+    #         await filesystem.get_file_client('file1').upload_data(data, overwrite=True)
+
+    #         # create file2, then pass file properties in batch delete later
+    #         file2 = filesystem.get_file_client('file2')
+    #         await file2.upload_data(data, overwrite=True)
+    #         file2_properties = await file2.get_file_properties()
+
+    #         # create file3 and batch delete it later only etag matches this file3 etag
+    #         file3 = filesystem.get_file_client('file3')
+    #         await file3.upload_data(data, overwrite=True)
+    #         file3_props = await file3.get_file_properties()
+    #         file3_etag = file3_props.etag
+
+    #         # create dir1
+    #         # empty directory can be deleted using delete_files
+    #         await filesystem.get_directory_client('dir1').create_directory(),
+
+    #         # create dir2, then pass directory properties in batch delete later
+    #         dir2 = filesystem.get_directory_client('dir2')
+    #         await dir2.create_directory()
+    #         dir2_properties = await dir2.get_directory_properties()
+
+    #     except:
+    #         pass
+
+    #     # Act
+    #     response = await self._to_list(await filesystem.delete_files(
+    #         'file1',
+    #         file2_properties,
+    #         {'name': 'file3', 'etag': file3_etag},
+    #         'dir1',
+    #         dir2_properties,
+    #         raise_on_any_failure=False
+    #     ))
+    #     assert len(response) == 5
+    #     assert response[0].status_code == 202
+    #     assert response[1].status_code == 202
+    #     assert response[2].status_code == 202
+    #     assert response[3].status_code == 202
+    #     assert response[4].status_code == 202
+
+    # @DataLakePreparer()
+    # async def test_delete_files_with_failed_subrequest(self, datalake_storage_account_name, datalake_storage_account_key):
+    #     # Arrange
+    #     self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+    #     filesystem = await self._create_file_system("fs1")
+    #     data = b'hello world'
+
+    #     try:
+    #         # create file1
+    #         await filesystem.get_file_client('file1').upload_data(data, overwrite=True)
+
+    #         # create file2
+    #         file2 = filesystem.get_file_client('file2')
+    #         await file2.upload_data(data, overwrite=True)
+    #         file2_properties = await file2.get_file_properties()
+
+    #         # create file3
+    #         file3 = filesystem.get_file_client('file3')
+    #         await file3.upload_data(data, overwrite=True)
+    #         file3_props = await file3.get_file_properties()
+    #         file3_etag = file3_props.etag
+
+    #         # create dir1
+    #         dir1 = filesystem.get_directory_client('dir1')
+    #         await dir1.create_file("file4")
+    #     except:
+    #         pass
+
+    #     # Act
+    #     response = await self._to_list(await filesystem.delete_files(
+    #         'file1',
+    #         file2_properties,
+    #         {'name': 'file3', 'etag': file3_etag},
+    #         'dir1',  # dir1 is not empty
+    #         'dir8',  # dir 8 doesn't exist
+    #         raise_on_any_failure=False
+    #     ))
+    #     assert len(response) == 5
+    #     assert response[0].status_code == 202
+    #     assert response[1].status_code == 202
+    #     assert response[2].status_code == 202
+    #     assert response[3].status_code == 409
+    #     assert response[4].status_code == 404
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

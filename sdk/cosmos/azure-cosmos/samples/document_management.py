@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
@@ -160,19 +165,9 @@ def run_sample():
     client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )
     try:
         # setup database for this sample
-        try:
-            db = client.create_database(id=DATABASE_ID)
-
-        except exceptions.CosmosResourceExistsError:
-            pass
-
+        db = client.create_database_if_not_exists(id=DATABASE_ID)
         # setup container for this sample
-        try:
-            container = db.create_container(id=CONTAINER_ID, partition_key=PartitionKey(path='/id', kind='Hash'))
-            print('Container with id \'{0}\' created'.format(CONTAINER_ID))
-
-        except exceptions.CosmosResourceExistsError:
-            print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
+        container = db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=PartitionKey(path='/id', kind='Hash'))
 
         create_items(container)
         read_item(container, 'SalesOrder1')

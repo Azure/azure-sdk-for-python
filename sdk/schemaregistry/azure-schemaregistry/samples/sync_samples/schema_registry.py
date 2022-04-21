@@ -23,64 +23,89 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
 """
-Example to show basic usage of schema registry:
-    - register a schema
-    - get schema by id
-    - get schema id
+FILE: schema_registry.py
+DESCRIPTION:
+    This sample demonstrates authenticating the SchemaRegistryClient and basic usage, including:
+        - registering a schema
+        - getting a schema by its ID
+        - getting schema id.
+USAGE:
+    python schema_registry.py
+    Set the environment variables with your own values before running the sample:
+    1) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+     which should follow the format: `<your-namespace>.servicebus.windows.net`
+    2) SCHEMAREGISTRY_GROUP - The name of the schema group.
+
+This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+For more information on DefaultAzureCredential, see
+ https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
-
-
 import os
+import json
 
-from azure.identity import ClientSecretCredential
-from azure.schemaregistry import SchemaRegistryClient, SerializationType
-
-TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
-
-SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
-SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
-SCHEMA_NAME = 'your-schema-name'
-SERIALIZATION_TYPE = SerializationType.AVRO
-SCHEMA_STRING = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+from azure.identity import DefaultAzureCredential
+from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
 
 
-def register_schema(client, schema_group, schema_name, serialization_type, schema_string):
+SCHEMAREGISTRY_FQN = os.environ["SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE"]
+GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
+NAME = "your-schema-name"
+FORMAT = SchemaFormat.AVRO
+
+SCHEMA_JSON = {
+    "namespace": "example.avro",
+    "type": "record",
+    "name": "User",
+    "fields": [
+        {"name": "name", "type": "string"},
+        {"name": "favorite_number", "type": ["int", "null"]},
+        {"name": "favorite_color", "type": ["string", "null"]},
+    ],
+}
+DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+
+
+def register_schema(client, group_name, name, definition, format):
     print("Registering schema...")
-    schema_properties = client.register_schema(schema_group, schema_name, serialization_type, schema_string)
-    print("Schema registered, returned schema id is {}".format(schema_properties.schema_id))
+    schema_properties = client.register_schema(
+        group_name, name, definition, format
+    )
+    print("Schema registered, returned schema id is {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
-    return schema_properties.schema_id
+    return schema_properties.id
 
 
 def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
     schema = client.get_schema(schema_id)
-    print("The schema string of schema id: {} string is {}".format(schema_id, schema.schema_content))
-    print("Schema properties are {}".format(schema_id))
-    return schema.schema_content
-
-
-def get_schema_id(client, schema_group, schema_name, serialization_type, schema_string):
-    print("Getting schema id...")
-    schema_properties = client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
-    print("The schema id is: {}".format(schema_properties.schema_id))
-    print("Schema properties are {}".format(schema_properties))
-    return schema_properties.schema_id
-
-
-if __name__ == '__main__':
-    token_credential = ClientSecretCredential(
-        tenant_id=TENANT_ID,
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET
+    print(
+        "The schema string of schema id: {} string is {}".format(schema_id, schema.definition)
     )
-    schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
-    with schema_registry_client:
-        schema_id = register_schema(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
-        schema_str = get_schema_by_id(schema_registry_client, schema_id=schema_id)
-        schema_id = get_schema_id(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
+    print("Schema properties are {}".format(schema_id))
+    return schema.definition
 
+
+def get_schema_id(client, group_name, name, definition, format):
+    print("Getting schema id...")
+    schema_properties = client.get_schema_properties(
+        group_name, name, definition, format
+    )
+    print("The schema id is: {}".format(schema_properties.id))
+    print("Schema properties are {}".format(schema_properties))
+    return schema_properties.id
+
+
+if __name__ == "__main__":
+    token_credential = DefaultAzureCredential()
+    schema_registry_client = SchemaRegistryClient(
+        fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
+    )
+    with schema_registry_client:
+        schema_id = register_schema(
+            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
+        )
+        schema_str = get_schema_by_id(schema_registry_client, schema_id)
+        schema_id = get_schema_id(
+            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
+        )

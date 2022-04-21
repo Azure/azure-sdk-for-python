@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -8,9 +7,9 @@
 FILE: sample_translation_with_azure_blob.py
 
 DESCRIPTION:
-    This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to create a translation
-    job. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
-    containers. Once the job is completed, use the storage library to download your documents locally.
+    This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to translate
+    documents. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
+    containers. Once the operation is completed, use the storage library to download your documents locally.
 
 PREREQUISITE:
     This sample requires you install azure-storage-blob client library:
@@ -30,22 +29,18 @@ USAGE:
     6) AZURE_STORAGE_SOURCE_CONTAINER_NAME - the name of your source container
     7) AZURE_STORAGE_TARGET_CONTAINER_NAME - the name of your target container
     8) AZURE_DOCUMENT_NAME - the name and file extension of your document in this directory
-        e.g. "mydocument.txt"
+        e.g. "document.txt"
 """
 
 import os
 import datetime
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
-from azure.ai.translation.document import (
-    DocumentTranslationClient,
-    DocumentTranslationInput,
-    TranslationTarget
-)
+from azure.ai.translation.document import DocumentTranslationClient
 from azure.storage.blob import BlobServiceClient, BlobClient, generate_container_sas
 
 
-class SampleTranslationWithAzureBlob(object):
+class SampleTranslationWithAzureBlob:
 
     def __init__(self):
         self.endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
@@ -86,40 +81,26 @@ class SampleTranslationWithAzureBlob(object):
                 name=self.document_name,
                 data=b"This is an example translation with the document translation client library"
             )
-        print("Uploaded document {} to storage container {}".format(self.document_name, source_container.container_name))
+        print(f"Uploaded document {self.document_name} to storage container {source_container.container_name}")
 
         source_container_sas_url = self.generate_sas_url(source_container, permissions="rl")
         target_container_sas_url = self.generate_sas_url(target_container, permissions="wl")
 
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code="fr"
-                    )
-                ]
-            )
-        ]
+        poller = translation_client.begin_translation(source_container_sas_url, target_container_sas_url, "fr")
+        print(f"Created translation operation with ID: {poller.id}")
+        print("Waiting until translation completes...")
 
-        job = translation_client.create_translation_job(translation_inputs)
-        print("Created translation job with ID: {}".format(job.id))
-        print("Waiting until job completes...")
-
-        job_result = translation_client.wait_until_done(job.id)
-        print("Job status: {}".format(job_result.status))
-
-        doc_results = translation_client.list_all_document_statuses(job_result.id)
+        result = poller.result()
+        print(f"Status: {poller.status()}")
 
         print("\nDocument results:")
-        for document in doc_results:
-            print("Document ID: {}".format(document.id))
-            print("Document status: {}".format(document.status))
+        for document in result:
+            print(f"Document ID: {document.id}")
+            print(f"Document status: {document.status}")
             if document.status == "Succeeded":
-                print("Source document location: {}".format(document.source_document_url))
-                print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translate_to))
+                print(f"Source document location: {document.source_document_url}")
+                print(f"Translated document location: {document.translated_document_url}")
+                print(f"Translated to language: {document.translated_to}\n")
 
                 blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)
                 with open("translated_"+self.document_name, "wb") as my_blob:
@@ -129,14 +110,14 @@ class SampleTranslationWithAzureBlob(object):
                 print("Downloaded {} locally".format("translated_"+self.document_name))
             else:
                 print("\nThere was a problem translating your document.")
-                print("Document Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+                print(f"Document Error Code: {document.error.code}, Message: {document.error.message}\n")
 
     def create_container(self, blob_service_client, container_name):
         try:
             container_client = blob_service_client.create_container(container_name)
-            print("Creating container: {}".format(container_name))
+            print(f"Creating container: {container_name}")
         except ResourceExistsError:
-            print("The container with name {} already exists".format(container_name))
+            print(f"The container with name {container_name} already exists")
             container_client = blob_service_client.get_container_client(container=container_name)
         return container_client
 
@@ -150,7 +131,7 @@ class SampleTranslationWithAzureBlob(object):
         )
 
         container_sas_url = self.storage_endpoint + container.container_name + "?" + sas_token
-        print("Generating {} SAS URL".format(container.container_name))
+        print(f"Generating {container.container_name} SAS URL")
         return container_sas_url
 
 

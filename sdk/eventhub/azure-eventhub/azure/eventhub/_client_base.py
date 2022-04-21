@@ -20,8 +20,13 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
-from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+)
 from azure.core.utils import parse_connection_string as core_parse_connection_string
+from azure.core.pipeline.policies import RetryMode
 
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
@@ -34,15 +39,12 @@ from ._constants import (
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
-    MGMT_STATUS_DESC
+    MGMT_STATUS_DESC,
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
-_Address = collections.namedtuple("Address", "hostname path")
-_AccessToken = collections.namedtuple("AccessToken", "token expires_on")
+_Address = collections.namedtuple("_Address", "hostname path")
 
 
 def _parse_conn_str(conn_str, **kwargs):
@@ -53,9 +55,11 @@ def _parse_conn_str(conn_str, **kwargs):
     entity_path = None  # type: Optional[str]
     shared_access_signature = None  # type: Optional[str]
     shared_access_signature_expiry = None
-    eventhub_name = kwargs.pop("eventhub_name", None) # type: Optional[str]
-    check_case = kwargs.pop("check_case", False) # type: bool
-    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=check_case)
+    eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
+    check_case = kwargs.pop("check_case", False)  # type: bool
+    conn_settings = core_parse_connection_string(
+        conn_str, case_sensitive_keys=check_case
+    )
     if check_case:
         shared_access_key = conn_settings.get("SharedAccessKey")
         shared_access_key_name = conn_settings.get("SharedAccessKeyName")
@@ -80,7 +84,7 @@ def _parse_conn_str(conn_str, **kwargs):
         try:
             # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
             shared_access_signature_expiry = int(
-                shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
+                shared_access_signature.split("se=")[1].split("&")[0]  # type: ignore
             )
         except (
             IndexError,
@@ -118,17 +122,19 @@ def _parse_conn_str(conn_str, **kwargs):
             "At least one of the SharedAccessKey or SharedAccessSignature must be present."
         )
 
-    return (host,
-            str(shared_access_key_name) if shared_access_key_name else None,
-            str(shared_access_key) if shared_access_key else None,
-            entity,
-            str(shared_access_signature) if shared_access_signature else None,
-            shared_access_signature_expiry)
+    return (
+        host,
+        str(shared_access_key_name) if shared_access_key_name else None,
+        str(shared_access_key) if shared_access_key else None,
+        entity,
+        str(shared_access_signature) if shared_access_signature else None,
+        shared_access_signature_expiry,
+    )
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> _AccessToken
-    """Create a shared access signiture token as a string literal.
+    # type: (str, str, str, Optional[timedelta]) -> AccessToken
+    """Create a shared access signature token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
     """
@@ -141,7 +147,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     encoded_key = key.encode("utf-8")
 
     token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
-    return _AccessToken(token=token, expires_on=abs_expiry)
+    return AccessToken(token=token, expires_on=abs_expiry)
 
 
 def _build_uri(address, entity):
@@ -153,6 +159,14 @@ def _build_uri(address, entity):
         raise ValueError("No EventHub specified")
     address += "/" + str(entity)
     return address
+
+
+def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
+    if retry_mode == RetryMode.Fixed:
+        backoff_value = backoff_factor
+    else:
+        backoff_value = backoff_factor * (2 ** retried_times)
+    return min(backoff_max, backoff_value)
 
 
 class EventHubSharedKeyCredential(object):
@@ -169,10 +183,11 @@ class EventHubSharedKeyCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> _AccessToken
+        # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
+
 
 class EventhubAzureNamedKeyTokenCredential(object):
     """The named key credential used for authentication.
@@ -187,7 +202,7 @@ class EventhubAzureNamedKeyTokenCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> _AccessToken
+        # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
@@ -200,6 +215,7 @@ class EventHubSASTokenCredential(object):
     :param str token: The shared access token string
     :param int expiry: The epoch timestamp
     """
+
     def __init__(self, token, expiry):
         # type: (str, int) -> None
         """
@@ -217,6 +233,7 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+
 class EventhubAzureSasTokenCredential(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
@@ -224,6 +241,7 @@ class EventhubAzureSasTokenCredential(object):
     :param azure_sas_credential: The credential to be used for authentication.
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
+
     def __init__(self, azure_sas_credential):
         # type: (AzureSasCredential) -> None
         """The shared access token credential used for authentication
@@ -244,9 +262,19 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+    CredentialTypes = Union[
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+        EventHubSharedKeyCredential,
+        TokenCredential
+    ]
+
+
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
+        # type: (str, str, CredentialTypes, Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -256,9 +284,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = EventhubAzureNamedKeyTokenCredential(credential) # type: ignore
+            self._credential = EventhubAzureNamedKeyTokenCredential(credential)  # type: ignore
         else:
-            self._credential = credential #type: ignore
+            self._credential = credential  # type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(
@@ -273,7 +301,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, **kwargs)
+        host, policy, key, entity, token, token_expiry = _parse_conn_str(
+            conn_str, **kwargs
+        )
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         if token and token_expiry:
@@ -290,7 +320,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         """
         try:
             # ignore mypy's warning because token_type is Optional
-            token_type = self._credential.token_type    # type: ignore
+            token_type = self._credential.token_type  # type: ignore
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
@@ -304,7 +334,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 transport_type=self._config.transport_type,
                 custom_endpoint_hostname=self._config.custom_endpoint_hostname,
                 port=self._config.connection_port,
-                verify=self._config.connection_verify
+                verify=self._config.connection_verify,
             )
             auth.update_token()
             return auth
@@ -318,7 +348,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             transport_type=self._config.transport_type,
             custom_endpoint_hostname=self._config.custom_endpoint_hostname,
             port=self._config.connection_port,
-            verify=self._config.connection_verify
+            verify=self._config.connection_verify,
+            refresh_window=300,
         )
 
     def _close_connection(self):
@@ -330,7 +361,12 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     ):
         # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
-        backoff = self._config.backoff_factor * 2 ** retried_times
+        backoff = _get_backoff_time(
+            self._config.retry_mode,
+            self._config.backoff_factor,
+            self._config.backoff_max,
+            retried_times,
+        )
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
         ):  # pylint:disable=no-else-return
@@ -350,6 +386,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _management_request(self, mgmt_msg, op_type):
         # type: (Message, bytes) -> Any
+        # pylint:disable=assignment-from-none
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
@@ -358,9 +395,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
             )
             try:
-                conn = self._conn_manager.get_connection(
+                conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
                     self._address.hostname, mgmt_auth
-                )  # pylint:disable=assignment-from-none
+                )
                 mgmt_client.open(connection=conn)
                 mgmt_msg.application_properties["security_token"] = mgmt_auth.token
                 response = mgmt_client.mgmt_request(
@@ -371,29 +408,28 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     description_fields=MGMT_STATUS_DESC,
                 )
                 status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(MGMT_STATUS_DESC)  # type: Optional[Union[str, bytes]]
+                description = response.application_properties.get(
+                    MGMT_STATUS_DESC
+                )  # type: Optional[Union[str, bytes]]
                 if description and isinstance(description, six.binary_type):
-                    description = description.decode('utf-8')
+                    description = description.decode("utf-8")
                 if status_code < 400:
                     return response
                 if status_code in [401]:
                     raise errors.AuthenticationException(
                         "Management authentication failed. Status code: {}, Description: {!r}".format(
-                            status_code,
-                            description
+                            status_code, description
                         )
                     )
                 if status_code in [404]:
                     raise ConnectError(
                         "Management connection failed. Status code: {}, Description: {!r}".format(
-                            status_code,
-                            description
+                            status_code, description
                         )
                     )
                 raise errors.AMQPConnectionError(
                     "Management request error. Status code: {}, Description: {!r}".format(
-                        status_code,
-                        description
+                        status_code, description
                     )
                 )
             except Exception as exception:  # pylint: disable=broad-except
@@ -489,9 +525,7 @@ class ConsumerProducerMixin(object):
             )
 
     def _open(self):
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
-
-        """
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:

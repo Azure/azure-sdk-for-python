@@ -245,7 +245,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -255,7 +255,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
@@ -541,7 +541,7 @@ class Operation(msrest.serialization.Model):
      "user", "system".
     :vartype origin: str or ~azure.mgmt.rdbms.postgresql.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, str]
+    :vartype properties: dict[str, any]
     """
 
     _validation = {
@@ -555,7 +555,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{object}'},
     }
 
     def __init__(
@@ -1316,8 +1316,9 @@ class ServerAdministratorResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar administrator_type: The type of administrator. Default value: "ActiveDirectory".
-    :vartype administrator_type: str
+    :param administrator_type: The type of administrator. The only acceptable values to pass in are
+     None and "ActiveDirectory". The default value is None.
+    :type administrator_type: str
     :param login: The server administrator login account name.
     :type login: str
     :param sid: The server administrator Sid (Secure ID).
@@ -1330,7 +1331,6 @@ class ServerAdministratorResource(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'administrator_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -1343,17 +1343,17 @@ class ServerAdministratorResource(ProxyResource):
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
     }
 
-    administrator_type = "ActiveDirectory"
-
     def __init__(
         self,
         *,
+        administrator_type: Optional[str] = None,
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs
     ):
         super(ServerAdministratorResource, self).__init__(**kwargs)
+        self.administrator_type = administrator_type
         self.login = login
         self.sid = sid
         self.tenant_id = tenant_id

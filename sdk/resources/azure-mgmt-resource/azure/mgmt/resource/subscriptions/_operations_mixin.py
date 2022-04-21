@@ -10,16 +10,10 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
-import warnings
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.mgmt.core.exceptions import ARMErrorFormat
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Optional
 
 
 class SubscriptionClientOperationsMixin(object):
@@ -29,17 +23,19 @@ class SubscriptionClientOperationsMixin(object):
         resource_name_definition=None,  # type: Optional["_models.ResourceName"]
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CheckResourceNameResult"
         """Checks resource name validity.
 
         A resource name is valid if it is not a reserved word, does not contains a reserved word and
         does not start with a reserved word.
 
         :param resource_name_definition: Resource object with values for resource name and resource
-         type.
-        :type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ResourceName
+         type. Default value is None.
+        :type resource_name_definition:
+         ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckResourceNameResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.CheckResourceNameResult
+        :rtype: ~azure.mgmt.resource.subscriptions.v2021_01_01.models.CheckResourceNameResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('check_resource_name')
@@ -51,6 +47,8 @@ class SubscriptionClientOperationsMixin(object):
             from .v2019_06_01.operations import SubscriptionClientOperationsMixin as OperationClass
         elif api_version == '2019-11-01':
             from .v2019_11_01.operations import SubscriptionClientOperationsMixin as OperationClass
+        elif api_version == '2021-01-01':
+            from .v2021_01_01.operations import SubscriptionClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'check_resource_name'".format(api_version))
         mixin_instance = OperationClass()

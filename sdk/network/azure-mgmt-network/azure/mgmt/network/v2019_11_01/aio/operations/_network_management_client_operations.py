@@ -28,7 +28,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         bastion_host_name: str,
         bsl_request: "_models.BastionShareableLinkListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.BastionShareableLinkListResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BastionShareableLinkListResult"]]
         error_map = {
@@ -83,7 +83,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         bastion_host_name: str,
         bsl_request: "_models.BastionShareableLinkListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLinkListResult"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
@@ -95,8 +95,8 @@ class NetworkManagementClientOperationsMixin:
         :type bsl_request: ~azure.mgmt.network.v2019_11_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns an iterator like instance of either BastionShareableLinkListResult or the result of cls(response)
@@ -216,7 +216,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         bastion_host_name: str,
         bsl_request: "_models.BastionShareableLinkListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -266,7 +266,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         bastion_host_name: str,
         bsl_request: "_models.BastionShareableLinkListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the Bastion Shareable Links for all the VMs specified in the request.
 
@@ -278,8 +278,8 @@ class NetworkManagementClientOperationsMixin:
         :type bsl_request: ~azure.mgmt.network.v2019_11_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -334,7 +334,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         bastion_host_name: str,
         bsl_request: "_models.BastionShareableLinkListRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BastionShareableLinkListResult"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
@@ -418,7 +418,7 @@ class NetworkManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.BastionActiveSessionListResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BastionActiveSessionListResult"]]
         error_map = {
@@ -467,7 +467,7 @@ class NetworkManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         bastion_host_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionActiveSessionListResult"]]:
         """Returns the list of currently active sessions on the Bastion.
 
@@ -477,8 +477,8 @@ class NetworkManagementClientOperationsMixin:
         :type bastion_host_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns an iterator like instance of either BastionActiveSessionListResult or the result of cls(response)
@@ -589,7 +589,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         bastion_host_name: str,
         session_ids: "_models.SessionIds",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BastionSessionDeleteResult"]:
         """Returns the list of currently active sessions on the Bastion.
 
@@ -673,7 +673,7 @@ class NetworkManagementClientOperationsMixin:
         self,
         location: str,
         domain_name_label: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DnsNameAvailabilityResult":
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
@@ -732,7 +732,7 @@ class NetworkManagementClientOperationsMixin:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualWanSecurityProviders":
         """Gives the supported security providers for the virtual wan.
 
@@ -792,7 +792,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         virtual_wan_name: str,
         vpn_client_params: "_models.VirtualWanVpnProfileParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VpnProfileResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VpnProfileResponse"]]
         error_map = {
@@ -847,7 +847,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         virtual_wan_name: str,
         vpn_client_params: "_models.VirtualWanVpnProfileParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VpnProfileResponse"]:
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
         VpnServerConfiguration combination in the specified resource group.
@@ -862,8 +862,8 @@ class NetworkManagementClientOperationsMixin:
         :type vpn_client_params: ~azure.mgmt.network.v2019_11_01.models.VirtualWanVpnProfileParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnProfileResponse or the result of cls(response)

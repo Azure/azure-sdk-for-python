@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -12,7 +17,7 @@ import config
 HOST = config.settings['host']
 MASTER_KEY = config.settings['master_key']
 DATABASE_ID = config.settings['database_id']
-CONTAINER_ID = "index-samples"
+CONTAINER_ID = config.settings['container_id']
 PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 
 # A typical container has the following properties within it's indexingPolicy property

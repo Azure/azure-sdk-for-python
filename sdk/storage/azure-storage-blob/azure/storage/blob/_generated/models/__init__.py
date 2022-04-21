@@ -16,6 +16,7 @@ try:
     from ._models_py3 import BlobHierarchyListSegment
     from ._models_py3 import BlobItemInternal
     from ._models_py3 import BlobMetadata
+    from ._models_py3 import BlobName
     from ._models_py3 import BlobPrefix
     from ._models_py3 import BlobPropertiesInternal
     from ._models_py3 import BlobTag
@@ -30,10 +31,7 @@ try:
     from ._models_py3 import CorsRule
     from ._models_py3 import CpkInfo
     from ._models_py3 import CpkScopeInfo
-    from ._models_py3 import DataLakeStorageError
-    from ._models_py3 import DataLakeStorageErrorError
     from ._models_py3 import DelimitedTextConfiguration
-    from ._models_py3 import DirectoryHttpHeaders
     from ._models_py3 import FilterBlobItem
     from ._models_py3 import FilterBlobSegment
     from ._models_py3 import GeoReplication
@@ -70,6 +68,7 @@ except (SyntaxError, ImportError):
     from ._models import BlobHierarchyListSegment  # type: ignore
     from ._models import BlobItemInternal  # type: ignore
     from ._models import BlobMetadata  # type: ignore
+    from ._models import BlobName  # type: ignore
     from ._models import BlobPrefix  # type: ignore
     from ._models import BlobPropertiesInternal  # type: ignore
     from ._models import BlobTag  # type: ignore
@@ -84,10 +83,7 @@ except (SyntaxError, ImportError):
     from ._models import CorsRule  # type: ignore
     from ._models import CpkInfo  # type: ignore
     from ._models import CpkScopeInfo  # type: ignore
-    from ._models import DataLakeStorageError  # type: ignore
-    from ._models import DataLakeStorageErrorError  # type: ignore
     from ._models import DelimitedTextConfiguration  # type: ignore
-    from ._models import DirectoryHttpHeaders  # type: ignore
     from ._models import FilterBlobItem  # type: ignore
     from ._models import FilterBlobSegment  # type: ignore
     from ._models import GeoReplication  # type: ignore
@@ -121,6 +117,7 @@ from ._azure_blob_storage_enums import (
     AccessTierRequired,
     AccountKind,
     ArchiveStatus,
+    BlobCopySourceTags,
     BlobExpiryOptions,
     BlobImmutabilityPolicyMode,
     BlobType,
@@ -134,7 +131,6 @@ from ._azure_blob_storage_enums import (
     LeaseStatusType,
     ListBlobsIncludeItem,
     ListContainersIncludeType,
-    PathRenameMode,
     PremiumPageBlobAccessTier,
     PublicAccessType,
     QueryFormatType,
@@ -154,6 +150,7 @@ __all__ = [
     'BlobHierarchyListSegment',
     'BlobItemInternal',
     'BlobMetadata',
+    'BlobName',
     'BlobPrefix',
     'BlobPropertiesInternal',
     'BlobTag',
@@ -168,10 +165,7 @@ __all__ = [
     'CorsRule',
     'CpkInfo',
     'CpkScopeInfo',
-    'DataLakeStorageError',
-    'DataLakeStorageErrorError',
     'DelimitedTextConfiguration',
-    'DirectoryHttpHeaders',
     'FilterBlobItem',
     'FilterBlobSegment',
     'GeoReplication',
@@ -203,6 +197,7 @@ __all__ = [
     'AccessTierRequired',
     'AccountKind',
     'ArchiveStatus',
+    'BlobCopySourceTags',
     'BlobExpiryOptions',
     'BlobImmutabilityPolicyMode',
     'BlobType',
@@ -216,7 +211,6 @@ __all__ = [
     'LeaseStatusType',
     'ListBlobsIncludeItem',
     'ListContainersIncludeType',
-    'PathRenameMode',
     'PremiumPageBlobAccessTier',
     'PublicAccessType',
     'QueryFormatType',

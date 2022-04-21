@@ -4,9 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import logging
-import sys
-from typing import Union
+from typing import TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse
@@ -19,7 +17,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 try:
     from azure.core.pipeline.transport import AsyncHttpTransport
 except ImportError:
-    AsyncHttpTransport = None
+    AsyncHttpTransport = None  # type: ignore
 
 try:
     from yarl import URL
@@ -34,10 +32,8 @@ from ._error import (
     _wrap_exception,
 )
 
-if sys.version_info > (3, 5):
-    from typing import Awaitable  # pylint: disable=ungrouped-imports
-
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest  # pylint: disable=ungrouped-imports
 
 
 class AzureSigningError(ClientAuthenticationError):
@@ -112,7 +108,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request):
-    # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+    # type: (PipelineRequest) -> None
         self.sign_request(request)
 
     def sign_request(self, request):
@@ -126,7 +122,6 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             + self._get_canonicalized_resource_query(request.http_request)
         )
         self._add_authorization_header(request.http_request, string_to_sign)
-        logger.debug("String_to_sign=%s", string_to_sign)
 
     def _get_canonicalized_resource_query(self, request):
         for name, value in request.query.items():

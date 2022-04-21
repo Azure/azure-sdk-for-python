@@ -47,7 +47,7 @@ class RecommendedActionsOperations:
         server_name: str,
         advisor_name: str,
         recommended_action_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecommendationAction":
         """Retrieve recommended actions from the advisor.
 
@@ -113,7 +113,7 @@ class RecommendedActionsOperations:
         server_name: str,
         advisor_name: str,
         session_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationActionsResultList"]:
         """Retrieve recommended actions from the advisor.
 

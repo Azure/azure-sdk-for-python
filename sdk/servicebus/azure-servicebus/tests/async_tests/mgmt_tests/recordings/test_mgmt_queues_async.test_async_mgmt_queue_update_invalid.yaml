@@ -5,22 +5,22 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2021-05
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-09-29T08:33:18Z</updated><link
-        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestkjdemkkogk.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2021-05</id><updated>2021-10-21T05:21:53Z</updated><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2021-05"/></feed>
     headers:
       content-type: application/atom+xml;type=feed;charset=utf-8
-      date: Tue, 29 Sep 2020 08:33:18 GMT
+      date: Thu, 21 Oct 2021 05:21:52 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 200
       message: OK
-    url: https://servicebustestrm7a5oi5hk.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
@@ -34,116 +34,116 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/vbmfm?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/vbmfm?api-version=2021-05
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/vbmfm?api-version=2017-04</id><title
-        type="text">vbmfm</title><published>2020-09-29T08:33:19Z</published><updated>2020-09-29T08:33:19Z</updated><author><name>servicebustestrm7a5oi5hk</name></author><link
-        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/vbmfm?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestkjdemkkogk.servicebus.windows.net/vbmfm?api-version=2021-05</id><title
+        type="text">vbmfm</title><published>2021-10-21T05:21:53Z</published><updated>2021-10-21T05:21:53Z</updated><author><name>servicebustestkjdemkkogk</name></author><link
+        rel="self" href="https://servicebustestkjdemkkogk.servicebus.windows.net/vbmfm?api-version=2021-05"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-09-29T08:33:19.117Z</CreatedAt><UpdatedAt>2020-09-29T08:33:19.187Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2021-10-21T05:21:53.887Z</CreatedAt><UpdatedAt>2021-10-21T05:21:53.927Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></content></entry>
     headers:
       content-type: application/atom+xml;type=entry;charset=utf-8
-      date: Tue, 29 Sep 2020 08:33:19 GMT
+      date: Thu, 21 Oct 2021 05:21:53 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 201
       message: Created
-    url: https://servicebustestrm7a5oi5hk.servicebus.windows.net/vbmfm?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/vbmfm?api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
       type="application/xml"><QueueDescription><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules
-      /><Status>Active</Status><CreatedAt>2020-09-29T08:33:19.117Z</CreatedAt><UpdatedAt>2020-09-29T08:33:19.187Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
+      /><Status>Active</Status><CreatedAt>2021-10-21T05:21:53.887Z</CreatedAt><UpdatedAt>2021-10-21T05:21:53.927Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
       Content-Length:
-      - '1264'
+      - '1322'
       Content-Type:
       - application/atom+xml
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/vbmfm?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/vbmfm?api-version=2021-05
   response:
     body:
       string: <Error><Code>400</Code><Detail>SubCode=40000. The value for the RequiresSession
         property of an existing Queue cannot be changed. To know more visit https://aka.ms/sbResourceMgrExceptions.
-        . TrackingId:75d6d8e8-691c-4947-a92a-9fd571da1825_G15, SystemTracker:servicebustestsbname.servicebus.windows.net:vbmfm,
-        Timestamp:2020-09-29T08:33:19</Detail></Error>
+        . TrackingId:29da31f9-84d9-4622-a43b-56378369c5c7_G6, SystemTracker:servicebustestsbname.servicebus.windows.net:vbmfm,
+        Timestamp:2021-10-21T05:21:54</Detail></Error>
     headers:
       content-type: application/xml; charset=utf-8
-      date: Tue, 29 Sep 2020 08:33:19 GMT
-      etag: '637369651991870000'
+      date: Thu, 21 Oct 2021 05:21:53 GMT
+      etag: '637703905139270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
-    url: https://servicebustestrm7a5oi5hk.servicebus.windows.net/vbmfm?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/vbmfm?api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
       type="application/xml"><QueueDescription><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules
-      /><Status>Active</Status><CreatedAt>2020-09-29T08:33:19.117Z</CreatedAt><UpdatedAt>2020-09-29T08:33:19.187Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
+      /><Status>Active</Status><CreatedAt>2021-10-21T05:21:53.887Z</CreatedAt><UpdatedAt>2021-10-21T05:21:53.927Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
       Content-Length:
-      - '1265'
+      - '1323'
       Content-Type:
       - application/atom+xml
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/dkfrgx?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/dkfrgx?api-version=2021-05
   response:
     body:
       string: <Error><Code>404</Code><Detail>SubCode=40400. Not Found. The Operation
         doesn't exist. To know more visit https://aka.ms/sbResourceMgrExceptions.
-        . TrackingId:217e54d3-cce5-43a5-8551-93d74a12423d_G15, SystemTracker:servicebustestsbname.servicebus.windows.net:dkfrgx,
-        Timestamp:2020-09-29T08:33:20</Detail></Error>
+        . TrackingId:fd6e32ee-9036-4ed1-a376-9dd1276492dd_G6, SystemTracker:servicebustestsbname.servicebus.windows.net:dkfrgx,
+        Timestamp:2021-10-21T05:21:55</Detail></Error>
     headers:
       content-type: application/xml; charset=utf-8
-      date: Tue, 29 Sep 2020 08:33:20 GMT
+      date: Thu, 21 Oct 2021 05:21:54 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 404
       message: Not Found
-    url: https://servicebustestrm7a5oi5hk.servicebus.windows.net/dkfrgx?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/dkfrgx?api-version=2021-05
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
       type="application/xml"><QueueDescription><LockDuration>P25D</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules
-      /><Status>Active</Status><CreatedAt>2020-09-29T08:33:19.117Z</CreatedAt><UpdatedAt>2020-09-29T08:33:19.187Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
+      /><Status>Active</Status><CreatedAt>2021-10-21T05:21:53.887Z</CreatedAt><UpdatedAt>2021-10-21T05:21:53.927Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress><MaxMessageSizeInKilobytes>256</MaxMessageSizeInKilobytes></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
       Content-Length:
-      - '1265'
+      - '1323'
       Content-Type:
       - application/atom+xml
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://servicebustestsbname.servicebus.windows.net/vbmfm?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/vbmfm?api-version=2021-05
   response:
     body:
       string: '<Error><Code>400</Code><Detail>SubCode=40000. The supplied lock time
@@ -152,39 +152,39 @@ interactions:
 
         Parameter name: LockDuration&#xD;
 
-        Actual value was 25.00:00:00. TrackingId:c2f92936-a8b8-4678-96ec-7201b03856cd_G15,
-        SystemTracker:servicebustestsbname.servicebus.windows.net:vbmfm, Timestamp:2020-09-29T08:33:20</Detail></Error>'
+        Actual value was 25.00:00:00. TrackingId:3b39bf7d-7335-4fb5-bfef-566fb12963dc_G6,
+        SystemTracker:servicebustestsbname.servicebus.windows.net:vbmfm, Timestamp:2021-10-21T05:21:55</Detail></Error>'
     headers:
       content-type: application/xml; charset=utf-8
-      date: Tue, 29 Sep 2020 08:33:20 GMT
-      etag: '637369651991870000'
+      date: Thu, 21 Oct 2021 05:21:54 GMT
+      etag: '637703905139270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
-    url: https://servicebustestrm7a5oi5hk.servicebus.windows.net/vbmfm?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/vbmfm?api-version=2021-05
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2021-05 Python/3.7.10 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://servicebustestsbname.servicebus.windows.net/vbmfm?api-version=2017-04
+    uri: https://servicebustestsbname.servicebus.windows.net/vbmfm?api-version=2021-05
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 29 Sep 2020 08:33:21 GMT
-      etag: '637369651991870000'
+      date: Thu, 21 Oct 2021 05:21:55 GMT
+      etag: '637703905139270000'
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
     status:
       code: 200
       message: OK
-    url: https://servicebustestrm7a5oi5hk.servicebus.windows.net/vbmfm?api-version=2017-04
+    url: https://servicebustestkjdemkkogk.servicebus.windows.net/vbmfm?api-version=2021-05
 version: 1

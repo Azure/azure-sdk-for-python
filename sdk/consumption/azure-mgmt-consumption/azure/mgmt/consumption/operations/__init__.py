@@ -18,7 +18,6 @@ from ._reservation_recommendations_operations import ReservationRecommendationsO
 from ._reservation_recommendation_details_operations import ReservationRecommendationDetailsOperations
 from ._reservation_transactions_operations import ReservationTransactionsOperations
 from ._price_sheet_operations import PriceSheetOperations
-from ._forecasts_operations import ForecastsOperations
 from ._operations import Operations
 from ._aggregated_cost_operations import AggregatedCostOperations
 from ._events_operations import EventsOperations
@@ -38,7 +37,6 @@ __all__ = [
     'ReservationRecommendationDetailsOperations',
     'ReservationTransactionsOperations',
     'PriceSheetOperations',
-    'ForecastsOperations',
     'Operations',
     'AggregatedCostOperations',
     'EventsOperations',

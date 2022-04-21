@@ -22,6 +22,8 @@ if "KEYVAULT_CLIENT_ID" not in os.environ:
 if "KEYVAULT_CLIENT_SECRET" not in os.environ:
     raise EnvironmentError("Missing a client secret for Key Vault")
 
+hsm_present = "AZURE_MANAGEDHSM_URL" in os.environ
+
 credential = ClientSecretCredential(
     tenant_id=os.environ["KEYVAULT_TENANT_ID"],
     client_id=os.environ["KEYVAULT_CLIENT_ID"],
@@ -30,6 +32,7 @@ credential = ClientSecretCredential(
 
 cert_client = CertificateClient(os.environ["AZURE_KEYVAULT_URL"], credential)
 key_client = KeyClient(os.environ["AZURE_KEYVAULT_URL"], credential)
+hsm_client = KeyClient(os.environ["AZURE_MANAGEDHSM_URL"], credential) if hsm_present else None
 secret_client = SecretClient(os.environ["AZURE_KEYVAULT_URL"], credential)
 
 async def delete_certificates():
@@ -49,6 +52,12 @@ async def delete_keys_and_secrets():
     async for key in test_keys:
         if key.name.startswith("livekvtest"):
             coroutines.append(key_client.delete_key(key.name))
+
+    if hsm_client:
+        hsm_test_keys = hsm_client.list_properties_of_keys()
+        async for key in hsm_test_keys:
+            if key.name.startswith("livekvtest"):
+                coroutines.append(hsm_client.delete_key(key.name))
 
     test_secrets = secret_client.list_properties_of_secrets()
     async for secret in test_secrets:
@@ -70,6 +79,12 @@ async def purge_resources():
         if key.name.startswith("livekvtest"):
             coroutines.append(key_client.purge_deleted_key(key.name))
 
+    if hsm_client:
+        hsm_deleted_test_keys = hsm_client.list_deleted_keys()
+        async for key in hsm_deleted_test_keys:
+            if key.name.startswith("livekvtest"):
+                coroutines.append(hsm_client.purge_deleted_key(key.name))
+
     deleted_test_secrets = secret_client.list_deleted_secrets()
     async for secret in deleted_test_secrets:
         if secret.name.startswith("livekvtest"):
@@ -81,6 +96,8 @@ async def close_sessions():
     await credential.close()
     await cert_client.close()
     await key_client.close()
+    if hsm_client:
+        await hsm_client.close()
     await secret_client.close()
 
 loop = asyncio.get_event_loop()

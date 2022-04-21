@@ -26,8 +26,8 @@
 """
 # https://github.com/PyCQA/pylint/issues/3112
 # Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
-from typing import Dict, Any, Optional # pylint: disable=unused-import
-import six
+from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
+import urllib.parse
 from urllib3.util.retry import Retry
 from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
@@ -58,7 +58,9 @@ from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
+from ._auth_policy import CosmosBearerTokenCredentialPolicy
 
+ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
 
 
@@ -87,12 +89,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     _DefaultStringRangePrecision = -1
 
     def __init__(
-        self,
-        url_connection,  # type: str
-        auth,  # type: Dict[str, Any]
-        connection_policy=None,  # type: Optional[ConnectionPolicy]
-        consistency_level=documents.ConsistencyLevel.Session,  # type: str
-        **kwargs  # type: Any
+            self,
+            url_connection,  # type: str
+            auth,  # type: Dict[str, Any]
+            connection_policy=None,  # type: Optional[ConnectionPolicy]
+            consistency_level=None,  # type: Optional[str]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """
@@ -113,9 +115,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self.master_key = None
         self.resource_tokens = None
+        self.aad_credentials = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
             self.resource_tokens = auth.get("resourceTokens")
+            self.aad_credentials = auth.get("clientSecretCredential")
 
             if auth.get("permissionFeed"):
                 self.resource_tokens = {}
@@ -138,19 +142,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        if consistency_level is not None:
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-
-        # Keeps the latest response headers from server.
+        # Keeps the latest response headers from the server.
         self.last_response_headers = None
-
-        if consistency_level == documents.ConsistencyLevel.Session:
-            # create a session - this is maintained only if the default consistency level
-            # on the client is set to session, or if the user explicitly sets it as a property
-            # via setter
-            self.session = _session.Session(self.url_connection)
-        else:
-            self.session = None  # type: ignore
 
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
@@ -172,26 +165,35 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
         else:
-            TypeError("Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
+            raise TypeError(
+                "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = self.connection_policy.ProxyConfiguration.Host
-            url = six.moves.urllib.parse.urlparse(host)
+            url = urllib.parse.urlparse(host)
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
-            proxies.update({url.scheme : proxy})
+            proxies.update({url.scheme: proxy})
+
+        self._user_agent = _utils.get_user_agent()
+
+        credentials_policy = None
+        if self.aad_credentials:
+            scopes = base.create_scope_from_url(self.url_connection)
+            credentials_policy = CosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes)
 
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
+            UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
+            credentials_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
-            ]
+        ]
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client = PipelineClient(base_url=url_connection, transport=transport, policies=policies)
@@ -206,6 +208,39 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh(database_account)
+
+        # Use database_account if no consistency passed in to verify consistency level to be used
+        self._set_client_consistency_level(database_account, consistency_level)
+
+    def _set_client_consistency_level(
+            self,
+            database_account: ClassType,
+            consistency_level: Optional[str],
+    ) -> None:
+        """Checks if consistency level param was passed in by user and sets it to that value or to the account default.
+
+        :param database_account: The database account to be used to check consistency levels
+        :type database_account: ~azure.cosmos.documents.DatabaseAccount
+        :param consistency_level: The consistency level passed in by the user
+        :type consistency_level: Optional[str]
+        :rtype: None
+        """
+        if consistency_level is None:
+            # Set to default level present in account
+            user_consistency_policy = database_account.ConsistencyPolicy
+            consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
+        else:
+            # Set consistency level header to be used for the client
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+
+        if consistency_level == documents.ConsistencyLevel.Session:
+            # create a session - this is maintained only if the default consistency level
+            # on the client is set to session, or if the user explicitly sets it as a property
+            # via setter
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+            self.session = _session.Session(self.url_connection)
+        else:
+            self.session = None  # type: ignore
 
     @property
     def Session(self):
@@ -840,13 +875,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
 
     def QueryItems(
-        self,
-        database_or_container_link,
-        query,
-        options=None,
-        partition_key=None,
-        response_hook=None,
-        **kwargs
+            self,
+            database_or_container_link,
+            query,
+            options=None,
+            partition_key=None,
+            response_hook=None,
+            **kwargs
     ):
         """Queries documents in a collection.
 
@@ -936,7 +971,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
 
     def _QueryChangeFeed(
-        self, collection_link, resource_type, options=None, partition_key_range_id=None, response_hook=None, **kwargs
+            self, collection_link, resource_type, options=None, partition_key_range_id=None, response_hook=None,
+            **kwargs
     ):
         """Queries change feed of a resource in a collection.
 
@@ -1129,10 +1165,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.Upsert(document, path, "docs", collection_id, None, options, **kwargs)
 
     PartitionResolverErrorMessage = (
-        "Couldn't find any partition resolvers for the database link provided. "
-        + "Ensure that the link you used when registering the partition resolvers "
-        + "matches the link provided or you need to register both types of database "
-        + "link(self link as well as ID based link)."
+            "Couldn't find any partition resolvers for the database link provided. "
+            + "Ensure that the link you used when registering the partition resolvers "
+            + "matches the link provided or you need to register both types of database "
+            + "link(self link as well as ID based link)."
     )
 
     # Gets the collection id and path for the document
@@ -1736,7 +1772,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get("serverScript"):
-            trigger["body"] = str(trigger["serverScript"])
+            trigger["body"] = str(trigger.pop("serverScript", ""))
         elif trigger.get("body"):
             trigger["body"] = str(trigger["body"])
 
@@ -1786,7 +1822,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get("serverScript"):
-            udf["body"] = str(udf["serverScript"])
+            udf["body"] = str(udf.pop("serverScript", ""))
         elif udf.get("body"):
             udf["body"] = str(udf["body"])
 
@@ -1870,7 +1906,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get("serverScript"):
-            sproc["body"] = str(sproc["serverScript"])
+            sproc["body"] = str(sproc.pop("serverScript", ""))
         elif sproc.get("body"):
             sproc["body"] = str(sproc["body"])
 
@@ -2040,7 +2076,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ]
 
         self._useMultipleWriteLocations = (
-            self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
+                self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
         return database_account
 
@@ -2107,7 +2143,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Replace(self, resource, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+    def Replace(self, resource, path, typ, id, initial_headers, options=None,
+                **kwargs):  # pylint: disable=redefined-builtin
         """Replaces a Azure Cosmos resource and returns it.
 
         :param dict resource:
@@ -2163,7 +2200,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
         return result
 
-    def DeleteResource(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+    def DeleteResource(self, path, typ, id, initial_headers, options=None,
+                       **kwargs):  # pylint: disable=redefined-builtin
         """Deletes a Azure Cosmos resource and returns it.
 
         :param str path:
@@ -2327,18 +2365,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
 
     def __QueryFeed(
-        self,
-        path,
-        typ,
-        id_,
-        result_fn,
-        create_fn,
-        query,
-        options=None,
-        partition_key_range_id=None,
-        response_hook=None,
-        is_query_plan=False,
-        **kwargs
+            self,
+            path,
+            typ,
+            id_,
+            result_fn,
+            create_fn,
+            query,
+            options=None,
+            partition_key_range_id=None,
+            response_hook=None,
+            is_query_plan=False,
+            **kwargs
     ):
         """Query for more than one Azure Cosmos resources.
 
@@ -2380,8 +2418,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request_params = _request_object.RequestObject(typ,
-                        documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
+            request_params = _request_object.RequestObject(
+                typ, documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
@@ -2395,8 +2433,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
 
         if (
-            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
-            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
+                self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
+                or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
         ):
             initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
         elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
@@ -2428,7 +2466,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             "isQueryPlanRequest": True,
             "supportedQueryFeatures": supported_query_features,
             "queryVersion": http_constants.Versions.QueryVersion
-            }
+        }
 
         resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
         path = base.GetPathFromLink(resource_link, "docs")
@@ -2459,18 +2497,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             dict or string
         """
         if (
-            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
-            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
+                self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
+                or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
         ):
-            if not isinstance(query_body, dict) and not isinstance(query_body, six.string_types):
+            if not isinstance(query_body, dict) and not isinstance(query_body, str):
                 raise TypeError("query body must be a dict or string.")
             if isinstance(query_body, dict) and not query_body.get("query"):
                 raise ValueError('query body must have valid query text with key "query".')
-            if isinstance(query_body, six.string_types):
+            if isinstance(query_body, str):
                 return {"query": query_body}
         elif (
-            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery
-            and not isinstance(query_body, six.string_types)
+                self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery
+                and not isinstance(query_body, str)
         ):
             raise TypeError("query body must be a string.")
         else:
@@ -2549,6 +2587,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             return self._return_undefined_or_empty_partition_key(is_system_key)
 
         return partitionKey
+
+    def refresh_routing_map_provider(self):
+        # re-initializes the routing map provider, effectively refreshing the current partition key range cache
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
     def _UpdateSessionIfRequired(self, request_headers, response_result, response_headers):
         """

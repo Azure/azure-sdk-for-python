@@ -1,5 +1,33 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
+
+### Features Added
+- Implement log exporter using experimental OT logging sdk
+    ([#23486](https://github.com/Azure/azure-sdk-for-python/pull/23486))
+- Implement sending of exception telemetry via log exporter
+    ([#23633](https://github.com/Azure/azure-sdk-for-python/pull/23633))
+- Implement exporting span events as message/exception telemetry
+    ([#23708](https://github.com/Azure/azure-sdk-for-python/pull/23708))
+- Implement metrics exporter using experimental OT metrics sdk
+    ([#23960](https://github.com/Azure/azure-sdk-for-python/pull/23960))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b5 (2021-10-05)
+
+### Features Added
+- Support stamp specific redirect in exporters
+    ([#20489](https://github.com/Azure/azure-sdk-for-python/pull/20489))
+
+### Breaking Changes
+- Change exporter OT to AI mapping fields following common schema
+    ([#20445](https://github.com/Azure/azure-sdk-for-python/pull/20445))
+
 ## 1.0.0b4 (2021-04-06)
 
   **Features**

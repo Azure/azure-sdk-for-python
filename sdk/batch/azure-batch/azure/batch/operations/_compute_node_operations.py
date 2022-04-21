@@ -24,7 +24,7 @@ class ComputeNodeOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-09-01.12.0".
+    :ivar api_version: The API version to use for the request. Constant value: "2022-01-01.15.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ComputeNodeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-01.12.0"
+        self.api_version = "2022-01-01.15.0"
 
         self.config = config
 
@@ -432,9 +432,8 @@ class ComputeNodeOperations(object):
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart.
         :type node_id: str
-        :param node_reboot_option: When to reboot the Compute Node and what to
-         do with currently running Tasks. The default value is requeue.
-         Possible values include: 'requeue', 'terminate', 'taskCompletion',
+        :param node_reboot_option: The default value is requeue. Possible
+         values include: 'requeue', 'terminate', 'taskCompletion',
          'retainedData'
         :type node_reboot_option: str or
          ~azure.batch.models.ComputeNodeRebootOption
@@ -536,9 +535,8 @@ class ComputeNodeOperations(object):
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart.
         :type node_id: str
-        :param node_reimage_option: When to reimage the Compute Node and what
-         to do with currently running Tasks. The default value is requeue.
-         Possible values include: 'requeue', 'terminate', 'taskCompletion',
+        :param node_reimage_option: The default value is requeue. Possible
+         values include: 'requeue', 'terminate', 'taskCompletion',
          'retainedData'
         :type node_reimage_option: str or
          ~azure.batch.models.ComputeNodeReimageOption
@@ -640,10 +638,8 @@ class ComputeNodeOperations(object):
         :param node_id: The ID of the Compute Node on which you want to
          disable Task scheduling.
         :type node_id: str
-        :param node_disable_scheduling_option: What to do with currently
-         running Tasks when disabling Task scheduling on the Compute Node. The
-         default value is requeue. Possible values include: 'requeue',
-         'terminate', 'taskCompletion'
+        :param node_disable_scheduling_option: The default value is requeue.
+         Possible values include: 'requeue', 'terminate', 'taskCompletion'
         :type node_disable_scheduling_option: str or
          ~azure.batch.models.DisableComputeNodeSchedulingOption
         :param compute_node_disable_scheduling_options: Additional parameters

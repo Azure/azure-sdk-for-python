@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 
@@ -61,6 +66,7 @@ def read_database(client, id):
 
     try:
         database = client.get_database_client(id)
+        database.read()
         print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
 
     except exceptions.CosmosResourceNotFoundError:

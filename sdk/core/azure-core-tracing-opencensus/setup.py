@@ -39,7 +39,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opencensus',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opencensus',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
@@ -61,7 +61,7 @@ setup(
         'opencensus>=0.6.0',
         'opencensus-ext-azure>=0.3.1',
         'opencensus-ext-threading',
-        'azure-core<2.0.0,>=1.0.0',
+        'azure-core<2.0.0,>=1.13.0',
     ],
     extras_require={
         ":python_version<'3.5'": ['typing'],

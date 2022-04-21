@@ -1,6 +1,6 @@
 [packaging]
 package_name = "azure-mgmt-iothub"
-package_pprint_name = "IoTHub Management"
+package_pprint_name = "IoT Hub Management"
 package_doc_id = "iot"
 is_stable = false
 is_arm = true

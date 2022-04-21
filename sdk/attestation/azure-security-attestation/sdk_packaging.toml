@@ -5,4 +5,4 @@ package_pprint_name = "Microsoft Azure Attestation Dataplane"
 package_doc_id = ""
 is_stable = false
 is_arm = false
-need_msrestazure = true
+auto_update = false

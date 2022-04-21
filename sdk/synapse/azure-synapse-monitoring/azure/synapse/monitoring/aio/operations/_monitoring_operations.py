@@ -42,7 +42,7 @@ class MonitoringOperations:
     async def get_spark_job_list(
         self,
         x_ms_client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SparkJobListViewResponse":
         """Get list of spark applications for the workspace.
 
@@ -101,7 +101,7 @@ class MonitoringOperations:
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
         skip: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlQueryStringDataModel":
         """Get SQL OD/DW Query for the workspace.
 

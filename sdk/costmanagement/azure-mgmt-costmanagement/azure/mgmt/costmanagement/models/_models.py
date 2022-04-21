@@ -175,13 +175,13 @@ class AlertPropertiesDetails(msrest.serialization.Model):
     :param triggered_by: notificationId that triggered this alert.
     :type triggered_by: str
     :param resource_group_filter: array of resourceGroups to filter by.
-    :type resource_group_filter: list[object]
+    :type resource_group_filter: list[any]
     :param resource_filter: array of resources to filter by.
-    :type resource_filter: list[object]
+    :type resource_filter: list[any]
     :param meter_filter: array of meters to filter by.
-    :type meter_filter: list[object]
+    :type meter_filter: list[any]
     :param tag_filter: tags to filter by.
-    :type tag_filter: object
+    :type tag_filter: any
     :param threshold: notification threshold percentage as a decimal which activated this alert.
     :type threshold: float
     :param operator: operator used to compare currentSpend with amount. Possible values include:
@@ -275,39 +275,80 @@ class AlertsResult(msrest.serialization.Model):
         self.next_link = None
 
 
-class CommonExportProperties(msrest.serialization.Model):
-    """The common properties of the export.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+class CacheItem(msrest.serialization.Model):
+    """CacheItem.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param format: The format of the export being delivered. Currently only 'Csv' is supported.
-     Possible values include: "Csv".
+    :param id: Required. Resource ID used by Resource Manager to uniquely identify the scope.
+    :type id: str
+    :param name: Required. Display name for the scope.
+    :type name: str
+    :param channel: Required. Indicates the account type. Allowed values include: EA, PAYG, Modern,
+     Internal, Unknown.
+    :type channel: str
+    :param subchannel: Required. Indicates the type of modern account. Allowed values include:
+     Individual, Enterprise, Partner, Indirect, NotApplicable.
+    :type subchannel: str
+    :param parent: Resource ID of the parent scope. For instance, subscription's resource ID for a
+     resource group or a management group resource ID for a subscription.
+    :type parent: str
+    :param status: Indicates the status of the scope. Status only applies to subscriptions and
+     billing accounts.
+    :type status: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'name': {'required': True},
+        'channel': {'required': True},
+        'subchannel': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'channel': {'key': 'channel', 'type': 'str'},
+        'subchannel': {'key': 'subchannel', 'type': 'str'},
+        'parent': {'key': 'parent', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CacheItem, self).__init__(**kwargs)
+        self.id = kwargs['id']
+        self.name = kwargs['name']
+        self.channel = kwargs['channel']
+        self.subchannel = kwargs['subchannel']
+        self.parent = kwargs.get('parent', None)
+        self.status = kwargs.get('status', None)
+
+
+class CommonExportProperties(msrest.serialization.Model):
+    """The common properties of the export.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param format: The format of the export being delivered. Possible values include: "Csv".
     :type format: str or ~azure.mgmt.costmanagement.models.FormatType
     :param delivery_info: Required. Has delivery information for the export.
     :type delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
-    :param definition: Required. Has the definition for the export.
+    :param definition: Required. Has definition for the export.
     :type definition: ~azure.mgmt.costmanagement.models.ExportDefinition
-    :param run_history: If requested, has the most recent execution history for the export.
-    :type run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
-    :ivar next_run_time_estimate: If the export has an active schedule, provides an estimate of the
-     next execution time.
-    :vartype next_run_time_estimate: ~datetime.datetime
     """
 
     _validation = {
         'delivery_info': {'required': True},
         'definition': {'required': True},
-        'next_run_time_estimate': {'readonly': True},
     }
 
     _attribute_map = {
         'format': {'key': 'format', 'type': 'str'},
         'delivery_info': {'key': 'deliveryInfo', 'type': 'ExportDeliveryInfo'},
         'definition': {'key': 'definition', 'type': 'ExportDefinition'},
-        'run_history': {'key': 'runHistory', 'type': 'ExportExecutionListResult'},
-        'next_run_time_estimate': {'key': 'nextRunTimeEstimate', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -318,8 +359,6 @@ class CommonExportProperties(msrest.serialization.Model):
         self.format = kwargs.get('format', None)
         self.delivery_info = kwargs['delivery_info']
         self.definition = kwargs['definition']
-        self.run_history = kwargs.get('run_history', None)
-        self.next_run_time_estimate = None
 
 
 class Dimension(Resource):
@@ -586,7 +625,7 @@ class ProxyResource(msrest.serialization.Model):
 
 
 class Export(ProxyResource):
-    """An export resource.
+    """A export resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -599,18 +638,12 @@ class Export(ProxyResource):
     :param e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :type e_tag: str
-    :param format: The format of the export being delivered. Currently only 'Csv' is supported.
-     Possible values include: "Csv".
+    :param format: The format of the export being delivered. Possible values include: "Csv".
     :type format: str or ~azure.mgmt.costmanagement.models.FormatType
     :param delivery_info: Has delivery information for the export.
     :type delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
-    :param definition: Has the definition for the export.
+    :param definition: Has definition for the export.
     :type definition: ~azure.mgmt.costmanagement.models.ExportDefinition
-    :param run_history: If requested, has the most recent execution history for the export.
-    :type run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
-    :ivar next_run_time_estimate: If the export has an active schedule, provides an estimate of the
-     next execution time.
-    :vartype next_run_time_estimate: ~datetime.datetime
     :param schedule: Has schedule information for the export.
     :type schedule: ~azure.mgmt.costmanagement.models.ExportSchedule
     """
@@ -619,7 +652,6 @@ class Export(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'next_run_time_estimate': {'readonly': True},
     }
 
     _attribute_map = {
@@ -630,8 +662,6 @@ class Export(ProxyResource):
         'format': {'key': 'properties.format', 'type': 'str'},
         'delivery_info': {'key': 'properties.deliveryInfo', 'type': 'ExportDeliveryInfo'},
         'definition': {'key': 'properties.definition', 'type': 'ExportDefinition'},
-        'run_history': {'key': 'properties.runHistory', 'type': 'ExportExecutionListResult'},
-        'next_run_time_estimate': {'key': 'properties.nextRunTimeEstimate', 'type': 'iso-8601'},
         'schedule': {'key': 'properties.schedule', 'type': 'ExportSchedule'},
     }
 
@@ -643,73 +673,25 @@ class Export(ProxyResource):
         self.format = kwargs.get('format', None)
         self.delivery_info = kwargs.get('delivery_info', None)
         self.definition = kwargs.get('definition', None)
-        self.run_history = kwargs.get('run_history', None)
-        self.next_run_time_estimate = None
         self.schedule = kwargs.get('schedule', None)
 
 
-class ExportDataset(msrest.serialization.Model):
-    """The definition for data in the export.
-
-    :param granularity: The granularity of rows in the export. Currently only 'Daily' is supported.
-     Possible values include: "Daily".
-    :type granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
-    :param configuration: The export dataset configuration.
-    :type configuration: ~azure.mgmt.costmanagement.models.ExportDatasetConfiguration
-    """
-
-    _attribute_map = {
-        'granularity': {'key': 'granularity', 'type': 'str'},
-        'configuration': {'key': 'configuration', 'type': 'ExportDatasetConfiguration'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ExportDataset, self).__init__(**kwargs)
-        self.granularity = kwargs.get('granularity', None)
-        self.configuration = kwargs.get('configuration', None)
-
-
-class ExportDatasetConfiguration(msrest.serialization.Model):
-    """The export dataset configuration. Allows columns to be selected for the export. If not provided then the export will include all available columns.
-
-    :param columns: Array of column names to be included in the export. If not provided then the
-     export will include all available columns. The available columns can vary by customer channel
-     (see examples).
-    :type columns: list[str]
-    """
-
-    _attribute_map = {
-        'columns': {'key': 'columns', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ExportDatasetConfiguration, self).__init__(**kwargs)
-        self.columns = kwargs.get('columns', None)
-
-
 class ExportDefinition(msrest.serialization.Model):
-    """The definition of an export.
+    """The definition of a query.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of the export. Note that 'Usage' is equivalent to 'ActualCost'
-     and is applicable to exports that do not yet provide data for charges or amortization for
-     service reservations. Possible values include: "Usage", "ActualCost", "AmortizedCost".
+    :param type: Required. The type of the query. Possible values include: "Usage", "ActualCost",
+     "AmortizedCost".
     :type type: str or ~azure.mgmt.costmanagement.models.ExportType
-    :param timeframe: Required. The time frame for pulling data for the export. If custom, then a
+    :param timeframe: Required. The time frame for pulling data for the query. If custom, then a
      specific time period must be provided. Possible values include: "MonthToDate",
      "BillingMonthToDate", "TheLastMonth", "TheLastBillingMonth", "WeekToDate", "Custom".
     :type timeframe: str or ~azure.mgmt.costmanagement.models.TimeframeType
-    :param time_period: Has time period for pulling data for the export.
-    :type time_period: ~azure.mgmt.costmanagement.models.ExportTimePeriod
-    :param data_set: The definition for data in the export.
-    :type data_set: ~azure.mgmt.costmanagement.models.ExportDataset
+    :param time_period: Has time period for pulling data for the query.
+    :type time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod
+    :param data_set: Has definition for data in this query.
+    :type data_set: ~azure.mgmt.costmanagement.models.QueryDatasetAutoGenerated
     """
 
     _validation = {
@@ -720,8 +702,8 @@ class ExportDefinition(msrest.serialization.Model):
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'timeframe': {'key': 'timeframe', 'type': 'str'},
-        'time_period': {'key': 'timePeriod', 'type': 'ExportTimePeriod'},
-        'data_set': {'key': 'dataSet', 'type': 'ExportDataset'},
+        'time_period': {'key': 'timePeriod', 'type': 'QueryTimePeriod'},
+        'data_set': {'key': 'dataSet', 'type': 'QueryDatasetAutoGenerated'},
     }
 
     def __init__(
@@ -795,8 +777,8 @@ class ExportDeliveryInfo(msrest.serialization.Model):
         self.destination = kwargs['destination']
 
 
-class ExportExecution(ProxyResource):
-    """An export execution.
+class ExportExecution(Resource):
+    """A export execution.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -806,44 +788,41 @@ class ExportExecution(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :type e_tag: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :param execution_type: The type of the export execution. Possible values include: "OnDemand",
      "Scheduled".
     :type execution_type: str or ~azure.mgmt.costmanagement.models.ExecutionType
-    :param status: The last known status of the export execution. Possible values include:
-     "Queued", "InProgress", "Completed", "Failed", "Timeout", "NewDataNotAvailable",
-     "DataNotAvailable".
+    :param status: The status of the export execution. Possible values include: "Queued",
+     "InProgress", "Completed", "Failed", "Timeout", "NewDataNotAvailable", "DataNotAvailable".
     :type status: str or ~azure.mgmt.costmanagement.models.ExecutionStatus
     :param submitted_by: The identifier for the entity that executed the export. For OnDemand
-     executions it is the user email. For scheduled executions it is 'System'.
+     executions, it is the email id. For Scheduled executions, it is the constant value - System.
     :type submitted_by: str
     :param submitted_time: The time when export was queued to be executed.
     :type submitted_time: ~datetime.datetime
     :param processing_start_time: The time when export was picked up to be executed.
     :type processing_start_time: ~datetime.datetime
-    :param processing_end_time: The time when the export execution finished.
+    :param processing_end_time: The time when export execution finished.
     :type processing_end_time: ~datetime.datetime
-    :param file_name: The name of the exported file.
+    :param file_name: The name of the file export got written to.
     :type file_name: str
-    :param run_settings: The export settings that were in effect for this execution.
+    :param run_settings: The common properties of the export.
     :type run_settings: ~azure.mgmt.costmanagement.models.CommonExportProperties
-    :param error: The details of any error.
-    :type error: ~azure.mgmt.costmanagement.models.ErrorDetails
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'tags': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'execution_type': {'key': 'properties.executionType', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'submitted_by': {'key': 'properties.submittedBy', 'type': 'str'},
@@ -852,7 +831,6 @@ class ExportExecution(ProxyResource):
         'processing_end_time': {'key': 'properties.processingEndTime', 'type': 'iso-8601'},
         'file_name': {'key': 'properties.fileName', 'type': 'str'},
         'run_settings': {'key': 'properties.runSettings', 'type': 'CommonExportProperties'},
-        'error': {'key': 'properties.error', 'type': 'ErrorDetails'},
     }
 
     def __init__(
@@ -868,15 +846,14 @@ class ExportExecution(ProxyResource):
         self.processing_end_time = kwargs.get('processing_end_time', None)
         self.file_name = kwargs.get('file_name', None)
         self.run_settings = kwargs.get('run_settings', None)
-        self.error = kwargs.get('error', None)
 
 
 class ExportExecutionListResult(msrest.serialization.Model):
-    """Result of listing the execution history of an export.
+    """Result of listing exports execution history of a export by name.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of export executions.
+    :ivar value: The list of export executions.
     :vartype value: list[~azure.mgmt.costmanagement.models.ExportExecution]
     """
 
@@ -924,22 +901,14 @@ class ExportListResult(msrest.serialization.Model):
 class ExportProperties(CommonExportProperties):
     """The properties of the export.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :param format: The format of the export being delivered. Currently only 'Csv' is supported.
-     Possible values include: "Csv".
+    :param format: The format of the export being delivered. Possible values include: "Csv".
     :type format: str or ~azure.mgmt.costmanagement.models.FormatType
     :param delivery_info: Required. Has delivery information for the export.
     :type delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
-    :param definition: Required. Has the definition for the export.
+    :param definition: Required. Has definition for the export.
     :type definition: ~azure.mgmt.costmanagement.models.ExportDefinition
-    :param run_history: If requested, has the most recent execution history for the export.
-    :type run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
-    :ivar next_run_time_estimate: If the export has an active schedule, provides an estimate of the
-     next execution time.
-    :vartype next_run_time_estimate: ~datetime.datetime
     :param schedule: Has schedule information for the export.
     :type schedule: ~azure.mgmt.costmanagement.models.ExportSchedule
     """
@@ -947,15 +916,12 @@ class ExportProperties(CommonExportProperties):
     _validation = {
         'delivery_info': {'required': True},
         'definition': {'required': True},
-        'next_run_time_estimate': {'readonly': True},
     }
 
     _attribute_map = {
         'format': {'key': 'format', 'type': 'str'},
         'delivery_info': {'key': 'deliveryInfo', 'type': 'ExportDeliveryInfo'},
         'definition': {'key': 'definition', 'type': 'ExportDefinition'},
-        'run_history': {'key': 'runHistory', 'type': 'ExportExecutionListResult'},
-        'next_run_time_estimate': {'key': 'nextRunTimeEstimate', 'type': 'iso-8601'},
         'schedule': {'key': 'schedule', 'type': 'ExportSchedule'},
     }
 
@@ -997,18 +963,24 @@ class ExportRecurrencePeriod(msrest.serialization.Model):
 
 
 class ExportSchedule(msrest.serialization.Model):
-    """The schedule associated with the export.
+    """The schedule associated with a export.
 
-    :param status: The status of the export's schedule. If 'Inactive', the export's schedule is
-     paused. Possible values include: "Active", "Inactive".
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: The status of the schedule. Whether active or not. If inactive, the export's
+     scheduled execution is paused. Possible values include: "Active", "Inactive".
     :type status: str or ~azure.mgmt.costmanagement.models.StatusType
-    :param recurrence: The schedule recurrence. Possible values include: "Daily", "Weekly",
-     "Monthly", "Annually".
+    :param recurrence: Required. The schedule recurrence. Possible values include: "Daily",
+     "Weekly", "Monthly", "Annually".
     :type recurrence: str or ~azure.mgmt.costmanagement.models.RecurrenceType
     :param recurrence_period: Has start and end date of the recurrence. The start date must be in
      future. If present, the end date must be greater than start date.
     :type recurrence_period: ~azure.mgmt.costmanagement.models.ExportRecurrencePeriod
     """
+
+    _validation = {
+        'recurrence': {'required': True},
+    }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
@@ -1022,72 +994,8 @@ class ExportSchedule(msrest.serialization.Model):
     ):
         super(ExportSchedule, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
-        self.recurrence = kwargs.get('recurrence', None)
+        self.recurrence = kwargs['recurrence']
         self.recurrence_period = kwargs.get('recurrence_period', None)
-
-
-class ExportTimePeriod(msrest.serialization.Model):
-    """The date range for data in the export. This should only be specified with timeFrame set to 'Custom'. The maximum date range is 3 months.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param from_property: Required. The start date for export data.
-    :type from_property: ~datetime.datetime
-    :param to: Required. The end date for export data.
-    :type to: ~datetime.datetime
-    """
-
-    _validation = {
-        'from_property': {'required': True},
-        'to': {'required': True},
-    }
-
-    _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'iso-8601'},
-        'to': {'key': 'to', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ExportTimePeriod, self).__init__(**kwargs)
-        self.from_property = kwargs['from_property']
-        self.to = kwargs['to']
-
-
-class ForecastDataset(msrest.serialization.Model):
-    """The definition of data present in the forecast.
-
-    :param granularity: The granularity of rows in the forecast. Possible values include: "Daily".
-    :type granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
-    :param configuration: Has configuration information for the data in the export. The
-     configuration will be ignored if aggregation and grouping are provided.
-    :type configuration: ~azure.mgmt.costmanagement.models.QueryDatasetConfiguration
-    :param aggregation: Dictionary of aggregation expression to use in the forecast. The key of
-     each item in the dictionary is the alias for the aggregated column. forecast can have up to 2
-     aggregation clauses.
-    :type aggregation: dict[str, ~azure.mgmt.costmanagement.models.QueryAggregation]
-    :param filter: Has filter expression to use in the forecast.
-    :type filter: ~azure.mgmt.costmanagement.models.QueryFilter
-    """
-
-    _attribute_map = {
-        'granularity': {'key': 'granularity', 'type': 'str'},
-        'configuration': {'key': 'configuration', 'type': 'QueryDatasetConfiguration'},
-        'aggregation': {'key': 'aggregation', 'type': '{QueryAggregation}'},
-        'filter': {'key': 'filter', 'type': 'QueryFilter'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ForecastDataset, self).__init__(**kwargs)
-        self.granularity = kwargs.get('granularity', None)
-        self.configuration = kwargs.get('configuration', None)
-        self.aggregation = kwargs.get('aggregation', None)
-        self.filter = kwargs.get('filter', None)
 
 
 class ForecastDefinition(msrest.serialization.Model):
@@ -1104,8 +1012,8 @@ class ForecastDefinition(msrest.serialization.Model):
     :type timeframe: str or ~azure.mgmt.costmanagement.models.ForecastTimeframeType
     :param time_period: Has time period for pulling data for the forecast.
     :type time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod
-    :param dataset: Has definition for data in this forecast.
-    :type dataset: ~azure.mgmt.costmanagement.models.ForecastDataset
+    :param dataset: Required. Has definition for data in this forecast.
+    :type dataset: ~azure.mgmt.costmanagement.models.QueryDataset
     :param include_actual_cost: a boolean determining if actualCost will be included.
     :type include_actual_cost: bool
     :param include_fresh_partial_cost: a boolean determining if FreshPartialCost will be included.
@@ -1115,13 +1023,14 @@ class ForecastDefinition(msrest.serialization.Model):
     _validation = {
         'type': {'required': True},
         'timeframe': {'required': True},
+        'dataset': {'required': True},
     }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'timeframe': {'key': 'timeframe', 'type': 'str'},
         'time_period': {'key': 'timePeriod', 'type': 'QueryTimePeriod'},
-        'dataset': {'key': 'dataset', 'type': 'ForecastDataset'},
+        'dataset': {'key': 'dataset', 'type': 'QueryDataset'},
         'include_actual_cost': {'key': 'includeActualCost', 'type': 'bool'},
         'include_fresh_partial_cost': {'key': 'includeFreshPartialCost', 'type': 'bool'},
     }
@@ -1134,7 +1043,7 @@ class ForecastDefinition(msrest.serialization.Model):
         self.type = kwargs['type']
         self.timeframe = kwargs['timeframe']
         self.time_period = kwargs.get('time_period', None)
-        self.dataset = kwargs.get('dataset', None)
+        self.dataset = kwargs['dataset']
         self.include_actual_cost = kwargs.get('include_actual_cost', None)
         self.include_fresh_partial_cost = kwargs.get('include_fresh_partial_cost', None)
 
@@ -1261,6 +1170,33 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = None
 
 
+class OperationStatus(msrest.serialization.Model):
+    """The status of the long running operation.
+
+    :param status: The status of the long running operation.
+    :type status: ~azure.mgmt.costmanagement.models.Status
+    :param report_url: The URL to download the generated report.
+    :type report_url: str
+    :param valid_until: The time at which report URL becomes invalid.
+    :type valid_until: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'Status'},
+        'report_url': {'key': 'properties.reportUrl', 'type': 'str'},
+        'valid_until': {'key': 'properties.validUntil', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationStatus, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.report_url = kwargs.get('report_url', None)
+        self.valid_until = kwargs.get('valid_until', None)
+
+
 class PivotProperties(msrest.serialization.Model):
     """Each pivot must contain a 'type' and 'name'.
 
@@ -1284,6 +1220,46 @@ class PivotProperties(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
 
 
+class ProxySettingResource(msrest.serialization.Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar kind: Resource kind.
+    :vartype kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'kind': {'readonly': True, 'max_length': 10, 'min_length': 0},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxySettingResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.kind = None
+        self.type = None
+
+
 class QueryAggregation(msrest.serialization.Model):
     """The aggregation expression to be used in the query.
 
@@ -1292,7 +1268,7 @@ class QueryAggregation(msrest.serialization.Model):
     :param name: Required. The name of the column to aggregate.
     :type name: str
     :param function: Required. The name of the aggregation function to use. Possible values
-     include: "Sum".
+     include: "Avg", "Max", "Min", "Sum".
     :type function: str or ~azure.mgmt.costmanagement.models.FunctionType
     """
 
@@ -1345,8 +1321,9 @@ class QueryComparisonExpression(msrest.serialization.Model):
 
     :param name: Required. The name of the column to use in comparison.
     :type name: str
-    :param operator: Required. The operator to use for comparison. Possible values include: "In".
-    :type operator: str or ~azure.mgmt.costmanagement.models.QueryOperatorType
+    :param operator: Required. The operator to use for comparison. Possible values include: "In",
+     "Contains".
+    :type operator: str or ~azure.mgmt.costmanagement.models.OperatorType
     :param values: Required. Array of values to use for comparison.
     :type values: list[str]
     """
@@ -1388,7 +1365,8 @@ class QueryDataset(msrest.serialization.Model):
     :param grouping: Array of group by expression to use in the query. Query can have up to 2 group
      by clauses.
     :type grouping: list[~azure.mgmt.costmanagement.models.QueryGrouping]
-    :param filter: Has filter expression to use in the query.
+    :param filter: The filter expression to use in the query. Please reference our Query API REST
+     documentation for how to properly format the filter.
     :type filter: ~azure.mgmt.costmanagement.models.QueryFilter
     """
 
@@ -1409,6 +1387,50 @@ class QueryDataset(msrest.serialization.Model):
         **kwargs
     ):
         super(QueryDataset, self).__init__(**kwargs)
+        self.granularity = kwargs.get('granularity', None)
+        self.configuration = kwargs.get('configuration', None)
+        self.aggregation = kwargs.get('aggregation', None)
+        self.grouping = kwargs.get('grouping', None)
+        self.filter = kwargs.get('filter', None)
+
+
+class QueryDatasetAutoGenerated(msrest.serialization.Model):
+    """The definition of data present in the query.
+
+    :param granularity: The granularity of rows in the query. Possible values include: "Daily".
+    :type granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
+    :param configuration: Has configuration information for the data in the export. The
+     configuration will be ignored if aggregation and grouping are provided.
+    :type configuration: ~azure.mgmt.costmanagement.models.QueryDatasetConfiguration
+    :param aggregation: Dictionary of aggregation expression to use in the query. The key of each
+     item in the dictionary is the alias for the aggregated column. Query can have up to 2
+     aggregation clauses.
+    :type aggregation: dict[str, ~azure.mgmt.costmanagement.models.QueryAggregation]
+    :param grouping: Array of group by expression to use in the query. Query can have up to 2 group
+     by clauses.
+    :type grouping: list[~azure.mgmt.costmanagement.models.QueryGrouping]
+    :param filter: The filter expression to use in the query. Please reference our Query API REST
+     documentation for how to properly format the filter.
+    :type filter: ~azure.mgmt.costmanagement.models.QueryFilterAutoGenerated
+    """
+
+    _validation = {
+        'grouping': {'max_items': 2, 'min_items': 0},
+    }
+
+    _attribute_map = {
+        'granularity': {'key': 'granularity', 'type': 'str'},
+        'configuration': {'key': 'configuration', 'type': 'QueryDatasetConfiguration'},
+        'aggregation': {'key': 'aggregation', 'type': '{QueryAggregation}'},
+        'grouping': {'key': 'grouping', 'type': '[QueryGrouping]'},
+        'filter': {'key': 'filter', 'type': 'QueryFilterAutoGenerated'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(QueryDatasetAutoGenerated, self).__init__(**kwargs)
         self.granularity = kwargs.get('granularity', None)
         self.configuration = kwargs.get('configuration', None)
         self.aggregation = kwargs.get('aggregation', None)
@@ -1450,13 +1472,14 @@ class QueryDefinition(msrest.serialization.Model):
     :type timeframe: str or ~azure.mgmt.costmanagement.models.TimeframeType
     :param time_period: Has time period for pulling data for the query.
     :type time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod
-    :param dataset: Has definition for data in this query.
+    :param dataset: Required. Has definition for data in this query.
     :type dataset: ~azure.mgmt.costmanagement.models.QueryDataset
     """
 
     _validation = {
         'type': {'required': True},
         'timeframe': {'required': True},
+        'dataset': {'required': True},
     }
 
     _attribute_map = {
@@ -1474,7 +1497,7 @@ class QueryDefinition(msrest.serialization.Model):
         self.type = kwargs['type']
         self.timeframe = kwargs['timeframe']
         self.time_period = kwargs.get('time_period', None)
-        self.dataset = kwargs.get('dataset', None)
+        self.dataset = kwargs['dataset']
 
 
 class QueryFilter(msrest.serialization.Model):
@@ -1484,12 +1507,10 @@ class QueryFilter(msrest.serialization.Model):
     :type and_property: list[~azure.mgmt.costmanagement.models.QueryFilter]
     :param or_property: The logical "OR" expression. Must have at least 2 items.
     :type or_property: list[~azure.mgmt.costmanagement.models.QueryFilter]
-    :param not_property: The logical "NOT" expression.
-    :type not_property: ~azure.mgmt.costmanagement.models.QueryFilter
-    :param dimension: Has comparison expression for a dimension.
-    :type dimension: ~azure.mgmt.costmanagement.models.QueryComparisonExpression
-    :param tag: Has comparison expression for a tag.
-    :type tag: ~azure.mgmt.costmanagement.models.QueryComparisonExpression
+    :param dimensions: Has comparison expression for a dimension.
+    :type dimensions: ~azure.mgmt.costmanagement.models.QueryComparisonExpression
+    :param tags: A set of tags. Has comparison expression for a tag.
+    :type tags: ~azure.mgmt.costmanagement.models.QueryComparisonExpression
     """
 
     _validation = {
@@ -1500,9 +1521,8 @@ class QueryFilter(msrest.serialization.Model):
     _attribute_map = {
         'and_property': {'key': 'and', 'type': '[QueryFilter]'},
         'or_property': {'key': 'or', 'type': '[QueryFilter]'},
-        'not_property': {'key': 'not', 'type': 'QueryFilter'},
-        'dimension': {'key': 'dimension', 'type': 'QueryComparisonExpression'},
-        'tag': {'key': 'tag', 'type': 'QueryComparisonExpression'},
+        'dimensions': {'key': 'dimensions', 'type': 'QueryComparisonExpression'},
+        'tags': {'key': 'tags', 'type': 'QueryComparisonExpression'},
     }
 
     def __init__(
@@ -1512,9 +1532,44 @@ class QueryFilter(msrest.serialization.Model):
         super(QueryFilter, self).__init__(**kwargs)
         self.and_property = kwargs.get('and_property', None)
         self.or_property = kwargs.get('or_property', None)
-        self.not_property = kwargs.get('not_property', None)
-        self.dimension = kwargs.get('dimension', None)
-        self.tag = kwargs.get('tag', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.tags = kwargs.get('tags', None)
+
+
+class QueryFilterAutoGenerated(msrest.serialization.Model):
+    """The filter expression to be used in the export.
+
+    :param and_property: The logical "AND" expression. Must have at least 2 items.
+    :type and_property: list[~azure.mgmt.costmanagement.models.QueryFilterAutoGenerated]
+    :param or_property: The logical "OR" expression. Must have at least 2 items.
+    :type or_property: list[~azure.mgmt.costmanagement.models.QueryFilterAutoGenerated]
+    :param dimensions: Has comparison expression for a dimension.
+    :type dimensions: ~azure.mgmt.costmanagement.models.QueryComparisonExpression
+    :param tags: A set of tags. Has comparison expression for a tag.
+    :type tags: ~azure.mgmt.costmanagement.models.QueryComparisonExpression
+    """
+
+    _validation = {
+        'and_property': {'min_items': 2},
+        'or_property': {'min_items': 2},
+    }
+
+    _attribute_map = {
+        'and_property': {'key': 'and', 'type': '[QueryFilterAutoGenerated]'},
+        'or_property': {'key': 'or', 'type': '[QueryFilterAutoGenerated]'},
+        'dimensions': {'key': 'dimensions', 'type': 'QueryComparisonExpression'},
+        'tags': {'key': 'tags', 'type': 'QueryComparisonExpression'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(QueryFilterAutoGenerated, self).__init__(**kwargs)
+        self.and_property = kwargs.get('and_property', None)
+        self.or_property = kwargs.get('or_property', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.tags = kwargs.get('tags', None)
 
 
 class QueryGrouping(msrest.serialization.Model):
@@ -1561,12 +1616,19 @@ class QueryResult(Resource):
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :param e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+     used to determine whether the user is updating the latest version or not.
+    :type e_tag: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar sku: Resource SKU.
+    :vartype sku: str
     :param next_link: The link (url) to the next page of results.
     :type next_link: str
     :param columns: Array of columns.
     :type columns: list[~azure.mgmt.costmanagement.models.QueryColumn]
     :param rows: Array of rows.
-    :type rows: list[list[object]]
+    :type rows: list[list[any]]
     """
 
     _validation = {
@@ -1574,6 +1636,8 @@ class QueryResult(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
+        'location': {'readonly': True},
+        'sku': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1581,6 +1645,9 @@ class QueryResult(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'str'},
         'next_link': {'key': 'properties.nextLink', 'type': 'str'},
         'columns': {'key': 'properties.columns', 'type': '[QueryColumn]'},
         'rows': {'key': 'properties.rows', 'type': '[[object]]'},
@@ -1591,6 +1658,9 @@ class QueryResult(Resource):
         **kwargs
     ):
         super(QueryResult, self).__init__(**kwargs)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.location = None
+        self.sku = None
         self.next_link = kwargs.get('next_link', None)
         self.columns = kwargs.get('columns', None)
         self.rows = kwargs.get('rows', None)
@@ -1634,7 +1704,7 @@ class ReportConfigAggregation(msrest.serialization.Model):
     :param name: Required. The name of the column to aggregate.
     :type name: str
     :param function: Required. The name of the aggregation function to use. Possible values
-     include: "Sum".
+     include: "Avg", "Max", "Min", "Sum".
     :type function: str or ~azure.mgmt.costmanagement.models.FunctionType
     """
 
@@ -1741,54 +1811,6 @@ class ReportConfigDataset(msrest.serialization.Model):
         self.filter = kwargs.get('filter', None)
 
 
-class ReportConfigDatasetAutoGenerated(msrest.serialization.Model):
-    """The definition of data present in the report.
-
-    :param granularity: The granularity of rows in the report. Possible values include: "Daily",
-     "Monthly".
-    :type granularity: str or ~azure.mgmt.costmanagement.models.ReportGranularityType
-    :param configuration: Has configuration information for the data in the report. The
-     configuration will be ignored if aggregation and grouping are provided.
-    :type configuration: ~azure.mgmt.costmanagement.models.ReportConfigDatasetConfiguration
-    :param aggregation: Dictionary of aggregation expression to use in the report. The key of each
-     item in the dictionary is the alias for the aggregated column. Report can have up to 2
-     aggregation clauses.
-    :type aggregation: dict[str, ~azure.mgmt.costmanagement.models.ReportConfigAggregation]
-    :param grouping: Array of group by expression to use in the report. Report can have up to 2
-     group by clauses.
-    :type grouping: list[~azure.mgmt.costmanagement.models.ReportConfigGrouping]
-    :param sorting: Array of order by expression to use in the report.
-    :type sorting: list[~azure.mgmt.costmanagement.models.ReportConfigSorting]
-    :param filter: Has filter expression to use in the report.
-    :type filter: ~azure.mgmt.costmanagement.models.ReportConfigFilterAutoGenerated
-    """
-
-    _validation = {
-        'grouping': {'max_items': 2, 'min_items': 0},
-    }
-
-    _attribute_map = {
-        'granularity': {'key': 'granularity', 'type': 'str'},
-        'configuration': {'key': 'configuration', 'type': 'ReportConfigDatasetConfiguration'},
-        'aggregation': {'key': 'aggregation', 'type': '{ReportConfigAggregation}'},
-        'grouping': {'key': 'grouping', 'type': '[ReportConfigGrouping]'},
-        'sorting': {'key': 'sorting', 'type': '[ReportConfigSorting]'},
-        'filter': {'key': 'filter', 'type': 'ReportConfigFilterAutoGenerated'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReportConfigDatasetAutoGenerated, self).__init__(**kwargs)
-        self.granularity = kwargs.get('granularity', None)
-        self.configuration = kwargs.get('configuration', None)
-        self.aggregation = kwargs.get('aggregation', None)
-        self.grouping = kwargs.get('grouping', None)
-        self.sorting = kwargs.get('sorting', None)
-        self.filter = kwargs.get('filter', None)
-
-
 class ReportConfigDatasetConfiguration(msrest.serialization.Model):
     """The configuration of dataset in the report.
 
@@ -1809,49 +1831,6 @@ class ReportConfigDatasetConfiguration(msrest.serialization.Model):
         self.columns = kwargs.get('columns', None)
 
 
-class ReportConfigDefinition(msrest.serialization.Model):
-    """The definition of a report config.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. The type of the report. Usage represents actual usage, forecast
-     represents forecasted data and UsageAndForecast represents both usage and forecasted data.
-     Actual usage and forecasted data can be differentiated based on dates. Possible values include:
-     "Usage".
-    :type type: str or ~azure.mgmt.costmanagement.models.ReportType
-    :param timeframe: Required. The time frame for pulling data for the report. If custom, then a
-     specific time period must be provided. Possible values include: "WeekToDate", "MonthToDate",
-     "YearToDate", "Custom".
-    :type timeframe: str or ~azure.mgmt.costmanagement.models.ReportTimeframeType
-    :param time_period: Has time period for pulling data for the report.
-    :type time_period: ~azure.mgmt.costmanagement.models.ReportConfigTimePeriod
-    :param dataset: Has definition for data in this report config.
-    :type dataset: ~azure.mgmt.costmanagement.models.ReportConfigDatasetAutoGenerated
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'timeframe': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'timeframe': {'key': 'timeframe', 'type': 'str'},
-        'time_period': {'key': 'timePeriod', 'type': 'ReportConfigTimePeriod'},
-        'dataset': {'key': 'dataset', 'type': 'ReportConfigDatasetAutoGenerated'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReportConfigDefinition, self).__init__(**kwargs)
-        self.type = kwargs['type']
-        self.timeframe = kwargs['timeframe']
-        self.time_period = kwargs.get('time_period', None)
-        self.dataset = kwargs.get('dataset', None)
-
-
 class ReportConfigFilter(msrest.serialization.Model):
     """The filter expression to be used in the report.
 
@@ -1859,12 +1838,14 @@ class ReportConfigFilter(msrest.serialization.Model):
     :type and_property: list[~azure.mgmt.costmanagement.models.ReportConfigFilter]
     :param or_property: The logical "OR" expression. Must have at least 2 items.
     :type or_property: list[~azure.mgmt.costmanagement.models.ReportConfigFilter]
-    :param not_property: The logical "NOT" expression.
-    :type not_property: ~azure.mgmt.costmanagement.models.ReportConfigFilter
-    :param dimension: Has comparison expression for a dimension.
-    :type dimension: ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
-    :param tag: Has comparison expression for a tag.
-    :type tag: ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
+    :param dimensions: Has comparison expression for a dimension.
+    :type dimensions: ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
+    :param tags: A set of tags. Has comparison expression for a tag.
+    :type tags: ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
+    :param tag_key: Has comparison expression for a tag key.
+    :type tag_key: ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
+    :param tag_value: Has comparison expression for a tag value.
+    :type tag_value: ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
     """
 
     _validation = {
@@ -1875,9 +1856,10 @@ class ReportConfigFilter(msrest.serialization.Model):
     _attribute_map = {
         'and_property': {'key': 'and', 'type': '[ReportConfigFilter]'},
         'or_property': {'key': 'or', 'type': '[ReportConfigFilter]'},
-        'not_property': {'key': 'not', 'type': 'ReportConfigFilter'},
-        'dimension': {'key': 'dimension', 'type': 'ReportConfigComparisonExpression'},
-        'tag': {'key': 'tag', 'type': 'ReportConfigComparisonExpression'},
+        'dimensions': {'key': 'dimensions', 'type': 'ReportConfigComparisonExpression'},
+        'tags': {'key': 'tags', 'type': 'ReportConfigComparisonExpression'},
+        'tag_key': {'key': 'tagKey', 'type': 'ReportConfigComparisonExpression'},
+        'tag_value': {'key': 'tagValue', 'type': 'ReportConfigComparisonExpression'},
     }
 
     def __init__(
@@ -1887,49 +1869,10 @@ class ReportConfigFilter(msrest.serialization.Model):
         super(ReportConfigFilter, self).__init__(**kwargs)
         self.and_property = kwargs.get('and_property', None)
         self.or_property = kwargs.get('or_property', None)
-        self.not_property = kwargs.get('not_property', None)
-        self.dimension = kwargs.get('dimension', None)
-        self.tag = kwargs.get('tag', None)
-
-
-class ReportConfigFilterAutoGenerated(msrest.serialization.Model):
-    """The filter expression to be used in the report.
-
-    :param and_property: The logical "AND" expression. Must have at least 2 items.
-    :type and_property: list[~azure.mgmt.costmanagement.models.ReportConfigFilterAutoGenerated]
-    :param or_property: The logical "OR" expression. Must have at least 2 items.
-    :type or_property: list[~azure.mgmt.costmanagement.models.ReportConfigFilterAutoGenerated]
-    :param not_property: The logical "NOT" expression.
-    :type not_property: ~azure.mgmt.costmanagement.models.ReportConfigFilterAutoGenerated
-    :param dimension: Has comparison expression for a dimension.
-    :type dimension: ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
-    :param tag: Has comparison expression for a tag.
-    :type tag: ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
-    """
-
-    _validation = {
-        'and_property': {'min_items': 2},
-        'or_property': {'min_items': 2},
-    }
-
-    _attribute_map = {
-        'and_property': {'key': 'and', 'type': '[ReportConfigFilterAutoGenerated]'},
-        'or_property': {'key': 'or', 'type': '[ReportConfigFilterAutoGenerated]'},
-        'not_property': {'key': 'not', 'type': 'ReportConfigFilterAutoGenerated'},
-        'dimension': {'key': 'dimension', 'type': 'ReportConfigComparisonExpression'},
-        'tag': {'key': 'tag', 'type': 'ReportConfigComparisonExpression'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReportConfigFilterAutoGenerated, self).__init__(**kwargs)
-        self.and_property = kwargs.get('and_property', None)
-        self.or_property = kwargs.get('or_property', None)
-        self.not_property = kwargs.get('not_property', None)
-        self.dimension = kwargs.get('dimension', None)
-        self.tag = kwargs.get('tag', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.tags = kwargs.get('tags', None)
+        self.tag_key = kwargs.get('tag_key', None)
+        self.tag_value = kwargs.get('tag_value', None)
 
 
 class ReportConfigGrouping(msrest.serialization.Model):
@@ -2023,6 +1966,107 @@ class ReportConfigTimePeriod(msrest.serialization.Model):
         self.to = kwargs['to']
 
 
+class Setting(ProxySettingResource):
+    """State of the myscope setting.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar kind: Resource kind.
+    :vartype kind: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param scope: Sets the default scope the current user will see when they sign into Azure Cost
+     Management in the Azure portal.
+    :type scope: str
+    :param start_on: Indicates what scope Cost Management in the Azure portal should default to.
+     Allowed values: LastUsed. Possible values include: "LastUsed", "ScopePicker", "SpecificScope".
+    :type start_on: str or ~azure.mgmt.costmanagement.models.SettingsPropertiesStartOn
+    :param cache: Array of scopes with additional details used by Cost Management in the Azure
+     portal.
+    :type cache: list[~azure.mgmt.costmanagement.models.CacheItem]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'kind': {'readonly': True, 'max_length': 10, 'min_length': 0},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
+        'start_on': {'key': 'properties.startOn', 'type': 'str'},
+        'cache': {'key': 'properties.cache', 'type': '[CacheItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Setting, self).__init__(**kwargs)
+        self.scope = kwargs.get('scope', None)
+        self.start_on = kwargs.get('start_on', None)
+        self.cache = kwargs.get('cache', None)
+
+
+class SettingsListResult(msrest.serialization.Model):
+    """Result of listing settings. It contains a list of available settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of settings.
+    :vartype value: list[~azure.mgmt.costmanagement.models.Setting]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True, 'max_items': 10, 'min_items': 0},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Setting]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SettingsListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class Status(msrest.serialization.Model):
+    """The status of the long running operation.
+
+    :param status: The status of the long running operation. Possible values include: "Running",
+     "Completed", "Failed".
+    :type status: str or ~azure.mgmt.costmanagement.models.OperationStatusType
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Status, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+
+
 class View(ProxyResource):
     """States and configurations of Cost Analysis.
 
@@ -2061,6 +2105,10 @@ class View(ProxyResource):
     :vartype created_on: ~datetime.datetime
     :ivar modified_on: Date when the user last modified this view.
     :vartype modified_on: ~datetime.datetime
+    :ivar date_range: Selected date range for viewing cost in.
+    :vartype date_range: str
+    :ivar currency: Selected currency.
+    :vartype currency: str
     :param chart: Chart type of the main view in Cost Analysis. Required. Possible values include:
      "Area", "Line", "StackedColumn", "GroupedColumn", "Table".
     :type chart: str or ~azure.mgmt.costmanagement.models.ChartType
@@ -2084,8 +2132,10 @@ class View(ProxyResource):
     :type timeframe: str or ~azure.mgmt.costmanagement.models.ReportTimeframeType
     :param time_period: Has time period for pulling data for the report.
     :type time_period: ~azure.mgmt.costmanagement.models.ReportConfigTimePeriod
-    :param dataset: Has definition for data in this report config.
-    :type dataset: ~azure.mgmt.costmanagement.models.ReportConfigDataset
+    :param data_set: Has definition for data in this report config.
+    :type data_set: ~azure.mgmt.costmanagement.models.ReportConfigDataset
+    :ivar include_monetary_commitment: Include monetary commitment.
+    :vartype include_monetary_commitment: bool
     """
 
     _validation = {
@@ -2094,6 +2144,9 @@ class View(ProxyResource):
         'type': {'readonly': True},
         'created_on': {'readonly': True},
         'modified_on': {'readonly': True},
+        'date_range': {'readonly': True},
+        'currency': {'readonly': True},
+        'include_monetary_commitment': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2105,6 +2158,8 @@ class View(ProxyResource):
         'scope': {'key': 'properties.scope', 'type': 'str'},
         'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
         'modified_on': {'key': 'properties.modifiedOn', 'type': 'iso-8601'},
+        'date_range': {'key': 'properties.dateRange', 'type': 'str'},
+        'currency': {'key': 'properties.currency', 'type': 'str'},
         'chart': {'key': 'properties.chart', 'type': 'str'},
         'accumulated': {'key': 'properties.accumulated', 'type': 'str'},
         'metric': {'key': 'properties.metric', 'type': 'str'},
@@ -2113,7 +2168,8 @@ class View(ProxyResource):
         'type_properties_query_type': {'key': 'properties.query.type', 'type': 'str'},
         'timeframe': {'key': 'properties.query.timeframe', 'type': 'str'},
         'time_period': {'key': 'properties.query.timePeriod', 'type': 'ReportConfigTimePeriod'},
-        'dataset': {'key': 'properties.query.dataset', 'type': 'ReportConfigDataset'},
+        'data_set': {'key': 'properties.query.dataSet', 'type': 'ReportConfigDataset'},
+        'include_monetary_commitment': {'key': 'properties.query.includeMonetaryCommitment', 'type': 'bool'},
     }
 
     def __init__(
@@ -2125,6 +2181,8 @@ class View(ProxyResource):
         self.scope = kwargs.get('scope', None)
         self.created_on = None
         self.modified_on = None
+        self.date_range = None
+        self.currency = None
         self.chart = kwargs.get('chart', None)
         self.accumulated = kwargs.get('accumulated', None)
         self.metric = kwargs.get('metric', None)
@@ -2133,7 +2191,8 @@ class View(ProxyResource):
         self.type_properties_query_type = kwargs.get('type_properties_query_type', None)
         self.timeframe = kwargs.get('timeframe', None)
         self.time_period = kwargs.get('time_period', None)
-        self.dataset = kwargs.get('dataset', None)
+        self.data_set = kwargs.get('data_set', None)
+        self.include_monetary_commitment = None
 
 
 class ViewListResult(msrest.serialization.Model):

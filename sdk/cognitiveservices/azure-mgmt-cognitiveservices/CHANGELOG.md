@@ -1,5 +1,63 @@
 # Release History
 
+## 13.1.0 (2022-03-25)
+
+**Features**
+
+  - Added operation AccountsOperations.list_models
+  - Model AccountProperties has a new parameter deletion_date
+  - Model AccountProperties has a new parameter dynamic_throttling_enabled
+  - Model AccountProperties has a new parameter scheduled_purge_date
+  - Model DeploymentScaleSettings has a new parameter active_capacity
+
+## 13.0.0 (2021-11-15)
+
+**Features**
+
+  - Model DomainAvailability has a new parameter kind
+  - Model CheckDomainAvailabilityParameter has a new parameter kind
+  - Added operation group CommitmentPlansOperations
+  - Added operation group CommitmentTiersOperations
+  - Added operation group DeploymentsOperations
+
+**Breaking changes**
+
+  - Operation CognitiveServicesManagementClientOperationsMixin.check_domain_availability has a new signature
+
+## 12.0.0 (2021-06-03)
+
+**Features**
+
+  - Model UserOwnedStorage has a new parameter identity_client_id
+  - Model Sku has a new parameter family
+  - Model Sku has a new parameter capacity
+  - Model Sku has a new parameter size
+  - Model PrivateEndpointConnection has a new parameter location
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter etag
+  - Model PrivateEndpointConnectionProperties has a new parameter provisioning_state
+  - Model KeyVaultProperties has a new parameter identity_client_id
+  - Model PrivateLinkServiceConnectionState has a new parameter actions_required
+  - Added operation PrivateEndpointConnectionsOperations.begin_create_or_update
+  - Added operation PrivateEndpointConnectionsOperations.begin_delete
+  - Added operation AccountsOperations.list_usages
+  - Added operation AccountsOperations.begin_delete
+  - Added operation AccountsOperations.get
+  - Added operation AccountsOperations.begin_create
+  - Added operation AccountsOperations.begin_update
+  - Added operation group DeletedAccountsOperations
+
+**Breaking changes**
+
+  - Model PrivateLinkServiceConnectionState no longer has parameter action_required
+  - Removed operation PrivateEndpointConnectionsOperations.create_or_update
+  - Removed operation PrivateEndpointConnectionsOperations.delete
+  - Removed operation AccountsOperations.delete
+  - Removed operation AccountsOperations.create
+  - Removed operation AccountsOperations.get_usages
+  - Removed operation AccountsOperations.update
+  - Removed operation AccountsOperations.get_properties
+
 ## 11.0.0 (2020-12-22)
 
 **Features**
@@ -20,7 +78,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -28,13 +86,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 6.3.0 (2020-10-09)
 

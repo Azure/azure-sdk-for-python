@@ -29,7 +29,10 @@ def build_config(config: Dict[str, Any]) -> Dict[str, str]:
     result["is_arm"] = result.pop("is_arm", True)
 
     # Do I need msrestazure for this package?
-    result["need_msrestazure"] = result.pop("need_msrestazure", True)
+    result["need_msrestazure"] = result.pop("need_msrestazure", False)
+
+    # Do I need azure-mgmt-core for this package?
+    result["need_azuremgmtcore"] = result.pop("need_azuremgmtcore", True)
 
     # Pre-compute some Jinja variable that are complicated to do inside the templates
     package_parts = result["package_nspkg"][: -len("-nspkg")].split("-")

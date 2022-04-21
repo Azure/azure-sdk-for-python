@@ -399,6 +399,9 @@ def parse_connection_str(conn_str, credential, service):
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
+    if service == "dfs":
+        primary = primary.replace(".blob.", ".dfs.")
+        secondary = secondary.replace(".blob.", ".dfs.")
     return primary, secondary, credential
 
 

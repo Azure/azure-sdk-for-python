@@ -7,17 +7,25 @@
 # --------------------------------------------------------------------------
 
 from ._accounts_operations import AccountsOperations
+from ._deleted_accounts_operations import DeletedAccountsOperations
 from ._resource_skus_operations import ResourceSkusOperations
 from ._operations import Operations
 from ._cognitive_services_management_client_operations import CognitiveServicesManagementClientOperationsMixin
+from ._commitment_tiers_operations import CommitmentTiersOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._deployments_operations import DeploymentsOperations
+from ._commitment_plans_operations import CommitmentPlansOperations
 
 __all__ = [
     'AccountsOperations',
+    'DeletedAccountsOperations',
     'ResourceSkusOperations',
     'Operations',
     'CognitiveServicesManagementClientOperationsMixin',
+    'CommitmentTiersOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
+    'DeploymentsOperations',
+    'CommitmentPlansOperations',
 ]

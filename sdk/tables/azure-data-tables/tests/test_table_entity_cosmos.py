@@ -11,14 +11,15 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError
+    ResourceExistsError,
+    ResourceModifiedError
 )
 from azure.data.tables import (
     TableEntity,
@@ -28,18 +29,18 @@ from azure.data.tables import (
     generate_table_sas,
     TableSasPermissions,
     TableServiceClient,
-    AccessPolicy
 )
+from azure.data.tables._common_conversion import TZ_UTC
 
 from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
 
 # ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(AzureTestCase, TableTestCase):
+class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
+    @recorded_by_proxy
     def test_url_encoding_at_symbol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity = {
@@ -73,6 +74,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -90,6 +92,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_user_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -110,6 +113,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_user_filter_multiple_params(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -134,6 +138,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_user_filter_integers(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -157,6 +162,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_user_filter_floats(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -180,6 +186,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_user_filter_datetimes(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -203,6 +210,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_user_filter_guids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -226,6 +234,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_user_filter_binary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -249,6 +258,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_user_filter_int64(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -278,6 +288,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_invalid_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -302,6 +313,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_dictionary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -317,6 +329,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -337,6 +350,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_with_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -362,6 +376,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_with_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -387,6 +402,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_conflict(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -404,6 +420,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_with_large_int32_value_throws(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
@@ -424,6 +441,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_with_large_int64_value_throws(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
@@ -444,6 +462,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_with_large_int_success(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
@@ -470,6 +489,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_missing_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -484,6 +504,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_empty_string_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -500,6 +521,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_missing_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -516,6 +538,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_entity_empty_string_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -530,6 +553,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -548,6 +572,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -566,6 +591,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -588,6 +614,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -614,6 +641,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_if_match_entity_bad_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -628,7 +656,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             new_etag = e.metadata["etag"]
             e.metadata["etag"] = old_etag
 
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.delete_entity(e, match_condition=MatchConditions.IfNotModified)
 
             # Try delete with correct etag
@@ -638,6 +666,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_delete_entity_if_match_table_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -661,6 +690,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -681,6 +711,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -701,6 +732,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -717,6 +749,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_with_special_doubles(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -741,6 +774,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_update_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -762,6 +796,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_update_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -778,6 +813,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_update_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -799,6 +835,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_update_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -807,7 +844,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.update_entity(
                     mode=UpdateMode.MERGE,
                     entity=sent_entity,
@@ -819,6 +856,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_or_merge_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
@@ -838,6 +876,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_or_merge_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                              tables_primary_cosmos_account_key):
         # Arrange
@@ -858,6 +897,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_or_replace_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                            tables_primary_cosmos_account_key):
         # Arrange
@@ -877,6 +917,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_insert_or_replace_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
         # Arrange
@@ -897,6 +938,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_merge_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -915,6 +957,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_merge_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -931,6 +974,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_merge_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -953,6 +997,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_merge_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -961,7 +1006,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.update_entity(mode=UpdateMode.MERGE,
                                          entity=sent_entity,
                                          etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
@@ -972,6 +1017,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_delete_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -988,6 +1034,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_delete_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -998,6 +1045,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_delete_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1019,6 +1067,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_delete_entity_with_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1026,7 +1075,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceModifiedError):
                 self.table.delete_entity(
                     entity['PartitionKey'],
                     entity['RowKey'],
@@ -1039,6 +1088,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_delete_entity_overloads(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1067,6 +1117,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_delete_entity_overloads_kwargs(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1095,6 +1146,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_unicode_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1118,6 +1170,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_unicode_property_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1141,20 +1194,20 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("Bad Request: Cosmos cannot handle single quotes in a PK/RK (confirm)")
     @cosmos_decorator
+    @recorded_by_proxy
     def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
         # Arrange
-        partition_key_with_single_quote = "a''''b"
-        row_key_with_single_quote = "a''''b"
+        partition_key_with_single_quote = u"a''''b"
+        row_key_with_single_quote = u"a''''b"
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
             entity, _ = self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             assert resp is not None
@@ -1163,8 +1216,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._assert_updated_entity(received_entity)
 
             # Act
-            sent_entity['newField'] = 'newFieldValue'
-            resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            sent_entity['newField'] = u'newFieldValue'
+            resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             assert resp is not None
@@ -1173,14 +1226,13 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert received_entity['newField'] ==  'newFieldValue'
 
             # Act
-            resp = self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
+            self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
 
-            # Assert
-            assert resp is not None
         finally:
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_empty_and_spaces_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1218,6 +1270,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_none_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1236,6 +1289,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_binary_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1255,6 +1309,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1277,6 +1332,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1294,6 +1350,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_entities_each_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1334,6 +1391,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_zero_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1349,6 +1407,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_entities_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1366,6 +1425,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_entities_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1383,6 +1443,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_entities_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1403,6 +1464,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_injection(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1472,6 +1534,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1494,6 +1557,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_entities_with_top(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1509,6 +1573,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_query_entities_with_top_and_next(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1542,6 +1607,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
@@ -1562,6 +1628,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_datetime_str_passthrough(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         partition, row = self._create_pk_rk(None, None)
@@ -1590,6 +1657,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_sas_query(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
 
@@ -1622,6 +1690,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_sas_add(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1653,6 +1722,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_sas_add_outside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1683,6 +1753,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_sas_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1713,6 +1784,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    @recorded_by_proxy
     def test_sas_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
@@ -1738,5 +1810,167 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Assert
             with pytest.raises(ResourceNotFoundError):
                 self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_datetime_duplicate_field(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
+        }
+        try:
+            self.table.create_entity(entity)
+            received = self.table.get_entity(partition, row)
+
+            assert 'Timestamp' not in received
+            assert 'timestamp' in received.metadata
+            assert isinstance(received.metadata['timestamp'], datetime)
+            assert received.metadata['timestamp'].year > 2020
+        
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
+            self.table.update_entity(received, mode=UpdateMode.REPLACE)
+            received = self.table.get_entity(partition, row)
+
+            assert 'timestamp' in received
+            assert isinstance(received['timestamp'], datetime)
+            assert received['timestamp'].year == 1999
+            assert isinstance(received.metadata['timestamp'], datetime)
+            assert received.metadata['timestamp'].year > 2020
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_etag_duplicate_field(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            #'ETag': u'foo',
+            'etag': u'bar',
+            'Etag': u'baz',
+        }
+        try:
+            self.table.create_entity(entity)
+            created = self.table.get_entity(partition, row)
+
+            #assert created['ETag'] == u'foo'
+            assert created['etag'] == u'bar'
+            assert 'Etag' not in created
+            assert created.metadata['etag'].startswith(u'W/"datetime\'')
+
+            #entity['ETag'] = u'one'
+            entity['etag'] = u'two'
+            entity['Etag'] = u'three'
+            with pytest.raises(ValueError):
+                self.table.update_entity(entity, match_condition=MatchConditions.IfNotModified)
+        
+            #created['ETag'] = u'one'
+            created['etag'] = u'two'
+            created['Etag'] = u'three'
+            self.table.update_entity(created, match_condition=MatchConditions.IfNotModified)
+
+            updated = self.table.get_entity(partition, row)
+            #assert updated['ETag'] == u'one'
+            assert updated['etag'] == u'two'
+            assert 'Etag' not in updated
+            assert updated.metadata['etag'].startswith(u'W/"datetime\'')
+            assert updated.metadata['etag'] != created.metadata['etag']
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_entity_create_response_echo(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'Value': u'foobar',
+            'Answer': 42
+        }
+        try:
+            result = self.table.create_entity(entity)
+            assert 'preference_applied' not in result
+            assert 'content' not in result
+            self.table.delete_entity(entity)
+
+            result = self.table.create_entity(entity, headers={'Prefer': 'return-no-content'})
+            assert 'preference_applied' in result
+            assert result['preference_applied'] == 'return-no-content'
+            assert 'content' in result
+            assert result['content'] is None
+            self.table.delete_entity(entity)
+
+            result = self.table.create_entity(entity, headers={'Prefer': 'return-content'})
+            assert 'preference_applied' in result
+            assert result['preference_applied'] == 'return-content'
+            assert 'content' in result
+            assert result['content']['PartitionKey'] == partition
+            assert result['content']['Value'] == u'foobar'
+            assert result['content']['Answer'] == 42
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_keys_with_specialchar(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
+            table2.create_table()
+
+            # Act
+            entity1 = {
+                'PartitionKey': u"A'aaa\"_bbbb2",
+                'RowKey': u'"A\'aaa"_bbbb2',
+                'test': u'"A\'aaa"_bbbb2'
+            }
+
+            self.table.create_entity(entity1.copy())
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            self.table.upsert_entity(entity1.copy(), mode='merge')
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            self.table.upsert_entity(entity1.copy(), mode='replace')
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            self.table.update_entity(entity1.copy(), mode='merge')
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+            self.table.update_entity(entity1.copy(), mode='replace')
+            get_entity = self.table.get_entity(
+                partition_key=entity1['PartitionKey'],
+                row_key=entity1['RowKey'])
+            assert get_entity == entity1
+
+            entity_results = list(self.table.list_entities())
+            assert entity_results[0] == entity1
+            for entity in entity_results:
+                get_entity = self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'])
+                assert get_entity == entity1
+
         finally:
             self._tear_down()

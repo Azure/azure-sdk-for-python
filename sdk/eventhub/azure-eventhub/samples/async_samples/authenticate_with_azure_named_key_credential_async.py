@@ -9,8 +9,6 @@
 Example to demonstrate utilizing AzureNamedKeyCredential to authenticate with Event Hubs asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 import time
@@ -41,7 +39,6 @@ async def authenticate_with_named_key():
         event_data_batch.add(EventData('Single message'))
         await producer_client.send_batch(event_data_batch)
 
-loop = asyncio.get_event_loop()
 start_time = time.time()
-loop.run_until_complete(authenticate_with_named_key())
+asyncio.run(authenticate_with_named_key())
 print("Send messages in {} seconds.".format(time.time() - start_time))

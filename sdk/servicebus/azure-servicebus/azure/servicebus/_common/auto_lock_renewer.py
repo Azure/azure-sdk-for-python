@@ -8,7 +8,7 @@ import datetime
 import logging
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from typing import TYPE_CHECKING
 
 from .._servicebus_receiver import ServiceBusReceiver
@@ -23,6 +23,11 @@ if TYPE_CHECKING:
     Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
     LockRenewFailureCallback = Callable[[Renewable, Optional[Exception]], None]
 
+try:
+    import queue
+except ImportError:
+    import Queue as queue  # type: ignore
+
 _log = logging.getLogger(__name__)
 
 SHORT_RENEW_OFFSET = 0.5  # Seconds that if a renew period is longer than lock duration + offset, it's "too long"
@@ -31,7 +36,7 @@ SHORT_RENEW_SCALING_FACTOR = (
 )
 
 
-class AutoLockRenewer(object):
+class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
     """Auto renew locks for messages and sessions using a background thread pool.
 
     :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
@@ -74,10 +79,12 @@ class AutoLockRenewer(object):
         max_workers=None,
     ):
         # type: (float, Optional[LockRenewFailureCallback], Optional[ThreadPoolExecutor], Optional[int]) -> None
-        """Auto renew locks for messages and sessions using a background thread pool.
+        """Auto renew locks for messages and sessions using a background thread pool. It is recommended
+        setting max_worker to a large number or passing ThreadPoolExecutor of large max_workers number when
+        AutoLockRenewer is supposed to deal with multiple messages or sessions simultaneously.
 
         :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
-          should be maintained for. Default value is 300 (5 minutes).
+         should be maintained for. Default value is 300 (5 minutes).
         :type max_lock_renewal_duration: float
         :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
          that is being registered. Default value is None (no callback).
@@ -91,11 +98,18 @@ class AutoLockRenewer(object):
         :type max_workers: Optional[int]
         """
         self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
+        # None indicates it's unknown whether the provided executor has max workers > 1
+        self._is_max_workers_greater_than_one = None if executor else (max_workers is None or max_workers > 1)
         self._shutdown = threading.Event()
-        self._sleep_time = 1
+        self._sleep_time = 0.5
         self._renew_period = 10
+        self._running_dispatcher = threading.Event()  # indicate whether the dispatcher is running
+        self._last_activity_timestamp = None  # the last timestamp when the dispatcher is active dealing with tasks
+        self._dispatcher_timeout = 5  # the idle time that dispatcher should exit if there's no activity
         self._max_lock_renewal_duration = max_lock_renewal_duration
         self._on_lock_renew_failure = on_lock_renew_failure
+        self._renew_tasks = queue.Queue()  # type: ignore
+        self._infer_max_workers_time = 1
 
     def __enter__(self):
         if self._shutdown.is_set():
@@ -103,10 +117,34 @@ class AutoLockRenewer(object):
                 "The AutoLockRenewer has already been shutdown. Please create a new instance for"
                 " auto lock renewing."
             )
+
+        self._init_workers()
         return self
 
     def __exit__(self, *args):
         self.close()
+
+    def _init_workers(self):
+        if not self._running_dispatcher.is_set():
+            self._infer_max_workers_greater_than_one_if_needed()
+            self._running_dispatcher.set()
+            self._executor.submit(self._dispatch_worker)
+
+    def _infer_max_workers_greater_than_one_if_needed(self):
+        # infer max_workers value if executor is passed in
+        if self._is_max_workers_greater_than_one is None:
+            max_wokers_checker = self._executor.submit(self._infer_max_workers_value_worker)
+            max_wokers_checker.result()
+
+    def _infer_max_workers_value_worker(self):
+        max_workers_checker = self._executor.submit(pow, 1, 1)
+        # This will never complete because there is only one worker thread and
+        # it is executing this function.
+        try:
+            max_workers_checker.result(timeout=self._infer_max_workers_time)
+            self._is_max_workers_greater_than_one = True
+        except FuturesTimeoutError:
+            self._is_max_workers_greater_than_one = False
 
     def _renewable(self, renewable):
         # pylint: disable=protected-access
@@ -120,7 +158,27 @@ class AutoLockRenewer(object):
             return False
         return True
 
-    def _auto_lock_renew(
+    def _dispatch_worker(self):
+        self._last_activity_timestamp = time.time()
+        while not self._shutdown.is_set() and self._running_dispatcher.is_set():
+            while not self._renew_tasks.empty():
+                renew_task = self._renew_tasks.get()
+                if self._is_max_workers_greater_than_one:
+                    self._executor.submit(self._auto_lock_renew_task, *renew_task)
+                else:
+                    self._auto_lock_renew_task(*renew_task)
+                self._renew_tasks.task_done()
+                self._last_activity_timestamp = time.time()
+            # If there's no activity in the past self._idle_timeout seconds, exit the method
+            # This ensures the dispatching thread could exit, not blocking the main python thread
+            # the main worker thread could be started again if new tasks get registered
+            if time.time() - self._last_activity_timestamp >= self._dispatcher_timeout:
+                self._running_dispatcher.clear()
+                self._last_activity_timestamp = None
+                return
+            time.sleep(self._sleep_time)  # save cpu cycles if there's currently no task in self._renew_tasks
+
+    def _auto_lock_renew_task(
         self,
         receiver,
         renewable,
@@ -130,14 +188,11 @@ class AutoLockRenewer(object):
         renew_period_override=None,
     ):
         # pylint: disable=protected-access
-        _log.debug(
-            "Running lock auto-renew thread for %r seconds", max_lock_renewal_duration
-        )
         error = None
         clean_shutdown = False  # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
         renew_period = renew_period_override or self._renew_period
         try:
-            while self._renewable(renewable):
+            if self._renewable(renewable):
                 if (utc_now() - starttime) >= datetime.timedelta(
                     seconds=max_lock_renewal_duration
                 ):
@@ -163,6 +218,18 @@ class AutoLockRenewer(object):
                         # Renewable is a message
                         receiver.renew_message_lock(renewable)  # type: ignore
                 time.sleep(self._sleep_time)
+                # enqueue a new task, keeping renewing the renewable
+                if self._renewable(renewable):
+                    self._renew_tasks.put(
+                        (
+                            receiver,
+                            renewable,
+                            starttime,
+                            max_lock_renewal_duration,
+                            on_lock_renew_failure,
+                            renew_period_override
+                        )
+                    )
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
             error = e
@@ -192,7 +259,7 @@ class AutoLockRenewer(object):
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.ServiceBusReceivedMessage, ~azure.servicebus.ServiceBusSession]
         :param max_lock_renewal_duration: A time in seconds that the lock should be maintained for.
-          Default value is 300 (5 minutes).
+         Default value is None. If specified, this value will override the default value specified at the constructor.
         :type max_lock_renewal_duration: Optional[float]
         :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
          that is being registered. Default value is None (no callback).
@@ -231,14 +298,21 @@ class AutoLockRenewer(object):
                 time_until_expiry.seconds * SHORT_RENEW_SCALING_FACTOR
             )
 
-        self._executor.submit(
-            self._auto_lock_renew,
-            receiver,
-            renewable,
-            starttime,
-            max_lock_renewal_duration or self._max_lock_renewal_duration,
-            on_lock_renew_failure or self._on_lock_renew_failure,
-            renew_period_override,
+        _log.debug(
+            "Running lock auto-renew for %r for %r seconds", renewable, max_lock_renewal_duration
+        )
+
+        self._init_workers()
+
+        self._renew_tasks.put(
+            (
+                receiver,
+                renewable,
+                starttime,
+                max_lock_renewal_duration or self._max_lock_renewal_duration,
+                on_lock_renew_failure or self._on_lock_renew_failure,
+                renew_period_override
+            )
         )
 
     def close(self, wait=True):
@@ -249,5 +323,6 @@ class AutoLockRenewer(object):
 
         :rtype: None
         """
+        self._running_dispatcher.clear()
         self._shutdown.set()
         self._executor.shutdown(wait=wait)

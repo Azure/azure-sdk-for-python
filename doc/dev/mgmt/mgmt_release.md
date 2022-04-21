@@ -16,7 +16,7 @@ Once Swagger PR is merged, SDK automation will create pull request to Azure SDK 
 
 Once you have a PR that contains accurate with correct tests (or no tests at all, but CI is green), this page explains how to prepare for a release.
 
-IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/dev_setup.md) in your currently loaded virtual environment.
+IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md) in your currently loaded virtual environment.
 
 ## Manual generation
 

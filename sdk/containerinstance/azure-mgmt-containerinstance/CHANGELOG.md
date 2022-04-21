@@ -1,6 +1,46 @@
 # Release History
 
+## 9.2.0 (2022-04-15)
+
+**Features**
+
+  - Model IpAddress has a new parameter dns_name_label_reuse_policy
+
+## 9.1.0 (2021-10-13)
+
+**Features**
+
+  - Model ContainerGroup has a new parameter zones
+  - Model Resource has a new parameter zones
+
+## 9.0.0 (2021-09-17)
+
+**Features**
+
+  - Model ImageRegistryCredential has a new parameter identity_url
+  - Model ImageRegistryCredential has a new parameter identity
+  - Model ContainerGroup has a new parameter subnet_ids
+  - Added operation ContainerGroupsOperations.get_outbound_network_dependencies_endpoints
+
+**Breaking changes**
+
+  - Model ContainerGroup no longer has parameter network_profile
+
+## 8.0.0 (2021-07-20)
+
+**Features**
+
+  - Model LogAnalytics has a new parameter workspace_resource_id
+  - Model ContainerHttpGet has a new parameter http_headers
+  - Added operation ContainersOperations.attach
+
+**Breaking changes**
+
+  - Operation ContainersOperations.list_logs has a new signature
+
 ## 7.0.0 (2020-11-25)
+
+  - GA release
 
 ## 7.0.0b1 (2020-10-12)
 
@@ -16,7 +56,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -24,13 +64,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 2.0.0 (2020-06-24)
 

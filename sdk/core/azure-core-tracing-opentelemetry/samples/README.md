@@ -26,9 +26,9 @@ It is assumed that the relevant SDKs are installed along with this extension. Be
 - [azure-eventhub](https://pypi.org/project/azure-eventhub/) v5 or greater
 - [opentelemtry-sdk](https://pypi.org/project/opentelemetry-sdk/)
 
-[python-sample-storage]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core-tracing-opentelemetry/samples/sample_storage.py
-[python-sample-eventgrid]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core-tracing-opentelemetry/samples/sample_eventgrid.py
-[python-sample-servicebus]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core-tracing-opentelemetry/samples/sample_servicebus.py
-[python-sample-servicebus-receive]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core-tracing-opentelemetry/samples/sample_receive_sb.py
-[python-sample-eventhub-send]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core-tracing-opentelemetry/samples/sample_eventhubs.py
-[python-sample-eventhub-receive]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core-tracing-opentelemetry/samples/sample_receive_eh.py
+[python-sample-storage]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_storage.py
+[python-sample-eventgrid]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_eventgrid.py
+[python-sample-servicebus]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_servicebus.py
+[python-sample-servicebus-receive]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_receive_sb.py
+[python-sample-eventhub-send]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_eventhubs.py
+[python-sample-eventhub-receive]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/samples/sample_receive_eh.py

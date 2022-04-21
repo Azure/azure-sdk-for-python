@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
@@ -212,6 +217,7 @@ def read_Container(db, id):
 
     try:
         container = db.get_container_client(id)
+        container.read()
         print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
 
     except exceptions.CosmosResourceNotFoundError:

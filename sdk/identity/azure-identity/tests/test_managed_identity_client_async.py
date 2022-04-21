@@ -6,15 +6,36 @@ import json
 import time
 from unittest.mock import Mock, patch
 
-from azure.core.exceptions import ClientAuthenticationError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio._internal.managed_identity_client import AsyncManagedIdentityClient
 import pytest
 
 from helpers import mock_response, Request
-from helpers_async import async_validating_transport
+from helpers_async import async_validating_transport, AsyncMockTransport, get_completed_future
 
 pytestmark = pytest.mark.asyncio
+
+
+async def test_close():
+    transport = AsyncMockTransport()
+    client = AsyncManagedIdentityClient(lambda *_: None, transport=transport)
+
+    await client.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    client = AsyncManagedIdentityClient(lambda *_: None, transport=transport)
+
+    async with client:
+        assert transport.__aenter__.call_count == 1
+        assert transport.__aexit__.call_count == 0
+
+    assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 1
 
 
 async def test_caching():
@@ -85,6 +106,24 @@ async def test_deserializes_json_from_text():
     token = await client.request_token(scope)
     assert token.expires_on == expected_expires_on
     assert token.token == expected_token
+
+
+@pytest.mark.asyncio
+async def test_managed_identity_client_retry():
+    """AsyncManagedIdentityClient should retry token requests"""
+
+    message = "can't connect"
+    transport = Mock(send=Mock(side_effect=ServiceRequestError(message)), sleep=get_completed_future)
+    request_factory = Mock()
+
+    client = AsyncManagedIdentityClient(request_factory, transport=transport)
+
+    for method in ("GET", "POST"):
+        request_factory.return_value = HttpRequest(method, "https://localhost")
+        with pytest.raises(ServiceRequestError, match=message):
+            await client.request_token("scope")
+        assert transport.send.call_count > 1
+        transport.send.reset_mock()
 
 
 @pytest.mark.parametrize("content_type", ("text/html", "application/json"))

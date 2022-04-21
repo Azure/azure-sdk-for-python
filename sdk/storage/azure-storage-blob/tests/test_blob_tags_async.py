@@ -4,34 +4,28 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
+from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
-import pytest
-from devtools_testutils import StorageAccountPreparer
+from azure.core.exceptions import (ResourceExistsError, ResourceModifiedError, HttpResponseError)
 
-from _shared.asynctestcase import AsyncStorageTestCase
-
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib2 import quote
-
-from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
-from azure.core.exceptions import (
-    ResourceExistsError, ResourceModifiedError, HttpResponseError)
-from azure.storage.blob import BlobBlock
+from azure.storage.blob import BlobBlock, BlobSasPermissions, generate_blob_sas
 from azure.storage.blob.aio import BlobServiceClient
-#------------------------------------------------------------------------------
 
+from devtools_testutils.storage.aio import AsyncStorageTestCase
+from settings.testcase import BlobPreparer
+
+#------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
 #------------------------------------------------------------------------------
 
 class StorageBlobTagsTest(AsyncStorageTestCase):
 
-    async def _setup(self, storage_account, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
+    async def _setup(self, storage_account_name, key):
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
         self.container_name = self.get_resource_name("container")
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
@@ -79,11 +73,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
     #-- test cases for blob tags ----------------------------------------------
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_set_blob_tags(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_set_blob_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         blob_client, _ = await self._create_block_blob()
 
         # Act
@@ -94,10 +86,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_set_blob_tags_with_lease(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_set_blob_tags_with_lease(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         blob_client, _ = await self._create_block_blob()
         lease = await blob_client.acquire_lease()
 
@@ -118,11 +109,10 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
         await blob_client.delete_blob(lease=lease)
 
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_set_blob_tags_for_a_version(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_set_blob_tags_for_a_version(self, versioned_storage_account_name, versioned_storage_account_key):
+        await self._setup(versioned_storage_account_name, versioned_storage_account_key)
         # use this version to set tag
         blob_client, resp = await self._create_block_blob()
         await self._create_block_blob()
@@ -135,11 +125,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_get_blob_tags(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_get_blob_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         blob_client, resp = await self._create_block_blob()
 
         # Act
@@ -154,11 +142,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         for key, value in resp.items():
             self.assertEqual(tags[key], value)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_get_blob_tags_for_a_snapshot(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_get_blob_tags_for_a_snapshot(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         tags = {"+-./:=_ ": "firsttag", "tag2": "+-./:=_", "+-./:=_1": "+-./:=_"}
         blob_client, resp = await self._create_block_blob(tags=tags)
 
@@ -173,11 +159,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         for key, value in resp.items():
             self.assertEqual(tags[key], value)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_upload_block_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_upload_block_blob_with_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = await self._create_block_blob(tags=tags)
 
@@ -187,11 +171,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_get_blob_properties_returns_tags_num(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_get_blob_properties_returns_tags_num(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = await self._create_block_blob(tags=tags)
 
@@ -203,11 +185,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertEqual(resp.tag_count, len(tags))
         self.assertEqual(downloaded.properties.tag_count, len(tags))
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_create_append_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_create_append_blob_with_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         tags = {"+-./:=_ ": "firsttag", "tag2": "+-./:=_", "+-./:=_1": "+-./:=_"}
         blob_client, resp = await self._create_append_blob(tags=tags)
 
@@ -217,11 +197,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_create_page_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_create_page_blob_with_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = await self._create_page_blob(tags=tags)
 
@@ -231,11 +209,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_commit_block_list_with_tags(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_commit_block_list_with_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = await self._create_empty_block_blob(tags={'condition tag': 'test tag'})
 
@@ -255,17 +231,15 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), len(tags))
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_start_copy_from_url_with_tags(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_start_copy_from_url_with_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob_client, resp = await self._create_block_blob()
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(storage_account, "blob"), self.container_name, blob_client.blob_name)
+            self.account_url(storage_account_name, "blob"), self.container_name, blob_client.blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         copy = await copyblob.start_copy_from_url(sourceblob, tags=tags)
@@ -285,11 +259,79 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), len(tags))
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_list_blobs_returns_tags(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_start_copy_from_url_with_tags_copy_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
+
+        source_sas = generate_blob_sas(
+            storage_account_name,
+            self.container_name,
+            source_blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True, tag=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        source_url = source_blob.url + '?' + source_sas
+        dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+
+        # Act
+        with self.assertRaises(ValueError):
+            await dest_blob.start_copy_from_url(source_url, tags="COPY")
+
+        copy = await dest_blob.start_copy_from_url(source_url, tags="COPY", requires_sync=True)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_tags = await dest_blob.get_blob_tags()
+
+        # Assert
+        self.assertIsNotNone(copy_tags)
+        self.assertEqual(tags, copy_tags)
+
+    @BlobPreparer()
+    async def test_start_copy_from_url_with_tags_replace_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        tags2 = {"hello": "world"}
+        source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
+
+        source_sas = generate_blob_sas(
+            storage_account_name,
+            self.container_name,
+            source_blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        source_url = source_blob.url + '?' + source_sas
+        dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+
+        # Act
+        copy = await dest_blob.start_copy_from_url(source_url, tags=tags2, requires_sync=True)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_tags = await dest_blob.get_blob_tags()
+
+        # Assert
+        self.assertIsNotNone(copy_tags)
+        self.assertEqual(tags2, copy_tags)
+
+    @BlobPreparer()
+    async def test_list_blobs_returns_tags(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         await self._create_block_blob(tags=tags)
         container = self.bsc.get_container_client(self.container_name)
@@ -302,10 +344,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
                 self.assertEqual(tags[key], value)
 
     @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_filter_blobs(self, resource_group, location, storage_account, storage_account_key):
-        await self._setup(storage_account, storage_account_key)
+    @BlobPreparer()
+    async def test_filter_blobs(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
         container_name1 = await self._create_container(prefix="container1")
         container_name2 = await self._create_container(prefix="container2")
         container_name3 = await self._create_container(prefix="container3")

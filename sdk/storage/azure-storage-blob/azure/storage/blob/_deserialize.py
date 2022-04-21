@@ -8,10 +8,12 @@ from typing import (  # pylint: disable=unused-import
     Tuple, Dict, List,
     TYPE_CHECKING
 )
-
-from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
+from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties, ImmutabilityPolicy
 from ._shared.models import get_enum_value
-
 from ._shared.response_handlers import deserialize_metadata
 from ._models import ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
     StaticWebsite, ObjectReplicationPolicy, ObjectReplicationRule
@@ -122,7 +124,10 @@ def service_properties_deserialize(generated):
 
 def get_blob_properties_from_generated_code(generated):
     blob = BlobProperties()
-    blob.name = generated.name
+    if generated.name.encoded:
+        blob.name = unquote(generated.name.content)
+    else:
+        blob.name = generated.name.content
     blob_type = get_enum_value(generated.properties.blob_type)
     blob.blob_type = BlobType(blob_type) if blob_type else None
     blob.etag = generated.properties.etag
@@ -153,6 +158,9 @@ def get_blob_properties_from_generated_code(generated):
     blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
     blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
     blob.last_accessed_on = generated.properties.last_accessed_on
+    blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
+    blob.has_legal_hold = generated.properties.legal_hold
+    blob.has_versions_only = generated.has_versions_only
     return blob
 
 

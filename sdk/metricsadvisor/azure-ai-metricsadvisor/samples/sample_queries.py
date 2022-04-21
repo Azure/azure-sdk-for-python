@@ -40,7 +40,7 @@ def sample_list_metric_enriched_series_data():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
-    series_identity = {"city": "Los Angeles"}
+    series_identity = {"region": "Los Angeles"}
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -65,7 +65,7 @@ def sample_list_anomaly_dimension_values():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
-    dimension_name = "city"
+    dimension_name = "region"
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -89,7 +89,7 @@ def sample_list_metric_dimension_values():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
-    dimension_name = "city"
+    dimension_name = "region"
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -103,8 +103,8 @@ def sample_list_metric_dimension_values():
 
     # [END list_metric_dimension_values]
 
-def sample_list_metrics_series_data():
-    # [START list_metrics_series_data]
+def sample_list_metric_series_data():
+    # [START list_metric_series_data]
     import datetime
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
 
@@ -116,18 +116,18 @@ def sample_list_metrics_series_data():
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    results = client.list_metrics_series_data(
+    results = client.list_metric_series_data(
             metric_id=metric_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 10, 21),
-            series_to_filter=[
-                {"city": "Los Angeles", "category": "Homemade"}
+            series_keys=[
+                {"region": "Los Angeles", "category": "Homemade"}
             ]
         )
     for result in results:
         print(str(result))
 
-    # [END list_metrics_series_data]
+    # [END list_metric_series_data]
 
 def sample_list_metric_series_definitions():
     # [START list_metric_series_definitions]
@@ -182,7 +182,7 @@ if __name__ == '__main__':
     print("---List metric dimension values...")
     sample_list_metric_dimension_values()
     print("---List metric series data...")
-    sample_list_metrics_series_data()
+    sample_list_metric_series_data()
     print("---List metric series definitions...")
     sample_list_metric_series_definitions()
     print("---List metric enrichment status...")

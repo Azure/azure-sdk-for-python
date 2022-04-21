@@ -9,32 +9,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30
+    uri: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/zR79nkWT2dj9v8XfvRo49O5nm2yps2nVdtXqbFMm2rq+U4PVueZ9N2lGbpAl+MPxp9
-        xC3OZvTS3ke/ZNSD9Dqf1nmbvqyKZZt+gbbBOw8/+iXf/yX/D1jCnWCJAAAA
+      string: '{"value":[{"@search.text":"Cheapest hotel in town. Infact, a motel.","hotelId":"2"},{"@search.text":"Secret
+        Point Motel","hotelId":"9"}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '216'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:23:06 GMT
-      elapsed-time: '179'
+      date: Tue, 31 Aug 2021 17:31:12 GMT
+      elapsed-time: '319'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 09f0b04c-b990-11eb-8baa-a0481ca055a9
+      request-id: 3d8de36f-0a81-11ec-beb5-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30
+    url: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2021-04-30-Preview
 version: 1

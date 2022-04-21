@@ -5,32 +5,27 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchd858185d.search.windows.net/indexes?api-version=2020-06-30
+    uri: https://searchd858185d.search.windows.net/indexes?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns5nB/cPdg/uz8by5/iqWM6qq2a8zNu7v9sibzO8/eP0
-        Yf4ubz4afXSZlev8o0ff+/4v+X8AmaKSKVsAAAA=
+      string: '{"@odata.context":"https://searchd858185d.search.windows.net/$metadata#indexes","value":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '200'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:28:16 GMT
-      elapsed-time: '27'
+      date: Tue, 31 Aug 2021 17:35:24 GMT
+      elapsed-time: '32'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: c2f732f8-b990-11eb-aab2-a0481ca055a9
+      request-id: d3d34c0b-0a81-11ec-80d9-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchd858185d.search.windows.net/indexes?api-version=2020-06-30
+    url: https://searchd858185d.search.windows.net/indexes?api-version=2021-04-30-Preview
 version: 1

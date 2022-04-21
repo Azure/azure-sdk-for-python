@@ -1,0 +1,6 @@
+include *.md
+include {{ folder_first }}/__init__.py
+include {{ folder_first }}/{{ folder_second }}/__init__.py
+include LICENSE
+recursive-include tests *.py
+recursive-include samples *.py *.md

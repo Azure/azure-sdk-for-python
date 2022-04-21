@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 import functools
-from typing import Optional, Any, Union
-
+from typing import Optional, Any, Union, TypeVar
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -19,8 +19,8 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
-from ._serialize import convert_dfs_url_to_blob_url
-from ._list_paths_helper import DeletedPathPropertiesPaged
+from ._serialize import convert_dfs_url_to_blob_url, get_api_version
+from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 from ._models import LocationMode, FileSystemProperties, PublicAccess, DeletedPathProperties, FileProperties, \
     DirectoryProperties
 from ._data_lake_file_client import DataLakeFileClient
@@ -28,7 +28,10 @@ from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
-from ._deserialize import deserialize_path_properties, process_storage_error, is_file_path
+from ._deserialize import process_storage_error, is_file_path
+
+
+ClassType = TypeVar("ClassType")
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -56,6 +59,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -104,10 +110,15 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url,
+                                                   file_system=file_system_name, pipeline=self._pipeline)
+        api_version = get_api_version(kwargs)
+        self._client._config.version = api_version  # pylint: disable=protected-access
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
+                                                                               base_url=self._container_client.url,
                                                                                file_system=file_system_name,
                                                                                pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
@@ -133,11 +144,12 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             file_system_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> FileSystemClient
+        ):  # type: (...) -> ClassType
         """
         Create FileSystemClient from a Connection String.
 
@@ -241,7 +253,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -509,13 +521,14 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: List the paths in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        return self._client.file_system.list_paths(
-            recursive=recursive,
-            max_results=max_results,
+        command = functools.partial(
+            self._client.file_system.list_paths,
             path=path,
             timeout=timeout,
-            cls=deserialize_path_properties,
             **kwargs)
+        return ItemPaged(
+            command, recursive, path=path, max_results=max_results,
+            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          metadata=None,  # type: Optional[Dict[str, str]]
@@ -806,6 +819,72 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self.get_directory_client('/')
 
+    # TODO: Temporarily removing this for GA release.
+    # def delete_files(self, *files, **kwargs):
+    #     # type: (...) -> Iterator[HttpResponse]
+    #     """Marks the specified files or empty directories for deletion.
+
+    #     The files/empty directories are later deleted during garbage collection.
+
+    #     If a delete retention policy is enabled for the service, then this operation soft deletes the
+    #     files/empty directories and retains the files or snapshots for specified number of days.
+    #     After specified number of days, files' data is removed from the service during garbage collection.
+    #     Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
+
+    #     :param files:
+    #         The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
+    #         be supplied, where each value is either the name of the file/directory (str) or
+    #         FileProperties/DirectoryProperties.
+
+    #         .. note::
+    #             When the file/dir type is dict, here's a list of keys, value rules.
+
+    #             blob name:
+    #                 key: 'name', value type: str
+    #             if the file modified or not:
+    #                 key: 'if_modified_since', 'if_unmodified_since', value type: datetime
+    #             etag:
+    #                 key: 'etag', value type: str
+    #             match the etag or not:
+    #                 key: 'match_condition', value type: MatchConditions
+    #             lease:
+    #                 key: 'lease_id', value type: Union[str, LeaseClient]
+    #             timeout for subrequest:
+    #                 key: 'timeout', value type: int
+
+    #     :type files: list[str], list[dict],
+    #         or list[Union[~azure.storage.filedatalake.FileProperties, ~azure.storage.filedatalake.DirectoryProperties]
+    #     :keyword ~datetime.datetime if_modified_since:
+    #         A DateTime value. Azure expects the date value passed in to be UTC.
+    #         If timezone is included, any non-UTC datetimes will be converted to UTC.
+    #         If a date is passed in without timezone info, it is assumed to be UTC.
+    #         Specify this header to perform the operation only
+    #         if the resource has been modified since the specified time.
+    #     :keyword ~datetime.datetime if_unmodified_since:
+    #         A DateTime value. Azure expects the date value passed in to be UTC.
+    #         If timezone is included, any non-UTC datetimes will be converted to UTC.
+    #         If a date is passed in without timezone info, it is assumed to be UTC.
+    #         Specify this header to perform the operation only if
+    #         the resource has not been modified since the specified date/time.
+    #     :keyword bool raise_on_any_failure:
+    #         This is a boolean param which defaults to True. When this is set, an exception
+    #         is raised even if there is a single operation failure.
+    #     :keyword int timeout:
+    #         The timeout parameter is expressed in seconds.
+    #     :return: An iterator of responses, one for each blob in order
+    #     :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
+
+    #     .. admonition:: Example:
+
+    #         .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+    #             :start-after: [START batch_delete_files_or_empty_directories]
+    #             :end-before: [END batch_delete_files_or_empty_directories]
+    #             :language: python
+    #             :dedent: 4
+    #             :caption: Deleting multiple files or empty directories.
+    #     """
+    #     return self._container_client.delete_blobs(*files, **kwargs)
+
     def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
                              ):
         # type: (...) -> DataLakeDirectoryClient
@@ -839,6 +918,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
+                                       api_version=self.api_version,
                                        _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
@@ -879,6 +959,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -895,7 +976,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         :keyword str path_prefix:
             Filters the results to return only paths under the specified path.
-        :keyword int max_results:
+        :keyword int results_per_page:
             An optional value that specifies the maximum number of items to return per page.
             If omitted or greater than 5,000, the response will include up to 5,000 items per page.
         :keyword int timeout:
@@ -905,8 +986,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """
         path_prefix = kwargs.pop('path_prefix', None)
-        results_per_page = kwargs.pop('max_results', None)
         timeout = kwargs.pop('timeout', None)
+        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
             showonly=ListBlobsIncludeItem.deleted,

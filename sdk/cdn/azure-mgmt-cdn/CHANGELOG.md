@@ -1,5 +1,160 @@
 # Release History
 
+## 12.0.0 (2022-03-22)
+
+**Features**
+
+  - Added operation CdnManagementClientOperationsMixin.check_endpoint_name_availability
+  - Added operation RuleSetsOperations.create
+  - Model AFDDomain has a new parameter pre_validated_custom_domain_resource_id
+  - Model AFDDomain has a new parameter profile_name
+  - Model AFDDomainProperties has a new parameter pre_validated_custom_domain_resource_id
+  - Model AFDDomainProperties has a new parameter profile_name
+  - Model AFDDomainUpdateParameters has a new parameter pre_validated_custom_domain_resource_id
+  - Model AFDDomainUpdateParameters has a new parameter profile_name
+  - Model AFDDomainUpdatePropertiesParameters has a new parameter pre_validated_custom_domain_resource_id
+  - Model AFDDomainUpdatePropertiesParameters has a new parameter profile_name
+  - Model AFDEndpoint has a new parameter auto_generated_domain_name_label_scope
+  - Model AFDEndpoint has a new parameter profile_name
+  - Model AFDEndpointProperties has a new parameter auto_generated_domain_name_label_scope
+  - Model AFDEndpointProperties has a new parameter profile_name
+  - Model AFDEndpointPropertiesUpdateParameters has a new parameter profile_name
+  - Model AFDEndpointUpdateParameters has a new parameter profile_name
+  - Model AFDOrigin has a new parameter enforce_certificate_name_check
+  - Model AFDOrigin has a new parameter origin_group_name
+  - Model AFDOriginGroup has a new parameter profile_name
+  - Model AFDOriginGroupProperties has a new parameter profile_name
+  - Model AFDOriginGroupUpdateParameters has a new parameter profile_name
+  - Model AFDOriginGroupUpdatePropertiesParameters has a new parameter profile_name
+  - Model AFDOriginProperties has a new parameter enforce_certificate_name_check
+  - Model AFDOriginProperties has a new parameter origin_group_name
+  - Model AFDOriginUpdateParameters has a new parameter enforce_certificate_name_check
+  - Model AFDOriginUpdateParameters has a new parameter origin_group_name
+  - Model AFDOriginUpdatePropertiesParameters has a new parameter enforce_certificate_name_check
+  - Model AFDOriginUpdatePropertiesParameters has a new parameter origin_group_name
+  - Model Certificate has a new parameter type
+  - Model CustomDomain has a new parameter custom_https_parameters
+  - Model CustomerCertificate has a new parameter secret_source
+  - Model CustomerCertificate has a new parameter secret_version
+  - Model CustomerCertificate has a new parameter type
+  - Model CustomerCertificateParameters has a new parameter expiration_date
+  - Model CustomerCertificateParameters has a new parameter subject
+  - Model CustomerCertificateParameters has a new parameter thumbprint
+  - Model DeepCreatedOrigin has a new parameter private_endpoint_status
+  - Model Endpoint has a new parameter custom_domains
+  - Model EndpointProperties has a new parameter custom_domains
+  - Model ErrorResponse has a new parameter error
+  - Model HttpVersionMatchConditionParameters has a new parameter transforms
+  - Model ManagedCertificate has a new parameter type
+  - Model ManagedCertificateParameters has a new parameter expiration_date
+  - Model ManagedCertificateParameters has a new parameter subject
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter service_specification
+  - Model OperationDisplay has a new parameter description
+  - Model Profile has a new parameter front_door_id
+  - Model Profile has a new parameter kind
+  - Model Profile has a new parameter origin_response_timeout_seconds
+  - Model ProfileUpdateParameters has a new parameter origin_response_timeout_seconds
+  - Model RequestMethodMatchConditionParameters has a new parameter transforms
+  - Model RequestSchemeMatchConditionParameters has a new parameter transforms
+  - Model Route has a new parameter cache_configuration
+  - Model Route has a new parameter endpoint_name
+  - Model RouteProperties has a new parameter cache_configuration
+  - Model RouteProperties has a new parameter endpoint_name
+  - Model RouteUpdateParameters has a new parameter cache_configuration
+  - Model RouteUpdateParameters has a new parameter endpoint_name
+  - Model RouteUpdatePropertiesParameters has a new parameter cache_configuration
+  - Model RouteUpdatePropertiesParameters has a new parameter endpoint_name
+  - Model Rule has a new parameter rule_set_name
+  - Model RuleProperties has a new parameter rule_set_name
+  - Model RuleSet has a new parameter profile_name
+  - Model RuleSetProperties has a new parameter profile_name
+  - Model RuleUpdateParameters has a new parameter rule_set_name
+  - Model RuleUpdatePropertiesParameters has a new parameter rule_set_name
+  - Model Secret has a new parameter profile_name
+  - Model SecretProperties has a new parameter profile_name
+  - Model SecurityPolicy has a new parameter profile_name
+  - Model SecurityPolicyProperties has a new parameter profile_name
+  - Model ValidateSecretInput has a new parameter secret_version
+
+**Breaking changes**
+
+  - Model AFDEndpoint no longer has parameter origin_response_timeout_seconds
+  - Model AFDEndpointProperties no longer has parameter origin_response_timeout_seconds
+  - Model AFDEndpointPropertiesUpdateParameters no longer has parameter origin_response_timeout_seconds
+  - Model AFDEndpointUpdateParameters no longer has parameter origin_response_timeout_seconds
+  - Model AFDOriginGroup no longer has parameter response_based_afd_origin_error_detection_settings
+  - Model AFDOriginGroupProperties no longer has parameter response_based_afd_origin_error_detection_settings
+  - Model AFDOriginGroupUpdateParameters no longer has parameter response_based_afd_origin_error_detection_settings
+  - Model AFDOriginGroupUpdatePropertiesParameters no longer has parameter response_based_afd_origin_error_detection_settings
+  - Model CacheExpirationActionParameters has a new required parameter type_name
+  - Model CacheExpirationActionParameters no longer has parameter odata_type
+  - Model CacheKeyQueryStringActionParameters has a new required parameter type_name
+  - Model CacheKeyQueryStringActionParameters no longer has parameter odata_type
+  - Model CdnCertificateSourceParameters has a new required parameter type_name
+  - Model CdnCertificateSourceParameters no longer has parameter odata_type
+  - Model Certificate no longer has parameter thumbprint
+  - Model CookiesMatchConditionParameters has a new required parameter type_name
+  - Model CookiesMatchConditionParameters no longer has parameter odata_type
+  - Model CustomerCertificate no longer has parameter certificate_url
+  - Model CustomerCertificate no longer has parameter version
+  - Model ErrorResponse no longer has parameter code
+  - Model ErrorResponse no longer has parameter message
+  - Model HeaderActionParameters has a new required parameter type_name
+  - Model HeaderActionParameters no longer has parameter odata_type
+  - Model HttpVersionMatchConditionParameters has a new required parameter type_name
+  - Model HttpVersionMatchConditionParameters no longer has parameter odata_type
+  - Model IsDeviceMatchConditionParameters has a new required parameter type_name
+  - Model IsDeviceMatchConditionParameters no longer has parameter odata_type
+  - Model KeyVaultCertificateSourceParameters has a new required parameter type_name
+  - Model KeyVaultCertificateSourceParameters no longer has parameter odata_type
+  - Model KeyVaultSigningKeyParameters has a new required parameter type_name
+  - Model KeyVaultSigningKeyParameters no longer has parameter odata_type
+  - Model ManagedCertificate no longer has parameter thumbprint
+  - Model OriginGroupOverrideActionParameters has a new required parameter type_name
+  - Model OriginGroupOverrideActionParameters no longer has parameter odata_type
+  - Model PostArgsMatchConditionParameters has a new required parameter type_name
+  - Model PostArgsMatchConditionParameters no longer has parameter odata_type
+  - Model Profile no longer has parameter frontdoor_id
+  - Model QueryStringMatchConditionParameters has a new required parameter type_name
+  - Model QueryStringMatchConditionParameters no longer has parameter odata_type
+  - Model RemoteAddressMatchConditionParameters has a new required parameter type_name
+  - Model RemoteAddressMatchConditionParameters no longer has parameter odata_type
+  - Model RequestBodyMatchConditionParameters has a new required parameter type_name
+  - Model RequestBodyMatchConditionParameters no longer has parameter odata_type
+  - Model RequestHeaderMatchConditionParameters has a new required parameter type_name
+  - Model RequestHeaderMatchConditionParameters no longer has parameter odata_type
+  - Model RequestMethodMatchConditionParameters has a new required parameter type_name
+  - Model RequestMethodMatchConditionParameters no longer has parameter odata_type
+  - Model RequestSchemeMatchConditionParameters has a new required parameter type_name
+  - Model RequestSchemeMatchConditionParameters no longer has parameter odata_type
+  - Model RequestUriMatchConditionParameters has a new required parameter type_name
+  - Model RequestUriMatchConditionParameters no longer has parameter odata_type
+  - Model Route no longer has parameter compression_settings
+  - Model Route no longer has parameter query_string_caching_behavior
+  - Model RouteProperties no longer has parameter compression_settings
+  - Model RouteProperties no longer has parameter query_string_caching_behavior
+  - Model RouteUpdateParameters no longer has parameter compression_settings
+  - Model RouteUpdateParameters no longer has parameter query_string_caching_behavior
+  - Model RouteUpdatePropertiesParameters no longer has parameter compression_settings
+  - Model RouteUpdatePropertiesParameters no longer has parameter query_string_caching_behavior
+  - Model UrlFileExtensionMatchConditionParameters has a new required parameter type_name
+  - Model UrlFileExtensionMatchConditionParameters no longer has parameter odata_type
+  - Model UrlFileNameMatchConditionParameters has a new required parameter type_name
+  - Model UrlFileNameMatchConditionParameters no longer has parameter odata_type
+  - Model UrlPathMatchConditionParameters has a new required parameter type_name
+  - Model UrlPathMatchConditionParameters no longer has parameter odata_type
+  - Model UrlRedirectActionParameters has a new required parameter type_name
+  - Model UrlRedirectActionParameters no longer has parameter odata_type
+  - Model UrlRewriteActionParameters has a new required parameter type_name
+  - Model UrlRewriteActionParameters no longer has parameter odata_type
+  - Model UrlSigningActionParameters has a new required parameter type_name
+  - Model UrlSigningActionParameters no longer has parameter odata_type
+  - Operation SecurityPoliciesOperations.begin_patch has a new signature
+  - Removed operation RuleSetsOperations.begin_create
+  - Removed operation SecretsOperations.begin_update
+
 ## 11.0.0 (2021-03-29)
 
 **Features**
@@ -77,20 +232,20 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
 - Most of the operation kwarg have changed. Some of the most noticeable:
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
-  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 5.1.0 (2020-08-10)
 

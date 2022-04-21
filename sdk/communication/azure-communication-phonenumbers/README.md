@@ -1,10 +1,14 @@
 # Azure Communication Phone Numbers Package client library for Python
 
-Azure Communication Phone Numbers client package is used to administer Phone Numbers. 
+Azure Communication Phone Numbers client package is used to administer Phone Numbers.
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Getting started
 ### Prerequisites
-- Python 2.7, or 3.6 or later is required to use this package.
+- Python 3.6 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 ### Install the package
@@ -105,7 +109,7 @@ The result of your search can be used to purchase the specified phone numbers. T
 
 ```python
 purchase_poller = phone_numbers_client.begin_purchase_phone_numbers(
-    search_result.search_id, 
+    search_result.search_id,
     polling=True
 )
 ```
@@ -116,14 +120,14 @@ Releases an acquired phone number.
 
 ```python
 poller = self.phone_number_client.begin_release_phone_number(
-    "<phone number>", 
+    "<phone number>",
     polling = True
 )
 ```
 
 ### Updating Phone Number Capabilities
 
-Updates the specified phone number capabilities for Calling and SMS to one of: 
+Updates the specified phone number capabilities for Calling and SMS to one of:
 
 - `PhoneNumberCapabilityType.NONE`
 - `PhoneNumberCapabilityType.INBOUND`
@@ -145,7 +149,7 @@ The Phone Numbers Administration client will raise exceptions defined in [Azure 
 # Next steps
 ## More sample code
 
-Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-phonenumbers/samples) directory for detailed examples of how to use this library.
+Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-phonenumbers/samples) directory for detailed examples of how to use this library.
 
 ## Provide Feedback
 
@@ -162,4 +166,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 <!-- LINKS -->
-[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md

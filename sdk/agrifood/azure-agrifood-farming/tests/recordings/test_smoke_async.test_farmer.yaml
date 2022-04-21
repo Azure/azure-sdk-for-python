@@ -9,60 +9,60 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"async-test-farmer","eTag":"0000a503-0000-0600-0000-60a44b700000","createdDateTime":"2021-05-18T23:19:12Z","modifiedDateTime":"2021-05-18T23:19:12Z"}'
+      string: '{"id":"async-test-farmer","eTag":"0300c371-0000-0600-0000-60cfd9ec0000","createdDateTime":"2021-06-21T00:14:36Z","modifiedDateTime":"2021-06-21T00:14:36Z"}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-length: '155'
+      content-length: '159'
       content-type: application/json; charset=utf-8
-      date: Tue, 18 May 2021 23:19:12 GMT
-      etag: 0000a503-0000-0600-0000-60a44b700000
-      location: http://sdk-testing-wcus-1.farmbeats.azure.net/farmers/async-test-farmer
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:14:36 GMT
+      etag: 0300c371-0000-0600-0000-60cfd9ec0000
+      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-farmer
       strict-transport-security: max-age=15724800; includeSubDomains
+      x-ms-throttle-information: '5'
     status:
       code: 201
       message: Created
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/async-test-farmer?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-farmer-137?api-version=2021-03-31-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-farmer?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"async-test-farmer","eTag":"0000a503-0000-0600-0000-60a44b700000","createdDateTime":"2021-05-18T23:19:12Z","modifiedDateTime":"2021-05-18T23:19:12Z"}'
+      string: '{"id":"async-test-farmer","eTag":"0300c371-0000-0600-0000-60cfd9ec0000","createdDateTime":"2021-06-21T00:14:36Z","modifiedDateTime":"2021-06-21T00:14:36Z"}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-length: '155'
+      content-length: '159'
       content-type: application/json; charset=utf-8
-      date: Tue, 18 May 2021 23:19:13 GMT
-      etag: 0000a503-0000-0600-0000-60a44b700000
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:14:36 GMT
+      etag: 0300c371-0000-0600-0000-60cfd9ec0000
       strict-transport-security: max-age=15724800; includeSubDomains
+      x-ms-throttle-information: '1'
     status:
       code: 200
       message: OK
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/async-test-farmer?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-farmer-137?api-version=2021-03-31-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fakeAccount.farmbeats.azure.net/farmers/async-test-farmer?api-version=2021-03-31-preview
   response:
@@ -73,11 +73,11 @@ interactions:
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
       content-length: '0'
-      date: Tue, 18 May 2021 23:19:13 GMT
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:14:36 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
+      x-ms-throttle-information: '1'
     status:
       code: 204
       message: No Content
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/async-test-farmer?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/async-test-farmer-137?api-version=2021-03-31-preview
 version: 1

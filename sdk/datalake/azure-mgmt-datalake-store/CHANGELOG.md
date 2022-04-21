@@ -29,20 +29,20 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
 - Most of the operation kwarg have changed. Some of the most noticeable:
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
-  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.5.0 (2018-06-14)
 
@@ -107,40 +107,40 @@ introduce breaking changes.
 
   -   - The account operations object has been changed from "account" to
         "accounts"
-        
+
           - E.g., account.get(...) to accounts.get(...)
 
   -   - When creating or updating resources (accounts, firewall rules,
         etc.), explicit parameter objects are now required:
-        
+
           -   - Account creation:
-                
+
                   -   - "DataLakeStoreAccount" to
                         "CreateDataLakeStoreAccountParameters"
-                        
+
                           - List of "FirewallRule" to
                             "CreateFirewallRuleWithAccountParameters"
                           - List of "TrustedIdProvider" to
                             "CreateTrustedIdProviderWithAccountParameters"
-        
+
           -   - Account update:
-                
+
                   -   - "DataLakeStoreUpdateParameters" to
                         "UpdateDataLakeStoreParameters"
-                        
+
                           - List of "FirewallRule" to
                             "UpdateFirewallRuleWithAccountParameters"
                           - List of "TrustedIdProvider" to
                             "UpdateTrustedIdProviderWithAccountParameters"
-        
+
           -   - Firewall rule creation and update:
-                
+
                   - "FirewallRule" to
                     "CreateOrUpdateFirewallRuleParameters"
                   - "FirewallRule" to "UpdateFirewallRuleParameters"
-        
+
           -   - Trusted identity provider creation and update:
-                
+
                   - "TrustedIdProvider" to
                     "CreateOrUpdateTrustedIdProviderParameters"
                   - "TrustedIdProvider" to

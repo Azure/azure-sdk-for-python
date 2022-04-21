@@ -18,7 +18,7 @@ from .._common.utils import (
     get_renewable_lock_duration,
 )
 from .._common.auto_lock_renewer import SHORT_RENEW_OFFSET, SHORT_RENEW_SCALING_FACTOR
-from ._async_utils import get_running_loop
+from ._async_utils import get_dict_with_loop_if_needed
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
 
 Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
@@ -41,8 +41,6 @@ class AutoLockRenewer:
     :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
      that is being registered. Default value is None (no callback).
     :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
-    :param loop: An async event loop.
-    :type loop: Optional[~asyncio.AbstractEventLoop]
 
     .. admonition:: Example:
 
@@ -68,9 +66,9 @@ class AutoLockRenewer:
         on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None,
         loop: Optional[asyncio.AbstractEventLoop] = None,
     ) -> None:
+        self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._shutdown = asyncio.Event()
         self._futures = []  # type: List[asyncio.Future]
-        self._loop = loop or get_running_loop()
         self._sleep_time = 1
         self._renew_period = 10
         self._on_lock_renew_failure = on_lock_renew_failure
@@ -177,8 +175,8 @@ class AutoLockRenewer:
         :type receiver: ~azure.servicebus.aio.ServiceBusReceiver
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.aio.ServiceBusReceivedMessage,~azure.servicebus.aio.ServiceBusSession]
-        :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
-          should be maintained for. Default value is 300 (5 minutes).
+        :param max_lock_renewal_duration: A time in seconds that the lock should be maintained for.
+         Default value is None. If specified, this value will override the default value specified at the constructor.
         :type max_lock_renewal_duration: Optional[float]
         :param Optional[AsyncLockRenewFailureCallback] on_lock_renew_failure:
          An async callback may be specified to be called when the lock is lost on the renewable being registered.
@@ -226,11 +224,12 @@ class AutoLockRenewer:
                 on_lock_renew_failure or self._on_lock_renew_failure,
                 renew_period_override,
             ),
-            loop=self._loop,
+            **self._internal_kwargs
         )
         self._futures.append(renew_future)
 
     async def close(self) -> None:
         """Cease autorenewal by cancelling any remaining open lock renewal futures."""
         self._shutdown.set()
-        await asyncio.wait(self._futures)
+        if self._futures:
+            await asyncio.wait(self._futures)

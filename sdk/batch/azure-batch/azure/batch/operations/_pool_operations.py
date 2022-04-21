@@ -24,7 +24,7 @@ class PoolOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-09-01.12.0".
+    :ivar api_version: The API version to use for the request. Constant value: "2022-01-01.15.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class PoolOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-01.12.0"
+        self.api_version = "2022-01-01.15.0"
 
         self.config = config
 
@@ -978,25 +978,22 @@ class PoolOperations(object):
         :param pool_id: The ID of the Pool on which to enable automatic
          scaling.
         :type pool_id: str
-        :param auto_scale_formula: The formula for the desired number of
-         Compute Nodes in the Pool. The formula is checked for validity before
+        :param auto_scale_formula: The formula is checked for validity before
          it is applied to the Pool. If the formula is not valid, the Batch
          service rejects the request with detailed error information. For more
          information about specifying this formula, see Automatically scale
          Compute Nodes in an Azure Batch Pool
          (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
         :type auto_scale_formula: str
-        :param auto_scale_evaluation_interval: The time interval at which to
-         automatically adjust the Pool size according to the autoscale formula.
-         The default value is 15 minutes. The minimum and maximum value are 5
-         minutes and 168 hours respectively. If you specify a value less than 5
-         minutes or greater than 168 hours, the Batch service rejects the
-         request with an invalid property value error; if you are calling the
-         REST API directly, the HTTP status code is 400 (Bad Request). If you
-         specify a new interval, then the existing autoscale evaluation
-         schedule will be stopped and a new autoscale evaluation schedule will
-         be started, with its starting time being the time when this request
-         was issued.
+        :param auto_scale_evaluation_interval: The default value is 15
+         minutes. The minimum and maximum value are 5 minutes and 168 hours
+         respectively. If you specify a value less than 5 minutes or greater
+         than 168 hours, the Batch service rejects the request with an invalid
+         property value error; if you are calling the REST API directly, the
+         HTTP status code is 400 (Bad Request). If you specify a new interval,
+         then the existing autoscale evaluation schedule will be stopped and a
+         new autoscale evaluation schedule will be started, with its starting
+         time being the time when this request was issued.
         :type auto_scale_evaluation_interval: timedelta
         :param pool_enable_auto_scale_options: Additional parameters for the
          operation
@@ -1109,8 +1106,7 @@ class PoolOperations(object):
         :param pool_id: The ID of the Pool on which to evaluate the automatic
          scaling formula.
         :type pool_id: str
-        :param auto_scale_formula: The formula for the desired number of
-         Compute Nodes in the Pool. The formula is validated and its results
+        :param auto_scale_formula: The formula is validated and its results
          calculated, but it is not applied to the Pool. To apply the formula to
          the Pool, 'Enable automatic scaling on a Pool'. For more information
          about specifying this formula, see Automatically scale Compute Nodes
@@ -1531,7 +1527,7 @@ class PoolOperations(object):
 
         This operation can only run when the allocation state of the Pool is
         steady. When this operation runs, the allocation state changes from
-        steady to resizing.
+        steady to resizing. Each request may remove up to 100 nodes.
 
         :param pool_id: The ID of the Pool from which you want to remove
          Compute Nodes.

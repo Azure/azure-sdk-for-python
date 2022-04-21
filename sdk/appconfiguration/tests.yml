@@ -3,9 +3,10 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: false
       ServiceDirectory: appconfiguration
-      DeployArmTemplate: true
+      SupportedClouds: 'Public,UsGov,China'
+      MatrixReplace:
+        - TestSamples=.*/true
       EnvVars:
         APP_CONFIG_CONNECTION: $(python-appconfiguration-connection-string)
         APP_CONFIG_ENDPOINT: $(python-appconfiguration-endpoint-string)

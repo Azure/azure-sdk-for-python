@@ -1,0 +1,26 @@
+parameters:
+  ServiceDirectory: ''
+  ValidateFormatting: false
+  EnvVars: {}
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7'
+    inputs:
+     versionSpec: '3.7'
+    condition: succeededOrFailed()
+
+  - script: |
+      pip install black==21.6b0
+    displayName: 'Prep Environment'
+    condition: succeededOrFailed()
+
+  - task: PythonScript@0
+    displayName: 'Run Black'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/validate_formatting.py'
+      arguments: >-
+        --service_directory="${{ parameters.ServiceDirectory }}"
+        --validate="${{ parameters.ValidateFormatting }}"
+    env: ${{ parameters.EnvVars }}
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))

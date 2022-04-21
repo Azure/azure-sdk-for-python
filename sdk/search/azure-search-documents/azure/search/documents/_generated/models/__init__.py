@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AnswerResult
     from ._models_py3 import AutocompleteItem
     from ._models_py3 import AutocompleteOptions
     from ._models_py3 import AutocompleteRequest
     from ._models_py3 import AutocompleteResult
+    from ._models_py3 import CaptionResult
     from ._models_py3 import FacetResult
     from ._models_py3 import IndexAction
     from ._models_py3 import IndexBatch
@@ -27,10 +29,12 @@ try:
     from ._models_py3 import SuggestRequest
     from ._models_py3 import SuggestResult
 except (SyntaxError, ImportError):
+    from ._models import AnswerResult  # type: ignore
     from ._models import AutocompleteItem  # type: ignore
     from ._models import AutocompleteOptions  # type: ignore
     from ._models import AutocompleteRequest  # type: ignore
     from ._models import AutocompleteResult  # type: ignore
+    from ._models import CaptionResult  # type: ignore
     from ._models import FacetResult  # type: ignore
     from ._models import IndexAction  # type: ignore
     from ._models import IndexBatch  # type: ignore
@@ -48,18 +52,27 @@ except (SyntaxError, ImportError):
     from ._models import SuggestResult  # type: ignore
 
 from ._search_client_enums import (
+    Answers,
     AutocompleteMode,
+    Captions,
     IndexActionType,
+    QueryAnswerType,
+    QueryCaptionType,
+    QueryLanguage,
+    QuerySpellerType,
     QueryType,
     ScoringStatistics,
     SearchMode,
+    Speller,
 )
 
 __all__ = [
+    'AnswerResult',
     'AutocompleteItem',
     'AutocompleteOptions',
     'AutocompleteRequest',
     'AutocompleteResult',
+    'CaptionResult',
     'FacetResult',
     'IndexAction',
     'IndexBatch',
@@ -75,9 +88,16 @@ __all__ = [
     'SuggestOptions',
     'SuggestRequest',
     'SuggestResult',
+    'Answers',
     'AutocompleteMode',
+    'Captions',
     'IndexActionType',
+    'QueryAnswerType',
+    'QueryCaptionType',
+    'QueryLanguage',
+    'QuerySpellerType',
     'QueryType',
     'ScoringStatistics',
     'SearchMode',
+    'Speller',
 ]

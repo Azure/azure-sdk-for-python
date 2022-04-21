@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -8,7 +7,7 @@
 FILE: sample_translation_with_glossaries.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a translation job and apply custom glossaries to the translation.
+    This sample demonstrates how to translate documents and apply custom glossaries to the translation.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -32,8 +31,6 @@ def sample_translation_with_glossaries():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
         DocumentTranslationClient,
-        DocumentTranslationInput,
-        TranslationTarget,
         TranslationGlossary
     )
 
@@ -45,40 +42,33 @@ def sample_translation_with_glossaries():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    inputs = DocumentTranslationInput(
-                source_url=source_container_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_url,
-                        language_code="es",
-                        glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")]
-                    )
-                ]
-            )
+    poller = client.begin_translation(
+        source_container_url,
+        target_container_url,
+        "es",
+        glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")]
+    )
 
-    job = client.create_translation_job(inputs=[inputs])  # type: JobStatusResult
+    result = poller.result()
 
-    job_result = client.wait_until_done(job.id)  # type: JobStatusResult
-
-    print("Job status: {}".format(job_result.status))
-    print("Job created on: {}".format(job_result.created_on))
-    print("Job last updated on: {}".format(job_result.last_updated_on))
-    print("Total number of translations on documents: {}".format(job_result.documents_total_count))
+    print(f"Status: {poller.status()}")
+    print(f"Created on: {poller.details.created_on}")
+    print(f"Last updated on: {poller.details.last_updated_on}")
+    print(f"Total number of translations on documents: {poller.details.documents_total_count}")
 
     print("\nOf total documents...")
-    print("{} failed".format(job_result.documents_failed_count))
-    print("{} succeeded".format(job_result.documents_succeeded_count))
+    print(f"{poller.details.documents_failed_count} failed")
+    print(f"{poller.details.documents_succeeded_count} succeeded")
 
-    doc_results = client.list_all_document_statuses(job_result.id)  # type: ItemPaged[DocumentStatusResult]
-    for document in doc_results:
-        print("Document ID: {}".format(document.id))
-        print("Document status: {}".format(document.status))
+    for document in result:
+        print(f"Document ID: {document.id}")
+        print(f"Document status: {document.status}")
         if document.status == "Succeeded":
-            print("Source document location: {}".format(document.source_document_url))
-            print("Translated document location: {}".format(document.translated_document_url))
-            print("Translated to language: {}\n".format(document.translate_to))
+            print(f"Source document location: {document.source_document_url}")
+            print(f"Translated document location: {document.translated_document_url}")
+            print(f"Translated to language: {document.translated_to}\n")
         else:
-            print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+            print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
 
 if __name__ == '__main__':

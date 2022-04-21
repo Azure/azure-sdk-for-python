@@ -9,16 +9,13 @@ from azure.core.credentials import AccessToken
 from azure.communication.sms.aio import SmsClient
 from unittest_helpers import mock_response
 
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from unittest.mock import Mock, patch
 
 class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 
-    def get_token(self, *args):
+    async def get_token(self, *args):
         return self.token
 
 class TestSMSClientAsync(aiounittest.AsyncTestCase):

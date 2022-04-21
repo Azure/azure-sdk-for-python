@@ -91,6 +91,7 @@ class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESTORE = "restore"
     RECOVER = "recover"
     PURGE = "purge"
+    RELEASE = "release"
 
 class ManagedHsmSkuFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """SKU Family of the managed HSM Pool

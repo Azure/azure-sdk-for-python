@@ -27,10 +27,13 @@ parameters:
     default: false
   - name: TestTimeoutInMinutes
     type: number
-    default: 0
+    default: 60
   - name: CloudConfig
     type: object
     default: {}
+  - name: TestProxy
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -70,6 +73,9 @@ jobs:
         PackageName: "azure-template"
         ServiceDirectory: "template"
         TestPipeline: ${{ parameters.TestPipeline }}
+
+    - ${{if eq(parameters.TestProxy, true) }}:
+      - template: /eng/common/testproxy/test-proxy-tool.yml
 
     - task: UsePythonVersion@0
       displayName: 'Use Python $(PythonVersion)'
@@ -192,3 +198,13 @@ jobs:
             $(activate.method) ${{ artifact.name }}
             python -m pytest $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
           displayName: 'Run Tests for ${{ checkout.package }}'
+
+    - ${{if eq(parameters.TestProxy, true) }}:
+      - pwsh: |
+          $files = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter _proxy_log_*.log
+          foreach($file in $files){
+              Write-Host "##[group]$file"
+              cat $file
+              Write-Host "##[endgroup]"
+          }
+        displayName: Dump Test-Proxy Logs

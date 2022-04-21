@@ -24,7 +24,7 @@ from typing import (
     cast
 )
 from contextlib import contextmanager
-from msrest.serialization import UTC
+from msrest.serialization import TZ_UTC
 
 try:
     from urlparse import urlparse
@@ -54,9 +54,13 @@ from .constants import (
     SPAN_ENQUEUED_TIME_PROPERTY,
     SPAN_NAME_RECEIVE,
 )
+from ..amqp import AmqpAnnotatedMessage
 
 if TYPE_CHECKING:
-    from .message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
+    from .message import (
+        ServiceBusReceivedMessage,
+        ServiceBusMessage,
+    )
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from .receiver_mixins import ReceiverMixin
@@ -65,18 +69,23 @@ if TYPE_CHECKING:
     MessagesType = Union[
         Mapping[str, Any],
         ServiceBusMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage]]
+        AmqpAnnotatedMessage,
+        List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
+    ]
+
+    SingleMessageType = Union[
+        Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage
     ]
 
 _log = logging.getLogger(__name__)
 
 
 def utc_from_timestamp(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp, tz=UTC())
+    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
 
 
 def utc_now():
-    return datetime.datetime.now(UTC())
+    return datetime.datetime.now(TZ_UTC)
 
 
 def build_uri(address, entity):
@@ -175,6 +184,7 @@ def create_authentication(client):
         timeout=client._config.auth_timeout,
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
+        refresh_window=300,
     )
 
 
@@ -196,47 +206,36 @@ def generate_dead_letter_entity_name(
     return entity_name
 
 
-def transform_messages_to_sendable_if_needed(messages):
-    """
-    This method is to convert single/multiple received messages
-    to sendable messages to enable message resending.
-    """
+def _convert_to_single_service_bus_message(message, message_type):
+    # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
     # pylint: disable=protected-access
     try:
-        msgs_to_return = []
-        for each in messages:
-            try:
-                msgs_to_return.append(each._to_outgoing_message())
-            except AttributeError:
-                msgs_to_return.append(each)
-        return msgs_to_return
+        # ServiceBusMessage/ServiceBusReceivedMessage
+        return message._to_outgoing_message()  # type: ignore
     except TypeError:
-        try:
-            return messages._to_outgoing_message()
-        except AttributeError:
-            return messages
+        # AmqpAnnotatedMessage
+        return message._to_outgoing_message(message_type)  # type: ignore
+    except AttributeError:
+        # Mapping representing
+        pass
 
-
-def _single_message_from_dict(message, message_type):
-    # type: (Union[ServiceBusMessage, Mapping[str, Any]], Type[ServiceBusMessage]) -> ServiceBusMessage
-    if isinstance(message, message_type):
-        return message
     try:
-        return message_type(**cast(Mapping[str, Any], message))
+        return message_type(**cast(Mapping[str, Any], message))._to_outgoing_message()
     except TypeError:
         raise TypeError(
-            "Only ServiceBusMessage instances or Mappings representing messages are supported. "
-            "Received instead: {}".format(
-                message.__class__.__name__
-            )
+            "Only AmqpAnnotatedMessage, ServiceBusMessage instances or Mappings representing messages are supported. "
+            "Received instead: {}".format(message.__class__.__name__)
         )
 
 
-def create_messages_from_dicts_if_needed(messages, message_type):
+def transform_messages_if_needed(messages, message_type):
     # type: (MessagesType, Type[ServiceBusMessage]) -> Union[ServiceBusMessage, List[ServiceBusMessage]]
     """
-    This method is used to convert dict representations of one or more messages to
-    one or more ServiceBusMessage objects.
+    This method serves multiple goals:
+    1. convert dict representations of one or more messages to
+    one or more ServiceBusMessage objects if needed
+    2. update the messages to be sendable in the case that input messages are received or already-sent
+    3. transform the AmqpAnnotatedMessage to be ServiceBusMessage
 
     :param Messages messages: A list or single instance of messages of type ServiceBusMessage or
         dict representations of type ServiceBusMessage.
@@ -244,8 +243,10 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     :rtype: Union[ServiceBusMessage, List[ServiceBusMessage]]
     """
     if isinstance(messages, list):
-        return [_single_message_from_dict(m, message_type) for m in messages]
-    return _single_message_from_dict(messages, message_type)
+        return [
+            _convert_to_single_service_bus_message(m, message_type) for m in messages
+        ]
+    return _convert_to_single_service_bus_message(messages, message_type)
 
 
 def strip_protocol_from_uri(uri):

@@ -5,13 +5,18 @@
 import logging
 import asyncio
 import datetime
+import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 import uamqp
 from uamqp import SendClientAsync, types
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
-from .._common.message import ServiceBusMessage, ServiceBusMessageBatch
+from .._common.message import (
+    ServiceBusMessage,
+    ServiceBusMessageBatch,
+)
+from ..amqp import AmqpAnnotatedMessage
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandler
 from .._common.constants import (
@@ -22,8 +27,7 @@ from .._common.constants import (
 )
 from .._common import mgmt_handlers
 from .._common.utils import (
-    transform_messages_to_sendable_if_needed,
-    create_messages_from_dicts_if_needed,
+    transform_messages_if_needed,
     send_trace_context_manager,
     trace_message,
 )
@@ -36,12 +40,15 @@ if TYPE_CHECKING:
 MessageTypes = Union[
     Mapping[str, Any],
     ServiceBusMessage,
-    List[Union[Mapping[str, Any], ServiceBusMessage]]
+    AmqpAnnotatedMessage,
+    List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
 ]
 MessageObjTypes = Union[
     ServiceBusMessage,
     ServiceBusMessageBatch,
-    List[ServiceBusMessage]]
+    AmqpAnnotatedMessage,
+    List[Union[ServiceBusMessage, AmqpAnnotatedMessage]],
+]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,7 +82,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -85,6 +92,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         fully_qualified_namespace: str,
         credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        *,
+        queue_name: Optional[str] = None,
+        topic_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         if kwargs.get("entity_name"):
@@ -94,8 +104,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 **kwargs
             )
         else:
-            queue_name = kwargs.get("queue_name")
-            topic_name = kwargs.get("topic_name")
             if queue_name and topic_name:
                 raise ValueError(
                     "Queue/Topic name can not be specified simultaneously."
@@ -109,6 +117,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 entity_name=str(entity_name),
+                queue_name=queue_name,
+                topic_name=topic_name,
                 **kwargs
             )
 
@@ -129,7 +139,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -197,13 +207,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         messages: MessageTypes,
         schedule_time_utc: datetime.datetime,
+        *,
+        timeout: Optional[float] = None,
         **kwargs: Any
     ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
 
         :param messages: The message or list of messages to schedule.
-        :type messages: ~azure.servicebus.ServiceBusMessage or list[~azure.servicebus.ServiceBusMessage]
+        :type messages: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage,
+         List[Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage]]]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
@@ -219,11 +232,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Schedule a message to be sent in future
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         # pylint: disable=protected-access
 
         self._check_live()
-        obj_messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
-        timeout = kwargs.pop("timeout", None)
+        obj_messages = transform_messages_if_needed(messages, ServiceBusMessage)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
@@ -247,7 +261,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
 
     async def cancel_scheduled_messages(
-        self, sequence_numbers: Union[int, List[int]], **kwargs: Any
+        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
     ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
@@ -269,8 +283,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Cancelling messages scheduled to be sent in future
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, int):
@@ -288,9 +303,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     async def send_messages(
-        self,
-        message: Union[MessageTypes, ServiceBusMessageBatch],
-        **kwargs: Any
+        self, message: Union[MessageTypes, ServiceBusMessageBatch], *, timeout: Optional[float] = None, **kwargs: Any
     ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
@@ -298,8 +311,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         `ValueError` if they cannot fit in a single batch.
 
         :param message: The ServiceBus message to be sent.
-        :type message: Union[~azure.servicebus.ServiceBusMessage,~azure.servicebus.ServiceBusMessageBatch,
-         list[~azure.servicebus.ServiceBusMessage]]
+        :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.ServiceBusMessageBatch,
+         ~azure.servicebus.amqp.AmqpAnnotatedMessage, List[Union[~azure.servicebus.ServiceBusMessage,
+         ~azure.servicebus.amqp.AmqpAnnotatedMessage]]]
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
@@ -322,8 +336,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         """
 
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
@@ -331,8 +346,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if isinstance(message, ServiceBusMessageBatch):
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
-                obj_message = transform_messages_to_sendable_if_needed(obj_message)
+                obj_message = transform_messages_if_needed(  # type: ignore
+                    message, ServiceBusMessage
+                )
                 try:
                     batch = await self.create_message_batch()
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
@@ -340,7 +356,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 except TypeError:  # Message was not a list or generator.
                     trace_message(cast(ServiceBusMessage, obj_message), send_span)
             if (
-                isinstance(obj_message, ServiceBusMessageBatch) and len(obj_message) == 0
+                isinstance(obj_message, ServiceBusMessageBatch)
+                and len(obj_message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
 

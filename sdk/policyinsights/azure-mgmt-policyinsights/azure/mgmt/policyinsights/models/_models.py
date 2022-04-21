@@ -10,6 +10,184 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class Resource(msrest.serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class Attestation(Resource):
+    """An attestation resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.policyinsights.models.SystemData
+    :param policy_assignment_id: Required. The resource ID of the policy assignment that the
+     attestation is setting the state for.
+    :type policy_assignment_id: str
+    :param policy_definition_reference_id: The policy definition reference ID from a policy set
+     definition that the attestation is setting the state for. If the policy assignment assigns a
+     policy set definition the attestation can choose a definition within the set definition with
+     this property or omit this and set the state for the entire set definition.
+    :type policy_definition_reference_id: str
+    :param compliance_state: The compliance state that should be set on the resource. Possible
+     values include: "Compliant", "NonCompliant", "Unknown".
+    :type compliance_state: str or ~azure.mgmt.policyinsights.models.ComplianceState
+    :param expires_on: The time the compliance state should expire.
+    :type expires_on: ~datetime.datetime
+    :param owner: The person responsible for setting the state of the resource. This value is
+     typically an Azure Active Directory object ID.
+    :type owner: str
+    :param comments: Comments describing why this attestation was created.
+    :type comments: str
+    :param evidence: The evidence supporting the compliance state set in this attestation.
+    :type evidence: list[~azure.mgmt.policyinsights.models.AttestationEvidence]
+    :ivar provisioning_state: The status of the attestation.
+    :vartype provisioning_state: str
+    :ivar last_compliance_state_change_at: The time the compliance state was last changed in this
+     attestation.
+    :vartype last_compliance_state_change_at: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'policy_assignment_id': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'last_compliance_state_change_at': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'policy_assignment_id': {'key': 'properties.policyAssignmentId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'properties.policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'properties.complianceState', 'type': 'str'},
+        'expires_on': {'key': 'properties.expiresOn', 'type': 'iso-8601'},
+        'owner': {'key': 'properties.owner', 'type': 'str'},
+        'comments': {'key': 'properties.comments', 'type': 'str'},
+        'evidence': {'key': 'properties.evidence', 'type': '[AttestationEvidence]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'last_compliance_state_change_at': {'key': 'properties.lastComplianceStateChangeAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Attestation, self).__init__(**kwargs)
+        self.system_data = None
+        self.policy_assignment_id = kwargs['policy_assignment_id']
+        self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
+        self.compliance_state = kwargs.get('compliance_state', None)
+        self.expires_on = kwargs.get('expires_on', None)
+        self.owner = kwargs.get('owner', None)
+        self.comments = kwargs.get('comments', None)
+        self.evidence = kwargs.get('evidence', None)
+        self.provisioning_state = None
+        self.last_compliance_state_change_at = None
+
+
+class AttestationEvidence(msrest.serialization.Model):
+    """A piece of evidence supporting the compliance state set in the attestation.
+
+    :param description: The description for this piece of evidence.
+    :type description: str
+    :param source_uri: The URI location of the evidence.
+    :type source_uri: str
+    """
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'source_uri': {'key': 'sourceUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AttestationEvidence, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.source_uri = kwargs.get('source_uri', None)
+
+
+class AttestationListResult(msrest.serialization.Model):
+    """List of attestations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of attestation definitions.
+    :vartype value: list[~azure.mgmt.policyinsights.models.Attestation]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Attestation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AttestationListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class CheckRestrictionsRequest(msrest.serialization.Model):
     """The check policy restrictions parameters describing the resource that is being evaluated.
 
@@ -47,7 +225,7 @@ class CheckRestrictionsResourceDetails(msrest.serialization.Model):
 
     :param resource_content: Required. The resource content. This should include whatever
      properties are already known and can be a partial set of all resource properties.
-    :type resource_content: object
+    :type resource_content: any
     :param api_version: The api-version of the resource content.
     :type api_version: str
     :param scope: The scope where the resource is being created. For example, if the resource is a
@@ -155,7 +333,7 @@ class ComponentEventDetails(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param id: Component Id.
     :type id: str
     :param type: Component type.
@@ -204,7 +382,7 @@ class ComponentStateDetails(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param id: Component Id.
     :type id: str
     :param type: Component type.
@@ -329,6 +507,51 @@ class ErrorDefinitionAutoGenerated(msrest.serialization.Model):
         self.additional_info = None
 
 
+class ErrorDefinitionAutoGenerated2(msrest.serialization.Model):
+    """Error definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Service specific error code which serves as the substatus for the HTTP error code.
+    :vartype code: str
+    :ivar message: Description of the error.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: Internal error details.
+    :vartype details: list[~azure.mgmt.policyinsights.models.ErrorDefinitionAutoGenerated2]
+    :ivar additional_info: Additional scenario specific error details.
+    :vartype additional_info: list[~azure.mgmt.policyinsights.models.TypedErrorInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDefinitionAutoGenerated2]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[TypedErrorInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorDefinitionAutoGenerated2, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
 class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
@@ -367,6 +590,25 @@ class ErrorResponseAutoGenerated(msrest.serialization.Model):
         self.error = kwargs.get('error', None)
 
 
+class ErrorResponseAutoGenerated2(msrest.serialization.Model):
+    """Error response.
+
+    :param error: The error details.
+    :type error: ~azure.mgmt.policyinsights.models.ErrorDefinitionAutoGenerated2
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDefinitionAutoGenerated2'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponseAutoGenerated2, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
 class ExpressionEvaluationDetails(msrest.serialization.Model):
     """Evaluation details of policy language expressions.
 
@@ -381,9 +623,9 @@ class ExpressionEvaluationDetails(msrest.serialization.Model):
     :param path: Property path if the expression is a field or an alias.
     :type path: str
     :param expression_value: Value of the expression.
-    :type expression_value: object
+    :type expression_value: any
     :param target_value: Target value to be compared with the expression value.
-    :type target_value: object
+    :type target_value: any
     :param operator: Operator to compare the expression value and the target value.
     :type operator: str
     """
@@ -812,7 +1054,7 @@ class PolicyEvent(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param odata_id: OData entity ID; always set to null since policy event records do not have an
      entity ID.
     :type odata_id: str
@@ -1044,7 +1286,7 @@ class PolicyMetadata(msrest.serialization.Model):
     :ivar additional_content_url: Url for getting additional content about the resource metadata.
     :vartype additional_content_url: str
     :ivar metadata: Additional metadata.
-    :vartype metadata: object
+    :vartype metadata: any
     :ivar description: The description of the policy metadata.
     :vartype description: str
     :ivar requirements: The requirements of the policy metadata.
@@ -1143,7 +1385,7 @@ class PolicyMetadataSlimProperties(msrest.serialization.Model):
     :ivar additional_content_url: Url for getting additional content about the resource metadata.
     :vartype additional_content_url: str
     :ivar metadata: Additional metadata.
-    :vartype metadata: object
+    :vartype metadata: any
     """
 
     _validation = {
@@ -1193,7 +1435,7 @@ class PolicyMetadataProperties(PolicyMetadataSlimProperties):
     :ivar additional_content_url: Url for getting additional content about the resource metadata.
     :vartype additional_content_url: str
     :ivar metadata: Additional metadata.
-    :vartype metadata: object
+    :vartype metadata: any
     :ivar description: The description of the policy metadata.
     :vartype description: str
     :ivar requirements: The requirements of the policy metadata.
@@ -1279,7 +1521,7 @@ class PolicyState(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param odata_id: OData entity ID; always set to null since policy state records do not have an
      entity ID.
     :type odata_id: str
@@ -1683,6 +1925,9 @@ class Remediation(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the remediation.
     :vartype name: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.policyinsights.models.SystemData
     :param policy_assignment_id: The resource ID of the policy assignment that should be
      remediated.
     :type policy_assignment_id: str
@@ -1705,22 +1950,42 @@ class Remediation(msrest.serialization.Model):
     :ivar deployment_status: The deployment status summary for all deployments created by the
      remediation.
     :vartype deployment_status: ~azure.mgmt.policyinsights.models.RemediationDeploymentSummary
+    :ivar status_message: The remediation status message. Provides additional details regarding the
+     state of the remediation.
+    :vartype status_message: str
+    :ivar correlation_id: The remediation correlation Id. Can be used to find events related to the
+     remediation in the activity log.
+    :vartype correlation_id: str
+    :param resource_count: Determines the max number of resources that can be remediated by the
+     remediation job. If not provided, the default resource count is used.
+    :type resource_count: int
+    :param parallel_deployments: Determines how many resources to remediate at any given time. Can
+     be used to increase or reduce the pace of the remediation. If not provided, the default
+     parallel deployments value is used.
+    :type parallel_deployments: int
+    :param failure_threshold: The remediation failure threshold settings.
+    :type failure_threshold:
+     ~azure.mgmt.policyinsights.models.RemediationPropertiesFailureThreshold
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'created_on': {'readonly': True},
         'last_updated_on': {'readonly': True},
         'deployment_status': {'readonly': True},
+        'status_message': {'readonly': True},
+        'correlation_id': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'policy_assignment_id': {'key': 'properties.policyAssignmentId', 'type': 'str'},
         'policy_definition_reference_id': {'key': 'properties.policyDefinitionReferenceId', 'type': 'str'},
         'resource_discovery_mode': {'key': 'properties.resourceDiscoveryMode', 'type': 'str'},
@@ -1729,6 +1994,11 @@ class Remediation(msrest.serialization.Model):
         'last_updated_on': {'key': 'properties.lastUpdatedOn', 'type': 'iso-8601'},
         'filters': {'key': 'properties.filters', 'type': 'RemediationFilters'},
         'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'RemediationDeploymentSummary'},
+        'status_message': {'key': 'properties.statusMessage', 'type': 'str'},
+        'correlation_id': {'key': 'properties.correlationId', 'type': 'str'},
+        'resource_count': {'key': 'properties.resourceCount', 'type': 'int'},
+        'parallel_deployments': {'key': 'properties.parallelDeployments', 'type': 'int'},
+        'failure_threshold': {'key': 'properties.failureThreshold', 'type': 'RemediationPropertiesFailureThreshold'},
     }
 
     def __init__(
@@ -1739,6 +2009,7 @@ class Remediation(msrest.serialization.Model):
         self.id = None
         self.type = None
         self.name = None
+        self.system_data = None
         self.policy_assignment_id = kwargs.get('policy_assignment_id', None)
         self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
         self.resource_discovery_mode = kwargs.get('resource_discovery_mode', None)
@@ -1747,6 +2018,11 @@ class Remediation(msrest.serialization.Model):
         self.last_updated_on = None
         self.filters = kwargs.get('filters', None)
         self.deployment_status = None
+        self.status_message = None
+        self.correlation_id = None
+        self.resource_count = kwargs.get('resource_count', None)
+        self.parallel_deployments = kwargs.get('parallel_deployments', None)
+        self.failure_threshold = kwargs.get('failure_threshold', None)
 
 
 class RemediationDeployment(msrest.serialization.Model):
@@ -1921,6 +2197,27 @@ class RemediationListResult(msrest.serialization.Model):
         self.next_link = None
 
 
+class RemediationPropertiesFailureThreshold(msrest.serialization.Model):
+    """The remediation failure threshold settings.
+
+    :param percentage: A number between 0.0 to 1.0 representing the percentage failure threshold.
+     The remediation will fail if the percentage of failed remediation operations (i.e. failed
+     deployments) exceeds this threshold.
+    :type percentage: float
+    """
+
+    _attribute_map = {
+        'percentage': {'key': 'percentage', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RemediationPropertiesFailureThreshold, self).__init__(**kwargs)
+        self.percentage = kwargs.get('percentage', None)
+
+
 class SlimPolicyMetadata(msrest.serialization.Model):
     """Slim version of policy metadata resource definition, excluding properties with large strings.
 
@@ -1943,7 +2240,7 @@ class SlimPolicyMetadata(msrest.serialization.Model):
     :ivar additional_content_url: Url for getting additional content about the resource metadata.
     :vartype additional_content_url: str
     :ivar metadata: Additional metadata.
-    :vartype metadata: object
+    :vartype metadata: any
     """
 
     _validation = {
@@ -2099,6 +2396,47 @@ class SummaryResults(msrest.serialization.Model):
         self.policy_group_details = kwargs.get('policy_group_details', None)
 
 
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.policyinsights.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.policyinsights.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
 class TrackedResourceModificationDetails(msrest.serialization.Model):
     """The details of the policy triggered deployment that created or modified the tracked resource.
 
@@ -2143,7 +2481,7 @@ class TypedErrorInfo(msrest.serialization.Model):
     :ivar type: The type of included error details.
     :vartype type: str
     :ivar info: The scenario specific error details.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {

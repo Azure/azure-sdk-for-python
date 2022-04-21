@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
 # 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates basic CRUD operations for the certificate contacts for a key vault.
@@ -37,39 +37,31 @@ async def run_sample():
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = CertificateClient(vault_url=VAULT_URL, credential=credential)
-    try:
-        contact_list = [
-            CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
-            CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
-        ]
 
-        # Creates and sets the certificate contacts for this key vault.
-        await client.set_contacts(contact_list)
+    contact_list = [
+        CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
+        CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
+    ]
 
-        # Gets the certificate contacts for this key vault.
-        contacts = await client.get_contacts()
-        for contact in contacts:
-            print(contact.name)
-            print(contact.email)
-            print(contact.phone)
+    # Creates and sets the certificate contacts for this key vault.
+    await client.set_contacts(contact_list)
 
-        # Deletes all of the certificate contacts for this key vault.
-        await client.delete_contacts()
+    # Gets the certificate contacts for this key vault.
+    contacts = await client.get_contacts()
+    for contact in contacts:
+        print(contact.name)
+        print(contact.email)
+        print(contact.phone)
 
-    except HttpResponseError as e:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
+    # Deletes all of the certificate contacts for this key vault.
+    await client.delete_contacts()
 
-    finally:
-        print("\nrun_sample done")
-        await credential.close()
-        await client.close()
+    print("\nrun_sample done")
+    await credential.close()
+    await client.close()
 
 
 if __name__ == "__main__":
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_sample())
-        loop.close()
-
-    except Exception as e:
-        print("Top level Error: {0}".format(str(e)))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_sample())
+    loop.close()

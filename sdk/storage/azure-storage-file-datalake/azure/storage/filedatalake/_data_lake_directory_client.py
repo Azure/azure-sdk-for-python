@@ -3,7 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any
+from typing import ( # pylint: disable=unused-import
+    Any, Dict, Optional, Type, TypeVar, Union,
+    TYPE_CHECKING)
 
 try:
     from urllib.parse import quote, unquote
@@ -15,6 +17,11 @@ from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
+ClassType = TypeVar("ClassType")
 
 
 class DataLakeDirectoryClient(PathClient):
@@ -44,6 +51,9 @@ class DataLakeDirectoryClient(PathClient):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -67,12 +77,13 @@ class DataLakeDirectoryClient(PathClient):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             file_system_name,  # type: str
             directory_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> DataLakeDirectoryClient
+        ):  # type: (...) -> ClassType
         """
         Create DataLakeDirectoryClient from a Connection String.
 
@@ -146,6 +157,9 @@ class DataLakeDirectoryClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
@@ -228,6 +242,10 @@ class DataLakeDirectoryClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the directory was created with a customer-provided key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: DirectoryProperties
@@ -248,7 +266,7 @@ class DataLakeDirectoryClient(PathClient):
         """
         Returns True if a directory exists and returns False otherwise.
 
-        :kwarg int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: boolean
         """
@@ -396,6 +414,9 @@ class DataLakeDirectoryClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient for the subdirectory.
@@ -494,6 +515,9 @@ class DataLakeDirectoryClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeFileClient
@@ -527,6 +551,7 @@ class DataLakeDirectoryClient(PathClient):
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -557,6 +582,7 @@ class DataLakeDirectoryClient(PathClient):
         )
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
+            api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

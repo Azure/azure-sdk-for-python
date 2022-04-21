@@ -42,7 +42,7 @@ async def sample_list_metric_enriched_series_data_async():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
-    series_identity = {"city": "Los Angeles"}
+    series_identity = {"region": "Los Angeles"}
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -69,7 +69,7 @@ async def sample_list_anomaly_dimension_values_async():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
-    dimension_name = "city"
+    dimension_name = "region"
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -95,7 +95,7 @@ async def sample_list_metric_dimension_values_async():
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
     api_key = os.getenv("METRICS_ADVISOR_API_KEY")
     metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
-    dimension_name = "city"
+    dimension_name = "region"
 
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -110,8 +110,8 @@ async def sample_list_metric_dimension_values_async():
 
     # [END list_metric_dimension_values_async]
 
-async def sample_list_metrics_series_data_async():
-    # [START list_metrics_series_data_async]
+async def sample_list_metric_series_data_async():
+    # [START list_metric_series_data_async]
     import datetime
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
     from azure.ai.metricsadvisor.aio import MetricsAdvisorClient
@@ -125,18 +125,18 @@ async def sample_list_metrics_series_data_async():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     async with client:
-        results = client.list_metrics_series_data(
+        results = client.list_metric_series_data(
                 metric_id=metric_id,
                 start_time=datetime.datetime(2020, 1, 1),
                 end_time=datetime.datetime(2020, 10, 21),
-                series_to_filter=[
-                    {"city": "Los Angeles", "category": "Homemade"}
+                series_keys=[
+                    {"region": "Los Angeles", "category": "Homemade"}
                 ]
             )
         async for result in results:
             print(str(result))
 
-    # [END list_metrics_series_data_async]
+    # [END list_metric_series_data_async]
 
 async def sample_list_metric_series_definitions_async():
     # [START list_metric_series_definitions_async]
@@ -195,12 +195,11 @@ async def main():
     print("---List metric dimension values...")
     await sample_list_metric_dimension_values_async()
     print("---List metric series data...")
-    await sample_list_metrics_series_data_async()
+    await sample_list_metric_series_data_async()
     print("---List metric series definitions...")
     await sample_list_metric_series_definitions_async()
     print("---List metric enrichment status...")
     await sample_list_metric_enrichment_status_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

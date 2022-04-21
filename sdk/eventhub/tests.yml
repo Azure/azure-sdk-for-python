@@ -3,10 +3,8 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: false
       ServiceDirectory: eventhub
       BuildTargetingString: azure-eventhub*
-      DeployArmTemplate: true
       MatrixReplace:
         - TestSamples=.*/true
       MatrixFilters:
@@ -19,3 +17,4 @@ stages:
         AZURE_TENANT_ID: $(python-eh-livetest-event-hub-aad-tenant-id)
         AZURE_CLIENT_SECRET: $(python-eh-livetest-event-hub-aad-secret)
         AZURE_SUBSCRIPTION_ID: $(python-eh-livetest-event-hub-subscription-id)
+        AZURE_COSMOS_CONN_STR: $(python-eventhub-livetest-cosmos-conn-str)

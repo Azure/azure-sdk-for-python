@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
+from urllib.parse import urlparse
 
 # pylint: disable=unused-import,ungrouped-imports
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
@@ -40,7 +37,7 @@ from .._utils import ( # pylint: disable=unused-import
 from .._version import SDK_MONIKER
 
 
-class ChatClient(object):
+class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Chat gateway.
 
     This client provides operations to create chat thread, delete chat thread,

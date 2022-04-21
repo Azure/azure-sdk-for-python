@@ -3,14 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from multiprocessing.sharedctypes import Value
 import pytest
 import platform
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables._error import _validate_storage_tablename
+from azure.data.tables import TableServiceClient, TableClient, TableTransactionError
 from azure.data.tables import __version__ as VERSION
-from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 from _shared.testcase import (
     TableTestCase
@@ -29,9 +31,9 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
-class TestTableClient(AzureTestCase, TableTestCase):
-
+class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
+    @recorded_by_proxy
     def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -68,6 +70,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
             count += 1
 
     @tables_decorator
+    @recorded_by_proxy
     def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -84,6 +87,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
             count += 1
 
     @tables_decorator
+    @recorded_by_proxy
     def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -101,6 +105,38 @@ class TestTableClient(AzureTestCase, TableTestCase):
         count = 0
         for table in tables:
             count += 1
+
+    @pytest.mark.live_test_only
+    @tables_decorator
+    @recorded_by_proxy
+    def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):
+        endpoint = self.account_url(tables_storage_account_name, "table")
+
+        # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
+        invalid_table_names = ["1table", "a"*2, "a"*64, "a//", "my_table"]
+        for invalid_name in invalid_table_names:
+            client = TableClient(
+                endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+            with pytest.raises(ValueError) as error:
+                client.create_table()
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.create_entity({'PartitionKey': 'foo', 'RowKey': 'bar'})
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.delete_entity("PK", "RK")
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError) as error:
+                client.get_table_access_policy()
+            assert 'Storage table names must be alphanumeric' in str(error.value)
+            with pytest.raises(ValueError):
+                batch = []
+                batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+                client.submit_transaction(batch)
+            assert 'Storage table names must be alphanumeric' in str(error.value)
 
 
 class TestTableUnitTests(TableTestCase):
@@ -144,7 +180,7 @@ class TestTableUnitTests(TableTestCase):
         # Arrange
         url = self.account_url(self.tables_storage_account_name, "table")
         suffix = '.table.core.windows.net'
-        token = self.generate_sas_token()
+        token = AzureSasCredential(self.generate_sas_token())
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -154,8 +190,7 @@ class TestTableUnitTests(TableTestCase):
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
             assert service.url.startswith('https://' + self.tables_storage_account_name + suffix)
-            assert service.url.endswith(token)
-            assert service.credential is None
+            assert isinstance(service.credential, AzureSasCredential)
 
     def test_create_service_china(self):
         # Arrange
@@ -198,7 +233,7 @@ class TestTableUnitTests(TableTestCase):
             with pytest.raises(ValueError):
                 test_service = service_type(endpoint=123456, credential=self.credential, table_name='foo')
 
-            assert str(e.value) == "You need to provide either a SAS token or an account shared key to authenticate."
+            assert str(e.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
     def test_create_service_with_socket_timeout(self):
         # Arrange
@@ -242,9 +277,8 @@ class TestTableUnitTests(TableTestCase):
 
     def test_create_service_with_connection_string_sas(self):
         # Arrange
-        token = self.generate_sas_token()
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(
-            self.tables_storage_account_name, token)
+        token = AzureSasCredential(self.generate_sas_token())
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_storage_account_name, token.signature)
 
         for service_type in SERVICES:
             # Act
@@ -253,10 +287,8 @@ class TestTableUnitTests(TableTestCase):
             # Assert
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
-            assert service.url.startswith(
-                'https://' + self.tables_storage_account_name + '.table.core.windows.net')
-            assert service.url.endswith(token)
-            assert service.credential is None
+            assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.core.windows.net')
+            assert isinstance(service.credential , AzureSasCredential)
 
     def test_create_service_with_connection_string_cosmos(self):
         # Arrange
@@ -380,8 +412,8 @@ class TestTableUnitTests(TableTestCase):
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_custom_account_endpoint_path(self):
-        token = self.generate_sas_token()
-        custom_account_url = "http://local-machine:11002/custom/account/path/" + token
+        token = AzureSasCredential(self.generate_sas_token())
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + token.signature
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
                 self.tables_storage_account_name, self.tables_primary_storage_account_key, custom_account_url)
@@ -394,12 +426,14 @@ class TestTableUnitTests(TableTestCase):
             assert service.credential.named_key.name == self.tables_storage_account_name
             assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
+            assert service.scheme == 'http'
 
         service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
@@ -407,13 +441,15 @@ class TestTableUnitTests(TableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
-        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token)
+        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token.signature)
         assert service.account_name == "custom"
         assert service.table_name == "foo"
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
     def test_create_table_client_with_complete_table_url(self):
         # Arrange
@@ -434,17 +470,6 @@ class TestTableUnitTests(TableTestCase):
         assert service.scheme == 'https'
         assert service.table_name == 'bar'
         assert service.account_name == self.tables_storage_account_name
-
-    def test_create_table_client_with_invalid_name(self):
-        # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format("test")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
 
     def test_error_with_malformed_conn_str(self):
         # Arrange
@@ -480,17 +505,18 @@ class TestTableUnitTests(TableTestCase):
                 self.account_url(self.tables_storage_account_name, "table"), credential=self.credential, table_name='table')
             service.close()
 
+    @pytest.mark.skip("HTTP prefix does not raise an error")
     def test_create_service_with_token_and_http(self):
         for service_type in SERVICES:
 
             with pytest.raises(ValueError):
                 url = self.account_url(self.tables_storage_account_name, "table").replace('https', 'http')
-                service_type(url, credential=self.generate_fake_token(), table_name='foo')
+                service_type(url, credential=AzureSasCredential("fake_sas_credential"), table_name='foo')
 
     def test_create_service_with_token(self):
         url = self.account_url(self.tables_storage_account_name, "table")
         suffix = '.table.core.windows.net'
-        self.token_credential = self.generate_fake_token()
+        self.token_credential = AzureSasCredential("fake_sas_credential")
 
         service = TableClient(url, credential=self.token_credential, table_name='foo')
 
@@ -500,7 +526,6 @@ class TestTableUnitTests(TableTestCase):
         assert service.url.startswith('https://' + self.tables_storage_account_name + suffix)
         assert service.credential == self.token_credential
         assert not hasattr(service.credential, 'account_key')
-        assert hasattr(service.credential, 'get_token')
 
         service = TableServiceClient(url, credential=self.token_credential, table_name='foo')
 
@@ -510,7 +535,6 @@ class TestTableUnitTests(TableTestCase):
         assert service.url.startswith('https://' + self.tables_storage_account_name + suffix)
         assert service.credential == self.token_credential
         assert not hasattr(service.credential, 'account_key')
-        assert hasattr(service.credential, 'get_token')
 
     def test_create_client_with_api_version(self):
         url = self.account_url(self.tables_storage_account_name, "table")
@@ -553,6 +577,7 @@ class TestTableUnitTests(TableTestCase):
         assert client.credential.named_key.key == self.tables_primary_storage_account_key
         assert client.credential.named_key.name == "devstoreaccount1"
         assert not client._cosmos_endpoint
+        assert client.scheme == 'http'
 
         client = TableServiceClient.from_connection_string(https_connstr)
         assert client.account_name == "devstoreaccount1"
@@ -562,6 +587,7 @@ class TestTableUnitTests(TableTestCase):
         assert client.credential.named_key.key == self.tables_primary_storage_account_key
         assert client.credential.named_key.name == "devstoreaccount1"
         assert not client._cosmos_endpoint
+        assert client.scheme == 'https'
 
         table = TableClient(account_url, "tablename", credential=azurite_credential)
         assert table.account_name == "myaccount"
@@ -582,6 +608,7 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == self.tables_primary_storage_account_key
         assert table.credential.named_key.name == "devstoreaccount1"
         assert not table._cosmos_endpoint
+        assert table.scheme == 'http'
 
         table = TableClient.from_connection_string(https_connstr, "tablename")
         assert table.account_name == "devstoreaccount1"
@@ -592,9 +619,10 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == self.tables_primary_storage_account_key
         assert table.credential.named_key.name == "devstoreaccount1"
         assert not table._cosmos_endpoint
+        assert table.scheme == 'https'
 
         table_url = "https://127.0.0.1:10002/myaccount/Tables('tablename')"
-        table = TableClient.from_table_url(table_url, azurite_credential)
+        table = TableClient.from_table_url(table_url, credential=azurite_credential)
         assert table.account_name == "myaccount"
         assert table.table_name == "tablename"
         assert table.url == "https://127.0.0.1:10002/myaccount"
@@ -603,3 +631,21 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == azurite_credential.named_key.key
         assert table.credential.named_key.name == azurite_credential.named_key.name
         assert not table._cosmos_endpoint
+    
+    def test_validate_storage_tablename(self):
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aa")
+        _validate_storage_tablename("aaa")
+        _validate_storage_tablename("a"*63)
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a"*64)
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aaa-")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aaa ")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a aa")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("1aaa")

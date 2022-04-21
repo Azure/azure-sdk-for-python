@@ -7,11 +7,15 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core import AsyncPipelineClient
-from azure.purview.catalog.core.rest import AsyncHttpResponse, HttpRequest, _AsyncStreamContextManager
-from msrest import Deserializer, Serializer
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+
+from ._configuration import PurviewCatalogClientConfiguration
+from .operations import CollectionOperations, DiscoveryOperations, EntityOperations, GlossaryOperations, LineageOperations, RelationshipOperations, TypesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -19,73 +23,89 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import PurviewCatalogClientConfiguration
+class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
+    """Purview Catalog Service is a fully managed cloud service whose users can discover the data
+    sources they need and understand the data sources they find. At the same time, Data Catalog
+    helps organizations get more value from their existing investments. This spec defines REST API
+    of Purview Catalog Service.
 
-
-class PurviewCatalogClient(object):
-    """Purview Catalog Service is a fully managed cloud service whose users can discover the data sources they need and understand the data sources they find. At the same time, Data Catalog helps organizations get more value from their existing investments. This spec defines REST API of Purview Catalog Service.
-
+    :ivar entity: EntityOperations operations
+    :vartype entity: azure.purview.catalog.aio.operations.EntityOperations
+    :ivar glossary: GlossaryOperations operations
+    :vartype glossary: azure.purview.catalog.aio.operations.GlossaryOperations
+    :ivar discovery: DiscoveryOperations operations
+    :vartype discovery: azure.purview.catalog.aio.operations.DiscoveryOperations
+    :ivar lineage: LineageOperations operations
+    :vartype lineage: azure.purview.catalog.aio.operations.LineageOperations
+    :ivar relationship: RelationshipOperations operations
+    :vartype relationship: azure.purview.catalog.aio.operations.RelationshipOperations
+    :ivar types: TypesOperations operations
+    :vartype types: azure.purview.catalog.aio.operations.TypesOperations
+    :ivar collection: CollectionOperations operations
+    :vartype collection: azure.purview.catalog.aio.operations.CollectionOperations
+    :param endpoint: The catalog endpoint of your Purview account. Example:
+     https://{accountName}.purview.azure.com.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.catalog.purview.azure.com.
-    :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2021-05-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         endpoint: str,
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        base_url = '{Endpoint}/api'
-        self._config = PurviewCatalogClientConfiguration(credential, endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _endpoint = '{Endpoint}/catalog/api'
+        self._config = PurviewCatalogClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.entity = EntityOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.glossary = GlossaryOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.discovery = DiscoveryOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.lineage = LineageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.relationship = RelationshipOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.types = TypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.collection = CollectionOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    async def send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+
+    def send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `azure.purview.catalog.rest`.
-        Use these helper methods to create the request you pass to this method. See our example below:
-
-        >>> from azure.purview.catalog.rest import build_create_or_update_request
-        >>> request = build_create_or_update_request(json, content)
-        <HttpRequest [POST], url: '/atlas/v2/entity'>
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
-        For advanced cases, you can also create your own :class:`~azure.purview.catalog.core.rest.HttpRequest`
-        and pass it in.
-
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.purview.catalog.core.rest.HttpRequest
-        :keyword bool stream_response: Whether the response payload will be streamed. Defaults to False.
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.purview.catalog.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        request_copy = deepcopy(http_request)
+
+        request_copy = deepcopy(request)
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
+
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        if kwargs.pop("stream_response", False):
-            return _AsyncStreamContextManager(
-                client=self._client._pipeline,
-                request=request_copy,
-            )
-        pipeline_response = await self._client._pipeline.run(request_copy._internal_request, **kwargs)
-        response = AsyncHttpResponse(
-            status_code=pipeline_response.http_response.status_code,
-            request=request_copy,
-            _internal_response=pipeline_response.http_response
-        )
-        await response.read()
-        return response
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()

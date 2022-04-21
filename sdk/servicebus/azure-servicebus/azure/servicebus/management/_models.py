@@ -245,6 +245,10 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
+    :ivar max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
+     can be accepted by the queue. This feature is only available when using a Premium namespace
+     and Service Bus API version "2021-05" or higher.
+    :type max_message_size_in_kilobytes: int
     """
 
     def __init__(self, name, **kwargs):
@@ -285,6 +289,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.forward_dead_lettered_messages_to = extract_kwarg(
             "forward_dead_lettered_messages_to"
         )
+        self.max_message_size_in_kilobytes = extract_kwarg("max_message_size_in_kilobytes")
 
         validate_extraction_missing_args(extraction_missing_args)
 
@@ -316,7 +321,9 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             forward_to=internal_qd.forward_to,
             forward_dead_lettered_messages_to=internal_qd.forward_dead_lettered_messages_to,
             user_metadata=internal_qd.user_metadata,
+            max_message_size_in_kilobytes=internal_qd.max_message_size_in_kilobytes
         )
+
         qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
         return qd
 
@@ -377,6 +384,10 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         )
 
         self._internal_qd.user_metadata = kwargs.pop("user_metadata", self.user_metadata)
+        self._internal_qd.max_message_size_in_kilobytes = kwargs.pop(
+            "max_message_size_in_kilobytes",
+            self.max_message_size_in_kilobytes
+        )
 
         return self._internal_qd
 
@@ -538,6 +549,10 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :type enable_express: bool
     :ivar user_metadata: Metadata associated with the topic.
     :type user_metadata: str
+    :ivar max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
+     can be accepted by the topic. This feature is only available when using a Premium namespace
+     and Service Bus API version "2021-05" or higher.
+    :type max_message_size_in_kilobytes: int
     """
 
     def __init__(self, name, **kwargs):
@@ -570,6 +585,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.availability_status = extract_kwarg("availability_status")
         self.enable_express = extract_kwarg("enable_express")
         self.user_metadata = extract_kwarg("user_metadata")
+        self.max_message_size_in_kilobytes = extract_kwarg("max_message_size_in_kilobytes")
 
         validate_extraction_missing_args(extraction_missing_args)
 
@@ -597,6 +613,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             availability_status=internal_td.entity_availability_status,
             enable_express=internal_td.enable_express,
             user_metadata=internal_td.user_metadata,
+            max_message_size_in_kilobytes=internal_td.max_message_size_in_kilobytes
         )
         td._internal_td = deepcopy(internal_td)
         return td
@@ -637,6 +654,10 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_td.entity_availability_status = kwargs.pop("availability_status", self.availability_status)
         self._internal_td.enable_express = kwargs.pop("enable_express", self.enable_express)
         self._internal_td.user_metadata = kwargs.pop("user_metadata", self.user_metadata)
+        self._internal_td.max_message_size_in_kilobytes = kwargs.pop(
+            "max_message_size_in_kilobytes",
+            self.max_message_size_in_kilobytes
+        )
 
         return self._internal_td
 
@@ -1137,7 +1158,7 @@ class SqlRuleFilter(object):
     :param sql_expression: The SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
-    :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    :type parameters: Dict[str, Union[str, int, float, bool, datetime, timedelta]]
     """
 
     def __init__(self, sql_expression=None, parameters=None):
@@ -1215,7 +1236,7 @@ class SqlRuleAction(object):
     :param sql_expression: SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
-    :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    :type parameters: Dict[str, Union[str, int, float, bool, datetime, timedelta]]
     :type requires_preprocessing: bool
     """
 

@@ -25,7 +25,7 @@ class AzureAppConfigurationOperationsMixin:
         name: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.KeyListResult"]:
         """Gets a list of keys.
 
@@ -117,7 +117,7 @@ class AzureAppConfigurationOperationsMixin:
         name: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
 
@@ -188,7 +188,7 @@ class AzureAppConfigurationOperationsMixin:
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, "_models.Get6ItemsItem"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.KeyValueListResult"]:
         """Gets a list of key-values.
 
@@ -290,7 +290,7 @@ class AzureAppConfigurationOperationsMixin:
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, "_models.Head6ItemsItem"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
 
@@ -370,7 +370,7 @@ class AzureAppConfigurationOperationsMixin:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         select: Optional[List[Union[str, "_models.Get7ItemsItem"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyValue":
         """Gets a single key-value.
 
@@ -460,7 +460,7 @@ class AzureAppConfigurationOperationsMixin:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         entity: Optional["_models.KeyValue"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyValue":
         """Creates a key-value.
 
@@ -548,7 +548,7 @@ class AzureAppConfigurationOperationsMixin:
         key: str,
         label: Optional[str] = None,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.KeyValue"]:
         """Deletes a key-value.
 
@@ -629,7 +629,7 @@ class AzureAppConfigurationOperationsMixin:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         select: Optional[List[Union[str, "_models.Head7ItemsItem"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
 
@@ -713,7 +713,7 @@ class AzureAppConfigurationOperationsMixin:
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[str]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LabelListResult"]:
         """Gets a list of labels.
 
@@ -810,7 +810,7 @@ class AzureAppConfigurationOperationsMixin:
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[str]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
 
@@ -884,7 +884,7 @@ class AzureAppConfigurationOperationsMixin:
         label: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyValue":
         """Locks a key-value.
 
@@ -963,7 +963,7 @@ class AzureAppConfigurationOperationsMixin:
         label: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyValue":
         """Unlocks a key-value.
 
@@ -1043,7 +1043,7 @@ class AzureAppConfigurationOperationsMixin:
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, "_models.Enum4"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.KeyValueListResult"]:
         """Gets a list of key-value revisions.
 
@@ -1145,7 +1145,7 @@ class AzureAppConfigurationOperationsMixin:
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, "_models.Enum5"]]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Requests the headers and status of the given resource.
 

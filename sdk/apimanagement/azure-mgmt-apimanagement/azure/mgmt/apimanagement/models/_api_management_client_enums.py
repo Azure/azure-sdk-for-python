@@ -6,38 +6,35 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessIdName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessIdName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ACCESS = "access"
     GIT_ACCESS = "gitAccess"
 
-class AlwaysLog(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of access to be used for the storage account.
+    """
+
+    #: Use access key.
+    ACCESS_KEY = "AccessKey"
+    #: Use system assigned managed identity.
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    #: Use user assigned managed identity.
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+class AlwaysLog(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies for what type of messages sampling settings should not apply.
     """
 
-    ALL_ERRORS = "allErrors"  #: Always log all erroneous request regardless of sampling settings.
+    #: Always log all erroneous request regardless of sampling settings.
+    ALL_ERRORS = "allErrors"
 
-class ApiManagementSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApiManagementSkuCapacityScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The scale type applicable to the sku.
     """
 
@@ -45,21 +42,21 @@ class ApiManagementSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta,
     MANUAL = "Manual"
     NONE = "None"
 
-class ApiManagementSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApiManagementSkuRestrictionsReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reason for restriction.
     """
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class ApiManagementSkuRestrictionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApiManagementSkuRestrictionsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of restrictions.
     """
 
     LOCATION = "Location"
     ZONE = "Zone"
 
-class ApimIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApimIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the resource. The type 'SystemAssigned, UserAssigned' includes
     both an implicitly created identity and a set of user assigned identities. The type 'None' will
     remove any identities from the service.
@@ -70,14 +67,16 @@ class ApimIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class ApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApiType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of API.
     """
 
     HTTP = "http"
     SOAP = "soap"
+    WEBSOCKET = "websocket"
+    GRAPHQL = "graphql"
 
-class ApiVersionSetContractDetailsVersioningScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApiVersionSetContractDetailsVersioningScheme(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An value that determines where the API Version identifier will be located in a HTTP request.
     """
 
@@ -85,12 +84,14 @@ class ApiVersionSetContractDetailsVersioningScheme(with_metaclass(_CaseInsensiti
     QUERY = "Query"
     HEADER = "Header"
 
-class AppType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AppType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    PORTAL = "portal"  #: User create request was sent by legacy developer portal.
-    DEVELOPER_PORTAL = "developerPortal"  #: User create request was sent by new developer portal.
+    #: User create request was sent by legacy developer portal.
+    PORTAL = "portal"
+    #: User create request was sent by new developer portal.
+    DEVELOPER_PORTAL = "developerPortal"
 
-class AsyncOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AsyncOperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of an async operation.
     """
 
@@ -99,7 +100,7 @@ class AsyncOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class AuthorizationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AuthorizationMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     HEAD = "HEAD"
     OPTIONS = "OPTIONS"
@@ -110,26 +111,30 @@ class AuthorizationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PATCH = "PATCH"
     DELETE = "DELETE"
 
-class BackendProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BackendProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Backend communication protocol.
     """
 
-    HTTP = "http"  #: The Backend is a RESTful service.
-    SOAP = "soap"  #: The Backend is a SOAP service.
+    #: The Backend is a RESTful service.
+    HTTP = "http"
+    #: The Backend is a SOAP service.
+    SOAP = "soap"
 
-class BearerTokenSendingMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BearerTokenSendingMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     AUTHORIZATION_HEADER = "authorizationHeader"
     QUERY = "query"
 
-class BearerTokenSendingMethods(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BearerTokenSendingMethods(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Form of an authorization grant, which the client uses to request the access token.
     """
 
-    AUTHORIZATION_HEADER = "authorizationHeader"  #: Access token will be transmitted in the Authorization header using Bearer schema.
-    QUERY = "query"  #: Access token will be transmitted as query parameters.
+    #: Access token will be transmitted in the Authorization header using Bearer schema.
+    AUTHORIZATION_HEADER = "authorizationHeader"
+    #: Access token will be transmitted as query parameters.
+    QUERY = "query"
 
-class CertificateConfigurationStoreName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateConfigurationStoreName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The System.Security.Cryptography.x509certificates.StoreName certificate store location. Only
     Root and CertificateAuthority are valid locations.
     """
@@ -137,23 +142,62 @@ class CertificateConfigurationStoreName(with_metaclass(_CaseInsensitiveEnumMeta,
     CERTIFICATE_AUTHORITY = "CertificateAuthority"
     ROOT = "Root"
 
-class ClientAuthenticationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Certificate Source.
+    """
 
-    BASIC = "Basic"  #: Basic Client Authentication method.
-    BODY = "Body"  #: Body based Authentication method.
+    MANAGED = "Managed"
+    KEY_VAULT = "KeyVault"
+    CUSTOM = "Custom"
+    BUILT_IN = "BuiltIn"
 
-class ConfigurationIdName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Certificate Status.
+    """
+
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
+
+class ClientAuthenticationMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Basic Client Authentication method.
+    BASIC = "Basic"
+    #: Body based Authentication method.
+    BODY = "Body"
+
+class ConfigurationIdName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     CONFIGURATION = "configuration"
 
-class Confirmation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Confirmation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Determines the type of confirmation e-mail that will be sent to the newly created user.
     """
 
-    SIGNUP = "signup"  #: Send an e-mail to the user confirming they have successfully signed up.
-    INVITE = "invite"  #: Send an e-mail inviting the user to sign-up and complete registration.
+    #: Send an e-mail to the user confirming they have successfully signed up.
+    SIGNUP = "signup"
+    #: Send an e-mail inviting the user to sign-up and complete registration.
+    INVITE = "invite"
 
-class ConnectivityStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The connection status.
+    """
+
+    UNKNOWN = "Unknown"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+    DEGRADED = "Degraded"
+
+class ConnectivityCheckProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The request's protocol. Specific protocol configuration can be available based on this
+    selection. The specified destination address must be coherent with this value.
+    """
+
+    TCP = "TCP"
+    HTTP = "HTTP"
+    HTTPS = "HTTPS"
+
+class ConnectivityStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Resource Connectivity Status Type identifier.
     """
 
@@ -161,58 +205,97 @@ class ConnectivityStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     SUCCESS = "success"
     FAILURE = "failure"
 
-class ContentFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContentFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Format of the Content in which the API is getting imported.
     """
 
-    WADL_XML = "wadl-xml"  #: The contents are inline and Content type is a WADL document.
-    WADL_LINK_JSON = "wadl-link-json"  #: The WADL document is hosted on a publicly accessible internet address.
-    SWAGGER_JSON = "swagger-json"  #: The contents are inline and Content Type is a OpenAPI 2.0 JSON Document.
-    SWAGGER_LINK_JSON = "swagger-link-json"  #: The OpenAPI 2.0 JSON document is hosted on a publicly accessible internet address.
-    WSDL = "wsdl"  #: The contents are inline and the document is a WSDL/Soap document.
-    WSDL_LINK = "wsdl-link"  #: The WSDL document is hosted on a publicly accessible internet address.
-    OPENAPI = "openapi"  #: The contents are inline and Content Type is a OpenAPI 3.0 YAML Document.
-    OPENAPI_JSON = "openapi+json"  #: The contents are inline and Content Type is a OpenAPI 3.0 JSON Document.
-    OPENAPI_LINK = "openapi-link"  #: The OpenAPI 3.0 YAML document is hosted on a publicly accessible internet address.
-    OPENAPI_JSON_LINK = "openapi+json-link"  #: The OpenAPI 3.0 JSON document is hosted on a publicly accessible internet address.
+    #: The contents are inline and Content type is a WADL document.
+    WADL_XML = "wadl-xml"
+    #: The WADL document is hosted on a publicly accessible internet address.
+    WADL_LINK_JSON = "wadl-link-json"
+    #: The contents are inline and Content Type is a OpenAPI 2.0 JSON Document.
+    SWAGGER_JSON = "swagger-json"
+    #: The OpenAPI 2.0 JSON document is hosted on a publicly accessible internet address.
+    SWAGGER_LINK_JSON = "swagger-link-json"
+    #: The contents are inline and the document is a WSDL/Soap document.
+    WSDL = "wsdl"
+    #: The WSDL document is hosted on a publicly accessible internet address.
+    WSDL_LINK = "wsdl-link"
+    #: The contents are inline and Content Type is a OpenAPI 3.0 YAML Document.
+    OPENAPI = "openapi"
+    #: The contents are inline and Content Type is a OpenAPI 3.0 JSON Document.
+    OPENAPI_JSON = "openapi+json"
+    #: The OpenAPI 3.0 YAML document is hosted on a publicly accessible internet address.
+    OPENAPI_LINK = "openapi-link"
+    #: The OpenAPI 3.0 JSON document is hosted on a publicly accessible internet address.
+    OPENAPI_JSON_LINK = "openapi+json-link"
+    #: The GraphQL API endpoint hosted on a publicly accessible internet address.
+    GRAPHQL_LINK = "graphql-link"
 
-class DataMaskingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class DataMaskingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Data masking mode.
     """
 
-    MASK = "Mask"  #: Mask the value of an entity.
-    HIDE = "Hide"  #: Hide the presence of an entity.
+    #: Mask the value of an entity.
+    MASK = "Mask"
+    #: Hide the presence of an entity.
+    HIDE = "Hide"
 
-class ExportApi(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExportApi(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     TRUE = "true"
 
-class ExportFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExportFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    SWAGGER = "swagger-link"  #: Export the Api Definition in OpenAPI 2.0 Specification as JSON document to the Storage Blob.
-    WSDL = "wsdl-link"  #: Export the Api Definition in WSDL Schema to Storage Blob. This is only supported for APIs of Type ``soap``.
-    WADL = "wadl-link"  #: Export the Api Definition in WADL Schema to Storage Blob.
-    OPENAPI = "openapi-link"  #: Export the Api Definition in OpenAPI 3.0 Specification as YAML document to Storage Blob.
-    OPENAPI_JSON = "openapi+json-link"  #: Export the Api Definition in OpenAPI 3.0 Specification as JSON document to Storage Blob.
+    #: Export the Api Definition in OpenAPI 2.0 Specification as JSON document to the Storage Blob.
+    SWAGGER = "swagger-link"
+    #: Export the Api Definition in WSDL Schema to Storage Blob. This is only supported for APIs of
+    #: Type ``soap``.
+    WSDL = "wsdl-link"
+    #: Export the Api Definition in WADL Schema to Storage Blob.
+    WADL = "wadl-link"
+    #: Export the Api Definition in OpenAPI 3.0 Specification as YAML document to Storage Blob.
+    OPENAPI = "openapi-link"
+    #: Export the Api Definition in OpenAPI 3.0 Specification as JSON document to Storage Blob.
+    OPENAPI_JSON = "openapi+json-link"
 
-class ExportResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Format in which the Api Details are exported to the Storage Blob with Sas Key valid for 5
+class ExportResultFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Format in which the API Details are exported to the Storage Blob with Sas Key valid for 5
     minutes.
     """
 
-    SWAGGER = "swagger-link-json"  #: The Api Definition is exported in OpenApi Specification 2.0 format to the Storage Blob.
-    WSDL = "wsdl-link+xml"  #: The Api Definition is exported in WSDL Schema to Storage Blob. This is only supported for APIs of Type ``soap``.
-    WADL = "wadl-link-json"  #: Export the Api Definition in WADL Schema to Storage Blob.
-    OPEN_API = "openapi-link"  #: Export the Api Definition in OpenApi Specification 3.0 to Storage Blob.
+    #: The API Definition is exported in OpenAPI Specification 2.0 format to the Storage Blob.
+    SWAGGER = "swagger-link-json"
+    #: The API Definition is exported in WSDL Schema to Storage Blob. This is only supported for APIs
+    #: of Type ``soap``.
+    WSDL = "wsdl-link+xml"
+    #: Export the API Definition in WADL Schema to Storage Blob.
+    WADL = "wadl-link-json"
+    #: Export the API Definition in OpenAPI Specification 3.0 to Storage Blob.
+    OPEN_API = "openapi-link"
 
-class GrantType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GrantType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    AUTHORIZATION_CODE = "authorizationCode"  #: Authorization Code Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.1.
-    IMPLICIT = "implicit"  #: Implicit Code Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.2.
-    RESOURCE_OWNER_PASSWORD = "resourceOwnerPassword"  #: Resource Owner Password Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.3.
-    CLIENT_CREDENTIALS = "clientCredentials"  #: Client Credentials Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.4.
+    #: Authorization Code Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.1.
+    AUTHORIZATION_CODE = "authorizationCode"
+    #: Implicit Code Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.2.
+    IMPLICIT = "implicit"
+    #: Resource Owner Password Grant flow as described
+    #: https://tools.ietf.org/html/rfc6749#section-4.3.
+    RESOURCE_OWNER_PASSWORD = "resourceOwnerPassword"
+    #: Client Credentials Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.4.
+    CLIENT_CREDENTIALS = "clientCredentials"
 
-class GroupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GroupType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Group type.
     """
 
@@ -220,7 +303,7 @@ class GroupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM = "system"
     EXTERNAL = "external"
 
-class HostnameType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HostnameType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Hostname type.
     """
 
@@ -230,39 +313,73 @@ class HostnameType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SCM = "Scm"
     DEVELOPER_PORTAL = "DeveloperPortal"
 
-class HttpCorrelationProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HttpCorrelationProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Sets correlation protocol to use for Application Insights diagnostics.
     """
 
-    NONE = "None"  #: Do not read and inject correlation headers.
-    LEGACY = "Legacy"  #: Inject Request-Id and Request-Context headers with request correlation data. See https://github.com/dotnet/corefx/blob/master/src/System.Diagnostics.DiagnosticSource/src/HttpCorrelationProtocol.md.
-    W3_C = "W3C"  #: Inject Trace Context headers. See https://w3c.github.io/trace-context.
+    #: Do not read and inject correlation headers.
+    NONE = "None"
+    #: Inject Request-Id and Request-Context headers with request correlation data. See
+    #: https://github.com/dotnet/corefx/blob/master/src/System.Diagnostics.DiagnosticSource/src/HttpCorrelationProtocol.md.
+    LEGACY = "Legacy"
+    #: Inject Trace Context headers. See https://w3c.github.io/trace-context.
+    W3_C = "W3C"
 
-class IdentityProviderType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IdentityProviderType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    FACEBOOK = "facebook"  #: Facebook as Identity provider.
-    GOOGLE = "google"  #: Google as Identity provider.
-    MICROSOFT = "microsoft"  #: Microsoft Live as Identity provider.
-    TWITTER = "twitter"  #: Twitter as Identity provider.
-    AAD = "aad"  #: Azure Active Directory as Identity provider.
-    AAD_B2_C = "aadB2C"  #: Azure Active Directory B2C as Identity provider.
+    #: Facebook as Identity provider.
+    FACEBOOK = "facebook"
+    #: Google as Identity provider.
+    GOOGLE = "google"
+    #: Microsoft Live as Identity provider.
+    MICROSOFT = "microsoft"
+    #: Twitter as Identity provider.
+    TWITTER = "twitter"
+    #: Azure Active Directory as Identity provider.
+    AAD = "aad"
+    #: Azure Active Directory B2C as Identity provider.
+    AAD_B2_C = "aadB2C"
 
-class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IssueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of issue.
+    """
+
+    UNKNOWN = "Unknown"
+    AGENT_STOPPED = "AgentStopped"
+    GUEST_FIREWALL = "GuestFirewall"
+    DNS_RESOLUTION = "DnsResolution"
+    SOCKET_BIND = "SocketBind"
+    NETWORK_SECURITY_RULE = "NetworkSecurityRule"
+    USER_DEFINED_ROUTE = "UserDefinedRoute"
+    PORT_THROTTLED = "PortThrottled"
+    PLATFORM = "Platform"
+
+class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The Key to be used to generate token for user.
     """
 
     PRIMARY = "primary"
     SECONDARY = "secondary"
 
-class LoggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LoggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Logger type.
     """
 
-    AZURE_EVENT_HUB = "azureEventHub"  #: Azure Event Hub as log destination.
-    APPLICATION_INSIGHTS = "applicationInsights"  #: Azure Application Insights as log destination.
-    AZURE_MONITOR = "azureMonitor"  #: Azure Monitor.
+    #: Azure Event Hub as log destination.
+    AZURE_EVENT_HUB = "azureEventHub"
+    #: Azure Application Insights as log destination.
+    APPLICATION_INSIGHTS = "applicationInsights"
+    #: Azure Monitor.
+    AZURE_MONITOR = "azureMonitor"
 
-class NameAvailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Method(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The HTTP method to be used.
+    """
+
+    GET = "GET"
+    POST = "POST"
+
+class NameAvailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Invalid indicates the name provided does not match the resource provider’s naming requirements
     (incorrect length, unsupported characters, etc.)  AlreadyExists indicates that the name is
     already in use and is therefore unavailable.
@@ -272,42 +389,86 @@ class NameAvailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class NotificationName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NotificationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    REQUEST_PUBLISHER_NOTIFICATION_MESSAGE = "RequestPublisherNotificationMessage"  #: The following email recipients and users will receive email notifications about subscription requests for API products requiring approval.
-    PURCHASE_PUBLISHER_NOTIFICATION_MESSAGE = "PurchasePublisherNotificationMessage"  #: The following email recipients and users will receive email notifications about new API product subscriptions.
-    NEW_APPLICATION_NOTIFICATION_MESSAGE = "NewApplicationNotificationMessage"  #: The following email recipients and users will receive email notifications when new applications are submitted to the application gallery.
-    BCC = "BCC"  #: The following recipients will receive blind carbon copies of all emails sent to developers.
-    NEW_ISSUE_PUBLISHER_NOTIFICATION_MESSAGE = "NewIssuePublisherNotificationMessage"  #: The following email recipients and users will receive email notifications when a new issue or comment is submitted on the developer portal.
-    ACCOUNT_CLOSED_PUBLISHER = "AccountClosedPublisher"  #: The following email recipients and users will receive email notifications when developer closes his account.
-    QUOTA_LIMIT_APPROACHING_PUBLISHER_NOTIFICATION_MESSAGE = "QuotaLimitApproachingPublisherNotificationMessage"  #: The following email recipients and users will receive email notifications when subscription usage gets close to usage quota.
+    #: The following email recipients and users will receive email notifications about subscription
+    #: requests for API products requiring approval.
+    REQUEST_PUBLISHER_NOTIFICATION_MESSAGE = "RequestPublisherNotificationMessage"
+    #: The following email recipients and users will receive email notifications about new API product
+    #: subscriptions.
+    PURCHASE_PUBLISHER_NOTIFICATION_MESSAGE = "PurchasePublisherNotificationMessage"
+    #: The following email recipients and users will receive email notifications when new applications
+    #: are submitted to the application gallery.
+    NEW_APPLICATION_NOTIFICATION_MESSAGE = "NewApplicationNotificationMessage"
+    #: The following recipients will receive blind carbon copies of all emails sent to developers.
+    BCC = "BCC"
+    #: The following email recipients and users will receive email notifications when a new issue or
+    #: comment is submitted on the developer portal.
+    NEW_ISSUE_PUBLISHER_NOTIFICATION_MESSAGE = "NewIssuePublisherNotificationMessage"
+    #: The following email recipients and users will receive email notifications when developer closes
+    #: his account.
+    ACCOUNT_CLOSED_PUBLISHER = "AccountClosedPublisher"
+    #: The following email recipients and users will receive email notifications when subscription
+    #: usage gets close to usage quota.
+    QUOTA_LIMIT_APPROACHING_PUBLISHER_NOTIFICATION_MESSAGE = "QuotaLimitApproachingPublisherNotificationMessage"
 
-class OperationNameFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationNameFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The format of the Operation Name for Application Insights telemetries. Default is Name.
     """
 
-    NAME = "Name"  #: API_NAME;rev=API_REVISION - OPERATION_NAME.
-    URL = "Url"  #: HTTP_VERB URL.
+    #: API_NAME;rev=API_REVISION - OPERATION_NAME.
+    NAME = "Name"
+    #: HTTP_VERB URL.
+    URL = "Url"
 
-class PolicyContentFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The origin of the issue.
+    """
+
+    LOCAL = "Local"
+    INBOUND = "Inbound"
+    OUTBOUND = "Outbound"
+
+class PlatformVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Compute Platform Version running the service.
+    """
+
+    #: Platform version cannot be determined, as compute platform is not deployed.
+    UNDETERMINED = "undetermined"
+    #: Platform running the service on Single Tenant V1 platform.
+    STV1 = "stv1"
+    #: Platform running the service on Single Tenant V2 platform.
+    STV2 = "stv2"
+    #: Platform running the service on Multi Tenant V1 platform.
+    MTV1 = "mtv1"
+
+class PolicyContentFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Format of the policyContent.
     """
 
-    XML = "xml"  #: The contents are inline and Content type is an XML document.
-    XML_LINK = "xml-link"  #: The policy XML document is hosted on a http endpoint accessible from the API Management service.
-    RAWXML = "rawxml"  #: The contents are inline and Content type is a non XML encoded policy document.
-    RAWXML_LINK = "rawxml-link"  #: The policy document is not Xml encoded and is hosted on a http endpoint accessible from the API Management service.
+    #: The contents are inline and Content type is an XML document.
+    XML = "xml"
+    #: The policy XML document is hosted on a http endpoint accessible from the API Management
+    #: service.
+    XML_LINK = "xml-link"
+    #: The contents are inline and Content type is a non XML encoded policy document.
+    RAWXML = "rawxml"
+    #: The policy document is not Xml encoded and is hosted on a http endpoint accessible from the API
+    #: Management service.
+    RAWXML_LINK = "rawxml-link"
 
-class PolicyExportFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyExportFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    XML = "xml"  #: The contents are inline and Content type is an XML document.
-    RAWXML = "rawxml"  #: The contents are inline and Content type is a non XML encoded policy document.
+    #: The contents are inline and Content type is an XML document.
+    XML = "xml"
+    #: The contents are inline and Content type is a non XML encoded policy document.
+    RAWXML = "rawxml"
 
-class PolicyIdName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyIdName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     POLICY = "policy"
 
-class PolicyScopeContract(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyScopeContract(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     TENANT = "Tenant"
     PRODUCT = "Product"
@@ -315,16 +476,43 @@ class PolicyScopeContract(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OPERATION = "Operation"
     ALL = "All"
 
-class PortalRevisionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Portal revision publishing status
+class PortalRevisionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of the portal's revision.
     """
 
-    PENDING = "pending"  #: Portal revision publishing is pending.
-    PUBLISHING = "publishing"  #: Portal revision is publishing.
-    COMPLETED = "completed"  #: Portal revision publishing completed.
-    FAILED = "failed"  #: Portal revision publishing failed.
+    #: Portal's revision has been queued.
+    PENDING = "pending"
+    #: Portal's revision is being published.
+    PUBLISHING = "publishing"
+    #: Portal's revision publishing completed.
+    COMPLETED = "completed"
+    #: Portal's revision publishing failed.
+    FAILED = "failed"
 
-class ProductState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PreferredIPVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The IP version to be used. Only IPv4 is supported for now.
+    """
+
+    I_PV4 = "IPv4"
+
+class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The private endpoint connection status.
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+class ProductState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """whether product is published or not. Published products are discoverable by users of developer
     portal. Non published products are visible only to administrators. Default state of Product is
     notPublished.
@@ -333,62 +521,112 @@ class ProductState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NOT_PUBLISHED = "notPublished"
     PUBLISHED = "published"
 
-class Protocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     HTTP = "http"
     HTTPS = "https"
+    WS = "ws"
+    WSS = "wss"
 
-class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether or not public endpoint access is allowed for this API Management service.  Value is
+    optional but if passed in, must be 'Enabled' or 'Disabled'. If 'Disabled', private endpoints
+    are the exclusive access method. Default value is 'Enabled'
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class ResourceSkuCapacityScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The scale type applicable to the sku.
     """
 
-    AUTOMATIC = "automatic"  #: Supported scale type automatic.
-    MANUAL = "manual"  #: Supported scale type manual.
-    NONE = "none"  #: Scaling not supported.
+    #: Supported scale type automatic.
+    AUTOMATIC = "automatic"
+    #: Supported scale type manual.
+    MANUAL = "manual"
+    #: Scaling not supported.
+    NONE = "none"
 
-class SamplingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SamplingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Sampling type.
     """
 
-    FIXED = "fixed"  #: Fixed-rate sampling.
+    #: Fixed-rate sampling.
+    FIXED = "fixed"
 
-class SettingsTypeName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SchemaType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Schema Type. Immutable.
+    """
+
+    #: Xml schema type.
+    XML = "xml"
+    #: Json schema type.
+    JSON = "json"
+
+class SettingsTypeName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     PUBLIC = "public"
 
-class SkuType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Severity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The severity of the issue.
+    """
+
+    ERROR = "Error"
+    WARNING = "Warning"
+
+class SkuType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the Sku.
     """
 
-    DEVELOPER = "Developer"  #: Developer SKU of Api Management.
-    STANDARD = "Standard"  #: Standard SKU of Api Management.
-    PREMIUM = "Premium"  #: Premium SKU of Api Management.
-    BASIC = "Basic"  #: Basic SKU of Api Management.
-    CONSUMPTION = "Consumption"  #: Consumption SKU of Api Management.
-    ISOLATED = "Isolated"  #: Isolated SKU of Api Management.
+    #: Developer SKU of Api Management.
+    DEVELOPER = "Developer"
+    #: Standard SKU of Api Management.
+    STANDARD = "Standard"
+    #: Premium SKU of Api Management.
+    PREMIUM = "Premium"
+    #: Basic SKU of Api Management.
+    BASIC = "Basic"
+    #: Consumption SKU of Api Management.
+    CONSUMPTION = "Consumption"
+    #: Isolated SKU of Api Management.
+    ISOLATED = "Isolated"
 
-class SoapApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of Api to create.
+class SoapApiType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of API to create.
     
     
-    * ``http`` creates a SOAP to REST API
-    * ``soap`` creates a SOAP pass-through API .
+    * ``http`` creates a REST API
+    * ``soap`` creates a SOAP pass-through API
+    * ``websocket`` creates websocket API
+    * ``graphql`` creates GraphQL API.
     """
 
-    SOAP_TO_REST = "http"  #: Imports a SOAP API having a RESTful front end.
-    SOAP_PASS_THROUGH = "soap"  #: Imports the Soap API having a SOAP front end.
+    #: Imports a SOAP API having a RESTful front end.
+    SOAP_TO_REST = "http"
+    #: Imports the SOAP API having a SOAP front end.
+    SOAP_PASS_THROUGH = "soap"
+    #: Imports the API having a Websocket front end.
+    WEB_SOCKET = "websocket"
+    #: Imports the API having a GraphQL front end.
+    GRAPH_QL = "graphql"
 
-class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class State(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the issue.
     """
 
-    PROPOSED = "proposed"  #: The issue is proposed.
-    OPEN = "open"  #: The issue is opened.
-    REMOVED = "removed"  #: The issue was removed.
-    RESOLVED = "resolved"  #: The issue is now resolved.
-    CLOSED = "closed"  #: The issue was closed.
+    #: The issue is proposed.
+    PROPOSED = "proposed"
+    #: The issue is opened.
+    OPEN = "open"
+    #: The issue was removed.
+    REMOVED = "removed"
+    #: The issue is now resolved.
+    RESOLVED = "resolved"
+    #: The issue was closed.
+    CLOSED = "closed"
 
-class SubscriptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SubscriptionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Subscription state. Possible states are * active – the subscription is active, * suspended –
     the subscription is blocked, and the subscriber cannot call any APIs of the product, *
     submitted – the subscription request has been made by the developer, but has not yet been
@@ -404,7 +642,7 @@ class SubscriptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REJECTED = "rejected"
     CANCELLED = "cancelled"
 
-class TemplateName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TemplateName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     APPLICATION_APPROVED_NOTIFICATION_MESSAGE = "applicationApprovedNotificationMessage"
     ACCOUNT_CLOSED_DEVELOPER = "accountClosedDeveloper"
@@ -421,33 +659,46 @@ class TemplateName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REJECT_DEVELOPER_NOTIFICATION_MESSAGE = "rejectDeveloperNotificationMessage"
     REQUEST_DEVELOPER_NOTIFICATION_MESSAGE = "requestDeveloperNotificationMessage"
 
-class UserState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UserState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Account state. Specifies whether the user is active or not. Blocked users are unable to sign
     into the developer portal or call any APIs of subscribed products. Default state is Active.
     """
 
-    ACTIVE = "active"  #: User state is active.
-    BLOCKED = "blocked"  #: User is blocked. Blocked users cannot authenticate at developer portal or call API.
-    PENDING = "pending"  #: User account is pending. Requires identity confirmation before it can be made active.
-    DELETED = "deleted"  #: User account is closed. All identities and related entities are removed.
+    #: User state is active.
+    ACTIVE = "active"
+    #: User is blocked. Blocked users cannot authenticate at developer portal or call API.
+    BLOCKED = "blocked"
+    #: User account is pending. Requires identity confirmation before it can be made active.
+    PENDING = "pending"
+    #: User account is closed. All identities and related entities are removed.
+    DELETED = "deleted"
 
-class Verbosity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Verbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The verbosity level applied to traces emitted by trace policies.
     """
 
-    VERBOSE = "verbose"  #: All the traces emitted by trace policies will be sent to the logger attached to this diagnostic instance.
-    INFORMATION = "information"  #: Traces with 'severity' set to 'information' and 'error' will be sent to the logger attached to this diagnostic instance.
-    ERROR = "error"  #: Only traces with 'severity' set to 'error' will be sent to the logger attached to this diagnostic instance.
+    #: All the traces emitted by trace policies will be sent to the logger attached to this diagnostic
+    #: instance.
+    VERBOSE = "verbose"
+    #: Traces with 'severity' set to 'information' and 'error' will be sent to the logger attached to
+    #: this diagnostic instance.
+    INFORMATION = "information"
+    #: Only traces with 'severity' set to 'error' will be sent to the logger attached to this
+    #: diagnostic instance.
+    ERROR = "error"
 
-class VersioningScheme(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VersioningScheme(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An value that determines where the API Version identifier will be located in a HTTP request.
     """
 
-    SEGMENT = "Segment"  #: The API Version is passed in a path segment.
-    QUERY = "Query"  #: The API Version is passed in a query parameter.
-    HEADER = "Header"  #: The API Version is passed in a HTTP header.
+    #: The API Version is passed in a path segment.
+    SEGMENT = "Segment"
+    #: The API Version is passed in a query parameter.
+    QUERY = "Query"
+    #: The API Version is passed in a HTTP header.
+    HEADER = "Header"
 
-class VirtualNetworkType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VirtualNetworkType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of VPN in which API Management service needs to be configured in. None (Default Value)
     means the API Management service is not part of any Virtual Network, External means the API
     Management deployment is set up inside a Virtual Network having an Internet Facing Endpoint,
@@ -455,6 +706,10 @@ class VirtualNetworkType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     Intranet Facing Endpoint only.
     """
 
-    NONE = "None"  #: The service is not part of any Virtual Network.
-    EXTERNAL = "External"  #: The service is part of Virtual Network and it is accessible from Internet.
-    INTERNAL = "Internal"  #: The service is part of Virtual Network and it is only accessible from within the virtual network.
+    #: The service is not part of any Virtual Network.
+    NONE = "None"
+    #: The service is part of Virtual Network and it is accessible from Internet.
+    EXTERNAL = "External"
+    #: The service is part of Virtual Network and it is only accessible from within the virtual
+    #: network.
+    INTERNAL = "Internal"

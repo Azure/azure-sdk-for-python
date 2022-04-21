@@ -3,6 +3,5 @@ package_name = "azure-mgmt-managementpartner"
 package_nspkg = "azure-mgmt-nspkg"
 is_stable = false
 is_arm = true
-need_msrestazure = true
-package_pprint_name = "ManagementPartner Management"
+package_pprint_name = "Management Partner Management"
 package_doc_id = ""

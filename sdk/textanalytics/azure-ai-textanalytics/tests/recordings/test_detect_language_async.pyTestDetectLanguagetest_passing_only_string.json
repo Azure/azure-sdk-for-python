@@ -1,0 +1,83 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/languages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "400",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "ffe92b16-5d10-11ec-8230-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022I should take my cat to the veterinarian.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022Este es un document escrito en Espa\\u00f1ol.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022\\u732b\\u306f\\u5e78\\u305b\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022Fahrt nach Stuttgart und dann zum Hotel zu Fu.\u0022, \u0022countryHint\u0022: \u0022US\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022\u0022, \u0022countryHint\u0022: \u0022US\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "a410b11a-1fe9-4bc5-8016-ba51087d0f77",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
+        "Date": "Tue, 14 Dec 2021 19:06:53 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "9"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "0",
+            "detectedLanguage": {
+              "name": "English",
+              "iso6391Name": "en",
+              "confidenceScore": 0.97
+            },
+            "warnings": []
+          },
+          {
+            "id": "1",
+            "detectedLanguage": {
+              "name": "English",
+              "iso6391Name": "en",
+              "confidenceScore": 1.0
+            },
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "detectedLanguage": {
+              "name": "Japanese",
+              "iso6391Name": "ja",
+              "confidenceScore": 1.0
+            },
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "detectedLanguage": {
+              "name": "German",
+              "iso6391Name": "de",
+              "confidenceScore": 0.99
+            },
+            "warnings": []
+          }
+        ],
+        "errors": [
+          {
+            "id": "4",
+            "error": {
+              "code": "InvalidArgument",
+              "message": "Invalid document in request.",
+              "innererror": {
+                "code": "InvalidDocument",
+                "message": "Document text is empty."
+              }
+            }
+          }
+        ],
+        "modelVersion": "2021-01-05"
+      }
+    }
+  ],
+  "Variables": {}
+}

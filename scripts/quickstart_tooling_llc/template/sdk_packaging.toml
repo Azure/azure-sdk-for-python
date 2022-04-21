@@ -1,0 +1,6 @@
+[packaging]
+package_name = "{{ package_name }}"
+package_pprint_name = "{{ package_pprint_name }}"
+package_doc_id = ""
+is_stable = false
+is_arm = false

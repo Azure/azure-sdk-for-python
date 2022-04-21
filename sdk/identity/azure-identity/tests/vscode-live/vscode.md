@@ -2,7 +2,7 @@
 
 ## Test matrix
 
-- Python 2.7, 3.5.3, 3.8
+- Python 3.7, 3.9
 - Windows, Ubuntu 18.04, Redhat Enterprise Linux 8.1, Debian 10, Mac OS
 
 ## Test steps

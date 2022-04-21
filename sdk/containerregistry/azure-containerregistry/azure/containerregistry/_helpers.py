@@ -3,12 +3,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
+import json
 import re
+import time
+from typing import TYPE_CHECKING, List, Dict
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
 
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest
+
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
+SUPPORTED_API_VERSIONS = [
+    "2019-08-15-preview",
+    "2021-07-01"
+]
 
 
 def _is_tag(tag_or_digest):
@@ -84,3 +99,29 @@ def _enforce_https(request):
         raise ServiceRequestError(
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
+
+
+def _host_only(url):
+    # type: (str) -> str
+    return urlparse(url).netloc
+
+
+def _strip_alg(digest):
+    if len(digest.split(":")) == 2:
+        return digest.split(":")[1]
+    return digest
+
+
+def _parse_exp_time(raw_token):
+    # type: (bytes) -> float
+    value = raw_token.split(".")
+    if len(value) > 2:
+        value = value[1]
+        padding = len(value) % 4
+        if padding > 0:
+            value += "=" * padding
+        byte_value = base64.b64decode(value).decode("utf-8")
+        web_token = json.loads(byte_value)
+        return web_token.get("exp", time.time())
+
+    return time.time()

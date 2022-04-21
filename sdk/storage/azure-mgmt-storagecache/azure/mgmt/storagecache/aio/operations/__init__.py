@@ -10,14 +10,18 @@ from ._operations import Operations
 from ._skus_operations import SkusOperations
 from ._usage_models_operations import UsageModelsOperations
 from ._asc_operations_operations import AscOperationsOperations
+from ._asc_usages_operations import AscUsagesOperations
 from ._caches_operations import CachesOperations
 from ._storage_targets_operations import StorageTargetsOperations
+from ._storage_target_operations import StorageTargetOperations
 
 __all__ = [
     'Operations',
     'SkusOperations',
     'UsageModelsOperations',
     'AscOperationsOperations',
+    'AscUsagesOperations',
     'CachesOperations',
     'StorageTargetsOperations',
+    'StorageTargetOperations',
 ]

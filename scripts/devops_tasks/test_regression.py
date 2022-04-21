@@ -10,6 +10,7 @@
 
 import argparse
 import glob
+import pdb
 import sys
 import os
 import logging
@@ -25,24 +26,30 @@ from common_tasks import (
     find_tools_packages,
     get_installed_packages,
     extend_dev_requirements,
-    str_to_bool
+    str_to_bool,
 )
-from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
+from git_helper import (
+    get_release_tag,
+    git_checkout_tag,
+    git_checkout_branch,
+    clone_repo,
+)
 
 AZURE_GLOB_STRING = "azure*"
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-test_tools_req_file = os.path.abspath(os.path.join(root_dir, "eng", "test_tools.txt"))
+test_tools_req_file = os.path.abspath(os.path.join(root_dir, "eng", "regression_test_tools.txt"))
 
 GIT_REPO_NAME = "azure-sdk-for-python"
-GIT_MASTER_BRANCH = "master"
+GIT_MASTER_BRANCH = "main"
 VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"
 
-OLDEST_EXTENSION_PKGS = ['msrestazure','adal']
+OLDEST_EXTENSION_PKGS = ["msrestazure", "adal"]
 
 logging.getLogger().setLevel(logging.INFO)
+
 
 class CustomVirtualEnv:
     def __init__(self, path):
@@ -56,19 +63,21 @@ class CustomVirtualEnv:
 
     def clear_venv(self):
         # clear any previously installed packages
-        run_check_call(
-            [sys.executable, "-m", "venv", "--clear", "ENV_DIR", self.path], root_dir
-        )
+        run_check_call([sys.executable, "-m", "venv", "--clear", "ENV_DIR", self.path], root_dir)
 
     def _find_python_executable(self):
-        paths = glob.glob(os.path.join(self.path, "*", "python")) + glob.glob(os.path.join(self.path, "*", "python.exe"))
+        paths = glob.glob(os.path.join(self.path, "*", "python")) + glob.glob(
+            os.path.join(self.path, "*", "python.exe")
+        )
         if not paths:
             logging.error("Failed to find path to python executable in virtual env:{}".format(self.path))
             sys.exit(1)
         return paths[0]
 
     def _find_lib_paths(self):
-        paths = glob.glob(os.path.join(self.path, "*", "site-packages")) + glob.glob(os.path.join(self.path, "lib", "*", "site-packages"))
+        paths = glob.glob(os.path.join(self.path, "*", "site-packages")) + glob.glob(
+            os.path.join(self.path, "lib", "*", "site-packages")
+        )
         if not paths:
             logging.error("Failed to find site-packages directory in virtual env:{}".format(self.path))
             sys.exit(1)
@@ -110,7 +119,10 @@ class RegressionTest:
         if pkg_name in self.package_dependency_dict:
             logging.info("Running regression test for {}".format(pkg_name))
 
-            self.whl_path = os.path.join(self.context.whl_directory, find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory))
+            self.whl_path = os.path.join(
+                self.context.whl_directory,
+                find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory),
+            )
             if find_packages_missing_on_pypi(self.whl_path):
                 logging.error("Required packages are not available on PyPI. Skipping regression test")
                 exit(0)
@@ -120,23 +132,13 @@ class RegressionTest:
             for dep_pkg_path in dep_packages:
                 dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
 
-                logging.info(
-                    "Starting regression test of {0} against released {1}".format(
-                        pkg_name, dep_pkg_name
-                    )
-                )
+                logging.info("Starting regression test of {0} against released {1}".format(pkg_name, dep_pkg_name))
                 self._run_test(dep_pkg_path)
-                logging.info(
-                    "Completed regression test of {0} against released {1}".format(
-                        pkg_name, dep_pkg_name
-                    )
-                )
+                logging.info("Completed regression test of {0} against released {1}".format(pkg_name, dep_pkg_name))
 
             logging.info("Completed regression test for {}".format(pkg_name))
         else:
-            logging.info(
-                "Package {} is not added as required by any package".format(pkg_name)
-            )
+            logging.info("Package {} is not added as required by any package".format(pkg_name))
 
     def _run_test(self, dep_pkg_path):
         self.context.initialize(dep_pkg_path)
@@ -166,8 +168,10 @@ class RegressionTest:
                     "install",
                     "-r",
                     test_tools_req_file,
+                    "--extra-index-url",
+                    "https://pypi.org/simple",
                 ],
-                dep_pkg_path
+                dep_pkg_path,
             )
 
             # Install pre-built whl for current package.
@@ -179,7 +183,7 @@ class RegressionTest:
 
             # install dependent package from source
             self._install_packages(dep_pkg_path, self.context.package_name)
-            
+
             # try install of pre-built whl for current package again. if unnecessary, pip does nothing.
             # we do this to ensure that the correct development version is installed. on non-dev builds
             # this step will just skip through.
@@ -196,7 +200,11 @@ class RegressionTest:
     def _execute_test(self, dep_pkg_path):
         #  Ensure correct version of package is installed
         if not self._is_package_installed(self.context.package_name, self.context.pkg_version):
-            logging.error("Incorrect version of package {0} is installed. Expected version {1}".format(self.context.package_name, self.context.pkg_version))
+            logging.error(
+                "Incorrect version of package {0} is installed. Expected version {1}".format(
+                    self.context.package_name, self.context.pkg_version
+                )
+            )
             sys.exit(1)
 
         logging.info("Running test for {}".format(dep_pkg_path))
@@ -218,7 +226,11 @@ class RegressionTest:
             commands.append(test_dir)
             run_check_call(commands, self.context.temp_path)
         else:
-            logging.info("Test directory is not found in package root. Skipping {} from regression test.".format(self.context.package_name))
+            logging.info(
+                "Test directory is not found in package root. Skipping {} from regression test.".format(
+                    self.context.package_name
+                )
+            )
 
     def _get_package_test_dir(self, pkg_root_path):
         # Returns path to test or tests folder within package root directory.
@@ -235,8 +247,10 @@ class RegressionTest:
         working_dir = self.context.package_root_path
         temp_dir = self.context.temp_path
 
-        list_to_exclude = [pkg_to_exclude, 'azure-sdk-tools', 'azure-devtools' ]
-        installed_pkgs = [p.split('==')[0] for p in get_installed_packages(self.context.venv.lib_paths) if p.startswith('azure-')]
+        list_to_exclude = [pkg_to_exclude, "azure-sdk-tools", "azure-devtools"]
+        installed_pkgs = [
+            p.split("==")[0] for p in get_installed_packages(self.context.venv.lib_paths) if p.startswith("azure-")
+        ]
         logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
 
         # Do not exclude list of packages in tools directory and so these tools packages will be reinstalled from repo branch we are testing
@@ -246,44 +260,43 @@ class RegressionTest:
 
         list_to_exclude.extend(installed_pkgs)
         # install dev requirement but skip already installed package which is being tested or present in dev requirement
-        filtered_dev_req_path = filter_dev_requirements(
-            dependent_pkg_path, list_to_exclude, dependent_pkg_path
-        )
+        filtered_dev_req_path = filter_dev_requirements(dependent_pkg_path, list_to_exclude, dependent_pkg_path)
 
-        # early versions of azure-sdk-tools had an unpinned version of azure-mgmt packages. 
+        # early versions of azure-sdk-tools had an unpinned version of azure-mgmt packages.
         # that unpinned version hits an a code path in azure-sdk-tools that hits this error.
         if filtered_dev_req_path and self.context.is_latest_depend_test == False:
-            logging.info(
-                "Extending dev requirements with {}".format(OLDEST_EXTENSION_PKGS)
-            )
-            extend_dev_requirements(
-                filtered_dev_req_path, OLDEST_EXTENSION_PKGS
-            )
+            logging.info("Extending dev requirements with {}".format(OLDEST_EXTENSION_PKGS))
+            extend_dev_requirements(filtered_dev_req_path, OLDEST_EXTENSION_PKGS)
         else:
-            logging.info("Not extending dev requirements {} {}".format(filtered_dev_req_path, self.context.is_latest_depend_test))
+            logging.info(
+                "Not extending dev requirements {} {}".format(filtered_dev_req_path, self.context.is_latest_depend_test)
+            )
 
         if filtered_dev_req_path:
             logging.info("Extending dev requirement to include azure-sdk-tools")
             extend_dev_requirements(
-                filtered_dev_req_path, [
-                    "../../../tools/azure-sdk-tools",
-                    "../../../tools/azure-devtools"
-                ]
+                filtered_dev_req_path,
+                ["../../../tools/azure-sdk-tools", "../../../tools/azure-devtools"],
             )
-            logging.info(
-                "Installing filtered dev requirements from {}".format(filtered_dev_req_path)
-            )
+            logging.info("Installing filtered dev requirements from {}".format(filtered_dev_req_path))
             run_check_call(
-                [python_executable, "-m", "pip", "install", "-r", filtered_dev_req_path],
+                [
+                    python_executable,
+                    "-m",
+                    "pip",
+                    "install",
+                    "-r",
+                    filtered_dev_req_path,
+                    "--extra-index-url",
+                    "https://pypi.org/simple",
+                ],
                 dependent_pkg_path,
             )
         else:
             logging.info("dev requirements is not found to install")
 
         # install dependent package which is being verified
-        run_check_call(
-            [python_executable, "-m", "pip", "install", dependent_pkg_path], temp_dir
-        )
+        run_check_call([python_executable, "-m", "pip", "install", dependent_pkg_path, "--extra-index-url", "https://pypi.org/simple"], temp_dir)
 
     def _is_package_installed(self, package, version):
         # find env root and pacakge locations
@@ -300,24 +313,24 @@ class RegressionTest:
 
 
 # This method identifies package dependency map for all packages in azure sdk
-def find_package_dependency(glob_string, repo_root_dir):
-    package_paths = process_glob_string(
-        glob_string, repo_root_dir, "", "Regression"
-    )
+def find_package_dependency(glob_string, repo_root_dir, dependent_service):
+    package_paths = process_glob_string(glob_string, repo_root_dir, "", "Regression")
+    dependent_service_filter = os.path.join('sdk', dependent_service.lower())
+
     dependency_map = {}
     for pkg_root in package_paths:
-        _, _, _, requires = parse_setup(pkg_root)
+        if dependent_service_filter in pkg_root:
+            _, _, _, requires = parse_setup(pkg_root)
 
-        # Get a list of package names from install requires
-        required_pkgs = [parse_require(r)[0] for r in requires]
-        required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
+            # Get a list of package names from install requires
+            required_pkgs = [parse_require(r)[0] for r in requires]
+            required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
 
-        for req_pkg in required_pkgs:
-            if req_pkg not in dependency_map:
-                dependency_map[req_pkg] = []
-            dependency_map[req_pkg].append(pkg_root)
+            for req_pkg in required_pkgs:
+                if req_pkg not in dependency_map:
+                    dependency_map[req_pkg] = []
+                dependency_map[req_pkg].append(pkg_root)
 
-    logging.info("Package dependency: {}".format(dependency_map))
     return dependency_map
 
 
@@ -355,19 +368,15 @@ def run_main(args):
     if not os.path.exists(code_repo_root):
         clone_repo(temp_dir, AZURE_SDK_FOR_PYTHON_GIT_URL)
     else:
-        logging.info(
-            "Path {} already exists. Skipping step to clone github repo".format(
-                code_repo_root
-            )
-        )
+        logging.info("Path {} already exists. Skipping step to clone github repo".format(code_repo_root))
 
     # find package dependency map for azure sdk
-    pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root)
+    pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root, args.dependent_service)
+
+    logging.info("Package dependency: {}".format(pkg_dependency))
 
     # Create regression text context. One context object will be reused for all packages
-    context = RegressionContext(
-        args.whl_dir, temp_dir, str_to_bool(args.verify_latest), args.mark_arg
-    )
+    context = RegressionContext(args.whl_dir, temp_dir, str_to_bool(args.verify_latest), args.mark_arg)
 
     for pkg_path in targeted_packages:
         context.init_for_pkg(pkg_path)
@@ -391,10 +400,14 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--service",
-        help=(
-            "Name of service directory (under sdk/) to test."
-            "Example: --service applicationinsights"
-        ),
+        help=("Name of service directory (under sdk/) to test." "Example: --service applicationinsights"),
+    )
+    
+    parser.add_argument(
+        "--dependent-service",
+        dest="dependent_service",
+        default="",
+        help=("Optional filter to force regression testing of only dependent packages of service X."),
     )
 
     parser.add_argument(

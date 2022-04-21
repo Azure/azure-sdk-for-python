@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Any, Optional, Dict, TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -25,7 +25,7 @@ from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
 
 if TYPE_CHECKING:
-    from ._models import CorsRule, Metrics, TableAnalyticsLogging
+    from ._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
 
 class TableServiceClient(TablesBaseClient):
@@ -42,13 +42,14 @@ class TableServiceClient(TablesBaseClient):
         The URL to the table service endpoint. Any other entities included
         in the URL path (e.g. table) will be discarded. This URL can be optionally
         authenticated with a SAS token.
-    :param credential:
+    :keyword credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
-        or AzureSasCredential from azure-core.
-    :type credential:
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+    :paramtype credential:
         :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-        :class:`~azure.core.credentials.AzureSasCredential`
+        :class:`~azure.core.credentials.AzureSasCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
@@ -102,12 +103,12 @@ class TableServiceClient(TablesBaseClient):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, object]
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of service stats
-        :rtype: :class:`~azure.data.tables.models.TableServiceStats`
+        :rtype: Dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError:`
         """
         try:
@@ -115,9 +116,9 @@ class TableServiceClient(TablesBaseClient):
             stats = self._client.service.get_statistics(  # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs
             )
-            return service_stats_deserialize(stats)
         except HttpResponseError as error:
             _process_table_error(error)
+        return service_stats_deserialize(stats)
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
@@ -126,49 +127,45 @@ class TableServiceClient(TablesBaseClient):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype: :class:`~azure.data.tables.models.TableServiceProperties`
+        :rtype: Dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
-            return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             _process_table_error(error)
+        return service_properties_deserialize(service_props)
 
     @distributed_trace
-    def set_service_properties(
-        self,
-        analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
-        hour_metrics=None,  # type: Optional[Metrics]
-        minute_metrics=None,  # type: Optional[Metrics]
-        cors=None,  # type: Optional[CorsRule]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def set_service_properties(self, **kwargs):
+        # type: (Any) -> None
         """Sets properties for an account's Table service endpoint,
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param analytics_logging: Properties for analytics
-        :type analytics_logging: ~azure.data.tables.TableAnalyticsLogging
-        :param hour_metrics: Hour level metrics
-        :type hour_metrics: ~azure.data.tables.Metrics
-        :param minute_metrics: Minute level metrics
-        :type minute_metrics: ~azure.data.tables.Metrics
-        :param cors: Cross-origin resource sharing rules
-        :type cors: ~azure.data.tables.CorsRule
+        :keyword analytics_logging: Properties for analytics
+        :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging
+        :keyword hour_metrics: Hour level metrics
+        :paramtype hour_metrics: ~azure.data.tables.TableMetrics
+        :keyword minute_metrics: Minute level metrics
+        :paramtype minute_metrics: ~azure.data.tables.TableMetrics
+        :keyword cors: Cross-origin resource sharing rules
+        :paramtype cors: List[~azure.data.tables.TableCorsRule]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        cors = kwargs.pop('cors', None)
+        if cors:
+            cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
         props = TableServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
-            cors=cors,
+            logging=kwargs.pop('analytics_logging', None),
+            hour_metrics=kwargs.pop('hour_metrics', None),
+            minute_metrics=kwargs.pop('minute_metrics', None),
+            cors=cors,  # type: ignore
         )
         try:
-            return self._client.service.set_properties(props, **kwargs)  # type: ignore
+            self._client.service.set_properties(props, **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -216,7 +213,7 @@ class TableServiceClient(TablesBaseClient):
                 :end-before: [END create_table_if_not_exists]
                 :language: python
                 :dedent: 8
-                :caption: Deleting a table from the TableServiceClient object
+                :caption: Creating a table if it doesn't exist, from the TableServiceClient object
         """
         table = self.get_table_client(table_name=table_name)
         try:
@@ -324,7 +321,7 @@ class TableServiceClient(TablesBaseClient):
         :rtype: :class:`~azure.data.tables.TableClient`
 
         """
-        pipeline = Pipeline(
+        pipeline = Pipeline(  # type: ignore
             transport=TransportWrapper(self._client._client._pipeline._transport), # pylint: disable = protected-access
             policies=self._policies
         )

@@ -18,24 +18,19 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline
-from ._generated.models import (
-    TrainRequest,
-    TrainSourceFilter,
-    CopyRequest,
-    CopyAuthorizationResult,
-)
 from ._helpers import TransportWrapper
-
+from ._api_versions import FormRecognizerApiVersion
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
     CustomFormModel,
 )
-from ._polling import TrainingPolling, CopyPolling
+from ._polling import FormTrainingPolling, CopyPolling
 from ._form_recognizer_client import FormRecognizerClient
 from ._form_base_client import FormRecognizerClientBase
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpResponse
     from azure.core.paging import ItemPaged
@@ -50,6 +45,9 @@ class FormTrainingClient(FormRecognizerClientBase):
     account properties, copying models to another Form Recognizer resource, and
     composing models from a collection of existing models trained with labels.
 
+    .. note:: FormTrainingClient should be used with API versions <=v2.1.
+        To use API versions 2021-09-30-preview and up, instantiate a DocumentModelAdministrationClient.
+
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
@@ -58,20 +56,21 @@ class FormTrainingClient(FormRecognizerClientBase):
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
         :class:`~azure.core.credentials.TokenCredential`
     :keyword api_version:
-        The API version of the service to use for requests. It defaults to the latest service version.
-        Setting to an older version may result in reduced feature compatibility.
+        The API version of the service to use for requests. It defaults to API version v2.1.
+        Setting to an older version may result in reduced feature compatibility. To use the
+        latest supported API version and features, instantiate a DocumentModelAdministrationClient instead.
     :paramtype api_version: str or ~azure.ai.formrecognizer.FormRecognizerApiVersion
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_authentication.py
+        .. literalinclude:: ../samples/v3.1/sample_authentication.py
             :start-after: [START create_ft_client_with_key]
             :end-before: [END create_ft_client_with_key]
             :language: python
             :dedent: 8
             :caption: Creating the FormTrainingClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/sample_authentication.py
+        .. literalinclude:: ../samples/v3.1/sample_authentication.py
             :start-after: [START create_ft_client_with_aad]
             :end-before: [END create_ft_client_with_aad]
             :language: python
@@ -79,22 +78,35 @@ class FormTrainingClient(FormRecognizerClientBase):
             :caption: Creating the FormTrainingClient with a token credential.
     """
 
+    def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+        api_version = kwargs.pop("api_version", FormRecognizerApiVersion.V2_1)
+        super(FormTrainingClient, self).__init__(
+            endpoint=endpoint,
+            credential=credential,
+            api_version=api_version,
+            client_kind="form",
+            **kwargs
+        )
+
     @distributed_trace
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
         # type: (str, bool, Any) -> LROPoller[CustomFormModel]
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
-        a container URI (without SAS) is accepted only when the container is public.
+        a container URI (without SAS) is accepted only when the container is public or has a managed identity
+        configured, see more about configuring managed identities to work with Form Recognizer here:
+        https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
         :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
-            can be used if the container is public. For more information on setting up a training data set, see:
-            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container if set to `True`.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
-            training. For example, when using a Azure storage blob URI, use the prefix to restrict sub
+            training. For example, when using an Azure storage blob URI, use the prefix to restrict sub
             folders for training.
         :keyword bool include_subfolders: A flag to indicate if subfolders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
@@ -113,7 +125,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_train_model_without_labels.py
+            .. literalinclude:: ../samples/v3.1/sample_train_model_without_labels.py
                 :start-after: [START training]
                 :end-before: [END training]
                 :language: python
@@ -131,14 +143,15 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         cls = kwargs.pop("cls", None)
         model_name = kwargs.pop("model_name", None)
-        if model_name and self._api_version == "2.0":
-            raise ValueError(
-                "'model_name' is only available for API version V2_1 and up"
-            )
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop(
             "polling_interval", self._client._config.polling_interval
         )
+
+        if model_name and self._api_version == "2.0":
+            raise ValueError(
+                "'model_name' is only available for API version V2_1 and up"
+            )
 
         if self._api_version == "2.0":
             deserialization_callback = cls if cls else callback_v2_0
@@ -146,7 +159,7 @@ class FormTrainingClient(FormRecognizerClientBase):
                 return LROPoller.from_continuation_token(
                     polling_method=LROBasePolling(
                         timeout=polling_interval,
-                        lro_algorithms=[TrainingPolling()],
+                        lro_algorithms=[FormTrainingPolling()],
                         **kwargs
                     ),
                     continuation_token=continuation_token,
@@ -155,10 +168,10 @@ class FormTrainingClient(FormRecognizerClientBase):
                 )
 
             response = self._client.train_custom_model_async(  # type: ignore
-                train_request=TrainRequest(
+                train_request=self._generated_models.TrainRequest(
                     source=training_files_url,
                     use_label_file=use_training_labels,
-                    source_filter=TrainSourceFilter(
+                    source_filter=self._generated_models.TrainSourceFilter(
                         prefix=kwargs.pop("prefix", ""),
                         include_sub_folders=kwargs.pop("include_subfolders", False),
                     ),
@@ -173,17 +186,17 @@ class FormTrainingClient(FormRecognizerClientBase):
                 deserialization_callback,
                 LROBasePolling(
                     timeout=polling_interval,
-                    lro_algorithms=[TrainingPolling()],
+                    lro_algorithms=[FormTrainingPolling()],
                     **kwargs
                 ),
             )
 
         deserialization_callback = cls if cls else callback_v2_1
         return self._client.begin_train_custom_model_async(  # type: ignore
-            train_request=TrainRequest(
+            train_request=self._generated_models.TrainRequest(
                 source=training_files_url,
                 use_label_file=use_training_labels,
-                source_filter=TrainSourceFilter(
+                source_filter=self._generated_models.TrainSourceFilter(
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_subfolders", False),
                 ),
@@ -192,7 +205,9 @@ class FormTrainingClient(FormRecognizerClientBase):
             cls=deserialization_callback,
             continuation_token=continuation_token,
             polling=LROBasePolling(
-                timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs
+                timeout=polling_interval,
+                lro_algorithms=[FormTrainingPolling()],
+                **kwargs
             ),
             **kwargs
         )
@@ -210,7 +225,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_manage_custom_models.py
+            .. literalinclude:: ../samples/v3.1/sample_manage_custom_models.py
                 :start-after: [START delete_model]
                 :end-before: [END delete_model]
                 :language: python
@@ -235,7 +250,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_manage_custom_models.py
+            .. literalinclude:: ../samples/v3.1/sample_manage_custom_models.py
                 :start-after: [START list_custom_models]
                 :end-before: [END list_custom_models]
                 :language: python
@@ -267,7 +282,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_manage_custom_models.py
+            .. literalinclude:: ../samples/v3.1/sample_manage_custom_models.py
                 :start-after: [START get_account_properties]
                 :end-before: [END get_account_properties]
                 :language: python
@@ -290,7 +305,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_manage_custom_models.py
+            .. literalinclude:: ../samples/v3.1/sample_manage_custom_models.py
                 :start-after: [START get_custom_model]
                 :end-before: [END get_custom_model]
                 :language: python
@@ -323,7 +338,7 @@ class FormTrainingClient(FormRecognizerClientBase):
         :param str resource_region: Location of the target Form Recognizer resource. A valid Azure
             region name supported by Cognitive Services. For example, 'westus', 'eastus' etc.
             See https://azure.microsoft.com/global-infrastructure/services/?products=cognitive-services
-            for the regional availability of Cognitive Services
+            for the regional availability of Cognitive Services.
         :return: A dictionary with values for the copy authorization -
             "modelId", "accessToken", "resourceId", "resourceRegion", and "expirationDateTimeTicks".
         :rtype: Dict[str, Union[str, int]]
@@ -331,7 +346,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_copy_model.py
+            .. literalinclude:: ../samples/v3.1/sample_copy_model.py
                 :start-after: [START get_copy_authorization]
                 :end-before: [END get_copy_authorization]
                 :language: python
@@ -373,7 +388,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_copy_model.py
+            .. literalinclude:: ../samples/v3.1/sample_copy_model.py
                 :start-after: [START begin_copy_model]
                 :end-before: [END begin_copy_model]
                 :language: python
@@ -412,10 +427,10 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         return self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
-            copy_request=CopyRequest(
+            copy_request=self._generated_models.CopyRequest(
                 target_resource_id=target["resourceId"],
                 target_resource_region=target["resourceRegion"],
-                copy_authorization=CopyAuthorizationResult(
+                copy_authorization=self._generated_models.CopyAuthorizationResult(
                     access_token=target["accessToken"],
                     model_id=target["modelId"],
                     expiration_date_time_ticks=target["expirationDateTimeTicks"],
@@ -453,7 +468,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_composed_model.py
+            .. literalinclude:: ../samples/v3.1/sample_create_composed_model.py
                 :start-after: [START begin_create_composed_model]
                 :end-before: [END begin_create_composed_model]
                 :language: python
@@ -473,12 +488,12 @@ class FormTrainingClient(FormRecognizerClientBase):
         )
         continuation_token = kwargs.pop("continuation_token", None)
         try:
-            return self._client.begin_compose_custom_models_async(
+            return self._client.begin_compose_custom_models_async(  # type: ignore
                 {"model_ids": model_ids, "model_name": model_name},
                 cls=kwargs.pop("cls", _compose_callback),
                 polling=LROBasePolling(
                     timeout=polling_interval,
-                    lro_algorithms=[TrainingPolling()],
+                    lro_algorithms=[FormTrainingPolling()],
                     **kwargs
                 ),
                 continuation_token=continuation_token,

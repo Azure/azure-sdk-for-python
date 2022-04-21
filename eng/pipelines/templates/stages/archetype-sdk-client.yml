@@ -11,6 +11,12 @@ parameters:
 - name: TestPipeline
   type: boolean
   default: false
+- name: BeforeTestSteps
+  type: object
+  default: []
+- name: AfterTestSteps
+  type: object
+  default: []
 - name: BeforePublishSteps
   type: object
   default: []
@@ -22,7 +28,7 @@ parameters:
   default: azure-*
 - name: TestTimeoutInMinutes
   type: number
-  default: 0
+  default: 60
 - name: ToxEnvParallel
   type: string
   default: --tenvparallel
@@ -60,12 +66,15 @@ parameters:
 - name: VerifyAutorest
   type: boolean
   default: false
+- name: ValidateFormatting
+  type: boolean
+  default: false
+- name: TestProxy
+  type: boolean
+  default: false
 
 stages:
   - stage: Build
-    variables:
-      - name: BuildTargetingStringValue
-        value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
     jobs:
     - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
@@ -74,9 +83,11 @@ stages:
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: $(BuildTargetingStringValue)
+        BuildTargetingString: '${{ parameters.BuildTargetingString }}'
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
@@ -90,6 +101,8 @@ stages:
         MatrixFilters: ${{ parameters.MatrixFilters }}
         MatrixReplace: ${{ parameters.MatrixReplace }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        TestProxy: ${{ parameters.TestProxy }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

@@ -8,15 +8,24 @@ parameters:
   - name: TestMarkArgument
     type: string
     default: ''
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
   - name: TestTimeoutInMinutes
     type: number
-    default: 0
+    default: 60
   - name: ToxEnvParallel
     type: string
     default: '--tenvparallel'
+  - name: UnsupportedToxEnvironments
+    type: string
+    default: ''
   - name: InjectedPackages
     type: string
     default: ''
@@ -31,6 +40,9 @@ parameters:
   - name: CloudConfig
     type: object
     default: {}
+  - name: TestProxy
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -63,9 +75,17 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
       parameters:
         AgentImage: $(OSVmImage)
+
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
 
     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
       parameters:
@@ -73,20 +93,14 @@ jobs:
         ServiceDirectory: "template"
         TestPipeline: ${{ parameters.TestPipeline }}
 
-    - pwsh: |
-        $toxenvvar = "whl,sdist,mindependency"
-        if ('$(System.TeamProject)' -eq 'internal') {
-          $toxenvvar = "whl,sdist,depends,latestdependency,mindependency,whl_no_aio"
-        }
-
-        # ensure that the variable is unset. if it isn't, use the value discovered there
-        if ('$(Run.ToxCustomEnvs)' -ne ('$' + '(Run.ToxCustomEnvs)'))
-        {
-          $toxenvvar = '$(Run.ToxCustomEnvs)'
-        }
-
-        echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
-      displayName: "Set Tox Environment"
+    - task: PythonScript@0
+      displayName: 'Set Tox Environment'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+        arguments: >-
+          --unsupported="$(UnsupportedToxEnvironments)"
+          --override="$(Run.ToxCustomEnvs)"
+          --team-project="$(System.TeamProject)"
 
     - template: ../steps/build-test.yml
       parameters:
@@ -96,10 +110,10 @@ jobs:
         OSVmImage: $(OSVmImage)
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
+        TestProxy: ${{ parameters.TestProxy }}
         BeforeTestSteps:
           - task: DownloadPipelineArtifact@2
             inputs:
@@ -109,4 +123,7 @@ jobs:
           - template: ../steps/set-dev-build.yml
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          
+          - ${{ each step in parameters.BeforeTestSteps }}:
+            -  ${{ step }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}

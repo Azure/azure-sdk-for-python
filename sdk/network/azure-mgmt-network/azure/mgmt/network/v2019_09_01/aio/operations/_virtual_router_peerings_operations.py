@@ -48,7 +48,7 @@ class VirtualRouterPeeringsOperations:
         resource_group_name: str,
         virtual_router_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -95,7 +95,7 @@ class VirtualRouterPeeringsOperations:
         resource_group_name: str,
         virtual_router_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified peering from a Virtual Router.
 
@@ -107,8 +107,8 @@ class VirtualRouterPeeringsOperations:
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -164,7 +164,7 @@ class VirtualRouterPeeringsOperations:
         resource_group_name: str,
         virtual_router_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualRouterPeering":
         """Gets the specified Virtual Router Peering.
 
@@ -228,7 +228,7 @@ class VirtualRouterPeeringsOperations:
         virtual_router_name: str,
         peering_name: str,
         parameters: "_models.VirtualRouterPeering",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualRouterPeering":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualRouterPeering"]
         error_map = {
@@ -288,7 +288,7 @@ class VirtualRouterPeeringsOperations:
         virtual_router_name: str,
         peering_name: str,
         parameters: "_models.VirtualRouterPeering",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualRouterPeering"]:
         """Creates or updates the specified Virtual Router Peering.
 
@@ -303,8 +303,8 @@ class VirtualRouterPeeringsOperations:
         :type parameters: ~azure.mgmt.network.v2019_09_01.models.VirtualRouterPeering
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualRouterPeering or the result of cls(response)
@@ -363,7 +363,7 @@ class VirtualRouterPeeringsOperations:
         self,
         resource_group_name: str,
         virtual_router_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualRouterPeeringListResult"]:
         """Lists all Virtual Router Peerings in a Virtual Router resource.
 

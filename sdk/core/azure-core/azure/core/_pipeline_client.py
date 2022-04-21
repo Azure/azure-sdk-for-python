@@ -25,10 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-try:
-    from collections.abc import Iterable
-except ImportError:
-    from collections import Iterable
+from collections.abc import Iterable
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -39,7 +36,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     RetryPolicy,
 )
-from .pipeline.transport import RequestsTransport
 
 try:
     from typing import TYPE_CHECKING
@@ -58,10 +54,12 @@ if TYPE_CHECKING:
         Callable,
         Iterator,
         cast,
+        TypeVar
     )  # pylint: disable=unused-import
+    HTTPResponseType = TypeVar("HTTPResponseType")
+    HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
-
 
 class PipelineClient(PipelineClientBase):
     """Service client core methods.
@@ -167,6 +165,31 @@ class PipelineClient(PipelineClientBase):
                 policies = policies_1
 
         if not transport:
+            from .pipeline.transport import RequestsTransport
             transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies)
+
+
+    def send_request(self, request, **kwargs):
+        # type: (HTTPRequestType, Any) -> HTTPResponseType
+        """Method that runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest('GET', 'http://www.example.com')
+        <HttpRequest [GET], url: 'http://www.example.com'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        stream = kwargs.pop("stream", False) # want to add default value
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
+        pipeline_response = self._pipeline.run(request, stream=stream, **kwargs) # pylint: disable=protected-access
+        if return_pipeline_response:
+            return pipeline_response
+        return pipeline_response.http_response

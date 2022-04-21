@@ -12,19 +12,19 @@ class TableEntity(dict):
     An Entity dictionary with additional metadata
 
     """
-    _metadata = None
+    _metadata = {}  # type: Dict[str, Any]
 
     @property
     def metadata(self):
         # type: () -> Dict[str, Any]
         """Resets metadata to be a part of the entity
         :return Dict of entity metadata
-        :rtype Dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         return self._metadata
 
 
-class EdmType(str, Enum):
+class EdmType(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
     to be stored by the Table service.

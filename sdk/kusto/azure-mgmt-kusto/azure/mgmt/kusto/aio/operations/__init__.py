@@ -9,21 +9,29 @@
 from ._clusters_operations import ClustersOperations
 from ._cluster_principal_assignments_operations import ClusterPrincipalAssignmentsOperations
 from ._databases_operations import DatabasesOperations
+from ._attached_database_configurations_operations import AttachedDatabaseConfigurationsOperations
+from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations
 from ._database_principal_assignments_operations import DatabasePrincipalAssignmentsOperations
 from ._scripts_operations import ScriptsOperations
-from ._attached_database_configurations_operations import AttachedDatabaseConfigurationsOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._data_connections_operations import DataConnectionsOperations
 from ._operations import Operations
 from ._operations_results_operations import OperationsResultsOperations
+from ._operations_results_location_operations import OperationsResultsLocationOperations
 
 __all__ = [
     'ClustersOperations',
     'ClusterPrincipalAssignmentsOperations',
     'DatabasesOperations',
+    'AttachedDatabaseConfigurationsOperations',
+    'ManagedPrivateEndpointsOperations',
     'DatabasePrincipalAssignmentsOperations',
     'ScriptsOperations',
-    'AttachedDatabaseConfigurationsOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
     'DataConnectionsOperations',
     'Operations',
     'OperationsResultsOperations',
+    'OperationsResultsLocationOperations',
 ]

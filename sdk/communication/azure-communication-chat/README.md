@@ -3,13 +3,17 @@
 This package contains a Python SDK for Azure Communication Services for Chat.
 Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-chat) | [Package (Pypi)](https://pypi.org/project/azure-communication-chat/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-communication-chat/1.0.0b5/index.html) | [Product documentation](https://docs.microsoft.com/azure/communication-services/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-chat) | [Package (Pypi)](https://pypi.org/project/azure-communication-chat/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-communication-chat/1.0.0b5/index.html) | [Product documentation](https://docs.microsoft.com/azure/communication-services/)
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Getting started
 
 ## Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- Python 3.6 or later is required to use this package.
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 
 ## Install the package
@@ -25,7 +29,7 @@ pip install --pre azure-communication-chat
 User access tokens enable you to build client applications that directly authenticate to Azure Communication Services. You can generate these tokens with azure.communication.identity module, and then use them to initialize the Communication Services SDKs. Example of using azure.communication.identity:
 
 ```bash
-pip install --pre azure-communication-identity
+pip install azure-communication-identity
 ```
 
 ```python
@@ -63,15 +67,15 @@ create_chat_thread_result = chat_client.create_chat_thread(topic)
 chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
 ```
 
-Additionally, the client can also direct so that the request is repeatable; that is, if the client makes the 
-request multiple times with the same Idempotency-Token and it will get back an appropriate response without 
-the server executing the request multiple times. The value of the Idempotency-Token is an opaque string 
+Additionally, the client can also direct so that the request is repeatable; that is, if the client makes the
+request multiple times with the same Idempotency-Token and it will get back an appropriate response without
+the server executing the request multiple times. The value of the Idempotency-Token is an opaque string
 representing a client-generated, globally unique for all time, identifier for the request.
 
 ```python
 create_chat_thread_result = chat_client.create_chat_thread(
-    topic, 
-    thread_participants=thread_participants, 
+    topic,
+    thread_participants=thread_participants,
     idempotency_token=idempotency_token
 )
 chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
@@ -85,8 +89,8 @@ chat_thread_client = chat_client.get_chat_thread_client(thread_id) # thread_id i
 
 # Key concepts
 
-A chat conversation is represented by a chat thread. Each user in the thread is called a thread participant. 
-Thread participants can chat with one another privately in a 1:1 chat or huddle up in a 1:N group chat. 
+A chat conversation is represented by a chat thread. Each user in the thread is called a thread participant.
+Thread participants can chat with one another privately in a 1:1 chat or huddle up in a 1:N group chat.
 Users also get near real-time updates for when others are typing and when they have read the messages.
 
 Once you initialized a `ChatClient` class, you can do the following chat operations:
@@ -180,8 +184,8 @@ Use the `create_chat_thread` method to create a chat thread.
 - Use `idempotency_token`, optional, to specify the unique identifier for the request.
 
 
-`CreateChatThreadResult` is the result returned from creating a thread, you can use it to fetch the `id` of 
-the chat thread that got created. This `id` can then be used to fetch a `ChatThreadClient` object using 
+`CreateChatThreadResult` is the result returned from creating a thread, you can use it to fetch the `id` of
+the chat thread that got created. This `id` can then be used to fetch a `ChatThreadClient` object using
 the `get_chat_thread_client` method. `ChatThreadClient` can be used to perform other chat operations to this chat thread.
 
 ```Python
@@ -231,8 +235,8 @@ thread_participants = [ChatParticipant(
 idempotency_token = get_unique_identifier_for_request()
 
 create_chat_thread_result = chat_client.create_chat_thread(
-    topic, 
-    thread_participants=thread_participants, 
+    topic,
+    thread_participants=thread_participants,
     idempotency_token=idempotency_token)
 thread_id = create_chat_thread_result.chat_thread.id
 
@@ -313,7 +317,7 @@ chat_client.delete_chat_thread(thread_id=thread_id)
 Use `send_message` method to sends a message to a thread identified by `thread_id`.
 
 - Use `content`, required, to provide the chat message content.
-- Use `chat_message_type`, optional, to provide the chat message type. Possible values include: `ChatMessageType.TEXT`, 
+- Use `chat_message_type`, optional, to provide the chat message type. Possible values include: `ChatMessageType.TEXT`,
   `ChatMessageType.HTML`, `'text'`, `'html'`; if not specified, `ChatMessageType.TEXT` will be set
 - Use `sender_display_name`,optional, to specify the display name of the sender, if not specified, empty name will be set
 
@@ -457,8 +461,8 @@ for _user in new_users:
     identifier=_user,
     display_name='Fred Flinstone',
     share_history_time=datetime.utcnow()
-  ) 
-  participants.append(chat_participant) 
+  )
+  participants.append(chat_participant)
 
 response = chat_thread_client.add_participants(thread_participants=participants)
 
@@ -469,7 +473,7 @@ def decide_to_retry(error, **kwargs):
     return True
 
 # verify if all users has been successfully added or not
-# in case of partial failures, you can retry to add all the failed participants 
+# in case of partial failures, you can retry to add all the failed participants
 retry = [p for p, e in response if decide_to_retry(e)]
 if retry:
     chat_thread_client.add_participants(retry)
@@ -487,7 +491,7 @@ chat_thread_client.remove_participant(identifier=new_user)
 
 # # conversely you can also do the following; provided the user_id is known
 # from azure.communication.chat import CommunicationUserIdentifier
-# 
+#
 # user_id = 'some user id'
 # chat_thread_client.remove_participant(identifier=CommunicationUserIdentifier(new_user))
 
@@ -536,8 +540,7 @@ for read_receipt_page in read_receipts.by_page():
 ## Sample Code
 
 These are code samples that show common scenario operations with the Azure Communication Chat client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations,
-and require Python 3.6 or later.
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations.
 Before run the sample code, refer to Prerequisites
 <!-- [Prerequisites](#Prerequisites) -->
 to create a resource, then set some Environment Variables
@@ -560,7 +563,7 @@ Running into issues? This section should contain details as to what to do there.
 
 # Next steps
 
-More sample code should go [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-chat/samples), along with links out to the appropriate example tests.
+More sample code should go [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-chat/samples), along with links out to the appropriate example tests.
 
 # Contributing
 

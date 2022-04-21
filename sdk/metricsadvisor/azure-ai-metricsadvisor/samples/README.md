@@ -11,23 +11,23 @@ urlFragment: metricsadvisor-samples
 # Samples for Azure Metrics Advisor client library for Python
 
 These code samples show common scenario operations with the Azure Metrics Advisor client library.
-The async versions of the samples require Python 3.5 or later.
 
 |**File Name**|**Description**|
 |----------------|-------------|
+|[sample_alert_configuration.py][sample_alert_configuration] and [sample_alert_configuration_async.py][sample_alert_configuration_async]|Create, list, get, update, and delete anomaly alert configurations. Also list alerts and anomalies for a specific alert configuration.|
 |[sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async]|Authenticate the clients|
 |[sample_data_feeds.py][sample_data_feeds] and [sample_data_feeds_async.py][sample_data_feeds_async]|Create, list, get, update, and delete data feeds|
-|[sample_ingestion.py][sample_ingestion] and [sample_ingestion_async.py][sample_ingestion_async]|Check on the data feed ingestion progress, list ingestion statuses, and refresh data feed ingestion|
-|[sample_anomaly_detection_configuration.py][sample_anomaly_detection_configuration] and [sample_anomaly_detection_configuration_async.py][sample_anomaly_detection_configuration_async]|Create, list, get, update, and delete anomaly detection configurations|
-|[sample_anomaly_alert_configuration.py][sample_anomaly_alert_configuration] and [sample_anomaly_alert_configuration_async.py][sample_anomaly_alert_configuration_async]|Create, list, get, update, and delete anomaly alert configurations. Also list alerts and anomalies for a specific alert configuration.|
-|[sample_hooks.py][sample_hooks] and [sample_hooks_async.py][sample_hooks_async]|Create, list, get, update, and delete notification hooks|
+|[sample_datasource_credentials.py][sample_datasource_credentials] and [sample_datasource_credentials_async.py][sample_datasource_credentials_async]|Create, list, get, update, and delete datasource credentials|
+|[sample_detection_configuration.py][sample_detection_configuration] and [sample_detection_configuration_async.py][sample_detection_configuration_async]|Create, list, get, update, and delete anomaly detection configurations|
 |[sample_feedback.py][sample_feedback] and [sample_feedback_async.py][sample_feedback_async]|Add, get, and list feedback for the anomaly detection result|
+|[sample_hooks.py][sample_hooks] and [sample_hooks_async.py][sample_hooks_async]|Create, list, get, update, and delete notification hooks|
+|[sample_incidents.py][sample_incidents] and [sample_incidents_async.py][sample_incidents_async]|List incidents and root causes|
+|[sample_ingestion.py][sample_ingestion] and [sample_ingestion_async.py][sample_ingestion_async]|Check on the data feed ingestion progress, list ingestion statuses, and refresh data feed ingestion|
 |[sample_queries.py][sample_queries] and [sample_queries_async.py][sample_queries_async]|Query dimensions/data/status/etc.|
-|[sample_credential_entities.py][sample_credential_entities] and [sample_credential_entities_async.py][sample_credential_entities_async]|Create, list, get, update, and delete credential entities|
-
 
 ## Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
+
+* Python 3.6 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Metrics Advisor account][portal_metrics_advisor_account] to run these samples.
 
@@ -36,7 +36,7 @@ The async versions of the samples require Python 3.5 or later.
 1. Install the Azure Metrics Advisor client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-metricsadvisor --pre
+pip install azure-ai-metricsadvisor
 ```
 
 2. Clone or download this sample repository
@@ -58,21 +58,23 @@ what you can do with the Azure Metrics Advisor client library.
 [portal_metrics_advisor_account]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesMetricsAdvisor
 [reference_documentation]: https://aka.ms/azsdk/python/metricsadvisor/docs
 
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_authentication_async.py
-[sample_data_feeds]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_data_feeds.py
-[sample_data_feeds_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_data_feeds_async.py
-[sample_ingestion]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_ingestion.py
-[sample_ingestion_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_ingestion_async.py
-[sample_anomaly_detection_configuration]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_detection_configuration.py
-[sample_anomaly_detection_configuration_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_detection_configuration_async.py
-[sample_anomaly_alert_configuration]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_alert_configuration.py
-[sample_anomaly_alert_configuration_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_alert_configuration_async.py
-[sample_hooks]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_hooks.py
-[sample_hooks_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_hooks_async.py
-[sample_feedback]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_feedback.py
-[sample_feedback_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_feedback_async.py
-[sample_queries]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_queries.py
-[sample_credential_entities]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_credential_entities.py
-[sample_credential_entities_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_credential_entities_async.py
-[sample_queries_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_queries_async.py
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_authentication_async.py
+[sample_data_feeds]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_data_feeds.py
+[sample_data_feeds_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_data_feeds_async.py
+[sample_ingestion]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_ingestion.py
+[sample_ingestion_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_ingestion_async.py
+[sample_detection_configuration]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_detection_configuration.py
+[sample_detection_configuration_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_detection_configuration_async.py
+[sample_alert_configuration]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_alert_configuration.py
+[sample_alert_configuration_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_alert_configuration_async.py
+[sample_hooks]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_hooks.py
+[sample_hooks_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_hooks_async.py
+[sample_feedback]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_feedback.py
+[sample_feedback_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_feedback_async.py
+[sample_queries]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_queries.py
+[sample_queries_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_queries_async.py
+[sample_datasource_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_datasource_credentials.py
+[sample_datasource_credentials_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_datasource_credentials_async.py
+[sample_incidents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/sample_incidents.py
+[sample_incidents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/async_samples/sample_incidents_async.py

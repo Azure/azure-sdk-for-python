@@ -24,7 +24,24 @@
 #
 # --------------------------------------------------------------------------
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
+
+class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    Represents the format of the schema to be stored by the Schema Registry service.
+    """
+
+    AVRO = "Avro"
+    """Represents the Apache Avro schema format."""
 
 
-class SerializationType(str, Enum):
-    AVRO = "avro"
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    Represents the Schema Registry API version to use for requests.
+    """
+
+    V2021_10 = "2021-10"
+    """This is the default version."""
+
+
+DEFAULT_VERSION = ApiVersion.V2021_10

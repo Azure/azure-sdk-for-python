@@ -44,7 +44,7 @@ class IotSecuritySolutionAnalyticsOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IoTSecuritySolutionAnalyticsModelList":
         """Use this method to get IoT security Analytics metrics in an array.
 
@@ -103,7 +103,7 @@ class IotSecuritySolutionAnalyticsOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IoTSecuritySolutionAnalyticsModel":
         """Use this method to get IoT Security Analytics metrics.
 

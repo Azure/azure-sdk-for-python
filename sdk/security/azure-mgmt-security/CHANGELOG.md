@@ -1,5 +1,51 @@
 # Release History
 
+## 2.0.0b1 (2021-08-10)
+
+**Features**
+
+  - Model SecurityAssessmentMetadata has a new parameter categories
+  - Model SecurityAssessmentMetadataProperties has a new parameter categories
+  - Model IoTSecuritySolutionModel has a new parameter system_data
+  - Model IoTSecuritySolutionModel has a new parameter additional_workspaces
+  - Added operation ServerVulnerabilityAssessmentOperations.begin_delete
+  - Added operation AlertsOperations.list_resource_group_level_by_region
+  - Added operation AlertsOperations.get_resource_group_level
+  - Added operation AlertsOperations.update_subscription_level_state_to_dismiss
+  - Added operation AlertsOperations.update_resource_group_level_state_to_dismiss
+  - Added operation AlertsOperations.update_resource_group_level_state_to_activate
+  - Added operation AlertsOperations.get_subscription_level
+  - Added operation AlertsOperations.update_subscription_level_state_to_activate
+  - Added operation AlertsOperations.list_subscription_level_by_region
+  - Added operation AlertsOperations.begin_simulate
+  - Added operation group IngestionSettingsOperations
+  - Added operation group SoftwareInventoriesOperations
+
+**Breaking changes**
+
+  - Model SecurityAssessmentMetadata no longer has parameter category
+  - Model SecurityAssessmentMetadataProperties no longer has parameter category
+  - Removed operation ServerVulnerabilityAssessmentOperations.delete
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_reactivate
+  - Removed operation AlertsOperations.get_resource_group_level_alerts
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_dismiss
+  - Removed operation AlertsOperations.get_subscription_level_alert
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_dismiss
+  - Removed operation AlertsOperations.list_subscription_level_alerts_by_region
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_reactivate
+  - Removed operation AlertsOperations.list_resource_group_level_alerts_by_region
+  - Removed operation group OnPremiseIotSensorsOperations
+  - Removed operation group IotRecommendationsOperations
+  - Removed operation group IotSensorsOperations
+  - Removed operation group DeviceOperations
+  - Removed operation group IotRecommendationTypesOperations
+  - Removed operation group DevicesForHubOperations
+  - Removed operation group IotDefenderSettingsOperations
+  - Removed operation group DevicesForSubscriptionOperations
+  - Removed operation group IotSitesOperations
+  - Removed operation group IotAlertTypesOperations
+  - Removed operation group IotAlertsOperations
+
 ## 1.0.0 (2020-12-15)
 
 **Bugfixes**
@@ -20,7 +66,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -28,13 +74,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.5.0 (2020-10-29)
 
@@ -80,7 +126,7 @@ This version uses a next-generation code generator that introduces important bre
   - Removed operation AlertsOperations.list_resource_group_level_alerts_by_region
   - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_reactivate
   - Removed operation AlertsOperations.update_subscription_level_alert_state_to_dismiss
-  
+
 ## 0.4.1 (2020-06-12)
 
 **Bugfixes**

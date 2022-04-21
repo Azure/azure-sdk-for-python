@@ -1,18 +1,22 @@
 # --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
+
+# THE VALUES IN THE ENUM ARE AUTO-GENERATED. DO NOT EDIT THIS MANUALLY.
 # --------------------------------------------------------------------------------------------
 from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 # pylint: disable=line-too-long
-
-class SystemEventNames(str, Enum):
+# pylint: disable=enum-must-be-uppercase
+class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     This enum represents the names of the various event types for the system events published to
     Azure Event Grid. To check the list of recognizable system topics,
     visit https://docs.microsoft.com/azure/event-grid/system-topics.
     """
-    # these names below are for backward compat only - refrain from using them.
+    # These names at the top are 'corrected' aliases of duplicate values that appear below, which are
+    # deprecated but maintained for backwards compatibility.
     AcsChatMemberAddedToThreadWithUserEventName = 'Microsoft.Communication.ChatMemberAddedToThreadWithUser'
 
     ResourceWriteFailureEventName = 'Microsoft.Resources.ResourceWriteFailure'
@@ -37,8 +41,6 @@ class SystemEventNames(str, Enum):
 
     ResourceWriteCancelEventName = 'Microsoft.Resources.ResourceWriteCancel'
 
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener'
-
     ResourceActionFailureEventName = 'Microsoft.Resources.ResourceActionFailure'
 
     AcsChatMemberRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatMemberRemovedFromThreadWithUser'
@@ -53,7 +55,7 @@ class SystemEventNames(str, Enum):
 
     IoTHubDeviceCreatedEventName = 'Microsoft.Devices.DeviceCreated'
 
-    # backward compat names end here.
+    # Aliases end here
     AcsChatMessageDeletedEventName = 'Microsoft.Communication.ChatMessageDeleted'
 
     AcsChatMessageDeletedInThreadEventName = 'Microsoft.Communication.ChatMessageDeletedInThread'
@@ -92,23 +94,59 @@ class SystemEventNames(str, Enum):
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
 
+    AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
+
+    ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.ApiCreated'
+
+    ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.ApiDeleted'
+
+    ApiManagementApiReleaseCreatedEventName = 'Microsoft.ApiManagement.ApiReleaseCreated'
+
+    ApiManagementApiReleaseDeletedEventName = 'Microsoft.ApiManagement.ApiReleaseDeleted'
+
+    ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.ApiReleaseUpdated'
+
+    ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.ApiUpdated'
+
+    ApiManagementProductCreatedEventName = 'Microsoft.ApiManagement.ProductCreated'
+
+    ApiManagementProductDeletedEventName = 'Microsoft.ApiManagement.ProductDeleted'
+
+    ApiManagementProductUpdatedEventName = 'Microsoft.ApiManagement.ProductUpdated'
+
+    ApiManagementSubscriptionCreatedEventName = 'Microsoft.ApiManagement.SubscriptionCreated'
+
+    ApiManagementSubscriptionDeletedEventName = 'Microsoft.ApiManagement.SubscriptionDeleted'
+
+    ApiManagementSubscriptionUpdatedEventName = 'Microsoft.ApiManagement.SubscriptionUpdated'
+
+    ApiManagementUserCreatedEventName = 'Microsoft.ApiManagement.UserCreated'
+
+    ApiManagementUserDeletedEventName = 'Microsoft.ApiManagement.UserDeleted'
+
+    ApiManagementUserUpdatedEventName = 'Microsoft.ApiManagement.UserUpdated'
+
     AppConfigurationKeyValueDeletedEventName = 'Microsoft.AppConfiguration.KeyValueDeleted'
 
     AppConfigurationKeyValueModifiedEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
 
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
 
-    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
-
     ContainerRegistryImageDeletedEventName = 'Microsoft.ContainerRegistry.ImageDeleted'
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
+    ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
+
+    HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
+
+    HealthcareFhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
+
+    HealthcareFhirResourceUpdatedEventName = 'Microsoft.HealthcareApis.FhirResourceUpdated'
 
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
 
@@ -119,8 +157,6 @@ class SystemEventNames(str, Enum):
     IotHubDeviceDisconnectedEventName = 'Microsoft.Devices.DeviceDisconnected'
 
     IotHubDeviceTelemetryEventName = 'Microsoft.Devices.DeviceTelemetry'
-
-    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
 
     KeyVaultCertificateExpiredEventName = 'Microsoft.KeyVault.CertificateExpired'
 
@@ -139,6 +175,8 @@ class SystemEventNames(str, Enum):
     KeyVaultSecretNearExpiryEventName = 'Microsoft.KeyVault.SecretNearExpiry'
 
     KeyVaultSecretNewVersionCreatedEventName = 'Microsoft.KeyVault.SecretNewVersionCreated'
+
+    KeyVaultVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
 
     MachineLearningServicesDatasetDriftDetectedEventName = 'Microsoft.MachineLearningServices.DatasetDriftDetected'
 
@@ -185,6 +223,8 @@ class SystemEventNames(str, Enum):
     MediaJobScheduledEventName = 'Microsoft.Media.JobScheduled'
 
     MediaJobStateChangeEventName = 'Microsoft.Media.JobStateChange'
+
+    MediaLiveEventChannelArchiveHeartbeatEventName = 'Microsoft.Media.LiveEventChannelArchiveHeartbeat'
 
     MediaLiveEventConnectionRejectedEventName = 'Microsoft.Media.LiveEventConnectionRejected'
 
@@ -242,6 +282,8 @@ class SystemEventNames(str, Enum):
 
     ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications'
 
+    ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
+
     SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'
 
     SignalRServiceClientConnectionDisconnectedEventName = 'Microsoft.SignalRService.ClientConnectionDisconnected'
@@ -251,6 +293,8 @@ class SystemEventNames(str, Enum):
     StorageBlobCreatedEventName = 'Microsoft.Storage.BlobCreated'
 
     StorageBlobDeletedEventName = 'Microsoft.Storage.BlobDeleted'
+
+    StorageBlobInventoryPolicyCompletedEventName = 'Microsoft.Storage.BlobInventoryPolicyCompleted'
 
     StorageBlobRenamedEventName = 'Microsoft.Storage.BlobRenamed'
 
@@ -293,3 +337,11 @@ class SystemEventNames(str, Enum):
     WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
+
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
+
+    ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
+
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'

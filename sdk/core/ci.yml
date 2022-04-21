@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -13,11 +12,12 @@ trigger:
     - sdk/core/
     - eng/
     - tools/
+    exclude:
+    - eng/common/
 
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -28,6 +28,8 @@ pr:
     - sdk/core/
     - eng/
     - tools/
+    exclude:
+    - eng/common/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml

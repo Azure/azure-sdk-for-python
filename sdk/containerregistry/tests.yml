@@ -3,12 +3,9 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: false
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
-      MatrixReplace:
-        - TestSamples=.*/true
-      DeployArmTemplate: true
+      SupportedClouds: 'Public,UsGov,China'
       EnvVars:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)

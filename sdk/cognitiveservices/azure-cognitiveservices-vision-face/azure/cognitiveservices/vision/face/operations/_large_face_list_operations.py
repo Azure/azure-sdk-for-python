@@ -36,7 +36,7 @@ class LargeFaceListOperations(object):
         self.config = config
 
     def create(
-            self, large_face_list_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
+            self, large_face_list_id, name, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
         """Create an empty large face list with user-specified largeFaceListId,
         name, an optional userData and recognitionModel.
         <br /> Large face list is a list of faces, up to 1,000,000 faces, and
@@ -342,7 +342,7 @@ class LargeFaceListOperations(object):
     get_training_status.metadata = {'url': '/largefacelists/{largeFaceListId}/training'}
 
     def list(
-            self, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
+            self, return_recognition_model=False, start=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List large face lists’ information of largeFaceListId, name, userData
         and recognitionModel. <br />
         To get face information inside largeFaceList use [LargeFaceList Face -
@@ -367,6 +367,12 @@ class LargeFaceListOperations(object):
         :param return_recognition_model: A value indicating whether the
          operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
+        :param start: Starting large face list id to return (used to list a
+         range of large face lists).
+        :type start: str
+        :param top: Number of large face lists to return starting with the
+         large face list id indicated by the 'start' parameter.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -390,6 +396,10 @@ class LargeFaceListOperations(object):
         query_parameters = {}
         if return_recognition_model is not None:
             query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
+        if start is not None:
+            query_parameters['start'] = self._serialize.query("start", start, 'str')
+        if top is not None:
+            query_parameters['top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
 
         # Construct headers
         header_parameters = {}

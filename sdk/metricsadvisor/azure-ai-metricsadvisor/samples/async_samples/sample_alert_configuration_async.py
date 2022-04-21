@@ -201,7 +201,7 @@ async def sample_list_alerts_async(alert_config_id):
         async for result in results:
             tolist.append(result)
             print("Alert id: {}".format(result.id))
-            print("Create on: {}".format(result.created_on))
+            print("Create time: {}".format(result.created_time))
         return tolist
 
     # [END list_alerts_async]
@@ -225,7 +225,7 @@ async def sample_list_anomalies_for_alert_async(alert_config_id, alert_id):
             alert_id=alert_id,
         )
         async for result in results:
-            print("Create on: {}".format(result.created_on))
+            print("Create time: {}".format(result.created_time))
             print("Severity: {}".format(result.severity))
             print("Status: {}".format(result.status))
 
@@ -255,7 +255,7 @@ async def sample_update_alert_config_async(alert_config):
         detection_configuration_id=detection_configuration_id,
         alert_scope=MetricAnomalyAlertScope(
             scope_type="SeriesGroup",
-            series_group_in_scope={'city': 'Shenzhen'}
+            series_group_in_scope={'region': 'Shenzhen'}
         ),
         alert_conditions=MetricAnomalyAlertConditions(
             metric_boundary_condition=MetricBoundaryCondition(
@@ -267,12 +267,11 @@ async def sample_update_alert_config_async(alert_config):
     alert_config.metric_alert_configurations.append(additional_alert)
 
     async with client:
-        await client.update_alert_configuration(
+        updated = await client.update_alert_configuration(
             alert_config,
             cross_metrics_operator="OR",
             description="updated alert config"
         )
-        updated = await client.get_alert_configuration(alert_config.id)
         print("Updated alert name: {}".format(updated.name))
         print("Updated alert description: {}".format(updated.description))
         print("Updated cross metrics operator: {}".format(updated.cross_metrics_operator))
@@ -326,5 +325,4 @@ async def main():
     await sample_delete_alert_config_async(alert_config.id)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

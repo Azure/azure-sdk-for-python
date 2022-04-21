@@ -41,7 +41,7 @@ class SigningCertificatesOperations:
 
     async def get(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JSONWebKeySet":
         """Retrieves the attestation signing keys in use by the attestation service.
 

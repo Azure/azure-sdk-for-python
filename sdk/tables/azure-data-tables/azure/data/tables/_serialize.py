@@ -20,36 +20,24 @@ from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 
-def _get_match_headers(kwargs, match_param, etag_param):
-    if_match = None
-    if_none_match = None
-    match_condition = kwargs.pop(match_param, None)
+def _get_match_headers(etag, match_condition):
     if match_condition == MatchConditions.IfNotModified:
-        if_match = kwargs.pop(etag_param, None)
-        if not if_match:
-            raise ValueError(
-                "'{}' specified without '{}'.".format(match_param, etag_param)
-            )
-    elif match_condition == MatchConditions.IfPresent:
-        if_match = "*"
-    elif match_condition == MatchConditions.IfModified:
-        if_none_match = kwargs.pop(etag_param, None)
-        if not if_none_match:
-            raise ValueError(
-                "'{}' specified without '{}'.".format(match_param, etag_param)
-            )
-    elif match_condition == MatchConditions.IfMissing:
-        if_none_match = "*"
-    elif match_condition == MatchConditions.Unconditionally:
-        if_none_match = "*"
-    elif match_condition is None:
-        if kwargs.get(etag_param):
-            raise ValueError(
-                "'{}' specified without '{}'.".format(etag_param, match_param)
-            )
-    else:
-        raise TypeError("Invalid match condition: {}".format(match_condition))
-    return if_match, if_none_match
+        if not etag:
+            raise ValueError("IfNotModified must be specified with etag.")
+        return etag
+    if match_condition == MatchConditions.Unconditionally:
+        if etag:
+            raise ValueError("Etag is not supported for an Unconditional operation.")
+        return "*"
+    raise ValueError("Unsupported match condition: {}".format(match_condition))
+
+
+def _prepare_key(keyvalue):
+    """Duplicate the single quote char to escape."""
+    try:
+        return keyvalue.replace("'", "''")
+    except AttributeError:
+        raise TypeError('PartitionKey or RowKey must be of type string.')
 
 
 def _parameter_filter_substitution(parameters, query_filter):
@@ -82,7 +70,7 @@ def _parameter_filter_substitution(parameters, query_filter):
                         v = v[2:-1]
                     filter_strings[index] = "X'{}'".format(v)
                 else:
-                    filter_strings[index] = "'{}'".format(val.replace("'", "''"))
+                    filter_strings[index] = "'{}'".format(_prepare_key(val))
         return ' '.join(filter_strings)
     return query_filter
 
@@ -116,7 +104,7 @@ def _to_entity_float(value):
         return EdmType.DOUBLE, "Infinity"
     if value == float("-inf"):
         return EdmType.DOUBLE, "-Infinity"
-    return None, value
+    return EdmType.DOUBLE, value
 
 
 def _to_entity_guid(value):
@@ -161,9 +149,9 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
 try:
     _PYTHON_TO_ENTITY_CONVERSIONS.update(
         {
-            unicode: _to_entity_str,
+            unicode: _to_entity_str,  # type: ignore
             str: _to_entity_binary,
-            long: _to_entity_int32,
+            long: _to_entity_int32,  # type: ignore
         }
     )
 except NameError:
@@ -210,7 +198,6 @@ def _add_entity_properties(source):
     properties = {}
 
     to_send = dict(source)  # shallow copy
-    to_send.pop("_metadata", None)
 
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
@@ -219,7 +206,7 @@ def _add_entity_properties(source):
 
         if isinstance(value, Enum):
             try:
-                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
             except NameError:
                 conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
             mtype, value = conv(value)

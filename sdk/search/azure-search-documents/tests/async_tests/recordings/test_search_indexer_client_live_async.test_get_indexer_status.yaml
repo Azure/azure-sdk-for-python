@@ -10,30 +10,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searcha24192c.search.windows.net/datasources?api-version=2020-06-30
+    uri: https://searcha24192c.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searcha24192c.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D91BB59EF74BE4\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://searcha24192c.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D96CBBB696FEDF\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
-      content-length: '390'
+      content-length: '406'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:35:11 GMT
-      elapsed-time: '59'
-      etag: W/"0x8D91BB59EF74BE4"
+      date: Tue, 31 Aug 2021 20:12:52 GMT
+      elapsed-time: '41'
+      etag: W/"0x8D96CBBB696FEDF"
       expires: '-1'
-      location: https://searcha24192c.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
+      location: https://searcha24192c.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: ba4b6b24-b991-11eb-97c7-a0481ca055a9
+      request-id: d23fdd24-0a97-11ec-a89e-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://searcha24192c.search.windows.net/datasources?api-version=2020-06-30
+    url: https://searcha24192c.search.windows.net/datasources?api-version=2021-04-30-Preview
 - request:
     body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
       "key": true, "retrievable": true, "searchable": false}]}'
@@ -45,30 +45,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searcha24192c.search.windows.net/indexes?api-version=2020-06-30
+    uri: https://searcha24192c.search.windows.net/indexes?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searcha24192c.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D91BB59FCCEA97\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
+      string: '{"@odata.context":"https://searcha24192c.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D96CBBB7128602\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"normalizer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"normalizers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":{"@odata.type":"#Microsoft.Azure.Search.BM25Similarity","k1":null,"b":null}}'
     headers:
       cache-control: no-cache
-      content-length: '628'
+      content-length: '663'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:35:13 GMT
-      elapsed-time: '1152'
-      etag: W/"0x8D91BB59FCCEA97"
+      date: Tue, 31 Aug 2021 20:12:53 GMT
+      elapsed-time: '639'
+      etag: W/"0x8D96CBBB7128602"
       expires: '-1'
-      location: https://searcha24192c.search.windows.net/indexes('hotels')?api-version=2020-06-30
+      location: https://searcha24192c.search.windows.net/indexes('hotels')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: ba87ce4d-b991-11eb-a5ac-a0481ca055a9
+      request-id: d269b4d9-0a97-11ec-8ee4-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://searcha24192c.search.windows.net/indexes?api-version=2020-06-30
+    url: https://searcha24192c.search.windows.net/indexes?api-version=2021-04-30-Preview
 - request:
     body: '{"name": "sample-indexer", "dataSourceName": "sample-datasource", "targetIndexName":
       "hotels", "disabled": false}'
@@ -80,65 +80,57 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searcha24192c.search.windows.net/indexers?api-version=2020-06-30
+    uri: https://searcha24192c.search.windows.net/indexers?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searcha24192c.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D91BB5A0C2E839\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"encryptionKey":null}'
+      string: '{"@odata.context":"https://searcha24192c.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D96CBBB752A76D\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
-      content-length: '369'
+      content-length: '382'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:35:15 GMT
-      elapsed-time: '1397'
-      etag: W/"0x8D91BB5A0C2E839"
+      date: Tue, 31 Aug 2021 20:12:53 GMT
+      elapsed-time: '374'
+      etag: W/"0x8D96CBBB752A76D"
       expires: '-1'
-      location: https://searcha24192c.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
+      location: https://searcha24192c.search.windows.net/indexers('sample-indexer')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: bb5e58ea-b991-11eb-b12a-a0481ca055a9
+      request-id: d2e591c9-0a97-11ec-958d-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://searcha24192c.search.windows.net/indexers?api-version=2020-06-30
+    url: https://searcha24192c.search.windows.net/indexers?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searcha24192c.search.windows.net/indexers('sample-indexer')/search.status?api-version=2020-06-30
+    uri: https://searcha24192c.search.windows.net/indexers('sample-indexer')/search.status?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns6zvf3dh3vTsfw1viqWs+qqGS/z9u7vtsjbDC//+BfF
-        tK6a6rwdH/9gXefj19L4J/d29nZ+/51Pf/97O+Oz5Sx/l9en7/Lpui2q5dnyvPpo9NEyW+TUZ5Mt
-        VmW+TcDRiD5v2qxdN/RNvV4ui+UFfVRmTfsqb9YlIblcl+XoI2orwL5dNG1VX3/06Hvfp3bFomjp
-        1V/80SJ792q9fFNwFy/f7LwmKPTZ02q6XuTL9vRdW2dTvP+6+AE12Qm+PQFB6Mc8Q6O8bt5U+gK1
-        /CW/5P8Bi1rMDzkBAAA=
+      string: '{"@odata.context":"https://searcha24192c.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.IndexerExecutionInfo","name":"sample-indexer","status":"running","lastResult":null,"executionHistory":[],"limits":{"maxRunTime":"PT0S","maxDocumentExtractionSize":0,"maxDocumentContentCharactersToExtract":0},"currentState":{"mode":"indexingAllDocs","allDocsInitialTrackingState":null,"allDocsFinalTrackingState":null,"resetDocsInitialTrackingState":null,"resetDocsFinalTrackingState":null,"resetDocumentKeys":[]}}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
-      content-length: '356'
+      content-length: '439'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:35:15 GMT
-      elapsed-time: '15'
+      date: Tue, 31 Aug 2021 20:12:53 GMT
+      elapsed-time: '18'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: bc687697-b991-11eb-9d67-a0481ca055a9
+      request-id: d337dc7c-0a97-11ec-abed-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searcha24192c.search.windows.net/indexers('sample-indexer')/search.status?api-version=2020-06-30
+    url: https://searcha24192c.search.windows.net/indexers('sample-indexer')/search.status?api-version=2021-04-30-Preview
 version: 1

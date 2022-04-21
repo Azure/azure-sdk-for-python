@@ -26,11 +26,14 @@
 import abc
 import base64
 import json
+from enum import Enum
 from typing import TYPE_CHECKING, Optional, Any, Union
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
+from ..pipeline._tools import is_rest
+from .._enum_meta import CaseInsensitiveEnumMeta
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -173,20 +176,38 @@ class LongRunningOperation(ABC):
         """
         raise NotImplementedError()
 
+class _LroOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known LRO options from Swagger."""
+
+    FINAL_STATE_VIA = "final-state-via"
+
+
+class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible final-state-via options."""
+
+    AZURE_ASYNC_OPERATION_FINAL_STATE = "azure-async-operation"
+    LOCATION_FINAL_STATE = "location"
+    OPERATION_LOCATION_FINAL_STATE = "operation-location"
+
 
 class OperationResourcePolling(LongRunningOperation):
     """Implements a operation resource polling, typically from Operation-Location.
 
     :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
+    :keyword dict[str, any] lro_options: Additional options for LRO. For more information, see
+     https://aka.ms/azsdk/autorest/openapi/lro-options
     """
 
-    def __init__(self, operation_location_header="operation-location"):
+    def __init__(
+        self, operation_location_header="operation-location", *, lro_options=None
+    ):
         self._operation_location_header = operation_location_header
 
         # Store the initial URLs
         self._async_url = None
         self._location_url = None
         self._request = None
+        self._lro_options = lro_options or {}
 
     def can_poll(self, pipeline_response):
         """Answer if this polling method could be used.
@@ -206,6 +227,20 @@ class OperationResourcePolling(LongRunningOperation):
 
         :rtype: str
         """
+        if (
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA) == _FinalStateViaOption.LOCATION_FINAL_STATE
+            and self._location_url
+        ):
+            return self._location_url
+        if (
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA)
+            in [
+                _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE,
+                _FinalStateViaOption.OPERATION_LOCATION_FINAL_STATE
+            ]
+            and self._request.method == "POST"
+        ):
+            return None
         response = pipeline_response.http_response
         if not _is_empty(response):
             body = _as_json(response)
@@ -380,7 +415,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         **operation_config
     ):
         self._lro_algorithms = lro_algorithms or [
-            OperationResourcePolling(),
+            OperationResourcePolling(lro_options=lro_options),
             LocationPolling(),
             StatusCheckPolling(),
         ]
@@ -574,10 +609,19 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
+        if is_rest(self._initial_response.http_response):
+            # if I am a azure.core.rest.HttpResponse
+            # want to keep making azure.core.rest calls
+            from azure.core.rest import HttpRequest as RestHttpRequest
+            request = RestHttpRequest("GET", status_link)
+            return self._client.send_request(
+                request, _return_pipeline_response=True, **self._operation_config
+            )
+        # if I am a azure.core.pipeline.transport.HttpResponse
+        request = self._client.get(status_link)
         return self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config
         )

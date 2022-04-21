@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
+from urllib.parse import urlparse
 
 # pylint: disable=unused-import,ungrouped-imports
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
@@ -24,6 +21,7 @@ from .._generated.models import (
     AddChatParticipantsRequest,
     SendReadReceiptRequest,
     SendChatMessageRequest,
+    SendTypingNotificationRequest,
     UpdateChatMessageRequest,
     UpdateChatThreadRequest,
     SendChatMessageResult,
@@ -42,7 +40,7 @@ from .._utils import CommunicationErrorResponseConverter
 from .._version import SDK_MONIKER
 
 
-class ChatThreadClient(object):
+class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Chat gateway.
     Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 
@@ -238,10 +236,14 @@ class ChatThreadClient(object):
     @distributed_trace_async
     async def send_typing_notification(
         self,
+        *,
+        sender_display_name: Optional[str] = None,
         **kwargs
     ) -> None:
         """Posts a typing event to a thread, on behalf of a user.
 
+        :keyword str sender_display_name: The display name of the typing notification sender. This property
+         is used to populate sender name for push notifications.
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -255,12 +257,20 @@ class ChatThreadClient(object):
                 :dedent: 12
                 :caption: Send typing notification.
         """
-        return await self._client.chat_thread.send_typing_notification(self._thread_id, **kwargs)
+
+        send_typing_notification_request = SendTypingNotificationRequest(sender_display_name=sender_display_name)
+
+        return await self._client.chat_thread.send_typing_notification(
+            chat_thread_id=self._thread_id,
+            send_typing_notification_request=send_typing_notification_request,
+            **kwargs)
 
     @distributed_trace_async
     async def send_message(
         self,
         content: str,
+        *,
+        metadata: Dict[str, str] = None,
         **kwargs
     ) -> SendChatMessageResult:
         """Sends a message to a thread.
@@ -272,6 +282,7 @@ class ChatThreadClient(object):
         :paramtype chat_message_type: Union[str, ~azure.communication.chat.ChatMessageType]
         :keyword str sender_display_name: The display name of the message sender. This property is used to
             populate sender name for push notifications.
+        :keyword dict[str, str] metadata: Message metadata.
         :return: SendChatMessageResult
         :rtype: ~azure.communication.chat.SendChatMessageResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -307,7 +318,8 @@ class ChatThreadClient(object):
         create_message_request = SendChatMessageRequest(
             content=content,
             type=chat_message_type,
-            sender_display_name=sender_display_name
+            sender_display_name=sender_display_name,
+            metadata=metadata
         )
         send_chat_message_result = await self._client.chat_thread.send_chat_message(
             chat_thread_id=self._thread_id,
@@ -382,14 +394,16 @@ class ChatThreadClient(object):
             self,
             message_id: str,
             content: str = None,
+            *,
+            metadata: Dict[str, str] = None,
             **kwargs
     ) -> None:
         """Updates a message.
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :param content: Chat message content.
-        :type content: str
+        :keyword content: Chat message content
+        :keyword dict[str, str] metadata: Message metadata.
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -406,7 +420,7 @@ class ChatThreadClient(object):
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
-        update_message_request = UpdateChatMessageRequest(content=content)
+        update_message_request = UpdateChatMessageRequest(content=content, metadata=metadata)
 
         return await self._client.chat_thread.update_chat_message(
             chat_thread_id=self._thread_id,

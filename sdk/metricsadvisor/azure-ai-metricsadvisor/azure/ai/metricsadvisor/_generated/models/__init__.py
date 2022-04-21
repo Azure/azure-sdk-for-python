@@ -323,7 +323,7 @@ except (SyntaxError, ImportError):
     from ._models import WholeMetricConfiguration  # type: ignore
     from ._models import WholeMetricConfigurationPatch  # type: ignore
 
-from ._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2_enums import (
+from ._metrics_advisor_enums import (
     AnomalyAlertingConfigurationLogicType,
     AnomalyDetectionConfigurationLogicType,
     AnomalyDetectorDirection,
@@ -468,7 +468,7 @@ __all__ = [
     'MetricSeriesItem',
     'MetricSeriesList',
     'MetricSeriesQueryOptions',
-    'MongoDbDataFeed',
+    'MongoDBDataFeed',
     'MongoDBDataFeedPatch',
     'MongoDBParameter',
     'MongoDBParameterPatch',

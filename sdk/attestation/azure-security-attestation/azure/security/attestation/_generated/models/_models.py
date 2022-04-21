@@ -69,17 +69,17 @@ class AttestationResult(msrest.serialization.Model):
      number of seconds since 1970-01-0T00:00:00Z UTC.
     :type nbf: float
     :param cnf: An RFC 7800 Proof of Possession Key.
-    :type cnf: object
+    :type cnf: any
     :param nonce: The Nonce input to the attestation request, if provided.
     :type nonce: str
     :param version: The Schema version of this structure. Current Value: 1.0.
     :type version: str
     :param runtime_claims: Runtime Claims.
-    :type runtime_claims: object
+    :type runtime_claims: any
     :param inittime_claims: Inittime Claims.
-    :type inittime_claims: object
+    :type inittime_claims: any
     :param policy_claims: Policy Generated Claims.
-    :type policy_claims: object
+    :type policy_claims: any
     :param verifier_type: The Attestation type being attested.
     :type verifier_type: str
     :param policy_signer: The certificate used to sign the policy object, if specified.
@@ -99,7 +99,7 @@ class AttestationResult(msrest.serialization.Model):
     :param enclave_held_data: A copy of the RuntimeData specified as an input to the attest call.
     :type enclave_held_data: bytes
     :param sgx_collateral: The SGX SVN value for the enclave.
-    :type sgx_collateral: object
+    :type sgx_collateral: any
     :param deprecated_version: DEPRECATED: Private Preview version of x-ms-ver claim.
     :type deprecated_version: str
     :param deprecated_is_debuggable: DEPRECATED: Private Preview version of x-ms-sgx-is-debuggable
@@ -107,7 +107,7 @@ class AttestationResult(msrest.serialization.Model):
     :type deprecated_is_debuggable: bool
     :param deprecated_sgx_collateral: DEPRECATED: Private Preview version of x-ms-sgx-collateral
      claim.
-    :type deprecated_sgx_collateral: object
+    :type deprecated_sgx_collateral: any
     :param deprecated_enclave_held_data: DEPRECATED: Private Preview version of x-ms-sgx-ehd claim.
     :type deprecated_enclave_held_data: bytes
     :param deprecated_enclave_held_data2: DEPRECATED: Private Preview version of x-ms-sgx-ehd

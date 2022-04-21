@@ -14,6 +14,9 @@ from ._private_endpoint_connections_operations import PrivateEndpointConnections
 from ._locations_operations import LocationsOperations
 from ._assets_operations import AssetsOperations
 from ._asset_filters_operations import AssetFiltersOperations
+from ._tracks_operations import TracksOperations
+from ._operation_statuses_operations import OperationStatusesOperations
+from ._operation_results_operations import OperationResultsOperations
 from ._content_key_policies_operations import ContentKeyPoliciesOperations
 from ._transforms_operations import TransformsOperations
 from ._jobs_operations import JobsOperations
@@ -32,6 +35,9 @@ __all__ = [
     'LocationsOperations',
     'AssetsOperations',
     'AssetFiltersOperations',
+    'TracksOperations',
+    'OperationStatusesOperations',
+    'OperationResultsOperations',
     'ContentKeyPoliciesOperations',
     'TransformsOperations',
     'JobsOperations',
