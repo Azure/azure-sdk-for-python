@@ -1636,6 +1636,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         # Assert
         progress.assert_complete()
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_upload_progress_unknown_size(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live

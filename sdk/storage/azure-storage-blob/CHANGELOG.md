@@ -3,6 +3,7 @@
 ## 12.12.0 (Unreleased)
 
 ### Features Added
+- Added an optional callback `progress_hook` to `upload_blob()` that can be used to track progress of a large upload.
 
 ### Bugs Fixed:
 - Fixed a bug in `BlobClient.from_blob_url()` such that users will receive a more helpful error
