@@ -22,9 +22,6 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
     ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=["sbs1.sipconfigtest.com"])]
 
     def __init__(self, method_name):
-        os.environ["AZURE_TEST_RUN_LIVE"] = "True"
-        os.environ["COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING"] = "endpoint=https://e2e_test.communication.azure.com/;accesskey=qGUv+J0z5Xv8TtjC0qZhy34sodSOMKG5HS7NfsjhqxaB/ZP4UnuS4FspWPo3JowuqAb+75COGi4ErREkB76/UQ=="
-
         super(TestSipRoutingClientE2E, self).__init__(method_name)
         
     def setUp(self):
