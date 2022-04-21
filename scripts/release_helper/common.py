@@ -1,14 +1,17 @@
-from datetime import date, datetime
-from typing import Set, List, Dict
 import os
-from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag,\
-    MULTI_LINK_LABEL
 import re
 import logging
 import time
+import urllib.parse
+from datetime import date, datetime
+from typing import Set, List, Dict
 from random import randint
+
 from github import Github
 from github.Repository import Repository
+
+from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag,\
+    MULTI_LINK_LABEL
 
 _LOG = logging.getLogger(__name__)
 
@@ -46,7 +49,7 @@ class IssueProcess:
                  assignee_candidates: Set[str], language_owner: Set[str]):
         self.issue_package = issue_package
         self.request_repo_dict = request_repo_dict
-        self.assignee = issue_package.issue.assignee.login
+        self.assignee = issue_package.issue.assignee.login if issue_package.issue.assignee else ''
         self.owner = issue_package.issue.user.login
         self.assignee_candidates = assignee_candidates
         self.language_owner = language_owner
@@ -79,7 +82,7 @@ class IssueProcess:
         pr_info = self.issue_package.rest_repo.get_pull(number=pr_number)
         pk_url_name = set()
         for pr_changed_file in pr_info.get_files():
-            contents_url = pr_changed_file.contents_url
+            contents_url = urllib.parse.unquote(pr_changed_file.contents_url)
             if '/resource-manager' not in contents_url:
                 continue
             try:
@@ -180,7 +183,8 @@ class IssueProcess:
         self.issue_package.labels_name.add(label)
 
     def update_assignee(self, assignee_to_del: str, assignee_to_add: str) -> None:
-        self.issue_package.issue.remove_from_assignees(assignee_to_del)
+        if assignee_to_del:
+            self.issue_package.issue.remove_from_assignees(assignee_to_del)
         self.issue_package.issue.add_to_assignees(assignee_to_add)
         self.assignee = assignee_to_add
 
@@ -193,14 +197,17 @@ class IssueProcess:
     def update_issue_instance(self) -> None:
         self.issue_package.issue = self.request_repo().get_issue(self.issue_package.issue.number)
 
+    def auto_assign_policy(self) -> str:
+        assignees = list(self.assignee_candidates)
+        random_idx = randint(0, len(assignees) - 1) if len(assignees) > 1 else 0
+        return assignees[random_idx]
+
     def auto_assign(self) -> None:
         if AUTO_ASSIGN_LABEL in self.issue_package.labels_name:
             self.update_issue_instance()
             return
         # assign averagely
-        assignees = list(self.assignee_candidates)
-        random_idx = randint(0, len(assignees) - 1) if len(assignees) > 1 else 0
-        assignee = assignees[random_idx]
+        assignee = self.auto_assign_policy()
 
         # update assignee
         if self.assignee != assignee:
@@ -291,6 +298,7 @@ class Common:
         self.package_name = ''
         self.result = []
         self.request_repo_dict = {}
+        self.issue_process_function = IssueProcess
 
         for assignee in assignee_token:
             self.request_repo_dict[assignee] = Github(assignee_token[assignee]).get_repo(REQUEST_REPO)
@@ -309,7 +317,10 @@ class Common:
     @staticmethod
     def output_md(item: IssueProcess):
         create_date = str(date.fromtimestamp(item.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
-        target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        try:
+            target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        except:
+            target_date = str(item.target_date)
 
         return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
             item.issue_package.issue.html_url.split('/')[-1],
@@ -326,7 +337,7 @@ class Common:
     def run(self):
         items = []
         for item in self.issues_package:
-            issue = IssueProcess(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
+            issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates, self.language_owner)
             try:
                 issue.run()
                 self.result.append(issue)

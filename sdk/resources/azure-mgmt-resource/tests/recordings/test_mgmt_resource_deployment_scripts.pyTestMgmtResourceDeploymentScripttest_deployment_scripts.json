@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.9.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,18 +17,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:57:58 GMT",
+        "Date": "Tue, 19 Apr 2022 03:14:19 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Set-Cookie": [
-          "fpc=Avt8V8S-PVdJpYNuUHuZ8Pg; expires=Sun, 26-Dec-2021 05:57:58 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrZ6f3zrZkux2H-fzp3RN1v4YwTQoRAjsCYLjY_gbgQHRJ-i1PUS2uqI1gAkIhLVJQPIfd3x2FL0n6d9XMb6y1PjdPhPl5h8GQtQpXe92PljhaXiCSLRpmYvvO-xriTysiKCAAw70PASibPzfpq1P6yqEDJFlqJsiLDtB92gf4EaAgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
-        ],
+        "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12231.8 - SCUS ProdSlices",
-        "x-ms-request-id": "85fa4a5e-8013-4fb1-96c8-c5d3fc62b401"
+        "x-ms-ests-server": "2.1.12651.5 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
@@ -105,8 +100,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Avt8V8S-PVdJpYNuUHuZ8Pg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)"
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.9.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -116,17 +111,13 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:57:58 GMT",
+        "Date": "Tue, 19 Apr 2022 03:14:20 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Set-Cookie": [
-          "fpc=Avt8V8S-PVdJpYNuUHuZ8Pg; expires=Sun, 26-Dec-2021 05:57:58 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
-        ],
+        "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12249.14 - KRSLR2 ProdSlices",
-        "x-ms-request-id": "055667e2-b61d-41bf-855f-5896b8582700"
+        "x-ms-ests-server": "2.1.12651.5 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -181,47 +172,43 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "9289b385-9476-4786-980e-8abc950469e9",
+        "client-request-id": "1ef16484-29fa-4ab8-ba1c-ff4dd8a5368d",
         "Connection": "keep-alive",
-        "Content-Length": "289",
+        "Content-Length": "286",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=Avt8V8S-PVdJpYNuUHuZ8Pg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.9.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
-        "x-client-os": "win32",
+        "x-client-os": "linux",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.16.0",
+        "x-client-ver": "1.17.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=0vj7Q~IsFayrD0V_8oyOfygU-GE3ELOabq95a\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "RequestBody": "client_id=8c41a920-007a-4844-a189-2d0efe39f51e\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=o0XWF_siD-FhI.5AE83-u0GaQHW_GP7cjy\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "9289b385-9476-4786-980e-8abc950469e9",
-        "Content-Length": "1349",
+        "client-request-id": "1ef16484-29fa-4ab8-ba1c-ff4dd8a5368d",
+        "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:57:58 GMT",
+        "Date": "Tue, 19 Apr 2022 03:14:20 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
-        "Set-Cookie": [
-          "fpc=Avt8V8S-PVdJpYNuUHuZ8PiZHqKEAQAAAGZuMtkOAAAA; expires=Sun, 26-Dec-2021 05:57:59 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
-        ],
+        "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12231.8 - EUS ProdSlices",
-        "x-ms-request-id": "5fd054d7-d019-4c53-88e0-62dbef34dc01"
+        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 3599,
         "ext_expires_in": 3599,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhLyIsImlhdCI6MTYzNzkwNTk3OSwibmJmIjoxNjM3OTA1OTc5LCJleHAiOjE2Mzc5MDk4NzksImFpbyI6IkUyWmdZQ2lNMmF6U1lObTVxRTN6ekpVMWZkYkNBQT09IiwiYXBwaWQiOiJhMmRmNTRkNS1hYjAzLTQ3MjUtOWI4MC05YTAwYjNiMTk2N2YiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwib2lkIjoiODg3YzQyYjEtNzk0Ni00YzIyLWJhYTYtMTUwNDNlNGIxMzIzIiwicmgiOiIwLkFUY0FJbXVDVk5ZNHNrLTYyYmU1T2o2Y1d0VlUzNklEcXlWSG00Q2FBTE94bG44M0FBQS4iLCJzdWIiOiI4ODdjNDJiMS03OTQ2LTRjMjItYmFhNi0xNTA0M2U0YjEzMjMiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1dGkiOiIxMVRRWHhuUVUweUk0R0xiN3pUY0FRIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE0MTIyMDY4NDB9.M9BZrE59O05jrDFD-QUFwKGK9yNBDe9Hlls9ZOItBy5x71MXgHHB82dgc5E6HOf9V0qnQ1Mh0dzNsxYOKTcqlF0uU-FobdBbRvdo2YvbB5JyhCnNXmewHTe6q8oHOxY5AZio6usDuKKWQ2_84coOC6VKmNjNJmWh5cdHSBq7PYbfMRo-tuLnoKHo0htNHilzqixZl2WAVnyH45QPuGgwG0ZmQ9oUXBkvUf6t0cyJ-_JVcrP7JNITehmQUFmKSjPAdl_KSV-Y-pii46u4U-1qKraJlNI1xUAOg_ShaLuBN16DBaqudSKXGfkKob1xQll6RrQxO17hwFYKJFJpgi1jlg"
+        "access_token": "access_token"
       }
     },
     {
@@ -230,81 +217,91 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "591",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "cdfa24ee-4e7d-11ec-a94c-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
-      "RequestBody": "{\u0022identity\u0022: {\u0022type\u0022: \u0022UserAssigned\u0022, \u0022userAssignedIdentities\u0022: {\u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\u0022: {}}}, \u0022location\u0022: \u0022westus\u0022, \u0022kind\u0022: \u0022AzurePowerShell\u0022, \u0022properties\u0022: {\u0022cleanupPreference\u0022: \u0022Always\u0022, \u0022scriptContent\u0022: \u0022Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\u0027test\u0027] = \u0027value\u0027 Get-AzResourceGroup -Location $Location -Name $Name\u0022, \u0022arguments\u0022: \u0022-Location \u0027westus\u0027 -Name \\\u0022*rg2\\\u0022\u0022, \u0022retentionInterval\u0022: \u0022P1DT2H\u0022, \u0022timeout\u0022: \u0022PT30M\u0022, \u0022azPowerShellVersion\u0022: \u00223.0\u0022}}",
+      "RequestBody": {
+        "identity": {
+          "type": "UserAssigned",
+          "userAssignedIdentities": {
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai": {}
+          }
+        },
+        "location": "westus",
+        "kind": "AzurePowerShell",
+        "properties": {
+          "cleanupPreference": "Always",
+          "scriptContent": "Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\u0027test\u0027] = \u0027value\u0027 Get-AzResourceGroup -Location $Location -Name $Name",
+          "arguments": "-Location \u0027westus\u0027 -Name \u0022*rg2\u0022",
+          "retentionInterval": "P1DT2H",
+          "timeout": "PT30M",
+          "azPowerShellVersion": "3.0"
+        }
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/63b4d5d6-96a2-4eb9-9c67-d82bee9b7222?api-version=2019-10-01-preview",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/0219fb72-2ab8-42db-9d35-4c9c9f3d012f?api-version=2019-10-01-preview",
         "Cache-Control": "no-cache",
-        "Content-Length": "1497",
+        "Content-Length": "1495",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:58:05 GMT",
+        "Date": "Tue, 19 Apr 2022 03:14:23 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Retry-After": "17",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "637d9201-e66a-45e7-89c3-471becf184cc",
-        "x-ms-ratelimit-remaining-subscription-writes": "1198",
-        "x-ms-request-id": "c9efbf35-0963-4567-842a-464239423146",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055806Z:637d9201-e66a-45e7-89c3-471becf184cc"
+        "x-ms-correlation-request-id": "b8a5ab9a-276d-4bbd-ab5c-cdcbc2c77ac6",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031424Z:b8a5ab9a-276d-4bbd-ab5c-cdcbc2c77ac6"
       },
-      "ResponseBody": [
-        "{\r\n",
-        "  \u0022kind\u0022: \u0022AzurePowerShell\u0022,\r\n",
-        "  \u0022identity\u0022: {\r\n",
-        "    \u0022type\u0022: \u0022userAssigned\u0022,\r\n",
-        "    \u0022tenantId\u0022: \u002200000000-0000-0000-0000-000000000000\u0022,\r\n",
-        "    \u0022userAssignedIdentities\u0022: {\r\n",
-        "      \u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\u0022: {\r\n",
-        "        \u0022principalId\u0022: \u002207a49957-fd51-4e4d-9048-ba0625d3e0a0\u0022,\r\n",
-        "        \u0022clientId\u0022: \u00225f28c26d-10a3-4c57-b651-9e17515fa424\u0022\r\n",
-        "      }\r\n",
-        "    }\r\n",
-        "  },\r\n",
-        "  \u0022location\u0022: \u0022westus\u0022,\r\n",
-        "  \u0022properties\u0022: {\r\n",
-        "    \u0022provisioningState\u0022: \u0022Creating\u0022,\r\n",
-        "    \u0022azPowerShellVersion\u0022: \u00223.0\u0022,\r\n",
-        "    \u0022scriptContent\u0022: \u0022Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\u0027test\u0027] = \u0027value\u0027 Get-AzResourceGroup -Location $Location -Name $Name\u0022,\r\n",
-        "    \u0022arguments\u0022: \u0022-Location \u0027westus\u0027 -Name \\\u0022*rg2\\\u0022\u0022,\r\n",
-        "    \u0022retentionInterval\u0022: \u0022P1DT2H\u0022,\r\n",
-        "    \u0022timeout\u0022: \u0022PT30M\u0022,\r\n",
-        "    \u0022containerSettings\u0022: {},\r\n",
-        "    \u0022status\u0022: {},\r\n",
-        "    \u0022cleanupPreference\u0022: \u0022Always\u0022\r\n",
-        "  },\r\n",
-        "  \u0022systemData\u0022: {\r\n",
-        "    \u0022createdBy\u0022: \u0022a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0022,\r\n",
-        "    \u0022createdByType\u0022: \u0022Application\u0022,\r\n",
-        "    \u0022createdAt\u0022: \u00222021-11-26T05:58:02.7902487Z\u0022,\r\n",
-        "    \u0022lastModifiedBy\u0022: \u0022a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0022,\r\n",
-        "    \u0022lastModifiedByType\u0022: \u0022Application\u0022,\r\n",
-        "    \u0022lastModifiedAt\u0022: \u00222021-11-26T05:58:02.7902487Z\u0022\r\n",
-        "  },\r\n",
-        "  \u0022id\u0022: \u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\u0022,\r\n",
-        "  \u0022type\u0022: \u0022Microsoft.Resources/deploymentScripts\u0022,\r\n",
-        "  \u0022name\u0022: \u0022scripttest\u0022\r\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "kind": "AzurePowerShell",
+        "identity": {
+          "type": "userAssigned",
+          "tenantId": "00000000-0000-0000-0000-000000000000",
+          "userAssignedIdentities": {
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai": {
+              "principalId": "f2b0eee5-5c6f-4584-9506-59ef4efcf4d5",
+              "clientId": "e33b87a6-d355-4d29-85a9-86c17721e4cf"
+            }
+          }
+        },
+        "location": "westus",
+        "properties": {
+          "provisioningState": "Creating",
+          "azPowerShellVersion": "3.0",
+          "scriptContent": "Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\u0027test\u0027] = \u0027value\u0027 Get-AzResourceGroup -Location $Location -Name $Name",
+          "arguments": "-Location \u0027westus\u0027 -Name \u0022*rg2\u0022",
+          "retentionInterval": "P1DT2H",
+          "timeout": "PT30M",
+          "containerSettings": {},
+          "status": {},
+          "cleanupPreference": "Always"
+        },
+        "systemData": {
+          "createdBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "createdByType": "Application",
+          "createdAt": "2022-04-19T03:14:22.925378Z",
+          "lastModifiedBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2022-04-19T03:14:22.925378Z"
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest",
+        "type": "Microsoft.Resources/deploymentScripts",
+        "name": "scripttest"
+      }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/63b4d5d6-96a2-4eb9-9c67-d82bee9b7222?api-version=2019-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/0219fb72-2ab8-42db-9d35-4c9c9f3d012f?api-version=2019-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "cdfa24ee-4e7d-11ec-a94c-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -312,7 +309,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:58:22 GMT",
+        "Date": "Tue, 19 Apr 2022 03:14:41 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -320,33 +317,28 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "5594e2a8-ab48-42f2-9dce-49cf3c30b56c",
+        "x-ms-correlation-request-id": "c9b78550-5af0-4658-81a3-dad21460f008",
         "x-ms-ratelimit-remaining-subscription-reads": "11999",
-        "x-ms-request-id": "c2f46654-91c0-49cc-a680-325af7a93e88",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055823Z:5594e2a8-ab48-42f2-9dce-49cf3c30b56c"
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031442Z:c9b78550-5af0-4658-81a3-dad21460f008"
       },
-      "ResponseBody": [
-        "{\r\n",
-        "  \u0022id\u0022: \u0022/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/63b4d5d6-96a2-4eb9-9c67-d82bee9b7222\u0022,\r\n",
-        "  \u0022name\u0022: \u002263b4d5d6-96a2-4eb9-9c67-d82bee9b7222\u0022,\r\n",
-        "  \u0022status\u0022: \u0022provisioningResources\u0022,\r\n",
-        "  \u0022error\u0022: {\r\n",
-        "    \u0022code\u0022: \u0022DeploymentScriptOperationFailed\u0022,\r\n",
-        "    \u0022message\u0022: \u0022The client \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 with object id \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials.\u0022\r\n",
-        "  }\r\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/0219fb72-2ab8-42db-9d35-4c9c9f3d012f",
+        "name": "0219fb72-2ab8-42db-9d35-4c9c9f3d012f",
+        "status": "provisioningResources",
+        "error": {
+          "code": "DeploymentScriptOperationFailed",
+          "message": "The client \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 with object id \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials."
+        }
+      }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/63b4d5d6-96a2-4eb9-9c67-d82bee9b7222?api-version=2019-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/0219fb72-2ab8-42db-9d35-4c9c9f3d012f?api-version=2019-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "cdfa24ee-4e7d-11ec-a94c-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -354,7 +346,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:58:54 GMT",
+        "Date": "Tue, 19 Apr 2022 03:15:11 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -362,33 +354,28 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "aa9d6094-8c85-43e9-a36c-7eb6d5258591",
+        "x-ms-correlation-request-id": "8212a53e-d48c-4d43-8352-508321de19cd",
         "x-ms-ratelimit-remaining-subscription-reads": "11998",
-        "x-ms-request-id": "65237236-cf72-4e3c-9bfd-2875d6f958d1",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055854Z:aa9d6094-8c85-43e9-a36c-7eb6d5258591"
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031512Z:8212a53e-d48c-4d43-8352-508321de19cd"
       },
-      "ResponseBody": [
-        "{\r\n",
-        "  \u0022id\u0022: \u0022/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/63b4d5d6-96a2-4eb9-9c67-d82bee9b7222\u0022,\r\n",
-        "  \u0022name\u0022: \u002263b4d5d6-96a2-4eb9-9c67-d82bee9b7222\u0022,\r\n",
-        "  \u0022status\u0022: \u0022provisioningResources\u0022,\r\n",
-        "  \u0022error\u0022: {\r\n",
-        "    \u0022code\u0022: \u0022DeploymentScriptOperationFailed\u0022,\r\n",
-        "    \u0022message\u0022: \u0022The client \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 with object id \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials.\u0022\r\n",
-        "  }\r\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/0219fb72-2ab8-42db-9d35-4c9c9f3d012f",
+        "name": "0219fb72-2ab8-42db-9d35-4c9c9f3d012f",
+        "status": "provisioningResources",
+        "error": {
+          "code": "DeploymentScriptOperationFailed",
+          "message": "The client \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 with object id \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials."
+        }
+      }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/63b4d5d6-96a2-4eb9-9c67-d82bee9b7222?api-version=2019-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/0219fb72-2ab8-42db-9d35-4c9c9f3d012f?api-version=2019-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "cdfa24ee-4e7d-11ec-a94c-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -396,7 +383,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:59:24 GMT",
+        "Date": "Tue, 19 Apr 2022 03:15:42 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -404,22 +391,19 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "47eaba45-91f6-403a-8c13-22b9d87a02f9",
+        "x-ms-correlation-request-id": "5c34d9a5-2a2d-4b4c-bbd2-632b75be9a52",
         "x-ms-ratelimit-remaining-subscription-reads": "11997",
-        "x-ms-request-id": "2d31922e-ed1e-4eaf-8bbd-634a95a6e00a",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055924Z:47eaba45-91f6-403a-8c13-22b9d87a02f9"
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031542Z:5c34d9a5-2a2d-4b4c-bbd2-632b75be9a52"
       },
-      "ResponseBody": [
-        "{\r\n",
-        "  \u0022id\u0022: \u0022/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/63b4d5d6-96a2-4eb9-9c67-d82bee9b7222\u0022,\r\n",
-        "  \u0022name\u0022: \u002263b4d5d6-96a2-4eb9-9c67-d82bee9b7222\u0022,\r\n",
-        "  \u0022status\u0022: \u0022failed\u0022,\r\n",
-        "  \u0022error\u0022: {\r\n",
-        "    \u0022code\u0022: \u0022DeploymentScriptOperationFailed\u0022,\r\n",
-        "    \u0022message\u0022: \u0022The client \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 with object id \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials.\u0022\r\n",
-        "  }\r\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Resources/locations/westus/deploymentScriptOperationResults/0219fb72-2ab8-42db-9d35-4c9c9f3d012f",
+        "name": "0219fb72-2ab8-42db-9d35-4c9c9f3d012f",
+        "status": "failed",
+        "error": {
+          "code": "DeploymentScriptOperationFailed",
+          "message": "The client \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 with object id \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials."
+        }
+      }
     },
     {
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview",
@@ -427,20 +411,22 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "28",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "01d523ba-4e7e-11ec-bdad-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
-      "RequestBody": "{\u0022tags\u0022: {\u0022key1\u0022: \u0022value1\u0022}}",
+      "RequestBody": {
+        "tags": {
+          "key1": "value1"
+        }
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:59:27 GMT",
+        "Date": "Tue, 19 Apr 2022 03:15:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -448,60 +434,57 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "085c8924-7d2a-4f2e-b2d5-3e3add6dfa0d",
-        "x-ms-ratelimit-remaining-subscription-writes": "1197",
-        "x-ms-request-id": "7cc4a899-5572-47d5-b112-d7debe22ac0c",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055927Z:085c8924-7d2a-4f2e-b2d5-3e3add6dfa0d"
+        "x-ms-correlation-request-id": "3e33aaa4-ad9d-4c7a-b78c-3b826d5895a0",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031544Z:3e33aaa4-ad9d-4c7a-b78c-3b826d5895a0"
       },
-      "ResponseBody": [
-        "{\r\n",
-        "  \u0022kind\u0022: \u0022AzurePowerShell\u0022,\r\n",
-        "  \u0022identity\u0022: {\r\n",
-        "    \u0022type\u0022: \u0022userAssigned\u0022,\r\n",
-        "    \u0022tenantId\u0022: \u002200000000-0000-0000-0000-000000000000\u0022,\r\n",
-        "    \u0022userAssignedIdentities\u0022: {\r\n",
-        "      \u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\u0022: {\r\n",
-        "        \u0022principalId\u0022: \u002207a49957-fd51-4e4d-9048-ba0625d3e0a0\u0022,\r\n",
-        "        \u0022clientId\u0022: \u00225f28c26d-10a3-4c57-b651-9e17515fa424\u0022\r\n",
-        "      }\r\n",
-        "    }\r\n",
-        "  },\r\n",
-        "  \u0022location\u0022: \u0022westus\u0022,\r\n",
-        "  \u0022tags\u0022: {\r\n",
-        "    \u0022key1\u0022: \u0022value1\u0022\r\n",
-        "  },\r\n",
-        "  \u0022properties\u0022: {\r\n",
-        "    \u0022provisioningState\u0022: \u0022Failed\u0022,\r\n",
-        "    \u0022azPowerShellVersion\u0022: \u00223.0\u0022,\r\n",
-        "    \u0022scriptContent\u0022: \u0022Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\u0027test\u0027] = \u0027value\u0027 Get-AzResourceGroup -Location $Location -Name $Name\u0022,\r\n",
-        "    \u0022arguments\u0022: \u0022-Location \u0027westus\u0027 -Name \\\u0022*rg2\\\u0022\u0022,\r\n",
-        "    \u0022retentionInterval\u0022: \u0022P1DT2H\u0022,\r\n",
-        "    \u0022timeout\u0022: \u0022PT30M\u0022,\r\n",
-        "    \u0022containerSettings\u0022: {},\r\n",
-        "    \u0022status\u0022: {\r\n",
-        "      \u0022startTime\u0022: \u00222021-11-26T05:59:21.7692795Z\u0022,\r\n",
-        "      \u0022endTime\u0022: \u00222021-11-26T05:59:22.8728804Z\u0022,\r\n",
-        "      \u0022expirationTime\u0022: \u00222021-11-27T07:59:22.8728804Z\u0022,\r\n",
-        "      \u0022error\u0022: {\r\n",
-        "        \u0022code\u0022: \u0022DeploymentScriptOperationFailed\u0022,\r\n",
-        "        \u0022message\u0022: \u0022The client \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 with object id \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials.\u0022\r\n",
-        "      }\r\n",
-        "    },\r\n",
-        "    \u0022cleanupPreference\u0022: \u0022Always\u0022\r\n",
-        "  },\r\n",
-        "  \u0022systemData\u0022: {\r\n",
-        "    \u0022createdBy\u0022: \u0022a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0022,\r\n",
-        "    \u0022createdByType\u0022: \u0022Application\u0022,\r\n",
-        "    \u0022createdAt\u0022: \u00222021-11-26T05:58:02.7902487Z\u0022,\r\n",
-        "    \u0022lastModifiedBy\u0022: \u0022a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0022,\r\n",
-        "    \u0022lastModifiedByType\u0022: \u0022Application\u0022,\r\n",
-        "    \u0022lastModifiedAt\u0022: \u00222021-11-26T05:59:25.3466523Z\u0022\r\n",
-        "  },\r\n",
-        "  \u0022id\u0022: \u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\u0022,\r\n",
-        "  \u0022type\u0022: \u0022Microsoft.Resources/deploymentScripts\u0022,\r\n",
-        "  \u0022name\u0022: \u0022scripttest\u0022\r\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "kind": "AzurePowerShell",
+        "identity": {
+          "type": "userAssigned",
+          "tenantId": "00000000-0000-0000-0000-000000000000",
+          "userAssignedIdentities": {
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai": {
+              "principalId": "f2b0eee5-5c6f-4584-9506-59ef4efcf4d5",
+              "clientId": "e33b87a6-d355-4d29-85a9-86c17721e4cf"
+            }
+          }
+        },
+        "location": "westus",
+        "tags": {
+          "key1": "value1"
+        },
+        "properties": {
+          "provisioningState": "Failed",
+          "azPowerShellVersion": "3.0",
+          "scriptContent": "Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\u0027test\u0027] = \u0027value\u0027 Get-AzResourceGroup -Location $Location -Name $Name",
+          "arguments": "-Location \u0027westus\u0027 -Name \u0022*rg2\u0022",
+          "retentionInterval": "P1DT2H",
+          "timeout": "PT30M",
+          "containerSettings": {},
+          "status": {
+            "startTime": "2022-04-19T03:15:39.5280418Z",
+            "endTime": "2022-04-19T03:15:40.3561605Z",
+            "expirationTime": "2022-04-20T05:15:40.3561605Z",
+            "error": {
+              "code": "DeploymentScriptOperationFailed",
+              "message": "The client \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 with object id \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials."
+            }
+          },
+          "cleanupPreference": "Always"
+        },
+        "systemData": {
+          "createdBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "createdByType": "Application",
+          "createdAt": "2022-04-19T03:14:22.925378Z",
+          "lastModifiedBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2022-04-19T03:15:43.4097788Z"
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest",
+        "type": "Microsoft.Resources/deploymentScripts",
+        "name": "scripttest"
+      }
     },
     {
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview",
@@ -509,10 +492,8 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "03ab1d1a-4e7e-11ec-861e-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -520,7 +501,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:59:27 GMT",
+        "Date": "Tue, 19 Apr 2022 03:15:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -528,60 +509,57 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "be3715ad-fca9-4829-bb36-0f200273faf4",
+        "x-ms-correlation-request-id": "7059018e-139d-4d73-854b-e8863871808a",
         "x-ms-ratelimit-remaining-subscription-reads": "11996",
-        "x-ms-request-id": "dd5f808c-f5bd-43cc-9880-0efdb44d3007",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055927Z:be3715ad-fca9-4829-bb36-0f200273faf4"
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031544Z:7059018e-139d-4d73-854b-e8863871808a"
       },
-      "ResponseBody": [
-        "{\r\n",
-        "  \u0022kind\u0022: \u0022AzurePowerShell\u0022,\r\n",
-        "  \u0022identity\u0022: {\r\n",
-        "    \u0022type\u0022: \u0022userAssigned\u0022,\r\n",
-        "    \u0022tenantId\u0022: \u002200000000-0000-0000-0000-000000000000\u0022,\r\n",
-        "    \u0022userAssignedIdentities\u0022: {\r\n",
-        "      \u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai\u0022: {\r\n",
-        "        \u0022principalId\u0022: \u002207a49957-fd51-4e4d-9048-ba0625d3e0a0\u0022,\r\n",
-        "        \u0022clientId\u0022: \u00225f28c26d-10a3-4c57-b651-9e17515fa424\u0022\r\n",
-        "      }\r\n",
-        "    }\r\n",
-        "  },\r\n",
-        "  \u0022location\u0022: \u0022westus\u0022,\r\n",
-        "  \u0022tags\u0022: {\r\n",
-        "    \u0022key1\u0022: \u0022value1\u0022\r\n",
-        "  },\r\n",
-        "  \u0022properties\u0022: {\r\n",
-        "    \u0022provisioningState\u0022: \u0022Failed\u0022,\r\n",
-        "    \u0022azPowerShellVersion\u0022: \u00223.0\u0022,\r\n",
-        "    \u0022scriptContent\u0022: \u0022Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\u0027test\u0027] = \u0027value\u0027 Get-AzResourceGroup -Location $Location -Name $Name\u0022,\r\n",
-        "    \u0022arguments\u0022: \u0022-Location \u0027westus\u0027 -Name \\\u0022*rg2\\\u0022\u0022,\r\n",
-        "    \u0022retentionInterval\u0022: \u0022P1DT2H\u0022,\r\n",
-        "    \u0022timeout\u0022: \u0022PT30M\u0022,\r\n",
-        "    \u0022containerSettings\u0022: {},\r\n",
-        "    \u0022status\u0022: {\r\n",
-        "      \u0022startTime\u0022: \u00222021-11-26T05:59:21.7692795Z\u0022,\r\n",
-        "      \u0022endTime\u0022: \u00222021-11-26T05:59:22.8728804Z\u0022,\r\n",
-        "      \u0022expirationTime\u0022: \u00222021-11-27T07:59:22.8728804Z\u0022,\r\n",
-        "      \u0022error\u0022: {\r\n",
-        "        \u0022code\u0022: \u0022DeploymentScriptOperationFailed\u0022,\r\n",
-        "        \u0022message\u0022: \u0022The client \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 with object id \u002707a49957-fd51-4e4d-9048-ba0625d3e0a0\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials.\u0022\r\n",
-        "      }\r\n",
-        "    },\r\n",
-        "    \u0022cleanupPreference\u0022: \u0022Always\u0022\r\n",
-        "  },\r\n",
-        "  \u0022systemData\u0022: {\r\n",
-        "    \u0022createdBy\u0022: \u0022a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0022,\r\n",
-        "    \u0022createdByType\u0022: \u0022Application\u0022,\r\n",
-        "    \u0022createdAt\u0022: \u00222021-11-26T05:58:02.7902487Z\u0022,\r\n",
-        "    \u0022lastModifiedBy\u0022: \u0022a2df54d5-ab03-4725-9b80-9a00b3b1967f\u0022,\r\n",
-        "    \u0022lastModifiedByType\u0022: \u0022Application\u0022,\r\n",
-        "    \u0022lastModifiedAt\u0022: \u00222021-11-26T05:59:25.3466523Z\u0022\r\n",
-        "  },\r\n",
-        "  \u0022id\u0022: \u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest\u0022,\r\n",
-        "  \u0022type\u0022: \u0022Microsoft.Resources/deploymentScripts\u0022,\r\n",
-        "  \u0022name\u0022: \u0022scripttest\u0022\r\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "kind": "AzurePowerShell",
+        "identity": {
+          "type": "userAssigned",
+          "tenantId": "00000000-0000-0000-0000-000000000000",
+          "userAssignedIdentities": {
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai": {
+              "principalId": "f2b0eee5-5c6f-4584-9506-59ef4efcf4d5",
+              "clientId": "e33b87a6-d355-4d29-85a9-86c17721e4cf"
+            }
+          }
+        },
+        "location": "westus",
+        "tags": {
+          "key1": "value1"
+        },
+        "properties": {
+          "provisioningState": "Failed",
+          "azPowerShellVersion": "3.0",
+          "scriptContent": "Param([string]$Location,[string]$Name) $deploymentScriptOutputs[\u0027test\u0027] = \u0027value\u0027 Get-AzResourceGroup -Location $Location -Name $Name",
+          "arguments": "-Location \u0027westus\u0027 -Name \u0022*rg2\u0022",
+          "retentionInterval": "P1DT2H",
+          "timeout": "PT30M",
+          "containerSettings": {},
+          "status": {
+            "startTime": "2022-04-19T03:15:39.5280418Z",
+            "endTime": "2022-04-19T03:15:40.3561605Z",
+            "expirationTime": "2022-04-20T05:15:40.3561605Z",
+            "error": {
+              "code": "DeploymentScriptOperationFailed",
+              "message": "The client \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 with object id \u0027f2b0eee5-5c6f-4584-9506-59ef4efcf4d5\u0027 does not have authorization to perform action \u0027Microsoft.Resources/subscriptions/providers/read\u0027 over scope \u0027/subscriptions/00000000-0000-0000-0000-000000000000\u0027 or the scope is invalid. If access was recently granted, please refresh your credentials."
+            }
+          },
+          "cleanupPreference": "Always"
+        },
+        "systemData": {
+          "createdBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "createdByType": "Application",
+          "createdAt": "2022-04-19T03:14:22.925378Z",
+          "lastModifiedBy": "8c41a920-007a-4844-a189-2d0efe39f51e",
+          "lastModifiedByType": "Application",
+          "lastModifiedAt": "2022-04-19T03:15:43.4097788Z"
+        },
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest",
+        "type": "Microsoft.Resources/deploymentScripts",
+        "name": "scripttest"
+      }
     },
     {
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default?api-version=2019-10-01-preview",
@@ -589,10 +567,8 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "03d3ed0c-4e7e-11ec-b1c2-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -600,7 +576,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:59:27 GMT",
+        "Date": "Tue, 19 Apr 2022 03:15:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -608,19 +584,16 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "7470c07c-4336-426c-8b80-64ee6276bbe1",
+        "x-ms-correlation-request-id": "8e7e6d8e-7e11-47e2-a6c3-0b967b673af6",
         "x-ms-ratelimit-remaining-subscription-reads": "11995",
-        "x-ms-request-id": "e8cba5ec-05a7-4923-8318-a51182fca3cd",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055928Z:7470c07c-4336-426c-8b80-64ee6276bbe1"
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031544Z:8e7e6d8e-7e11-47e2-a6c3-0b967b673af6"
       },
-      "ResponseBody": [
-        "{\r\n",
-        "  \u0022properties\u0022: {},\r\n",
-        "  \u0022id\u0022: \u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default\u0022,\r\n",
-        "  \u0022type\u0022: \u0022Microsoft.Resources/deploymentScripts/logs\u0022,\r\n",
-        "  \u0022name\u0022: \u0022default\u0022\r\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "properties": {},
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default",
+        "type": "Microsoft.Resources/deploymentScripts/logs",
+        "name": "default"
+      }
     },
     {
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs?api-version=2019-10-01-preview",
@@ -628,10 +601,8 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "0407a2a8-4e7e-11ec-9d37-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -639,7 +610,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 05:59:28 GMT",
+        "Date": "Tue, 19 Apr 2022 03:15:45 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -647,23 +618,20 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "5ca25026-fc41-4c8e-bacd-5a1c837ea1ea",
+        "x-ms-correlation-request-id": "9c19eb7f-a653-4209-bdfb-b0afa108e159",
         "x-ms-ratelimit-remaining-subscription-reads": "11994",
-        "x-ms-request-id": "1a5f88d8-2c5e-40d9-bf50-de2d2d882494",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055928Z:5ca25026-fc41-4c8e-bacd-5a1c837ea1ea"
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031545Z:9c19eb7f-a653-4209-bdfb-b0afa108e159"
       },
-      "ResponseBody": [
-        "{\r\n",
-        "  \u0022value\u0022: [\r\n",
-        "    {\r\n",
-        "      \u0022properties\u0022: {},\r\n",
-        "      \u0022id\u0022: \u0022/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default\u0022,\r\n",
-        "      \u0022type\u0022: \u0022Microsoft.Resources/deploymentScripts/logs\u0022,\r\n",
-        "      \u0022name\u0022: \u0022default\u0022\r\n",
-        "    }\r\n",
-        "  ]\r\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "value": [
+          {
+            "properties": {},
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest/logs/default",
+            "type": "Microsoft.Resources/deploymentScripts/logs",
+            "name": "default"
+          }
+        ]
+      }
     },
     {
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Resources/deploymentScripts/scripttest?api-version=2019-10-01-preview",
@@ -671,27 +639,24 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "04323c54-4e7e-11ec-8f7b-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 26 Nov 2021 05:59:35 GMT",
+        "Date": "Tue, 19 Apr 2022 03:15:51 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "973e1e29-1111-4610-bb65-e1e7f221a614",
-        "x-ms-ratelimit-remaining-subscription-deletes": "14998",
-        "x-ms-request-id": "949a9500-30fb-447b-818a-0abe14100c72",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T055935Z:973e1e29-1111-4610-bb65-e1e7f221a614"
+        "x-ms-correlation-request-id": "7a1e8b87-0095-4ade-b891-178b92db043a",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14999",
+        "x-ms-routing-request-id": "NORTHCENTRALUS:20220419T031551Z:7a1e8b87-0095-4ade-b891-178b92db043a"
       },
       "ResponseBody": null
     }

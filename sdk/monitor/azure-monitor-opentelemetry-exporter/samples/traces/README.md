@@ -6,14 +6,16 @@ products:
   - azure-monitor
 ---
 
-# Microsoft Azure Monitor Opentelemetry Exporter Python Samples
+# Microsoft Azure Monitor Opentelemetry Exporter Trace Python Samples
 
 These code samples show common champion scenario operations with the AzureMonitorTraceExporter.
 
 * Azure Service Bus Send: [sample_servicebus_send.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_servicebus_send.py)
 * Azure Service Bus Receive: [sample_servicebus_receive.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_servicebus_receive.py)
-* Azure Storage Blob Create Container: [sample_storage.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_storage.py)
+* Azure Storage Blob Create Container: [sample_storage_blob.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_storage_blob.py)
+* Azure CosmosDb Create Db/Container: [sample_cosmos.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_cosmos.py)
 * Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_client.py)
+* Event: [sample_span_event.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_span_event.py)
 * Jaeger: [sample_jaeger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_jaeger.py)
 * Trace: [sample_trace.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_trace.py)
 * Server: [sample_server.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_server.py)
@@ -47,6 +49,17 @@ $ python sample_trace.py
 $ pip install opentelemetry-instrumentation-requests
 $ # from this directory
 $ python sample_request.py
+```
+
+### Span Event
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # from this directory
+$ python sample_span_event.py
 ```
 
 ### Server
@@ -158,7 +171,7 @@ $ python sample_servicebus_receive.py
 
 ### Azure Storage Blob Create Container
 
-The following sample assumes that you have setup an Azure Service Bus [namespace](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal).
+The following sample assumes that you have setup Azure Blob [storage](https://docs.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `AZURE_STORAGE_CONNECTION_STRING` environment variable
@@ -172,7 +185,26 @@ $ pip install azure-storage-blob
 $ # azure sdk core tracing library for opentelemetry
 $ pip install azure-core-tracing-opentelemetry
 $ # from this directory
-$ python sample_storage.py
+$ python sample_storage_blob.py
+```
+
+### Azure CosmosDb Create Db/Container
+
+The following sample assumes that you have setup Azure CosmosDb [account](https://docs.microsoft.com/azure/cosmos-db/sql/create-cosmosdb-resources-portal).
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+* Update `ACCOUNT_URI` environment variable
+* Update `ACCOUNT_KEY` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-storage-blob library
+$ pip install azure-cosmos
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_cosmos.py
 ```
 
 ## Explore the data

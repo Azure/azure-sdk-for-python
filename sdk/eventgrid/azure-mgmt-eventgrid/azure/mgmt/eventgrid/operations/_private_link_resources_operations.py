@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -20,27 +20,21 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    parent_type,  # type: str
-    parent_name,  # type: str
-    private_link_resource_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    parent_type: str,
+    parent_name: str,
+    private_link_resource_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateLinkResources/{privateLinkResourceName}')
@@ -72,17 +66,16 @@ def build_get_request(
 
 
 def build_list_by_resource_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    parent_type,  # type: str
-    parent_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    parent_type: str,
+    parent_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateLinkResources')
@@ -115,7 +108,6 @@ def build_list_by_resource_request(
         **kwargs
     )
 
-# fmt: on
 class PrivateLinkResourcesOperations(object):
     """PrivateLinkResourcesOperations operations.
 
@@ -141,24 +133,23 @@ class PrivateLinkResourcesOperations(object):
     @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        parent_type,  # type: str
-        parent_name,  # type: str
-        private_link_resource_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PrivateLinkResource"
+        resource_group_name: str,
+        parent_type: str,
+        parent_name: str,
+        private_link_resource_name: str,
+        **kwargs: Any
+    ) -> "_models.PrivateLinkResource":
         """Get a private link resource.
 
         Get properties of a private link resource.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
         :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_link_resource_name: The name of private link resource.
         :type private_link_resource_name: str
@@ -205,25 +196,24 @@ class PrivateLinkResourcesOperations(object):
     @distributed_trace
     def list_by_resource(
         self,
-        resource_group_name,  # type: str
-        parent_type,  # type: str
-        parent_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.PrivateLinkResourcesListResult"]
-        """List private link resources under specific topic or domain.
+        resource_group_name: str,
+        parent_type: str,
+        parent_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.PrivateLinkResourcesListResult"]:
+        """List private link resources under specific topic, domain, or partner namespace.
 
-        List all the private link resources under a topic or domain.
+        List all the private link resources under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
         :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These

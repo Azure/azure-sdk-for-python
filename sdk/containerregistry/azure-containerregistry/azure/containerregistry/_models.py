@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any, List
 
@@ -200,6 +201,14 @@ class RepositoryProperties(object):
             can_list=self.can_list,
         )
 
+    def __getattr__(self, name):
+        if name == "last_udpated_on":
+            warnings.warn(
+                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", # pylint: disable=line-too-long
+                DeprecationWarning)
+            return self.last_updated_on
+        return super().__getattr__(self, name) # pylint: disable=no-member
+
     @property
     def created_on(self):
         # type: () -> datetime
@@ -303,7 +312,7 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class ArtifactArchitecture(str, Enum):
+class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     AMD64 = "amd64"
     ARM = "arm"
@@ -320,7 +329,7 @@ class ArtifactArchitecture(str, Enum):
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum):
+class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     AIX = "aix"
     ANDROID = "android"

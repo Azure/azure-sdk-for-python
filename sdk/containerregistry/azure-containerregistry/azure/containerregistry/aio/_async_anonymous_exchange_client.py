@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AnonymousACRExchangeClient(object):
+class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint

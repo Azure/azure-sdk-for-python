@@ -21,9 +21,9 @@ from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._error import (
     _process_table_error,
-    _validate_table_name,
     _reraise_error,
-    _decode_error
+    _decode_error,
+    _validate_tablename_error
 )
 from ._generated.models import (
     SignedIdentifier,
@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 
-class TableClient(TablesBaseClient):
+class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -77,7 +77,6 @@ class TableClient(TablesBaseClient):
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
-        _validate_table_name(table_name)
         self.table_name = table_name
         super(TableClient, self).__init__(endpoint, **kwargs)
 
@@ -182,7 +181,7 @@ class TableClient(TablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
         for identifier in cast(List[SignedIdentifier], identifiers):
             if identifier.access_policy:
@@ -227,7 +226,7 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             try:
-                _process_table_error(error)
+                _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as table_error:
                 if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
                 and len(signed_identifiers) > 5):
@@ -261,7 +260,7 @@ class TableClient(TablesBaseClient):
         try:
             result = self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace
@@ -290,7 +289,7 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
 
     @overload
     def delete_entity(self, partition_key, row_key, **kwargs):
@@ -367,7 +366,7 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
 
     @distributed_trace
     def create_entity(
@@ -408,6 +407,7 @@ class TableClient(TablesBaseClient):
                     raise ValueError("PartitionKey must be present in an entity")
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
+            _validate_tablename_error(decoded, self.table_name)
             _reraise_error(error)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
@@ -483,7 +483,7 @@ class TableClient(TablesBaseClient):
             else:
                 raise ValueError("Mode type '{}' is not supported.".format(mode))
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
@@ -612,7 +612,7 @@ class TableClient(TablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _convert_to_entity(entity)
 
     @distributed_trace
@@ -674,7 +674,7 @@ class TableClient(TablesBaseClient):
                     )
                 )
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     def submit_transaction(
@@ -725,4 +725,4 @@ class TableClient(TablesBaseClient):
                 "The value of 'operations' must be an iterator "
                 "of Tuples. Please check documentation for correct Tuple format."
             )
-        return self._batch_send(*batched_requests.requests, **kwargs)  # type: ignore
+        return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
