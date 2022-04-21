@@ -18,7 +18,6 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
 
 
     def __init__(self, method_name):
-        os.environ["COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING"] = "endpoint=https://e2e_test.communication.azure.com/;accesskey=qGUv+J0z5Xv8TtjC0qZhy34sodSOMKG5HS7NfsjhqxaB/ZP4UnuS4FspWPo3JowuqAb+75COGi4ErREkB76/UQ=="
         os.environ["AZURE_TEST_RUN_LIVE"] = "True"
 
         super(TestSipRoutingClientE2E, self).__init__(method_name)
@@ -80,11 +79,10 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
 
         try:
             self._sip_routing_client.replace_trunks(new_trunks)
+            result_trunks = self._sip_routing_client.get_trunks()
         except Exception as e:
             raised = True
             ex = str(e)
-
-        result_trunks = self._sip_routing_client.get_trunks()
 
         assert raised is False, "Exception:" + ex + " was thrown."
         assert result_trunks is not None, "No trunks were returned."
@@ -105,22 +103,6 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         assert raised is False, "Exception:" + ex + " was thrown."
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes)
-
-    def test_delete_route(self):
-        raised = False
-        route_to_delete = self.ROUTES[0].name
-        self._sip_routing_client.replace_routes(self.ROUTES)
-
-        try:
-            self._sip_routing_client.delete_route(route_to_delete)
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        new_routes = self._sip_routing_client.get_routes()
-
-        assert raised is False, "Exception:" + ex + " was thrown."
-        self._routes_are_equal(new_routes,[])
 
     def test_delete_trunk(self):
         raised = False
@@ -151,21 +133,32 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
 
         assert raised is False, "Exception:" + ex + " was thrown."
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],self.TRUNKS[1],new_trunk])
-        
-    def test_add_route(self):
+
+    def test_get_trunk(self):
         raised = False
-        new_route = SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])
-        
         try:
-            self._sip_routing_client.set_route(self.ROUTES[0])
-            self._sip_routing_client.set_route(new_route)
-            new_routes = self._sip_routing_client.get_routes()
+            trunk = self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
         except Exception as e:
             raised = True
             ex = str(e)
 
         assert raised is False, "Exception:" + ex + " was thrown."
-        self._routes_are_equal(new_routes,[self.ROUTES[0],new_route])
+        assert trunk is not None, "No trunk was returned."
+        trunk == self.TRUNKS[0]
+
+    def test_set_trunk(self):
+        raised = False
+        modified_trunk = SipTrunk(fqdn=self.TRUNKS[1].fqdn,sip_signaling_port=7777)
+        try:
+            self._sip_routing_client.set_trunk(modified_trunk)
+
+        except Exception as e:
+            raised = True
+            ex = str(e)
+
+        new_trunks = self._sip_routing_client.get_trunks()
+        assert raised is False, "Exception:" + ex + " was thrown."
+        self._trunks_are_equal(new_trunks,[self.TRUNKS[0],modified_trunk])
 
     def _trunks_are_equal(self, response_trunks, request_trunks):
         assert len(response_trunks) == len(request_trunks), "Trunks have different length."

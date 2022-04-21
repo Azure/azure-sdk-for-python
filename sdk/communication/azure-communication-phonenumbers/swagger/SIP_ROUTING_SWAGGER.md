@@ -53,15 +53,6 @@ directive:
     delete $.SipConfigurationPatch
 ```
 
-### Remove required attribute from Trunk, to be able to use it instead of TrunkPatch
-``` yaml
-directive:
-  from: swagger-document
-  where: $.definitions.Trunk
-  transform: >
-    delete $.required;
-```
-
 ### Directive renaming "Trunk" model to "SipTrunkInternal"
 ``` yaml
 directive:

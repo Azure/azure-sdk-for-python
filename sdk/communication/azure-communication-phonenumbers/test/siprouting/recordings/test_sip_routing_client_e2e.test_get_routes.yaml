@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 15 Feb 2022 15:46:46 GMT
+      - Wed, 20 Apr 2022 12:07:15 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -23,17 +23,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Feb 2022 15:46:46 GMT
+      - Wed, 20 Apr 2022 12:07:15 GMT
       ms-cv:
-      - 9xqE5ajmu06sNE+jfEbgMQ.0
-      request-context:
-      - appId=
+      - Wgf2JDjPdkuWPp7dXXPHDw.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 276ms
+      - 255ms
     status:
       code: 200
       message: OK
@@ -51,7 +51,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Tue, 15 Feb 2022 15:46:47 GMT
+      - Wed, 20 Apr 2022 12:07:16 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -65,17 +65,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Feb 2022 15:46:47 GMT
+      - Wed, 20 Apr 2022 12:07:15 GMT
       ms-cv:
-      - dNtB18LnukaFHEp3p7zu+g.0
-      request-context:
-      - appId=
+      - Pn7zWkCa1kWmhBiHMTlO4g.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 481ms
+      - 315ms
     status:
       code: 200
       message: OK
@@ -89,7 +89,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 15 Feb 2022 15:46:48 GMT
+      - Wed, 20 Apr 2022 12:07:16 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -103,17 +103,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Feb 2022 15:46:47 GMT
+      - Wed, 20 Apr 2022 12:07:16 GMT
       ms-cv:
-      - XQYgVxHHb0mgeJDSTrHHUg.0
-      request-context:
-      - appId=
+      - kIl2O7d0sEeNa1a6znzCWQ.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 268ms
+      - 180ms
     status:
       code: 200
       message: OK
@@ -131,7 +131,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Tue, 15 Feb 2022 15:46:48 GMT
+      - Wed, 20 Apr 2022 12:07:16 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -145,17 +145,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Feb 2022 15:46:48 GMT
+      - Wed, 20 Apr 2022 12:07:16 GMT
       ms-cv:
-      - WAJ9Z6LOykCPOB9VwXCVrA.0
-      request-context:
-      - appId=
+      - 4XjmccgpXEqIamlKJNju2w.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 604ms
+      - 360ms
     status:
       code: 200
       message: OK
@@ -174,7 +174,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Tue, 15 Feb 2022 15:46:49 GMT
+      - Wed, 20 Apr 2022 12:07:17 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -188,17 +188,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Feb 2022 15:46:49 GMT
+      - Wed, 20 Apr 2022 12:07:18 GMT
       ms-cv:
-      - NDrs2LTYg0av6dgBX8mJPA.0
-      request-context:
-      - appId=
+      - DXGyzIk1L06Dl4z1QzcASA.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 841ms
+      - 1011ms
     status:
       code: 200
       message: OK
@@ -212,7 +212,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 15 Feb 2022 15:46:50 GMT
+      - Wed, 20 Apr 2022 12:07:19 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -226,17 +226,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Feb 2022 15:46:49 GMT
+      - Wed, 20 Apr 2022 12:07:18 GMT
       ms-cv:
-      - FkFG5lia4UGkgP2lSZtJLw.0
-      request-context:
-      - appId=
+      - Js2iOBkrwUWsDn934x+IzQ.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 275ms
+      - 254ms
     status:
       code: 200
       message: OK
@@ -255,7 +255,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Tue, 15 Feb 2022 15:46:50 GMT
+      - Wed, 20 Apr 2022 12:07:19 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -270,17 +270,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Feb 2022 15:46:50 GMT
+      - Wed, 20 Apr 2022 12:07:19 GMT
       ms-cv:
-      - Vm3KzRR7dEqU1bFUcqHHjw.0
-      request-context:
-      - appId=
+      - Qr+oq7rpE0WbrnGSn5cDzw.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 308ms
+      - 283ms
     status:
       code: 200
       message: OK
@@ -294,7 +294,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 15 Feb 2022 15:46:51 GMT
+      - Wed, 20 Apr 2022 12:07:20 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -309,17 +309,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Feb 2022 15:46:50 GMT
+      - Wed, 20 Apr 2022 12:07:19 GMT
       ms-cv:
-      - BH+1OAk8P0ecPGjNN9FDJQ.0
-      request-context:
-      - appId=
+      - jVtE8syEzUySHZ5EEKRgFg.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 239ms
+      - 243ms
     status:
       code: 200
       message: OK

@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class CommunicationError(msrest.serialization.Model):
@@ -88,7 +92,7 @@ class CommunicationErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: "CommunicationError",
+        error: "_models.CommunicationError",
         **kwargs
     ):
         """
@@ -121,8 +125,8 @@ Call is then directed into route's first available trunk, based on the order in 
     def __init__(
         self,
         *,
-        trunks: Optional[Dict[str, "SipTrunkInternal"]] = None,
-        routes: Optional[List["SipTrunkRoute"]] = None,
+        trunks: Optional[Dict[str, "_models.SipTrunkInternal"]] = None,
+        routes: Optional[List["_models.SipTrunkRoute"]] = None,
         **kwargs
     ):
         """
@@ -141,9 +145,15 @@ Call is then directed into route's first available trunk, based on the order in 
 class SipTrunkInternal(msrest.serialization.Model):
     """Represents a SIP trunk for routing calls. See RFC 4904.
 
-    :ivar sip_signaling_port: Gets or sets SIP signaling port of the trunk.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar sip_signaling_port: Required. Gets or sets SIP signaling port of the trunk.
     :vartype sip_signaling_port: int
     """
+
+    _validation = {
+        'sip_signaling_port': {'required': True},
+    }
 
     _attribute_map = {
         'sip_signaling_port': {'key': 'sipSignalingPort', 'type': 'int'},
@@ -152,11 +162,11 @@ class SipTrunkInternal(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sip_signaling_port: Optional[int] = None,
+        sip_signaling_port: int,
         **kwargs
     ):
         """
-        :keyword sip_signaling_port: Gets or sets SIP signaling port of the trunk.
+        :keyword sip_signaling_port: Required. Gets or sets SIP signaling port of the trunk.
         :paramtype sip_signaling_port: int
         """
         super(SipTrunkInternal, self).__init__(**kwargs)

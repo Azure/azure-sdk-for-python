@@ -19,10 +19,6 @@ from ._generated.models import (
     PhoneNumberType,
 )
 
-from .siprouting._sip_routing_client import SipRoutingClient
-from .siprouting._models import SipTrunk
-from .siprouting._generated.models import SipTrunkRoute
-
 __all__ = [
     'PurchasedPhoneNumber',
     'PhoneNumberCapabilities',
@@ -32,8 +28,5 @@ __all__ = [
     'PhoneNumberAssignmentType',
     'PhoneNumberCapabilityType',
     'PhoneNumberType',
-    'PhoneNumbersClient',
-    'SipRoutingClient',
-    'SipTrunk',
-    'SipTrunkRoute'
+    'PhoneNumbersClient'
 ]

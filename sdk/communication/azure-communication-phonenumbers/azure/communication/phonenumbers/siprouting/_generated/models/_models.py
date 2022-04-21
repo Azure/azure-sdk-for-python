@@ -131,9 +131,15 @@ Call is then directed into route's first available trunk, based on the order in 
 class SipTrunkInternal(msrest.serialization.Model):
     """Represents a SIP trunk for routing calls. See RFC 4904.
 
-    :ivar sip_signaling_port: Gets or sets SIP signaling port of the trunk.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar sip_signaling_port: Required. Gets or sets SIP signaling port of the trunk.
     :vartype sip_signaling_port: int
     """
+
+    _validation = {
+        'sip_signaling_port': {'required': True},
+    }
 
     _attribute_map = {
         'sip_signaling_port': {'key': 'sipSignalingPort', 'type': 'int'},
@@ -144,11 +150,11 @@ class SipTrunkInternal(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword sip_signaling_port: Gets or sets SIP signaling port of the trunk.
+        :keyword sip_signaling_port: Required. Gets or sets SIP signaling port of the trunk.
         :paramtype sip_signaling_port: int
         """
         super(SipTrunkInternal, self).__init__(**kwargs)
-        self.sip_signaling_port = kwargs.get('sip_signaling_port', None)
+        self.sip_signaling_port = kwargs['sip_signaling_port']
 
 
 class SipTrunkRoute(msrest.serialization.Model):

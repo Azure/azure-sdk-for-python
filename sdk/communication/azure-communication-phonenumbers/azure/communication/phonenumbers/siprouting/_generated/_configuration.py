@@ -17,15 +17,17 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class SIPRoutingServiceConfiguration(Configuration):
+class SIPRoutingServiceConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for SIPRoutingService.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The communication resource, for example https://resourcename.communication.azure.com.
+    :param endpoint: The communication resource, for example
+     https://resourcename.communication.azure.com.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2021-05-01-preview". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-05-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
