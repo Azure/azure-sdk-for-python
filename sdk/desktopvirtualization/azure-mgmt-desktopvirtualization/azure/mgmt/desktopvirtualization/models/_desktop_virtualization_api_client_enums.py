@@ -6,41 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ApplicationGroupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationGroupType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Resource Type of ApplicationGroup.
     """
 
     REMOTE_APP = "RemoteApp"
     DESKTOP = "Desktop"
 
-class ApplicationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Application type of application.
     """
 
     REMOTE_APP = "RemoteApp"
     DESKTOP = "Desktop"
 
-class CommandLineSetting(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CommandLineSetting(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether this published application can be launched with command line arguments
     provided by the client, command line arguments specified at publish time, or no command line
     arguments at all.
@@ -50,7 +35,7 @@ class CommandLineSetting(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALLOW = "Allow"
     REQUIRE = "Require"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
 
@@ -59,7 +44,19 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class HealthCheckName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Day of the week.
+    """
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
+
+class HealthCheckName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents the name of the health check operation performed.
     """
 
@@ -115,7 +112,7 @@ class HealthCheckName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: end-users.
     APP_ATTACH_HEALTH_CHECK = "AppAttachHealthCheck"
 
-class HealthCheckResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HealthCheckResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents the Health state of the health check we performed.
     """
 
@@ -128,7 +125,17 @@ class HealthCheckResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: We received a Shutdown notification.
     SESSION_HOST_SHUTDOWN = "SessionHostShutdown"
 
-class HostPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HostpoolPublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enabled allows this resource to be accessed from both public and private networks, Disabled
+    allows this resource to only be accessed via private endpoints
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    ENABLED_FOR_SESSION_HOSTS_ONLY = "EnabledForSessionHostsOnly"
+    ENABLED_FOR_CLIENTS_ONLY = "EnabledForClientsOnly"
+
+class HostPoolType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """HostPool type for desktop.
     """
 
@@ -142,7 +149,7 @@ class HostPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: PersonalDesktopAssignmentType must be Direct.
     BYO_DESKTOP = "BYODesktop"
 
-class LoadBalancerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LoadBalancerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the load balancer.
     """
 
@@ -150,7 +157,7 @@ class LoadBalancerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEPTH_FIRST = "DepthFirst"
     PERSISTENT = "Persistent"
 
-class Operation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Operation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of operation for migration.
     """
 
@@ -165,14 +172,14 @@ class Operation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Unhide the hostpool.
     UNHIDE = "Unhide"
 
-class PersonalDesktopAssignmentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PersonalDesktopAssignmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """PersonalDesktopAssignment type for HostPool.
     """
 
     AUTOMATIC = "Automatic"
     DIRECT = "Direct"
 
-class PreferredAppGroupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PreferredAppGroupType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of preferred application group type, default to Desktop Application Group
     """
 
@@ -180,7 +187,7 @@ class PreferredAppGroupType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     DESKTOP = "Desktop"
     RAIL_APPLICATIONS = "RailApplications"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current provisioning state.
     """
 
@@ -189,7 +196,7 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitive
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The private endpoint connection status.
     """
 
@@ -197,7 +204,7 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnum
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
-class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enabled allows this resource to be accessed from both public and private networks, Disabled
     allows this resource to only be accessed via private endpoints
     """
@@ -205,7 +212,7 @@ class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class RegistrationTokenOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RegistrationTokenOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of resetting the token.
     """
 
@@ -213,21 +220,21 @@ class RegistrationTokenOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     NONE = "None"
     UPDATE = "Update"
 
-class RemoteApplicationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RemoteApplicationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Resource Type of Application.
     """
 
     IN_BUILT = "InBuilt"
     MSIX_APPLICATION = "MsixApplication"
 
-class ScalingHostPoolType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScalingHostPoolType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """HostPool type for desktop.
     """
 
     #: Users get a new (random) SessionHost every time it connects to the HostPool.
     POOLED = "Pooled"
 
-class ScalingScheduleDaysOfWeekItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ScalingScheduleDaysOfWeekItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SUNDAY = "Sunday"
     MONDAY = "Monday"
@@ -237,14 +244,23 @@ class ScalingScheduleDaysOfWeekItem(with_metaclass(_CaseInsensitiveEnumMeta, str
     FRIDAY = "Friday"
     SATURDAY = "Saturday"
 
-class SessionHostLoadBalancingAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SessionHostComponentUpdateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of maintenance for session host components.
+    """
+
+    #: Agent and other agent side components are delivery schedule is controlled by WVD Infra.
+    DEFAULT = "Default"
+    #: TenantAdmin have opted in for Scheduled Component Update feature.
+    SCHEDULED = "Scheduled"
+
+class SessionHostLoadBalancingAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Load balancing algorithm for ramp up period.
     """
 
     BREADTH_FIRST = "BreadthFirst"
     DEPTH_FIRST = "DepthFirst"
 
-class SessionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SessionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State of user session.
     """
 
@@ -255,7 +271,7 @@ class SessionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOG_OFF = "LogOff"
     USER_PROFILE_DISK_MOUNTED = "UserProfileDiskMounted"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
     """
@@ -265,7 +281,7 @@ class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class SSOSecretType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SSOSecretType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of single sign on Secret Type.
     """
 
@@ -274,7 +290,7 @@ class SSOSecretType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SHARED_KEY_IN_KEY_VAULT = "SharedKeyInKeyVault"
     CERTIFICATE_IN_KEY_VAULT = "CertificateInKeyVault"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status for a SessionHost.
     """
 
@@ -309,14 +325,14 @@ class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: connections might not fail, as these issues are not fatal.
     NEEDS_ASSISTANCE = "NeedsAssistance"
 
-class StopHostsWhen(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StopHostsWhen(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies when to stop hosts during ramp down period.
     """
 
     ZERO_SESSIONS = "ZeroSessions"
     ZERO_ACTIVE_SESSIONS = "ZeroActiveSessions"
 
-class UpdateState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UpdateState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Update state of a SessionHost.
     """
 
