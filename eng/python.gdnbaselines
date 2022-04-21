@@ -24,22 +24,6 @@
       "expirationDate": null,
       "type": null
     },
-    "dddcb70bc3d03b820b40ec33582bf683f570c9a8e4015d4245fab8d06da7a073": {
-      "signature": "dddcb70bc3d03b820b40ec33582bf683f570c9a8e4015d4245fab8d06da7a073",
-      "alternativeSignatures": [
-        "4ce59db802719a37a7d88cb8de7afb38ac863ec3c954366347324a5d50245095"
-      ],
-      "target": "sdk/botservice/azure-mgmt-botservice/tests/test_mgmt_botservice_channels.py",
-      "memberOf": [
-        "baseline"
-      ],
-      "tool": "credscan",
-      "ruleId": "CSCAN-GENERAL0060",
-      "justification": null,
-      "createdDate": "2022-02-18 01:42:17Z",
-      "expirationDate": null,
-      "type": null
-    },
     "c39a345f3bcb986c72e33811d0947f0300c287b717b922def73e785c2ee32d35": {
       "signature": "c39a345f3bcb986c72e33811d0947f0300c287b717b922def73e785c2ee32d35",
       "alternativeSignatures": [
@@ -109,7 +93,7 @@
       "alternativeSignatures": [
         "6ffa4ddd18d57ae7e5333b748cffe147fd9e591bf3d1ee3eb744d273f81f5d50"
       ],
-      "target": "sdk/hdinsight/azure-mgmt-hdinsight/test/test_mgmt_hdinsight.py",
+      "target": "sdk/hdinsight/azure-mgmt-hdinsight/test/disable_test_mgmt_hdinsight.py",
       "memberOf": [
         "baseline"
       ],
