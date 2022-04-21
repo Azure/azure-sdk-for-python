@@ -59,7 +59,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
         immutability_policy_expiry = None if immutability_policy is None else immutability_policy.expiry_time
         immutability_policy_mode = None if immutability_policy is None else immutability_policy.policy_mode
         legal_hold = kwargs.pop('legal_hold', None)
-        progress_callback = kwargs.pop('progress_callback', None)
+        progress_hook = kwargs.pop('progress_hook', None)
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
@@ -88,8 +88,8 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 legal_hold=legal_hold,
                 **kwargs)
 
-            if progress_callback:
-                progress_callback(adjusted_count, adjusted_count)
+            if progress_hook:
+                progress_hook(adjusted_count, adjusted_count)
 
             return response
 
@@ -114,7 +114,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 stream=stream,
                 validate_content=validate_content,
                 encryption_options=encryption_options,
-                progress_callback=progress_callback,
+                progress_hook=progress_hook,
                 headers=headers,
                 **kwargs
             )
@@ -127,7 +127,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
-                progress_callback=progress_callback,
+                progress_hook=progress_hook,
                 headers=headers,
                 **kwargs
             )
@@ -183,7 +183,7 @@ async def upload_page_blob(
         if encryption_options and encryption_options.get('data'):
             headers['x-ms-meta-encryptiondata'] = encryption_options['data']
         blob_tags_string = kwargs.pop('blob_tags_string', None)
-        progress_callback = kwargs.pop('progress_callback', None)
+        progress_hook = kwargs.pop('progress_hook', None)
 
         response = await client.create(
             content_length=0,
@@ -207,7 +207,7 @@ async def upload_page_blob(
             max_concurrency=max_concurrency,
             validate_content=validate_content,
             encryption_options=encryption_options,
-            progress_callback=progress_callback,
+            progress_hook=progress_hook,
             headers=headers,
             **kwargs)
 
@@ -239,7 +239,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
             max_size=kwargs.pop('maxsize_condition', None),
             append_position=None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
-        progress_callback = kwargs.pop('progress_callback', None)
+        progress_hook = kwargs.pop('progress_hook', None)
 
         try:
             if overwrite:
@@ -258,7 +258,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
-                progress_callback=progress_callback,
+                progress_hook=progress_hook,
                 headers=headers,
                 **kwargs)
         except HttpResponseError as error:
@@ -287,7 +287,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
-                progress_callback=progress_callback,
+                progress_hook=progress_hook,
                 headers=headers,
                 **kwargs)
     except HttpResponseError as error:

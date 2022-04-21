@@ -2152,7 +2152,7 @@ class StoragePageBlobTest(StorageTestCase):
             blob_type=BlobType.PageBlob,
             overwrite=True,
             max_concurrency=1,
-            progress_callback=progress.assert_progress)
+            progress_hook=progress.assert_progress)
 
         # Assert
         progress.assert_complete()
@@ -2181,7 +2181,7 @@ class StoragePageBlobTest(StorageTestCase):
             blob_type=BlobType.PageBlob,
             overwrite=True,
             max_concurrency=3,
-            progress_callback=progress.assert_progress)
+            progress_hook=progress.assert_progress)
 
         # Assert
         progress.assert_complete()

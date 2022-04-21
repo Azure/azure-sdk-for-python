@@ -1396,7 +1396,7 @@ class StorageBlockBlobTest(StorageTestCase):
             blob_type=BlobType.BlockBlob,
             overwrite=True,
             max_concurrency=1,
-            progress_callback=progress.assert_progress)
+            progress_hook=progress.assert_progress)
 
         # Assert
         progress.assert_complete()
@@ -1421,7 +1421,7 @@ class StorageBlockBlobTest(StorageTestCase):
             blob_type=BlobType.BlockBlob,
             overwrite=True,
             max_concurrency=1,
-            progress_callback=progress.assert_progress)
+            progress_hook=progress.assert_progress)
 
         # Assert
         progress.assert_complete()
@@ -1448,7 +1448,7 @@ class StorageBlockBlobTest(StorageTestCase):
             blob_type=BlobType.BlockBlob,
             overwrite=True,
             max_concurrency=3,
-            progress_callback=progress.assert_progress)
+            progress_hook=progress.assert_progress)
 
         # Assert
         progress.assert_complete()
@@ -1476,7 +1476,7 @@ class StorageBlockBlobTest(StorageTestCase):
             blob_type=BlobType.BlockBlob,
             overwrite=True,
             max_concurrency=3,
-            progress_callback=progress.assert_progress)
+            progress_hook=progress.assert_progress)
 
         # Assert
         progress.assert_complete()

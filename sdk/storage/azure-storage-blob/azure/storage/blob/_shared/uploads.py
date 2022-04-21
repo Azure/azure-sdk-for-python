@@ -53,7 +53,7 @@ def upload_data_chunks(
         stream=None,
         validate_content=None,
         encryption_options=None,
-        progress_callback=None,
+        progress_hook=None,
         **kwargs):
 
     if encryption_options:
@@ -76,7 +76,7 @@ def upload_data_chunks(
         stream=stream,
         parallel=parallel,
         validate_content=validate_content,
-        progress_callback=progress_callback,
+        progress_hook=progress_hook,
         **kwargs)
     if parallel:
         with futures.ThreadPoolExecutor(max_concurrency) as executor:
@@ -100,7 +100,7 @@ def upload_substream_blocks(
         chunk_size=None,
         max_concurrency=None,
         stream=None,
-        progress_callback=None,
+        progress_hook=None,
         **kwargs):
     parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:
@@ -112,7 +112,7 @@ def upload_substream_blocks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
-        progress_callback=progress_callback,
+        progress_hook=progress_hook,
         **kwargs)
 
     if parallel:
@@ -140,7 +140,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             parallel,
             encryptor=None,
             padder=None,
-            progress_callback=None,
+            progress_hook=None,
             **kwargs):
         self.service = service
         self.total_size = total_size
@@ -155,7 +155,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         # Progress feedback
         self.progress_total = 0
         self.progress_lock = Lock() if parallel else None
-        self.progress_callback = progress_callback
+        self.progress_hook = progress_hook
 
         # Encryption
         self.encryptor = encryptor
@@ -214,8 +214,8 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             self.progress_total += length
 
         # TODO Should this be inside the lock?
-        if self.progress_callback:
-            self.progress_callback(self.progress_total, self.total_size)
+        if self.progress_hook:
+            self.progress_hook(self.progress_total, self.total_size)
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         raise NotImplementedError("Must be implemented by child class.")
