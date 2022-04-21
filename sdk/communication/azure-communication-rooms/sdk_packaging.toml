@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-communication-rooms"
+package_pprint_name = "Azure Communication Rooms"
+package_doc_id = ""
+is_stable = false
+is_arm = false
