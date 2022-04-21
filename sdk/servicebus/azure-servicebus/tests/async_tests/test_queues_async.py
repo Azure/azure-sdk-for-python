@@ -147,7 +147,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     while len(received_msgs) < 5:
                         # issue link credits more than 5, client should consume 5 msgs from the service in total,
                         # leaving the extra credits on the wire
-                        for msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=5)):
+                        for msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=10)):
                             await receiver.complete_message(msg)
                             received_msgs.append(received_msgs)
                     assert len(received_msgs) == 5
@@ -161,7 +161,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     while len(received_msgs) < target_msgs_count:
                         # issue 10 link credits, client should consume 5 msgs from the service, leaving no link credits
                         for msg in (await receiver.receive_messages(max_message_count=target_msgs_count - len(received_msgs),
-                                                             max_wait_time=5)):
+                                                             max_wait_time=10)):
                             assert msg.delivery_count == 0  # release would not increase delivery count
                             await receiver.complete_message(msg)
                             received_msgs.append(msg)
@@ -187,7 +187,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
                             while len(received_msgs) < 4:  # there supposed to be 5 msgs in the queue
                                 # we issue 10 link credits, leaving more credits on the wire
-                                for sub_msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=5)):
+                                for sub_msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=10)):
                                     assert sub_msg.delivery_count == 0
                                     await receiver.complete_message(sub_msg)
                                     received_msgs.append(sub_msg)
@@ -249,7 +249,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     while len(received_msgs) < 5:
                         # issue 10 link credits, client should consume 5 msgs from the service
                         # leaving 5 credits on the wire
-                        for msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=5)):
+                        for msg in (await receiver.receive_messages(max_message_count=10, max_wait_time=10)):
                             await receiver.complete_message(msg)
                             received_msgs.append(msg)
                     assert len(received_msgs) == 5
@@ -262,7 +262,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     target_msgs_count = 5
                     received_msgs = []
                     while len(received_msgs) < target_msgs_count:
-                        received_msgs.extend((await receiver.receive_messages(max_message_count=5, max_wait_time=5)))
+                        received_msgs.extend((await receiver.receive_messages(max_message_count=5, max_wait_time=10)))
                     assert len(received_msgs) == 5
                     for msg in received_msgs:
                         assert msg.delivery_count == 0
@@ -273,7 +273,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     target_msgs_count = 5
                     received_msgs = []
                     while len(received_msgs) < target_msgs_count:
-                        received_msgs.extend((await receiver.receive_messages(max_message_count=5, max_wait_time=5)))
+                        received_msgs.extend((await receiver.receive_messages(max_message_count=5, max_wait_time=10)))
                     assert len(received_msgs) == 5
                     for msg in received_msgs:
                         assert msg.delivery_count > 0

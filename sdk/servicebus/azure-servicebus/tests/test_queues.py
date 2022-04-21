@@ -1249,7 +1249,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             renewer = AutoLockRenewer(max_lock_renewal_duration=10)
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                                 max_wait_time=5, 
+                                                 max_wait_time=10,
                                                  receive_mode=ServiceBusReceiveMode.PEEK_LOCK, 
                                                  prefetch_count=10,
                                                  auto_lock_renewer=renewer) as receiver:
