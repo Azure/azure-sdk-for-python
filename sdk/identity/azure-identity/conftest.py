@@ -7,7 +7,7 @@ import sys
 
 import pytest
 import six
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, is_live
+from devtools_testutils import test_proxy, add_general_regex_sanitizer, is_live, add_body_key_sanitizer
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
 RECORD_IMDS = "--record-imds"
@@ -184,4 +184,5 @@ def add_sanitizers(test_proxy):
     if "OBO_TENANT_ID" in os.environ and "OBO_USERNAME" in os.environ:
         add_general_regex_sanitizer(regex=os.environ["OBO_TENANT_ID"], value="tenant")
         add_general_regex_sanitizer(regex=os.environ["OBO_USERNAME"], value="username")
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
 
