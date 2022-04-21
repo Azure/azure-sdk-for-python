@@ -1,0 +1,163 @@
+{
+    "chosen_version": "",
+    "total_api_version_list": ["2015-10-31", "2018-06-30", "2019-06-01", "2020-01-13-preview", "2021-06-22"],
+    "client": {
+        "name": "AutomationClient",
+        "filename": "_automation_client",
+        "description": "Automation Client.",
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AutomationClientConfiguration\"], \"._operations_mixin\": [\"AutomationClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AutomationClientConfiguration\"], \"._operations_mixin\": [\"AutomationClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "python2_package": "Python2PackageOperations",
+        "agent_registration_information": "AgentRegistrationInformationOperations",
+        "dsc_node": "DscNodeOperations",
+        "node_reports": "NodeReportsOperations",
+        "dsc_node_configuration": "DscNodeConfigurationOperations",
+        "dsc_compilation_job": "DscCompilationJobOperations",
+        "dsc_compilation_job_stream": "DscCompilationJobStreamOperations",
+        "node_count_information": "NodeCountInformationOperations",
+        "source_control": "SourceControlOperations",
+        "source_control_sync_job": "SourceControlSyncJobOperations",
+        "source_control_sync_job_streams": "SourceControlSyncJobStreamsOperations",
+        "automation_account": "AutomationAccountOperations",
+        "statistics": "StatisticsOperations",
+        "usages": "UsagesOperations",
+        "keys": "KeysOperations",
+        "certificate": "CertificateOperations",
+        "connection": "ConnectionOperations",
+        "connection_type": "ConnectionTypeOperations",
+        "credential": "CredentialOperations",
+        "hybrid_runbook_worker_group": "HybridRunbookWorkerGroupOperations",
+        "job_schedule": "JobScheduleOperations",
+        "linked_workspace": "LinkedWorkspaceOperations",
+        "activity": "ActivityOperations",
+        "module": "ModuleOperations",
+        "object_data_types": "ObjectDataTypesOperations",
+        "fields": "FieldsOperations",
+        "schedule": "ScheduleOperations",
+        "variable": "VariableOperations",
+        "watcher": "WatcherOperations",
+        "dsc_configuration": "DscConfigurationOperations",
+        "job": "JobOperations",
+        "job_stream": "JobStreamOperations",
+        "operations": "Operations",
+        "software_update_configurations": "SoftwareUpdateConfigurationsOperations",
+        "software_update_configuration_runs": "SoftwareUpdateConfigurationRunsOperations",
+        "software_update_configuration_machine_runs": "SoftwareUpdateConfigurationMachineRunsOperations",
+        "runbook_draft": "RunbookDraftOperations",
+        "runbook": "RunbookOperations",
+        "test_job_streams": "TestJobStreamsOperations",
+        "test_job": "TestJobOperations",
+        "webhook": "WebhookOperations",
+        "hybrid_runbook_workers": "HybridRunbookWorkersOperations"
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "operations": {
+            "convert_graph_runbook_content" : {
+                "sync": {
+                    "signature": "def convert_graph_runbook_content(\n    self,\n    resource_group_name,  # type: str\n    automation_account_name,  # type: str\n    parameters,  # type: \"_models.GraphicalRunbookContent\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.GraphicalRunbookContent\"\n",
+                    "doc": "\"\"\"Post operation to serialize or deserialize GraphRunbookContent.\n\n:param resource_group_name: Name of an Azure Resource group.\n:type resource_group_name: str\n:param automation_account_name: The name of the automation account.\n:type automation_account_name: str\n:param parameters: Input data describing the graphical runbook.\n:type parameters: ~azure.mgmt.automation.models.GraphicalRunbookContent\n:keyword api_version: Api Version. Default value is \"2021-06-22\". Note that overriding this\n default value may result in unsupported behavior.\n:paramtype api_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: GraphicalRunbookContent, or the result of cls(response)\n:rtype: ~azure.mgmt.automation.models.GraphicalRunbookContent\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def convert_graph_runbook_content(\n    self,\n    resource_group_name: str,\n    automation_account_name: str,\n    parameters: \"_models.GraphicalRunbookContent\",\n    **kwargs: Any\n) -\u003e \"_models.GraphicalRunbookContent\":\n",
+                    "doc": "\"\"\"Post operation to serialize or deserialize GraphRunbookContent.\n\n:param resource_group_name: Name of an Azure Resource group.\n:type resource_group_name: str\n:param automation_account_name: The name of the automation account.\n:type automation_account_name: str\n:param parameters: Input data describing the graphical runbook.\n:type parameters: ~azure.mgmt.automation.models.GraphicalRunbookContent\n:keyword api_version: Api Version. Default value is \"2021-06-22\". Note that overriding this\n default value may result in unsupported behavior.\n:paramtype api_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: GraphicalRunbookContent, or the result of cls(response)\n:rtype: ~azure.mgmt.automation.models.GraphicalRunbookContent\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, automation_account_name, parameters"
+            }
+        }
+    }
+}
