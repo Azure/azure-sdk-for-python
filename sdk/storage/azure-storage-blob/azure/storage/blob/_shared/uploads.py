@@ -213,7 +213,6 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         else:
             self.progress_total += length
 
-        # TODO Should this be inside the lock?
         if self.progress_hook:
             self.progress_hook(self.progress_total, self.total_size)
 

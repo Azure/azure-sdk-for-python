@@ -368,7 +368,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Defaults to UTF-8.
         :keyword Callable[[int, Optional[int]], None] progress_hook:
             A callback to track the progress of a long running upload. The signature is
-            function(current: int, total: int) where current is the number of bytes transfered
+            function(current: int, total: Optional[int]) where current is the number of bytes transfered
             so far, and total is the size of the blob or None if the size is unknown.
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
