@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 
 import os
+import pytest
+
 from .._shared.testcase import CommunicationTestCase
 from .._shared.uri_replacer_processor import URIReplacerProcessor
 from .._shared.utils import create_token_credential, get_http_logging_policy
@@ -12,13 +14,16 @@ from .._shared.utils import create_token_credential, get_http_logging_policy
 from azure.communication.phonenumbers.siprouting import SipRoutingClient, SipTrunk, SipTrunkRoute
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
+SKIP_TOKEN_AUTHENTICATION_TESTS = os.getenv("AZURE_TEST_RUN_LIVE", "false") == "false"
+SKIP_TOKEN_AUTHENTICATION_TESTS_REASON = "Authentication tests are run only with live tests."
+    
 class TestSipRoutingClientE2E(CommunicationTestCase):
     TRUNKS = [SipTrunk(fqdn="sbs1.sipconfigtest.com", sip_signaling_port=1122), SipTrunk(fqdn="sbs2.sipconfigtest.com", sip_signaling_port=1123)]
     ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=["sbs1.sipconfigtest.com"])]
 
-
     def __init__(self, method_name):
         os.environ["AZURE_TEST_RUN_LIVE"] = "True"
+        os.environ["COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING"] = "endpoint=https://e2e_test.communication.azure.com/;accesskey=qGUv+J0z5Xv8TtjC0qZhy34sodSOMKG5HS7NfsjhqxaB/ZP4UnuS4FspWPo3JowuqAb+75COGi4ErREkB76/UQ=="
 
         super(TestSipRoutingClientE2E, self).__init__(method_name)
         
@@ -59,6 +64,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES)
 
+    @pytest.mark.skipif(SKIP_TOKEN_AUTHENTICATION_TESTS, reason=SKIP_TOKEN_AUTHENTICATION_TESTS_REASON)
     def test_retrieval_with_token_auth(self):
         raised = False
         endpoint, access_key = parse_connection_str(self.connection_str)
@@ -91,17 +97,17 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
     def test_replace_routes(self):
         raised = False
         new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
-        self._sip_routing_client.replace_routes(self.ROUTES)
 
         try:
-            routes = self._sip_routing_client.replace_routes(new_routes)
+            self._sip_routing_client.replace_routes(self.ROUTES)
+            self._sip_routing_client.replace_routes(new_routes)
             result_routes = self._sip_routing_client.get_routes()
         except Exception as e:
             raised = True
             ex = str(e)
 
         assert raised is False, "Exception:" + ex + " was thrown."
-        assert routes is not None, "No routes were returned."
+        assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes)
 
     def test_delete_trunk(self):

@@ -6,21 +6,27 @@
 
 import os
 import asyncio
+import pytest
+
 from .._shared.asynctestcase import AsyncCommunicationTestCase
 from .._shared.uri_replacer_processor import URIReplacerProcessor
-from .._shared.utils import get_http_logging_policy
+from .._shared.utils import create_token_credential, get_http_logging_policy
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting._generated.models import SipTrunkRoute
 from azure.communication.phonenumbers.siprouting._models import SipTrunk
+from azure.communication.phonenumbers._shared.utils import parse_connection_str
+
+SKIP_TOKEN_AUTHENTICATION_TESTS = os.getenv("AZURE_TEST_RUN_LIVE", "false") == "false"
+SKIP_TOKEN_AUTHENTICATION_TESTS_REASON = "Authentication tests are run only with live tests."
 
 class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
     TRUNKS = [SipTrunk(fqdn="sbs1.sipconfigtest.com", sip_signaling_port=1122), SipTrunk(fqdn="sbs2.sipconfigtest.com", sip_signaling_port=1123)]
     ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=["sbs1.sipconfigtest.com"])]
 
-
     def __init__(self, method_name):
         os.environ["AZURE_TEST_RUN_LIVE"] = "True"
+        os.environ["COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING"] = "endpoint=https://e2e_test.communication.azure.com/;accesskey=qGUv+J0z5Xv8TtjC0qZhy34sodSOMKG5HS7NfsjhqxaB/ZP4UnuS4FspWPo3JowuqAb+75COGi4ErREkB76/UQ=="
 
         super(TestSipRoutingClientE2EAsync, self).__init__(method_name)
         
@@ -67,6 +73,21 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES), "Routes are not equal."
 
+    @pytest.mark.skipif(SKIP_TOKEN_AUTHENTICATION_TESTS, reason=SKIP_TOKEN_AUTHENTICATION_TESTS_REASON)
+    async def test_retrieval_with_token_auth(self):
+        raised = False
+        endpoint, access_key = parse_connection_str(self.connection_str)
+        credential = create_token_credential()
+        client = SipRoutingClient(endpoint, credential)
+        
+        try:
+            await client.get_routes()
+        except Exception as e:
+            raised = True
+            ex = str(e)
+
+        assert raised is False, "Exception" + ex + " was thrown"
+
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_replace_trunks(self):
         raised = False
@@ -90,14 +111,14 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
 
         try:
             await self._sip_routing_client.replace_routes(self.ROUTES)
-            routes = await self._sip_routing_client.replace_routes(new_routes)
+            await self._sip_routing_client.replace_routes(new_routes)
             result_routes = await self._sip_routing_client.get_routes()
         except Exception as e:
             raised = True
             ex = str(e)
 
         assert raised is False, "Exception:" + ex + " was thrown."
-        assert routes is not None, "No routes were returned."
+        assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes), "Routes are not equal."
 
     @AsyncCommunicationTestCase.await_prepared_test
@@ -132,29 +153,31 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],self.TRUNKS[1],new_trunk])
     
     @AsyncCommunicationTestCase.await_prepared_test
-    def test_get_trunk(self):
+    async def test_get_trunk(self):
         raised = False
+
         try:
-            trunk = self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
+            trunk = await self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
         except Exception as e:
             raised = True
             ex = str(e)
 
         assert raised is False, "Exception:" + ex + " was thrown."
         assert trunk is not None, "No trunk was returned."
-        trunk == self.TRUNKS[0]
+        self._trunks_are_equal([trunk],[self.TRUNKS[0]]), "Returned trunk does not match the required trunk."
 
     @AsyncCommunicationTestCase.await_prepared_test
-    def test_set_trunk(self):
+    async def test_set_trunk(self):
         raised = False
-        modified_trunk = SipTrunk(self.TRUNKS[1].fqdn,7777)
+        modified_trunk = SipTrunk(fqdn=self.TRUNKS[1].fqdn,sip_signaling_port=7777)
+
         try:
-            self._sip_routing_client.set_trunk(modified_trunk)
+            await self._sip_routing_client.set_trunk(modified_trunk)
         except Exception as e:
             raised = True
             ex = str(e)
 
-        new_trunks = self._sip_routing_client.get_trunks()
+        new_trunks = await self._sip_routing_client.get_trunks()
         assert raised is False, "Exception:" + ex + " was thrown."
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],modified_trunk])
 

@@ -1,34 +1,5 @@
 interactions:
 - request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      Date:
-      - Tue, 15 Feb 2022 15:45:03 GMT
-      User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
-  response:
-    body:
-      string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[{"description":"Handle
-        numbers starting with ''+999''","name":"Alternative rule","numberPattern":"\\+999[0-9]+","trunks":["sbs2.sipconfigtest.com"]}]}'
-    headers:
-      content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:03 GMT
-      ms-cv: QnUfgfJtcEqdZfL+70yfqw.0
-      request-context: appId=
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 232ms
-    status:
-      code: 200
-      message: OK
-    url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
-- request:
     body: '{"routes": []}'
     headers:
       Accept:
@@ -37,10 +8,10 @@ interactions:
       - '14'
       Content-Type:
       - application/merge-patch+json
-      Date:
-      - Tue, 15 Feb 2022 15:45:04 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 21 Apr 2022 11:40:23 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -50,12 +21,12 @@ interactions:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:03 GMT
-      ms-cv: YOD/uVfgYk6Ocm2iTqDykw.0
-      request-context: appId=
+      date: Thu, 21 Apr 2022 11:40:24 GMT
+      ms-cv: QV45ActpokCR7fhbMGwy3w.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 283ms
+      x-processing-time: 295ms
     status:
       code: 200
       message: OK
@@ -65,10 +36,10 @@ interactions:
     headers:
       Accept:
       - application/json
-      Date:
-      - Tue, 15 Feb 2022 15:45:04 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 21 Apr 2022 11:40:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -78,12 +49,12 @@ interactions:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:03 GMT
-      ms-cv: 80Hq42bOxU2/wrk6TjQywA.0
-      request-context: appId=
+      date: Thu, 21 Apr 2022 11:40:24 GMT
+      ms-cv: OBTt63HrHkm8AtmVxGHb6Q.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 152ms
+      x-processing-time: 289ms
     status:
       code: 200
       message: OK
@@ -97,10 +68,10 @@ interactions:
       - '76'
       Content-Type:
       - application/merge-patch+json
-      Date:
-      - Tue, 15 Feb 2022 15:45:04 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 21 Apr 2022 11:40:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -110,12 +81,12 @@ interactions:
       string: '{"trunks":{},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:04 GMT
-      ms-cv: mAHgw5M/lkqdyffjUuZQag.0
-      request-context: appId=
+      date: Thu, 21 Apr 2022 11:40:25 GMT
+      ms-cv: bdHY7tRv/02YI/VueIqQAA.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 393ms
+      x-processing-time: 405ms
     status:
       code: 200
       message: OK
@@ -130,10 +101,10 @@ interactions:
       - '120'
       Content-Type:
       - application/merge-patch+json
-      Date:
-      - Tue, 15 Feb 2022 15:45:05 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 21 Apr 2022 11:40:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -143,12 +114,12 @@ interactions:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:05 GMT
-      ms-cv: AIK8fRAbSkmFi8prVopndA.0
-      request-context: appId=
+      date: Thu, 21 Apr 2022 11:40:25 GMT
+      ms-cv: lQKxajk1yUeMLbKSzTPtBA.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 1063ms
+      x-processing-time: 805ms
     status:
       code: 200
       message: OK
@@ -158,10 +129,10 @@ interactions:
     headers:
       Accept:
       - application/json
-      Date:
-      - Tue, 15 Feb 2022 15:45:06 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 21 Apr 2022 11:40:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -171,12 +142,12 @@ interactions:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:05 GMT
-      ms-cv: kU9BlkXQo0OLuIMLt/TDOg.0
-      request-context: appId=
+      date: Thu, 21 Apr 2022 11:40:26 GMT
+      ms-cv: j+A/r5nqUEubP3PAJzY5ew.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 172ms
+      x-processing-time: 140ms
     status:
       code: 200
       message: OK
@@ -190,10 +161,10 @@ interactions:
       - '76'
       Content-Type:
       - application/merge-patch+json
-      Date:
-      - Tue, 15 Feb 2022 15:45:06 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 21 Apr 2022 11:40:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -203,12 +174,12 @@ interactions:
       string: '{"trunks":{},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:06 GMT
-      ms-cv: mRKQ75fde0G9kKsJKDKh4w.0
-      request-context: appId=
+      date: Thu, 21 Apr 2022 11:40:26 GMT
+      ms-cv: 7Cmh0nWZXEuEOuIXqJwGug.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 370ms
+      x-processing-time: 322ms
     status:
       code: 200
       message: OK
@@ -222,10 +193,10 @@ interactions:
       - '66'
       Content-Type:
       - application/merge-patch+json
-      Date:
-      - Tue, 15 Feb 2022 15:45:07 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 21 Apr 2022 11:40:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -235,12 +206,12 @@ interactions:
       string: '{"trunks":{"sbs3.sipconfigtest.com":{"sipSignalingPort":2222}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:07 GMT
-      ms-cv: 0EnS5EjLt06dvIdVIkJvcg.0
-      request-context: appId=
+      date: Thu, 21 Apr 2022 11:40:27 GMT
+      ms-cv: wembppJqnkuB6flgX1zl8g.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 868ms
+      x-processing-time: 740ms
     status:
       code: 200
       message: OK
@@ -250,10 +221,10 @@ interactions:
     headers:
       Accept:
       - application/json
-      Date:
-      - Tue, 15 Feb 2022 15:45:08 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Thu, 21 Apr 2022 11:40:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -263,12 +234,12 @@ interactions:
       string: '{"trunks":{"sbs3.sipconfigtest.com":{"sipSignalingPort":2222}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:45:07 GMT
-      ms-cv: 6nAX4cy20E2SrwoCyUma2A.0
-      request-context: appId=
+      date: Thu, 21 Apr 2022 11:40:27 GMT
+      ms-cv: aq94Qv2OZUq6jx2fK4eFIg.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 145ms
+      x-processing-time: 173ms
     status:
       code: 200
       message: OK

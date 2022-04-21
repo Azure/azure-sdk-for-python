@@ -112,7 +112,7 @@ class SipRoutingClient(object):
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        config = self._rest_service.get_sip_configuration(
+        config = await self._rest_service.get_sip_configuration(
             **kwargs)
         trunk = config.trunks[trunk_fqdn]
 
