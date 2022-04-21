@@ -39,12 +39,16 @@ class SipRoutingClient(object):
     :type endpoint: str
     :param credential: The credentials with which to authenticate.
     :type credential: TokenCredential
+    :keyword api_version: Api Version. Default value is "2021-05-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
         endpoint,  # type: str
         credential,  # type: TokenCredential
+        api_version="2021-05-01-preview", # type: str
         **kwargs  # type: Any
     ):  # type: (...) -> SipRoutingClient
 
@@ -67,6 +71,7 @@ class SipRoutingClient(object):
             self._endpoint,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
+            api_version=api_version,
             **kwargs
         )
 
