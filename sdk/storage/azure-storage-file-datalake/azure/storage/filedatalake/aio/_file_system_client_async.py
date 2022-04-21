@@ -723,8 +723,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
     @distributed_trace_async
     async def delete_files(
         self,
-        *files: Union[str, Dict[str, Any], FileProperties, DirectoryProperties],
-        **kwargs) -> List[Tuple[Union[str, Dict[str, Any], FileProperties, DirectoryProperties], HttpResponseError]]:
+        *files: str,
+        **kwargs) -> List[Tuple[str, HttpResponseError]]:
         """Marks the specified files or empty directories for deletion.
 
         The files/empty directories are later deleted during garbage collection.
@@ -734,29 +734,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         After specified number of days, files' data is removed from the service during garbage collection.
         Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
 
-        :param files:
+        :param str files:
             The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
-            be supplied, where each value is either the name of the file/directory (str) or
-            FileProperties/DirectoryProperties.
+            be supplied, where each value is the name of the file/directory (str).
 
-            .. note::
-                When the file/dir type is dict, here's a list of keys, value rules.
-
-                file/directory name:
-                    key: 'name', value type: str
-                if the file modified or not:
-                    key: 'if_modified_since', 'if_unmodified_since', value type: datetime
-                etag:
-                    key: 'etag', value type: str
-                match the etag or not:
-                    key: 'match_condition', value type: MatchConditions
-                lease:
-                    key: 'lease_id', value type: Union[str, LeaseClient]
-                timeout for subrequest:
-                    key: 'timeout', value type: int
-
-        :paramtype files: str or Dict[str, Any] or ~azure.storage.filedatalake.FileProperties or
-            ~azure.storage.filedatalake.DirectoryProperties
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -775,8 +756,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A list of tuples mapping the input to an error. Empty list if no errors occuured.
-        :rtype: List[Tuple[Union[str, Dict[str, Any], ~azure.storage.filedatalake.FileProperties,
-            ~azure.storage.filedatalake.DirectoryProperties], HttpResponseError]]
+        :rtype: List[Tuple[str, HttpResponseError]]
 
         .. admonition:: Example:
 

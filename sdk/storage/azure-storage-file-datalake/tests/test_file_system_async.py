@@ -839,13 +839,10 @@ class FileSystemTest(StorageTestCase):
             # create file2, then pass file properties in batch delete later
             file2 = filesystem.get_file_client('file2')
             await file2.upload_data(data, overwrite=True)
-            file2_properties = await file2.get_file_properties()
 
             # create file3 and batch delete it later only etag matches this file3 etag
             file3 = filesystem.get_file_client('file3')
             await file3.upload_data(data, overwrite=True)
-            file3_props = await file3.get_file_properties()
-            file3_etag = file3_props.etag
 
             # create dir1
             # empty directory can be deleted using delete_files
@@ -854,7 +851,6 @@ class FileSystemTest(StorageTestCase):
             # create dir2, then pass directory properties in batch delete later
             dir2 = filesystem.get_directory_client('dir2')
             await dir2.create_directory()
-            dir2_properties = await dir2.get_directory_properties()
 
         except:
             pass
@@ -862,10 +858,10 @@ class FileSystemTest(StorageTestCase):
         # Act
         response = await filesystem.delete_files(
             'file1',
-            file2_properties,
-            {'name': 'file3', 'etag': file3_etag},
+            'file2',
+            'file3',
             'dir1',
-            dir2_properties,
+            'dir2',
             raise_on_any_failure=False
         )
 
@@ -886,13 +882,10 @@ class FileSystemTest(StorageTestCase):
             # create file2
             file2 = filesystem.get_file_client('file2')
             await file2.upload_data(data, overwrite=True)
-            file2_properties = await file2.get_file_properties()
 
             # create file3
             file3 = filesystem.get_file_client('file3')
             await file3.upload_data(data, overwrite=True)
-            file3_props = await file3.get_file_properties()
-            file3_etag = file3_props.etag
 
             # create dir1
             dir1 = filesystem.get_directory_client('dir1')
@@ -903,8 +896,8 @@ class FileSystemTest(StorageTestCase):
         # Act
         response = await filesystem.delete_files(
             'file1',
-            file2_properties,
-            {'name': 'file3', 'etag': file3_etag},
+            'file2',
+            'file3',
             'dir1',  # dir1 is not empty
             'dir8',  # dir 8 doesn't exist
             raise_on_any_failure=False
