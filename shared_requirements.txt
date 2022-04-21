@@ -177,7 +177,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.14.0
 #override azure-servicebus typing-extensions>=3.7.4.3
-#override azure-synapse-accesscontrol azure-core>=1.20.0,<2.0.0req
+#override azure-synapse-accesscontrol azure-core>=1.20.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.20.0,<2.0.0
 #override azure-synapse-artifacts azure-core>=1.23.0,<2.0.0
 #override azure-synapse-monitoring azure-core>=1.20.0,<2.0.0
