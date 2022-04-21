@@ -16,7 +16,7 @@ from azure.servicebus._common.utils import utc_now
 
 from devtools_testutils import AzureMgmtRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
-from sb_new_preparer import (
+from sb_env_loader import (
     ServiceBusPreparer
 )
 

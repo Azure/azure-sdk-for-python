@@ -17,7 +17,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
-from sb_new_preparer import (
+from sb_env_loader import (
     ServiceBusPreparer
 )
 
@@ -102,6 +102,7 @@ class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
             await mgmt_service.delete_topic(topic_name)
             await mgmt_service.delete_topic(topic_name_2)
 
+    @pytest.mark.skip("unblock after resolving Cannot upgrade to premium namespace.")
     @ServiceBusPreparer()
     @recorded_by_proxy_async
     async def test_async_mgmt_topic_premium_create_with_topic_description(self, servicebus_connection_str, **kwargs):

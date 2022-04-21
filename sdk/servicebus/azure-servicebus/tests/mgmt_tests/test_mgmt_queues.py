@@ -18,7 +18,7 @@ from azure.core.exceptions import HttpResponseError, ServiceRequestError, Resour
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
-from sb_new_preparer import (
+from sb_env_loader import (
     ServiceBusPreparer
 )
 

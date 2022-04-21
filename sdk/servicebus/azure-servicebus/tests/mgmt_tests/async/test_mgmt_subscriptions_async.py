@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
-from sb_new_preparer import (
+from sb_env_loader import (
     ServiceBusPreparer
 )
 
@@ -146,7 +146,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
             await mgmt_service.delete_topic(topic_name)
 
     @ServiceBusPreparer()
-    @pytest.mark.live_test_only
+    @recorded_by_proxy_async
     async def test_async_mgmt_subscription_update_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
@@ -186,8 +186,8 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
             # assert topic_description.requires_session == True
 
             # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
-            subscription_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
-            subscription_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description.forward_to = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description.forward_dead_lettered_messages_to = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
             await mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
@@ -411,7 +411,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
         await mgmt_service.delete_topic(topic_name)
 
     @ServiceBusPreparer()
-    @pytest.mark.live_test_only
+    @recorded_by_proxy_async
     async def test_mgmt_subscription_async_update_dict_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
@@ -452,8 +452,8 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
             # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
             subscription_description_dict = dict(subscription_description)
-            subscription_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
-            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description_dict["forward_to"] = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
             await mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
             subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.

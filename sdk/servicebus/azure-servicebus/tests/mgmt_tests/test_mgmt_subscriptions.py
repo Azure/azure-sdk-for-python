@@ -13,7 +13,7 @@ from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
-from sb_new_preparer import (
+from sb_env_loader import (
     ServiceBusPreparer
 )
 
@@ -144,7 +144,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.delete_topic(topic_name)
 
     @ServiceBusPreparer()
-    @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_mgmt_subscription_update_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
@@ -184,8 +184,8 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             # assert topic_description.requires_session == True
 
             # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
-            subscription_description.forward_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
-            subscription_description.forward_dead_lettered_messages_to = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description.forward_to = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description.forward_dead_lettered_messages_to = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
             mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
@@ -411,8 +411,10 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             SubscriptionProperties("randomname")
 
     @ServiceBusPreparer()
-    @pytest.mark.live_test_only
-    def test_mgmt_subscription_update_dict_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
+    @recorded_by_proxy
+    def test_mgmt_subscription_update_dict_success(self, **kwargs):
+        servicebus_connection_str = kwargs.pop('servicebus_connection_str')
+        servicebus_fully_qualified_namespace = kwargs.pop('servicebus_fully_qualified_namespace')
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         clear_topics(mgmt_service)
         topic_name = "fjruid"
@@ -452,8 +454,8 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
             # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
             subscription_description_dict = dict(subscription_description)
-            subscription_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
-            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description_dict["forward_to"] = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
+            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}/{}".format(servicebus_fully_qualified_namespace, topic_name)
             mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
