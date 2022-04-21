@@ -93,7 +93,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         # with pytest.raises(ServiceRequestError):
         #     await async_pageable_to_list(mgmt_service.list_queues())
 
-        invalid_conn_str = 'Endpoint=sb://{}.servicebus.windows.net/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'.format(servicebus_fully_qualified_namespace)
+        invalid_conn_str = 'Endpoint=sb://{}/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'.format(servicebus_fully_qualified_namespace)
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(invalid_conn_str)
         with pytest.raises(HttpResponseError):
             await async_pageable_to_list(mgmt_service.list_queues())
@@ -106,7 +106,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         # with pytest.raises(ServiceRequestError):
         #     await async_pageable_to_list(mgmt_service.list_queues())
 
-        fully_qualified_namespace = servicebus_fully_qualified_namespace + '.servicebus.windows.net'
+        fully_qualified_namespace = servicebus_fully_qualified_namespace
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential("invalid", "invalid")

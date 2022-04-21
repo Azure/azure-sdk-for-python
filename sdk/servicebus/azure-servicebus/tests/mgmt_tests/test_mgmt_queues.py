@@ -97,7 +97,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         #     list(mgmt_service.list_queues())
         # TODO: This negative test makes replay test fail. Need more investigation. Live test has no problem.
 
-        invalid_conn_str = 'Endpoint=sb://{}.servicebus.windows.net/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'.format(servicebus_fully_qualified_namespace)
+        invalid_conn_str = 'Endpoint=sb://{}/;SharedAccessKeyName=invalid;SharedAccessKey=invalid'.format(servicebus_fully_qualified_namespace)
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(invalid_conn_str)
         with pytest.raises(HttpResponseError):
             list(mgmt_service.list_queues())
