@@ -1,6 +1,6 @@
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
-with the storage SDK and exporting to Azure monitor backend.
+with the event hub SDK and exporting to Azure monitor backend.
 This example traces calls for sending event data using event hub SDK.
 The telemetry will be collected automatically and sent to Application
 Insights via the AzureMonitorTraceExporter
