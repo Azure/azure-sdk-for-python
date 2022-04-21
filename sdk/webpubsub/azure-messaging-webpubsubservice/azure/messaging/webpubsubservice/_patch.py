@@ -33,7 +33,7 @@ from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
 
-from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
+from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
 from ._operations._patch import _UTC_TZ
 
 

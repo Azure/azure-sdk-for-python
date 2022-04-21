@@ -19,10 +19,10 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
         self.display_name = "this is a test bot"
         self.description= "this is a description for a test bot"
         self.endpoint = "https://bing.com/messages/"
-        self.msa_app_id = "41a220b9-6571-4f0b-bbd2-43f1c1d82f51"
-        self.developer_app_insight_key = '59513bad-10a7-4d41-b4d0-b1c34c6af52a'
-        self.developer_app_insights_api_key = 'w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv2r'
-        self.developer_app_insights_application_id = 'cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b'
+        self.msa_app_id = ""
+        self.developer_app_insight_key = ''
+        self.developer_app_insights_api_key = ''
+        self.developer_app_insights_application_id = ''
 
     def validate_bot_properties(self, bot):
         self.assertEqual(bot.id, '/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.BotService/botServices/{2}'.format(self.client.config.subscription_id,self.resource_group_name,self.resource_name))

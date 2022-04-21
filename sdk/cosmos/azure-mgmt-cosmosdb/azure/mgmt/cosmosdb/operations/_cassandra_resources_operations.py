@@ -35,7 +35,7 @@ def build_list_cassandra_keyspaces_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces')
@@ -71,7 +71,7 @@ def build_get_cassandra_keyspace_request(
     keyspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}')
@@ -113,7 +113,7 @@ def build_create_update_cassandra_keyspace_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}')
@@ -154,7 +154,7 @@ def build_delete_cassandra_keyspace_request_initial(
     keyspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}')
     path_format_arguments = {
@@ -185,7 +185,7 @@ def build_get_cassandra_keyspace_throughput_request(
     keyspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/throughputSettings/default')
@@ -227,7 +227,7 @@ def build_update_cassandra_keyspace_throughput_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/throughputSettings/default')
@@ -268,7 +268,7 @@ def build_migrate_cassandra_keyspace_to_autoscale_request_initial(
     keyspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/throughputSettings/default/migrateToAutoscale')
@@ -305,7 +305,7 @@ def build_migrate_cassandra_keyspace_to_manual_throughput_request_initial(
     keyspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/throughputSettings/default/migrateToManualThroughput')
@@ -342,7 +342,7 @@ def build_list_cassandra_tables_request(
     keyspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables')
@@ -380,7 +380,7 @@ def build_get_cassandra_table_request(
     table_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}')
@@ -424,7 +424,7 @@ def build_create_update_cassandra_table_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}')
@@ -467,7 +467,7 @@ def build_delete_cassandra_table_request_initial(
     table_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}')
     path_format_arguments = {
@@ -500,7 +500,7 @@ def build_get_cassandra_table_throughput_request(
     table_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}/throughputSettings/default')
@@ -544,7 +544,7 @@ def build_update_cassandra_table_throughput_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}/throughputSettings/default')
@@ -587,7 +587,7 @@ def build_migrate_cassandra_table_to_autoscale_request_initial(
     table_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}/throughputSettings/default/migrateToAutoscale')
@@ -626,7 +626,7 @@ def build_migrate_cassandra_table_to_manual_throughput_request_initial(
     table_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}/throughputSettings/default/migrateToManualThroughput')
@@ -664,7 +664,7 @@ def build_list_cassandra_views_request(
     keyspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views')
@@ -702,7 +702,7 @@ def build_get_cassandra_view_request(
     view_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}')
@@ -746,7 +746,7 @@ def build_create_update_cassandra_view_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}')
@@ -789,7 +789,7 @@ def build_delete_cassandra_view_request_initial(
     view_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}')
     path_format_arguments = {
@@ -822,7 +822,7 @@ def build_get_cassandra_view_throughput_request(
     view_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default')
@@ -866,7 +866,7 @@ def build_update_cassandra_view_throughput_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default')
@@ -909,7 +909,7 @@ def build_migrate_cassandra_view_to_autoscale_request_initial(
     view_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default/migrateToAutoscale')
@@ -948,7 +948,7 @@ def build_migrate_cassandra_view_to_manual_throughput_request_initial(
     view_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/views/{viewName}/throughputSettings/default/migrateToManualThroughput')
