@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/dev-cognitiveservices-Language-2022-03-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-03-01-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/preview/2022-03-01-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 namespace: azure.ai.language.conversations
 package-name: azure-ai-language-conversations
@@ -74,4 +74,30 @@ directive:
       where: $["definitions"]["AnswerSpan"]["properties"]["confidenceScore"]
       transform: >
         $["x-ms-client-name"] = "confidence";
+```
+
+### Set default values for ParticipantID, and ConversationID
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]["properties"]["participantId"]
+      transform: >
+        $["x-ms-client-default"] = 1;
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]["properties"]["id"]
+      transform: >
+        $["x-ms-client-default"] = 1;
+```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["CustomConversationTaskParameters"]
+    transform: >
+        delete $.properties["stringIndexType"]
 ```

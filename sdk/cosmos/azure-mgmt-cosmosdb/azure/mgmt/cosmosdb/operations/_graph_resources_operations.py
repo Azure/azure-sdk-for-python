@@ -35,7 +35,7 @@ def build_list_graphs_request(
     account_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs')
@@ -71,7 +71,7 @@ def build_get_graph_request(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}')
@@ -113,7 +113,7 @@ def build_create_update_graph_request_initial(
 ) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}')
@@ -154,7 +154,7 @@ def build_delete_graph_resource_request_initial(
     graph_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-11-15-preview"
+    api_version = "2022-02-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/graphs/{graphName}')
     path_format_arguments = {
