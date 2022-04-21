@@ -14,6 +14,7 @@ These code samples show common champion scenario operations with the AzureMonito
 * Azure Service Bus Receive: [sample_servicebus_receive.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_servicebus_receive.py)
 * Azure Storage Blob Create Container: [sample_storage_blob.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_storage_blob.py)
 * Azure CosmosDb Create Db/Container: [sample_cosmos.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_cosmos.py)
+* Azure EventHub Send EventData: [sample_event_hub.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_event_hub.py)
 * Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_client.py)
 * Event: [sample_span_event.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_span_event.py)
 * Jaeger: [sample_jaeger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_jaeger.py)
@@ -199,8 +200,27 @@ The following sample assumes that you have setup Azure CosmosDb [account](https:
 * Run the sample
 
 ```sh
-$ # azure-storage-blob library
+$ # azure-cosmos library
 $ pip install azure-cosmos
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_cosmos.py
+```
+
+### Azure EventHub Send EventData
+
+The following sample assumes that you have setup an Azure EventHubs namespace and [EventHub](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+* Update `EVENT_HUB_CONN_STR` environment variable
+* Update `EVENT_HUB_NAME` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-eventhub library
+$ pip install azure-eventhub
 $ # azure sdk core tracing library for opentelemetry
 $ pip install azure-core-tracing-opentelemetry
 $ # from this directory
