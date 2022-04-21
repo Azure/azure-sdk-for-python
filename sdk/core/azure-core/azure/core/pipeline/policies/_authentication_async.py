@@ -131,7 +131,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
 
 class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
-    """Adds a bearer token Authorization header to requests, for the tenant provided in authorization challenges.
+    """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
     See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
     authentication challenges.
@@ -139,8 +139,16 @@ class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword bool enable_tenant_discovery: Determines if tenant discovery should be enabled. Defaults to True.
+    :keyword bool enable_scopes_discovery: Determines if scopes from authentication challenges should be provided to
+        token requests, instead of the scopes given to the policy's constructor. Defaults to True.
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
+
+    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any") -> None:
+        self._discover_tenant = kwargs.pop("enable_tenant_discovery", True)
+        self._discover_scopes = kwargs.pop("enable_scopes_discovery", True)
+        super().__init__(credential, *scopes, **kwargs)
 
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Authorize request according to an authentication challenge
@@ -158,5 +166,14 @@ class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         except ValueError:
             return False
 
-        await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+        if self._discover_tenant:
+            await self.authorize_request(
+                request, scope if self._discover_scopes else self._scopes, tenant_id=challenge.tenant_id
+            )
+        else:
+            if self._discover_scopes:
+                await self.authorize_request(request, scope)
+            else:
+                # we can't discover the tenant or use a different scope; the request will fail because it hasn't changed
+                return False
         return True
