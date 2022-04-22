@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._monitor_ingestion_client import MonitorIngestionClient
+from ._client import MonitorIngestionClient
 
 try:
     from ._patch import __all__ as _patch_all
