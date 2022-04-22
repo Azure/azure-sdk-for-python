@@ -81,9 +81,7 @@ class CollectApiVersion:
         packge_pattern = re.compile(b"package-name: (azure-mgmt-.*?)\n")
         for service_path in service_paths:
             try:
-                resource_manager = self.rest_repo.get_contents(
-                    f"{service_path.path}/resource-manager"
-                )
+                resource_manager = self.rest_repo.get_contents(f"{service_path.path}/resource-manager")
             except UnknownObjectException:
                 continue
             package_name, providers, multi_api_readme_python = "", set(), False
@@ -94,25 +92,17 @@ class CollectApiVersion:
                     if b"multiapiscript: true" not in resource.decoded_content:
                         break
                     multi_api_readme_python = True
-                    package_name_line = re.search(
-                        packge_pattern, resource.decoded_content
-                    )
-                    package_name = package_name_line.groups()[0].decode(
-                        encoding="utf-8"
-                    )
+                    package_name_line = re.search(packge_pattern, resource.decoded_content)
+                    package_name = package_name_line.groups()[0].decode(encoding="utf-8")
             if not multi_api_readme_python:
                 continue
             for n in providers:
                 if not self.provider_mapping_package.get(n):
-                    self.provider_mapping_package[n] = {
-                        package_name,
-                    }
+                    self.provider_mapping_package[n] = {package_name, }
                 else:
                     self.provider_mapping_package[n].add(package_name)
 
-    def find_versions_from_json(
-        self, provider: str, version: Dict[str, Any], multi_api_version: Dict
-    ):
+    def find_versions_from_json(self, provider: str, version: Dict[str, Any], multi_api_version: Dict):
         if self.provider_mapping_package.get(provider):
             for p in self.provider_mapping_package.get(provider):
                 if not multi_api_version.get(p):
@@ -127,22 +117,13 @@ class CollectApiVersion:
         git_path = url_path.split("main/")[-1]
         file_paths = self.rest_repo.get_contents(git_path)
         for file in file_paths:
-            file_name, file_contents = (
-                file.name.replace(".md", ""),
-                file.decoded_content,
-            )
-            profiles_content = (
-                str(file_contents).split("profiles:")[1].split("operations:")[0]
-            )
-            profiles_content = (
-                profiles_content.strip(r"\n").strip().replace(r"\n", "\n")
-            )
+            file_name, file_contents = file.name.replace(".md", ""), file.decoded_content
+            profiles_content = str(file_contents).split("profiles:")[1].split("operations:")[0]
+            profiles_content = profiles_content.strip(r"\n").strip().replace(r"\n", "\n")
             # Convert to JSON format
             content_dict = yaml.load(profiles_content, Loader=yaml.FullLoader)
             for provider, version in content_dict[file_name]["resources"].items():
-                self.find_versions_from_json(
-                    provider, version, self.multi_api_version_from_profiles
-                )
+                self.find_versions_from_json(provider, version, self.multi_api_version_from_profiles)
 
     def get_api_version_from_rest_api_profile(self):
         if not self.provider_mapping_package:
@@ -154,20 +135,11 @@ class CollectApiVersion:
         for file in file_paths:
             if ".json" not in file.name:
                 continue
-            file_name, file_contents = (
-                file.name.replace(".json", ""),
-                file.decoded_content,
-            )
+            file_name, file_contents = (file.name.replace(".json", ""), file.decoded_content)
             content_dict = json.loads(file_contents.decode())
-            resource_manager = (
-                "resource-manager"
-                if content_dict.get("resource-manager")
-                else "resourcemanager"
-            )
+            resource_manager = "resource-manager" if content_dict.get("resource-manager") else "resourcemanager"
             for provider, version in content_dict[resource_manager].items():
-                self.find_versions_from_json(
-                    provider, version, self.multi_api_version_from_profile
-                )
+                self.find_versions_from_json(provider, version, self.multi_api_version_from_profile)
 
     @staticmethod
     def extract_api_version(api_version_info: Any) -> Set[str]:
@@ -175,9 +147,7 @@ class CollectApiVersion:
         if isinstance(api_version_info, str):
             api_version = api_version_info
         else:
-            api_version = api_version_info.default_api_version + str(
-                api_version_info.profile
-            )
+            api_version = api_version_info.default_api_version + str(api_version_info.profile)
 
         return set(re.findall("\d{4}-\d{2}-\d{2}[-a-z]*", api_version))
 
@@ -193,18 +163,10 @@ class CollectApiVersion:
             self.write_file(v, getattr(self, k))
         # merge multi_api_version_from_profiles to package_api_version
         for k, v in self.multi_api_version_from_profiles.items():
-            self.package_api_version[k] = (
-                self.package_api_version[k] | v
-                if self.package_api_version.get(k)
-                else v
-            )
+            self.package_api_version[k] = self.package_api_version[k] | v if self.package_api_version.get(k) else v
         # merge multi_api_version_from_profile to package_api_version
         for k, v in self.multi_api_version_from_profile.items():
-            self.package_api_version[k] = (
-                self.package_api_version[k] | v
-                if self.package_api_version.get(k)
-                else v
-            )
+            self.package_api_version[k] = self.package_api_version[k] | v if self.package_api_version.get(k) else v
 
         # output all apiversion
         self.write_file("package_api_version_all.json", self.package_api_version)

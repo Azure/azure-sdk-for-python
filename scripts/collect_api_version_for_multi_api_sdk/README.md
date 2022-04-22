@@ -5,7 +5,7 @@ This folder contains collecting the multi API versions in use from:
 - https://github.com/Azure/azure-rest-api-specs/tree/main/profile
 
 ## `main.py`
-the script could help to collect Multi Api quickly.
+the script could help to collect all the Api Versions used by Azure CLI and Azure Stack.
 
 ### Usage
 ```
