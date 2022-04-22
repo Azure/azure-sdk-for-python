@@ -10,7 +10,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._monitor_ingestion_client import MonitorIngestionClient
 
-from ._generated.models import BatchRequest, QueryBody as LogsIngestionBody
 from ._helpers import get_authentication_policy
 
 from azure.core.credentials import TokenCredential
