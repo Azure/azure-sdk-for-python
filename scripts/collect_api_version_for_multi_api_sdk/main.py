@@ -30,11 +30,18 @@ class CollectApiVersion:
 
     def __init__(self):
         self.github = Github(os.getenv('TOKEN'))
-        self.package_api_version = {}
         self.rest_repo = self.github.get_repo('Azure/azure-rest-api-specs')
+        self.multi_api_version_from_cli = {}
         self.multi_api_version_from_profiles = {}
         self.multi_api_version_from_profile = {}
+        self.package_api_version_all = {}
         self.provider_mapping_package = {}
+        self.output_files = {'multi_api_version_from_cli': 'package_api_version_from_cli.json',
+                             'multi_api_version_from_profiles': 'package_api_version_from_profiles.json',
+                             'multi_api_version_from_profile': 'package_api_version_from_profile.json',
+                             'package_api_version_all': 'package_api_version_all.json'
+                             }
+
 
     def get_api_version_from_azure_cli(self):
         # read content from github
@@ -62,9 +69,11 @@ class CollectApiVersion:
                 package_name = package_info.import_prefix
                 if re.search('azure.mgmt.', package_name):
                     api_version = self.extract_api_version(info[package_info])
-                    if package_name not in self.package_api_version:
-                        self.package_api_version[package_name] = set()
-                    self.package_api_version[package_name].update(api_version)
+                    # eg: change them like azure.mgmt.resource to azure-mgmt-resource
+                    package_name = package_name.replace('.', '-')
+                    if package_name not in self.multi_api_version_from_cli:
+                        self.multi_api_version_from_cli[package_name] = set()
+                    self.multi_api_version_from_cli[package_name].update(api_version)
 
     def get_multiapi_from_rest_api(self):
         # map provider to package name, like: {'microsoft.insights': {'azure-mgmt-applicationinsights'}}
@@ -152,24 +161,18 @@ class CollectApiVersion:
             json.dump(json_out, file_out, indent=4)
 
     def output(self):
-        # eg: change them like azure.mgmt.resource to azure-mgmt-resource
-        self.package_api_version = {k.replace('.', '-'): v for k, v in self.package_api_version.items()}
-        # output service and api version from cli
-        self.write_file('package_api_version_from_cli.json', self.package_api_version)
-        # output service and api version from profiles
-        self.write_file('package_api_version_from_profiles.json', self.multi_api_version_from_profiles)
-        # output service and api version from profile
-        self.write_file('package_api_version_from_profile.json', self.multi_api_version_from_profile)
 
-        # merge multi_api_version_from_profiles to package_api_version
+        self.package_api_version_all = self.multi_api_version_from_cli
+        # merge multi_api_version_from_profiles to package_api_version_all
         for k, v in self.multi_api_version_from_profiles.items():
-            self.package_api_version[k] = self.package_api_version[k] | v if self.package_api_version.get(k) else v
-        # merge multi_api_version_from_profile to package_api_version
+            self.package_api_version_all[k] = self.package_api_version_all[k] | v if self.package_api_version_all.get(k) else v
+        # merge multi_api_version_from_profile to package_api_version_all
         for k, v in self.multi_api_version_from_profile.items():
-            self.package_api_version[k] = self.package_api_version[k] | v if self.package_api_version.get(k) else v
-        # output all services and api versions
-        self.write_file('package_api_version_all.json', self.package_api_version)
+            self.package_api_version_all[k] = self.package_api_version_all[k] | v if self.package_api_version_all.get(k) else v
 
+        # output service and api version from cli or profiles or profile
+        for k, v in self.output_files.items():
+            self.write_file(v, getattr(self, k))
 
     def run(self):
         self.get_api_version_from_azure_cli()
@@ -197,4 +200,4 @@ if __name__ == '__main__':
 
     instance = CollectApiVersion()
     instance.run()
-    # upload_to_github()
+    upload_to_github()
