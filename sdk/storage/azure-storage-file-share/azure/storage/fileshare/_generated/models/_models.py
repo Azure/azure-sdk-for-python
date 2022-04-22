@@ -98,6 +98,10 @@ class CopyFileSmbInfo(msrest.serialization.Model):
      source file(source) to a target file or a time value in ISO 8601 format to set as last write
      time on a target file.
     :vartype file_last_write_time: str
+    :ivar file_change_time: Specifies either the option to copy file last write time from a source
+     file(source) to a target file or a time value in ISO 8601 format to set as last write time on a
+     target file.
+    :vartype file_change_time: str
     :ivar file_permission_copy_mode: Specifies the option to copy file security descriptor from
      source file or to set it using the value which is defined by the header value of
      x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
@@ -117,6 +121,7 @@ class CopyFileSmbInfo(msrest.serialization.Model):
         'file_attributes': {'key': 'fileAttributes', 'type': 'str'},
         'file_creation_time': {'key': 'fileCreationTime', 'type': 'str'},
         'file_last_write_time': {'key': 'fileLastWriteTime', 'type': 'str'},
+        'file_change_time': {'key': 'fileChangeTime', 'type': 'str'},
         'file_permission_copy_mode': {'key': 'filePermissionCopyMode', 'type': 'str'},
         'ignore_read_only': {'key': 'ignoreReadOnly', 'type': 'bool'},
         'set_archive_attribute': {'key': 'setArchiveAttribute', 'type': 'bool'},
@@ -138,6 +143,10 @@ class CopyFileSmbInfo(msrest.serialization.Model):
          source file(source) to a target file or a time value in ISO 8601 format to set as last write
          time on a target file.
         :paramtype file_last_write_time: str
+        :keyword file_change_time: Specifies either the option to copy file last write time from a
+         source file(source) to a target file or a time value in ISO 8601 format to set as last write
+         time on a target file.
+        :paramtype file_change_time: str
         :keyword file_permission_copy_mode: Specifies the option to copy file security descriptor from
          source file or to set it using the value which is defined by the header value of
          x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
@@ -156,6 +165,7 @@ class CopyFileSmbInfo(msrest.serialization.Model):
         self.file_attributes = kwargs.get('file_attributes', None)
         self.file_creation_time = kwargs.get('file_creation_time', None)
         self.file_last_write_time = kwargs.get('file_last_write_time', None)
+        self.file_change_time = kwargs.get('file_change_time', None)
         self.file_permission_copy_mode = kwargs.get('file_permission_copy_mode', None)
         self.ignore_read_only = kwargs.get('ignore_read_only', None)
         self.set_archive_attribute = kwargs.get('set_archive_attribute', None)

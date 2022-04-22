@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b5 (2022-04-15)
+
+**Features**
+
+  - Added operation group WorkspaceManagedSqlServerDedicatedSQLMinimalTlsSettingsOperations
+
 ## 2.1.0b4 (2022-01-11)
 
 **Features**

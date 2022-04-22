@@ -563,6 +563,8 @@ class DeploymentProperties(msrest.serialization.Model):
 class DeploymentPropertiesExtended(msrest.serialization.Model):
     """Deployment properties with additional details.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provisioning_state: The state of the provisioning.
     :vartype provisioning_state: str
     :ivar correlation_id: The correlation ID of the deployment.
@@ -589,7 +591,13 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :vartype mode: str or ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentMode
     :ivar debug_setting: The debug setting of the deployment.
     :vartype debug_setting: ~azure.mgmt.resource.resources.v2016_02_01.models.DebugSetting
+    :ivar error: The deployment error.
+    :vartype error: ~azure.mgmt.resource.resources.v2016_02_01.models.ErrorResponse
     """
+
+    _validation = {
+        'error': {'readonly': True},
+    }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
@@ -604,6 +612,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
     def __init__(
@@ -664,6 +673,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         self.parameters_link = parameters_link
         self.mode = mode
         self.debug_setting = debug_setting
+        self.error = None
 
 
 class DeploymentValidateResult(msrest.serialization.Model):

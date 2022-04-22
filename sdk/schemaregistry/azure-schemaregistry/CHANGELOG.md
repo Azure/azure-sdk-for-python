@@ -6,6 +6,8 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 
 ### Features Added
 
+- `group_name` and `name` have been added as instance variables to `SchemaProperties`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
