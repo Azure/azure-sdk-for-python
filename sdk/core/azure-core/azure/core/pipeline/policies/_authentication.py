@@ -4,8 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-import six
 import urllib.parse
+import six
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
