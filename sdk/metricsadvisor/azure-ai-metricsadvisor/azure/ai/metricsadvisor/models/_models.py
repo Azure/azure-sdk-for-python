@@ -106,7 +106,7 @@ if TYPE_CHECKING:
     from .._metrics_advisor_administration_client import DataFeedSourceUnion
 
 
-class MetricAnomalyAlertScopeType(str, Enum):
+class MetricAnomalyAlertScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Anomaly scope"""
 
     WHOLE_SERIES = "WholeSeries"
@@ -138,7 +138,7 @@ class MetricAnomalyAlertScopeType(str, Enum):
         return alert
 
 
-class DataFeedRollupType(str, Enum):
+class DataFeedRollupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data feed rollup type"""
 
     NO_ROLLUP = "NoRollup"
@@ -166,7 +166,7 @@ class DataFeedRollupType(str, Enum):
         return rollup
 
 
-class MetricAnomalyAlertConfigurationsOperator(str, Enum):
+class MetricAnomalyAlertConfigurationsOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cross metrics operator"""
 
     AND = "AND"
@@ -174,7 +174,7 @@ class MetricAnomalyAlertConfigurationsOperator(str, Enum):
     XOR = "XOR"
 
 
-class DetectionConditionOperator(str, Enum):
+class DetectionConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AND = "AND"
     OR = "OR"
