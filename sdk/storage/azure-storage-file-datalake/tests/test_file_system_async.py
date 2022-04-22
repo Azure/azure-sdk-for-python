@@ -901,17 +901,15 @@ class FileSystemTest(StorageTestCase):
             'dir8',  # dir 8 doesn't exist
             raise_on_any_failure=False
         )
-        tuple1 = response[0]
-        tuple2 = response[1]
 
         # Assert
         self.assertEqual(len(response), 2)
-        self.assertEqual(tuple1[0], 'dir1')
-        self.assertEqual(tuple2[0], 'dir8')
-        self.assertEqual(tuple1[1].error_code, StorageErrorCode.directory_not_empty)
-        self.assertEqual(tuple2[1].error_code, StorageErrorCode.path_not_found)
-        self.assertEqual(tuple1[1].status_code, 409)
-        self.assertEqual(tuple2[1].status_code, 404)
+        self.assertEqual(response[0][0], 'dir1')
+        self.assertEqual(response[1][0], 'dir8')
+        self.assertEqual(response[0][1].error_code, StorageErrorCode.directory_not_empty)
+        self.assertEqual(response[1][1].error_code, StorageErrorCode.path_not_found)
+        self.assertEqual(response[0][1].status_code, 409)
+        self.assertEqual(response[1][1].status_code, 404)
 
     @DataLakePreparer()
     async def test_serialized_error(
