@@ -3,8 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime
 from tkinter import N
 from typing import TYPE_CHECKING
+import uuid
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.rooms._models import CommunicationRoom
@@ -114,8 +116,12 @@ class RoomsClient(object):
             valid_until=valid_until,
             participants=participantsDict
         )
+
+        repeatability_request_id = uuid.uuid1();
+        repeatability_first_sent = datetime.utcnow();
+
         create_room_response = await self._rooms_service_client.rooms.create_room(
-            create_room_request=create_room_request, **kwargs)
+            create_room_request=create_room_request, repeatability_request_id=repeatability_request_id, repeatability_first_sent=repeatability_first_sent, **kwargs)
         return CommunicationRoom.from_room_response(create_room_response)
 
     @distributed_trace_async
