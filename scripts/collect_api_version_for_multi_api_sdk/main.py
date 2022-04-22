@@ -112,7 +112,6 @@ class CollectApiVersion:
                 else:
                     multi_api_version[p].update(set(version.keys()))
 
-
     def get_api_version_from_rest_api_profiles(self):
         self.get_multiapi_from_rest_api()
         # Find api version mapping to {'azure-mgmt-msi': {'2018-11-30'}}
@@ -161,7 +160,6 @@ class CollectApiVersion:
             json.dump(json_out, file_out, indent=4)
 
     def output(self):
-
         self.package_api_version_all = self.multi_api_version_from_cli
         # merge multi_api_version_from_profiles to package_api_version_all
         for k, v in self.multi_api_version_from_profiles.items():
