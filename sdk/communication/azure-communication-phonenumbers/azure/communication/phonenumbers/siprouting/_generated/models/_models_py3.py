@@ -6,14 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
 
 
 class CommunicationError(msrest.serialization.Model):
@@ -92,7 +88,7 @@ class CommunicationErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: "_models.CommunicationError",
+        error: "CommunicationError",
         **kwargs
     ):
         """
@@ -125,8 +121,8 @@ Call is then directed into route's first available trunk, based on the order in 
     def __init__(
         self,
         *,
-        trunks: Optional[Dict[str, "_models.SipTrunkInternal"]] = None,
-        routes: Optional[List["_models.SipTrunkRoute"]] = None,
+        trunks: Optional[Dict[str, "SipTrunkInternal"]] = None,
+        routes: Optional[List["SipTrunkRoute"]] = None,
         **kwargs
     ):
         """

@@ -15,7 +15,6 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._vendor import _convert_request
@@ -34,26 +33,25 @@ def build_get_sip_configuration_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-05-01-preview"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
-
+    accept = "application/json"
     # Construct URL
     _url = kwargs.pop("template_url", "/sip")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -62,29 +60,28 @@ def build_patch_sip_configuration_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-05-01-preview"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
-
+    accept = "application/json"
     # Construct URL
     _url = kwargs.pop("template_url", "/sip")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PATCH",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -96,7 +93,7 @@ class SIPRoutingServiceOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.SipConfiguration
+        # type: (...) -> "_models.SipConfiguration"
         """Gets SIP configuration for resource.
 
         Gets SIP configuration for resource.
@@ -106,31 +103,26 @@ class SIPRoutingServiceOperationsMixin(object):
         :rtype: ~azure.communication.phonenumbers.siprouting.models.SipConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SipConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SipConfiguration]
+        api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
 
         
         request = build_get_sip_configuration_request(
             api_version=api_version,
             template_url=self.get_sip_configuration.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -155,10 +147,10 @@ class SIPRoutingServiceOperationsMixin(object):
     @distributed_trace
     def patch_sip_configuration(
         self,
-        body=None,  # type: Optional[_models.SipConfiguration]
+        body=None,  # type: Optional["_models.SipConfiguration"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.SipConfiguration
+        # type: (...) -> "_models.SipConfiguration"
         """Patches SIP configuration for resource.
 
         Patches SIP configuration for resource.
@@ -170,17 +162,14 @@ class SIPRoutingServiceOperationsMixin(object):
         :rtype: ~azure.communication.phonenumbers.siprouting.models.SipConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SipConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-05-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SipConfiguration]
+        api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/merge-patch+json")  # type: Optional[str]
 
         if body is not None:
             _json = self._serialize.body(body, 'SipConfiguration')
@@ -192,16 +181,14 @@ class SIPRoutingServiceOperationsMixin(object):
             content_type=content_type,
             json=_json,
             template_url=self.patch_sip_configuration.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
