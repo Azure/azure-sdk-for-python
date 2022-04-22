@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey03311274c/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -22,7 +22,7 @@
         "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-server-latency": "1"
+        "x-ms-server-latency": "0"
       },
       "ResponseBody": null
     },
@@ -43,16 +43,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 15 Apr 2022 22:23:29 GMT",
+        "Date": "Fri, 22 Apr 2022 15:53:13 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAQAAAL3j69kOAAAAwSDpKQUAAADI4-vZDgAAAA; expires=Sun, 15-May-2022 22:23:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAEQAAAEDG9NkOAAAA; expires=Sun, 22-May-2022 15:53:13 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.5 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -130,7 +130,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAQAAAL3j69kOAAAAwSDpKQUAAADI4-vZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAEQAAAEDG9NkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -141,16 +141,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 15 Apr 2022 22:23:29 GMT",
+        "Date": "Fri, 22 Apr 2022 15:53:13 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAQAAAL3j69kOAAAAwSDpKQUAAADI4-vZDgAAAA; expires=Sun, 15-May-2022 22:23:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAEQAAAEDG9NkOAAAA; expires=Sun, 22-May-2022 15:53:13 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -201,7 +201,7 @@
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey03311274c/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -217,7 +217,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -225,16 +225,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "254"
+        "x-ms-server-latency": "204"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061410,
+          "created": 1650642794,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061410
+          "updated": 1650642794
         },
         "key": {
           "e": "AQAB",
@@ -246,14 +246,14 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/70dd6452269306a803c51d0a62687638",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey03311274c/776927f9e9da0c97b4882094ca8a18ae",
           "kty": "RSA-HSM",
-          "n": "sLO1RYW3lDhnqbzqbzC0O6-J4UdQVdcECesJY3714jliduE10PY3EC6zqv81mskK6g51aMrp1bnip0BIYBPVb1F90QQraA1qvzDSeRc_yRqU6vq2WPyS7fjTxG9XOFDweI1kCQxZeJ5j8TSWjhL-XkknOU23v-iZGEeZ5yEXblmOP1jhyCUYhhQ1qA5jo-2NAvnckpOE_DvfIbGEySRJXh_3B_TpyBVlUHsncYAFeowW9IubwBa8V3J8w3t_zeFMrAXfdAJBdnRtRDTRTxXhxJGE7CBSvpkBifdO_VKq39jDnZBC3YcXBuA0ckMsWegY9VBuSU3w6gGaZCViT8ZuMw"
+          "n": "4rbxYMncB3OYQTkvRnZ6XZ5w-NoQVqki8N7sGzzmfj6kNSN8wEasqO9qRcOEUNpIFDSjmvQjd8NfSHiMtVuqvDTZaJ4PBIlnoXTLjc6v_7k5ItaKoAl3DcVqCwf2sIOn6Tk500aXlBhkYjLesHtwR9ZamyeVxQGQOprMs8XO1_TRM0Q2M9FU4Ngkk3iAaul1lEoNQuKiZvNHKsb2G9X-5DKgDuKLLYadG8Qt75ILifzsxnHy-XhWKoOSyLaEsItJdEHB6vv5ACbj0rhsUbSwA1lsMbeREbzsOQwtwaRzjCTDg8vva-IKudEBI6LgpPw_ycWxRSN0mlHBbm3HmAL21w"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey13311274c/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -269,7 +269,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -277,16 +277,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "260"
+        "x-ms-server-latency": "204"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061412,
+          "created": 1650642796,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061412
+          "updated": 1650642796
         },
         "key": {
           "e": "AQAB",
@@ -298,14 +298,14 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/f06a7fde1f804b541f4ad142928d5f93",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey13311274c/2b3b3bbc742847d51aeab53c738211f1",
           "kty": "RSA-HSM",
-          "n": "mkktH41XAjOt8Gn6LpGUN-2bQHvP0Gyj8kMNxsAJdFPw9vH-X8dQaY4hmltID0TH5DydwUSeedlE3MTzWvSc7BgYwqJPTIv5dwCQjegnIVDIPw6MZhunXxJuacxqlS-h5mUf2buDeEddOeltfGPXk_ndbm0eSXlZH3D3OdZQBGvzvRLXYrqzVRdY9mXY2nSMihP151dytx8mfEZhWc6NjJuc8n9RV9WNGqrqqYKd6vLndLjiVVMFHwGGKS4fY5ipkOJK-jsKS3qgNZ_np-6kMTxTWKt6oOHNnjzGU6avINo14RajNBNbQ3ZGrJdmuFirJ2uZG7gjHfP2NvhO0foyww"
+          "n": "0OdKWmwKo0srhtlqyMMY5p3D6pA2OA2xaWJFFoAoIHZsgKSFhbMeYdkQ9TN0J0ZTNSItDDIfxKmMjB75lNnt076VIdviAyek-T6wo0XdWTLx5YPMu-vnzA540bNrHonA16vgLbhlUjBXHQ9dQBcw375_N_KNj8UzU0rgC_Mk70l7I5uDcVNXydGbFaN1K9EHUh8ICUKIwSlokPT9cC-nF7x4juCuZD0ETFVf1IYF0eEndfhN-RE8gTKIkIKEPXNj_N5R9RyTHZviZAGz7GRZSSFhH9L-Y8Y8MUsVTB5-PliKYCOyh0pEXjjH07uEjstM8kBt6o9MPAl29YY4bH906Q"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey23311274c/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -321,7 +321,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -329,16 +329,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "277"
+        "x-ms-server-latency": "223"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061415,
+          "created": 1650642798,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061415
+          "updated": 1650642798
         },
         "key": {
           "e": "AQAB",
@@ -350,14 +350,14 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/8278534109aa42122ab8b0b5f5be1c1a",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey23311274c/57ac3ee5b78106a5211af716dafad7b6",
           "kty": "RSA-HSM",
-          "n": "l5zT0qtwAm8cFH1t_iS5NzSkfKEViPgsvOPnCCHkFbSEW0sh5X27RCNXIo0OPRTz8iWj_XqIL4YH_Dx21yWlKcmEnVY7PTGnd_G02-kAb2H1teBqo5GbhVWS62bvy2rcX_0Vyp5-_X4gNFvOIuYrhA6Om9BXkkwi43ZgMHDDcKnTJqtHmNGsV4L_AhQCJ7-KYhpDXYXXHOnc3FTdWpG9JVp3M9N_WJikR5i1RjJ55cHxKDvRIi9fV7l6G5uDnh0cYoxKFeacB6mxgFGYgNCPxbDAX0We62CGNdHO4_4jB-KgdvylGdUz4DVukpxpKDI8yZGgHdaq0La3cdWTPc1osQ"
+          "n": "qUhFnfx26UF8cerI-8vSQgQIPjSsqqb8X5gmm39NOiT1HZgxToY4ubehfw8jNqpN_UuPlbhdw8nwgZoin97haYemicaqY0XjXH2eIZqNSnRQizAj29XPFu6dD_iyFievvu1EQ0-e5j6VMTC2dv-NCQE5j8cUslLsKMgy0-FS_zDEceT5ZVOkvhRx1enk6QW1fAMdtA8BfylAL9yZOqD4zca0AdBeDGh4hVd7qM0xKlq27fAPX4IQviwUWUZhrNMcspz2N02OT9DVHJ6xK_0tSxL5I9BJ-y4ORFLYA-zOp1XOle1Tx3zqXupUr1xTzlnEn_lDwGrKZnC7-k5OnEcKkQ"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey33311274c/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -373,7 +373,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -381,16 +381,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "273"
+        "x-ms-server-latency": "222"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061417,
+          "created": 1650642800,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061417
+          "updated": 1650642800
         },
         "key": {
           "e": "AQAB",
@@ -402,14 +402,14 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/0e9bf33012480f123e7adae7349067b9",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey33311274c/870561bc1be30fff80d2e75dde2c2b80",
           "kty": "RSA-HSM",
-          "n": "td0fm4bpBzdsri-Aw0Z8Esp6SI4S2AZZLZE1WlSTjdvznvVp33ra6tKpeTeU_8uW3GzS4PAtgmvga17yVxP5O98KWYEQxeLrmXZ1vkjTcGRYz3eWySIEMz0gjVx-gyaczTRLjsIIAk8WrwYvSUOoRTiSvd3qI5Z2rvexHdFnLlr2Vu10J-iVc-ZSW86dKHvNuc4TG3GTLp9Z-Xbp4R5BpM0goiHuy3C0-vfSLylqix2PIfAIRBNwiPFfCLv288flooNCtJbVgYQeTEbOFH5iyu6YXFu_NAB8ZolQBBpDEaMQeyGxcirp9PCW0S4dlcVzqZff89UIy_fQkWt8iofbpw"
+          "n": "qLm6riDr5gF3EB4MfaVVwJ9dL576vvT74s4Go-bY4wS6IZ7jRLmw4d-O6DMrpl_eXw3Pkx1q3fDFMlYTNLgrIAgFedW2pr5sVb8bcI9GNucYiAhBVYM8TywBt2kvkWKUDsOkVuL2L6_YlNMnFCL8XOiNg-agj4d9-6azmg-Qgl1sMPU05WZqd_20vMasrVvbmtJM_GO_7ANZjjgyHhI8j3hAJ_TruhTVs8M1VuKviLJTN_iuNVuctDd79qbAUL_0isn5c6aAMmsBZy6khNS4IcJgm6s-3tU7MJN73SknHvAZV0uaJo6wpoJrkKG1_Hxa1XKA_Oc8NkWXnHOtZHNBNw"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey43311274c/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -425,7 +425,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -433,16 +433,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "285"
+        "x-ms-server-latency": "243"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061420,
+          "created": 1650642803,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061420
+          "updated": 1650642803
         },
         "key": {
           "e": "AQAB",
@@ -454,14 +454,14 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/5c79c2eefa1e4ee9147b964253033fdb",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey43311274c/2be76c72344b406b0ff389f81a5ca84d",
           "kty": "RSA-HSM",
-          "n": "jRrl1rzNDzZHYFzJbDL7OoWpJh1xMzsjGI43RBCzhUeDHhFQ9FKcZHCnhePp2GHmGwnG_onnMO0c5jyYu30kCwmRm77p1dIZiY8Qeqc1lBLWGC4G7IeJmFPrCWXURuZvD6WDoFn18LraEghTILJErE_R4SyQf3WJTOzkgrXsrZRqm_rH3AzK07v01rktrPPtPVowiy1mjNd9I_r5wRjXPs6mU11sHMX8ewkIuwhwUP5RLHYMbWQZcO8e2HrfX4a50ZUNOiobY01mFDLiqScAGB3DZYIdWDZioJyW8hkJ4P7zyAYnHXpnpU7tStxwA2TDcxSTZ2yx7njcx2jb5nEZTw"
+          "n": "rEcLYlPDW5PfQQixN_LXupIDSum0AfYGBTtpaHaevfJ-SGHz2Agkv37C2uRrYmSUT1_3IS23XKHtUc591slwvWiQtv-1NChIgKiq_a_qW3WENR1H1F410iGOElPiFHo83y-iCwVdZiJEj7UD3B0brP7DrsFx8-gd8WBxEKUPwVb4eUGQtyRpbszke3ASXaA7X24yBNcKwUuZbIMvh9HRN17RRfqj1nizUYldXpkv-0DnoJ-vS8X8DYvBj8ToYMktgBddwpef4_lZ2_kdR_iJfpHvk8DVoR3kKmoqQfIa3QX4giL-dG21Qvy5YK3iy_-4bRVUB6pkfI4gUkcs46IZEw"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey53311274c/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -477,7 +477,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -485,16 +485,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "244"
+        "x-ms-server-latency": "227"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061422,
+          "created": 1650642805,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061422
+          "updated": 1650642805
         },
         "key": {
           "e": "AQAB",
@@ -506,14 +506,14 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/92843516520b07c03f52808bd693754c",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey53311274c/913761381f350ad49027151cf8f20b80",
           "kty": "RSA-HSM",
-          "n": "r9cXy5icy5d2pgXiyRWTBEaqsOszncrjqgt4MEPRX8oketwtE7LlkxUKH58tjU0h3ut33as5Z5uFB1UxwNL9-3m04Bk6mk2n5iAX0We_pV6Db3m4qgc9RNFFDOYvn7hm25VVd-zfy0B1v4JB-QRGntLTjQtoGbzc8-bxLOGreHRlpmHl2CnayIV_SPkI-S9vMMzlcIopXKqL4ma6naX_atWTRUd9QNJzkzuRFrE1jGU6j5zG637D4H9Q3vi5RSQvofdwdLWYLWZVhXPn6RLXmMNbEmcZsdQyqEqDitsSb0RiXmScIbw5bTtet6kFH_tYT3wO1Mqe8ok3PgiQRC2-jw"
+          "n": "nQFTSn6HEJ2XYs2TwruFUQiodFXGqFuMDF8gY9uShLlG0Q3z1wxPKdmgCc_ENMiUYN8D0WmODe8YWjaCPoaBNzUOK0IJgUrmKok2KY0M-XFygw4EcDWlRUhzmtErNSB1ls9RbvjHJ_lJUhCB28VWRdtbhUJDItoe2nM0Gtd9IhXGzTk5t_8_nOpobIjvS12qOl0Axkbgms-o4ZiRZbQcdtMjBmXYVh3vYRrAmCXW4RCa0XyiImgV9kvVsLbRu6dtyNxiHX01xuu0YkCaOhi8F7KZQ5HY3_IbqZQl1zah0bexj-RJUMptktOhqFHE-h5AaV0xpC0Ha0ie27ODA1lr0Q"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey63311274c/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -529,7 +529,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -537,16 +537,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "270"
+        "x-ms-server-latency": "214"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061424,
+          "created": 1650642807,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061424
+          "updated": 1650642807
         },
         "key": {
           "e": "AQAB",
@@ -558,14 +558,14 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/8425570aa8d000d08656d9e6f53d5d10",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey63311274c/46e8397a9da54c43236e6ecac1216161",
           "kty": "RSA-HSM",
-          "n": "kfqHjhc9BwJd2wdGrDgUJvf2Ppln30P4Ov8XiWCZQ1vwEMIvd7xaJr_cQ8txGt9TR1cjRac5wS4HS9akK-PZRCWAxZqj-hSZ9JZNsB6q1tzRbrE9x5UclCEGlNEmYmBZjF0FFMZ28O0RRZE28j2Mmh7nYE5RhoPTr1ZXnni7ahVR-lRvIyfU5t9G58_oVMhVGXrrlzuMFZIh1MV1bJNhY-Jsfgi2Qfggiyc1RqafzOWR419nddMxZ2EoDtNnXe8QwlK60MkvPwTltdb2JOvxK4frhuerg0hll2lqJhrjNc5y2gpjewrvqCF5lxAPNJWH7sjLnDwxxIjpCJJHoSnD8w"
+          "n": "tzbr2JyYcsiEkaZaUCd8fegOHA0ynI3wpo2QtD_deVWUl-Zb_aRAQzccMz-FCgR14atX_4-S1zREyscUcJQRS8xeXopm14AmgJrtHobHemyOdap8aqfNAomhtSSygh6DGYIgZllQs-zJPHf63bnXhRLObSWPlkcqzekLP-Dxa3ZkrEcFs_oi5JD7WljIYQtZqyKjDTpFFZdyLTgPWpLUhB8G6DUGlPbT4-BCBPm1irPhTBRD1djnIswr2WKpRK-oU1wZn2YVUkGp4AvrcvPMAdyR53XNWRQETHRSzDiZEysnZJ-w3ngwPdPHXSsDyVuGU6nZxsgYhZ87tslDfA2Ofw"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey03311274c?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -578,7 +578,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -586,18 +586,18 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "170"
+        "x-ms-server-latency": "186"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061410,
+          "created": 1650642794,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061410
+          "updated": 1650642794
         },
-        "deletedDate": 1650061425,
+        "deletedDate": 1650642808,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -608,16 +608,16 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/70dd6452269306a803c51d0a62687638",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey03311274c/776927f9e9da0c97b4882094ca8a18ae",
           "kty": "RSA-HSM",
-          "n": "sLO1RYW3lDhnqbzqbzC0O6-J4UdQVdcECesJY3714jliduE10PY3EC6zqv81mskK6g51aMrp1bnip0BIYBPVb1F90QQraA1qvzDSeRc_yRqU6vq2WPyS7fjTxG9XOFDweI1kCQxZeJ5j8TSWjhL-XkknOU23v-iZGEeZ5yEXblmOP1jhyCUYhhQ1qA5jo-2NAvnckpOE_DvfIbGEySRJXh_3B_TpyBVlUHsncYAFeowW9IubwBa8V3J8w3t_zeFMrAXfdAJBdnRtRDTRTxXhxJGE7CBSvpkBifdO_VKq39jDnZBC3YcXBuA0ckMsWegY9VBuSU3w6gGaZCViT8ZuMw"
+          "n": "4rbxYMncB3OYQTkvRnZ6XZ5w-NoQVqki8N7sGzzmfj6kNSN8wEasqO9qRcOEUNpIFDSjmvQjd8NfSHiMtVuqvDTZaJ4PBIlnoXTLjc6v_7k5ItaKoAl3DcVqCwf2sIOn6Tk500aXlBhkYjLesHtwR9ZamyeVxQGQOprMs8XO1_TRM0Q2M9FU4Ngkk3iAaul1lEoNQuKiZvNHKsb2G9X-5DKgDuKLLYadG8Qt75ILifzsxnHy-XhWKoOSyLaEsItJdEHB6vv5ACbj0rhsUbSwA1lsMbeREbzsOQwtwaRzjCTDg8vva-IKudEBI6LgpPw_ycWxRSN0mlHBbm3HmAL21w"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c",
-        "scheduledPurgeDate": 1650666225
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey03311274c",
+        "scheduledPurgeDate": 1651247608
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey03311274c?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -629,7 +629,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -638,18 +638,18 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "29"
+        "x-ms-server-latency": "94"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061410,
+          "created": 1650642794,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061410
+          "updated": 1650642794
         },
-        "deletedDate": 1650061425,
+        "deletedDate": 1650642808,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -660,16 +660,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/70dd6452269306a803c51d0a62687638",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey03311274c/776927f9e9da0c97b4882094ca8a18ae",
           "kty": "RSA-HSM",
-          "n": "sLO1RYW3lDhnqbzqbzC0O6-J4UdQVdcECesJY3714jliduE10PY3EC6zqv81mskK6g51aMrp1bnip0BIYBPVb1F90QQraA1qvzDSeRc_yRqU6vq2WPyS7fjTxG9XOFDweI1kCQxZeJ5j8TSWjhL-XkknOU23v-iZGEeZ5yEXblmOP1jhyCUYhhQ1qA5jo-2NAvnckpOE_DvfIbGEySRJXh_3B_TpyBVlUHsncYAFeowW9IubwBa8V3J8w3t_zeFMrAXfdAJBdnRtRDTRTxXhxJGE7CBSvpkBifdO_VKq39jDnZBC3YcXBuA0ckMsWegY9VBuSU3w6gGaZCViT8ZuMw"
+          "n": "4rbxYMncB3OYQTkvRnZ6XZ5w-NoQVqki8N7sGzzmfj6kNSN8wEasqO9qRcOEUNpIFDSjmvQjd8NfSHiMtVuqvDTZaJ4PBIlnoXTLjc6v_7k5ItaKoAl3DcVqCwf2sIOn6Tk500aXlBhkYjLesHtwR9ZamyeVxQGQOprMs8XO1_TRM0Q2M9FU4Ngkk3iAaul1lEoNQuKiZvNHKsb2G9X-5DKgDuKLLYadG8Qt75ILifzsxnHy-XhWKoOSyLaEsItJdEHB6vv5ACbj0rhsUbSwA1lsMbeREbzsOQwtwaRzjCTDg8vva-IKudEBI6LgpPw_ycWxRSN0mlHBbm3HmAL21w"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c",
-        "scheduledPurgeDate": 1650666225
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey03311274c",
+        "scheduledPurgeDate": 1651247608
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey13311274c?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -682,7 +682,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -690,18 +690,18 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "164"
+        "x-ms-server-latency": "191"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061412,
+          "created": 1650642796,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061412
+          "updated": 1650642796
         },
-        "deletedDate": 1650061425,
+        "deletedDate": 1650642808,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -712,16 +712,16 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/f06a7fde1f804b541f4ad142928d5f93",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey13311274c/2b3b3bbc742847d51aeab53c738211f1",
           "kty": "RSA-HSM",
-          "n": "mkktH41XAjOt8Gn6LpGUN-2bQHvP0Gyj8kMNxsAJdFPw9vH-X8dQaY4hmltID0TH5DydwUSeedlE3MTzWvSc7BgYwqJPTIv5dwCQjegnIVDIPw6MZhunXxJuacxqlS-h5mUf2buDeEddOeltfGPXk_ndbm0eSXlZH3D3OdZQBGvzvRLXYrqzVRdY9mXY2nSMihP151dytx8mfEZhWc6NjJuc8n9RV9WNGqrqqYKd6vLndLjiVVMFHwGGKS4fY5ipkOJK-jsKS3qgNZ_np-6kMTxTWKt6oOHNnjzGU6avINo14RajNBNbQ3ZGrJdmuFirJ2uZG7gjHfP2NvhO0foyww"
+          "n": "0OdKWmwKo0srhtlqyMMY5p3D6pA2OA2xaWJFFoAoIHZsgKSFhbMeYdkQ9TN0J0ZTNSItDDIfxKmMjB75lNnt076VIdviAyek-T6wo0XdWTLx5YPMu-vnzA540bNrHonA16vgLbhlUjBXHQ9dQBcw375_N_KNj8UzU0rgC_Mk70l7I5uDcVNXydGbFaN1K9EHUh8ICUKIwSlokPT9cC-nF7x4juCuZD0ETFVf1IYF0eEndfhN-RE8gTKIkIKEPXNj_N5R9RyTHZviZAGz7GRZSSFhH9L-Y8Y8MUsVTB5-PliKYCOyh0pEXjjH07uEjstM8kBt6o9MPAl29YY4bH906Q"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c",
-        "scheduledPurgeDate": 1650666225
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey13311274c",
+        "scheduledPurgeDate": 1651247608
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey13311274c?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -733,7 +733,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -742,18 +742,18 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "31"
+        "x-ms-server-latency": "32"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061412,
+          "created": 1650642796,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061412
+          "updated": 1650642796
         },
-        "deletedDate": 1650061425,
+        "deletedDate": 1650642808,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -764,16 +764,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/f06a7fde1f804b541f4ad142928d5f93",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey13311274c/2b3b3bbc742847d51aeab53c738211f1",
           "kty": "RSA-HSM",
-          "n": "mkktH41XAjOt8Gn6LpGUN-2bQHvP0Gyj8kMNxsAJdFPw9vH-X8dQaY4hmltID0TH5DydwUSeedlE3MTzWvSc7BgYwqJPTIv5dwCQjegnIVDIPw6MZhunXxJuacxqlS-h5mUf2buDeEddOeltfGPXk_ndbm0eSXlZH3D3OdZQBGvzvRLXYrqzVRdY9mXY2nSMihP151dytx8mfEZhWc6NjJuc8n9RV9WNGqrqqYKd6vLndLjiVVMFHwGGKS4fY5ipkOJK-jsKS3qgNZ_np-6kMTxTWKt6oOHNnjzGU6avINo14RajNBNbQ3ZGrJdmuFirJ2uZG7gjHfP2NvhO0foyww"
+          "n": "0OdKWmwKo0srhtlqyMMY5p3D6pA2OA2xaWJFFoAoIHZsgKSFhbMeYdkQ9TN0J0ZTNSItDDIfxKmMjB75lNnt076VIdviAyek-T6wo0XdWTLx5YPMu-vnzA540bNrHonA16vgLbhlUjBXHQ9dQBcw375_N_KNj8UzU0rgC_Mk70l7I5uDcVNXydGbFaN1K9EHUh8ICUKIwSlokPT9cC-nF7x4juCuZD0ETFVf1IYF0eEndfhN-RE8gTKIkIKEPXNj_N5R9RyTHZviZAGz7GRZSSFhH9L-Y8Y8MUsVTB5-PliKYCOyh0pEXjjH07uEjstM8kBt6o9MPAl29YY4bH906Q"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c",
-        "scheduledPurgeDate": 1650666225
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey13311274c",
+        "scheduledPurgeDate": 1651247608
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey23311274c?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -786,7 +786,111 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "192"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642798,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642798
+        },
+        "deletedDate": 1650642809,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "encrypt",
+            "decrypt",
+            "unwrapKey",
+            "sign",
+            "verify"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey23311274c/57ac3ee5b78106a5211af716dafad7b6",
+          "kty": "RSA-HSM",
+          "n": "qUhFnfx26UF8cerI-8vSQgQIPjSsqqb8X5gmm39NOiT1HZgxToY4ubehfw8jNqpN_UuPlbhdw8nwgZoin97haYemicaqY0XjXH2eIZqNSnRQizAj29XPFu6dD_iyFievvu1EQ0-e5j6VMTC2dv-NCQE5j8cUslLsKMgy0-FS_zDEceT5ZVOkvhRx1enk6QW1fAMdtA8BfylAL9yZOqD4zca0AdBeDGh4hVd7qM0xKlq27fAPX4IQviwUWUZhrNMcspz2N02OT9DVHJ6xK_0tSxL5I9BJ-y4ORFLYA-zOp1XOle1Tx3zqXupUr1xTzlnEn_lDwGrKZnC7-k5OnEcKkQ"
+        },
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey23311274c",
+        "scheduledPurgeDate": 1651247609
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey23311274c?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "880",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "28"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642798,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642798
+        },
+        "deletedDate": 1650642809,
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt",
+            "wrapKey"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey23311274c/57ac3ee5b78106a5211af716dafad7b6",
+          "kty": "RSA-HSM",
+          "n": "qUhFnfx26UF8cerI-8vSQgQIPjSsqqb8X5gmm39NOiT1HZgxToY4ubehfw8jNqpN_UuPlbhdw8nwgZoin97haYemicaqY0XjXH2eIZqNSnRQizAj29XPFu6dD_iyFievvu1EQ0-e5j6VMTC2dv-NCQE5j8cUslLsKMgy0-FS_zDEceT5ZVOkvhRx1enk6QW1fAMdtA8BfylAL9yZOqD4zca0AdBeDGh4hVd7qM0xKlq27fAPX4IQviwUWUZhrNMcspz2N02OT9DVHJ6xK_0tSxL5I9BJ-y4ORFLYA-zOp1XOle1Tx3zqXupUr1xTzlnEn_lDwGrKZnC7-k5OnEcKkQ"
+        },
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey23311274c",
+        "scheduledPurgeDate": 1651247609
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey33311274c?api-version=7.3",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -798,14 +902,14 @@
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061415,
+          "created": 1650642800,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061415
+          "updated": 1650642800
         },
-        "deletedDate": 1650061425,
+        "deletedDate": 1650642809,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -816,16 +920,16 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/8278534109aa42122ab8b0b5f5be1c1a",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey33311274c/870561bc1be30fff80d2e75dde2c2b80",
           "kty": "RSA-HSM",
-          "n": "l5zT0qtwAm8cFH1t_iS5NzSkfKEViPgsvOPnCCHkFbSEW0sh5X27RCNXIo0OPRTz8iWj_XqIL4YH_Dx21yWlKcmEnVY7PTGnd_G02-kAb2H1teBqo5GbhVWS62bvy2rcX_0Vyp5-_X4gNFvOIuYrhA6Om9BXkkwi43ZgMHDDcKnTJqtHmNGsV4L_AhQCJ7-KYhpDXYXXHOnc3FTdWpG9JVp3M9N_WJikR5i1RjJ55cHxKDvRIi9fV7l6G5uDnh0cYoxKFeacB6mxgFGYgNCPxbDAX0We62CGNdHO4_4jB-KgdvylGdUz4DVukpxpKDI8yZGgHdaq0La3cdWTPc1osQ"
+          "n": "qLm6riDr5gF3EB4MfaVVwJ9dL576vvT74s4Go-bY4wS6IZ7jRLmw4d-O6DMrpl_eXw3Pkx1q3fDFMlYTNLgrIAgFedW2pr5sVb8bcI9GNucYiAhBVYM8TywBt2kvkWKUDsOkVuL2L6_YlNMnFCL8XOiNg-agj4d9-6azmg-Qgl1sMPU05WZqd_20vMasrVvbmtJM_GO_7ANZjjgyHhI8j3hAJ_TruhTVs8M1VuKviLJTN_iuNVuctDd79qbAUL_0isn5c6aAMmsBZy6khNS4IcJgm6s-3tU7MJN73SknHvAZV0uaJo6wpoJrkKG1_Hxa1XKA_Oc8NkWXnHOtZHNBNw"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c",
-        "scheduledPurgeDate": 1650666225
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey33311274c",
+        "scheduledPurgeDate": 1651247609
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey33311274c?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -837,7 +941,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -846,18 +950,18 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "28"
+        "x-ms-server-latency": "38"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061415,
+          "created": 1650642800,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061415
+          "updated": 1650642800
         },
-        "deletedDate": 1650061425,
+        "deletedDate": 1650642809,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -868,16 +972,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/8278534109aa42122ab8b0b5f5be1c1a",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey33311274c/870561bc1be30fff80d2e75dde2c2b80",
           "kty": "RSA-HSM",
-          "n": "l5zT0qtwAm8cFH1t_iS5NzSkfKEViPgsvOPnCCHkFbSEW0sh5X27RCNXIo0OPRTz8iWj_XqIL4YH_Dx21yWlKcmEnVY7PTGnd_G02-kAb2H1teBqo5GbhVWS62bvy2rcX_0Vyp5-_X4gNFvOIuYrhA6Om9BXkkwi43ZgMHDDcKnTJqtHmNGsV4L_AhQCJ7-KYhpDXYXXHOnc3FTdWpG9JVp3M9N_WJikR5i1RjJ55cHxKDvRIi9fV7l6G5uDnh0cYoxKFeacB6mxgFGYgNCPxbDAX0We62CGNdHO4_4jB-KgdvylGdUz4DVukpxpKDI8yZGgHdaq0La3cdWTPc1osQ"
+          "n": "qLm6riDr5gF3EB4MfaVVwJ9dL576vvT74s4Go-bY4wS6IZ7jRLmw4d-O6DMrpl_eXw3Pkx1q3fDFMlYTNLgrIAgFedW2pr5sVb8bcI9GNucYiAhBVYM8TywBt2kvkWKUDsOkVuL2L6_YlNMnFCL8XOiNg-agj4d9-6azmg-Qgl1sMPU05WZqd_20vMasrVvbmtJM_GO_7ANZjjgyHhI8j3hAJ_TruhTVs8M1VuKviLJTN_iuNVuctDd79qbAUL_0isn5c6aAMmsBZy6khNS4IcJgm6s-3tU7MJN73SknHvAZV0uaJo6wpoJrkKG1_Hxa1XKA_Oc8NkWXnHOtZHNBNw"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c",
-        "scheduledPurgeDate": 1650666225
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey33311274c",
+        "scheduledPurgeDate": 1651247609
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey43311274c?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -890,7 +994,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -898,18 +1002,18 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "176"
+        "x-ms-server-latency": "271"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061417,
+          "created": 1650642803,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061417
+          "updated": 1650642803
         },
-        "deletedDate": 1650061426,
+        "deletedDate": 1650642810,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -920,16 +1024,16 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/0e9bf33012480f123e7adae7349067b9",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey43311274c/2be76c72344b406b0ff389f81a5ca84d",
           "kty": "RSA-HSM",
-          "n": "td0fm4bpBzdsri-Aw0Z8Esp6SI4S2AZZLZE1WlSTjdvznvVp33ra6tKpeTeU_8uW3GzS4PAtgmvga17yVxP5O98KWYEQxeLrmXZ1vkjTcGRYz3eWySIEMz0gjVx-gyaczTRLjsIIAk8WrwYvSUOoRTiSvd3qI5Z2rvexHdFnLlr2Vu10J-iVc-ZSW86dKHvNuc4TG3GTLp9Z-Xbp4R5BpM0goiHuy3C0-vfSLylqix2PIfAIRBNwiPFfCLv288flooNCtJbVgYQeTEbOFH5iyu6YXFu_NAB8ZolQBBpDEaMQeyGxcirp9PCW0S4dlcVzqZff89UIy_fQkWt8iofbpw"
+          "n": "rEcLYlPDW5PfQQixN_LXupIDSum0AfYGBTtpaHaevfJ-SGHz2Agkv37C2uRrYmSUT1_3IS23XKHtUc591slwvWiQtv-1NChIgKiq_a_qW3WENR1H1F410iGOElPiFHo83y-iCwVdZiJEj7UD3B0brP7DrsFx8-gd8WBxEKUPwVb4eUGQtyRpbszke3ASXaA7X24yBNcKwUuZbIMvh9HRN17RRfqj1nizUYldXpkv-0DnoJ-vS8X8DYvBj8ToYMktgBddwpef4_lZ2_kdR_iJfpHvk8DVoR3kKmoqQfIa3QX4giL-dG21Qvy5YK3iy_-4bRVUB6pkfI4gUkcs46IZEw"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c",
-        "scheduledPurgeDate": 1650666226
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey43311274c",
+        "scheduledPurgeDate": 1651247610
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey43311274c?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -941,7 +1045,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -950,18 +1054,18 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "28"
+        "x-ms-server-latency": "30"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061417,
+          "created": 1650642803,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061417
+          "updated": 1650642803
         },
-        "deletedDate": 1650061426,
+        "deletedDate": 1650642809,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -972,16 +1076,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/0e9bf33012480f123e7adae7349067b9",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey43311274c/2be76c72344b406b0ff389f81a5ca84d",
           "kty": "RSA-HSM",
-          "n": "td0fm4bpBzdsri-Aw0Z8Esp6SI4S2AZZLZE1WlSTjdvznvVp33ra6tKpeTeU_8uW3GzS4PAtgmvga17yVxP5O98KWYEQxeLrmXZ1vkjTcGRYz3eWySIEMz0gjVx-gyaczTRLjsIIAk8WrwYvSUOoRTiSvd3qI5Z2rvexHdFnLlr2Vu10J-iVc-ZSW86dKHvNuc4TG3GTLp9Z-Xbp4R5BpM0goiHuy3C0-vfSLylqix2PIfAIRBNwiPFfCLv288flooNCtJbVgYQeTEbOFH5iyu6YXFu_NAB8ZolQBBpDEaMQeyGxcirp9PCW0S4dlcVzqZff89UIy_fQkWt8iofbpw"
+          "n": "rEcLYlPDW5PfQQixN_LXupIDSum0AfYGBTtpaHaevfJ-SGHz2Agkv37C2uRrYmSUT1_3IS23XKHtUc591slwvWiQtv-1NChIgKiq_a_qW3WENR1H1F410iGOElPiFHo83y-iCwVdZiJEj7UD3B0brP7DrsFx8-gd8WBxEKUPwVb4eUGQtyRpbszke3ASXaA7X24yBNcKwUuZbIMvh9HRN17RRfqj1nizUYldXpkv-0DnoJ-vS8X8DYvBj8ToYMktgBddwpef4_lZ2_kdR_iJfpHvk8DVoR3kKmoqQfIa3QX4giL-dG21Qvy5YK3iy_-4bRVUB6pkfI4gUkcs46IZEw"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c",
-        "scheduledPurgeDate": 1650666226
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey43311274c",
+        "scheduledPurgeDate": 1651247609
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey53311274c?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -994,7 +1098,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1006,14 +1110,14 @@
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061420,
+          "created": 1650642805,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061420
+          "updated": 1650642805
         },
-        "deletedDate": 1650061426,
+        "deletedDate": 1650642810,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -1024,16 +1128,16 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/5c79c2eefa1e4ee9147b964253033fdb",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey53311274c/913761381f350ad49027151cf8f20b80",
           "kty": "RSA-HSM",
-          "n": "jRrl1rzNDzZHYFzJbDL7OoWpJh1xMzsjGI43RBCzhUeDHhFQ9FKcZHCnhePp2GHmGwnG_onnMO0c5jyYu30kCwmRm77p1dIZiY8Qeqc1lBLWGC4G7IeJmFPrCWXURuZvD6WDoFn18LraEghTILJErE_R4SyQf3WJTOzkgrXsrZRqm_rH3AzK07v01rktrPPtPVowiy1mjNd9I_r5wRjXPs6mU11sHMX8ewkIuwhwUP5RLHYMbWQZcO8e2HrfX4a50ZUNOiobY01mFDLiqScAGB3DZYIdWDZioJyW8hkJ4P7zyAYnHXpnpU7tStxwA2TDcxSTZ2yx7njcx2jb5nEZTw"
+          "n": "nQFTSn6HEJ2XYs2TwruFUQiodFXGqFuMDF8gY9uShLlG0Q3z1wxPKdmgCc_ENMiUYN8D0WmODe8YWjaCPoaBNzUOK0IJgUrmKok2KY0M-XFygw4EcDWlRUhzmtErNSB1ls9RbvjHJ_lJUhCB28VWRdtbhUJDItoe2nM0Gtd9IhXGzTk5t_8_nOpobIjvS12qOl0Axkbgms-o4ZiRZbQcdtMjBmXYVh3vYRrAmCXW4RCa0XyiImgV9kvVsLbRu6dtyNxiHX01xuu0YkCaOhi8F7KZQ5HY3_IbqZQl1zah0bexj-RJUMptktOhqFHE-h5AaV0xpC0Ha0ie27ODA1lr0Q"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c",
-        "scheduledPurgeDate": 1650666226
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey53311274c",
+        "scheduledPurgeDate": 1651247610
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey53311274c?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1045,7 +1149,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1054,18 +1158,18 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "28"
+        "x-ms-server-latency": "27"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061420,
+          "created": 1650642805,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061420
+          "updated": 1650642805
         },
-        "deletedDate": 1650061426,
+        "deletedDate": 1650642810,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -1076,16 +1180,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/5c79c2eefa1e4ee9147b964253033fdb",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey53311274c/913761381f350ad49027151cf8f20b80",
           "kty": "RSA-HSM",
-          "n": "jRrl1rzNDzZHYFzJbDL7OoWpJh1xMzsjGI43RBCzhUeDHhFQ9FKcZHCnhePp2GHmGwnG_onnMO0c5jyYu30kCwmRm77p1dIZiY8Qeqc1lBLWGC4G7IeJmFPrCWXURuZvD6WDoFn18LraEghTILJErE_R4SyQf3WJTOzkgrXsrZRqm_rH3AzK07v01rktrPPtPVowiy1mjNd9I_r5wRjXPs6mU11sHMX8ewkIuwhwUP5RLHYMbWQZcO8e2HrfX4a50ZUNOiobY01mFDLiqScAGB3DZYIdWDZioJyW8hkJ4P7zyAYnHXpnpU7tStxwA2TDcxSTZ2yx7njcx2jb5nEZTw"
+          "n": "nQFTSn6HEJ2XYs2TwruFUQiodFXGqFuMDF8gY9uShLlG0Q3z1wxPKdmgCc_ENMiUYN8D0WmODe8YWjaCPoaBNzUOK0IJgUrmKok2KY0M-XFygw4EcDWlRUhzmtErNSB1ls9RbvjHJ_lJUhCB28VWRdtbhUJDItoe2nM0Gtd9IhXGzTk5t_8_nOpobIjvS12qOl0Axkbgms-o4ZiRZbQcdtMjBmXYVh3vYRrAmCXW4RCa0XyiImgV9kvVsLbRu6dtyNxiHX01xuu0YkCaOhi8F7KZQ5HY3_IbqZQl1zah0bexj-RJUMptktOhqFHE-h5AaV0xpC0Ha0ie27ODA1lr0Q"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c",
-        "scheduledPurgeDate": 1650666226
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey53311274c",
+        "scheduledPurgeDate": 1651247610
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey63311274c?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1098,7 +1202,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1106,18 +1210,18 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "165"
+        "x-ms-server-latency": "190"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061422,
+          "created": 1650642807,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061422
+          "updated": 1650642807
         },
-        "deletedDate": 1650061427,
+        "deletedDate": 1650642810,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -1128,16 +1232,16 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/92843516520b07c03f52808bd693754c",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey63311274c/46e8397a9da54c43236e6ecac1216161",
           "kty": "RSA-HSM",
-          "n": "r9cXy5icy5d2pgXiyRWTBEaqsOszncrjqgt4MEPRX8oketwtE7LlkxUKH58tjU0h3ut33as5Z5uFB1UxwNL9-3m04Bk6mk2n5iAX0We_pV6Db3m4qgc9RNFFDOYvn7hm25VVd-zfy0B1v4JB-QRGntLTjQtoGbzc8-bxLOGreHRlpmHl2CnayIV_SPkI-S9vMMzlcIopXKqL4ma6naX_atWTRUd9QNJzkzuRFrE1jGU6j5zG637D4H9Q3vi5RSQvofdwdLWYLWZVhXPn6RLXmMNbEmcZsdQyqEqDitsSb0RiXmScIbw5bTtet6kFH_tYT3wO1Mqe8ok3PgiQRC2-jw"
+          "n": "tzbr2JyYcsiEkaZaUCd8fegOHA0ynI3wpo2QtD_deVWUl-Zb_aRAQzccMz-FCgR14atX_4-S1zREyscUcJQRS8xeXopm14AmgJrtHobHemyOdap8aqfNAomhtSSygh6DGYIgZllQs-zJPHf63bnXhRLObSWPlkcqzekLP-Dxa3ZkrEcFs_oi5JD7WljIYQtZqyKjDTpFFZdyLTgPWpLUhB8G6DUGlPbT4-BCBPm1irPhTBRD1djnIswr2WKpRK-oU1wZn2YVUkGp4AvrcvPMAdyR53XNWRQETHRSzDiZEysnZJ-w3ngwPdPHXSsDyVuGU6nZxsgYhZ87tslDfA2Ofw"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c",
-        "scheduledPurgeDate": 1650666227
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey63311274c",
+        "scheduledPurgeDate": 1651247610
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey63311274c?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1149,7 +1253,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "880",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1158,18 +1262,18 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "32"
+        "x-ms-server-latency": "27"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061422,
+          "created": 1650642807,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061422
+          "updated": 1650642807
         },
-        "deletedDate": 1650061427,
+        "deletedDate": 1650642810,
         "key": {
           "e": "AQAB",
           "key_ops": [
@@ -1180,68 +1284,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/92843516520b07c03f52808bd693754c",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey63311274c/46e8397a9da54c43236e6ecac1216161",
           "kty": "RSA-HSM",
-          "n": "r9cXy5icy5d2pgXiyRWTBEaqsOszncrjqgt4MEPRX8oketwtE7LlkxUKH58tjU0h3ut33as5Z5uFB1UxwNL9-3m04Bk6mk2n5iAX0We_pV6Db3m4qgc9RNFFDOYvn7hm25VVd-zfy0B1v4JB-QRGntLTjQtoGbzc8-bxLOGreHRlpmHl2CnayIV_SPkI-S9vMMzlcIopXKqL4ma6naX_atWTRUd9QNJzkzuRFrE1jGU6j5zG637D4H9Q3vi5RSQvofdwdLWYLWZVhXPn6RLXmMNbEmcZsdQyqEqDitsSb0RiXmScIbw5bTtet6kFH_tYT3wO1Mqe8ok3PgiQRC2-jw"
+          "n": "tzbr2JyYcsiEkaZaUCd8fegOHA0ynI3wpo2QtD_deVWUl-Zb_aRAQzccMz-FCgR14atX_4-S1zREyscUcJQRS8xeXopm14AmgJrtHobHemyOdap8aqfNAomhtSSygh6DGYIgZllQs-zJPHf63bnXhRLObSWPlkcqzekLP-Dxa3ZkrEcFs_oi5JD7WljIYQtZqyKjDTpFFZdyLTgPWpLUhB8G6DUGlPbT4-BCBPm1irPhTBRD1djnIswr2WKpRK-oU1wZn2YVUkGp4AvrcvPMAdyR53XNWRQETHRSzDiZEysnZJ-w3ngwPdPHXSsDyVuGU6nZxsgYhZ87tslDfA2Ofw"
         },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c",
-        "scheduledPurgeDate": 1650666227
+        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey63311274c",
+        "scheduledPurgeDate": 1651247610
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c?api-version=7.3",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Length": "864",
-        "Content-Security-Policy": "default-src \u0027self\u0027",
-        "Content-Type": "application/json; charset=utf-8",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
-        "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "201"
-      },
-      "ResponseBody": {
-        "attributes": {
-          "created": 1650061424,
-          "enabled": true,
-          "exportable": false,
-          "recoverableDays": 7,
-          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061424
-        },
-        "deletedDate": 1650061427,
-        "key": {
-          "e": "AQAB",
-          "key_ops": [
-            "wrapKey",
-            "encrypt",
-            "decrypt",
-            "unwrapKey",
-            "sign",
-            "verify"
-          ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/8425570aa8d000d08656d9e6f53d5d10",
-          "kty": "RSA-HSM",
-          "n": "kfqHjhc9BwJd2wdGrDgUJvf2Ppln30P4Ov8XiWCZQ1vwEMIvd7xaJr_cQ8txGt9TR1cjRac5wS4HS9akK-PZRCWAxZqj-hSZ9JZNsB6q1tzRbrE9x5UclCEGlNEmYmBZjF0FFMZ28O0RRZE28j2Mmh7nYE5RhoPTr1ZXnni7ahVR-lRvIyfU5t9G58_oVMhVGXrrlzuMFZIh1MV1bJNhY-Jsfgi2Qfggiyc1RqafzOWR419nddMxZ2EoDtNnXe8QwlK60MkvPwTltdb2JOvxK4frhuerg0hll2lqJhrjNc5y2gpjewrvqCF5lxAPNJWH7sjLnDwxxIjpCJJHoSnD8w"
-        },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c",
-        "scheduledPurgeDate": 1650666227
-      }
-    },
-    {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1253,7 +1305,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "864",
+        "Content-Length": "4248",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1262,38 +1314,164 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "29"
+        "x-ms-server-latency": "43"
       },
       "ResponseBody": {
-        "attributes": {
-          "created": 1650061424,
-          "enabled": true,
-          "exportable": false,
-          "recoverableDays": 7,
-          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061424
-        },
-        "deletedDate": 1650061427,
-        "key": {
-          "e": "AQAB",
-          "key_ops": [
-            "verify",
-            "sign",
-            "unwrapKey",
-            "encrypt",
-            "decrypt",
-            "wrapKey"
-          ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/8425570aa8d000d08656d9e6f53d5d10",
-          "kty": "RSA-HSM",
-          "n": "kfqHjhc9BwJd2wdGrDgUJvf2Ppln30P4Ov8XiWCZQ1vwEMIvd7xaJr_cQ8txGt9TR1cjRac5wS4HS9akK-PZRCWAxZqj-hSZ9JZNsB6q1tzRbrE9x5UclCEGlNEmYmBZjF0FFMZ28O0RRZE28j2Mmh7nYE5RhoPTr1ZXnni7ahVR-lRvIyfU5t9G58_oVMhVGXrrlzuMFZIh1MV1bJNhY-Jsfgi2Qfggiyc1RqafzOWR419nddMxZ2EoDtNnXe8QwlK60MkvPwTltdb2JOvxK4frhuerg0hll2lqJhrjNc5y2gpjewrvqCF5lxAPNJWH7sjLnDwxxIjpCJJHoSnD8w"
-        },
-        "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c",
-        "scheduledPurgeDate": 1650666227
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+        "value": [
+          {
+            "attributes": {
+              "created": 1650642647,
+              "enabled": true,
+              "exp": 2524723200,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642651
+            },
+            "deletedDate": 1650642651,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-rsa-key3e722c4f",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key3e722c4f",
+            "scheduledPurgeDate": 1651247451,
+            "tags": {
+              "foo": "updated tag"
+            }
+          },
+          {
+            "attributes": {
+              "created": 1650642660,
+              "enabled": true,
+              "exp": 2524723200,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642663
+            },
+            "deletedDate": 1650642663,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-rsa-key3e642c4e",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key3e642c4e",
+            "scheduledPurgeDate": 1651247463,
+            "tags": {
+              "foo": "updated tag"
+            }
+          },
+          {
+            "attributes": {
+              "created": 1650642753,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642753
+            },
+            "deletedDate": 1650642768,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e11a2b63",
+            "scheduledPurgeDate": 1651247568
+          },
+          {
+            "attributes": {
+              "created": 1650642756,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642756
+            },
+            "deletedDate": 1650642768,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e11a2b63",
+            "scheduledPurgeDate": 1651247568
+          },
+          {
+            "attributes": {
+              "created": 1650642758,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642758
+            },
+            "deletedDate": 1650642769,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e11a2b63",
+            "scheduledPurgeDate": 1651247569
+          },
+          {
+            "attributes": {
+              "created": 1650642760,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642760
+            },
+            "deletedDate": 1650642769,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e11a2b63",
+            "scheduledPurgeDate": 1651247569
+          },
+          {
+            "attributes": {
+              "created": 1650642763,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642763
+            },
+            "deletedDate": 1650642769,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e11a2b63",
+            "scheduledPurgeDate": 1651247569
+          },
+          {
+            "attributes": {
+              "created": 1650642765,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642765
+            },
+            "deletedDate": 1650642770,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e11a2b63",
+            "scheduledPurgeDate": 1651247570
+          },
+          {
+            "attributes": {
+              "created": 1650642767,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642767
+            },
+            "deletedDate": 1650642770,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e11a2b63",
+            "scheduledPurgeDate": 1651247570
+          },
+          {
+            "attributes": {
+              "created": 1650642773,
+              "enabled": true,
+              "exportable": false,
+              "recoverableDays": 7,
+              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+              "updated": 1650642773
+            },
+            "deletedDate": 1650642788,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e10c2b62",
+            "scheduledPurgeDate": 1651247588
+          }
+        ]
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys?api-version=7.3\u0026maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1305,7 +1483,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "4080",
+        "Content-Length": "4124",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1317,161 +1495,153 @@
         "x-ms-server-latency": "33"
       },
       "ResponseBody": {
-        "nextLink": "00000000-0000-0000-0000-000000000000deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-Sklwb0FObnRjOUpjQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+        "nextLink": "https://managedhsmvaultname.vault.azure.net/deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25uQUFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
         "value": [
           {
             "attributes": {
-              "created": 1650058982,
+              "created": 1650642776,
               "enabled": true,
-              "exp": 2524723200,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650058985
+              "updated": 1650642776
             },
-            "deletedDate": 1650058986,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestcrud-rsa-key3e722c4f",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestcrud-rsa-key3e722c4f",
-            "scheduledPurgeDate": 1650663786,
-            "tags": {
-              "foo": "updated tag"
-            }
+            "deletedDate": 1650642788,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e10c2b62",
+            "scheduledPurgeDate": 1651247588
           },
           {
             "attributes": {
-              "created": 1650059031,
+              "created": 1650642778,
               "enabled": true,
-              "exp": 2524723200,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650059035
+              "updated": 1650642778
             },
-            "deletedDate": 1650059035,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestcrud-rsa-key3e642c4e",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestcrud-rsa-key3e642c4e",
-            "scheduledPurgeDate": 1650663835,
-            "tags": {
-              "foo": "updated tag"
-            }
+            "deletedDate": 1650642789,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e10c2b62",
+            "scheduledPurgeDate": 1651247589
           },
           {
             "attributes": {
-              "created": 1650060465,
+              "created": 1650642780,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060465
+              "updated": 1650642780
             },
-            "deletedDate": 1650060479,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey0e11a2b63",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey0e11a2b63",
-            "scheduledPurgeDate": 1650665279
+            "deletedDate": 1650642789,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e10c2b62",
+            "scheduledPurgeDate": 1651247589
           },
           {
             "attributes": {
-              "created": 1650060467,
+              "created": 1650642783,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060467
+              "updated": 1650642783
             },
-            "deletedDate": 1650060480,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey1e11a2b63",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey1e11a2b63",
-            "scheduledPurgeDate": 1650665280
+            "deletedDate": 1650642789,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e10c2b62",
+            "scheduledPurgeDate": 1651247589
           },
           {
             "attributes": {
-              "created": 1650060470,
+              "created": 1650642785,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060470
+              "updated": 1650642785
             },
-            "deletedDate": 1650060480,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey2e11a2b63",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey2e11a2b63",
-            "scheduledPurgeDate": 1650665280
+            "deletedDate": 1650642790,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e10c2b62",
+            "scheduledPurgeDate": 1651247590
           },
           {
             "attributes": {
-              "created": 1650060472,
+              "created": 1650642787,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060472
+              "updated": 1650642787
             },
-            "deletedDate": 1650060480,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey3e11a2b63",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey3e11a2b63",
-            "scheduledPurgeDate": 1650665280
+            "deletedDate": 1650642790,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e10c2b62",
+            "scheduledPurgeDate": 1651247590
           },
           {
             "attributes": {
-              "created": 1650060474,
+              "created": 1650642794,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060474
+              "updated": 1650642794
             },
-            "deletedDate": 1650060481,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey4e11a2b63",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey4e11a2b63",
-            "scheduledPurgeDate": 1650665281
+            "deletedDate": 1650642808,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey03311274c",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey03311274c",
+            "scheduledPurgeDate": 1651247608
           },
           {
             "attributes": {
-              "created": 1650060477,
+              "created": 1650642796,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060477
+              "updated": 1650642796
             },
-            "deletedDate": 1650060481,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey5e11a2b63",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey5e11a2b63",
-            "scheduledPurgeDate": 1650665281
+            "deletedDate": 1650642808,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey13311274c",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey13311274c",
+            "scheduledPurgeDate": 1651247608
           },
           {
             "attributes": {
-              "created": 1650060479,
+              "created": 1650642798,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060479
+              "updated": 1650642798
             },
-            "deletedDate": 1650060482,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey6e11a2b63",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey6e11a2b63",
-            "scheduledPurgeDate": 1650665282
+            "deletedDate": 1650642809,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey23311274c",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey23311274c",
+            "scheduledPurgeDate": 1651247609
           },
           {
             "attributes": {
-              "created": 1650060538,
+              "created": 1650642800,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060538
+              "updated": 1650642800
             },
-            "deletedDate": 1650060553,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey0e10c2b62",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey0e10c2b62",
-            "scheduledPurgeDate": 1650665353
+            "deletedDate": 1650642809,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey33311274c",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey33311274c",
+            "scheduledPurgeDate": 1651247609
           }
         ]
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys?api-version=7.3\u0026maxresults=25\u0026$skiptoken=K1JJRDp-Sklwb0FObnRjOUpjQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys?api-version=7.3\u0026maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25uQUFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1483,7 +1653,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "3956",
+        "Content-Length": "1193",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1492,227 +1662,57 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "37"
-      },
-      "ResponseBody": {
-        "nextLink": "00000000-0000-0000-0000-000000000000deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-Sklwb0FObnRjOUp3QUFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
-        "value": [
-          {
-            "attributes": {
-              "created": 1650060540,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060540
-            },
-            "deletedDate": 1650060553,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey1e10c2b62",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey1e10c2b62",
-            "scheduledPurgeDate": 1650665353
-          },
-          {
-            "attributes": {
-              "created": 1650060543,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060543
-            },
-            "deletedDate": 1650060553,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey2e10c2b62",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey2e10c2b62",
-            "scheduledPurgeDate": 1650665353
-          },
-          {
-            "attributes": {
-              "created": 1650060545,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060545
-            },
-            "deletedDate": 1650060554,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey3e10c2b62",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey3e10c2b62",
-            "scheduledPurgeDate": 1650665354
-          },
-          {
-            "attributes": {
-              "created": 1650060547,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060547
-            },
-            "deletedDate": 1650060554,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey4e10c2b62",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey4e10c2b62",
-            "scheduledPurgeDate": 1650665354
-          },
-          {
-            "attributes": {
-              "created": 1650060550,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060550
-            },
-            "deletedDate": 1650060554,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey5e10c2b62",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey5e10c2b62",
-            "scheduledPurgeDate": 1650665354
-          },
-          {
-            "attributes": {
-              "created": 1650060552,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650060552
-            },
-            "deletedDate": 1650060555,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey6e10c2b62",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey6e10c2b62",
-            "scheduledPurgeDate": 1650665355
-          },
-          {
-            "attributes": {
-              "created": 1650061410,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650061410
-            },
-            "deletedDate": 1650061425,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c",
-            "scheduledPurgeDate": 1650666225
-          },
-          {
-            "attributes": {
-              "created": 1650061412,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650061412
-            },
-            "deletedDate": 1650061425,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c",
-            "scheduledPurgeDate": 1650666225
-          },
-          {
-            "attributes": {
-              "created": 1650061415,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650061415
-            },
-            "deletedDate": 1650061425,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c",
-            "scheduledPurgeDate": 1650666225
-          },
-          {
-            "attributes": {
-              "created": 1650061417,
-              "enabled": true,
-              "exportable": false,
-              "recoverableDays": 7,
-              "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650061417
-            },
-            "deletedDate": 1650061426,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c",
-            "scheduledPurgeDate": 1650666226
-          }
-        ]
-      }
-    },
-    {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys?api-version=7.3\u0026maxresults=25\u0026$skiptoken=K1JJRDp-Sklwb0FObnRjOUp3QUFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Length": "1145",
-        "Content-Security-Policy": "default-src \u0027self\u0027",
-        "Content-Type": "application/json; charset=utf-8",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
-        "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "32"
+        "x-ms-server-latency": "27"
       },
       "ResponseBody": {
         "value": [
           {
             "attributes": {
-              "created": 1650061420,
+              "created": 1650642803,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650061420
+              "updated": 1650642803
             },
-            "deletedDate": 1650061426,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c",
-            "scheduledPurgeDate": 1650666226
+            "deletedDate": 1650642809,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey43311274c",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey43311274c",
+            "scheduledPurgeDate": 1651247609
           },
           {
             "attributes": {
-              "created": 1650061422,
+              "created": 1650642805,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650061422
+              "updated": 1650642805
             },
-            "deletedDate": 1650061427,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c",
-            "scheduledPurgeDate": 1650666227
+            "deletedDate": 1650642810,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey53311274c",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey53311274c",
+            "scheduledPurgeDate": 1651247610
           },
           {
             "attributes": {
-              "created": 1650061424,
+              "created": 1650642807,
               "enabled": true,
               "exportable": false,
               "recoverableDays": 7,
               "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-              "updated": 1650061424
+              "updated": 1650642807
             },
-            "deletedDate": 1650061427,
-            "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c",
-            "recoveryId": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c",
-            "scheduledPurgeDate": 1650666227
+            "deletedDate": 1650642810,
+            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey63311274c",
+            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey63311274c",
+            "scheduledPurgeDate": 1651247610
           }
         ]
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey03311274c/recover?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey03311274c/recover?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1725,7 +1725,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1733,16 +1733,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "110"
+        "x-ms-server-latency": "128"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061410,
+          "created": 1650642794,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061410
+          "updated": 1650642794
         },
         "key": {
           "e": "AQAB",
@@ -1754,14 +1754,14 @@
             "encrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey03311274c/70dd6452269306a803c51d0a62687638",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey03311274c/776927f9e9da0c97b4882094ca8a18ae",
           "kty": "RSA-HSM",
-          "n": "sLO1RYW3lDhnqbzqbzC0O6-J4UdQVdcECesJY3714jliduE10PY3EC6zqv81mskK6g51aMrp1bnip0BIYBPVb1F90QQraA1qvzDSeRc_yRqU6vq2WPyS7fjTxG9XOFDweI1kCQxZeJ5j8TSWjhL-XkknOU23v-iZGEeZ5yEXblmOP1jhyCUYhhQ1qA5jo-2NAvnckpOE_DvfIbGEySRJXh_3B_TpyBVlUHsncYAFeowW9IubwBa8V3J8w3t_zeFMrAXfdAJBdnRtRDTRTxXhxJGE7CBSvpkBifdO_VKq39jDnZBC3YcXBuA0ckMsWegY9VBuSU3w6gGaZCViT8ZuMw"
+          "n": "4rbxYMncB3OYQTkvRnZ6XZ5w-NoQVqki8N7sGzzmfj6kNSN8wEasqO9qRcOEUNpIFDSjmvQjd8NfSHiMtVuqvDTZaJ4PBIlnoXTLjc6v_7k5ItaKoAl3DcVqCwf2sIOn6Tk500aXlBhkYjLesHtwR9ZamyeVxQGQOprMs8XO1_TRM0Q2M9FU4Ngkk3iAaul1lEoNQuKiZvNHKsb2G9X-5DKgDuKLLYadG8Qt75ILifzsxnHy-XhWKoOSyLaEsItJdEHB6vv5ACbj0rhsUbSwA1lsMbeREbzsOQwtwaRzjCTDg8vva-IKudEBI6LgpPw_ycWxRSN0mlHBbm3HmAL21w"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey13311274c/recover?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey13311274c/recover?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1774,7 +1774,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1782,16 +1782,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "113"
+        "x-ms-server-latency": "697"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061412,
+          "created": 1650642796,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061412
+          "updated": 1650642796
         },
         "key": {
           "e": "AQAB",
@@ -1803,14 +1803,14 @@
             "encrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey13311274c/f06a7fde1f804b541f4ad142928d5f93",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey13311274c/2b3b3bbc742847d51aeab53c738211f1",
           "kty": "RSA-HSM",
-          "n": "mkktH41XAjOt8Gn6LpGUN-2bQHvP0Gyj8kMNxsAJdFPw9vH-X8dQaY4hmltID0TH5DydwUSeedlE3MTzWvSc7BgYwqJPTIv5dwCQjegnIVDIPw6MZhunXxJuacxqlS-h5mUf2buDeEddOeltfGPXk_ndbm0eSXlZH3D3OdZQBGvzvRLXYrqzVRdY9mXY2nSMihP151dytx8mfEZhWc6NjJuc8n9RV9WNGqrqqYKd6vLndLjiVVMFHwGGKS4fY5ipkOJK-jsKS3qgNZ_np-6kMTxTWKt6oOHNnjzGU6avINo14RajNBNbQ3ZGrJdmuFirJ2uZG7gjHfP2NvhO0foyww"
+          "n": "0OdKWmwKo0srhtlqyMMY5p3D6pA2OA2xaWJFFoAoIHZsgKSFhbMeYdkQ9TN0J0ZTNSItDDIfxKmMjB75lNnt076VIdviAyek-T6wo0XdWTLx5YPMu-vnzA540bNrHonA16vgLbhlUjBXHQ9dQBcw375_N_KNj8UzU0rgC_Mk70l7I5uDcVNXydGbFaN1K9EHUh8ICUKIwSlokPT9cC-nF7x4juCuZD0ETFVf1IYF0eEndfhN-RE8gTKIkIKEPXNj_N5R9RyTHZviZAGz7GRZSSFhH9L-Y8Y8MUsVTB5-PliKYCOyh0pEXjjH07uEjstM8kBt6o9MPAl29YY4bH906Q"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey23311274c/recover?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey23311274c/recover?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1823,7 +1823,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1835,12 +1835,12 @@
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061415,
+          "created": 1650642798,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061415
+          "updated": 1650642798
         },
         "key": {
           "e": "AQAB",
@@ -1852,14 +1852,14 @@
             "encrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey23311274c/8278534109aa42122ab8b0b5f5be1c1a",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey23311274c/57ac3ee5b78106a5211af716dafad7b6",
           "kty": "RSA-HSM",
-          "n": "l5zT0qtwAm8cFH1t_iS5NzSkfKEViPgsvOPnCCHkFbSEW0sh5X27RCNXIo0OPRTz8iWj_XqIL4YH_Dx21yWlKcmEnVY7PTGnd_G02-kAb2H1teBqo5GbhVWS62bvy2rcX_0Vyp5-_X4gNFvOIuYrhA6Om9BXkkwi43ZgMHDDcKnTJqtHmNGsV4L_AhQCJ7-KYhpDXYXXHOnc3FTdWpG9JVp3M9N_WJikR5i1RjJ55cHxKDvRIi9fV7l6G5uDnh0cYoxKFeacB6mxgFGYgNCPxbDAX0We62CGNdHO4_4jB-KgdvylGdUz4DVukpxpKDI8yZGgHdaq0La3cdWTPc1osQ"
+          "n": "qUhFnfx26UF8cerI-8vSQgQIPjSsqqb8X5gmm39NOiT1HZgxToY4ubehfw8jNqpN_UuPlbhdw8nwgZoin97haYemicaqY0XjXH2eIZqNSnRQizAj29XPFu6dD_iyFievvu1EQ0-e5j6VMTC2dv-NCQE5j8cUslLsKMgy0-FS_zDEceT5ZVOkvhRx1enk6QW1fAMdtA8BfylAL9yZOqD4zca0AdBeDGh4hVd7qM0xKlq27fAPX4IQviwUWUZhrNMcspz2N02OT9DVHJ6xK_0tSxL5I9BJ-y4ORFLYA-zOp1XOle1Tx3zqXupUr1xTzlnEn_lDwGrKZnC7-k5OnEcKkQ"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey33311274c/recover?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey33311274c/recover?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1872,7 +1872,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1884,12 +1884,12 @@
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061417,
+          "created": 1650642800,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061417
+          "updated": 1650642800
         },
         "key": {
           "e": "AQAB",
@@ -1901,14 +1901,14 @@
             "encrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey33311274c/0e9bf33012480f123e7adae7349067b9",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey33311274c/870561bc1be30fff80d2e75dde2c2b80",
           "kty": "RSA-HSM",
-          "n": "td0fm4bpBzdsri-Aw0Z8Esp6SI4S2AZZLZE1WlSTjdvznvVp33ra6tKpeTeU_8uW3GzS4PAtgmvga17yVxP5O98KWYEQxeLrmXZ1vkjTcGRYz3eWySIEMz0gjVx-gyaczTRLjsIIAk8WrwYvSUOoRTiSvd3qI5Z2rvexHdFnLlr2Vu10J-iVc-ZSW86dKHvNuc4TG3GTLp9Z-Xbp4R5BpM0goiHuy3C0-vfSLylqix2PIfAIRBNwiPFfCLv288flooNCtJbVgYQeTEbOFH5iyu6YXFu_NAB8ZolQBBpDEaMQeyGxcirp9PCW0S4dlcVzqZff89UIy_fQkWt8iofbpw"
+          "n": "qLm6riDr5gF3EB4MfaVVwJ9dL576vvT74s4Go-bY4wS6IZ7jRLmw4d-O6DMrpl_eXw3Pkx1q3fDFMlYTNLgrIAgFedW2pr5sVb8bcI9GNucYiAhBVYM8TywBt2kvkWKUDsOkVuL2L6_YlNMnFCL8XOiNg-agj4d9-6azmg-Qgl1sMPU05WZqd_20vMasrVvbmtJM_GO_7ANZjjgyHhI8j3hAJ_TruhTVs8M1VuKviLJTN_iuNVuctDd79qbAUL_0isn5c6aAMmsBZy6khNS4IcJgm6s-3tU7MJN73SknHvAZV0uaJo6wpoJrkKG1_Hxa1XKA_Oc8NkWXnHOtZHNBNw"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey43311274c/recover?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey43311274c/recover?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1921,7 +1921,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1929,16 +1929,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "129"
+        "x-ms-server-latency": "113"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061420,
+          "created": 1650642803,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061420
+          "updated": 1650642803
         },
         "key": {
           "e": "AQAB",
@@ -1950,14 +1950,14 @@
             "encrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey43311274c/5c79c2eefa1e4ee9147b964253033fdb",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey43311274c/2be76c72344b406b0ff389f81a5ca84d",
           "kty": "RSA-HSM",
-          "n": "jRrl1rzNDzZHYFzJbDL7OoWpJh1xMzsjGI43RBCzhUeDHhFQ9FKcZHCnhePp2GHmGwnG_onnMO0c5jyYu30kCwmRm77p1dIZiY8Qeqc1lBLWGC4G7IeJmFPrCWXURuZvD6WDoFn18LraEghTILJErE_R4SyQf3WJTOzkgrXsrZRqm_rH3AzK07v01rktrPPtPVowiy1mjNd9I_r5wRjXPs6mU11sHMX8ewkIuwhwUP5RLHYMbWQZcO8e2HrfX4a50ZUNOiobY01mFDLiqScAGB3DZYIdWDZioJyW8hkJ4P7zyAYnHXpnpU7tStxwA2TDcxSTZ2yx7njcx2jb5nEZTw"
+          "n": "rEcLYlPDW5PfQQixN_LXupIDSum0AfYGBTtpaHaevfJ-SGHz2Agkv37C2uRrYmSUT1_3IS23XKHtUc591slwvWiQtv-1NChIgKiq_a_qW3WENR1H1F410iGOElPiFHo83y-iCwVdZiJEj7UD3B0brP7DrsFx8-gd8WBxEKUPwVb4eUGQtyRpbszke3ASXaA7X24yBNcKwUuZbIMvh9HRN17RRfqj1nizUYldXpkv-0DnoJ-vS8X8DYvBj8ToYMktgBddwpef4_lZ2_kdR_iJfpHvk8DVoR3kKmoqQfIa3QX4giL-dG21Qvy5YK3iy_-4bRVUB6pkfI4gUkcs46IZEw"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey53311274c/recover?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey53311274c/recover?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1970,7 +1970,56 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "721",
+        "Content-Length": "729",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "108"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650642805,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650642805
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "verify",
+            "sign",
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "wrapKey"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey53311274c/913761381f350ad49027151cf8f20b80",
+          "kty": "RSA-HSM",
+          "n": "nQFTSn6HEJ2XYs2TwruFUQiodFXGqFuMDF8gY9uShLlG0Q3z1wxPKdmgCc_ENMiUYN8D0WmODe8YWjaCPoaBNzUOK0IJgUrmKok2KY0M-XFygw4EcDWlRUhzmtErNSB1ls9RbvjHJ_lJUhCB28VWRdtbhUJDItoe2nM0Gtd9IhXGzTk5t_8_nOpobIjvS12qOl0Axkbgms-o4ZiRZbQcdtMjBmXYVh3vYRrAmCXW4RCa0XyiImgV9kvVsLbRu6dtyNxiHX01xuu0YkCaOhi8F7KZQ5HY3_IbqZQl1zah0bexj-RJUMptktOhqFHE-h5AaV0xpC0Ha0ie27ODA1lr0Q"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey63311274c/recover?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "729",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1982,12 +2031,12 @@
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650061422,
+          "created": 1650642807,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061422
+          "updated": 1650642807
         },
         "key": {
           "e": "AQAB",
@@ -1999,58 +2048,9 @@
             "encrypt",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey53311274c/92843516520b07c03f52808bd693754c",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey63311274c/46e8397a9da54c43236e6ecac1216161",
           "kty": "RSA-HSM",
-          "n": "r9cXy5icy5d2pgXiyRWTBEaqsOszncrjqgt4MEPRX8oketwtE7LlkxUKH58tjU0h3ut33as5Z5uFB1UxwNL9-3m04Bk6mk2n5iAX0We_pV6Db3m4qgc9RNFFDOYvn7hm25VVd-zfy0B1v4JB-QRGntLTjQtoGbzc8-bxLOGreHRlpmHl2CnayIV_SPkI-S9vMMzlcIopXKqL4ma6naX_atWTRUd9QNJzkzuRFrE1jGU6j5zG637D4H9Q3vi5RSQvofdwdLWYLWZVhXPn6RLXmMNbEmcZsdQyqEqDitsSb0RiXmScIbw5bTtet6kFH_tYT3wO1Mqe8ok3PgiQRC2-jw"
-        }
-      }
-    },
-    {
-      "RequestUri": "00000000-0000-0000-0000-000000000000deletedkeys/livekvtestkey63311274c/recover?api-version=7.3",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Length": "721",
-        "Content-Security-Policy": "default-src \u0027self\u0027",
-        "Content-Type": "application/json; charset=utf-8",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
-        "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "117"
-      },
-      "ResponseBody": {
-        "attributes": {
-          "created": 1650061424,
-          "enabled": true,
-          "exportable": false,
-          "recoverableDays": 7,
-          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650061424
-        },
-        "key": {
-          "e": "AQAB",
-          "key_ops": [
-            "verify",
-            "sign",
-            "unwrapKey",
-            "decrypt",
-            "encrypt",
-            "wrapKey"
-          ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestkey63311274c/8425570aa8d000d08656d9e6f53d5d10",
-          "kty": "RSA-HSM",
-          "n": "kfqHjhc9BwJd2wdGrDgUJvf2Ppln30P4Ov8XiWCZQ1vwEMIvd7xaJr_cQ8txGt9TR1cjRac5wS4HS9akK-PZRCWAxZqj-hSZ9JZNsB6q1tzRbrE9x5UclCEGlNEmYmBZjF0FFMZ28O0RRZE28j2Mmh7nYE5RhoPTr1ZXnni7ahVR-lRvIyfU5t9G58_oVMhVGXrrlzuMFZIh1MV1bJNhY-Jsfgi2Qfggiyc1RqafzOWR419nddMxZ2EoDtNnXe8QwlK60MkvPwTltdb2JOvxK4frhuerg0hll2lqJhrjNc5y2gpjewrvqCF5lxAPNJWH7sjLnDwxxIjpCJJHoSnD8w"
+          "n": "tzbr2JyYcsiEkaZaUCd8fegOHA0ynI3wpo2QtD_deVWUl-Zb_aRAQzccMz-FCgR14atX_4-S1zREyscUcJQRS8xeXopm14AmgJrtHobHemyOdap8aqfNAomhtSSygh6DGYIgZllQs-zJPHf63bnXhRLObSWPlkcqzekLP-Dxa3ZkrEcFs_oi5JD7WljIYQtZqyKjDTpFFZdyLTgPWpLUhB8G6DUGlPbT4-BCBPm1irPhTBRD1djnIswr2WKpRK-oU1wZn2YVUkGp4AvrcvPMAdyR53XNWRQETHRSzDiZEysnZJ-w3ngwPdPHXSsDyVuGU6nZxsgYhZ87tslDfA2Ofw"
         }
       }
     }

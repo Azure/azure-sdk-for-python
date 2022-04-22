@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestmultitenant-key1ab83264/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key1ab83264/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -22,7 +22,7 @@
         "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-server-latency": "1"
+        "x-ms-server-latency": "0"
       },
       "ResponseBody": null
     },
@@ -43,17 +43,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 15 Apr 2022 21:02:43 GMT",
+        "Date": "Fri, 22 Apr 2022 16:13:01 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ApWfnrUk6sFOl7V4DTBtQX4; expires=Sun, 15-May-2022 21:02:43 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrnW3MFd9q2Opf9cHOGb3WDCir-9haXFlhW4QbJq4E3b_UEeeUurniObiznyPlw2FDglWKtQPrfQi-TAuFpMp-oDyobSIcvIcFuGh-eMCOmmo_bUMFxgvHQIRR9KMXpYY_8TYXpGessa5qM-fdGRGHy0gvd0BN7buFrxrJlr2ebJggAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoYECHYVsYZBnicRrY_2H34hRuoADAAAAJjI9NkOAAAA; expires=Sun, 22-May-2022 16:13:01 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.5 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -131,7 +130,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=ApWfnrUk6sFOl7V4DTBtQX4; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AoYECHYVsYZBnicRrY_2H34hRuoADAAAAJjI9NkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -142,16 +141,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 15 Apr 2022 21:02:43 GMT",
+        "Date": "Fri, 22 Apr 2022 16:13:01 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ApWfnrUk6sFOl7V4DTBtQX4; expires=Sun, 15-May-2022 21:02:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoYECHYVsYZBnicRrY_2H34hRuoADAAAAJjI9NkOAAAA; expires=Sun, 22-May-2022 16:13:02 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -202,7 +201,7 @@
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestmultitenant-key1ab83264/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key1ab83264/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -218,7 +217,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "732",
+        "Content-Length": "740",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -226,16 +225,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "279"
+        "x-ms-server-latency": "374"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650056564,
+          "created": 1650643982,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650056564
+          "updated": 1650643982
         },
         "key": {
           "e": "AQAB",
@@ -247,14 +246,14 @@
             "decrypt",
             "unwrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestmultitenant-key1ab83264/1c3eab893c27097c24abb6322e3c0eb6",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key1ab83264/14a791724ea3057604b5c0981e11ba45",
           "kty": "RSA-HSM",
-          "n": "ipo91kD2nuDoaOY5p375rWTi8HfMzfk6K0FEtPKG2UXHD_5gwRj6q491bxnFpPjoOK3jfsPy-iYfy1sWPknP5fzX8UoJ7JuWDGhZUjiNIkwB4BFsvRPFFOQgMqqZsZEPXWjAHVrKTpzgEXb7dr6XmqxI3rNVvbeiDdmgP6P3ttx-G_XeMm8L9KozZZzo43wh-3pmkdMFgkxaLtezZSzUQb5HnZLdW17X1Mhk-JxSb8kGPxDgEjf0Y_SjTB-Lgfh5NW6OQkTgGbQl8aA2V2oG_x7jpOO1o_BfnRJU2YFv284L6otksrLkdTaA3nnJhONowdoBSWlBKR_iz_UopiTuhQ"
+          "n": "ibthUAF0o07eu3sWmCfu-IF_N0iZ7EcuppClJCh1u5yWFzDouPMbWK5Wv03i2Fv9qaGaDBAH6ZZhODq870uq_gDkBPl7YiaCly-wydtrOfQxz-doxBjkneterpxAZNVe6GjSyycpqCNj2wSY2Dg4F3TrFWGk4X5bZrS-XMLPvQdbzwzHjVtLsMmXh_DLJ-fMcnkrKS2husVrbNfKyTlRLB9NH6NlJEgwPtZntcz2QhtxcM_0KqjGC9MqqJxP-RC5s6P6p4r451-QLAGifnkuncb5m0rwv1qZx5y_qZ-UKK8QFTVYr-bJWE-5yDf2_CNcDw5kjoXugWSEJtEO5wNd0w"
         }
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestmultitenant-key1ab83264/?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key1ab83264/?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -266,7 +265,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "732",
+        "Content-Length": "740",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -275,16 +274,16 @@
         "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "100"
+        "x-ms-server-latency": "92"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650056564,
+          "created": 1650643982,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650056564
+          "updated": 1650643982
         },
         "key": {
           "e": "AQAB",
@@ -296,9 +295,9 @@
             "sign",
             "wrapKey"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestmultitenant-key1ab83264/1c3eab893c27097c24abb6322e3c0eb6",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key1ab83264/14a791724ea3057604b5c0981e11ba45",
           "kty": "RSA-HSM",
-          "n": "ipo91kD2nuDoaOY5p375rWTi8HfMzfk6K0FEtPKG2UXHD_5gwRj6q491bxnFpPjoOK3jfsPy-iYfy1sWPknP5fzX8UoJ7JuWDGhZUjiNIkwB4BFsvRPFFOQgMqqZsZEPXWjAHVrKTpzgEXb7dr6XmqxI3rNVvbeiDdmgP6P3ttx-G_XeMm8L9KozZZzo43wh-3pmkdMFgkxaLtezZSzUQb5HnZLdW17X1Mhk-JxSb8kGPxDgEjf0Y_SjTB-Lgfh5NW6OQkTgGbQl8aA2V2oG_x7jpOO1o_BfnRJU2YFv284L6otksrLkdTaA3nnJhONowdoBSWlBKR_iz_UopiTuhQ"
+          "n": "ibthUAF0o07eu3sWmCfu-IF_N0iZ7EcuppClJCh1u5yWFzDouPMbWK5Wv03i2Fv9qaGaDBAH6ZZhODq870uq_gDkBPl7YiaCly-wydtrOfQxz-doxBjkneterpxAZNVe6GjSyycpqCNj2wSY2Dg4F3TrFWGk4X5bZrS-XMLPvQdbzwzHjVtLsMmXh_DLJ-fMcnkrKS2husVrbNfKyTlRLB9NH6NlJEgwPtZntcz2QhtxcM_0KqjGC9MqqJxP-RC5s6P6p4r451-QLAGifnkuncb5m0rwv1qZx5y_qZ-UKK8QFTVYr-bJWE-5yDf2_CNcDw5kjoXugWSEJtEO5wNd0w"
         }
       }
     }

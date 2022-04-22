@@ -17,7 +17,7 @@
         "Cache-Control": "no-cache",
         "Content-Length": "97",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Apr 2022 14:42:31 GMT",
+        "Date": "Fri, 22 Apr 2022 14:43:33 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
@@ -51,16 +51,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Apr 2022 14:42:31 GMT",
+        "Date": "Fri, 22 Apr 2022 14:43:34 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyEQAAAD1v79kOAAAAwSDpKRQAAABCb-_ZDgAAAA; expires=Wed, 18-May-2022 14:42:32 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoYECHYVsYZBnicRrY_2H34tc15lFAAAALW19NkOAAAA; expires=Sun, 22-May-2022 14:43:34 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -138,7 +138,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyEQAAAD1v79kOAAAAwSDpKRQAAABCb-_ZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AoYECHYVsYZBnicRrY_2H34tc15lFAAAALW19NkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -149,16 +149,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Apr 2022 14:42:31 GMT",
+        "Date": "Fri, 22 Apr 2022 14:43:34 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyEQAAAD1v79kOAAAAwSDpKRQAAABCb-_ZDgAAAA; expires=Wed, 18-May-2022 14:42:32 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoYECHYVsYZBnicRrY_2H34tc15lFAAAALW19NkOAAAA; expires=Sun, 22-May-2022 14:43:35 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -230,20 +230,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "727",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Apr 2022 14:42:32 GMT",
+        "Date": "Fri, 22 Apr 2022 14:43:35 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
-        "x-ms-keyvault-rbac-cache": "ra_age=4349;da_age=4349;rd_age=4349;brd_age=3709;dec_lev=1;",
+        "x-ms-keyvault-rbac-assignment-id": "8f011949-ed39-5d00-b7ce-c76e5a8c4b2d",
+        "x-ms-keyvault-rbac-cache": "ra_age=397;da_age=397;rd_age=397;brd_age=2379;ra_notif_age=1265;dec_lev=1;",
         "x-ms-keyvault-region": "westus2",
         "x-ms-keyvault-service-version": "1.9.358.1"
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://vaultname.vault.azure.net/keys/livekvtestrsa-not-yet-valid70cb3523/c4d67d5bd3aa4509ab557550e7ed3503",
+          "kid": "https://vaultname.vault.azure.net/keys/livekvtestrsa-not-yet-valid70cb3523/6998878840bc4e40a944d1de701afa52",
           "kty": "RSA",
           "key_ops": [
             "encrypt",
@@ -253,14 +253,14 @@
             "wrapKey",
             "unwrapKey"
           ],
-          "n": "26W2ggh0HtLqZfyVPvxwnq759q_GpPgOK1UoPiUicGUsIELOCW4s3VS7R1p3mm1_h-w22N_2BobLl9BZGAwGq68pggDsDQghPv5jqGTy4ZokILRagVX4zf-FXdQSzNgP15GiXpSgRsGFmh_Z_RKT-10lMazUJ6oI2Q2__DrPRnE0SYjgI350C0grkPCFT4nl9KPQXkNgRlbMzY7wneN0ZAeVUGRfCGKzAVlUNSte-r5bKIeZdEbvLXu2Rn1QtnKIE14ulni3P2zj6eePXQPX4txF-9rxOYUZmoUorOXH0MJG8rzdny-Y4tYshoPhie9Cq5MPMy94Z490gZoJIMU0gQ",
+          "n": "yG6nxJi1eiSW26wmSPvVq5TVznMRV-jSlBMrZ4AmeMXbtQl3mSB7VRketRu3Hqe02LQIYjJG_6mAujn80iTgBILVMVxJ5gD448sTRJTxUawZIlczxCzDG2oFACgLjBjneze15n8C9VOGS9_tj8SOD3bul1uuNMhwG-V-jvxAe8pXN0yGXmZJqhwB7FY1WD8BBmAhV7Rc1HCfFx-2zX9ZuIPjvr-uygUdCNMuVslENVjXHrNRjDloytPDXGwsEYYeW_fdl7vstRq9dzGbOahBa7BZy4rXMVaFmVUz8fjiXyZnCbqelSir3HkemIU_ETfge6bO9jdFL2aoG4DY0tiGcQ",
           "e": "AQAB"
         },
         "attributes": {
           "enabled": true,
           "nbf": 32503680000,
-          "created": 1650292952,
-          "updated": 1650292952,
+          "created": 1650638615,
+          "updated": 1650638615,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
           "recoverableDays": 7
         }
@@ -288,20 +288,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "719",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Apr 2022 14:42:34 GMT",
+        "Date": "Fri, 22 Apr 2022 14:43:37 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
-        "x-ms-keyvault-rbac-cache": "ra_age=4352;da_age=4351;rd_age=4351;brd_age=3711;dec_lev=1;",
+        "x-ms-keyvault-rbac-assignment-id": "8f011949-ed39-5d00-b7ce-c76e5a8c4b2d",
+        "x-ms-keyvault-rbac-cache": "ra_age=400;da_age=400;rd_age=400;brd_age=2382;ra_notif_age=1267;dec_lev=1;",
         "x-ms-keyvault-region": "westus2",
         "x-ms-keyvault-service-version": "1.9.358.1"
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://vaultname.vault.azure.net/keys/livekvtestrsa-expired70cb3523/13409dba883945888c53ae2fc5e4d7fe",
+          "kid": "https://vaultname.vault.azure.net/keys/livekvtestrsa-expired70cb3523/24626ce46ebf434a8e2cf9ac4713aa4d",
           "kty": "RSA",
           "key_ops": [
             "encrypt",
@@ -311,14 +311,14 @@
             "wrapKey",
             "unwrapKey"
           ],
-          "n": "qS9TP6hxGAgpXrYTEsLHkM1R0CYrnfJwP9Oedgi7h8toVae8CmAIHv1xVq-ZsMW-8axz34wnRp9GcW4Dk2oO15nhfmxenQoqFTzxvNhX3kT6G77IwP3-MRRp9KTbcWGtbYdYF97f5_-oMC9X_vrwgTiRu3Y6rL3O1MVjLkoWUpicaaycFfAr-OcfAEUYbA5HNkUTJa6edO9bnL3tmXkivYOMOB3TQmkFteKNGXPyvbqE3739wpjch9b9yH_3RyK3tJFwUDwWCvrJViUh_4RfWHJRGyGmLeXnSIQ0klJCMBZuMDDLjwowRWbw72ZP_5iz_4-BYJpP0rPV5-0gA-xPPQ",
+          "n": "6f5boW7Ubz3mQIINV6GEnF2K4eioC8_FJHiTd6ps5oJ-dXm3_k569NFWsNz_NUgyPdZrkaf7_jg5MowzmD_xYZ4wLztuAfJWalKSJb7e40en9f2Zif1oawPitunMAGuX46XGOlRZB7u__W-CGK7k67oNK4z_ekobH06IYimf2i215jhLWo1nRqg1DdbVlxsUfP8KPXSh_VJFqsC_ZTw1RkRRQAJxhfkMZwfci3wCzh0nkJ5sunJK9WCfjaJ8dAuOaHNXfYB_rqLKYVeg3bmdm2oVA1qsQls2TIxNoMDtZ2u2rjqzKOjk3GnqdIOlvqcQRv4xIU2Swxv1J70lwf0HrQ",
           "e": "AQAB"
         },
         "attributes": {
           "enabled": true,
           "exp": 946684800,
-          "created": 1650292954,
-          "updated": 1650292954,
+          "created": 1650638617,
+          "updated": 1650638617,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
           "recoverableDays": 7
         }
@@ -347,20 +347,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "737",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Apr 2022 14:42:36 GMT",
+        "Date": "Fri, 22 Apr 2022 14:43:40 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000;includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-rbac-assignment-id": "ae1ec34e-30ed-581a-9f84-7759a8c5a1fa",
-        "x-ms-keyvault-rbac-cache": "ra_age=4354;da_age=4354;rd_age=4354;brd_age=3714;dec_lev=1;",
+        "x-ms-keyvault-rbac-assignment-id": "8f011949-ed39-5d00-b7ce-c76e5a8c4b2d",
+        "x-ms-keyvault-rbac-cache": "ra_age=402;da_age=402;rd_age=402;brd_age=2384;ra_notif_age=1269;dec_lev=1;",
         "x-ms-keyvault-region": "westus2",
         "x-ms-keyvault-service-version": "1.9.358.1"
       },
       "ResponseBody": {
         "key": {
-          "kid": "https://vaultname.vault.azure.net/keys/livekvtestrsa-valid70cb3523/2ab24e89f01945acb1017541743c8404",
+          "kid": "https://vaultname.vault.azure.net/keys/livekvtestrsa-valid70cb3523/801068029ba54229a36f3cc1bc1bc17e",
           "kty": "RSA",
           "key_ops": [
             "encrypt",
@@ -370,15 +370,15 @@
             "wrapKey",
             "unwrapKey"
           ],
-          "n": "xpknl2Q5d3q4SxX46hp9_kMH6x6HtzYEvHRS1yHCG_aWdTpK2R3aay2n_0E7W0snhWKoOZfCd5AYOCQ96bGJ2rd8HwEUlFcUucg1nMwPIqJB9qfyD-8eZyKGYK1FQhUhee9n8Ev_rNUsoVkftJPV3KEg9OSOKmXBOtLVQ4TXlfxDNR3gBPFzqxd__fhAuQiimHyCb8f3BC566v37TkY7SuxutRQFRdHkqL5pxrm-bkN8RM6sylHWSRXh4mby2bzucACAoPhG7HNBOgn1w5PYdRTKjtk_5cjI3pR1DChAgbrX24gbdCX5GAeciZD9GTtfNcTIOwbpVXkC1vmAHWIBUQ",
+          "n": "n5dmu8HJ2MKSHlyoQZg8Np0BArEMRBlk7GFHATHHJ6oHvUCn18QYWJXEc_tGuQDI65gmOjGE_7WqClLkwha5fN7cVRaT9Yt3WKPtcwdMbCrLk7hBmaTXSqnaNGfVghvv9w9U-kMYb7ptmtwAS3V-tPznjFsHgz09OII1imKCFQjEaS7IiZUodzBzV6t6_Q6FCv4dzpxtsc0ZSaxxjCj5mrYyM4y6vWzbJsDArDaMVR1lEbKk0WQ6pYCe_UMfbcnxyEI4teMgfBXLReyg3J40Cr6WPwNBULYnhFeM5FJ8By8au5HrCV8WK9vWcHcbKBRg7p4Ke3LVa7QDlQs22ughxQ",
           "e": "AQAB"
         },
         "attributes": {
           "enabled": true,
           "nbf": 32503680000,
           "exp": 32535216000,
-          "created": 1650292957,
-          "updated": 1650292957,
+          "created": 1650638620,
+          "updated": 1650638620,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
           "recoverableDays": 7
         }

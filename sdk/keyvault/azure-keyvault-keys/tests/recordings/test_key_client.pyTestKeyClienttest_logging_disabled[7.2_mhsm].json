@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestrsa-key-nameb1132ad3/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-key-nameb1132ad3/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -22,7 +22,7 @@
         "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-server-latency": "1"
+        "x-ms-server-latency": "0"
       },
       "ResponseBody": null
     },
@@ -43,16 +43,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Apr 2022 13:33:35 GMT",
+        "Date": "Fri, 22 Apr 2022 15:54:49 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAwAAANVe79kOAAAAwSDpKQYAAADaXu_ZDgAAAA; expires=Wed, 18-May-2022 13:33:35 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAFAAAAEDG9NkOAAAA; expires=Sun, 22-May-2022 15:54:50 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -130,7 +130,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAwAAANVe79kOAAAAwSDpKQYAAADaXu_ZDgAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAFAAAAEDG9NkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.10.0b2 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -141,16 +141,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Apr 2022 13:33:35 GMT",
+        "Date": "Fri, 22 Apr 2022 15:54:49 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjXrbxA4WpZEtJruXChTXptv7ioyAwAAANVe79kOAAAAwSDpKQYAAADaXu_ZDgAAAA; expires=Wed, 18-May-2022 13:33:36 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoYECHYVsYZBnicRrY_2H34hRuoAFAAAAEDG9NkOAAAA; expires=Sun, 22-May-2022 15:54:50 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.7 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -201,7 +201,7 @@
       }
     },
     {
-      "RequestUri": "00000000-0000-0000-0000-000000000000keys/livekvtestrsa-key-nameb1132ad3/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-key-nameb1132ad3/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -218,7 +218,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "729",
+        "Content-Length": "737",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -226,16 +226,16 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-server-latency": "271"
+        "x-ms-server-latency": "220"
       },
       "ResponseBody": {
         "attributes": {
-          "created": 1650288816,
+          "created": 1650642890,
           "enabled": true,
           "exportable": false,
           "recoverableDays": 7,
           "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
-          "updated": 1650288816
+          "updated": 1650642890
         },
         "key": {
           "e": "AQAB",
@@ -247,9 +247,9 @@
             "sign",
             "verify"
           ],
-          "kid": "00000000-0000-0000-0000-000000000000keys/livekvtestrsa-key-nameb1132ad3/090cd8b950de002931b160f5288d0360",
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestrsa-key-nameb1132ad3/420f3f7f338c474d3c921b88a7ea3944",
           "kty": "RSA-HSM",
-          "n": "iibAlAeaxxc9Wgs8KGHPNU11Dviq1KdZqCj6ag9ubLUy1iC2mGfLfzkFZY4kHeqrnCB1auPAnRRPURs_uJkhQxFKcI4tMBPoDRzgpzjDuVIwg9RJZjyAxZRbFPzLXyjyCqLbgvORfrbBoqk9Q4P-xM7Ivy_IjrXbYuhBMzTriZCAm1WQnG7SNulccivzcSkeNuwXTLBn66ocOqAqWgy0Tne_iyoKxDuAG6BtNVr5xCEzwjjXap5J9FC_1cAntXj1QCjT4eN-w1PWyWBKyJ-rLY_4qIQXA98lv67e1dfqqZ2P8rpJ-6kiBkZA1Ic1qIjbxZtENtVVgLjwS8u1mqmdcw"
+          "n": "m2tnoOHYcd3-vZyu7c8TADW1Cst6sD5YRuDXLB3MqxChCQFlEQsDcwAS1KToLKaF6hDOXNYvmii0dv1aiHx1tvgAT8sz_oDkChczg78Q_SEGmlusmOI3dgbLoKcHi8ttLLox45ViN-pCpGQjZpuJyKStvL-7MePnJClwMiMbqFt-pE9Vw8NZERfCv4AoZ4OGnTXcz86DHVMBSLcwjVCB7LD-kbUJqDhxKLBj_1OTG5vBYP7_qe7BFPMOBjyqDCCT-8xv2lYtr9Qi9HJiYWo9a8-ZOZoOGslCPz9IZSs6XGxel3FiAVNXN2DTNmIY9vCKR0grYJ5UOqtyjnsVvG3pNQ"
         }
       }
     }
