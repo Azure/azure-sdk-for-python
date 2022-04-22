@@ -1,0 +1,309 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-server-latency": "0"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/create?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "18",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "kty": "RSA-HSM"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "733",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "459"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650662338,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650662338
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "sign",
+            "verify",
+            "encrypt",
+            "decrypt",
+            "unwrapKey"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa",
+          "kty": "RSA-HSM",
+          "n": "uai2kje8hlK0iJ5POQ1MqoFFZ4ceQiUq_dYfdPCKlLFGc4nFJS1WwjfSVPYLGppv6koiWTXvyK7NLzlqZKvlbaBDpGdRtpC5c_aG5bfqBLux9p8X4VvCYi4R4RppklQ6KrE_mVEyNsYCuzABAgrMdm76t5nZnWkJB5oIb_D6p6iRPIOvZxRd4PA_jwekuOExE2Dy9vRCeHJJd9AKnmZkDAjtCQiNpGGjMCwS_v4AkV0bPxcrNkrV7X_9HBG3-su-MsKwDPeD9iSdnICVFTDQqRgQ4k5FTi2bze3r1kaq2AsctTexlOAS2ES_-n__xp0Eo03CnV_qy18qr2F2SWxvXw"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "733",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "176"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650662338,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650662338
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "wrapKey",
+            "verify",
+            "sign",
+            "unwrapKey",
+            "encrypt",
+            "decrypt"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa",
+          "kty": "RSA-HSM",
+          "n": "uai2kje8hlK0iJ5POQ1MqoFFZ4ceQiUq_dYfdPCKlLFGc4nFJS1WwjfSVPYLGppv6koiWTXvyK7NLzlqZKvlbaBDpGdRtpC5c_aG5bfqBLux9p8X4VvCYi4R4RppklQ6KrE_mVEyNsYCuzABAgrMdm76t5nZnWkJB5oIb_D6p6iRPIOvZxRd4PA_jwekuOExE2Dy9vRCeHJJd9AKnmZkDAjtCQiNpGGjMCwS_v4AkV0bPxcrNkrV7X_9HBG3-su-MsKwDPeD9iSdnICVFTDQqRgQ4k5FTi2bze3r1kaq2AsctTexlOAS2ES_-n__xp0Eo03CnV_qy18qr2F2SWxvXw"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa/encrypt?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "44",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "alg": "RSA-OAEP",
+        "value": "cGxhaW50ZXh0"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "488",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "1"
+      },
+      "ResponseBody": {
+        "alg": "RSA-OAEP",
+        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa",
+        "value": "ZJ8XHcYbUw8Jp7VLdLdsUgizl2coSnaIk-_gTOjL9yO5LkAXpWWR8x6BfRU7qVgtsJxUkGw8DiNS4z73AC3iHpAOzutMv8H_KAPlhW2pKNYLD1psGQ9vK0-2O9Z8mnj7Sm3D8JDhI6PeJqEpVrBKa9IdWJwHZw-R271zCl4JrB4taeAAgYa3904iv3-kM1rYX9BiAKw7o3Rp9mvXCcCEfG-FNxo3PDFoFhCF01I64ueMDTFZrNxy5oSk1Fm2QrOALqtEoZ5U4XZ7IRkPLl8ShH3blNnjIhWtGwp2b4odraMjNBeMzyHSAcPFeCbxtbkCM8lT2CD4TS8JpKPHERCQPQ"
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa/decrypt?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "374",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "alg": "RSA-OAEP",
+        "value": "ZJ8XHcYbUw8Jp7VLdLdsUgizl2coSnaIk-_gTOjL9yO5LkAXpWWR8x6BfRU7qVgtsJxUkGw8DiNS4z73AC3iHpAOzutMv8H_KAPlhW2pKNYLD1psGQ9vK0-2O9Z8mnj7Sm3D8JDhI6PeJqEpVrBKa9IdWJwHZw-R271zCl4JrB4taeAAgYa3904iv3-kM1rYX9BiAKw7o3Rp9mvXCcCEfG-FNxo3PDFoFhCF01I64ueMDTFZrNxy5oSk1Fm2QrOALqtEoZ5U4XZ7IRkPLl8ShH3blNnjIhWtGwp2b4odraMjNBeMzyHSAcPFeCbxtbkCM8lT2CD4TS8JpKPHERCQPQ"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "158",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "2"
+      },
+      "ResponseBody": {
+        "alg": "RSA-OAEP",
+        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa",
+        "value": "cGxhaW50ZXh0"
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "733",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "1"
+      },
+      "ResponseBody": {
+        "attributes": {
+          "created": 1650662338,
+          "enabled": true,
+          "exportable": false,
+          "recoverableDays": 7,
+          "recoveryLevel": "CustomizedRecoverable\u002BPurgeable",
+          "updated": 1650662338
+        },
+        "key": {
+          "e": "AQAB",
+          "key_ops": [
+            "unwrapKey",
+            "decrypt",
+            "encrypt",
+            "verify",
+            "sign",
+            "wrapKey"
+          ],
+          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa",
+          "kty": "RSA-HSM",
+          "n": "uai2kje8hlK0iJ5POQ1MqoFFZ4ceQiUq_dYfdPCKlLFGc4nFJS1WwjfSVPYLGppv6koiWTXvyK7NLzlqZKvlbaBDpGdRtpC5c_aG5bfqBLux9p8X4VvCYi4R4RppklQ6KrE_mVEyNsYCuzABAgrMdm76t5nZnWkJB5oIb_D6p6iRPIOvZxRd4PA_jwekuOExE2Dy9vRCeHJJd9AKnmZkDAjtCQiNpGGjMCwS_v4AkV0bPxcrNkrV7X_9HBG3-su-MsKwDPeD9iSdnICVFTDQqRgQ4k5FTi2bze3r1kaq2AsctTexlOAS2ES_-n__xp0Eo03CnV_qy18qr2F2SWxvXw"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa/encrypt?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "44",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "alg": "RSA-OAEP",
+        "value": "cGxhaW50ZXh0"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "488",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "1"
+      },
+      "ResponseBody": {
+        "alg": "RSA-OAEP",
+        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa",
+        "value": "Xrtx8J_CTJvOi-yaqBRrZ_kvzJ1LBnbPk7IEHeXZiLIj2P9GRcWVjZ2gffKs5FmOS7fEA504lTJiSOnLe59FM-tnIZ3aQhBkTSJebWZFOzvstK835FJwPG1NEy54-cFbzWFbiXPzNtDClLN-julgh3nCWawu80uE6FYEKD0rb23C7qlmuUqxg0POeGY7HLWSkiFp2SxciWM-Z-WZujrsfefkNFQWec9PhxBt3Y_pVyBhkQhupTsJAvOepj7r7TF8-s6DyK0kMeQjA_cYJ5k9pfknxzssjeVlw50BzLBpl9VB_VdIZqpGIRPSi-FecGzNQanG83L0SdAMYHVkhZvd-Q"
+      }
+    },
+    {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa/decrypt?api-version=7.3",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "374",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-keyvault-keys/4.5.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "alg": "RSA-OAEP",
+        "value": "Xrtx8J_CTJvOi-yaqBRrZ_kvzJ1LBnbPk7IEHeXZiLIj2P9GRcWVjZ2gffKs5FmOS7fEA504lTJiSOnLe59FM-tnIZ3aQhBkTSJebWZFOzvstK835FJwPG1NEy54-cFbzWFbiXPzNtDClLN-julgh3nCWawu80uE6FYEKD0rb23C7qlmuUqxg0POeGY7HLWSkiFp2SxciWM-Z-WZujrsfefkNFQWec9PhxBt3Y_pVyBhkQhupTsJAvOepj7r7TF8-s6DyK0kMeQjA_cYJ5k9pfknxzssjeVlw50BzLBpl9VB_VdIZqpGIRPSi-FecGzNQanG83L0SdAMYHVkhZvd-Q"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "158",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-server-latency": "3"
+      },
+      "ResponseBody": {
+        "alg": "RSA-OAEP",
+        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey-name62512ee7/3a7f61bcf3704b8a924aa7a1089075aa",
+        "value": "cGxhaW50ZXh0"
+      }
+    }
+  ],
+  "Variables": {}
+}
