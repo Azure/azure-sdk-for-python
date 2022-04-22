@@ -29,7 +29,7 @@ class LogsIngestionClient(object):
         *,
         api_version: str,
         **kwargs: Any
-        ):
+        ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
