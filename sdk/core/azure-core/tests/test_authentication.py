@@ -7,7 +7,7 @@ import time
 from itertools import product
 import azure.core
 from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
-from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
@@ -31,13 +31,13 @@ except ImportError:
 def test_bearer_policy_adds_header(http_request):
     """The bearer token policy should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
-    correct_token = AccessToken("correct_token", 2524608000)
+    expected_token = AccessToken("expected_token", 2524608000)
 
     def verify_authorization_header(request):
-        assert request.http_request.headers["Authorization"] == "Bearer {}".format(correct_token.token)
+        assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
         return Mock()
 
-    fake_credential = Mock(get_token=Mock(return_value=correct_token))
+    fake_credential = Mock(get_token=Mock(return_value=expected_token))
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
 
     pipeline = Pipeline(transport=Mock(), policies=policies)
@@ -139,15 +139,15 @@ def test_bearer_policy_preserves_enforce_https_opt_out(http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_bearer_policy_default_context(http_request):
     """The policy should call get_token with the scopes given at construction, and no keyword arguments, by default"""
-    challenge_scope = "scope"
+    expected_scope = "scope"
     token = AccessToken("", 0)
     credential = Mock(get_token=Mock(return_value=token))
-    policy = BearerTokenCredentialPolicy(credential, challenge_scope)
+    policy = BearerTokenCredentialPolicy(credential, expected_scope)
     pipeline = Pipeline(transport=Mock(), policies=[policy])
 
     pipeline.run(http_request("GET", "https://localhost"))
 
-    credential.get_token.assert_called_once_with(challenge_scope)
+    credential.get_token.assert_called_once_with(expected_scope)
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -191,19 +191,19 @@ def test_bearer_policy_calls_on_challenge(http_request):
 def test_bearer_policy_cannot_complete_challenge(http_request):
     """BearerTokenCredentialPolicy should return the 401 response when it can't complete its challenge"""
 
-    challenge_scope = "scope"
-    correct_token = AccessToken("***", int(time.time()) + 3600)
-    credential = Mock(get_token=Mock(return_value=correct_token))
+    expected_scope = "scope"
+    expected_token = AccessToken("***", int(time.time()) + 3600)
+    credential = Mock(get_token=Mock(return_value=expected_token))
     expected_response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
     transport = Mock(send=Mock(return_value=expected_response))
-    policies = [BearerTokenCredentialPolicy(credential, challenge_scope)]
+    policies = [BearerTokenCredentialPolicy(credential, expected_scope)]
 
     pipeline = Pipeline(transport=transport, policies=policies)
     response = pipeline.run(http_request("GET", "https://localhost"))
 
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
-    credential.get_token.assert_called_once_with(challenge_scope)
+    credential.get_token.assert_called_once_with(expected_scope)
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -267,9 +267,9 @@ def test_bearer_policy_calls_sansio_methods(http_request):
 def test_multitenant_policy_uses_scopes_and_tenant(http_request):
     """The policy's token requests should pass the parsed scope and tenant ID from the challenge, by default"""
 
-    def test_with_challenge(challenge, challenge_scope, challenge_tenant):
+    def test_with_challenge(challenge, expected_scope, challenge_tenant):
         bad_token = "bad_token"
-        correct_token = "correct_token"
+        expected_token = "expected_token"
 
         class Requests:
             count = 0
@@ -285,7 +285,7 @@ def test_multitenant_policy_uses_scopes_and_tenant(http_request):
                 return challenge
             elif Requests.count == 2:
                 # second request should be authorized according to challenge and have the expected content
-                assert correct_token in request.headers["Authorization"]
+                assert expected_token in request.headers["Authorization"]
                 return Mock(status_code=200)
             raise ValueError("unexpected request")
 
@@ -294,14 +294,14 @@ def test_multitenant_policy_uses_scopes_and_tenant(http_request):
             TokenRequests.count += 1
             if TokenRequests.count == 1:
                 # first request uses the scope given to the policy, and no tenant ID
-                assert scopes[0] != challenge_scope
+                assert scopes[0] != expected_scope
                 assert kwargs.get("tenant_id") is None
                 return AccessToken(bad_token, 0)
             elif TokenRequests.count == 2:
                 # second request should use the scope and tenant ID specified in the auth challenge
-                assert scopes[0] == challenge_scope
+                assert scopes[0] == expected_scope
                 assert kwargs.get("tenant_id") == challenge_tenant
-                return AccessToken(correct_token, 0)
+                return AccessToken(expected_token, 0)
             raise ValueError("unexpected token request")
 
         credential = Mock(get_token=Mock(wraps=get_token))
@@ -340,7 +340,7 @@ def test_multitenant_policy_uses_scopes_and_tenant(http_request):
 def test_multitenant_policy_disable_tenant_discovery(http_request):
     """The policy's token requests should exclude the challenge's tenant if requested"""
 
-    def test_with_challenge(challenge, challenge_scope):
+    def test_with_challenge(challenge, expected_scope):
         bad_token = "bad_token"
 
         class Requests:
@@ -366,12 +366,12 @@ def test_multitenant_policy_disable_tenant_discovery(http_request):
             TokenRequests.count += 1
             if TokenRequests.count == 1:
                 # first request uses the scope given to the policy, and no tenant ID
-                assert scopes[0] != challenge_scope
+                assert scopes[0] != expected_scope
                 assert kwargs.get("tenant_id") is None
                 return AccessToken(bad_token, 0)
             elif TokenRequests.count == 2:
                 # second request should use the scope specified in the auth challenge, but not the tenant
-                assert scopes[0] == challenge_scope
+                assert scopes[0] == expected_scope
                 assert kwargs.get("tenant_id") is None
                 return AccessToken(bad_token, 0)
             raise ValueError("unexpected token request")
@@ -400,7 +400,7 @@ def test_multitenant_policy_disable_tenant_discovery(http_request):
 def test_multitenant_policy_disable_scopes_discovery(http_request):
     """The policy's token requests should exclude the challenge's scope if requested"""
 
-    def test_with_challenge(challenge, challenge_scope, challenge_tenant):
+    def test_with_challenge(challenge, expected_scope, challenge_tenant):
         bad_token = "bad_token"
 
         class Requests:
@@ -426,12 +426,12 @@ def test_multitenant_policy_disable_scopes_discovery(http_request):
             TokenRequests.count += 1
             if TokenRequests.count == 1:
                 # first request uses the scope given to the policy, and no tenant ID
-                assert scopes[0] != challenge_scope
+                assert scopes[0] != expected_scope
                 assert kwargs.get("tenant_id") is None
                 return AccessToken(bad_token, 0)
             elif TokenRequests.count == 2:
                 # second request should use the tenant specified in the auth challenge, but not the scope
-                assert scopes[0] != challenge_scope
+                assert scopes[0] != expected_scope
                 assert kwargs.get("tenant_id") == challenge_tenant
                 return AccessToken(bad_token, 0)
             raise ValueError("unexpected token request")
@@ -460,7 +460,7 @@ def test_multitenant_policy_disable_scopes_discovery(http_request):
 def test_multitenant_policy_disable_any_discovery(http_request):
     """The policy shouldn't respond to the challenge if it can't use the provided scope or tenant"""
 
-    def test_with_challenge(challenge, challenge_scope, challenge_tenant):
+    def test_with_challenge(challenge, expected_scope, challenge_tenant):
         bad_token = "bad_token"
 
         class Requests:
@@ -482,7 +482,7 @@ def test_multitenant_policy_disable_any_discovery(http_request):
             TokenRequests.count += 1
             if TokenRequests.count == 1:
                 # first request uses the scope given to the policy, and no tenant ID
-                assert scopes[0] != challenge_scope
+                assert scopes[0] != expected_scope
                 assert kwargs.get("tenant_id") is None
                 return AccessToken(bad_token, 0)
             raise ValueError("unexpected token request")
