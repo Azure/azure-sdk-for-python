@@ -12,7 +12,6 @@ class ProgressTracker:
         self.current = 0
 
     def assert_progress(self, current: int, total: int):
-        print(current, total)
         if self.current != self.total:
             self.current += self.step
 
