@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
 
@@ -35,14 +20,14 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class NameUnavailableReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NameUnavailableReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """reason of name unavailable.
     """
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class Serial(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+class Serial(with_metaclass(CaseInsensitiveEnumMeta, int, Enum)):
     """Serial of key to be regenerated
     """
 
@@ -51,7 +36,7 @@ class Serial(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     #: The Secondary Key.
     SECONDARY = 2
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
     """

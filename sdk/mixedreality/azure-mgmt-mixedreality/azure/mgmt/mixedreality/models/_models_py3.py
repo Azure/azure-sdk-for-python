@@ -17,9 +17,9 @@ from ._mixed_reality_client_enums import *
 class AccountKeyRegenerateRequest(msrest.serialization.Model):
     """Request for account key regeneration.
 
-    :param serial: Serial of key to be regenerated. Possible values include: 1, 2. Default value:
+    :ivar serial: Serial of key to be regenerated. Possible values include: 1, 2. Default value:
      "1".
-    :type serial: str or ~azure.mgmt.mixedreality.models.Serial
+    :vartype serial: int or ~azure.mgmt.mixedreality.models.Serial
     """
 
     _attribute_map = {
@@ -29,9 +29,14 @@ class AccountKeyRegenerateRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        serial: Optional[Union[int, "Serial"]] = "1",
+        serial: Optional[Union[int, "Serial"]] = 1,
         **kwargs
     ):
+        """
+        :keyword serial: Serial of key to be regenerated. Possible values include: 1, 2. Default value:
+         "1".
+        :paramtype serial: int or ~azure.mgmt.mixedreality.models.Serial
+        """
         super(AccountKeyRegenerateRequest, self).__init__(**kwargs)
         self.serial = serial
 
@@ -61,6 +66,8 @@ class AccountKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AccountKeys, self).__init__(**kwargs)
         self.primary_key = None
         self.secondary_key = None
@@ -71,10 +78,10 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Resource Name To Verify.
-    :type name: str
-    :param type: Required. Fully qualified resource type which includes provider namespace.
-    :type type: str
+    :ivar name: Required. Resource Name To Verify.
+    :vartype name: str
+    :ivar type: Required. Fully qualified resource type which includes provider namespace.
+    :vartype type: str
     """
 
     _validation = {
@@ -94,6 +101,12 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
         type: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Resource Name To Verify.
+        :paramtype name: str
+        :keyword type: Required. Fully qualified resource type which includes provider namespace.
+        :paramtype type: str
+        """
         super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -104,12 +117,12 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name_available: Required. if name Available.
-    :type name_available: bool
-    :param reason: Resource Name To Verify. Possible values include: "Invalid", "AlreadyExists".
-    :type reason: str or ~azure.mgmt.mixedreality.models.NameUnavailableReason
-    :param message: detail message.
-    :type message: str
+    :ivar name_available: Required. if name Available.
+    :vartype name_available: bool
+    :ivar reason: Resource Name To Verify. Possible values include: "Invalid", "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.mixedreality.models.NameUnavailableReason
+    :ivar message: detail message.
+    :vartype message: str
     """
 
     _validation = {
@@ -130,6 +143,14 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Required. if name Available.
+        :paramtype name_available: bool
+        :keyword reason: Resource Name To Verify. Possible values include: "Invalid", "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.mixedreality.models.NameUnavailableReason
+        :keyword message: detail message.
+        :paramtype message: str
+        """
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
@@ -139,17 +160,17 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
 class CloudErrorBody(msrest.serialization.Model):
     """An error response from Azure.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for displaying in a
-     user interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for displaying in a user
+     interface.
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.mixedreality.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.mixedreality.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -168,6 +189,19 @@ class CloudErrorBody(msrest.serialization.Model):
         details: Optional[List["CloudErrorBody"]] = None,
         **kwargs
     ):
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for displaying in a
+         user interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.mixedreality.models.CloudErrorBody]
+        """
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -184,14 +218,14 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
+    :ivar type: The identity type. The only acceptable values to pass in are None and
+     "SystemAssigned". The default value is None.
     :vartype type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -200,26 +234,32 @@ class Identity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
+        *,
+        type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. The only acceptable values to pass in are None and
+         "SystemAssigned". The default value is None.
+        :paramtype type: str
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = type
 
 
 class LogSpecification(msrest.serialization.Model):
     """Specifications of the Log for Azure Monitoring.
 
-    :param name: Name of the log.
-    :type name: str
-    :param display_name: Localized friendly display name of the log.
-    :type display_name: str
-    :param blob_duration: Blob duration of the log.
-    :type blob_duration: str
+    :ivar name: Name of the log.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the log.
+    :vartype display_name: str
+    :ivar blob_duration: Blob duration of the log.
+    :vartype blob_duration: str
     """
 
     _attribute_map = {
@@ -236,6 +276,14 @@ class LogSpecification(msrest.serialization.Model):
         blob_duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the log.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the log.
+        :paramtype display_name: str
+        :keyword blob_duration: Blob duration of the log.
+        :paramtype blob_duration: str
+        """
         super(LogSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -245,18 +293,21 @@ class LogSpecification(msrest.serialization.Model):
 class MetricDimension(msrest.serialization.Model):
     """Specifications of the Dimension of metrics.
 
-    :param name: Name of the dimension.
-    :type name: str
-    :param display_name: Localized friendly display name of the dimension.
-    :type display_name: str
-    :param internal_name: Internal name of the dimension.
-    :type internal_name: str
+    :ivar name: Name of the dimension.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the dimension.
+    :vartype display_name: str
+    :ivar internal_name: Internal name of the dimension.
+    :vartype internal_name: str
+    :ivar to_be_exported_for_shoebox: Flag to indicate export for Shoebox.
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'internal_name': {'key': 'internalName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
     }
 
     def __init__(
@@ -265,32 +316,65 @@ class MetricDimension(msrest.serialization.Model):
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         internal_name: Optional[str] = None,
+        to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the dimension.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the dimension.
+        :paramtype display_name: str
+        :keyword internal_name: Internal name of the dimension.
+        :paramtype internal_name: str
+        :keyword to_be_exported_for_shoebox: Flag to indicate export for Shoebox.
+        :paramtype to_be_exported_for_shoebox: bool
+        """
         super(MetricDimension, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
+        self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
 class MetricSpecification(msrest.serialization.Model):
     """Specifications of the Metrics for Azure Monitoring.
 
-    :param name: Name of the metric.
-    :type name: str
-    :param display_name: Localized friendly display name of the metric.
-    :type display_name: str
-    :param display_description: Localized friendly description of the metric.
-    :type display_description: str
-    :param unit: Unit that makes sense for the metric.
-    :type unit: str
-    :param aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
+    :ivar name: Name of the metric.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the metric.
+    :vartype display_name: str
+    :ivar display_description: Localized friendly description of the metric.
+    :vartype display_description: str
+    :ivar unit: Unit that makes sense for the metric.
+    :vartype unit: str
+    :ivar aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
      Maximum, Total, Count.
-    :type aggregation_type: str
-    :param internal_metric_name: Internal metric name.
-    :type internal_metric_name: str
-    :param dimensions: Dimensions of the metric.
-    :type dimensions: list[~azure.mgmt.mixedreality.models.MetricDimension]
+    :vartype aggregation_type: str
+    :ivar supported_aggregation_types: Supported aggregation types. Valid values: Average, Minimum,
+     Maximum, Total, Count.
+    :vartype supported_aggregation_types: list[str]
+    :ivar supported_time_grain_types: Supported time grains. Valid values: PT1M, PT5M, PT15M,
+     PT30M, PT1H, PT6H, PT12H, P1D.
+    :vartype supported_time_grain_types: list[str]
+    :ivar enable_regional_mdm_account: Flag to indicate use of regional Mdm accounts.
+    :vartype enable_regional_mdm_account: bool
+    :ivar source_mdm_account: Source mdm account.
+    :vartype source_mdm_account: str
+    :ivar source_mdm_namespace: Source mdm namespace.
+    :vartype source_mdm_namespace: str
+    :ivar metric_filter_pattern: Metric filter regex pattern.
+    :vartype metric_filter_pattern: str
+    :ivar fill_gap_with_zero: Flag to determine is Zero is returned for time duration where no
+     metric is emitted.
+    :vartype fill_gap_with_zero: bool
+    :ivar category: Metric category.
+    :vartype category: str
+    :ivar internal_metric_name: Internal metric name.
+    :vartype internal_metric_name: str
+    :ivar dimensions: Dimensions of the metric.
+    :vartype dimensions: list[~azure.mgmt.mixedreality.models.MetricDimension]
+    :ivar locked_aggregation_type: Locked aggregation type of the metric.
+    :vartype locked_aggregation_type: str
     """
 
     _attribute_map = {
@@ -299,8 +383,17 @@ class MetricSpecification(msrest.serialization.Model):
         'display_description': {'key': 'displayDescription', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
+        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+        'metric_filter_pattern': {'key': 'metricFilterPattern', 'type': 'str'},
+        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
+        'category': {'key': 'category', 'type': 'str'},
         'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'locked_aggregation_type': {'key': 'lockedAggregationType', 'type': 'str'},
     }
 
     def __init__(
@@ -311,18 +404,74 @@ class MetricSpecification(msrest.serialization.Model):
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
         aggregation_type: Optional[str] = None,
+        supported_aggregation_types: Optional[List[str]] = None,
+        supported_time_grain_types: Optional[List[str]] = None,
+        enable_regional_mdm_account: Optional[bool] = None,
+        source_mdm_account: Optional[str] = None,
+        source_mdm_namespace: Optional[str] = None,
+        metric_filter_pattern: Optional[str] = None,
+        fill_gap_with_zero: Optional[bool] = None,
+        category: Optional[str] = None,
         internal_metric_name: Optional[str] = None,
         dimensions: Optional[List["MetricDimension"]] = None,
+        locked_aggregation_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the metric.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the metric.
+        :paramtype display_name: str
+        :keyword display_description: Localized friendly description of the metric.
+        :paramtype display_description: str
+        :keyword unit: Unit that makes sense for the metric.
+        :paramtype unit: str
+        :keyword aggregation_type: Only provide one value for this field. Valid values: Average,
+         Minimum, Maximum, Total, Count.
+        :paramtype aggregation_type: str
+        :keyword supported_aggregation_types: Supported aggregation types. Valid values: Average,
+         Minimum, Maximum, Total, Count.
+        :paramtype supported_aggregation_types: list[str]
+        :keyword supported_time_grain_types: Supported time grains. Valid values: PT1M, PT5M, PT15M,
+         PT30M, PT1H, PT6H, PT12H, P1D.
+        :paramtype supported_time_grain_types: list[str]
+        :keyword enable_regional_mdm_account: Flag to indicate use of regional Mdm accounts.
+        :paramtype enable_regional_mdm_account: bool
+        :keyword source_mdm_account: Source mdm account.
+        :paramtype source_mdm_account: str
+        :keyword source_mdm_namespace: Source mdm namespace.
+        :paramtype source_mdm_namespace: str
+        :keyword metric_filter_pattern: Metric filter regex pattern.
+        :paramtype metric_filter_pattern: str
+        :keyword fill_gap_with_zero: Flag to determine is Zero is returned for time duration where no
+         metric is emitted.
+        :paramtype fill_gap_with_zero: bool
+        :keyword category: Metric category.
+        :paramtype category: str
+        :keyword internal_metric_name: Internal metric name.
+        :paramtype internal_metric_name: str
+        :keyword dimensions: Dimensions of the metric.
+        :paramtype dimensions: list[~azure.mgmt.mixedreality.models.MetricDimension]
+        :keyword locked_aggregation_type: Locked aggregation type of the metric.
+        :paramtype locked_aggregation_type: str
+        """
         super(MetricSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
         self.unit = unit
         self.aggregation_type = aggregation_type
+        self.supported_aggregation_types = supported_aggregation_types
+        self.supported_time_grain_types = supported_time_grain_types
+        self.enable_regional_mdm_account = enable_regional_mdm_account
+        self.source_mdm_account = source_mdm_account
+        self.source_mdm_namespace = source_mdm_namespace
+        self.metric_filter_pattern = metric_filter_pattern
+        self.fill_gap_with_zero = fill_gap_with_zero
+        self.category = category
         self.internal_metric_name = internal_metric_name
         self.dimensions = dimensions
+        self.locked_aggregation_type = locked_aggregation_type
 
 
 class Resource(msrest.serialization.Model):
@@ -356,6 +505,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -377,10 +528,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -405,6 +556,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -425,16 +582,22 @@ class ObjectAnchorsAccount(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity:
-    :type identity: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccountIdentity
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity:
+    :vartype identity: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccountIdentity
+    :ivar plan: The plan associated with this account.
+    :vartype plan: ~azure.mgmt.mixedreality.models.Identity
+    :ivar sku: The sku associated with this account.
+    :vartype sku: ~azure.mgmt.mixedreality.models.Sku
+    :ivar kind: The kind of account, if supported.
+    :vartype kind: ~azure.mgmt.mixedreality.models.Sku
     :ivar system_data: The system metadata related to an object anchors account.
     :vartype system_data: ~azure.mgmt.mixedreality.models.SystemData
-    :param storage_account_name: The name of the storage account associated with this accountId.
-    :type storage_account_name: str
+    :ivar storage_account_name: The name of the storage account associated with this accountId.
+    :vartype storage_account_name: str
     :ivar account_id: unique id of certain account.
     :vartype account_id: str
     :ivar account_domain: Correspond domain name of certain Spatial Anchors Account.
@@ -458,6 +621,9 @@ class ObjectAnchorsAccount(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ObjectAnchorsAccountIdentity'},
+        'plan': {'key': 'plan', 'type': 'Identity'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'Sku'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
         'account_id': {'key': 'properties.accountId', 'type': 'str'},
@@ -470,11 +636,33 @@ class ObjectAnchorsAccount(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["ObjectAnchorsAccountIdentity"] = None,
+        plan: Optional["Identity"] = None,
+        sku: Optional["Sku"] = None,
+        kind: Optional["Sku"] = None,
         storage_account_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity:
+        :paramtype identity: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccountIdentity
+        :keyword plan: The plan associated with this account.
+        :paramtype plan: ~azure.mgmt.mixedreality.models.Identity
+        :keyword sku: The sku associated with this account.
+        :paramtype sku: ~azure.mgmt.mixedreality.models.Sku
+        :keyword kind: The kind of account, if supported.
+        :paramtype kind: ~azure.mgmt.mixedreality.models.Sku
+        :keyword storage_account_name: The name of the storage account associated with this accountId.
+        :paramtype storage_account_name: str
+        """
         super(ObjectAnchorsAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
+        self.plan = plan
+        self.sku = sku
+        self.kind = kind
         self.system_data = None
         self.storage_account_name = storage_account_name
         self.account_id = None
@@ -490,14 +678,14 @@ class ObjectAnchorsAccountIdentity(Identity):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
+    :ivar type: The identity type. The only acceptable values to pass in are None and
+     "SystemAssigned". The default value is None.
     :vartype type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -506,22 +694,27 @@ class ObjectAnchorsAccountIdentity(Identity):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
+        *,
+        type: Optional[str] = None,
         **kwargs
     ):
-        super(ObjectAnchorsAccountIdentity, self).__init__(**kwargs)
+        """
+        :keyword type: The identity type. The only acceptable values to pass in are None and
+         "SystemAssigned". The default value is None.
+        :paramtype type: str
+        """
+        super(ObjectAnchorsAccountIdentity, self).__init__(type=type, **kwargs)
 
 
 class ObjectAnchorsAccountPage(msrest.serialization.Model):
     """Result of the request to get resource collection. It contains a list of resources and a URL link to get the next set of results.
 
-    :param value: List of resources supported by the Resource Provider.
-    :type value: list[~azure.mgmt.mixedreality.models.ObjectAnchorsAccount]
-    :param next_link: URL to get the next set of resource list results if there are any.
-    :type next_link: str
+    :ivar value: List of resources supported by the Resource Provider.
+    :vartype value: list[~azure.mgmt.mixedreality.models.ObjectAnchorsAccount]
+    :ivar next_link: URL to get the next set of resource list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -536,6 +729,12 @@ class ObjectAnchorsAccountPage(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of resources supported by the Resource Provider.
+        :paramtype value: list[~azure.mgmt.mixedreality.models.ObjectAnchorsAccount]
+        :keyword next_link: URL to get the next set of resource list results if there are any.
+        :paramtype next_link: str
+        """
         super(ObjectAnchorsAccountPage, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -544,16 +743,16 @@ class ObjectAnchorsAccountPage(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """REST API operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.mixedreality.models.OperationDisplay
-    :param is_data_action: Whether or not this is a data plane operation.
-    :type is_data_action: bool
-    :param origin: The origin.
-    :type origin: str
-    :param properties: Properties of the operation.
-    :type properties: ~azure.mgmt.mixedreality.models.OperationProperties
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.mixedreality.models.OperationDisplay
+    :ivar is_data_action: Whether or not this is a data plane operation.
+    :vartype is_data_action: bool
+    :ivar origin: The origin.
+    :vartype origin: str
+    :ivar properties: Properties of the operation.
+    :vartype properties: ~azure.mgmt.mixedreality.models.OperationProperties
     """
 
     _attribute_map = {
@@ -574,6 +773,18 @@ class Operation(msrest.serialization.Model):
         properties: Optional["OperationProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.mixedreality.models.OperationDisplay
+        :keyword is_data_action: Whether or not this is a data plane operation.
+        :paramtype is_data_action: bool
+        :keyword origin: The origin.
+        :paramtype origin: str
+        :keyword properties: Properties of the operation.
+        :paramtype properties: ~azure.mgmt.mixedreality.models.OperationProperties
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -587,15 +798,14 @@ class OperationDisplay(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param provider: Required. Service provider: Microsoft.ResourceProvider.
-    :type provider: str
-    :param resource: Required. Resource on which the operation is performed: Profile, endpoint,
-     etc.
-    :type resource: str
-    :param operation: Required. Operation type: Read, write, delete, etc.
-    :type operation: str
-    :param description: Required. Description of operation.
-    :type description: str
+    :ivar provider: Required. Service provider: Microsoft.ResourceProvider.
+    :vartype provider: str
+    :ivar resource: Required. Resource on which the operation is performed: Profile, endpoint, etc.
+    :vartype resource: str
+    :ivar operation: Required. Operation type: Read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Required. Description of operation.
+    :vartype description: str
     """
 
     _validation = {
@@ -621,6 +831,17 @@ class OperationDisplay(msrest.serialization.Model):
         description: str,
         **kwargs
     ):
+        """
+        :keyword provider: Required. Service provider: Microsoft.ResourceProvider.
+        :paramtype provider: str
+        :keyword resource: Required. Resource on which the operation is performed: Profile, endpoint,
+         etc.
+        :paramtype resource: str
+        :keyword operation: Required. Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Required. Description of operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -631,10 +852,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationPage(msrest.serialization.Model):
     """Result of the request to list Resource Provider operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of operations supported by the Resource Provider.
-    :type value: list[~azure.mgmt.mixedreality.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of operations supported by the Resource Provider.
+    :vartype value: list[~azure.mgmt.mixedreality.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -649,6 +870,12 @@ class OperationPage(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of operations supported by the Resource Provider.
+        :paramtype value: list[~azure.mgmt.mixedreality.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationPage, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -657,8 +884,8 @@ class OperationPage(msrest.serialization.Model):
 class OperationProperties(msrest.serialization.Model):
     """Operation properties.
 
-    :param service_specification: Service specification.
-    :type service_specification: ~azure.mgmt.mixedreality.models.ServiceSpecification
+    :ivar service_specification: Service specification.
+    :vartype service_specification: ~azure.mgmt.mixedreality.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -671,6 +898,10 @@ class OperationProperties(msrest.serialization.Model):
         service_specification: Optional["ServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword service_specification: Service specification.
+        :paramtype service_specification: ~azure.mgmt.mixedreality.models.ServiceSpecification
+        """
         super(OperationProperties, self).__init__(**kwargs)
         self.service_specification = service_specification
 
@@ -690,22 +921,22 @@ class RemoteRenderingAccount(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: The identity associated with this account.
-    :type identity: ~azure.mgmt.mixedreality.models.Identity
-    :param plan: The plan associated with this account.
-    :type plan: ~azure.mgmt.mixedreality.models.Identity
-    :param sku: The sku associated with this account.
-    :type sku: ~azure.mgmt.mixedreality.models.Sku
-    :param kind: The kind of account, if supported.
-    :type kind: ~azure.mgmt.mixedreality.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: The identity associated with this account.
+    :vartype identity: ~azure.mgmt.mixedreality.models.Identity
+    :ivar plan: The plan associated with this account.
+    :vartype plan: ~azure.mgmt.mixedreality.models.Identity
+    :ivar sku: The sku associated with this account.
+    :vartype sku: ~azure.mgmt.mixedreality.models.Sku
+    :ivar kind: The kind of account, if supported.
+    :vartype kind: ~azure.mgmt.mixedreality.models.Sku
     :ivar system_data: System metadata for this account.
     :vartype system_data: ~azure.mgmt.mixedreality.models.SystemData
-    :param storage_account_name: The name of the storage account associated with this accountId.
-    :type storage_account_name: str
+    :ivar storage_account_name: The name of the storage account associated with this accountId.
+    :vartype storage_account_name: str
     :ivar account_id: unique id of certain account.
     :vartype account_id: str
     :ivar account_domain: Correspond domain name of certain Spatial Anchors Account.
@@ -750,6 +981,22 @@ class RemoteRenderingAccount(TrackedResource):
         storage_account_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The identity associated with this account.
+        :paramtype identity: ~azure.mgmt.mixedreality.models.Identity
+        :keyword plan: The plan associated with this account.
+        :paramtype plan: ~azure.mgmt.mixedreality.models.Identity
+        :keyword sku: The sku associated with this account.
+        :paramtype sku: ~azure.mgmt.mixedreality.models.Sku
+        :keyword kind: The kind of account, if supported.
+        :paramtype kind: ~azure.mgmt.mixedreality.models.Sku
+        :keyword storage_account_name: The name of the storage account associated with this accountId.
+        :paramtype storage_account_name: str
+        """
         super(RemoteRenderingAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.plan = plan
@@ -764,10 +1011,10 @@ class RemoteRenderingAccount(TrackedResource):
 class RemoteRenderingAccountPage(msrest.serialization.Model):
     """Result of the request to get resource collection. It contains a list of resources and a URL link to get the next set of results.
 
-    :param value: List of resources supported by the Resource Provider.
-    :type value: list[~azure.mgmt.mixedreality.models.RemoteRenderingAccount]
-    :param next_link: URL to get the next set of resource list results if there are any.
-    :type next_link: str
+    :ivar value: List of resources supported by the Resource Provider.
+    :vartype value: list[~azure.mgmt.mixedreality.models.RemoteRenderingAccount]
+    :ivar next_link: URL to get the next set of resource list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -782,6 +1029,12 @@ class RemoteRenderingAccountPage(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of resources supported by the Resource Provider.
+        :paramtype value: list[~azure.mgmt.mixedreality.models.RemoteRenderingAccount]
+        :keyword next_link: URL to get the next set of resource list results if there are any.
+        :paramtype next_link: str
+        """
         super(RemoteRenderingAccountPage, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -790,10 +1043,10 @@ class RemoteRenderingAccountPage(msrest.serialization.Model):
 class ServiceSpecification(msrest.serialization.Model):
     """Service specification payload.
 
-    :param log_specifications: Specifications of the Log for Azure Monitoring.
-    :type log_specifications: list[~azure.mgmt.mixedreality.models.LogSpecification]
-    :param metric_specifications: Specifications of the Metrics for Azure Monitoring.
-    :type metric_specifications: list[~azure.mgmt.mixedreality.models.MetricSpecification]
+    :ivar log_specifications: Specifications of the Log for Azure Monitoring.
+    :vartype log_specifications: list[~azure.mgmt.mixedreality.models.LogSpecification]
+    :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
+    :vartype metric_specifications: list[~azure.mgmt.mixedreality.models.MetricSpecification]
     """
 
     _attribute_map = {
@@ -808,6 +1061,12 @@ class ServiceSpecification(msrest.serialization.Model):
         metric_specifications: Optional[List["MetricSpecification"]] = None,
         **kwargs
     ):
+        """
+        :keyword log_specifications: Specifications of the Log for Azure Monitoring.
+        :paramtype log_specifications: list[~azure.mgmt.mixedreality.models.LogSpecification]
+        :keyword metric_specifications: Specifications of the Metrics for Azure Monitoring.
+        :paramtype metric_specifications: list[~azure.mgmt.mixedreality.models.MetricSpecification]
+        """
         super(ServiceSpecification, self).__init__(**kwargs)
         self.log_specifications = log_specifications
         self.metric_specifications = metric_specifications
@@ -818,21 +1077,21 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
-    :type name: str
-    :param tier: This field is required to be implemented by the Resource Provider if the service
+    :ivar name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+    :vartype name: str
+    :ivar tier: This field is required to be implemented by the Resource Provider if the service
      has more than one tier, but is not required on a PUT. Possible values include: "Free", "Basic",
      "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.mixedreality.models.SkuTier
-    :param size: The SKU size. When the name field is the combination of tier and some other value,
+    :vartype tier: str or ~azure.mgmt.mixedreality.models.SkuTier
+    :ivar size: The SKU size. When the name field is the combination of tier and some other value,
      this would be the standalone code.
-    :type size: str
-    :param family: If the service has different generations of hardware, for the same SKU, then
-     that can be captured here.
-    :type family: str
-    :param capacity: If the SKU supports scale out/in then the capacity integer should be included.
+    :vartype size: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
+    :ivar capacity: If the SKU supports scale out/in then the capacity integer should be included.
      If scale out/in is not possible for the resource this may be omitted.
-    :type capacity: int
+    :vartype capacity: int
     """
 
     _validation = {
@@ -857,6 +1116,23 @@ class Sku(msrest.serialization.Model):
         capacity: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+        :paramtype name: str
+        :keyword tier: This field is required to be implemented by the Resource Provider if the service
+         has more than one tier, but is not required on a PUT. Possible values include: "Free", "Basic",
+         "Standard", "Premium".
+        :paramtype tier: str or ~azure.mgmt.mixedreality.models.SkuTier
+        :keyword size: The SKU size. When the name field is the combination of tier and some other
+         value, this would be the standalone code.
+        :paramtype size: str
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword capacity: If the SKU supports scale out/in then the capacity integer should be
+         included. If scale out/in is not possible for the resource this may be omitted.
+        :paramtype capacity: int
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
@@ -880,22 +1156,22 @@ class SpatialAnchorsAccount(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: The identity associated with this account.
-    :type identity: ~azure.mgmt.mixedreality.models.Identity
-    :param plan: The plan associated with this account.
-    :type plan: ~azure.mgmt.mixedreality.models.Identity
-    :param sku: The sku associated with this account.
-    :type sku: ~azure.mgmt.mixedreality.models.Sku
-    :param kind: The kind of account, if supported.
-    :type kind: ~azure.mgmt.mixedreality.models.Sku
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
+    :ivar identity: The identity associated with this account.
+    :vartype identity: ~azure.mgmt.mixedreality.models.Identity
+    :ivar plan: The plan associated with this account.
+    :vartype plan: ~azure.mgmt.mixedreality.models.Identity
+    :ivar sku: The sku associated with this account.
+    :vartype sku: ~azure.mgmt.mixedreality.models.Sku
+    :ivar kind: The kind of account, if supported.
+    :vartype kind: ~azure.mgmt.mixedreality.models.Sku
     :ivar system_data: System metadata for this account.
     :vartype system_data: ~azure.mgmt.mixedreality.models.SystemData
-    :param storage_account_name: The name of the storage account associated with this accountId.
-    :type storage_account_name: str
+    :ivar storage_account_name: The name of the storage account associated with this accountId.
+    :vartype storage_account_name: str
     :ivar account_id: unique id of certain account.
     :vartype account_id: str
     :ivar account_domain: Correspond domain name of certain Spatial Anchors Account.
@@ -940,6 +1216,22 @@ class SpatialAnchorsAccount(TrackedResource):
         storage_account_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The identity associated with this account.
+        :paramtype identity: ~azure.mgmt.mixedreality.models.Identity
+        :keyword plan: The plan associated with this account.
+        :paramtype plan: ~azure.mgmt.mixedreality.models.Identity
+        :keyword sku: The sku associated with this account.
+        :paramtype sku: ~azure.mgmt.mixedreality.models.Sku
+        :keyword kind: The kind of account, if supported.
+        :paramtype kind: ~azure.mgmt.mixedreality.models.Sku
+        :keyword storage_account_name: The name of the storage account associated with this accountId.
+        :paramtype storage_account_name: str
+        """
         super(SpatialAnchorsAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.plan = plan
@@ -954,10 +1246,10 @@ class SpatialAnchorsAccount(TrackedResource):
 class SpatialAnchorsAccountPage(msrest.serialization.Model):
     """Result of the request to get resource collection. It contains a list of resources and a URL link to get the next set of results.
 
-    :param value: List of resources supported by the Resource Provider.
-    :type value: list[~azure.mgmt.mixedreality.models.SpatialAnchorsAccount]
-    :param next_link: URL to get the next set of resource list results if there are any.
-    :type next_link: str
+    :ivar value: List of resources supported by the Resource Provider.
+    :vartype value: list[~azure.mgmt.mixedreality.models.SpatialAnchorsAccount]
+    :ivar next_link: URL to get the next set of resource list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -972,6 +1264,12 @@ class SpatialAnchorsAccountPage(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of resources supported by the Resource Provider.
+        :paramtype value: list[~azure.mgmt.mixedreality.models.SpatialAnchorsAccount]
+        :keyword next_link: URL to get the next set of resource list results if there are any.
+        :paramtype next_link: str
+        """
         super(SpatialAnchorsAccountPage, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -980,20 +1278,20 @@ class SpatialAnchorsAccountPage(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.mixedreality.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.mixedreality.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.mixedreality.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.mixedreality.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1016,6 +1314,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.mixedreality.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.mixedreality.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
