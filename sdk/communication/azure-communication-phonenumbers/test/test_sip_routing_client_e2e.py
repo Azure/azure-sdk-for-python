@@ -4,9 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
-import pytest
-
 from _shared.testcase import CommunicationTestCase
 from _shared.uri_replacer_processor import URIReplacerProcessor
 from _shared.utils import create_token_credential, get_http_logging_policy
@@ -14,9 +11,6 @@ from _shared.utils import create_token_credential, get_http_logging_policy
 from azure.communication.phonenumbers.siprouting import SipRoutingClient, SipTrunk, SipTrunkRoute
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
-SKIP_TOKEN_AUTHENTICATION_TESTS = os.getenv("AZURE_TEST_RUN_LIVE", "false") == "false"
-SKIP_TOKEN_AUTHENTICATION_TESTS_REASON = "Authentication tests are run only with live tests."
-    
 class TestSipRoutingClientE2E(CommunicationTestCase):
     TRUNKS = [SipTrunk(fqdn="sbs1.sipconfigtest.com", sip_signaling_port=1122), SipTrunk(fqdn="sbs2.sipconfigtest.com", sip_signaling_port=1123)]
     ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=["sbs1.sipconfigtest.com"])]
@@ -29,10 +23,24 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
 
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
-        )
+            )
         self.recording_processors.extend([URIReplacerProcessor()])
         self._sip_routing_client.replace_routes([])
         self._sip_routing_client.replace_trunks(self.TRUNKS)
+
+    def test_retrieval_with_token_auth(self):
+        raised = False
+        endpoint, access_key = parse_connection_str(self.connection_str)
+        credential = create_token_credential()
+        client = SipRoutingClient(endpoint, credential)
+        
+        try:
+            client.get_routes()
+        except Exception as e:
+            raised = True
+            ex = str(e)
+
+        assert raised is False, "Exception" + ex + " was thrown"
 
     def test_get_trunks(self):
         raised = False
@@ -60,21 +68,6 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         assert raised is False, "Exception:" + ex + " was thrown."
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES)
-
-    @pytest.mark.skipif(SKIP_TOKEN_AUTHENTICATION_TESTS, reason=SKIP_TOKEN_AUTHENTICATION_TESTS_REASON)
-    def test_retrieval_with_token_auth(self):
-        raised = False
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
-        client = SipRoutingClient(endpoint, credential)
-        
-        try:
-            client.get_routes()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception" + ex + " was thrown"
 
     def test_replace_trunks(self):
         raised = False

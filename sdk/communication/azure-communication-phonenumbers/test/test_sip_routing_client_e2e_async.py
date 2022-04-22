@@ -4,21 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
 import asyncio
-import pytest
 
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.uri_replacer_processor import URIReplacerProcessor
-from _shared.utils import create_token_credential, get_http_logging_policy
+from _shared.utils import async_create_token_credential, get_http_logging_policy
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting._generated.models import SipTrunkRoute
 from azure.communication.phonenumbers.siprouting._models import SipTrunk
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
-
-SKIP_TOKEN_AUTHENTICATION_TESTS = os.getenv("AZURE_TEST_RUN_LIVE", "false") == "false"
-SKIP_TOKEN_AUTHENTICATION_TESTS_REASON = "Authentication tests are run only with live tests."
 
 class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
     TRUNKS = [SipTrunk(fqdn="sbs1.sipconfigtest.com", sip_signaling_port=1122), SipTrunk(fqdn="sbs2.sipconfigtest.com", sip_signaling_port=1123)]
@@ -40,6 +35,21 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         loop = asyncio.get_event_loop()
         coroutine = self._sip_routing_client.replace_trunks(self.TRUNKS)
         loop.run_until_complete(coroutine)
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_retrieval_with_token_auth(self):
+        raised = False
+        endpoint, access_key = parse_connection_str(self.connection_str)
+        credential = async_create_token_credential()
+        client = SipRoutingClient(endpoint, credential)
+        
+        try:
+            await client.get_routes()
+        except Exception as e:
+            raised = True
+            ex = str(e)
+
+        assert raised is False, "Exception" + ex + " was thrown"
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_trunks(self):
@@ -69,21 +79,6 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         assert raised is False, "Exception:" + ex + " was thrown."
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES), "Routes are not equal."
-
-    @pytest.mark.skipif(SKIP_TOKEN_AUTHENTICATION_TESTS, reason=SKIP_TOKEN_AUTHENTICATION_TESTS_REASON)
-    async def test_retrieval_with_token_auth(self):
-        raised = False
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = create_token_credential()
-        client = SipRoutingClient(endpoint, credential)
-        
-        try:
-            await client.get_routes()
-        except Exception as e:
-            raised = True
-            ex = str(e)
-
-        assert raised is False, "Exception" + ex + " was thrown"
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_replace_trunks(self):
