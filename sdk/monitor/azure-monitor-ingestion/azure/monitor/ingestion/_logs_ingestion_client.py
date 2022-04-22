@@ -6,15 +6,12 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, List, Optional
+
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.credentials import TokenCredential
 
 from ._generated._monitor_ingestion_client import MonitorIngestionClient
-
 from ._helpers import get_authentication_policy
-
-from azure.core.credentials import TokenCredential
-from datetime import timedelta, datetime
-
 
 class LogsIngestionClient(object):
     """Azure Monitor Ingestion Python Client.
@@ -26,7 +23,6 @@ class LogsIngestionClient(object):
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
-
     def __init__(self,
         endpoint: str,
         credential: TokenCredential,
@@ -41,6 +37,7 @@ class LogsIngestionClient(object):
             credential=credential,
             authentication_policy=get_authentication_policy(credential, endpoint),
             base_url=self._endpoint.rstrip('/'),
+            api_version=api_version,
             **kwargs
         )
         self._client = self._client.data_collection_rule
@@ -73,7 +70,11 @@ class LogsIngestionClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._client.ingest(
-            rule_id, stream, body, content_encoding, **kwargs
+            rule_id=rule_id,
+            stream=stream,
+            body=body,
+            content_encoding=content_encoding,
+            **kwargs
         )
 
     def close(self):
