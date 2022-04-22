@@ -2291,7 +2291,7 @@ class PreBuiltResult(msrest.serialization.Model):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -2343,7 +2343,7 @@ class EntitiesResult(PreBuiltResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[EntitiesResultDocumentsItem]'},
     }
 
@@ -2435,7 +2435,7 @@ class PreBuiltTaskParameters(TaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -2472,7 +2472,7 @@ class EntitiesTaskParameters(PreBuiltTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -2750,7 +2750,7 @@ class EntityLinkingResult(PreBuiltResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[EntityLinkingResultDocumentsItem]'},
     }
 
@@ -2901,7 +2901,7 @@ class EntityLinkingTaskParameters(PreBuiltTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -3395,7 +3395,7 @@ class ExtractiveSummarizationResult(PreBuiltResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[ExtractiveSummarizationResultDocumentsItem]'},
     }
 
@@ -3501,7 +3501,7 @@ class ExtractiveSummarizationTaskParameters(PreBuiltTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'sentence_count': {'key': 'sentenceCount', 'type': 'int'},
         'sort_by': {'key': 'sortBy', 'type': 'str'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
@@ -4034,7 +4034,7 @@ class HealthcareResult(PreBuiltResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[HealthcareResultDocumentsItem]'},
     }
 
@@ -4140,7 +4140,7 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -4472,7 +4472,7 @@ class KeyPhraseResult(PreBuiltResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[KeyPhraseResultDocumentsItem]'},
     }
 
@@ -4621,7 +4621,7 @@ class KeyPhraseTaskParameters(PreBuiltTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -4784,7 +4784,7 @@ class LanguageDetectionResult(PreBuiltResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[LanguageDetectionDocumentResult]'},
     }
 
@@ -4824,7 +4824,7 @@ class LanguageDetectionTaskParameters(PreBuiltTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -5360,7 +5360,7 @@ class PiiResult(PreBuiltResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[PiiResultDocumentsItem]'},
     }
 
@@ -5475,7 +5475,7 @@ class PiiTaskParameters(PreBuiltTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'domain': {'key': 'domain', 'type': 'str'},
         'pii_categories': {'key': 'piiCategories', 'type': '[str]'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
@@ -5924,7 +5924,7 @@ class SentimentAnalysisTaskParameters(PreBuiltTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'opinion_mining': {'key': 'opinionMining', 'type': 'bool'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
@@ -6172,7 +6172,7 @@ class SentimentResponse(PreBuiltResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'model_version': {'key': 'model-version', 'type': 'str'},
+        'model_version': {'key': 'modelVersion', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[SentimentResponseDocumentsItem]'},
     }
 

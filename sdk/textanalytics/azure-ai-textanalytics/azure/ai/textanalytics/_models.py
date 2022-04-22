@@ -1758,7 +1758,7 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MULTI_CATEGORY_CLASSIFY = "multi_category_classify"
 
 
-class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # FIXME needs update for language api?
+class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOGNIZE_ENTITIES = "entityRecognitionTasks"
     RECOGNIZE_PII_ENTITIES = "entityRecognitionPiiTasks"
     EXTRACT_KEY_PHRASES = "keyPhraseExtractionTasks"

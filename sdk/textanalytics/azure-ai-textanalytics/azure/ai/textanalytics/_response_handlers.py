@@ -392,9 +392,13 @@ def get_ordered_errors(tasks_obj, task_name, doc_id_order):
 
     # create a DocumentError per input doc with the action error details
     for err in tasks_obj.errors:
-        property_name, index = resolve_action_pointer(err.target)
-        actions = getattr(tasks_obj.tasks, property_name)
-        action = actions[index]
+        # language API compat
+        if err.target.find("items") != -1:
+            action = tasks_obj.tasks.items[int(err.target.split("/")[-1])]
+        else:
+            property_name, index = resolve_action_pointer(err.target)
+            actions = getattr(tasks_obj.tasks, property_name)
+            action = actions[index]
         if action.task_name == task_name:
             errors = [
                 DocumentError(
@@ -466,7 +470,6 @@ def lro_get_next_page(
     except AttributeError:
         pass
 
-    # FIXME language api compat?
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))

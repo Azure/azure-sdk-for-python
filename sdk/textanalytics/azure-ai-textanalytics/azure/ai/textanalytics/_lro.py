@@ -18,10 +18,11 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     BadStatus,
 )
+from ._generated.v2022_03_01_preview.models import JobMetadata
 
-_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallySucceeded"])
+_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
-_SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallySucceeded"])
+_SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
@@ -127,8 +128,6 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.models import JobMetadata # FIXME
-
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -274,9 +273,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.models import AnalyzeJobMetadata # FIXME
-
-        return AnalyzeJobMetadata.deserialize(self._pipeline_response)
+        return JobMetadata.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):
