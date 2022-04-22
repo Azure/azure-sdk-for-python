@@ -18,7 +18,6 @@ from ._generated.v2022_03_01_preview import models as _v2022_03_01_preview_model
 def is_language_api(api_version):
     """Language API is date-based
     """
-    import re
     return re.search(r'\d{4}-\d{2}-\d{2}', api_version)
 
 

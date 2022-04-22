@@ -417,7 +417,8 @@ def _get_doc_results(task, doc_id_order, response_headers, returned_tasks_object
         current_task_type
     )
     # language api compat
-    property_name = "items" if hasattr(returned_tasks, "items") else _get_property_name_from_task_type(current_task_type)
+    property_name = \
+        "items" if hasattr(returned_tasks, "items") else _get_property_name_from_task_type(current_task_type)
     try:
         response_task_to_deserialize = \
             next(task for task in getattr(returned_tasks, property_name) if task.task_name == task_name)
