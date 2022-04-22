@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import pytest
 import time
 
 from azure.keyvault.keys._shared import HttpChallengeCache
@@ -15,6 +16,32 @@ class KeyVaultTestCase(AzureRecordedTestCase):
     def get_resource_name(self, name):
         """helper to create resources with a consistent, test-indicative prefix"""
         return super(KeyVaultTestCase, self).get_resource_name("livekvtest{}".format(name))
+
+    def _get_attestation_uri(self):
+        playback_uri = "https://fakeattestation.azurewebsites.net"
+        if self.is_live:
+            real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL")
+            real_uri = real_uri.rstrip('/')
+            if real_uri is None:
+                pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URL environment variable")
+            #self._scrub_url(real_uri, playback_uri)
+            return real_uri
+        return playback_uri
+
+    def create_crypto_client(self, key, **kwargs):
+        
+        from azure.keyvault.keys.crypto import CryptographyClient
+
+        credential = self.get_credential(CryptographyClient)
+        return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
+
+    def create_key_client(self, vault_uri, **kwargs):
+       
+        from azure.keyvault.keys import KeyClient
+
+        credential = self.get_credential(KeyClient)
+        
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=10):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
