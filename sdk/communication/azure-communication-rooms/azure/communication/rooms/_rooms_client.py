@@ -116,7 +116,7 @@ class RoomsClient(object):
         )
         create_room_response = self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
-        return CommunicationRoom.from_create_room_response(create_room_response)
+        return CommunicationRoom.from_room_response(create_room_response)
 
     @distributed_trace
     def delete_room(
@@ -166,7 +166,7 @@ class RoomsClient(object):
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_update_room_response(update_room_response)
+        return CommunicationRoom.from_room_response(update_room_response)
 
     @distributed_trace
     def get_room(
@@ -185,7 +185,7 @@ class RoomsClient(object):
 
         """
         get_room_response = self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
-        return CommunicationRoom.from_get_room_response(get_room_response)
+        return CommunicationRoom.from_room_response(get_room_response)
 
     @distributed_trace
     def add_participants(
@@ -210,7 +210,7 @@ class RoomsClient(object):
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_update_room_response(update_room_response)
+        return CommunicationRoom.from_room_response(update_room_response)
 
     @distributed_trace
     def update_participants(
@@ -235,7 +235,7 @@ class RoomsClient(object):
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_update_room_response(update_room_response)
+        return CommunicationRoom.from_room_response(update_room_response)
 
     @distributed_trace
     def remove_participants(
@@ -263,7 +263,7 @@ class RoomsClient(object):
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_update_room_response(update_room_response)
+        return CommunicationRoom.from_room_response(update_room_response)
 
     @distributed_trace
     def remove_all_participants(
@@ -284,4 +284,4 @@ class RoomsClient(object):
         )
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_update_room_response(update_room_response)
+        return CommunicationRoom.from_room_response(update_room_response)

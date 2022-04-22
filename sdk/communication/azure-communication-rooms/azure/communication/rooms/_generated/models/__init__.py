@@ -10,28 +10,26 @@ try:
     from ._models_py3 import CommunicationError
     from ._models_py3 import CommunicationErrorResponse
     from ._models_py3 import CreateRoomRequest
-    from ._models_py3 import CreateRoomResponse
     from ._models_py3 import RoomModel
     from ._models_py3 import RoomParticipantInternal
     from ._models_py3 import UpdateRoomRequest
-    from ._models_py3 import UpdateRoomResponse
 except (SyntaxError, ImportError):
     from ._models import CommunicationError  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
     from ._models import CreateRoomRequest  # type: ignore
-    from ._models import CreateRoomResponse  # type: ignore
     from ._models import RoomModel  # type: ignore
     from ._models import RoomParticipantInternal  # type: ignore
     from ._models import UpdateRoomRequest  # type: ignore
-    from ._models import UpdateRoomResponse  # type: ignore
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'CommunicationError',
     'CommunicationErrorResponse',
     'CreateRoomRequest',
-    'CreateRoomResponse',
     'RoomModel',
     'RoomParticipantInternal',
     'UpdateRoomRequest',
-    'UpdateRoomResponse',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

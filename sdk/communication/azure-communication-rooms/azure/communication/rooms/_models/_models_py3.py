@@ -9,9 +9,7 @@ import msrest.serialization
 
 from .._generated.models import (
     RoomModel,
-    RoomParticipantInternal,
-    CreateRoomResponse,
-    UpdateRoomResponse
+    RoomParticipantInternal
 )
 
 class CommunicationRoom(msrest.serialization.Model):
@@ -30,8 +28,6 @@ class CommunicationRoom(msrest.serialization.Model):
     :vartype valid_until: ~datetime
     :ivar participants: Collection of identities invited to the room.
     :vartype participants: dict[str, any]
-    :ivar invalid_participants: Collection of participants failed to be added to the room.
-    :vartype invalid_participants: dict[str, any]
     """
 
     _attribute_map = {
@@ -40,7 +36,6 @@ class CommunicationRoom(msrest.serialization.Model):
         'valid_from': {'key': 'validFrom', 'type': 'iso-8601'},
         'valid_until': {'key': 'validUntil', 'type': 'iso-8601'},
         'participants': {'key': 'participants', 'type': '{object}'},
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '{object}'},
     }
 
     def __init__(
@@ -51,7 +46,6 @@ class CommunicationRoom(msrest.serialization.Model):
         valid_from=None, # type: Optional[datetime]
         valid_until=None, # type: Optional[datetime]
         participants=None, # type: Optional[List[RoomParticipant]]
-        invalid_participants=None, # type: Optional[Dict[str, Any]]
         **kwargs
     ):
         """
@@ -75,62 +69,9 @@ class CommunicationRoom(msrest.serialization.Model):
         self.valid_from = valid_from
         self.valid_until = valid_until
         self.participants = participants
-        self.invalid_participants = invalid_participants
 
     @classmethod
-    def from_create_room_response(cls, create_room_response,  # type: CreateRoomResponse
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> CommunicationRoom
-        """Create CommunicationRoom from a CreateRoomResponse.
-        :param CreateRoomResponse create_room_response:
-            Response from create_room API.
-        :returns: Instance of CommunicationRoom.
-        :rtype: ~azure.communication.CommunicationRoom
-        """
-        if create_room_response.room.participants is None:
-            participants = None
-        else:
-            participants = [RoomParticipant(identifier=identifier, role_name=participant.role) for identifier, participant in create_room_response.room.participants.items()]
-
-        return cls(
-        id=create_room_response.room.id,
-        created_date_time=create_room_response.room.created_date_time,
-        valid_from=create_room_response.room.valid_from,
-        valid_until=create_room_response.room.valid_until,
-        participants=participants,
-        invalid_participants=create_room_response.invalid_participants,
-        **kwargs
-        )
-
-    @classmethod
-    def from_update_room_response(cls, update_room_response,  # type: UpdateRoomResponse
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> CommunicationRoom
-        """Create CommunicationRoom from a UpdateRoomResponse.
-        :param UpdateRoomResponse update_room_response:
-            Response from update_room API.
-        :returns: Instance of CommunicationRoom.
-        :rtype: ~azure.communication.CommunicationRoom
-        """
-        if update_room_response.room.participants is None:
-            participants = None
-        else:
-            participants = [RoomParticipant(identifier=identifier, role_name=participant.role) for identifier, participant in update_room_response.room.participants.items()]
-
-        return cls(
-        id=update_room_response.room.id,
-        created_date_time=update_room_response.room.created_date_time,
-        valid_from=update_room_response.room.valid_from,
-        valid_until=update_room_response.room.valid_until,
-        participants= participants,
-        invalid_participants=update_room_response.invalid_participants,
-        **kwargs
-        )
-
-    @classmethod
-    def from_get_room_response(cls, get_room_response,  # type: RoomModel
+    def from_room_response(cls, get_room_response,  # type: RoomModel
             **kwargs  # type: Any
     ):
         # type: (...) -> CommunicationRoom

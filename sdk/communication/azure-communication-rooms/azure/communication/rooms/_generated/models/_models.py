@@ -132,43 +132,6 @@ class CreateRoomRequest(msrest.serialization.Model):
         self.participants = kwargs.get('participants', None)
 
 
-class CreateRoomResponse(msrest.serialization.Model):
-    """Response payload for create room operation.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar room: Required. The meeting room.
-    :vartype room: ~azure.communication.rooms.models.RoomModel
-    :ivar invalid_participants: Collection of participants failed to be added to the room.
-    :vartype invalid_participants: dict[str,
-     ~azure.communication.rooms.models.RoomParticipantInternal]
-    """
-
-    _validation = {
-        'room': {'required': True},
-    }
-
-    _attribute_map = {
-        'room': {'key': 'room', 'type': 'RoomModel'},
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '{RoomParticipantInternal}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword room: Required. The meeting room.
-        :paramtype room: ~azure.communication.rooms.models.RoomModel
-        :keyword invalid_participants: Collection of participants failed to be added to the room.
-        :paramtype invalid_participants: dict[str,
-         ~azure.communication.rooms.models.RoomParticipantInternal]
-        """
-        super(CreateRoomResponse, self).__init__(**kwargs)
-        self.room = kwargs['room']
-        self.invalid_participants = kwargs.get('invalid_participants', None)
-
-
 class RoomModel(msrest.serialization.Model):
     """The meeting room.
 
@@ -282,40 +245,3 @@ class UpdateRoomRequest(msrest.serialization.Model):
         self.valid_from = kwargs.get('valid_from', None)
         self.valid_until = kwargs.get('valid_until', None)
         self.participants = kwargs.get('participants', None)
-
-
-class UpdateRoomResponse(msrest.serialization.Model):
-    """Response payload for update room operation.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar room: Required. The meeting room.
-    :vartype room: ~azure.communication.rooms.models.RoomModel
-    :ivar invalid_participants: Collection of participants failed to be added to the room.
-    :vartype invalid_participants: dict[str,
-     ~azure.communication.rooms.models.RoomParticipantInternal]
-    """
-
-    _validation = {
-        'room': {'required': True},
-    }
-
-    _attribute_map = {
-        'room': {'key': 'room', 'type': 'RoomModel'},
-        'invalid_participants': {'key': 'invalidParticipants', 'type': '{RoomParticipantInternal}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword room: Required. The meeting room.
-        :paramtype room: ~azure.communication.rooms.models.RoomModel
-        :keyword invalid_participants: Collection of participants failed to be added to the room.
-        :paramtype invalid_participants: dict[str,
-         ~azure.communication.rooms.models.RoomParticipantInternal]
-        """
-        super(UpdateRoomResponse, self).__init__(**kwargs)
-        self.room = kwargs['room']
-        self.invalid_participants = kwargs.get('invalid_participants', None)
