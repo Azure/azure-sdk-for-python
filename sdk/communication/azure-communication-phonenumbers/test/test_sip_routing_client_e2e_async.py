@@ -8,9 +8,9 @@ import os
 import asyncio
 import pytest
 
-from .._shared.asynctestcase import AsyncCommunicationTestCase
-from .._shared.uri_replacer_processor import URIReplacerProcessor
-from .._shared.utils import create_token_credential, get_http_logging_policy
+from _shared.asynctestcase import AsyncCommunicationTestCase
+from _shared.uri_replacer_processor import URIReplacerProcessor
+from _shared.utils import create_token_credential, get_http_logging_policy
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting._generated.models import SipTrunkRoute

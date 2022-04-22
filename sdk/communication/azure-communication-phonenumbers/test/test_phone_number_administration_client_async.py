@@ -4,19 +4,19 @@ from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import (
-    async_create_token_credential,
+    async_create_token_credential, 
     get_header_policy,
     get_http_logging_policy
 )
 from azure.communication.phonenumbers import (
-    PhoneNumberAssignmentType,
-    PhoneNumberCapabilities,
-    PhoneNumberCapabilityType,
-    PhoneNumberType,
+    PhoneNumberAssignmentType, 
+    PhoneNumberCapabilities, 
+    PhoneNumberCapabilityType, 
+    PhoneNumberType, 
 )
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
-from .phone_number_helper import PhoneNumberUriReplacer
+from phone_number_helper import PhoneNumberUriReplacer
 
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
@@ -44,7 +44,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             self.phone_number = get_test_phone_number()
             self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
-            self.connection_str,
+            self.connection_str, 
             http_logging_policy=get_http_logging_policy(),
             headers_policy=get_header_policy()
         )
@@ -59,8 +59,8 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = async_create_token_credential()
         return PhoneNumbersClient(
-            endpoint,
-            credential,
+            endpoint, 
+            credential, 
             http_logging_policy=get_http_logging_policy(),
             headers_policy=get_header_policy()
         )
@@ -83,7 +83,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             async for item in phone_numbers:
                 items.append(item)
         assert len(items) > 0
-
+    
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_purchased_phone_number_from_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
@@ -189,7 +189,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             release_poller = await phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
-
+        
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_purchase_phone_numbers(self):
@@ -210,7 +210,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             await purchase_poller.result()
             release_poller = await self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
-
+    
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_purchased_phone_number_with_invalid_phone_number(self):
         if self.is_playback():
@@ -221,10 +221,10 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         with pytest.raises(Exception) as ex:
             async with self.phone_number_client:
                 await self.phone_number_client.get_purchased_phone_number(phone_number)
-
+        
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
-
+    
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_search_available_phone_numbers_with_invalid_country_code(self):
         capabilities = PhoneNumberCapabilities(
@@ -241,7 +241,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
                     capabilities,
                     polling = True
                 )
-
+    
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities_with_invalid_phone_number(self):
         if self.is_playback():
@@ -257,6 +257,6 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
                     PhoneNumberCapabilityType.INBOUND,
                     polling = True
                 )
-
+        
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None

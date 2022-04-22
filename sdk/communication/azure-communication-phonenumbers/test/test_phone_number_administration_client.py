@@ -1,8 +1,8 @@
 import os
 import pytest
 from azure.communication.phonenumbers import PhoneNumbersClient
-from ._shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, BodyReplacerProcessor
-from ._shared.utils import (
+from _shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, BodyReplacerProcessor
+from _shared.utils import (
     create_token_credential, 
     get_header_policy,
     get_http_logging_policy
@@ -15,7 +15,7 @@ from azure.communication.phonenumbers import (
 )
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
-from .phone_number_helper import PhoneNumberUriReplacer
+from phone_number_helper import PhoneNumberUriReplacer
 
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
