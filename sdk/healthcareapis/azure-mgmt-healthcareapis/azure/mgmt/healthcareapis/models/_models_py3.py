@@ -374,12 +374,6 @@ class DicomService(TaggedResource, ServiceManagedIdentity):
         self.etag = etag
         self.location = location
         self.tags = tags
-        self.system_data = None
-        self.provisioning_state = None
-        self.authentication_configuration = authentication_configuration
-        self.service_url = None
-        self.private_endpoint_connections = None
-        self.public_network_access = public_network_access
 
 
 class DicomServiceAuthenticationConfiguration(msrest.serialization.Model):
@@ -620,6 +614,8 @@ class FhirService(TaggedResource, ServiceManagedIdentity):
     :ivar resource_version_policy_configuration: Determines tracking of history for resources.
     :vartype resource_version_policy_configuration:
      ~azure.mgmt.healthcareapis.models.ResourceVersionPolicyConfiguration
+    :ivar import_configuration: Fhir Service import configuration.
+    :vartype import_configuration: ~azure.mgmt.healthcareapis.models.FhirServiceImportConfiguration
     """
 
     _validation = {
@@ -652,6 +648,7 @@ class FhirService(TaggedResource, ServiceManagedIdentity):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'event_state': {'key': 'properties.eventState', 'type': 'str'},
         'resource_version_policy_configuration': {'key': 'properties.resourceVersionPolicyConfiguration', 'type': 'ResourceVersionPolicyConfiguration'},
+        'import_configuration': {'key': 'properties.importConfiguration', 'type': 'FhirServiceImportConfiguration'},
     }
 
     def __init__(
@@ -669,6 +666,7 @@ class FhirService(TaggedResource, ServiceManagedIdentity):
         export_configuration: Optional["FhirServiceExportConfiguration"] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         resource_version_policy_configuration: Optional["ResourceVersionPolicyConfiguration"] = None,
+        import_configuration: Optional["FhirServiceImportConfiguration"] = None,
         **kwargs
     ):
         """
@@ -703,6 +701,9 @@ class FhirService(TaggedResource, ServiceManagedIdentity):
         :keyword resource_version_policy_configuration: Determines tracking of history for resources.
         :paramtype resource_version_policy_configuration:
          ~azure.mgmt.healthcareapis.models.ResourceVersionPolicyConfiguration
+        :keyword import_configuration: Fhir Service import configuration.
+        :paramtype import_configuration:
+         ~azure.mgmt.healthcareapis.models.FhirServiceImportConfiguration
         """
         super(FhirService, self).__init__(etag=etag, location=location, tags=tags, identity=identity, **kwargs)
         self.identity = identity
@@ -718,24 +719,13 @@ class FhirService(TaggedResource, ServiceManagedIdentity):
         self.public_network_access = public_network_access
         self.event_state = None
         self.resource_version_policy_configuration = resource_version_policy_configuration
+        self.import_configuration = import_configuration
         self.id = None
         self.name = None
         self.type = None
         self.etag = etag
         self.location = location
         self.tags = tags
-        self.kind = kind
-        self.system_data = None
-        self.provisioning_state = None
-        self.access_policies = access_policies
-        self.acr_configuration = acr_configuration
-        self.authentication_configuration = authentication_configuration
-        self.cors_configuration = cors_configuration
-        self.export_configuration = export_configuration
-        self.private_endpoint_connections = None
-        self.public_network_access = public_network_access
-        self.event_state = None
-        self.resource_version_policy_configuration = resource_version_policy_configuration
 
 
 class FhirServiceAccessPolicyEntry(msrest.serialization.Model):
@@ -956,6 +946,45 @@ class FhirServiceExportConfiguration(msrest.serialization.Model):
         self.storage_account_name = storage_account_name
 
 
+class FhirServiceImportConfiguration(msrest.serialization.Model):
+    """Import operation configuration information.
+
+    :ivar integration_data_store: The name of the default integration storage account.
+    :vartype integration_data_store: str
+    :ivar initial_import_mode: If the FHIR service is in InitialImportMode.
+    :vartype initial_import_mode: bool
+    :ivar enabled: If the import operation is enabled.
+    :vartype enabled: bool
+    """
+
+    _attribute_map = {
+        'integration_data_store': {'key': 'integrationDataStore', 'type': 'str'},
+        'initial_import_mode': {'key': 'initialImportMode', 'type': 'bool'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        integration_data_store: Optional[str] = None,
+        initial_import_mode: Optional[bool] = None,
+        enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword integration_data_store: The name of the default integration storage account.
+        :paramtype integration_data_store: str
+        :keyword initial_import_mode: If the FHIR service is in InitialImportMode.
+        :paramtype initial_import_mode: bool
+        :keyword enabled: If the import operation is enabled.
+        :paramtype enabled: bool
+        """
+        super(FhirServiceImportConfiguration, self).__init__(**kwargs)
+        self.integration_data_store = integration_data_store
+        self.initial_import_mode = initial_import_mode
+        self.enabled = enabled
+
+
 class FhirServicePatchResource(ResourceTags, ServiceManagedIdentity):
     """FhirService patch properties.
 
@@ -1086,10 +1115,6 @@ class IotConnector(TaggedResource, ServiceManagedIdentity):
         self.etag = etag
         self.location = location
         self.tags = tags
-        self.system_data = None
-        self.provisioning_state = None
-        self.ingestion_endpoint_configuration = ingestion_endpoint_configuration
-        self.device_mapping = device_mapping
 
 
 class IotConnectorCollection(msrest.serialization.Model):
@@ -2519,6 +2544,45 @@ class ServiceExportConfigurationInfo(msrest.serialization.Model):
         self.storage_account_name = storage_account_name
 
 
+class ServiceImportConfigurationInfo(msrest.serialization.Model):
+    """Import operation configuration information.
+
+    :ivar integration_data_store: The name of the default integration storage account.
+    :vartype integration_data_store: str
+    :ivar initial_import_mode: If the FHIR service is in InitialImportMode.
+    :vartype initial_import_mode: bool
+    :ivar enabled: If the import operation is enabled.
+    :vartype enabled: bool
+    """
+
+    _attribute_map = {
+        'integration_data_store': {'key': 'integrationDataStore', 'type': 'str'},
+        'initial_import_mode': {'key': 'initialImportMode', 'type': 'bool'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        integration_data_store: Optional[str] = None,
+        initial_import_mode: Optional[bool] = None,
+        enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword integration_data_store: The name of the default integration storage account.
+        :paramtype integration_data_store: str
+        :keyword initial_import_mode: If the FHIR service is in InitialImportMode.
+        :paramtype initial_import_mode: bool
+        :keyword enabled: If the import operation is enabled.
+        :paramtype enabled: bool
+        """
+        super(ServiceImportConfigurationInfo, self).__init__(**kwargs)
+        self.integration_data_store = integration_data_store
+        self.initial_import_mode = initial_import_mode
+        self.enabled = enabled
+
+
 class ServiceManagedIdentityIdentity(msrest.serialization.Model):
     """Setting indicating whether the service has a managed identity associated with it.
 
@@ -2962,6 +3026,8 @@ class ServicesProperties(msrest.serialization.Model):
     :ivar acr_configuration: The azure container registry settings used for convert data operation
      of the service instance.
     :vartype acr_configuration: ~azure.mgmt.healthcareapis.models.ServiceAcrConfigurationInfo
+    :ivar import_configuration: The settings for the import operation of the service instance.
+    :vartype import_configuration: ~azure.mgmt.healthcareapis.models.ServiceImportConfigurationInfo
     """
 
     _validation = {
@@ -2978,6 +3044,7 @@ class ServicesProperties(msrest.serialization.Model):
         'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'acr_configuration': {'key': 'acrConfiguration', 'type': 'ServiceAcrConfigurationInfo'},
+        'import_configuration': {'key': 'importConfiguration', 'type': 'ServiceImportConfigurationInfo'},
     }
 
     def __init__(
@@ -2991,6 +3058,7 @@ class ServicesProperties(msrest.serialization.Model):
         private_endpoint_connections: Optional[List["PrivateEndpointConnection"]] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         acr_configuration: Optional["ServiceAcrConfigurationInfo"] = None,
+        import_configuration: Optional["ServiceImportConfigurationInfo"] = None,
         **kwargs
     ):
         """
@@ -3018,6 +3086,9 @@ class ServicesProperties(msrest.serialization.Model):
         :keyword acr_configuration: The azure container registry settings used for convert data
          operation of the service instance.
         :paramtype acr_configuration: ~azure.mgmt.healthcareapis.models.ServiceAcrConfigurationInfo
+        :keyword import_configuration: The settings for the import operation of the service instance.
+        :paramtype import_configuration:
+         ~azure.mgmt.healthcareapis.models.ServiceImportConfigurationInfo
         """
         super(ServicesProperties, self).__init__(**kwargs)
         self.provisioning_state = None
@@ -3029,6 +3100,7 @@ class ServicesProperties(msrest.serialization.Model):
         self.private_endpoint_connections = private_endpoint_connections
         self.public_network_access = public_network_access
         self.acr_configuration = acr_configuration
+        self.import_configuration = import_configuration
 
 
 class ServicesResourceIdentity(msrest.serialization.Model):

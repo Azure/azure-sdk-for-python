@@ -21,6 +21,7 @@ from ._models_py3 import FhirServiceAuthenticationConfiguration
 from ._models_py3 import FhirServiceCollection
 from ._models_py3 import FhirServiceCorsConfiguration
 from ._models_py3 import FhirServiceExportConfiguration
+from ._models_py3 import FhirServiceImportConfiguration
 from ._models_py3 import FhirServicePatchResource
 from ._models_py3 import IotConnector
 from ._models_py3 import IotConnectorCollection
@@ -59,6 +60,7 @@ from ._models_py3 import ServiceAuthenticationConfigurationInfo
 from ._models_py3 import ServiceCorsConfigurationInfo
 from ._models_py3 import ServiceCosmosDbConfigurationInfo
 from ._models_py3 import ServiceExportConfigurationInfo
+from ._models_py3 import ServiceImportConfigurationInfo
 from ._models_py3 import ServiceManagedIdentity
 from ._models_py3 import ServiceManagedIdentityIdentity
 from ._models_py3 import ServiceOciArtifactEntry
@@ -113,6 +115,7 @@ __all__ = [
     'FhirServiceCollection',
     'FhirServiceCorsConfiguration',
     'FhirServiceExportConfiguration',
+    'FhirServiceImportConfiguration',
     'FhirServicePatchResource',
     'IotConnector',
     'IotConnectorCollection',
@@ -151,6 +154,7 @@ __all__ = [
     'ServiceCorsConfigurationInfo',
     'ServiceCosmosDbConfigurationInfo',
     'ServiceExportConfigurationInfo',
+    'ServiceImportConfigurationInfo',
     'ServiceManagedIdentity',
     'ServiceManagedIdentityIdentity',
     'ServiceOciArtifactEntry',
