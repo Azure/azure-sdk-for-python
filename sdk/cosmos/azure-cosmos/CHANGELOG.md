@@ -1,5 +1,11 @@
 ## Release History
 
+### 4.3.0b5 (Unreleased)
+
+#### Breaking Changes
+- Bugfix: Automatic Id generation for items was turned on for `upsert_items()` when no 'id' value was present in document body.
+Method call will now require an 'id' field to be present in the document body.
+
 ### 4.3.0b4 (2022-04-07)
 
 #### Features Added
