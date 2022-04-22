@@ -13,7 +13,7 @@ from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling._async_poller import PollingReturnType
 from .._lro import TextAnalyticsOperationResourcePolling
-from ._generated.v2022_03_01_preview.models import JobMetadata
+from .._generated.v2022_03_01_preview.models import JobMetadata
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
