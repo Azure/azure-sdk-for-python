@@ -64,7 +64,7 @@ class AvroEncoder(object):
     :keyword client: Required. The schema registry client
      which is used to register schema and retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
-    :keyword str group_name: Required. Schema group under which schema should be registered.
+    :keyword Optional[str] group_name: Schema group under which schema should be registered.
     :keyword bool auto_register: When true, register new schemas passed to encode.
      Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
 
@@ -73,13 +73,13 @@ class AvroEncoder(object):
     def __init__(self, **kwargs):
         # type: (Any) -> None
         try:
-            self._schema_group = kwargs.pop("group_name")
             self._schema_registry_client = kwargs.pop(
                 "client"
             )  # type: "SchemaRegistryClient"
         except KeyError as exc:
-            raise TypeError("'{}' is a required keyword.".format(exc.args[0]))
+            raise TypeError(f"'{exc.args[0]}' is a required keyword.")
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
+        self._schema_group = kwargs.pop("group_name", None)
         self._auto_register = kwargs.get("auto_register", False)
         self._auto_register_schema_func = (
             self._schema_registry_client.register_schema
@@ -199,6 +199,8 @@ class AvroEncoder(object):
         """
 
         raw_input_schema = schema
+        if not self._schema_group:
+            raise TypeError(f"'group_name' cannot be None.")
         schema_fullname = validate_schema(self._avro_encoder, raw_input_schema)
 
         cache_misses = (

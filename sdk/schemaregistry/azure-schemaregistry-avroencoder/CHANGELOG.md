@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- `group_name` is now an optional parameter in the sync and async `AvroEncoder` constructors.
+
 ## 1.0.0b3 (2022-04-05)
 
 ### Breaking Changes
