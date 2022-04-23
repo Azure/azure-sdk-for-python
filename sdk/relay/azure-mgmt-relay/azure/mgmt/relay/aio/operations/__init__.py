@@ -6,14 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
 from ._namespaces_operations import NamespacesOperations
 from ._hybrid_connections_operations import HybridConnectionsOperations
 from ._wcf_relays_operations import WCFRelaysOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._operations import Operations
 
 __all__ = [
-    'Operations',
     'NamespacesOperations',
     'HybridConnectionsOperations',
     'WCFRelaysOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'Operations',
 ]

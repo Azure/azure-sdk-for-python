@@ -6,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+import datetime
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -17,20 +18,20 @@ from ._relay_api_enums import *
 class AccessKeys(msrest.serialization.Model):
     """Namespace/Relay Connection String.
 
-    :param primary_connection_string: Primary connection string of the created namespace
+    :ivar primary_connection_string: Primary connection string of the created namespace
      authorization rule.
-    :type primary_connection_string: str
-    :param secondary_connection_string: Secondary connection string of the created namespace
+    :vartype primary_connection_string: str
+    :ivar secondary_connection_string: Secondary connection string of the created namespace
      authorization rule.
-    :type secondary_connection_string: str
-    :param primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
+    :vartype secondary_connection_string: str
+    :ivar primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
      token.
-    :type primary_key: str
-    :param secondary_key: A base64-encoded 256-bit secondary key for signing and validating the SAS
+    :vartype primary_key: str
+    :ivar secondary_key: A base64-encoded 256-bit secondary key for signing and validating the SAS
      token.
-    :type secondary_key: str
-    :param key_name: A string that describes the authorization rule.
-    :type key_name: str
+    :vartype secondary_key: str
+    :ivar key_name: A string that describes the authorization rule.
+    :vartype key_name: str
     """
 
     _attribute_map = {
@@ -51,12 +52,498 @@ class AccessKeys(msrest.serialization.Model):
         key_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword primary_connection_string: Primary connection string of the created namespace
+         authorization rule.
+        :paramtype primary_connection_string: str
+        :keyword secondary_connection_string: Secondary connection string of the created namespace
+         authorization rule.
+        :paramtype secondary_connection_string: str
+        :keyword primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
+         token.
+        :paramtype primary_key: str
+        :keyword secondary_key: A base64-encoded 256-bit secondary key for signing and validating the
+         SAS token.
+        :paramtype secondary_key: str
+        :keyword key_name: A string that describes the authorization rule.
+        :paramtype key_name: str
+        """
         super(AccessKeys, self).__init__(**kwargs)
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.key_name = key_name
+
+
+class ProxyResource(msrest.serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.EventHub/Namespaces" or
+     "Microsoft.EventHub/Namespaces/EventHubs".
+    :vartype type: str
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = None
+
+
+class AuthorizationRule(ProxyResource):
+    """Single item in a List or Get AuthorizationRule operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.EventHub/Namespaces" or
+     "Microsoft.EventHub/Namespaces/EventHubs".
+    :vartype type: str
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.relay.models.SystemData
+    :ivar rights: The rights associated with the rule.
+    :vartype rights: list[str or ~azure.mgmt.relay.models.AccessRights]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'rights': {'key': 'properties.rights', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        rights: Optional[List[Union[str, "AccessRights"]]] = None,
+        **kwargs
+    ):
+        """
+        :keyword rights: The rights associated with the rule.
+        :paramtype rights: list[str or ~azure.mgmt.relay.models.AccessRights]
+        """
+        super(AuthorizationRule, self).__init__(**kwargs)
+        self.system_data = None
+        self.rights = rights
+
+
+class AuthorizationRuleListResult(msrest.serialization.Model):
+    """The response from the list namespace operation.
+
+    :ivar value: Result of the list authorization rules operation.
+    :vartype value: list[~azure.mgmt.relay.models.AuthorizationRule]
+    :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
+     of authorization rules.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AuthorizationRule]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["AuthorizationRule"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Result of the list authorization rules operation.
+        :paramtype value: list[~azure.mgmt.relay.models.AuthorizationRule]
+        :keyword next_link: Link to the next set of results. Not empty if value contains incomplete
+         list of authorization rules.
+        :paramtype next_link: str
+        """
+        super(AuthorizationRuleListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class CheckNameAvailability(msrest.serialization.Model):
+    """Description of the check name availability request properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. The namespace name to check for availability. The namespace name can
+     contain only letters, numbers, and hyphens. The namespace must start with a letter, and it must
+     end with a letter or number.
+    :vartype name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        **kwargs
+    ):
+        """
+        :keyword name: Required. The namespace name to check for availability. The namespace name can
+         contain only letters, numbers, and hyphens. The namespace must start with a letter, and it must
+         end with a letter or number.
+        :paramtype name: str
+        """
+        super(CheckNameAvailability, self).__init__(**kwargs)
+        self.name = name
+
+
+class CheckNameAvailabilityResult(msrest.serialization.Model):
+    """Description of the check name availability request properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar message: The detailed info regarding the reason associated with the namespace.
+    :vartype message: str
+    :ivar name_available: Value indicating namespace is available. Returns true if the namespace is
+     available; otherwise, false.
+    :vartype name_available: bool
+    :ivar reason: The reason for unavailability of a namespace. Possible values include: "None",
+     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+     "TooManyNamespaceInCurrentSubscription".
+    :vartype reason: str or ~azure.mgmt.relay.models.UnavailableReason
+    """
+
+    _validation = {
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'message': {'key': 'message', 'type': 'str'},
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "UnavailableReason"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword name_available: Value indicating namespace is available. Returns true if the namespace
+         is available; otherwise, false.
+        :paramtype name_available: bool
+        :keyword reason: The reason for unavailability of a namespace. Possible values include: "None",
+         "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+         "TooManyNamespaceInCurrentSubscription".
+        :paramtype reason: str or ~azure.mgmt.relay.models.UnavailableReason
+        """
+        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
+        self.message = None
+        self.name_available = name_available
+        self.reason = reason
+
+
+class ConnectionState(msrest.serialization.Model):
+    """ConnectionState information.
+
+    :ivar status: Status of the connection. Possible values include: "Pending", "Approved",
+     "Rejected", "Disconnected".
+    :vartype status: str or ~azure.mgmt.relay.models.PrivateLinkConnectionStatus
+    :ivar description: Description of the connection state.
+    :vartype description: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "PrivateLinkConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Status of the connection. Possible values include: "Pending", "Approved",
+         "Rejected", "Disconnected".
+        :paramtype status: str or ~azure.mgmt.relay.models.PrivateLinkConnectionStatus
+        :keyword description: Description of the connection state.
+        :paramtype description: str
+        """
+        super(ConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+
+
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.relay.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.relay.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.relay.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorDetail"] = None,
+        **kwargs
+    ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.relay.models.ErrorDetail
+        """
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
+class HybridConnection(ProxyResource):
+    """Description of hybrid connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.EventHub/Namespaces" or
+     "Microsoft.EventHub/Namespaces/EventHubs".
+    :vartype type: str
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.relay.models.SystemData
+    :ivar created_at: The time the hybrid connection was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The time the namespace was updated.
+    :vartype updated_at: ~datetime.datetime
+    :ivar listener_count: The number of listeners for this hybrid connection. Note that min : 1 and
+     max:25 are supported.
+    :vartype listener_count: int
+    :ivar requires_client_authorization: Returns true if client authorization is needed for this
+     hybrid connection; otherwise, false.
+    :vartype requires_client_authorization: bool
+    :ivar user_metadata: The usermetadata is a placeholder to store user-defined string data for
+     the hybrid connection endpoint. For example, it can be used to store descriptive data, such as
+     a list of teams and their contact information. Also, user-defined configuration settings can be
+     stored.
+    :vartype user_metadata: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'system_data': {'readonly': True},
+        'created_at': {'readonly': True},
+        'updated_at': {'readonly': True},
+        'listener_count': {'readonly': True, 'maximum': 25, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
+        'listener_count': {'key': 'properties.listenerCount', 'type': 'int'},
+        'requires_client_authorization': {'key': 'properties.requiresClientAuthorization', 'type': 'bool'},
+        'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        requires_client_authorization: Optional[bool] = None,
+        user_metadata: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword requires_client_authorization: Returns true if client authorization is needed for this
+         hybrid connection; otherwise, false.
+        :paramtype requires_client_authorization: bool
+        :keyword user_metadata: The usermetadata is a placeholder to store user-defined string data for
+         the hybrid connection endpoint. For example, it can be used to store descriptive data, such as
+         a list of teams and their contact information. Also, user-defined configuration settings can be
+         stored.
+        :paramtype user_metadata: str
+        """
+        super(HybridConnection, self).__init__(**kwargs)
+        self.system_data = None
+        self.created_at = None
+        self.updated_at = None
+        self.listener_count = None
+        self.requires_client_authorization = requires_client_authorization
+        self.user_metadata = user_metadata
+
+
+class HybridConnectionListResult(msrest.serialization.Model):
+    """The response of the list hybrid connection operation.
+
+    :ivar value: Result of the list hybrid connections.
+    :vartype value: list[~azure.mgmt.relay.models.HybridConnection]
+    :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
+     hybrid connection operation.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[HybridConnection]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["HybridConnection"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Result of the list hybrid connections.
+        :paramtype value: list[~azure.mgmt.relay.models.HybridConnection]
+        :keyword next_link: Link to the next set of results. Not empty if value contains incomplete
+         list hybrid connection operation.
+        :paramtype next_link: str
+        """
+        super(HybridConnectionListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class Resource(msrest.serialization.Model):
@@ -88,176 +575,16 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class AuthorizationRule(Resource):
-    """Description of a namespace authorization rule.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param rights: Required. The rights associated with the rule.
-    :type rights: list[str or ~azure.mgmt.relay.models.AccessRights]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'rights': {'required': True, 'unique': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'rights': {'key': 'properties.rights', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        rights: List[Union[str, "AccessRights"]],
-        **kwargs
-    ):
-        super(AuthorizationRule, self).__init__(**kwargs)
-        self.rights = rights
-
-
-class AuthorizationRuleListResult(msrest.serialization.Model):
-    """The response from the list namespace operation.
-
-    :param value: Result of the list authorization rules operation.
-    :type value: list[~azure.mgmt.relay.models.AuthorizationRule]
-    :param next_link: Link to the next set of results. Not empty if value contains incomplete list
-     of authorization rules.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AuthorizationRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AuthorizationRule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(AuthorizationRuleListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class CheckNameAvailability(msrest.serialization.Model):
-    """Description of the check name availability request properties.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The namespace name to check for availability. The namespace name can
-     contain only letters, numbers, and hyphens. The namespace must start with a letter, and it must
-     end with a letter or number.
-    :type name: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(CheckNameAvailability, self).__init__(**kwargs)
-        self.name = name
-
-
-class CheckNameAvailabilityResult(msrest.serialization.Model):
-    """Description of the check name availability request properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar message: The detailed info regarding the reason associated with the namespace.
-    :vartype message: str
-    :param name_available: Value indicating namespace is available. Returns true if the namespace
-     is available; otherwise, false.
-    :type name_available: bool
-    :param reason: The reason for unavailability of a namespace. Possible values include: "None",
-     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
-     "TooManyNamespaceInCurrentSubscription".
-    :type reason: str or ~azure.mgmt.relay.models.UnavailableReason
-    """
-
-    _validation = {
-        'message': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "UnavailableReason"]] = None,
-        **kwargs
-    ):
-        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
-        self.message = None
-        self.name_available = name_available
-        self.reason = reason
-
-
-class ErrorResponse(msrest.serialization.Model):
-    """Error reponse indicates Relay service is not able to process the incoming request. The reason is provided in the error message.
-
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-
-
-class HybridConnection(Resource):
-    """Description of hybrid connection resource.
+class NetworkRuleSet(Resource):
+    """Description of topic resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -267,83 +594,81 @@ class HybridConnection(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar created_at: The time the hybrid connection was created.
-    :vartype created_at: ~datetime.datetime
-    :ivar updated_at: The time the namespace was updated.
-    :vartype updated_at: ~datetime.datetime
-    :ivar listener_count: The number of listeners for this hybrid connection. Note that min : 1 and
-     max:25 are supported.
-    :vartype listener_count: int
-    :param requires_client_authorization: Returns true if client authorization is needed for this
-     hybrid connection; otherwise, false.
-    :type requires_client_authorization: bool
-    :param user_metadata: The usermetadata is a placeholder to store user-defined string data for
-     the hybrid connection endpoint. For example, it can be used to store descriptive data, such as
-     a list of teams and their contact information. Also, user-defined configuration settings can be
-     stored.
-    :type user_metadata: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.relay.models.SystemData
+    :ivar default_action: Default Action for Network Rule Set. Possible values include: "Allow",
+     "Deny".
+    :vartype default_action: str or ~azure.mgmt.relay.models.DefaultAction
+    :ivar ip_rules: List of IpRules.
+    :vartype ip_rules: list[~azure.mgmt.relay.models.NWRuleSetIpRules]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'created_at': {'readonly': True},
-        'updated_at': {'readonly': True},
-        'listener_count': {'readonly': True, 'maximum': 25, 'minimum': 0},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'listener_count': {'key': 'properties.listenerCount', 'type': 'int'},
-        'requires_client_authorization': {'key': 'properties.requiresClientAuthorization', 'type': 'bool'},
-        'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'default_action': {'key': 'properties.defaultAction', 'type': 'str'},
+        'ip_rules': {'key': 'properties.ipRules', 'type': '[NWRuleSetIpRules]'},
     }
 
     def __init__(
         self,
         *,
-        requires_client_authorization: Optional[bool] = None,
-        user_metadata: Optional[str] = None,
+        default_action: Optional[Union[str, "DefaultAction"]] = None,
+        ip_rules: Optional[List["NWRuleSetIpRules"]] = None,
         **kwargs
     ):
-        super(HybridConnection, self).__init__(**kwargs)
-        self.created_at = None
-        self.updated_at = None
-        self.listener_count = None
-        self.requires_client_authorization = requires_client_authorization
-        self.user_metadata = user_metadata
+        """
+        :keyword default_action: Default Action for Network Rule Set. Possible values include: "Allow",
+         "Deny".
+        :paramtype default_action: str or ~azure.mgmt.relay.models.DefaultAction
+        :keyword ip_rules: List of IpRules.
+        :paramtype ip_rules: list[~azure.mgmt.relay.models.NWRuleSetIpRules]
+        """
+        super(NetworkRuleSet, self).__init__(**kwargs)
+        self.system_data = None
+        self.default_action = default_action
+        self.ip_rules = ip_rules
 
 
-class HybridConnectionListResult(msrest.serialization.Model):
-    """The response of the list hybrid connection operation.
+class NWRuleSetIpRules(msrest.serialization.Model):
+    """The response from the List namespace operation.
 
-    :param value: Result of the list hybrid connections.
-    :type value: list[~azure.mgmt.relay.models.HybridConnection]
-    :param next_link: Link to the next set of results. Not empty if value contains incomplete list
-     hybrid connection operation.
-    :type next_link: str
+    :ivar ip_mask: IP Mask.
+    :vartype ip_mask: str
+    :ivar action: The IP Filter Action. Possible values include: "Allow".
+    :vartype action: str or ~azure.mgmt.relay.models.NetworkRuleIPAction
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HybridConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'ip_mask': {'key': 'ipMask', 'type': 'str'},
+        'action': {'key': 'action', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["HybridConnection"]] = None,
-        next_link: Optional[str] = None,
+        ip_mask: Optional[str] = None,
+        action: Optional[Union[str, "NetworkRuleIPAction"]] = None,
         **kwargs
     ):
-        super(HybridConnectionListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        """
+        :keyword ip_mask: IP Mask.
+        :paramtype ip_mask: str
+        :keyword action: The IP Filter Action. Possible values include: "Allow".
+        :paramtype action: str or ~azure.mgmt.relay.models.NetworkRuleIPAction
+        """
+        super(NWRuleSetIpRules, self).__init__(**kwargs)
+        self.ip_mask = ip_mask
+        self.action = action
 
 
 class Operation(msrest.serialization.Model):
@@ -353,63 +678,89 @@ class Operation(msrest.serialization.Model):
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.relay.models.OperationDisplay
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: Display of the operation.
+    :vartype display: ~azure.mgmt.relay.models.OperationDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar properties: Properties of the operation.
+    :vartype properties: any
     """
 
     _validation = {
         'name': {'readonly': True},
+        'is_data_action': {'readonly': True},
+        'display': {'readonly': True},
+        'origin': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(
         self,
         *,
-        display: Optional["OperationDisplay"] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Properties of the operation.
+        :paramtype properties: any
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
-        self.display = display
+        self.is_data_action = None
+        self.display = None
+        self.origin = None
+        self.properties = properties
 
 
 class OperationDisplay(msrest.serialization.Model):
-    """The object that represents the operation.
+    """Operation display payload.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provider: Service provider: Relay.
+    :ivar provider: Resource provider of the operation.
     :vartype provider: str
-    :ivar resource: Resource on which the operation is performed: Invoice, etc.
+    :ivar resource: Resource of the operation.
     :vartype resource: str
-    :ivar operation: Operation type: Read, write, delete, etc.
+    :ivar operation: Localized friendly name for the operation.
     :vartype operation: str
+    :ivar description: Localized friendly description for the operation.
+    :vartype description: str
     """
 
     _validation = {
         'provider': {'readonly': True},
         'resource': {'readonly': True},
         'operation': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
+        self.description = None
 
 
 class OperationListResult(msrest.serialization.Model):
@@ -417,7 +768,7 @@ class OperationListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of Relay operations supported by resource provider.
+    :ivar value: List of Relay operations supported by the Microsoft.EventHub resource provider.
     :vartype value: list[~azure.mgmt.relay.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
@@ -437,22 +788,242 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
+class PrivateEndpoint(msrest.serialization.Model):
+    """PrivateEndpoint information.
+
+    :ivar id: The ARM identifier for Private Endpoint.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: The ARM identifier for Private Endpoint.
+        :paramtype id: str
+        """
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = id
+
+
+class PrivateEndpointConnection(ProxyResource):
+    """Properties of the PrivateEndpointConnection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.EventHub/Namespaces" or
+     "Microsoft.EventHub/Namespaces/EventHubs".
+    :vartype type: str
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.relay.models.SystemData
+    :ivar private_endpoint: The Private Endpoint resource for this Connection.
+    :vartype private_endpoint: ~azure.mgmt.relay.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Details about the state of the connection.
+    :vartype private_link_service_connection_state: ~azure.mgmt.relay.models.ConnectionState
+    :ivar provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
+     values include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.relay.models.EndPointProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'ConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["ConnectionState"] = None,
+        provisioning_state: Optional[Union[str, "EndPointProvisioningState"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword private_endpoint: The Private Endpoint resource for this Connection.
+        :paramtype private_endpoint: ~azure.mgmt.relay.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Details about the state of the connection.
+        :paramtype private_link_service_connection_state: ~azure.mgmt.relay.models.ConnectionState
+        :keyword provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
+         values include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+        :paramtype provisioning_state: str or ~azure.mgmt.relay.models.EndPointProvisioningState
+        """
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.system_data = None
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = provisioning_state
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """Result of the list of all private endpoint connections operation.
+
+    :ivar value: A collection of private endpoint connection resources.
+    :vartype value: list[~azure.mgmt.relay.models.PrivateEndpointConnection]
+    :ivar next_link: A link for the next page of private endpoint connection resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A collection of private endpoint connection resources.
+        :paramtype value: list[~azure.mgmt.relay.models.PrivateEndpointConnection]
+        :keyword next_link: A link for the next page of private endpoint connection resources.
+        :paramtype next_link: str
+        """
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PrivateLinkResource(msrest.serialization.Model):
+    """Information of the private link resource.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        group_id: Optional[str] = None,
+        required_members: Optional[List[str]] = None,
+        required_zone_names: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Fully qualified identifier of the resource.
+        :paramtype id: str
+        :keyword name: Name of the resource.
+        :paramtype name: str
+        :keyword type: Type of the resource.
+        :paramtype type: str
+        :keyword group_id: The private link resource group id.
+        :paramtype group_id: str
+        :keyword required_members: The private link resource required member names.
+        :paramtype required_members: list[str]
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.group_id = group_id
+        self.required_members = required_members
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourcesListResult(msrest.serialization.Model):
+    """Result of the List private link resources operation.
+
+    :ivar value: A collection of private link resources.
+    :vartype value: list[~azure.mgmt.relay.models.PrivateLinkResource]
+    :ivar next_link: A link for the next page of private link resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateLinkResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A collection of private link resources.
+        :paramtype value: list[~azure.mgmt.relay.models.PrivateLinkResource]
+        :keyword next_link: A link for the next page of private link resources.
+        :paramtype next_link: str
+        """
+        super(PrivateLinkResourcesListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class RegenerateAccessKeyParameters(msrest.serialization.Model):
-    """Parameters supplied to the regenerate authorization rule operation, specifies which key neeeds to be reset.
+    """Parameters supplied to the regenerate authorization rule operation, specifies which key needs to be reset.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_type: Required. The access key to regenerate. Possible values include: "PrimaryKey",
+    :ivar key_type: Required. The access key to regenerate. Possible values include: "PrimaryKey",
      "SecondaryKey".
-    :type key_type: str or ~azure.mgmt.relay.models.KeyType
-    :param key: Optional. If the key value is provided, this is set to key type, or autogenerated
+    :vartype key_type: str or ~azure.mgmt.relay.models.KeyType
+    :ivar key: Optional. If the key value is provided, this is set to key type, or autogenerated
      key value set for key type.
-    :type key: str
+    :vartype key: str
     """
 
     _validation = {
@@ -471,6 +1042,14 @@ class RegenerateAccessKeyParameters(msrest.serialization.Model):
         key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_type: Required. The access key to regenerate. Possible values include:
+         "PrimaryKey", "SecondaryKey".
+        :paramtype key_type: str or ~azure.mgmt.relay.models.KeyType
+        :keyword key: Optional. If the key value is provided, this is set to key type, or autogenerated
+         key value set for key type.
+        :paramtype key: str
+        """
         super(RegenerateAccessKeyParameters, self).__init__(**kwargs)
         self.key_type = key_type
         self.key = key
@@ -489,10 +1068,10 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -517,6 +1096,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -535,15 +1120,18 @@ class RelayNamespace(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: SKU of the namespace.
-    :type sku: ~azure.mgmt.relay.models.Sku
-    :ivar provisioning_state:  Possible values include: "Created", "Succeeded", "Deleted",
-     "Failed", "Updating", "Unknown".
-    :vartype provisioning_state: str or ~azure.mgmt.relay.models.ProvisioningStateEnum
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: SKU of the namespace.
+    :vartype sku: ~azure.mgmt.relay.models.Sku
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.relay.models.SystemData
+    :ivar provisioning_state: Provisioning state of the Namespace.
+    :vartype provisioning_state: str
+    :ivar status: Status of the Namespace.
+    :vartype status: str
     :ivar created_at: The time the namespace was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The time the namespace was updated.
@@ -552,6 +1140,12 @@ class RelayNamespace(TrackedResource):
     :vartype service_bus_endpoint: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
+    :ivar private_endpoint_connections: List of private endpoint connections.
+    :vartype private_endpoint_connections: list[~azure.mgmt.relay.models.PrivateEndpointConnection]
+    :ivar public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled. Possible values include: "Enabled", "Disabled", "SecuredByPerimeter".
+     Default value: "Enabled".
+    :vartype public_network_access: str or ~azure.mgmt.relay.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -559,7 +1153,9 @@ class RelayNamespace(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
         'service_bus_endpoint': {'readonly': True},
@@ -573,11 +1169,15 @@ class RelayNamespace(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -586,25 +1186,46 @@ class RelayNamespace(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["Sku"] = None,
+        private_endpoint_connections: Optional[List["PrivateEndpointConnection"]] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = "Enabled",
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: SKU of the namespace.
+        :paramtype sku: ~azure.mgmt.relay.models.Sku
+        :keyword private_endpoint_connections: List of private endpoint connections.
+        :paramtype private_endpoint_connections:
+         list[~azure.mgmt.relay.models.PrivateEndpointConnection]
+        :keyword public_network_access: This determines if traffic is allowed over public network. By
+         default it is enabled. Possible values include: "Enabled", "Disabled", "SecuredByPerimeter".
+         Default value: "Enabled".
+        :paramtype public_network_access: str or ~azure.mgmt.relay.models.PublicNetworkAccess
+        """
         super(RelayNamespace, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
+        self.system_data = None
         self.provisioning_state = None
+        self.status = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
         self.metric_id = None
+        self.private_endpoint_connections = private_endpoint_connections
+        self.public_network_access = public_network_access
 
 
 class RelayNamespaceListResult(msrest.serialization.Model):
     """The response from the list namespace operation.
 
-    :param value: Result of the list namespace operation.
-    :type value: list[~azure.mgmt.relay.models.RelayNamespace]
-    :param next_link: Link to the next set of results. Not empty if value contains incomplete list
+    :ivar value: Result of the list namespace operation.
+    :vartype value: list[~azure.mgmt.relay.models.RelayNamespace]
+    :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of namespaces.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -619,6 +1240,13 @@ class RelayNamespaceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the list namespace operation.
+        :paramtype value: list[~azure.mgmt.relay.models.RelayNamespace]
+        :keyword next_link: Link to the next set of results. Not empty if value contains incomplete
+         list of namespaces.
+        :paramtype next_link: str
+        """
         super(RelayNamespaceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -635,8 +1263,8 @@ class ResourceNamespacePatch(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -658,6 +1286,10 @@ class ResourceNamespacePatch(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(ResourceNamespacePatch, self).__init__(**kwargs)
         self.tags = tags
 
@@ -673,13 +1305,14 @@ class RelayUpdateParameters(ResourceNamespacePatch):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: SKU of the namespace.
-    :type sku: ~azure.mgmt.relay.models.Sku
-    :ivar provisioning_state:  Possible values include: "Created", "Succeeded", "Deleted",
-     "Failed", "Updating", "Unknown".
-    :vartype provisioning_state: str or ~azure.mgmt.relay.models.ProvisioningStateEnum
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: SKU of the namespace.
+    :vartype sku: ~azure.mgmt.relay.models.Sku
+    :ivar provisioning_state: Provisioning state of the Namespace.
+    :vartype provisioning_state: str
+    :ivar status: Status of the Namespace.
+    :vartype status: str
     :ivar created_at: The time the namespace was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The time the namespace was updated.
@@ -688,6 +1321,12 @@ class RelayUpdateParameters(ResourceNamespacePatch):
     :vartype service_bus_endpoint: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
+    :ivar private_endpoint_connections: List of private endpoint connections.
+    :vartype private_endpoint_connections: list[~azure.mgmt.relay.models.PrivateEndpointConnection]
+    :ivar public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled. Possible values include: "Enabled", "Disabled", "SecuredByPerimeter".
+     Default value: "Enabled".
+    :vartype public_network_access: str or ~azure.mgmt.relay.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -695,6 +1334,7 @@ class RelayUpdateParameters(ResourceNamespacePatch):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
         'service_bus_endpoint': {'readonly': True},
@@ -708,10 +1348,13 @@ class RelayUpdateParameters(ResourceNamespacePatch):
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -719,33 +1362,48 @@ class RelayUpdateParameters(ResourceNamespacePatch):
         *,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["Sku"] = None,
+        private_endpoint_connections: Optional[List["PrivateEndpointConnection"]] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = "Enabled",
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: SKU of the namespace.
+        :paramtype sku: ~azure.mgmt.relay.models.Sku
+        :keyword private_endpoint_connections: List of private endpoint connections.
+        :paramtype private_endpoint_connections:
+         list[~azure.mgmt.relay.models.PrivateEndpointConnection]
+        :keyword public_network_access: This determines if traffic is allowed over public network. By
+         default it is enabled. Possible values include: "Enabled", "Disabled", "SecuredByPerimeter".
+         Default value: "Enabled".
+        :paramtype public_network_access: str or ~azure.mgmt.relay.models.PublicNetworkAccess
+        """
         super(RelayUpdateParameters, self).__init__(tags=tags, **kwargs)
         self.sku = sku
         self.provisioning_state = None
+        self.status = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
         self.metric_id = None
+        self.private_endpoint_connections = private_endpoint_connections
+        self.public_network_access = public_network_access
 
 
 class Sku(msrest.serialization.Model):
     """SKU of the namespace.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Name of this SKU. Has constant value: "Standard".
-    :vartype name: str
-    :param tier: The tier of this SKU. The only acceptable values to pass in are None and
-     "Standard". The default value is None.
-    :type tier: str
+    :ivar name: Required. Name of this SKU. Possible values include: "Standard".
+    :vartype name: str or ~azure.mgmt.relay.models.SkuName
+    :ivar tier: The tier of this SKU. Possible values include: "Standard".
+    :vartype tier: str or ~azure.mgmt.relay.models.SkuTier
     """
 
     _validation = {
-        'name': {'required': True, 'constant': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
@@ -753,29 +1411,105 @@ class Sku(msrest.serialization.Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    name = "Standard"
+    def __init__(
+        self,
+        *,
+        name: Union[str, "SkuName"],
+        tier: Optional[Union[str, "SkuTier"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: Required. Name of this SKU. Possible values include: "Standard".
+        :paramtype name: str or ~azure.mgmt.relay.models.SkuName
+        :keyword tier: The tier of this SKU. Possible values include: "Standard".
+        :paramtype tier: str or ~azure.mgmt.relay.models.SkuTier
+        """
+        super(Sku, self).__init__(**kwargs)
+        self.name = name
+        self.tier = tier
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.relay.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.relay.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
 
     def __init__(
         self,
         *,
-        tier: Optional[str] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(Sku, self).__init__(**kwargs)
-        self.tier = tier
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.relay.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.relay.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
-class WcfRelay(Resource):
+class WcfRelay(ProxyResource):
     """Description of the WCF relay resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.EventHub/Namespaces" or
+     "Microsoft.EventHub/Namespaces/EventHubs".
     :vartype type: str
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.relay.models.SystemData
     :ivar is_dynamic: Returns true if the relay is dynamic; otherwise, false.
     :vartype is_dynamic: bool
     :ivar created_at: The time the WCF relay was created.
@@ -785,24 +1519,26 @@ class WcfRelay(Resource):
     :ivar listener_count: The number of listeners for this relay. Note that min :1 and max:25 are
      supported.
     :vartype listener_count: int
-    :param relay_type: WCF relay type. Possible values include: "NetTcp", "Http".
-    :type relay_type: str or ~azure.mgmt.relay.models.Relaytype
-    :param requires_client_authorization: Returns true if client authorization is needed for this
+    :ivar relay_type: WCF relay type. Possible values include: "NetTcp", "Http".
+    :vartype relay_type: str or ~azure.mgmt.relay.models.Relaytype
+    :ivar requires_client_authorization: Returns true if client authorization is needed for this
      relay; otherwise, false.
-    :type requires_client_authorization: bool
-    :param requires_transport_security: Returns true if transport security is needed for this
-     relay; otherwise, false.
-    :type requires_transport_security: bool
-    :param user_metadata: The usermetadata is a placeholder to store user-defined string data for
+    :vartype requires_client_authorization: bool
+    :ivar requires_transport_security: Returns true if transport security is needed for this relay;
+     otherwise, false.
+    :vartype requires_transport_security: bool
+    :ivar user_metadata: The usermetadata is a placeholder to store user-defined string data for
      the WCF Relay endpoint. For example, it can be used to store descriptive data, such as list of
      teams and their contact information. Also, user-defined configuration settings can be stored.
-    :type user_metadata: str
+    :vartype user_metadata: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
+        'system_data': {'readonly': True},
         'is_dynamic': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
@@ -813,6 +1549,8 @@ class WcfRelay(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'is_dynamic': {'key': 'properties.isDynamic', 'type': 'bool'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
@@ -832,7 +1570,22 @@ class WcfRelay(Resource):
         user_metadata: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword relay_type: WCF relay type. Possible values include: "NetTcp", "Http".
+        :paramtype relay_type: str or ~azure.mgmt.relay.models.Relaytype
+        :keyword requires_client_authorization: Returns true if client authorization is needed for this
+         relay; otherwise, false.
+        :paramtype requires_client_authorization: bool
+        :keyword requires_transport_security: Returns true if transport security is needed for this
+         relay; otherwise, false.
+        :paramtype requires_transport_security: bool
+        :keyword user_metadata: The usermetadata is a placeholder to store user-defined string data for
+         the WCF Relay endpoint. For example, it can be used to store descriptive data, such as list of
+         teams and their contact information. Also, user-defined configuration settings can be stored.
+        :paramtype user_metadata: str
+        """
         super(WcfRelay, self).__init__(**kwargs)
+        self.system_data = None
         self.is_dynamic = None
         self.created_at = None
         self.updated_at = None
@@ -846,11 +1599,11 @@ class WcfRelay(Resource):
 class WcfRelaysListResult(msrest.serialization.Model):
     """The response of the list WCF relay operation.
 
-    :param value: Result of the list WCF relay operation.
-    :type value: list[~azure.mgmt.relay.models.WcfRelay]
-    :param next_link: Link to the next set of results. Not empty if value contains incomplete list
+    :ivar value: Result of the list WCF relay operation.
+    :vartype value: list[~azure.mgmt.relay.models.WcfRelay]
+    :ivar next_link: Link to the next set of results. Not empty if value contains incomplete list
      of WCF relays.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -865,6 +1618,13 @@ class WcfRelaysListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of the list WCF relay operation.
+        :paramtype value: list[~azure.mgmt.relay.models.WcfRelay]
+        :keyword next_link: Link to the next set of results. Not empty if value contains incomplete
+         list of WCF relays.
+        :paramtype next_link: str
+        """
         super(WcfRelaysListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
