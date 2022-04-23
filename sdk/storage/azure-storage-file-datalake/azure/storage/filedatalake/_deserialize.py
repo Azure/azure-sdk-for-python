@@ -147,7 +147,7 @@ def _decode_error(response, error_message=None, serialized_error=None):
 
     # Convert blob errors to datalake errors
     if error_code in [StorageErrorCode.blob_not_found]:
-            error_code = StorageErrorCode.path_not_found
+        error_code = StorageErrorCode.path_not_found
 
     try:
         # This check would be unnecessary if we have already serialized the error.
