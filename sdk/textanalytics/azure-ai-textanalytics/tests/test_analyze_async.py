@@ -595,6 +595,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert poller.total_actions_count == 1
             assert poller.id
 
+    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -617,6 +618,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
+    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async

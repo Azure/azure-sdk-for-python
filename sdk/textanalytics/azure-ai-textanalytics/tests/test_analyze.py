@@ -550,6 +550,7 @@ class TestAnalyze(TextAnalyticsTest):
             for doc in document_results:
                 assert doc.is_error
 
+    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -570,6 +571,7 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             ).result()
 
+    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
