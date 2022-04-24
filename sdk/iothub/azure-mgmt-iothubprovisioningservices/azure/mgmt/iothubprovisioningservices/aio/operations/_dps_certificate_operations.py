@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-import warnings
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -63,7 +62,7 @@ class DpsCertificateOperations:
         :param provisioning_service_name: Name of the provisioning service the certificate is
          associated with.
         :type provisioning_service_name: str
-        :param if_match: ETag of the certificate.
+        :param if_match: ETag of the certificate. Default value is None.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateResponse, or the result of cls(response)
@@ -76,19 +75,26 @@ class DpsCertificateOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-02-05")  # type: str
+
         
         request = build_get_request(
             certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
+            api_version=api_version,
             if_match=if_match,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -103,7 +109,7 @@ class DpsCertificateOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -112,7 +118,7 @@ class DpsCertificateOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         certificate_name: str,
-        certificate_description: "_models.CertificateBodyDescription",
+        certificate_description: "_models.CertificateResponse",
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> "_models.CertificateResponse":
@@ -128,9 +134,9 @@ class DpsCertificateOperations:
         :type certificate_name: str
         :param certificate_description: The certificate body.
         :type certificate_description:
-         ~azure.mgmt.iothubprovisioningservices.models.CertificateBodyDescription
+         ~azure.mgmt.iothubprovisioningservices.models.CertificateResponse
         :param if_match: ETag of the certificate. This is required to update an existing certificate,
-         and ignored while creating a brand new certificate.
+         and ignored while creating a brand new certificate. Default value is None.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateResponse, or the result of cls(response)
@@ -143,15 +149,17 @@ class DpsCertificateOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-02-05")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(certificate_description, 'CertificateBodyDescription')
+        _json = self._serialize.body(certificate_description, 'CertificateResponse')
 
         request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
             certificate_name=certificate_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             if_match=if_match,
@@ -160,7 +168,11 @@ class DpsCertificateOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -175,11 +187,11 @@ class DpsCertificateOperations:
 
         return deserialized
 
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}  # type: ignore
+    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def delete(
+    async def delete(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         if_match: str,
@@ -209,22 +221,26 @@ class DpsCertificateOperations:
          that the provisioning service will access by.
         :type certificate_name: str
         :param certificate_name1: This is optional, and it is the Common Name of the certificate.
+         Default value is None.
         :type certificate_name1: str
-        :param certificate_raw_bytes: Raw data within the certificate.
+        :param certificate_raw_bytes: Raw data within the certificate. Default value is None.
         :type certificate_raw_bytes: bytearray
         :param certificate_is_verified: Indicates if certificate has been verified by owner of the
-         private key.
+         private key. Default value is None.
         :type certificate_is_verified: bool
-        :param certificate_purpose: A description that mentions the purpose of the certificate.
+        :param certificate_purpose: A description that mentions the purpose of the certificate. Default
+         value is None.
         :type certificate_purpose: str or
          ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
-        :param certificate_created: Time the certificate is created.
+        :param certificate_created: Time the certificate is created. Default value is None.
         :type certificate_created: ~datetime.datetime
-        :param certificate_last_updated: Time the certificate is last updated.
+        :param certificate_last_updated: Time the certificate is last updated. Default value is None.
         :type certificate_last_updated: ~datetime.datetime
         :param certificate_has_private_key: Indicates if the certificate contains a private key.
+         Default value is None.
         :type certificate_has_private_key: bool
-        :param certificate_nonce: Random number generated to indicate Proof of Possession.
+        :param certificate_nonce: Random number generated to indicate Proof of Possession. Default
+         value is None.
         :type certificate_nonce: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -237,12 +253,15 @@ class DpsCertificateOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-02-05")  # type: str
+
         
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
             certificate_name=certificate_name,
+            api_version=api_version,
             if_match=if_match,
             certificate_name1=certificate_name1,
             certificate_raw_bytes=certificate_raw_bytes,
@@ -257,7 +276,11 @@ class DpsCertificateOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -268,7 +291,7 @@ class DpsCertificateOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}  # type: ignore
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -295,17 +318,24 @@ class DpsCertificateOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-02-05")  # type: str
+
         
         request = build_list_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
+            api_version=api_version,
             template_url=self.list.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -320,7 +350,7 @@ class DpsCertificateOperations:
 
         return deserialized
 
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates'}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates"}  # type: ignore
 
 
     @distributed_trace_async
@@ -352,23 +382,26 @@ class DpsCertificateOperations:
         :type resource_group_name: str
         :param provisioning_service_name: Name of provisioning service.
         :type provisioning_service_name: str
-        :param certificate_name1: Common Name for the certificate.
+        :param certificate_name1: Common Name for the certificate. Default value is None.
         :type certificate_name1: str
-        :param certificate_raw_bytes: Raw data of certificate.
+        :param certificate_raw_bytes: Raw data of certificate. Default value is None.
         :type certificate_raw_bytes: bytearray
         :param certificate_is_verified: Indicates if the certificate has been verified by owner of the
-         private key.
+         private key. Default value is None.
         :type certificate_is_verified: bool
-        :param certificate_purpose: Description mentioning the purpose of the certificate.
+        :param certificate_purpose: Description mentioning the purpose of the certificate. Default
+         value is None.
         :type certificate_purpose: str or
          ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
-        :param certificate_created: Certificate creation time.
+        :param certificate_created: Certificate creation time. Default value is None.
         :type certificate_created: ~datetime.datetime
-        :param certificate_last_updated: Certificate last updated time.
+        :param certificate_last_updated: Certificate last updated time. Default value is None.
         :type certificate_last_updated: ~datetime.datetime
-        :param certificate_has_private_key: Indicates if the certificate contains private key.
+        :param certificate_has_private_key: Indicates if the certificate contains private key. Default
+         value is None.
         :type certificate_has_private_key: bool
-        :param certificate_nonce: Random number generated to indicate Proof of Possession.
+        :param certificate_nonce: Random number generated to indicate Proof of Possession. Default
+         value is None.
         :type certificate_nonce: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VerificationCodeResponse, or the result of cls(response)
@@ -381,12 +414,15 @@ class DpsCertificateOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-02-05")  # type: str
+
         
         request = build_generate_verification_code_request(
             certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
+            api_version=api_version,
             if_match=if_match,
             certificate_name1=certificate_name1,
             certificate_raw_bytes=certificate_raw_bytes,
@@ -401,7 +437,11 @@ class DpsCertificateOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -416,7 +456,7 @@ class DpsCertificateOperations:
 
         return deserialized
 
-    generate_verification_code.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/generateVerificationCode'}  # type: ignore
+    generate_verification_code.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/generateVerificationCode"}  # type: ignore
 
 
     @distributed_trace_async
@@ -453,23 +493,25 @@ class DpsCertificateOperations:
         :type provisioning_service_name: str
         :param request: The name of the certificate.
         :type request: ~azure.mgmt.iothubprovisioningservices.models.VerificationCodeRequest
-        :param certificate_name1: Common Name for the certificate.
+        :param certificate_name1: Common Name for the certificate. Default value is None.
         :type certificate_name1: str
-        :param certificate_raw_bytes: Raw data of certificate.
+        :param certificate_raw_bytes: Raw data of certificate. Default value is None.
         :type certificate_raw_bytes: bytearray
         :param certificate_is_verified: Indicates if the certificate has been verified by owner of the
-         private key.
+         private key. Default value is None.
         :type certificate_is_verified: bool
-        :param certificate_purpose: Describe the purpose of the certificate.
+        :param certificate_purpose: Describe the purpose of the certificate. Default value is None.
         :type certificate_purpose: str or
          ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
-        :param certificate_created: Certificate creation time.
+        :param certificate_created: Certificate creation time. Default value is None.
         :type certificate_created: ~datetime.datetime
-        :param certificate_last_updated: Certificate last updated time.
+        :param certificate_last_updated: Certificate last updated time. Default value is None.
         :type certificate_last_updated: ~datetime.datetime
-        :param certificate_has_private_key: Indicates if the certificate contains private key.
+        :param certificate_has_private_key: Indicates if the certificate contains private key. Default
+         value is None.
         :type certificate_has_private_key: bool
-        :param certificate_nonce: Random number generated to indicate Proof of Possession.
+        :param certificate_nonce: Random number generated to indicate Proof of Possession. Default
+         value is None.
         :type certificate_nonce: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateResponse, or the result of cls(response)
@@ -482,6 +524,7 @@ class DpsCertificateOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-02-05")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(request, 'VerificationCodeRequest')
@@ -491,6 +534,7 @@ class DpsCertificateOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
+            api_version=api_version,
             content_type=content_type,
             if_match=if_match,
             json=_json,
@@ -507,7 +551,11 @@ class DpsCertificateOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -522,5 +570,5 @@ class DpsCertificateOperations:
 
         return deserialized
 
-    verify_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/verify'}  # type: ignore
+    verify_certificate.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/verify"}  # type: ignore
 

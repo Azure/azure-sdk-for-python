@@ -21,26 +21,26 @@ class AsyncOperationResult(msrest.serialization.Model):
     :ivar status: current status of a long running operation.
     :vartype status: str
     :ivar error: Error message containing code, description and details.
-    :vartype error: ~azure.mgmt.iothubprovisioningservices.models.ErrorMesssage
+    :vartype error: ~azure.mgmt.iothubprovisioningservices.models.ErrorMessage
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorMesssage'},
+        'error': {'key': 'error', 'type': 'ErrorMessage'},
     }
 
     def __init__(
         self,
         *,
         status: Optional[str] = None,
-        error: Optional["ErrorMesssage"] = None,
+        error: Optional["ErrorMessage"] = None,
         **kwargs
     ):
         """
         :keyword status: current status of a long running operation.
         :paramtype status: str
         :keyword error: Error message containing code, description and details.
-        :paramtype error: ~azure.mgmt.iothubprovisioningservices.models.ErrorMesssage
+        :paramtype error: ~azure.mgmt.iothubprovisioningservices.models.ErrorMessage
         """
         super(AsyncOperationResult, self).__init__(**kwargs)
         self.status = status
@@ -134,8 +134,6 @@ class CertificateProperties(msrest.serialization.Model):
         'subject': {'readonly': True},
         'expiry': {'readonly': True},
         'thumbprint': {'readonly': True},
-        'is_verified': {'readonly': True},
-        'certificate': {'readonly': True},
         'created': {'readonly': True},
         'updated': {'readonly': True},
     }
@@ -152,16 +150,24 @@ class CertificateProperties(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        is_verified: Optional[bool] = None,
+        certificate: Optional[bytearray] = None,
         **kwargs
     ):
         """
+        :keyword is_verified: Determines whether certificate has been verified.
+        :paramtype is_verified: bool
+        :keyword certificate: base-64 representation of X509 certificate .cer file or just .pem file
+         content.
+        :paramtype certificate: bytearray
         """
         super(CertificateProperties, self).__init__(**kwargs)
         self.subject = None
         self.expiry = None
         self.thumbprint = None
-        self.is_verified = None
-        self.certificate = None
+        self.is_verified = is_verified
+        self.certificate = certificate
         self.created = None
         self.updated = None
 
@@ -263,7 +269,7 @@ class ErrorDetails(msrest.serialization.Model):
         self.details = None
 
 
-class ErrorMesssage(msrest.serialization.Model):
+class ErrorMessage(msrest.serialization.Model):
     """Error response containing message and code.
 
     :ivar code: standard error code.
@@ -296,7 +302,7 @@ class ErrorMesssage(msrest.serialization.Model):
         :keyword details: detailed summary of error.
         :paramtype details: str
         """
-        super(ErrorMesssage, self).__init__(**kwargs)
+        super(ErrorMessage, self).__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
