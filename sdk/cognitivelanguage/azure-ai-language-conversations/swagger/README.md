@@ -28,9 +28,9 @@ license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
+title: ConversationAnalysisClient
 tag: release_2022_05_01_preview
 openapi-type: data-plane
-title: ConversationAnalysisClient
 version-tolerant: true
 models-mode: msrest
 package-version: 1.0.0b4
@@ -42,6 +42,71 @@ modelerfour:
   lenient-model-deduplication: true
 ```
 
+### Remove intermediary object from analyze operation call
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/:analyze-conversations"]["post"]
+      transform: >
+          $["operationId"] = "analyzeConversation";
+```
+
+### Rename body to tasks
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/:analyze-conversations"]["post"]
+      transform: >
+        $["parameters"][1]["x-ms-client-name"] = "task";
+```
+
+### Rename 'confidenceScore' in Qna intent result
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["KnowledgeBaseAnswer"]["properties"]["confidenceScore"]
+      transform: >
+        $["x-ms-client-name"] = "confidence";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnswerSpan"]["properties"]["confidenceScore"]
+      transform: >
+        $["x-ms-client-name"] = "confidence";
+```
+
+### Set default values for ParticipantID, and ConversationID
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]["properties"]["participantId"]
+      transform: >
+        $["x-ms-client-default"] = 1;
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]["properties"]["id"]
+      transform: >
+        $["x-ms-client-default"] = 1;
+```
+
+# Fix enum error
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["CustomConversationTaskParameters"]
+    transform: >
+        delete $.properties["stringIndexType"]
+```
 
 ### Rename 'duplicate schema' errors in 'Task State'
 
@@ -61,4 +126,40 @@ directive:
       where: $["definitions"]["JobState"]["properties"]
       transform: >
         $["status"]["x-ms-enum"]["name"] = "JobStateEnum";
+```
+
+### Rename operations
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/:analyze-conversations"]["post"]
+      transform: >
+          $["operationId"] = "analyzeConversation";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      transform: >
+          $["operationId"] = "submitConversationJob";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs/{jobId}"]["get"]
+      transform: >
+          $["operationId"] = "getConversationJobStatus";
+```
+
+### temp - change api version
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["info"]
+      transform: >
+          $["version"] = "2022-04-01-preview";
 ```
