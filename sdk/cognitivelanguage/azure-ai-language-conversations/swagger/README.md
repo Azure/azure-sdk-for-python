@@ -42,7 +42,41 @@ modelerfour:
   lenient-model-deduplication: true
 ```
 
-### Remove intermediary object from analyze operation call
+## Fix generation errors
+
+### Fix `enum` error
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["CustomConversationTaskParameters"]
+    transform: >
+        delete $.properties["stringIndexType"]
+```
+
+### Fix `duplicate schema` errors in `Task State`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["TaskState"]["properties"]
+      transform: >
+        $["status"]["x-ms-enum"]["name"] = "TaskStateEnum";
+```
+
+### Fix `duplicate schema` errors in `Job State`
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["JobState"]["properties"]
+      transform: >
+        $["status"]["x-ms-enum"]["name"] = "JobStateEnum";
+```
+
+## Rename Client Operations 
+
+### CLU Analyze Operation
 
 ```yaml
 directive:
@@ -52,7 +86,29 @@ directive:
           $["operationId"] = "analyzeConversation";
 ```
 
-### Rename body to tasks
+### Async Analyze Operation POST
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      transform: >
+          $["operationId"] = "submitConversationJob";
+```
+
+### Async Analyze Operation GET
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversations/jobs/{jobId}"]["get"]
+      transform: >
+          $["operationId"] = "getConversationJobStatus";
+```
+
+## CLU Directives
+
+### Rename `body` to `tasks`
 
 ```yaml
 directive:
@@ -62,7 +118,7 @@ directive:
         $["parameters"][1]["x-ms-client-name"] = "task";
 ```
 
-### Rename 'confidenceScore' in Qna intent result
+### Unify `confidenceScore` in Qna intent result
 
 ```yaml
 directive:
@@ -80,7 +136,7 @@ directive:
         $["x-ms-client-name"] = "confidence";
 ```
 
-### Set default values for ParticipantID, and ConversationID
+### Set default values for `ParticipantID`, and `ConversationID`
 
 ```yaml
 directive:
@@ -98,63 +154,9 @@ directive:
         $["x-ms-client-default"] = 1;
 ```
 
-# Fix enum error
+## Temporary changes
 
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["CustomConversationTaskParameters"]
-    transform: >
-        delete $.properties["stringIndexType"]
-```
-
-### Rename 'duplicate schema' errors in 'Task State'
-
-```yaml
-directive:
-    - from: swagger-document
-      where: $["definitions"]["TaskState"]["properties"]
-      transform: >
-        $["status"]["x-ms-enum"]["name"] = "TaskStateEnum";
-```
-
-### Rename 'duplicate schema' errors in 'Job State'
-
-```yaml
-directive:
-    - from: swagger-document
-      where: $["definitions"]["JobState"]["properties"]
-      transform: >
-        $["status"]["x-ms-enum"]["name"] = "JobStateEnum";
-```
-
-### Rename operations
-
-```yaml
-directive:
-    - from: swagger-document
-      where: $["paths"]["/:analyze-conversations"]["post"]
-      transform: >
-          $["operationId"] = "analyzeConversation";
-```
-
-```yaml
-directive:
-    - from: swagger-document
-      where: $["paths"]["/analyze-conversations/jobs"]["post"]
-      transform: >
-          $["operationId"] = "submitConversationJob";
-```
-
-```yaml
-directive:
-    - from: swagger-document
-      where: $["paths"]["/analyze-conversations/jobs/{jobId}"]["get"]
-      transform: >
-          $["operationId"] = "getConversationJobStatus";
-```
-
-### temp - change api version
+### Change api version
 
 ```yaml
 directive:
