@@ -6,20 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
-from six import with_metaclass
-from azure.core import CaseInsensitiveEnumMeta
+from ._action_groups_operations import ActionGroupsOperations
 
-
-class ResultType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-
-    DATA = "Data"
-    METADATA = "Metadata"
-
-class Sensitivity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the sensitivity of the baseline.
-    """
-
-    LOW = "Low"
-    MEDIUM = "Medium"
-    HIGH = "High"
+__all__ = [
+    'ActionGroupsOperations',
+]

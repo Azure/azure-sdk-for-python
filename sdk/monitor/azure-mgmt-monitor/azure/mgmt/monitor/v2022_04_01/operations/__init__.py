@@ -6,4 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "3.1.0"
+from ._action_groups_operations import ActionGroupsOperations
+
+__all__ = [
+    'ActionGroupsOperations',
+]

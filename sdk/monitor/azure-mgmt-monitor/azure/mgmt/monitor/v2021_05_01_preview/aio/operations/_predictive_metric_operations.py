@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-import warnings
+from typing import Any, Callable, Dict, Optional, TypeVar
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -87,11 +86,14 @@ class PredictiveMetricOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: str
+
         
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             autoscale_setting_name=autoscale_setting_name,
+            api_version=api_version,
             timespan=timespan,
             interval=interval,
             metric_namespace=metric_namespace,
@@ -102,7 +104,11 @@ class PredictiveMetricOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -117,5 +123,5 @@ class PredictiveMetricOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics'}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics"}  # type: ignore
 

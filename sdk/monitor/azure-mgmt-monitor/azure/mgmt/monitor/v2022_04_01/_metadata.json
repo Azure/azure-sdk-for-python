@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2017-11-01-preview",
-    "total_api_version_list": ["2017-11-01-preview"],
+    "chosen_version": "2022-04-01",
+    "total_api_version_list": ["2022-04-01"],
     "client": {
         "name": "MonitorManagementClient",
         "filename": "_monitor_management_client",
@@ -8,10 +8,10 @@
         "host_value": "\"https://management.azure.com\"",
         "parameterized_host_template": null,
         "azure_arm": true,
-        "has_lro_operations": false,
+        "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MonitorManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MonitorManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MonitorManagementClientConfiguration\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MonitorManagementClientConfiguration\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -19,6 +19,12 @@
                 "signature": "credential,  # type: \"TokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
                 "required": true
             }
         },
@@ -28,11 +34,17 @@
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
+                "required": true
             }
         },
         "constant": {
         },
-        "call": "credential",
+        "call": "credential, subscription_id",
         "service_client_specific": {
             "sync": {
                 "api_version": {
@@ -85,6 +97,6 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "metric_baseline": "MetricBaselineOperations"
+        "action_groups": "ActionGroupsOperations"
     }
 }

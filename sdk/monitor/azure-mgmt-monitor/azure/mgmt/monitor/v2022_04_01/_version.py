@@ -6,8 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._metric_baseline_operations import MetricBaselineOperations
-
-__all__ = [
-    'MetricBaselineOperations',
-]
+VERSION = "4.0.0"
