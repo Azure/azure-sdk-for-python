@@ -44,16 +44,6 @@ modelerfour:
 
 ## Fix generation errors
 
-### Fix `enum` error
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["CustomConversationTaskParameters"]
-    transform: >
-        delete $.properties["stringIndexType"]
-```
-
 ### Fix `duplicate schema` errors in `Task State`
 
 ```yaml
@@ -72,6 +62,16 @@ directive:
       where: $["definitions"]["JobState"]["properties"]
       transform: >
         $["status"]["x-ms-enum"]["name"] = "JobStateEnum";
+```
+
+### Fix `enum` error
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["CustomConversationTaskParameters"]
+    transform: >
+        delete $.properties["stringIndexType"]
 ```
 
 ## Rename Client Operations 
