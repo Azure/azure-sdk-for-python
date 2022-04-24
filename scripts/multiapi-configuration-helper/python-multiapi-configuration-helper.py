@@ -102,7 +102,8 @@ class MultiApiConfigHelper:
             if file_name:
                 files.append(file_name)
         for tag_name in tags_name:
-            self.tag_files[tag_name] = files
+            if not self.tag_files.get(tag_name) and files:
+                self.tag_files[tag_name] = files
         return end_idx + 1
 
     def get_all_tag_files(self):
