@@ -64,16 +64,6 @@ directive:
         $["status"]["x-ms-enum"]["name"] = "JobStateEnum";
 ```
 
-### Fix `enum` error
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["CustomConversationTaskParameters"]
-    transform: >
-        delete $.properties["stringIndexType"]
-```
-
 ## Rename Client Operations 
 
 ### CLU Analyze Operation
@@ -152,6 +142,16 @@ directive:
       where: $["definitions"]["ConversationItemBase"]["properties"]["id"]
       transform: >
         $["x-ms-client-default"] = 1;
+```
+
+### Fix `enum` error
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["CustomConversationTaskParameters"]
+    transform: >
+        delete $.properties["stringIndexType"]
 ```
 
 ## Temporary changes
