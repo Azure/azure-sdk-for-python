@@ -20,6 +20,20 @@ class AgeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WEEK = "Week"
     DAY = "Day"
 
+class AnalyzeConversationLROTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported analysis tasks on a collection of conversations.
+    """
+
+    CONVERSATIONAL_PII_TASK = "ConversationalPIITask"
+    CONVERSATIONAL_SUMMARIZATION_TASK = "ConversationalSummarizationTask"
+
+class AnalyzeConversationResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported Conversation Analysis task results.
+    """
+
+    CONVERSATIONAL_PII_RESULTS = "ConversationalPIIResults"
+    CONVERSATIONAL_SUMMARIZATION_RESULTS = "ConversationalSummarizationResults"
+
 class AnalyzeConversationTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Conversation tasks.
     """
@@ -49,6 +63,27 @@ class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SQUARE_MILE = "SquareMile"
     SQUARE_YARD = "SquareYard"
     ACRE = "Acre"
+
+class ConversationDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported conversational domains.
+    """
+
+    FINANCE = "finance"
+    HEALTHCARE = "healthcare"
+    GENERIC = "generic"
+
+class ConversationPIICategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    ADDRESS = "Address"
+    CREDIT_CARD_NUMBER = "CreditCardNumber"
+    EMAIL = "Email"
+    NAME = "Name"
+    NUMERIC_IDENTIFIER = "NumericIdentifier"
+    PHONE_NUMBER = "PhoneNumber"
+    US_SOCIAL_SECURITY_NUMBER = "USSocialSecurityNumber"
+    MISCELLANEOUS = "Miscellaneous"
+    ALL = "All"
+    DEFAULT = "Default"
 
 class DateTimeSubKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The DateTime SubKind
@@ -123,6 +158,16 @@ class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
+class JobStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    NOT_STARTED = "notStarted"
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    PARTIALLY_SUCCEEDED = "partiallySucceeded"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    CANCELLING = "cancelling"
+
 class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The length Unit of measurement
     """
@@ -146,9 +191,10 @@ class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PT = "Pt"
 
 class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The modality (format) of ConversationItem (e.g., Text, Transcript)
+    """Enumeration of supported conversational modalities.
     """
 
+    TRANSCRIPT = "transcript"
     TEXT = "text"
 
 class Modifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -189,8 +235,8 @@ class ProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the project.
     """
 
-    CONVERSATION = "conversation"
-    WORKFLOW = "workflow"
+    CUSTOM_CONVERSATION = "CustomConversation"
+    ORCHESTRATOR = "Orchestrator"
 
 class RangeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of range that the resolution object represents.
@@ -235,6 +281,14 @@ class ResolutionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NUMERIC_RANGE = "NumericRange"
     TEMPORAL_SPAN = "TemporalSpan"
 
+class Role(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role of the participant.
+    """
+
+    AGENT = "agent"
+    CUSTOMER = "customer"
+    GENERIC = "generic"
+
 class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The speed Unit of measurement
     """
@@ -254,14 +308,30 @@ class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CENTIMETERS_PER_MILLISECOND = "CentimetersPerMillisecond"
     KILOMETERS_PER_MILLISECOND = "KilometersPerMillisecond"
 
-class TargetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class SummaryAspect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    SUMMARY = "summary"
+    RESOLUTION = "resolution"
+
+class TargetProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of a target service.
     """
 
-    LUIS = "luis"
-    CONVERSATION = "conversation"
-    QUESTION_ANSWERING = "question_answering"
-    NON_LINKED = "non_linked"
+    LUIS = "Luis"
+    CUSTOM_CONVERSATION = "CustomConversation"
+    QUESTION_ANSWERING = "QuestionAnswering"
+    NON_LINKED = "NonLinked"
+
+class TaskStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the task at the mentioned last update time.
+    """
+
+    NOT_STARTED = "notStarted"
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    CANCELLING = "cancelling"
 
 class TemperatureUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The temperature Unit of measurement.
@@ -272,6 +342,15 @@ class TemperatureUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KELVIN = "Kelvin"
     RANKINE = "Rankine"
     CELSIUS = "Celsius"
+
+class TranscriptContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported transcript content types.
+    """
+
+    LEXICAL = "lexical"
+    ITN = "itn"
+    MASKED_ITN = "maskedItn"
+    TEXT = "text"
 
 class VolumeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Volume Unit of measurement

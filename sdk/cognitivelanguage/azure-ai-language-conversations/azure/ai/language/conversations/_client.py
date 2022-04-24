@@ -20,22 +20,27 @@ from ._configuration import ConversationAnalysisClientConfiguration
 from ._operations import ConversationAnalysisClientOperationsMixin
 
 class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
-    """This API accepts a request and mediates among multiple language projects, such as LUIS
+    """The language service conversations API is a suite of natural language processing (NLP) skills
+    that can be used to analyze structured conversations (textual or spoken). The synchronous API
+    in this suite accepts a request and mediates among multiple language projects, such as LUIS
     Generally Available, Question Answering, Conversational Language Understanding, and then calls
     the best candidate service to handle the request. At last, it returns a response with the
     candidate service's response as a payload.
 
      In some cases, this API needs to forward requests and responses between the caller and an
-    upstream service.
+    upstream service. The asynchronous APIs in this suite enable tasks like Conversation
+    Summarization and Conversational PII detection.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-04-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
