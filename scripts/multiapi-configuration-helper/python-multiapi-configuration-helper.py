@@ -161,7 +161,9 @@ class MultiApiConfigHelper:
         if self.tag not in self.tag_files:
             raise Exception(f'Do not find \"{self.tag}\" in \"{self.service_name}/readme.md\"'
                             f'({str(self.tag_files.keys())})')
+        print(f'find the following tiles in {self.tag}:')
         for file_name in self.tag_files[self.tag]:
+            print(file_name)
             if file_name not in self.configured_files:
                 missing_files.append('  - ' + file_name)
 
