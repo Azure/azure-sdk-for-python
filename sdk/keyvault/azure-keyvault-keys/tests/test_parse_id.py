@@ -10,7 +10,8 @@ from _shared.test_case import KeyVaultTestCase
 
 class TestParseId(KeyVaultTestCase):
     def test_parse_key_id_with_version(self):
-        vault_url = self.vault_url = os.environ.get("AZURE_KEYVAULT_URL","https://vaultname.vault.azure.net")
+        vault_url = os.environ.get("AZURE_KEYVAULT_URL","https://vaultname.vault.azure.net")
+        vault_url = vault_url.rstrip("/")
         client = self.create_key_client(vault_url)
         key_name = self.get_resource_name("key")
         # create key

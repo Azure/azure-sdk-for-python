@@ -2,14 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from enum import Flag
+import functools
 import json
 import os
 
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 from azure.keyvault.keys import KeyReleasePolicy
+from azure.keyvault.keys._shared import HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
 from devtools_testutils import AzureRecordedTestCase
+from six.moves.urllib_parse import urlparse
 import pytest
 
 
@@ -66,7 +70,7 @@ def is_public_cloud():
     return (".microsoftonline.com" in os.getenv('AZURE_AUTHORITY_HOST', ''))
 
     
-class KeysClientPreparer(AzureRecordedTestCase):
+class AsyncKeysClientPreparer(AzureRecordedTestCase):
     def __init__(self, *args, **kwargs):
         vault_playback_url = "https://vaultname.vault.azure.net"
         hsm_playback_url = "https://managedhsmvaultname.vault.azure.net"
@@ -74,10 +78,11 @@ class KeysClientPreparer(AzureRecordedTestCase):
 
         if self.is_live:
             self.vault_url = os.environ["AZURE_KEYVAULT_URL"]
-            self.vault_url = self.vault_url.rstrip("/")
-            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL", None)
-            if self.managed_hsm_url:
-                self.managed_hsm_url = self.managed_hsm_url.rstrip("/")
+            # self._scrub_url(real_url=self.vault_url, playback_url=vault_playback_url)
+
+            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
+            # if self.managed_hsm_url:
+            #     self._scrub_url(real_url=self.managed_hsm_url, playback_url=hsm_playback_url)
         else:
             self.vault_url = vault_playback_url
             self.managed_hsm_url = hsm_playback_url
@@ -85,45 +90,48 @@ class KeysClientPreparer(AzureRecordedTestCase):
         self._set_mgmt_settings_real_values()
 
     def __call__(self, fn):
-        def _preparer(test_class, api_version, is_hsm, **kwargs):
-
+        async def _preparer(test_class, api_version, is_hsm, **kwargs):
+            
             self._skip_if_not_configured(api_version, is_hsm)
             if not self.is_logging_enabled:
                 kwargs.update({"logging_enable": False})
             endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
             client = self.create_key_client(endpoint_url, api_version=api_version, **kwargs)
+            await fn(test_class, client, is_hsm=is_hsm, managed_hsm_url = self.managed_hsm_url, vault_url = self.vault_url)
 
-            with client:
-                fn(test_class, client, is_hsm=is_hsm, managed_hsm_url = self.managed_hsm_url, vault_url = self.vault_url)
         return _preparer
         
 
 
     def create_key_client(self, vault_uri, **kwargs):
        
-        from azure.keyvault.keys import KeyClient
+        from azure.keyvault.keys.aio import KeyClient
 
-        credential = self.get_credential(KeyClient)
+        credential = self.get_credential(KeyClient, is_async=True)
         
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     def create_crypto_client(self, key, **kwargs):
         
-        from azure.keyvault.keys.crypto import CryptographyClient
+        from azure.keyvault.keys.crypto.aio import CryptographyClient
 
-        credential = self.get_credential(CryptographyClient)
+        credential = self.get_credential(CryptographyClient, is_async=True)
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
 
     def _get_attestation_uri(self):
         playback_uri = "https://fakeattestation.azurewebsites.net"
         if self.is_live:
             real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL")
-            real_uri = real_uri.rstrip("/")
             if real_uri is None:
                 pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URL environment variable")
             self._scrub_url(real_uri, playback_uri)
             return real_uri
         return playback_uri
+
+    # def _scrub_url(self, real_url, playback_url):
+    #     real = urlparse(real_url)
+    #     playback = urlparse(playback_url)
+    #     super.scrubber.register_name_pair(real.netloc, playback.netloc)
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:

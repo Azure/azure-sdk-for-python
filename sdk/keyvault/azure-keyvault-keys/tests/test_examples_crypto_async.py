@@ -1,112 +1,122 @@
-# # ------------------------------------
-# # Copyright (c) Microsoft Corporation.
-# # Licensed under the MIT License.
-# # ------------------------------------
-# from azure.keyvault.keys.crypto.aio import CryptographyClient
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+from devtools_testutils import set_bodiless_matcher
+from azure.keyvault.keys.crypto.aio import CryptographyClient
 
-# from _shared.test_case_async import KeyVaultTestCase
-# from _test_case import client_setup, get_decorator, KeysTestCase
+from _shared.test_case_async import KeyVaultTestCase
+from _async_test_case import get_decorator, AsyncKeysClientPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
+import pytest
+
+all_api_versions = get_decorator(is_async=True, only_vault=True)
 
 
-# all_api_versions = get_decorator(is_async=True, only_vault=True)
+class TestCryptoExamples(KeyVaultTestCase):
+    # def __init__(self, *args, **kwargs):
+    #     kwargs["match_body"] = False
+    #     super(TestCryptoExamples, self).__init__(*args, **kwargs)
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_encrypt_decrypt_async(self, key_client, **kwargs):
+        set_bodiless_matcher()
+        credential = self.get_credential(CryptographyClient, is_async=True)
+        key_name = self.get_resource_name("crypto-test-encrypt-key")
+        await key_client.create_rsa_key(key_name)
 
-# class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
-#     def __init__(self, *args, **kwargs):
-#         kwargs["match_body"] = False
-#         super(TestCryptoExamples, self).__init__(*args, **kwargs)
+        # [START create_client]
+        # create a CryptographyClient using a KeyVaultKey instance
+        key = await key_client.get_key(key_name)
+        crypto_client = CryptographyClient(key, credential)
 
-#     @all_api_versions()
-#     @client_setup
-#     async def test_encrypt_decrypt_async(self, key_client, **kwargs):
-#         credential = self.get_credential(CryptographyClient, is_async=True)
-#         key_name = self.get_resource_name("crypto-test-encrypt-key")
-#         await key_client.create_rsa_key(key_name)
+        # or a key's id, which must include a version
+        key_id = "https://<your vault>.vault.azure.net/keys/<key name>/fe4fdcab688c479a9aa80f01ffeac26"
+        crypto_client = CryptographyClient(key_id, credential)
 
-#         # [START create_client]
-#         # create a CryptographyClient using a KeyVaultKey instance
-#         key = await key_client.get_key(key_name)
-#         crypto_client = CryptographyClient(key, credential)
+        # the client and credential should be closed when no longer needed
+        # (both are also async context managers)
+        await crypto_client.close()
+        await credential.close()
+        # [END create_client]
 
-#         # or a key's id, which must include a version
-#         key_id = "https://<your vault>.vault.azure.net/keys/<key name>/fe4fdcab688c479a9aa80f01ffeac26"
-#         crypto_client = CryptographyClient(key_id, credential)
+        client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
-#         # the client and credential should be closed when no longer needed
-#         # (both are also async context managers)
-#         await crypto_client.close()
-#         await credential.close()
-#         # [END create_client]
+        # [START encrypt]
+        from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
-#         client = CryptographyClient(key, credential, api_version=key_client.api_version)
+        # the result holds the ciphertext and identifies the encryption key and algorithm used
+        result = await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+        print(result.key_id)
+        print(result.algorithm)
+        ciphertext = result.ciphertext
+        # [END encrypt]
 
-#         # [START encrypt]
-#         from azure.keyvault.keys.crypto import EncryptionAlgorithm
+        # [START decrypt]
+        from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
-#         # the result holds the ciphertext and identifies the encryption key and algorithm used
-#         result = await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
-#         print(result.key_id)
-#         print(result.algorithm)
-#         ciphertext = result.ciphertext
-#         # [END encrypt]
+        result = await client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
+        print(result.plaintext)
+        # [END decrypt]
 
-#         # [START decrypt]
-#         from azure.keyvault.keys.crypto import EncryptionAlgorithm
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_wrap_unwrap_async(self, key_client, **kwargs):
+        set_bodiless_matcher()
+        credential = self.get_credential(CryptographyClient, is_async=True)
+        key_name = self.get_resource_name("crypto-test-wrapping-key")
+        key = await key_client.create_rsa_key(key_name)
+        client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
-#         result = await client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
-#         print(result.plaintext)
-#         # [END decrypt]
+        key_bytes = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
-#     @all_api_versions()
-#     @client_setup
-#     async def test_wrap_unwrap_async(self, key_client, **kwargs):
-#         credential = self.get_credential(CryptographyClient, is_async=True)
-#         key_name = self.get_resource_name("crypto-test-wrapping-key")
-#         key = await key_client.create_rsa_key(key_name)
-#         client = CryptographyClient(key, credential, api_version=key_client.api_version)
+        # [START wrap_key]
+        from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-#         key_bytes = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+        # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
+        result = await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        print(result.key_id)
+        print(result.algorithm)
+        encrypted_key = result.encrypted_key
+        # [END wrap_key]
 
-#         # [START wrap_key]
-#         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
+        # [START unwrap_key]
+        from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-#         # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-#         result = await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
-#         print(result.key_id)
-#         print(result.algorithm)
-#         encrypted_key = result.encrypted_key
-#         # [END wrap_key]
+        result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
+        # [END unwrap_key]
 
-#         # [START unwrap_key]
-#         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_sign_verify_async(self, key_client, **kwargs):
+        credential = self.get_credential(CryptographyClient, is_async=True)
+        key_name = self.get_resource_name("crypto-test-wrapping-key")
+        key = await key_client.create_rsa_key(key_name)
+        client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
-#         result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
-#         # [END unwrap_key]
+        # [START sign]
+        import hashlib
+        from azure.keyvault.keys.crypto import SignatureAlgorithm
 
-#     @all_api_versions()
-#     @client_setup
-#     async def test_sign_verify_async(self, key_client, **kwargs):
-#         credential = self.get_credential(CryptographyClient, is_async=True)
-#         key_name = self.get_resource_name("crypto-test-wrapping-key")
-#         key = await key_client.create_rsa_key(key_name)
-#         client = CryptographyClient(key, credential, api_version=key_client.api_version)
+        digest = hashlib.sha256(b"plaintext").digest()
 
-#         # [START sign]
-#         import hashlib
-#         from azure.keyvault.keys.crypto import SignatureAlgorithm
+        # sign returns the signature and the metadata required to verify it
+        result = await client.sign(SignatureAlgorithm.rs256, digest)
+        print(result.key_id)
+        print(result.algorithm)
+        signature = result.signature
+        # [END sign]
 
-#         digest = hashlib.sha256(b"plaintext").digest()
+        # [START verify]
+        from azure.keyvault.keys.crypto import SignatureAlgorithm
 
-#         # sign returns the signature and the metadata required to verify it
-#         result = await client.sign(SignatureAlgorithm.rs256, digest)
-#         print(result.key_id)
-#         print(result.algorithm)
-#         signature = result.signature
-#         # [END sign]
-
-#         # [START verify]
-#         from azure.keyvault.keys.crypto import SignatureAlgorithm
-
-#         verified = await client.verify(SignatureAlgorithm.rs256, digest, signature)
-#         assert verified.is_valid
-#         # [END verify]
+        verified = await client.verify(SignatureAlgorithm.rs256, digest, signature)
+        assert verified.is_valid
+        # [END verify]

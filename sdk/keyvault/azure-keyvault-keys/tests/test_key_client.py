@@ -29,8 +29,6 @@ from six import byte2int
 from _shared.test_case import KeyVaultTestCase
 from _test_case import get_attestation_token, get_decorator, get_release_policy, is_public_cloud, KeysClientPreparer
 
-#DONE
-
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3 = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3])
