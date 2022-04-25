@@ -42,7 +42,8 @@ from ._models import (
     RetentionPolicy,
     StaticWebsite,
     CorsRule,
-    DeletedPathProperties
+    DeletedPathProperties,
+    CustomerProvidedEncryptionKey
 )
 
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
@@ -101,5 +102,6 @@ __all__ = [
     'RetentionPolicy',
     'StaticWebsite',
     'CorsRule',
-    'DeletedPathProperties'
+    'DeletedPathProperties',
+    'CustomerProvidedEncryptionKey'
 ]
