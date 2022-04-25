@@ -11,7 +11,7 @@ from unittest import mock
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import set_bodiless_matcher
 from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
@@ -20,7 +20,6 @@ from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 import pytest
 
 from _shared.helpers_async  import get_completed_future
-from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case_async import KeyVaultTestCase
 from _async_test_case import get_decorator, AsyncKeysClientPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -34,9 +33,6 @@ no_get = get_decorator(is_async=True, permissions=NO_GET)
 
 
 class TestCryptoClient(KeyVaultTestCase):
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, match_body=False, custom_request_matchers=[json_attribute_matcher], **kwargs)
-
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
     iv = codecs.decode("89b8adbfb07345e3598932a09c517441", "hex_codec")
     aad = b"test"

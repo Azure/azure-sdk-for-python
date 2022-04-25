@@ -10,10 +10,8 @@ import os
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 from azure.keyvault.keys import KeyReleasePolicy
-from azure.keyvault.keys._shared import HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
 from devtools_testutils import AzureRecordedTestCase
-from six.moves.urllib_parse import urlparse
 import pytest
 
 

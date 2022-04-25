@@ -14,10 +14,6 @@ all_api_versions = get_decorator(is_async=True, only_vault=True)
 
 
 class TestCryptoExamples(KeyVaultTestCase):
-    # def __init__(self, *args, **kwargs):
-    #     kwargs["match_body"] = False
-    #     super(TestCryptoExamples, self).__init__(*args, **kwargs)
-
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()

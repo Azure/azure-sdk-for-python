@@ -26,7 +26,7 @@ from six import byte2int
 from _shared.test_case_async import KeyVaultTestCase
 from _async_test_case import get_attestation_token, get_decorator, get_release_policy, is_public_cloud, AsyncKeysClientPreparer
 from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_policies_equal
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
 
