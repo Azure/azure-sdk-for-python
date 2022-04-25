@@ -14,7 +14,7 @@ IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_s
 
 # Overview
 
-This page is to help you write tests for Azure Python SDK when these tests require Azure HTTP requests. The Azure SDK test framework uses the [`azure-devtools`][azure_devtools] package, which in turn rests upon on a HTTP recording system ([vcrpy][vcrpy]) that enables tests dependent on network interaction to be run offline.
+This page is to help you write tests for Azure Python SDK when these tests require Azure HTTP requests. The Azure SDK test framework uses the [`azure-devtools`][azure_devtools] package, which in turn rests upon on a HTTP recording system ([testproxy][testproxy]) that enables tests dependent on network interaction to be run offline.
 
 In this document, we will describe:
 -   [How to run the tests online (by authenticating with Azure to record new HTTP interactions)](#running-tests-in-live-mode)
@@ -361,4 +361,3 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
 [testproxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [pytest]: https://docs.pytest.org/en/latest/
-[vcrpy]: https://pypi.python.org/pypi/vcrpy
