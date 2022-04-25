@@ -41,7 +41,7 @@ def build_analyze_conversation_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/:analyze-conversations"
+    _url = "/:analyze-conversation"
 
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
@@ -76,7 +76,7 @@ def build_submit_conversation_job_request_initial(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/analyze-conversations/jobs"
+    _url = "/analyze-conversation/jobs"
 
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
@@ -110,7 +110,7 @@ def build_get_conversation_job_status_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/analyze-conversations/jobs/{jobId}"
+    _url = "/analyze-conversation/jobs/{jobId}"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
     }
