@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AsyncTablesBaseClient(AccountHostsMixin):
+class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,

@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MetricsQueryClient(object):
+class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
     """MetricsQueryClient
 
     :param credential: The credential to authenticate the client

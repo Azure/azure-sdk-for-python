@@ -74,6 +74,7 @@ except (SyntaxError, ImportError):
 from ._azure_file_storage_enums import (
     CopyStatusType,
     DeleteSnapshotsOptionType,
+    FileLastWrittenMode,
     FileRangeWriteType,
     LeaseDurationType,
     LeaseStateType,
@@ -120,6 +121,7 @@ __all__ = [
     'StorageServiceProperties',
     'CopyStatusType',
     'DeleteSnapshotsOptionType',
+    'FileLastWrittenMode',
     'FileRangeWriteType',
     'LeaseDurationType',
     'LeaseStateType',

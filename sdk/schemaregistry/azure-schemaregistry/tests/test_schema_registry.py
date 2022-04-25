@@ -54,12 +54,16 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         assert returned_schema.properties.id == schema_properties.id
         assert returned_schema.properties.format == "Avro"
+        assert returned_schema.properties.group_name == schemaregistry_group
+        assert returned_schema.properties.name == name
         assert returned_schema.definition == schema_str
 
         returned_schema_properties = client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
         assert returned_schema_properties.id == schema_properties.id
         assert returned_schema_properties.format == "Avro"
+        assert returned_schema.properties.group_name == schemaregistry_group
+        assert returned_schema.properties.name == name
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -80,6 +84,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         assert new_schema_properties.id is not None
         assert new_schema_properties.format == "Avro"
+        assert new_schema_properties.group_name == schemaregistry_group
+        assert new_schema_properties.name == name
 
         new_schema = client.get_schema(schema_id=new_schema_properties.id)
 
@@ -87,6 +93,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert new_schema.properties.id == new_schema_properties.id
         assert new_schema.definition == schema_str_new
         assert new_schema.properties.format == "Avro"
+        assert new_schema.properties.group_name == schemaregistry_group
+        assert new_schema.properties.name == name
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy

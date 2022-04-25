@@ -31,7 +31,7 @@ class Operations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~mobile_network_management_client.models
+    :type models: ~azure.mgmt.mobilenetwork.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -55,8 +55,7 @@ class Operations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OperationList or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~mobile_network_management_client.models.OperationList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.mobilenetwork.models.OperationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationList"]

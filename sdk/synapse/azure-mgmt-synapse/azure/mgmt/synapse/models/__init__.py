@@ -51,6 +51,9 @@ from ._models_py3 import DatabasePrincipalAssignment
 from ._models_py3 import DatabasePrincipalAssignmentCheckNameRequest
 from ._models_py3 import DatabasePrincipalAssignmentListResult
 from ._models_py3 import DatabaseStatistics
+from ._models_py3 import DedicatedSQLminimalTlsSettings
+from ._models_py3 import DedicatedSQLminimalTlsSettingsListResult
+from ._models_py3 import DedicatedSQLminimalTlsSettingsPatchInfo
 from ._models_py3 import DynamicExecutorAllocation
 from ._models_py3 import EncryptionDetails
 from ._models_py3 import EncryptionProtector
@@ -279,6 +282,7 @@ from ._synapse_management_client_enums import (
     DataWarehouseUserActivityName,
     DatabasePrincipalRole,
     DayOfWeek,
+    DedicatedSQLMinimalTlsSettingsName,
     DefaultPrincipalsModificationKind,
     EncryptionProtectorName,
     EventGridDataFormat,
@@ -389,6 +393,9 @@ __all__ = [
     'DatabasePrincipalAssignmentCheckNameRequest',
     'DatabasePrincipalAssignmentListResult',
     'DatabaseStatistics',
+    'DedicatedSQLminimalTlsSettings',
+    'DedicatedSQLminimalTlsSettingsListResult',
+    'DedicatedSQLminimalTlsSettingsPatchInfo',
     'DynamicExecutorAllocation',
     'EncryptionDetails',
     'EncryptionProtector',
@@ -614,6 +621,7 @@ __all__ = [
     'DataWarehouseUserActivityName',
     'DatabasePrincipalRole',
     'DayOfWeek',
+    'DedicatedSQLMinimalTlsSettingsName',
     'DefaultPrincipalsModificationKind',
     'EncryptionProtectorName',
     'EventGridDataFormat',
