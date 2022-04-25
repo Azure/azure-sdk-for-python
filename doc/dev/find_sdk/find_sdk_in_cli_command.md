@@ -6,7 +6,7 @@ This article aims to provide a guide for customer to find the sdk in Azure CLI.
 Find SDK function in cli command is divided into the following steps:
 1. Determine the command module
 2. Search its definition in `command.py`
-3. Find the corresponding SDK
+3. Find the management client and corresponding SDK
 4. Find the function in Python SDK or Doc
 
 ## Determine the command module
@@ -28,7 +28,7 @@ After entering the link, a command module folder generally contains the followin
 ```
 Still the above sample `az resource group create`, You can find its definition on line 222 from [here](https://github.com/Azure/azure-cli/blob/dev/src/azure-cli/azure/cli/command_modules/resource/commands.py#L222).
 
-## Find the corresponding SDK
+## Find the management client and corresponding SDK
 ```python
 with self.command_group('group', resource_group_sdk, resource_type=ResourceType.MGMT_RESOURCE_RESOURCES) as g:
     g.command('delete', 'begin_delete', supports_no_wait=True, confirmation=True)
@@ -40,11 +40,19 @@ with self.command_group('group', resource_group_sdk, resource_type=ResourceType.
     g.generic_update_command('update', custom_func_name='update_resource_group', custom_func_type=resource_custom)
     g.wait_command('wait')
 ```
-Taking the above code as an example, it can be roughly divided into three types: `command()` function, `show_command()` function and `custom_command()` function.<br/>
+
+Taking the above code as an example, follow the  `resource_type` parameter in `command_group()` function find SDK name and client. like searching for the `MGMT_RESOURCE_RESOURCES` definition.
+```python
+# src/azure-cli-core/azure/cli/core/profiles/_shared.py
+MGMT_RESOURCE_RESOURCES = ('azure.mgmt.resource.resources', 'ResourceManagementClient')
+```
+You could find that its package name is `azure-mgmt-resource` and its client name is `ResourceManagementClient`.
+
+Then, you could it can be divided into three types in `command_group()` function: command()` function, `show_command()` function and `custom_command()` function.<br/>
 
 For the first two function, the first parameter comes from the CLI command, and the second parameter comes from the function name of the SDK.
 If you want to find the SDK function about `az resource group delete`, it is the `begin_delete`.<br/>
-
+![img.png](find_the_sdk.PNG)
 If it is a `custom_command()` function, you could find its definition in the `custom.py` In the peer path.
 Such as `create_resource_group()`, you could find the definition from [here](https://github.com/Azure/azure-cli/blob/dev/src/azure-cli/azure/cli/command_modules/resource/custom.py#L1310). (If it is not found, you could search for `create_resource_group` in this file.)
 ```python
@@ -83,6 +91,6 @@ In this file, you could search the function name to find the function definition
 Above the `begin_delete` function, you could find it from [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01/operations/_operations.py#L8784).
 The same, the `create_or_update` function is [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/v2021_04_01/operations/_operations.py#L9761).
 
-Finally, you also could find the usage of function by Azure doc, like [this](https://docs.microsoft.com/en-us/azure/developer/python/sdk/examples/azure-sdk-example-resource-group#3-write-code-to-provision-a-resource-group).
+Finally, you also could find the usage of function by [Azure doc](https://docs.microsoft.com/en-us/azure/developer/python/sdk/examples/azure-sdk-example-resource-group#3-write-code-to-provision-a-resource-group) or [Azure samples](https://github.com/Azure-Samples/azure-samples-python-management).
 
 Feel free to contact Azure SDK team at any time through any channels. We are passionate to build the world-class cloud product.
