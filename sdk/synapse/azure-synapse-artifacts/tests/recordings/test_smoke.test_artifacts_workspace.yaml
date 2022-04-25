@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-synapse-artifacts/0.12.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-synapse-artifacts/0.13.0 Python/3.8.10 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://myservice.artifacts.azure.com/workspace?api-version=2020-12-01
   response:
@@ -23,7 +23,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Mar 2022 06:42:37 GMT
+      - Wed, 20 Apr 2022 01:47:17 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

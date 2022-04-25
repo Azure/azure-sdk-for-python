@@ -4,8 +4,8 @@ reports=no
 
 # PYLINT DIRECTORY BLACKLIST.
 ignore=_vendor,_generated,samples,examples,test,tests,doc,.tox
+ignore-paths=azure\\mixedreality\\remoterendering\\_api_version.py,azure/mixedreality/remoterendering/_api_version.py,azure/cosmos/aio/cosmos_client.py,azure\\cosmos\\aio\\cosmos_client.py,azure/cosmos/cosmos_client.py,azure\\cosmos\\cosmos_client.py 
 
-init-hook='import sys; import os; sys.path.insert(0, os.path.abspath(os.getcwd().rsplit("azure-sdk-for-python", 1)[0] + "azure-sdk-for-python/scripts/pylint_custom_plugin"))'
 load-plugins=pylint_guidelines_checker
 
 [MESSAGES CONTROL]
