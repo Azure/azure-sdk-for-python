@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/release-cognitiveservices-Language-2022-05-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/mshaban-msft/azure-rest-api-specs/mshaban/cognitive-language-2022-05-15-swagger-fixes/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 namespace: azure.ai.language.conversations
 package-name: azure-ai-language-conversations
@@ -71,7 +71,7 @@ directive:
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/:analyze-conversations"]["post"]
+      where: $["paths"]["/:analyze-conversation"]["post"]
       transform: >
           $["operationId"] = "analyzeConversation";
 ```
@@ -81,7 +81,7 @@ directive:
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/analyze-conversations/jobs"]["post"]
+      where: $["paths"]["/analyze-conversation/jobs"]["post"]
       transform: >
           $["operationId"] = "submitConversationJob";
 ```
@@ -91,7 +91,7 @@ directive:
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/analyze-conversations/jobs/{jobId}"]["get"]
+      where: $["paths"]["/analyze-conversation/jobs/{jobId}"]["get"]
       transform: >
           $["operationId"] = "getConversationJobStatus";
 ```
@@ -103,7 +103,7 @@ directive:
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/:analyze-conversations"]["post"]
+      where: $["paths"]["/:analyze-conversation"]["post"]
       transform: >
         $["parameters"][1]["x-ms-client-name"] = "task";
 ```
