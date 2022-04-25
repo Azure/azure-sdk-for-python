@@ -91,12 +91,12 @@ def sample_issue_resolution_dict_parms():
         print("status: {}".format(task_result.status))
         issue_resolution_result = task_result.results
         if issue_resolution_result.errors:
-            print("... errors occured")
+            print("... errors occured:")
             for error in issue_resolution_result.errors:
                 print(error)
         conversation_result = issue_resolution_result.conversations[0]
         if conversation_result.warnings:
-            print("... view task status:")
+            print("... view warnings:")
             for warning in conversation_result.warnings:
                 print(warning)
         summaries = conversation_result.summaries
