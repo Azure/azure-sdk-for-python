@@ -7,31 +7,51 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
-from ._configuration import MicrosoftServiceLinkerConfiguration
-from .operations import LinkerOperations, Operations
+from ._configuration import SCVMMConfiguration
+from .operations import AvailabilitySetsOperations, CloudsOperations, InventoryItemsOperations, Operations, VirtualMachineTemplatesOperations, VirtualMachinesOperations, VirtualNetworksOperations, VmmServersOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MicrosoftServiceLinker:
-    """Microsoft.ServiceLinker provider.
+class SCVMM:    # pylint: disable=too-many-instance-attributes
+    """The Microsoft.ScVmm Rest API spec.
 
-    :ivar linker: LinkerOperations operations
-    :vartype linker: microsoft_service_linker.aio.operations.LinkerOperations
+    :ivar vmm_servers: VmmServersOperations operations
+    :vartype vmm_servers: azure.mgmt.scvmm.aio.operations.VmmServersOperations
     :ivar operations: Operations operations
-    :vartype operations: microsoft_service_linker.aio.operations.Operations
+    :vartype operations: azure.mgmt.scvmm.aio.operations.Operations
+    :ivar clouds: CloudsOperations operations
+    :vartype clouds: azure.mgmt.scvmm.aio.operations.CloudsOperations
+    :ivar virtual_networks: VirtualNetworksOperations operations
+    :vartype virtual_networks: azure.mgmt.scvmm.aio.operations.VirtualNetworksOperations
+    :ivar virtual_machines: VirtualMachinesOperations operations
+    :vartype virtual_machines: azure.mgmt.scvmm.aio.operations.VirtualMachinesOperations
+    :ivar virtual_machine_templates: VirtualMachineTemplatesOperations operations
+    :vartype virtual_machine_templates:
+     azure.mgmt.scvmm.aio.operations.VirtualMachineTemplatesOperations
+    :ivar availability_sets: AvailabilitySetsOperations operations
+    :vartype availability_sets: azure.mgmt.scvmm.aio.operations.AvailabilitySetsOperations
+    :ivar inventory_items: InventoryItemsOperations operations
+    :vartype inventory_items: azure.mgmt.scvmm.aio.operations.InventoryItemsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
+     00000000-0000-0000-0000-000000000000).
+    :type subscription_id: str
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2020-06-05-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -39,18 +59,25 @@ class MicrosoftServiceLinker:
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        subscription_id: str,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = MicrosoftServiceLinkerConfiguration(credential=credential, **kwargs)
+        self._config = SCVMMConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.linker = LinkerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vmm_servers = VmmServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.clouds = CloudsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_networks = VirtualNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machines = VirtualMachinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machine_templates = VirtualMachineTemplatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.availability_sets = AvailabilitySetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.inventory_items = InventoryItemsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
@@ -82,7 +109,7 @@ class MicrosoftServiceLinker:
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "MicrosoftServiceLinker":
+    async def __aenter__(self) -> "SCVMM":
         await self._client.__aenter__()
         return self
 

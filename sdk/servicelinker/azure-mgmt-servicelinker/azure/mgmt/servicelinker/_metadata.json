@@ -1,17 +1,17 @@
 {
-    "chosen_version": "2021-11-01-preview",
-    "total_api_version_list": ["2021-11-01-preview"],
+    "chosen_version": "2022-05-01",
+    "total_api_version_list": ["2022-05-01"],
     "client": {
-        "name": "MicrosoftServiceLinker",
-        "filename": "_microsoft_service_linker",
+        "name": "ServiceLinkerManagementClient",
+        "filename": "_service_linker_management_client",
         "description": "Microsoft.ServiceLinker provider.",
         "host_value": "\"https://management.azure.com\"",
         "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MicrosoftServiceLinkerConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MicrosoftServiceLinkerConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ServiceLinkerManagementClientConfiguration\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ServiceLinkerManagementClientConfiguration\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
