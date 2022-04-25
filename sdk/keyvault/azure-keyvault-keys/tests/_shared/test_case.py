@@ -24,7 +24,6 @@ class KeyVaultTestCase(AzureRecordedTestCase):
             real_uri = real_uri.rstrip('/')
             if real_uri is None:
                 pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URL environment variable")
-            #self._scrub_url(real_uri, playback_uri)
             return real_uri
         return playback_uri
 
