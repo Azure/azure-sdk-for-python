@@ -1772,7 +1772,7 @@ class CheckEnum(BaseChecker):
                     self._enum_uppercase(node)   
             # Else if it does not have a metaclass, but it is an enum class
             # Check both capitalization and throw pylint error for metaclass
-            elif node.bases[1].name == "Enum":
+            elif node.bases[0].name == "str" and node.bases[1].name == "Enum":
                 self.add_message(
                     "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
                 )
@@ -1925,6 +1925,10 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
                 logger.debug("Pylint custom checker failed to check if model is aliased.")
                 pass
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 73f4c8fb284a593a8fec4381e423b05c543172cf
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))

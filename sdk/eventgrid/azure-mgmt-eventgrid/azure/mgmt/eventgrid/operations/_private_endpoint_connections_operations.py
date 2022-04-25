@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -22,27 +22,22 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    parent_type,  # type: Union[str, "_models.Enum18"]
-    parent_name,  # type: str
-    private_endpoint_connection_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    parent_type: Union[str, "_models.ParentType"],
+    parent_name: str,
+    private_endpoint_connection_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}')
@@ -74,17 +69,19 @@ def build_get_request(
 
 
 def build_update_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    parent_type,  # type: Union[str, "_models.Enum19"]
-    parent_name,  # type: str
-    private_endpoint_connection_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    subscription_id: str,
+    resource_group_name: str,
+    parent_type: Union[str, "_models.ParentType"],
+    parent_name: str,
+    private_endpoint_connection_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-12-01"
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}')
@@ -113,20 +110,21 @@ def build_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    parent_type,  # type: Union[str, "_models.Enum20"]
-    parent_name,  # type: str
-    private_endpoint_connection_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    parent_type: Union[str, "_models.ParentType"],
+    parent_name: str,
+    private_endpoint_connection_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}')
     path_format_arguments = {
@@ -152,17 +150,16 @@ def build_delete_request_initial(
 
 
 def build_list_by_resource_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    parent_type,  # type: Union[str, "_models.Enum21"]
-    parent_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    parent_type: Union[str, "_models.ParentType"],
+    parent_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections')
@@ -195,7 +192,6 @@ def build_list_by_resource_request(
         **kwargs
     )
 
-# fmt: on
 class PrivateEndpointConnectionsOperations(object):
     """PrivateEndpointConnectionsOperations operations.
 
@@ -221,24 +217,23 @@ class PrivateEndpointConnectionsOperations(object):
     @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        parent_type,  # type: Union[str, "_models.Enum18"]
-        parent_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PrivateEndpointConnection"
+        resource_group_name: str,
+        parent_type: Union[str, "_models.ParentType"],
+        parent_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnection":
         """Get a specific private endpoint connection.
 
-        Get a specific private endpoint connection under a topic or domain.
+        Get a specific private endpoint connection under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum18
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -285,14 +280,13 @@ class PrivateEndpointConnectionsOperations(object):
 
     def _update_initial(
         self,
-        resource_group_name,  # type: str
-        parent_type,  # type: Union[str, "_models.Enum19"]
-        parent_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        private_endpoint_connection,  # type: "_models.PrivateEndpointConnection"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PrivateEndpointConnection"
+        resource_group_name: str,
+        parent_type: Union[str, "_models.ParentType"],
+        parent_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -340,25 +334,24 @@ class PrivateEndpointConnectionsOperations(object):
     @distributed_trace
     def begin_update(
         self,
-        resource_group_name,  # type: str
-        parent_type,  # type: Union[str, "_models.Enum19"]
-        parent_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        private_endpoint_connection,  # type: "_models.PrivateEndpointConnection"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.PrivateEndpointConnection"]
+        resource_group_name: str,
+        parent_type: Union[str, "_models.ParentType"],
+        parent_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        **kwargs: Any
+    ) -> LROPoller["_models.PrivateEndpointConnection"]:
         """Update a specific private endpoint connection.
 
-        Update a specific private endpoint connection under a topic or domain.
+        Update a specific private endpoint connection under a topic, domain or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum19
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -424,13 +417,12 @@ class PrivateEndpointConnectionsOperations(object):
 
     def _delete_initial(
         self,
-        resource_group_name,  # type: str
-        parent_type,  # type: Union[str, "_models.Enum20"]
-        parent_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        parent_type: Union[str, "_models.ParentType"],
+        parent_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -465,24 +457,23 @@ class PrivateEndpointConnectionsOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        resource_group_name,  # type: str
-        parent_type,  # type: Union[str, "_models.Enum20"]
-        parent_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        resource_group_name: str,
+        parent_type: Union[str, "_models.ParentType"],
+        parent_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete a specific private endpoint connection.
 
-        Delete a specific private endpoint connection under a topic or domain.
+        Delete a specific private endpoint connection under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum20
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection
          connection.
@@ -540,25 +531,24 @@ class PrivateEndpointConnectionsOperations(object):
     @distributed_trace
     def list_by_resource(
         self,
-        resource_group_name,  # type: str
-        parent_type,  # type: Union[str, "_models.Enum21"]
-        parent_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.PrivateEndpointConnectionListResult"]
+        resource_group_name: str,
+        parent_type: Union[str, "_models.ParentType"],
+        parent_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.PrivateEndpointConnectionListResult"]:
         """Lists all private endpoint connections under a resource.
 
-        Get all private endpoint connections under a topic or domain.
+        Get all private endpoint connections under a topic, domain, or partner namespace.
 
         :param resource_group_name: The name of the resource group within the user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be either \'topics\' or
-         \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum21
-        :param parent_name: The name of the parent resource (namely, either, the topic name or domain
-         name).
+        :param parent_type: The type of the parent resource. This can be either \'topics\',
+         \'domains\', or \'partnerNamespaces\'.
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.ParentType
+        :param parent_name: The name of the parent resource (namely, either, the topic name, domain
+         name, or partner namespace name).
         :type parent_name: str
         :param filter: The query used to filter the search results using OData syntax. Filtering is
          permitted on the 'name' property only and with limited number of OData operations. These

@@ -30,7 +30,7 @@ class SubscriptionClientOperationsMixin(object):
         does not start with a reserved word.
 
         :param resource_name_definition: Resource object with values for resource name and resource
-         type.
+         type. Default value is None.
         :type resource_name_definition:
          ~azure.mgmt.resource.subscriptions.v2021_01_01.models.ResourceName
         :keyword callable cls: A custom type or function that will be passed the direct response

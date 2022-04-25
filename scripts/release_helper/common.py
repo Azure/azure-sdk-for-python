@@ -1,14 +1,17 @@
-from datetime import date, datetime
-from typing import Set, List, Dict
 import os
-from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag,\
-    MULTI_LINK_LABEL
 import re
 import logging
 import time
+import urllib.parse
+from datetime import date, datetime
+from typing import Set, List, Dict
 from random import randint
+
 from github import Github
 from github.Repository import Repository
+
+from utils import IssuePackage, REQUEST_REPO, AUTO_ASSIGN_LABEL, AUTO_PARSE_LABEL, get_origin_link_and_tag,\
+    MULTI_LINK_LABEL
 
 _LOG = logging.getLogger(__name__)
 
@@ -79,7 +82,7 @@ class IssueProcess:
         pr_info = self.issue_package.rest_repo.get_pull(number=pr_number)
         pk_url_name = set()
         for pr_changed_file in pr_info.get_files():
-            contents_url = pr_changed_file.contents_url
+            contents_url = urllib.parse.unquote(pr_changed_file.contents_url)
             if '/resource-manager' not in contents_url:
                 continue
             try:
