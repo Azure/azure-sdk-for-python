@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.keyvault.secrets.aio import SecretClient
 import pytest
+from azure.keyvault.secrets.aio import SecretClient
 
 from _shared.helpers_async import AsyncMockTransport
 
