@@ -7,31 +7,35 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
-from ._configuration import MicrosoftServiceLinkerConfiguration
+from ._configuration import ServiceLinkerManagementClientConfiguration
 from .operations import LinkerOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class MicrosoftServiceLinker:
+class ServiceLinkerManagementClient:
     """Microsoft.ServiceLinker provider.
 
     :ivar linker: LinkerOperations operations
-    :vartype linker: microsoft_service_linker.operations.LinkerOperations
+    :vartype linker: azure.mgmt.servicelinker.operations.LinkerOperations
     :ivar operations: Operations operations
-    :vartype operations: microsoft_service_linker.operations.Operations
+    :vartype operations: azure.mgmt.servicelinker.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -42,7 +46,7 @@ class MicrosoftServiceLinker:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = MicrosoftServiceLinkerConfiguration(credential=credential, **kwargs)
+        self._config = ServiceLinkerManagementClientConfiguration(credential=credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -55,7 +59,7 @@ class MicrosoftServiceLinker:
 
     def _send_request(
         self,
-        request,  # type: HttpRequest
+        request: HttpRequest,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -84,7 +88,7 @@ class MicrosoftServiceLinker:
         self._client.close()
 
     def __enter__(self):
-        # type: () -> MicrosoftServiceLinker
+        # type: () -> ServiceLinkerManagementClient
         self._client.__enter__()
         return self
 
