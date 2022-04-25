@@ -4,11 +4,14 @@
 # -------------------------------------
 import os
 
+from devtools_testutils import recorded_by_proxy
+
 from azure.keyvault.keys import KeyVaultKeyIdentifier
 from _shared.test_case import KeyVaultTestCase
 
 
 class TestParseId(KeyVaultTestCase):
+    @recorded_by_proxy
     def test_parse_key_id_with_version(self):
         vault_url = os.environ.get("AZURE_KEYVAULT_URL") if self.is_live else "https://vaultname.vault.azure.net"
         vault_url = vault_url.rstrip("/")
