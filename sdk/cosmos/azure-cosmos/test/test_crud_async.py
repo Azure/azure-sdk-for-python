@@ -39,9 +39,8 @@ from azure.core.pipeline.transport import RequestsTransport, RequestsTransportRe
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-import test_config
 import azure.cosmos._base as base
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.aio.cosmos_client as cosmos_client
 from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos import _retry_utility
@@ -82,10 +81,6 @@ class CRUDTests(unittest.TestCase):
     """Python CRUD Tests.
     """
 
-    configs = test_config._test_config
-    host = configs.host
-    masterKey = configs.masterKey
-    connectionPolicy = configs.connectionPolicy
     last_headers = []
 
     async def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -141,7 +136,7 @@ class CRUDTests(unittest.TestCase):
         self.client.get_database_client(created_db.id)
 
         # delete database.
-        self.client.delete_database(created_db.id)
+        await self.client.delete_database(created_db.id)
         # read database after deletion
         read_db = self.client.get_database_client(created_db.id)
         await self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
@@ -155,7 +150,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
 
-        self.client.delete_database(database_id)
+        await self.client.delete_database(database_id)
 
     @pytest.mark.skip("skipping as the TestResources subscription doesn't support this offer")
     async def test_database_level_offer_throughput(self):
@@ -176,7 +171,7 @@ class CRUDTests(unittest.TestCase):
         new_offer_throughput = 2000
         offer = created_db.replace_throughput(new_offer_throughput)
         self.assertEqual(offer.offer_throughput, new_offer_throughput)
-        self.client.delete_database(created_db.id)
+        await self.client.delete_database(created_db.id)
 
     async def test_sql_query_crud(self):
         # create two databases.
@@ -201,8 +196,8 @@ class CRUDTests(unittest.TestCase):
         # query with a string.
         databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))   # nosec
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
-        self.client.delete_database(db1.id)
-        self.client.delete_database(db2.id)
+        await self.client.delete_database(db1.id)
+        await self.client.delete_database(db2.id)
 
     async def test_collection_crud(self):
         created_db = self.databaseForTest
@@ -1410,7 +1405,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(read_doc["id"], docId)
 
         #6. Success-- Use Doc permission to delete doc
-        doc_client.get_database_client(db.id).get_container_client(success_coll.id).delete_item(docId, docId)
+        await doc_client.get_database_client(db.id).get_container_client(success_coll.id).delete_item(docId, docId)
         self.assertEqual(read_doc["id"], docId)
 
         db.client_connection = old_client_connection
@@ -1966,14 +1961,14 @@ class CRUDTests(unittest.TestCase):
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
 
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            client.create_database_if_not_exists("test", timeout=2)
+            await client.create_database_if_not_exists("test", timeout=2)
 
         status_response = 500  # Users connection level retry
         timeout_transport = TimeoutTransport(status_response)
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            client.create_database("test", timeout=2)
+            await client.create_database("test", timeout=2)
 
         databases = client.list_databases(timeout=2)
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
@@ -1984,7 +1979,7 @@ class CRUDTests(unittest.TestCase):
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            client.create_database_if_not_exists("test", timeout=2)
+            await client.create_database_if_not_exists("test", timeout=2)
 
         databases = client.list_databases(timeout=2)
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
@@ -2360,35 +2355,35 @@ class CRUDTests(unittest.TestCase):
     async def test_id_validation(self):
         # Id shouldn't end with space.
         try:
-            self.client.create_database(id='id_with_space ')
+            await self.client.create_database(id='id_with_space ')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id ends with a space.', e.args[0])
         # Id shouldn't contain '/'.
 
         try:
-            self.client.create_database(id='id_with_illegal/_char')
+            await self.client.create_database(id='id_with_illegal/_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '\\'.
 
         try:
-            self.client.create_database(id='id_with_illegal\\_char')
+            await self.client.create_database(id='id_with_illegal\\_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '?'.
 
         try:
-            self.client.create_database(id='id_with_illegal?_char')
+            await self.client.create_database(id='id_with_illegal?_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '#'.
 
         try:
-            self.client.create_database(id='id_with_illegal#_char')
+            await self.client.create_database(id='id_with_illegal#_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
@@ -2397,7 +2392,7 @@ class CRUDTests(unittest.TestCase):
         db = self.client.create_database(id=' id_begin_space')
         self.assertTrue(True)
 
-        self.client.delete_database(database=db)
+        await self.client.delete_database(database=db)
 
     async def test_id_case_validation(self):
         # create database
