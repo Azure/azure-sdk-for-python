@@ -366,10 +366,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword str encoding:
             Defaults to UTF-8.
-        :keyword Callable[[int, Optional[int]], None] progress_hook:
+        :keyword progress_hook:
             A callback to track the progress of a long running upload. The signature is
             function(current: int, total: Optional[int]) where current is the number of bytes transfered
             so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], None]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
