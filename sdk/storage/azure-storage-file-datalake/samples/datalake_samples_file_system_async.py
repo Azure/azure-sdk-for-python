@@ -216,6 +216,51 @@ class FileSystemSamplesAsync(object):
             # [END delete_directory_from_file_system]
 
             await file_system_client.delete_file_system()
+    
+        # [START batch_delete_files_or_empty_directories]
+    async def batch_delete_files_or_empty_directories(self):
+        from azure.storage.filedatalake import FileSystemClient
+        file_system_client = FileSystemClient.from_connection_string(self.connection_string, "filesystem")
+
+        async with file_system_client:
+            await file_system_client.create_file_system()
+
+        data = b'hello world'
+
+        try:
+            # create file1
+            await file_system_client.get_file_client('file1').upload_data(data, overwrite=True)
+
+            # create file2, then pass file properties in batch delete later
+            file2 = file_system_client.get_file_client('file2')
+            await file2.upload_data(data, overwrite=True)
+
+            # create file3 and batch delete it later only etag matches this file3 etag
+            file3 = file_system_client.get_file_client('file3')
+            await file3.upload_data(data, overwrite=True)
+
+            # create dir1. Empty directory can be deleted using delete_files
+            await file_system_client.get_directory_client('dir1').create_directory()
+            await file_system_client.get_directory_client('dir1').create_file('file4')
+
+        except:
+            pass
+
+        # Act
+        response = await file_system_client.delete_files(
+            'file1',
+            'file2',
+            'file3',
+            'dir1', # dir1 is not empty
+            'dir8', # dir8 doesn't exist
+            raise_on_any_failure=False
+        )
+        print("Total number of sub-responses: " + len(response) + "\n")
+        print("First failure: " + response[0][0] + "\n")
+        print("First failure error code: " + response[0][1] + "\n")
+        print("Second failure: " + response[1][0] + "\n")
+        print("Second failure error code: " + response[1][1] + "\n")
+        # [END batch_delete_files_or_empty_directories]
 
 
 async def run():
@@ -226,6 +271,7 @@ async def run():
     await sample.list_paths_in_file_system()
     await sample.get_file_client_from_file_system()
     await sample.create_file_from_file_system()
+    await sample.batch_delete_files_or_empty_directories()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
