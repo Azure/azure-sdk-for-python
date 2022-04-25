@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_conv_pii_transcript__input_dict_parms.py
+FILE: sample_conv_pii_transcript_input_dict_parms.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze a conversation for PII (personally identifiable information).
@@ -13,7 +13,7 @@ DESCRIPTION:
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_conv_pii_transcript__input_dict_parms.py
+    python sample_conv_pii_transcript_input_dict_parms.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
@@ -23,7 +23,7 @@ USAGE:
 from azure.ai.language import conversations
 
 
-def sample_conv_pii_transcript__input_dict_parms():
+def sample_conv_pii_transcript_input_dict_parms():
     # [START analyze_conversation_app]
     # import libraries
     import os
@@ -140,4 +140,4 @@ def sample_conv_pii_transcript__input_dict_parms():
 
 
 if __name__ == '__main__':
-    sample_conv_pii_transcript__input_dict_parms()
+    sample_conv_pii_transcript_input_dict_parms()
