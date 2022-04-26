@@ -2,15 +2,10 @@
 
 ### 4.3.0b5 (Unreleased)
 
-#### Features Added
-
-#### Breaking Changes
-
-#### Bugs Fixed
-
 #### Other Changes
- - Added samples showing how to configure retry options for both the sync and async clients.
- - Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
+- Added samples showing how to configure retry options for both the sync and async clients.
+- Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
+
 ### 4.3.0b4 (2022-04-07)
 
 #### Features Added
