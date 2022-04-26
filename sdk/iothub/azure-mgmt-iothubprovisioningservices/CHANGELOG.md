@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0 (2022-04-26)
+
+**Features**
+
+  - Added model ErrorMessage
+
 ## 1.1.0 (2022-02-07)
 
 **Features**

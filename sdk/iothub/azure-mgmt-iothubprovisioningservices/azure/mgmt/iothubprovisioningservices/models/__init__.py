@@ -12,7 +12,7 @@ from ._models_py3 import CertificateListDescription
 from ._models_py3 import CertificateProperties
 from ._models_py3 import CertificateResponse
 from ._models_py3 import ErrorDetails
-from ._models_py3 import ErrorMesssage
+from ._models_py3 import ErrorMessage
 from ._models_py3 import GroupIdInformation
 from ._models_py3 import GroupIdInformationProperties
 from ._models_py3 import IotDpsPropertiesDescription
@@ -64,7 +64,7 @@ __all__ = [
     'CertificateProperties',
     'CertificateResponse',
     'ErrorDetails',
-    'ErrorMesssage',
+    'ErrorMessage',
     'GroupIdInformation',
     'GroupIdInformationProperties',
     'IotDpsPropertiesDescription',
