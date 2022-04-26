@@ -2,17 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from enum import Flag
-import functools
 import json
 import os
 
-from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
-from azure.keyvault.keys import KeyReleasePolicy
-from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
+from azure.keyvault.keys import KeyReleasePolicy
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
+from devtools_testutils import AzureRecordedTestCase
 
 
 async def get_attestation_token(attestation_uri):
@@ -76,11 +74,7 @@ class AsyncKeysClientPreparer(AzureRecordedTestCase):
 
         if self.is_live:
             self.vault_url = os.environ["AZURE_KEYVAULT_URL"]
-            # self._scrub_url(real_url=self.vault_url, playback_url=vault_playback_url)
-
             self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
-            # if self.managed_hsm_url:
-            #     self._scrub_url(real_url=self.managed_hsm_url, playback_url=hsm_playback_url)
         else:
             self.vault_url = vault_playback_url
             self.managed_hsm_url = hsm_playback_url
@@ -125,11 +119,6 @@ class AsyncKeysClientPreparer(AzureRecordedTestCase):
             self._scrub_url(real_uri, playback_uri)
             return real_uri
         return playback_uri
-
-    # def _scrub_url(self, real_url, playback_url):
-    #     real = urlparse(real_url)
-    #     playback = urlparse(playback_url)
-    #     super.scrubber.register_name_pair(real.netloc, playback.netloc)
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
