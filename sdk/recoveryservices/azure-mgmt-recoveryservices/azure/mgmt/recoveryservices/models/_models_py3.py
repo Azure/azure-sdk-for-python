@@ -17,8 +17,8 @@ from ._recovery_services_client_enums import *
 class CertificateRequest(msrest.serialization.Model):
     """Details of the certificate to be uploaded to the vault.
 
-    :param properties: Raw certificate data.
-    :type properties: ~azure.mgmt.recoveryservices.models.RawCertificateData
+    :ivar properties: Raw certificate data.
+    :vartype properties: ~azure.mgmt.recoveryservices.models.RawCertificateData
     """
 
     _attribute_map = {
@@ -31,6 +31,10 @@ class CertificateRequest(msrest.serialization.Model):
         properties: Optional["RawCertificateData"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Raw certificate data.
+        :paramtype properties: ~azure.mgmt.recoveryservices.models.RawCertificateData
+        """
         super(CertificateRequest, self).__init__(**kwargs)
         self.properties = properties
 
@@ -38,10 +42,10 @@ class CertificateRequest(msrest.serialization.Model):
 class CheckNameAvailabilityParameters(msrest.serialization.Model):
     """Resource Name availability input parameters - Resource type and resource name.
 
-    :param type: Describes the Resource type: Microsoft.RecoveryServices/Vaults.
-    :type type: str
-    :param name: Resource name for which availability needs to be checked.
-    :type name: str
+    :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults.
+    :vartype type: str
+    :ivar name: Resource name for which availability needs to be checked.
+    :vartype name: str
     """
 
     _attribute_map = {
@@ -56,6 +60,12 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: Describes the Resource type: Microsoft.RecoveryServices/Vaults.
+        :paramtype type: str
+        :keyword name: Resource name for which availability needs to be checked.
+        :paramtype name: str
+        """
         super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.type = type
         self.name = name
@@ -64,12 +74,12 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
 class CheckNameAvailabilityResult(msrest.serialization.Model):
     """Response for check name availability API. Resource provider will set availability as true | false.
 
-    :param name_available:
-    :type name_available: bool
-    :param reason:
-    :type reason: str
-    :param message:
-    :type message: str
+    :ivar name_available:
+    :vartype name_available: bool
+    :ivar reason:
+    :vartype reason: str
+    :ivar message:
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -86,6 +96,14 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name_available:
+        :paramtype name_available: bool
+        :keyword reason:
+        :paramtype reason: str
+        :keyword message:
+        :paramtype message: str
+        """
         super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
@@ -95,14 +113,14 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
 class ClientDiscoveryDisplay(msrest.serialization.Model):
     """Localized display information of an operation.
 
-    :param provider: Name of the provider for display purposes.
-    :type provider: str
-    :param resource: ResourceType for which this Operation can be performed.
-    :type resource: str
-    :param operation: Operations Name itself.
-    :type operation: str
-    :param description: Description of the operation having details of what operation is about.
-    :type description: str
+    :ivar provider: Name of the provider for display purposes.
+    :vartype provider: str
+    :ivar resource: ResourceType for which this Operation can be performed.
+    :vartype resource: str
+    :ivar operation: Operations Name itself.
+    :vartype operation: str
+    :ivar description: Description of the operation having details of what operation is about.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -121,6 +139,16 @@ class ClientDiscoveryDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Name of the provider for display purposes.
+        :paramtype provider: str
+        :keyword resource: ResourceType for which this Operation can be performed.
+        :paramtype resource: str
+        :keyword operation: Operations Name itself.
+        :paramtype operation: str
+        :keyword description: Description of the operation having details of what operation is about.
+        :paramtype description: str
+        """
         super(ClientDiscoveryDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -131,12 +159,12 @@ class ClientDiscoveryDisplay(msrest.serialization.Model):
 class ClientDiscoveryForLogSpecification(msrest.serialization.Model):
     """Class to represent shoebox log specification in json client discovery.
 
-    :param name: Name of the log.
-    :type name: str
-    :param display_name: Localized display name.
-    :type display_name: str
-    :param blob_duration: Blobs created in customer storage account per hour.
-    :type blob_duration: str
+    :ivar name: Name of the log.
+    :vartype name: str
+    :ivar display_name: Localized display name.
+    :vartype display_name: str
+    :ivar blob_duration: Blobs created in customer storage account per hour.
+    :vartype blob_duration: str
     """
 
     _attribute_map = {
@@ -153,6 +181,14 @@ class ClientDiscoveryForLogSpecification(msrest.serialization.Model):
         blob_duration: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the log.
+        :paramtype name: str
+        :keyword display_name: Localized display name.
+        :paramtype display_name: str
+        :keyword blob_duration: Blobs created in customer storage account per hour.
+        :paramtype blob_duration: str
+        """
         super(ClientDiscoveryForLogSpecification, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -162,8 +198,8 @@ class ClientDiscoveryForLogSpecification(msrest.serialization.Model):
 class ClientDiscoveryForProperties(msrest.serialization.Model):
     """Class to represent shoebox properties in json client discovery.
 
-    :param service_specification: Operation properties.
-    :type service_specification:
+    :ivar service_specification: Operation properties.
+    :vartype service_specification:
      ~azure.mgmt.recoveryservices.models.ClientDiscoveryForServiceSpecification
     """
 
@@ -177,6 +213,11 @@ class ClientDiscoveryForProperties(msrest.serialization.Model):
         service_specification: Optional["ClientDiscoveryForServiceSpecification"] = None,
         **kwargs
     ):
+        """
+        :keyword service_specification: Operation properties.
+        :paramtype service_specification:
+         ~azure.mgmt.recoveryservices.models.ClientDiscoveryForServiceSpecification
+        """
         super(ClientDiscoveryForProperties, self).__init__(**kwargs)
         self.service_specification = service_specification
 
@@ -184,8 +225,8 @@ class ClientDiscoveryForProperties(msrest.serialization.Model):
 class ClientDiscoveryForServiceSpecification(msrest.serialization.Model):
     """Class to represent shoebox service specification in json client discovery.
 
-    :param log_specifications: List of log specifications of this operation.
-    :type log_specifications:
+    :ivar log_specifications: List of log specifications of this operation.
+    :vartype log_specifications:
      list[~azure.mgmt.recoveryservices.models.ClientDiscoveryForLogSpecification]
     """
 
@@ -199,6 +240,11 @@ class ClientDiscoveryForServiceSpecification(msrest.serialization.Model):
         log_specifications: Optional[List["ClientDiscoveryForLogSpecification"]] = None,
         **kwargs
     ):
+        """
+        :keyword log_specifications: List of log specifications of this operation.
+        :paramtype log_specifications:
+         list[~azure.mgmt.recoveryservices.models.ClientDiscoveryForLogSpecification]
+        """
         super(ClientDiscoveryForServiceSpecification, self).__init__(**kwargs)
         self.log_specifications = log_specifications
 
@@ -206,10 +252,10 @@ class ClientDiscoveryForServiceSpecification(msrest.serialization.Model):
 class ClientDiscoveryResponse(msrest.serialization.Model):
     """Operations List response which contains list of available APIs.
 
-    :param value: List of available operations.
-    :type value: list[~azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApi]
-    :param next_link: Link to the next chunk of the response.
-    :type next_link: str
+    :ivar value: List of available operations.
+    :vartype value: list[~azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApi]
+    :ivar next_link: Link to the next chunk of the response.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -224,6 +270,12 @@ class ClientDiscoveryResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of available operations.
+        :paramtype value: list[~azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApi]
+        :keyword next_link: Link to the next chunk of the response.
+        :paramtype next_link: str
+        """
         super(ClientDiscoveryResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -232,15 +284,15 @@ class ClientDiscoveryResponse(msrest.serialization.Model):
 class ClientDiscoveryValueForSingleApi(msrest.serialization.Model):
     """Available operation details.
 
-    :param name: Name of the Operation.
-    :type name: str
-    :param display: Contains the localized display information for this particular operation.
-    :type display: ~azure.mgmt.recoveryservices.models.ClientDiscoveryDisplay
-    :param origin: The intended executor of the operation;governs the display of the operation in
+    :ivar name: Name of the Operation.
+    :vartype name: str
+    :ivar display: Contains the localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.recoveryservices.models.ClientDiscoveryDisplay
+    :ivar origin: The intended executor of the operation;governs the display of the operation in
      the RBAC UX and the audit logs UX.
-    :type origin: str
-    :param properties: ShoeBox properties for the given operation.
-    :type properties: ~azure.mgmt.recoveryservices.models.ClientDiscoveryForProperties
+    :vartype origin: str
+    :ivar properties: ShoeBox properties for the given operation.
+    :vartype properties: ~azure.mgmt.recoveryservices.models.ClientDiscoveryForProperties
     """
 
     _attribute_map = {
@@ -259,6 +311,17 @@ class ClientDiscoveryValueForSingleApi(msrest.serialization.Model):
         properties: Optional["ClientDiscoveryForProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the Operation.
+        :paramtype name: str
+        :keyword display: Contains the localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.recoveryservices.models.ClientDiscoveryDisplay
+        :keyword origin: The intended executor of the operation;governs the display of the operation in
+         the RBAC UX and the audit logs UX.
+        :paramtype origin: str
+        :keyword properties: ShoeBox properties for the given operation.
+        :paramtype properties: ~azure.mgmt.recoveryservices.models.ClientDiscoveryForProperties
+        """
         super(ClientDiscoveryValueForSingleApi, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -269,12 +332,12 @@ class ClientDiscoveryValueForSingleApi(msrest.serialization.Model):
 class CmkKekIdentity(msrest.serialization.Model):
     """The details of the identity used for CMK.
 
-    :param use_system_assigned_identity: Indicate that system assigned identity should be used.
+    :ivar use_system_assigned_identity: Indicate that system assigned identity should be used.
      Mutually exclusive with 'userAssignedIdentity' field.
-    :type use_system_assigned_identity: bool
-    :param user_assigned_identity: The user assigned identity to be used to grant permissions in
+    :vartype use_system_assigned_identity: bool
+    :ivar user_assigned_identity: The user assigned identity to be used to grant permissions in
      case the type of identity used is UserAssigned.
-    :type user_assigned_identity: str
+    :vartype user_assigned_identity: str
     """
 
     _attribute_map = {
@@ -289,6 +352,14 @@ class CmkKekIdentity(msrest.serialization.Model):
         user_assigned_identity: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword use_system_assigned_identity: Indicate that system assigned identity should be used.
+         Mutually exclusive with 'userAssignedIdentity' field.
+        :paramtype use_system_assigned_identity: bool
+        :keyword user_assigned_identity: The user assigned identity to be used to grant permissions in
+         case the type of identity used is UserAssigned.
+        :paramtype user_assigned_identity: str
+        """
         super(CmkKekIdentity, self).__init__(**kwargs)
         self.use_system_assigned_identity = use_system_assigned_identity
         self.user_assigned_identity = user_assigned_identity
@@ -297,8 +368,8 @@ class CmkKekIdentity(msrest.serialization.Model):
 class CmkKeyVaultProperties(msrest.serialization.Model):
     """The properties of the Key Vault which hosts CMK.
 
-    :param key_uri: The key uri of the Customer Managed Key.
-    :type key_uri: str
+    :ivar key_uri: The key uri of the Customer Managed Key.
+    :vartype key_uri: str
     """
 
     _attribute_map = {
@@ -311,6 +382,10 @@ class CmkKeyVaultProperties(msrest.serialization.Model):
         key_uri: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key_uri: The key uri of the Customer Managed Key.
+        :paramtype key_uri: str
+        """
         super(CmkKeyVaultProperties, self).__init__(**kwargs)
         self.key_uri = key_uri
 
@@ -352,6 +427,8 @@ class Error(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Error, self).__init__(**kwargs)
         self.additional_info = None
         self.code = None
@@ -385,6 +462,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.info = None
         self.type = None
@@ -401,15 +480,15 @@ class IdentityData(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: Required. The type of managed identity used. The type 'SystemAssigned,
+    :ivar type: Required. The type of managed identity used. The type 'SystemAssigned,
      UserAssigned' includes both an implicitly created identity and a set of user-assigned
      identities. The type 'None' will remove any identities. Possible values include:
      "SystemAssigned", "None", "UserAssigned", "SystemAssigned, UserAssigned".
-    :type type: str or ~azure.mgmt.recoveryservices.models.ResourceIdentityType
-    :param user_assigned_identities: The list of user-assigned identities associated with the
+    :vartype type: str or ~azure.mgmt.recoveryservices.models.ResourceIdentityType
+    :ivar user_assigned_identities: The list of user-assigned identities associated with the
      resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :type user_assigned_identities: dict[str, ~azure.mgmt.recoveryservices.models.UserIdentity]
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.recoveryservices.models.UserIdentity]
     """
 
     _validation = {
@@ -432,6 +511,18 @@ class IdentityData(msrest.serialization.Model):
         user_assigned_identities: Optional[Dict[str, "UserIdentity"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required. The type of managed identity used. The type 'SystemAssigned,
+         UserAssigned' includes both an implicitly created identity and a set of user-assigned
+         identities. The type 'None' will remove any identities. Possible values include:
+         "SystemAssigned", "None", "UserAssigned", "SystemAssigned, UserAssigned".
+        :paramtype type: str or ~azure.mgmt.recoveryservices.models.ResourceIdentityType
+        :keyword user_assigned_identities: The list of user-assigned identities associated with the
+         resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.recoveryservices.models.UserIdentity]
+        """
         super(IdentityData, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -442,12 +533,12 @@ class IdentityData(msrest.serialization.Model):
 class JobsSummary(msrest.serialization.Model):
     """Summary of the replication job data for this vault.
 
-    :param failed_jobs: Count of failed jobs.
-    :type failed_jobs: int
-    :param suspended_jobs: Count of suspended jobs.
-    :type suspended_jobs: int
-    :param in_progress_jobs: Count of in-progress jobs.
-    :type in_progress_jobs: int
+    :ivar failed_jobs: Count of failed jobs.
+    :vartype failed_jobs: int
+    :ivar suspended_jobs: Count of suspended jobs.
+    :vartype suspended_jobs: int
+    :ivar in_progress_jobs: Count of in-progress jobs.
+    :vartype in_progress_jobs: int
     """
 
     _attribute_map = {
@@ -464,6 +555,14 @@ class JobsSummary(msrest.serialization.Model):
         in_progress_jobs: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword failed_jobs: Count of failed jobs.
+        :paramtype failed_jobs: int
+        :keyword suspended_jobs: Count of suspended jobs.
+        :paramtype suspended_jobs: int
+        :keyword in_progress_jobs: Count of in-progress jobs.
+        :paramtype in_progress_jobs: int
+        """
         super(JobsSummary, self).__init__(**kwargs)
         self.failed_jobs = failed_jobs
         self.suspended_jobs = suspended_jobs
@@ -473,18 +572,18 @@ class JobsSummary(msrest.serialization.Model):
 class MonitoringSummary(msrest.serialization.Model):
     """Summary of the replication monitoring data for this vault.
 
-    :param un_healthy_vm_count: Count of unhealthy VMs.
-    :type un_healthy_vm_count: int
-    :param un_healthy_provider_count: Count of unhealthy replication providers.
-    :type un_healthy_provider_count: int
-    :param events_count: Count of all critical warnings.
-    :type events_count: int
-    :param deprecated_provider_count: Count of all deprecated recovery service providers.
-    :type deprecated_provider_count: int
-    :param supported_provider_count: Count of all the supported recovery service providers.
-    :type supported_provider_count: int
-    :param unsupported_provider_count: Count of all the unsupported recovery service providers.
-    :type unsupported_provider_count: int
+    :ivar un_healthy_vm_count: Count of unhealthy VMs.
+    :vartype un_healthy_vm_count: int
+    :ivar un_healthy_provider_count: Count of unhealthy replication providers.
+    :vartype un_healthy_provider_count: int
+    :ivar events_count: Count of all critical warnings.
+    :vartype events_count: int
+    :ivar deprecated_provider_count: Count of all deprecated recovery service providers.
+    :vartype deprecated_provider_count: int
+    :ivar supported_provider_count: Count of all the supported recovery service providers.
+    :vartype supported_provider_count: int
+    :ivar unsupported_provider_count: Count of all the unsupported recovery service providers.
+    :vartype unsupported_provider_count: int
     """
 
     _attribute_map = {
@@ -507,6 +606,20 @@ class MonitoringSummary(msrest.serialization.Model):
         unsupported_provider_count: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword un_healthy_vm_count: Count of unhealthy VMs.
+        :paramtype un_healthy_vm_count: int
+        :keyword un_healthy_provider_count: Count of unhealthy replication providers.
+        :paramtype un_healthy_provider_count: int
+        :keyword events_count: Count of all critical warnings.
+        :paramtype events_count: int
+        :keyword deprecated_provider_count: Count of all deprecated recovery service providers.
+        :paramtype deprecated_provider_count: int
+        :keyword supported_provider_count: Count of all the supported recovery service providers.
+        :paramtype supported_provider_count: int
+        :keyword unsupported_provider_count: Count of all the unsupported recovery service providers.
+        :paramtype unsupported_provider_count: int
+        """
         super(MonitoringSummary, self).__init__(**kwargs)
         self.un_healthy_vm_count = un_healthy_vm_count
         self.un_healthy_provider_count = un_healthy_provider_count
@@ -519,10 +632,10 @@ class MonitoringSummary(msrest.serialization.Model):
 class NameInfo(msrest.serialization.Model):
     """The name of usage.
 
-    :param value: Value of usage.
-    :type value: str
-    :param localized_value: Localized value of usage.
-    :type localized_value: str
+    :ivar value: Value of usage.
+    :vartype value: str
+    :ivar localized_value: Localized value of usage.
+    :vartype localized_value: str
     """
 
     _attribute_map = {
@@ -537,6 +650,12 @@ class NameInfo(msrest.serialization.Model):
         localized_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Value of usage.
+        :paramtype value: str
+        :keyword localized_value: Localized value of usage.
+        :paramtype localized_value: str
+        """
         super(NameInfo, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
@@ -545,20 +664,20 @@ class NameInfo(msrest.serialization.Model):
 class OperationResource(msrest.serialization.Model):
     """Operation Resource.
 
-    :param end_time: End time of the operation.
-    :type end_time: ~datetime.datetime
-    :param error: Required if status == failed or status == canceled. This is the OData v4 error
+    :ivar end_time: End time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar error: Required if status == failed or status == canceled. This is the OData v4 error
      format, used by the RPC and will go into the v2.2 Azure REST API guidelines.
-    :type error: ~azure.mgmt.recoveryservices.models.Error
-    :param id: It should match what is used to GET the operation result.
-    :type id: str
-    :param name: It must match the last segment of the "id" field, and will typically be a GUID /
+    :vartype error: ~azure.mgmt.recoveryservices.models.Error
+    :ivar id: It should match what is used to GET the operation result.
+    :vartype id: str
+    :ivar name: It must match the last segment of the "id" field, and will typically be a GUID /
      system generated value.
-    :type name: str
-    :param status: The status of the operation. (InProgress/Success/Failed/Cancelled).
-    :type status: str
-    :param start_time: Start time of the operation.
-    :type start_time: ~datetime.datetime
+    :vartype name: str
+    :ivar status: The status of the operation. (InProgress/Success/Failed/Cancelled).
+    :vartype status: str
+    :ivar start_time: Start time of the operation.
+    :vartype start_time: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -581,6 +700,22 @@ class OperationResource(msrest.serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword end_time: End time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword error: Required if status == failed or status == canceled. This is the OData v4 error
+         format, used by the RPC and will go into the v2.2 Azure REST API guidelines.
+        :paramtype error: ~azure.mgmt.recoveryservices.models.Error
+        :keyword id: It should match what is used to GET the operation result.
+        :paramtype id: str
+        :keyword name: It must match the last segment of the "id" field, and will typically be a GUID /
+         system generated value.
+        :paramtype name: str
+        :keyword status: The status of the operation. (InProgress/Success/Failed/Cancelled).
+        :paramtype status: str
+        :keyword start_time: Start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        """
         super(OperationResource, self).__init__(**kwargs)
         self.end_time = end_time
         self.error = error
@@ -602,8 +737,8 @@ class Resource(msrest.serialization.Model):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param etag: Optional ETag.
-    :type etag: str
+    :ivar etag: Optional ETag.
+    :vartype etag: str
     """
 
     _validation = {
@@ -625,6 +760,10 @@ class Resource(msrest.serialization.Model):
         etag: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword etag: Optional ETag.
+        :paramtype etag: str
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -644,12 +783,12 @@ class PatchTrackedResource(Resource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param etag: Optional ETag.
-    :type etag: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar etag: Optional ETag.
+    :vartype etag: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -675,6 +814,14 @@ class PatchTrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword etag: Optional ETag.
+        :paramtype etag: str
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(PatchTrackedResource, self).__init__(etag=etag, **kwargs)
         self.location = location
         self.tags = tags
@@ -692,18 +839,18 @@ class PatchVault(PatchTrackedResource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param etag: Optional ETag.
-    :type etag: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param properties: Properties of the vault.
-    :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
-    :param sku: Identifies the unique system identifier for each Azure resource.
-    :type sku: ~azure.mgmt.recoveryservices.models.Sku
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.recoveryservices.models.IdentityData
+    :ivar etag: Optional ETag.
+    :vartype etag: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of the vault.
+    :vartype properties: ~azure.mgmt.recoveryservices.models.VaultProperties
+    :ivar sku: Identifies the unique system identifier for each Azure resource.
+    :vartype sku: ~azure.mgmt.recoveryservices.models.Sku
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.recoveryservices.models.IdentityData
     """
 
     _validation = {
@@ -735,6 +882,20 @@ class PatchVault(PatchTrackedResource):
         identity: Optional["IdentityData"] = None,
         **kwargs
     ):
+        """
+        :keyword etag: Optional ETag.
+        :paramtype etag: str
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of the vault.
+        :paramtype properties: ~azure.mgmt.recoveryservices.models.VaultProperties
+        :keyword sku: Identifies the unique system identifier for each Azure resource.
+        :paramtype sku: ~azure.mgmt.recoveryservices.models.Sku
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.recoveryservices.models.IdentityData
+        """
         super(PatchVault, self).__init__(etag=etag, location=location, tags=tags, **kwargs)
         self.properties = properties
         self.sku = sku
@@ -762,6 +923,8 @@ class PrivateEndpoint(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -799,6 +962,8 @@ class PrivateEndpointConnection(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.provisioning_state = None
         self.private_endpoint = None
@@ -815,25 +980,43 @@ class PrivateEndpointConnectionVaultProperties(msrest.serialization.Model):
     :vartype id: str
     :ivar properties: Private Endpoint Connection Response Properties.
     :vartype properties: ~azure.mgmt.recoveryservices.models.PrivateEndpointConnection
+    :ivar name: The name of the private Endpoint Connection.
+    :vartype name: str
+    :ivar type: The type, which will be of the format,
+     Microsoft.RecoveryServices/vaults/privateEndpointConnections.
+    :vartype type: str
+    :ivar location: The location of the private Endpoint connection.
+    :vartype location: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'properties': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'PrivateEndpointConnection'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpointConnectionVaultProperties, self).__init__(**kwargs)
         self.id = None
         self.properties = None
+        self.name = None
+        self.type = None
+        self.location = None
 
 
 class PrivateLinkResource(msrest.serialization.Model):
@@ -878,6 +1061,8 @@ class PrivateLinkResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -890,10 +1075,10 @@ class PrivateLinkResource(msrest.serialization.Model):
 class PrivateLinkResources(msrest.serialization.Model):
     """Class which represent the stamps associated with the vault.
 
-    :param value: A collection of private link resources.
-    :type value: list[~azure.mgmt.recoveryservices.models.PrivateLinkResource]
-    :param next_link: Link to the next chunk of the response.
-    :type next_link: str
+    :ivar value: A collection of private link resources.
+    :vartype value: list[~azure.mgmt.recoveryservices.models.PrivateLinkResource]
+    :ivar next_link: Link to the next chunk of the response.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -908,6 +1093,12 @@ class PrivateLinkResources(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A collection of private link resources.
+        :paramtype value: list[~azure.mgmt.recoveryservices.models.PrivateLinkResource]
+        :keyword next_link: Link to the next chunk of the response.
+        :paramtype next_link: str
+        """
         super(PrivateLinkResources, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -943,6 +1134,8 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = None
         self.description = None
@@ -952,11 +1145,11 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 class RawCertificateData(msrest.serialization.Model):
     """Raw certificate data.
 
-    :param auth_type: Specifies the authentication type. Possible values include: "Invalid", "ACS",
+    :ivar auth_type: Specifies the authentication type. Possible values include: "Invalid", "ACS",
      "AAD", "AccessControlService", "AzureActiveDirectory".
-    :type auth_type: str or ~azure.mgmt.recoveryservices.models.AuthType
-    :param certificate: The base64 encoded certificate raw data string.
-    :type certificate: bytearray
+    :vartype auth_type: str or ~azure.mgmt.recoveryservices.models.AuthType
+    :ivar certificate: The base64 encoded certificate raw data string.
+    :vartype certificate: bytearray
     """
 
     _attribute_map = {
@@ -971,6 +1164,13 @@ class RawCertificateData(msrest.serialization.Model):
         certificate: Optional[bytearray] = None,
         **kwargs
     ):
+        """
+        :keyword auth_type: Specifies the authentication type. Possible values include: "Invalid",
+         "ACS", "AAD", "AccessControlService", "AzureActiveDirectory".
+        :paramtype auth_type: str or ~azure.mgmt.recoveryservices.models.AuthType
+        :keyword certificate: The base64 encoded certificate raw data string.
+        :paramtype certificate: bytearray
+        """
         super(RawCertificateData, self).__init__(**kwargs)
         self.auth_type = auth_type
         self.certificate = certificate
@@ -979,19 +1179,19 @@ class RawCertificateData(msrest.serialization.Model):
 class ReplicationUsage(msrest.serialization.Model):
     """Replication usages of a vault.
 
-    :param monitoring_summary: Summary of the replication monitoring data for this vault.
-    :type monitoring_summary: ~azure.mgmt.recoveryservices.models.MonitoringSummary
-    :param jobs_summary: Summary of the replication jobs data for this vault.
-    :type jobs_summary: ~azure.mgmt.recoveryservices.models.JobsSummary
-    :param protected_item_count: Number of replication protected items for this vault.
-    :type protected_item_count: int
-    :param recovery_plan_count: Number of replication recovery plans for this vault.
-    :type recovery_plan_count: int
-    :param registered_servers_count: Number of servers registered to this vault.
-    :type registered_servers_count: int
-    :param recovery_services_provider_auth_type: The authentication type of recovery service
+    :ivar monitoring_summary: Summary of the replication monitoring data for this vault.
+    :vartype monitoring_summary: ~azure.mgmt.recoveryservices.models.MonitoringSummary
+    :ivar jobs_summary: Summary of the replication jobs data for this vault.
+    :vartype jobs_summary: ~azure.mgmt.recoveryservices.models.JobsSummary
+    :ivar protected_item_count: Number of replication protected items for this vault.
+    :vartype protected_item_count: int
+    :ivar recovery_plan_count: Number of replication recovery plans for this vault.
+    :vartype recovery_plan_count: int
+    :ivar registered_servers_count: Number of servers registered to this vault.
+    :vartype registered_servers_count: int
+    :ivar recovery_services_provider_auth_type: The authentication type of recovery service
      providers in the vault.
-    :type recovery_services_provider_auth_type: int
+    :vartype recovery_services_provider_auth_type: int
     """
 
     _attribute_map = {
@@ -1014,6 +1214,21 @@ class ReplicationUsage(msrest.serialization.Model):
         recovery_services_provider_auth_type: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword monitoring_summary: Summary of the replication monitoring data for this vault.
+        :paramtype monitoring_summary: ~azure.mgmt.recoveryservices.models.MonitoringSummary
+        :keyword jobs_summary: Summary of the replication jobs data for this vault.
+        :paramtype jobs_summary: ~azure.mgmt.recoveryservices.models.JobsSummary
+        :keyword protected_item_count: Number of replication protected items for this vault.
+        :paramtype protected_item_count: int
+        :keyword recovery_plan_count: Number of replication recovery plans for this vault.
+        :paramtype recovery_plan_count: int
+        :keyword registered_servers_count: Number of servers registered to this vault.
+        :paramtype registered_servers_count: int
+        :keyword recovery_services_provider_auth_type: The authentication type of recovery service
+         providers in the vault.
+        :paramtype recovery_services_provider_auth_type: int
+        """
         super(ReplicationUsage, self).__init__(**kwargs)
         self.monitoring_summary = monitoring_summary
         self.jobs_summary = jobs_summary
@@ -1026,8 +1241,8 @@ class ReplicationUsage(msrest.serialization.Model):
 class ReplicationUsageList(msrest.serialization.Model):
     """Replication usages for vault.
 
-    :param value: The list of replication usages for the given vault.
-    :type value: list[~azure.mgmt.recoveryservices.models.ReplicationUsage]
+    :ivar value: The list of replication usages for the given vault.
+    :vartype value: list[~azure.mgmt.recoveryservices.models.ReplicationUsage]
     """
 
     _attribute_map = {
@@ -1040,6 +1255,10 @@ class ReplicationUsageList(msrest.serialization.Model):
         value: Optional[List["ReplicationUsage"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of replication usages for the given vault.
+        :paramtype value: list[~azure.mgmt.recoveryservices.models.ReplicationUsage]
+        """
         super(ReplicationUsageList, self).__init__(**kwargs)
         self.value = value
 
@@ -1052,25 +1271,25 @@ class ResourceCertificateDetails(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param auth_type: Required. This property will be used as the discriminator for deciding the
+    :ivar auth_type: Required. This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types.Constant filled by server.
-    :type auth_type: str
-    :param certificate: The base64 encoded certificate raw data string.
-    :type certificate: bytearray
-    :param friendly_name: Certificate friendly name.
-    :type friendly_name: str
-    :param issuer: Certificate issuer.
-    :type issuer: str
-    :param resource_id: Resource ID of the vault.
-    :type resource_id: long
-    :param subject: Certificate Subject Name.
-    :type subject: str
-    :param thumbprint: Certificate thumbprint.
-    :type thumbprint: str
-    :param valid_from: Certificate Validity start Date time.
-    :type valid_from: ~datetime.datetime
-    :param valid_to: Certificate Validity End Date time.
-    :type valid_to: ~datetime.datetime
+    :vartype auth_type: str
+    :ivar certificate: The base64 encoded certificate raw data string.
+    :vartype certificate: bytearray
+    :ivar friendly_name: Certificate friendly name.
+    :vartype friendly_name: str
+    :ivar issuer: Certificate issuer.
+    :vartype issuer: str
+    :ivar resource_id: Resource ID of the vault.
+    :vartype resource_id: long
+    :ivar subject: Certificate Subject Name.
+    :vartype subject: str
+    :ivar thumbprint: Certificate thumbprint.
+    :vartype thumbprint: str
+    :ivar valid_from: Certificate Validity start Date time.
+    :vartype valid_from: ~datetime.datetime
+    :ivar valid_to: Certificate Validity End Date time.
+    :vartype valid_to: ~datetime.datetime
     """
 
     _validation = {
@@ -1106,6 +1325,24 @@ class ResourceCertificateDetails(msrest.serialization.Model):
         valid_to: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword certificate: The base64 encoded certificate raw data string.
+        :paramtype certificate: bytearray
+        :keyword friendly_name: Certificate friendly name.
+        :paramtype friendly_name: str
+        :keyword issuer: Certificate issuer.
+        :paramtype issuer: str
+        :keyword resource_id: Resource ID of the vault.
+        :paramtype resource_id: long
+        :keyword subject: Certificate Subject Name.
+        :paramtype subject: str
+        :keyword thumbprint: Certificate thumbprint.
+        :paramtype thumbprint: str
+        :keyword valid_from: Certificate Validity start Date time.
+        :paramtype valid_from: ~datetime.datetime
+        :keyword valid_to: Certificate Validity End Date time.
+        :paramtype valid_to: ~datetime.datetime
+        """
         super(ResourceCertificateDetails, self).__init__(**kwargs)
         self.auth_type = None  # type: Optional[str]
         self.certificate = certificate
@@ -1123,37 +1360,37 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param auth_type: Required. This property will be used as the discriminator for deciding the
+    :ivar auth_type: Required. This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types.Constant filled by server.
-    :type auth_type: str
-    :param certificate: The base64 encoded certificate raw data string.
-    :type certificate: bytearray
-    :param friendly_name: Certificate friendly name.
-    :type friendly_name: str
-    :param issuer: Certificate issuer.
-    :type issuer: str
-    :param resource_id: Resource ID of the vault.
-    :type resource_id: long
-    :param subject: Certificate Subject Name.
-    :type subject: str
-    :param thumbprint: Certificate thumbprint.
-    :type thumbprint: str
-    :param valid_from: Certificate Validity start Date time.
-    :type valid_from: ~datetime.datetime
-    :param valid_to: Certificate Validity End Date time.
-    :type valid_to: ~datetime.datetime
-    :param aad_authority: Required. AAD tenant authority.
-    :type aad_authority: str
-    :param aad_tenant_id: Required. AAD tenant Id.
-    :type aad_tenant_id: str
-    :param service_principal_client_id: Required. AAD service principal clientId.
-    :type service_principal_client_id: str
-    :param service_principal_object_id: Required. AAD service principal ObjectId.
-    :type service_principal_object_id: str
-    :param azure_management_endpoint_audience: Required. Azure Management Endpoint Audience.
-    :type azure_management_endpoint_audience: str
-    :param service_resource_id: Service Resource Id.
-    :type service_resource_id: str
+    :vartype auth_type: str
+    :ivar certificate: The base64 encoded certificate raw data string.
+    :vartype certificate: bytearray
+    :ivar friendly_name: Certificate friendly name.
+    :vartype friendly_name: str
+    :ivar issuer: Certificate issuer.
+    :vartype issuer: str
+    :ivar resource_id: Resource ID of the vault.
+    :vartype resource_id: long
+    :ivar subject: Certificate Subject Name.
+    :vartype subject: str
+    :ivar thumbprint: Certificate thumbprint.
+    :vartype thumbprint: str
+    :ivar valid_from: Certificate Validity start Date time.
+    :vartype valid_from: ~datetime.datetime
+    :ivar valid_to: Certificate Validity End Date time.
+    :vartype valid_to: ~datetime.datetime
+    :ivar aad_authority: Required. AAD tenant authority.
+    :vartype aad_authority: str
+    :ivar aad_tenant_id: Required. AAD tenant Id.
+    :vartype aad_tenant_id: str
+    :ivar service_principal_client_id: Required. AAD service principal clientId.
+    :vartype service_principal_client_id: str
+    :ivar service_principal_object_id: Required. AAD service principal ObjectId.
+    :vartype service_principal_object_id: str
+    :ivar azure_management_endpoint_audience: Required. Azure Management Endpoint Audience.
+    :vartype azure_management_endpoint_audience: str
+    :ivar service_resource_id: Service Resource Id.
+    :vartype service_resource_id: str
     """
 
     _validation = {
@@ -1202,6 +1439,36 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
         service_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword certificate: The base64 encoded certificate raw data string.
+        :paramtype certificate: bytearray
+        :keyword friendly_name: Certificate friendly name.
+        :paramtype friendly_name: str
+        :keyword issuer: Certificate issuer.
+        :paramtype issuer: str
+        :keyword resource_id: Resource ID of the vault.
+        :paramtype resource_id: long
+        :keyword subject: Certificate Subject Name.
+        :paramtype subject: str
+        :keyword thumbprint: Certificate thumbprint.
+        :paramtype thumbprint: str
+        :keyword valid_from: Certificate Validity start Date time.
+        :paramtype valid_from: ~datetime.datetime
+        :keyword valid_to: Certificate Validity End Date time.
+        :paramtype valid_to: ~datetime.datetime
+        :keyword aad_authority: Required. AAD tenant authority.
+        :paramtype aad_authority: str
+        :keyword aad_tenant_id: Required. AAD tenant Id.
+        :paramtype aad_tenant_id: str
+        :keyword service_principal_client_id: Required. AAD service principal clientId.
+        :paramtype service_principal_client_id: str
+        :keyword service_principal_object_id: Required. AAD service principal ObjectId.
+        :paramtype service_principal_object_id: str
+        :keyword azure_management_endpoint_audience: Required. Azure Management Endpoint Audience.
+        :paramtype azure_management_endpoint_audience: str
+        :keyword service_resource_id: Service Resource Id.
+        :paramtype service_resource_id: str
+        """
         super(ResourceCertificateAndAadDetails, self).__init__(certificate=certificate, friendly_name=friendly_name, issuer=issuer, resource_id=resource_id, subject=subject, thumbprint=thumbprint, valid_from=valid_from, valid_to=valid_to, **kwargs)
         self.auth_type = 'AzureActiveDirectory'  # type: str
         self.aad_authority = aad_authority
@@ -1217,31 +1484,31 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param auth_type: Required. This property will be used as the discriminator for deciding the
+    :ivar auth_type: Required. This property will be used as the discriminator for deciding the
      specific types in the polymorphic chain of types.Constant filled by server.
-    :type auth_type: str
-    :param certificate: The base64 encoded certificate raw data string.
-    :type certificate: bytearray
-    :param friendly_name: Certificate friendly name.
-    :type friendly_name: str
-    :param issuer: Certificate issuer.
-    :type issuer: str
-    :param resource_id: Resource ID of the vault.
-    :type resource_id: long
-    :param subject: Certificate Subject Name.
-    :type subject: str
-    :param thumbprint: Certificate thumbprint.
-    :type thumbprint: str
-    :param valid_from: Certificate Validity start Date time.
-    :type valid_from: ~datetime.datetime
-    :param valid_to: Certificate Validity End Date time.
-    :type valid_to: ~datetime.datetime
-    :param global_acs_namespace: Required. ACS namespace name - tenant for our service.
-    :type global_acs_namespace: str
-    :param global_acs_host_name: Required. Acs mgmt host name to connect to.
-    :type global_acs_host_name: str
-    :param global_acs_rp_realm: Required. Global ACS namespace RP realm.
-    :type global_acs_rp_realm: str
+    :vartype auth_type: str
+    :ivar certificate: The base64 encoded certificate raw data string.
+    :vartype certificate: bytearray
+    :ivar friendly_name: Certificate friendly name.
+    :vartype friendly_name: str
+    :ivar issuer: Certificate issuer.
+    :vartype issuer: str
+    :ivar resource_id: Resource ID of the vault.
+    :vartype resource_id: long
+    :ivar subject: Certificate Subject Name.
+    :vartype subject: str
+    :ivar thumbprint: Certificate thumbprint.
+    :vartype thumbprint: str
+    :ivar valid_from: Certificate Validity start Date time.
+    :vartype valid_from: ~datetime.datetime
+    :ivar valid_to: Certificate Validity End Date time.
+    :vartype valid_to: ~datetime.datetime
+    :ivar global_acs_namespace: Required. ACS namespace name - tenant for our service.
+    :vartype global_acs_namespace: str
+    :ivar global_acs_host_name: Required. Acs mgmt host name to connect to.
+    :vartype global_acs_host_name: str
+    :ivar global_acs_rp_realm: Required. Global ACS namespace RP realm.
+    :vartype global_acs_rp_realm: str
     """
 
     _validation = {
@@ -1282,6 +1549,30 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
         valid_to: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword certificate: The base64 encoded certificate raw data string.
+        :paramtype certificate: bytearray
+        :keyword friendly_name: Certificate friendly name.
+        :paramtype friendly_name: str
+        :keyword issuer: Certificate issuer.
+        :paramtype issuer: str
+        :keyword resource_id: Resource ID of the vault.
+        :paramtype resource_id: long
+        :keyword subject: Certificate Subject Name.
+        :paramtype subject: str
+        :keyword thumbprint: Certificate thumbprint.
+        :paramtype thumbprint: str
+        :keyword valid_from: Certificate Validity start Date time.
+        :paramtype valid_from: ~datetime.datetime
+        :keyword valid_to: Certificate Validity End Date time.
+        :paramtype valid_to: ~datetime.datetime
+        :keyword global_acs_namespace: Required. ACS namespace name - tenant for our service.
+        :paramtype global_acs_namespace: str
+        :keyword global_acs_host_name: Required. Acs mgmt host name to connect to.
+        :paramtype global_acs_host_name: str
+        :keyword global_acs_rp_realm: Required. Global ACS namespace RP realm.
+        :paramtype global_acs_rp_realm: str
+        """
         super(ResourceCertificateAndAcsDetails, self).__init__(certificate=certificate, friendly_name=friendly_name, issuer=issuer, resource_id=resource_id, subject=subject, thumbprint=thumbprint, valid_from=valid_from, valid_to=valid_to, **kwargs)
         self.auth_type = 'AccessControlService'  # type: str
         self.global_acs_namespace = global_acs_namespace
@@ -1294,10 +1585,16 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The Sku name. Possible values include: "Standard", "RS0".
-    :type name: str or ~azure.mgmt.recoveryservices.models.SkuName
-    :param tier: The Sku tier.
-    :type tier: str
+    :ivar name: Required. The Sku name. Possible values include: "Standard", "RS0".
+    :vartype name: str or ~azure.mgmt.recoveryservices.models.SkuName
+    :ivar tier: The Sku tier.
+    :vartype tier: str
+    :ivar family: The sku family.
+    :vartype family: str
+    :ivar size: The sku size.
+    :vartype size: str
+    :ivar capacity: The sku capacity.
+    :vartype capacity: str
     """
 
     _validation = {
@@ -1307,6 +1604,9 @@ class Sku(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'str'},
+        'family': {'key': 'family', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'str'},
     }
 
     def __init__(
@@ -1314,30 +1614,48 @@ class Sku(msrest.serialization.Model):
         *,
         name: Union[str, "SkuName"],
         tier: Optional[str] = None,
+        family: Optional[str] = None,
+        size: Optional[str] = None,
+        capacity: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The Sku name. Possible values include: "Standard", "RS0".
+        :paramtype name: str or ~azure.mgmt.recoveryservices.models.SkuName
+        :keyword tier: The Sku tier.
+        :paramtype tier: str
+        :keyword family: The sku family.
+        :paramtype family: str
+        :keyword size: The sku size.
+        :paramtype size: str
+        :keyword capacity: The sku capacity.
+        :paramtype capacity: str
+        """
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
+        self.family = family
+        self.size = size
+        self.capacity = capacity
 
 
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.recoveryservices.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.recoveryservices.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.recoveryservices.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the resource.
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.recoveryservices.models.CreatedByType
+    :ivar last_modified_at: The type of identity that last modified the resource.
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1360,6 +1678,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.recoveryservices.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.recoveryservices.models.CreatedByType
+        :keyword last_modified_at: The type of identity that last modified the resource.
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -1383,12 +1717,12 @@ class TrackedResource(Resource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param etag: Optional ETag.
-    :type etag: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar etag: Optional ETag.
+    :vartype etag: str
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -1415,6 +1749,14 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword etag: Optional ETag.
+        :paramtype etag: str
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TrackedResource, self).__init__(etag=etag, **kwargs)
         self.location = location
         self.tags = tags
@@ -1475,6 +1817,8 @@ class UpgradeDetails(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UpgradeDetails, self).__init__(**kwargs)
         self.operation_id = None
         self.start_time_utc = None
@@ -1512,6 +1856,8 @@ class UserIdentity(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(UserIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -1531,18 +1877,18 @@ class Vault(TrackedResource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param etag: Optional ETag.
-    :type etag: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.recoveryservices.models.IdentityData
-    :param properties: Properties of the vault.
-    :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
-    :param sku: Identifies the unique system identifier for each Azure resource.
-    :type sku: ~azure.mgmt.recoveryservices.models.Sku
+    :ivar etag: Optional ETag.
+    :vartype etag: str
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.recoveryservices.models.IdentityData
+    :ivar properties: Properties of the vault.
+    :vartype properties: ~azure.mgmt.recoveryservices.models.VaultProperties
+    :ivar sku: Identifies the unique system identifier for each Azure resource.
+    :vartype sku: ~azure.mgmt.recoveryservices.models.Sku
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.recoveryservices.models.SystemData
     """
@@ -1579,6 +1925,20 @@ class Vault(TrackedResource):
         sku: Optional["Sku"] = None,
         **kwargs
     ):
+        """
+        :keyword etag: Optional ETag.
+        :paramtype etag: str
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.recoveryservices.models.IdentityData
+        :keyword properties: Properties of the vault.
+        :paramtype properties: ~azure.mgmt.recoveryservices.models.VaultProperties
+        :keyword sku: Identifies the unique system identifier for each Azure resource.
+        :paramtype sku: ~azure.mgmt.recoveryservices.models.Sku
+        """
         super(Vault, self).__init__(etag=etag, location=location, tags=tags, **kwargs)
         self.identity = identity
         self.properties = properties
@@ -1598,8 +1958,8 @@ class VaultCertificateResponse(msrest.serialization.Model):
     :vartype type: str
     :ivar id: Resource Id represents the complete path to the resource.
     :vartype id: str
-    :param properties: Certificate details representing the Vault credentials.
-    :type properties: ~azure.mgmt.recoveryservices.models.ResourceCertificateDetails
+    :ivar properties: Certificate details representing the Vault credentials.
+    :vartype properties: ~azure.mgmt.recoveryservices.models.ResourceCertificateDetails
     """
 
     _validation = {
@@ -1621,6 +1981,10 @@ class VaultCertificateResponse(msrest.serialization.Model):
         properties: Optional["ResourceCertificateDetails"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Certificate details representing the Vault credentials.
+        :paramtype properties: ~azure.mgmt.recoveryservices.models.ResourceCertificateDetails
+        """
         super(VaultCertificateResponse, self).__init__(**kwargs)
         self.name = None
         self.type = None
@@ -1640,16 +2004,16 @@ class VaultExtendedInfoResource(Resource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param etag: Optional ETag.
-    :type etag: str
-    :param integrity_key: Integrity key.
-    :type integrity_key: str
-    :param encryption_key: Encryption key.
-    :type encryption_key: str
-    :param encryption_key_thumbprint: Encryption key thumbprint.
-    :type encryption_key_thumbprint: str
-    :param algorithm: Algorithm for Vault ExtendedInfo.
-    :type algorithm: str
+    :ivar etag: Optional ETag.
+    :vartype etag: str
+    :ivar integrity_key: Integrity key.
+    :vartype integrity_key: str
+    :ivar encryption_key: Encryption key.
+    :vartype encryption_key: str
+    :ivar encryption_key_thumbprint: Encryption key thumbprint.
+    :vartype encryption_key_thumbprint: str
+    :ivar algorithm: Algorithm for Vault ExtendedInfo.
+    :vartype algorithm: str
     """
 
     _validation = {
@@ -1679,6 +2043,18 @@ class VaultExtendedInfoResource(Resource):
         algorithm: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword etag: Optional ETag.
+        :paramtype etag: str
+        :keyword integrity_key: Integrity key.
+        :paramtype integrity_key: str
+        :keyword encryption_key: Encryption key.
+        :paramtype encryption_key: str
+        :keyword encryption_key_thumbprint: Encryption key thumbprint.
+        :paramtype encryption_key_thumbprint: str
+        :keyword algorithm: Algorithm for Vault ExtendedInfo.
+        :paramtype algorithm: str
+        """
         super(VaultExtendedInfoResource, self).__init__(etag=etag, **kwargs)
         self.integrity_key = integrity_key
         self.encryption_key = encryption_key
@@ -1691,8 +2067,8 @@ class VaultList(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.recoveryservices.models.Vault]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.recoveryservices.models.Vault]
     :ivar next_link:
     :vartype next_link: str
     """
@@ -1712,6 +2088,10 @@ class VaultList(msrest.serialization.Model):
         value: Optional[List["Vault"]] = None,
         **kwargs
     ):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.recoveryservices.models.Vault]
+        """
         super(VaultList, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -1724,8 +2104,8 @@ class VaultProperties(msrest.serialization.Model):
 
     :ivar provisioning_state: Provisioning State.
     :vartype provisioning_state: str
-    :param upgrade_details: Details for upgrading vault.
-    :type upgrade_details: ~azure.mgmt.recoveryservices.models.UpgradeDetails
+    :ivar upgrade_details: Details for upgrading vault.
+    :vartype upgrade_details: ~azure.mgmt.recoveryservices.models.UpgradeDetails
     :ivar private_endpoint_connections: List of private endpoint connection.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.recoveryservices.models.PrivateEndpointConnectionVaultProperties]
@@ -1737,8 +2117,18 @@ class VaultProperties(msrest.serialization.Model):
      Possible values include: "None", "Enabled".
     :vartype private_endpoint_state_for_site_recovery: str or
      ~azure.mgmt.recoveryservices.models.VaultPrivateEndpointState
-    :param encryption: Customer Managed Key details of the resource.
-    :type encryption: ~azure.mgmt.recoveryservices.models.VaultPropertiesEncryption
+    :ivar encryption: Customer Managed Key details of the resource.
+    :vartype encryption: ~azure.mgmt.recoveryservices.models.VaultPropertiesEncryption
+    :ivar move_details: The details of the latest move operation performed on the Azure Resource.
+    :vartype move_details: ~azure.mgmt.recoveryservices.models.VaultPropertiesMoveDetails
+    :ivar move_state: The State of the Resource after the move operation. Possible values include:
+     "Unknown", "InProgress", "PrepareFailed", "CommitFailed", "PrepareTimedout", "CommitTimedout",
+     "MoveSucceeded", "Failure", "CriticalFailure", "PartialSuccess".
+    :vartype move_state: str or ~azure.mgmt.recoveryservices.models.ResourceMoveState
+    :ivar backup_storage_version: Backup storage version. Possible values include: "V1", "V2",
+     "Unassigned".
+    :vartype backup_storage_version: str or
+     ~azure.mgmt.recoveryservices.models.BackupStorageVersion
     """
 
     _validation = {
@@ -1746,6 +2136,8 @@ class VaultProperties(msrest.serialization.Model):
         'private_endpoint_connections': {'readonly': True},
         'private_endpoint_state_for_backup': {'readonly': True},
         'private_endpoint_state_for_site_recovery': {'readonly': True},
+        'move_state': {'readonly': True},
+        'backup_storage_version': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1755,6 +2147,9 @@ class VaultProperties(msrest.serialization.Model):
         'private_endpoint_state_for_backup': {'key': 'privateEndpointStateForBackup', 'type': 'str'},
         'private_endpoint_state_for_site_recovery': {'key': 'privateEndpointStateForSiteRecovery', 'type': 'str'},
         'encryption': {'key': 'encryption', 'type': 'VaultPropertiesEncryption'},
+        'move_details': {'key': 'moveDetails', 'type': 'VaultPropertiesMoveDetails'},
+        'move_state': {'key': 'moveState', 'type': 'str'},
+        'backup_storage_version': {'key': 'backupStorageVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -1762,8 +2157,18 @@ class VaultProperties(msrest.serialization.Model):
         *,
         upgrade_details: Optional["UpgradeDetails"] = None,
         encryption: Optional["VaultPropertiesEncryption"] = None,
+        move_details: Optional["VaultPropertiesMoveDetails"] = None,
         **kwargs
     ):
+        """
+        :keyword upgrade_details: Details for upgrading vault.
+        :paramtype upgrade_details: ~azure.mgmt.recoveryservices.models.UpgradeDetails
+        :keyword encryption: Customer Managed Key details of the resource.
+        :paramtype encryption: ~azure.mgmt.recoveryservices.models.VaultPropertiesEncryption
+        :keyword move_details: The details of the latest move operation performed on the Azure
+         Resource.
+        :paramtype move_details: ~azure.mgmt.recoveryservices.models.VaultPropertiesMoveDetails
+        """
         super(VaultProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.upgrade_details = upgrade_details
@@ -1771,18 +2176,21 @@ class VaultProperties(msrest.serialization.Model):
         self.private_endpoint_state_for_backup = None
         self.private_endpoint_state_for_site_recovery = None
         self.encryption = encryption
+        self.move_details = move_details
+        self.move_state = None
+        self.backup_storage_version = None
 
 
 class VaultPropertiesEncryption(msrest.serialization.Model):
     """Customer Managed Key details of the resource.
 
-    :param key_vault_properties: The properties of the Key Vault which hosts CMK.
-    :type key_vault_properties: ~azure.mgmt.recoveryservices.models.CmkKeyVaultProperties
-    :param kek_identity: The details of the identity used for CMK.
-    :type kek_identity: ~azure.mgmt.recoveryservices.models.CmkKekIdentity
-    :param infrastructure_encryption: Enabling/Disabling the Double Encryption state. Possible
+    :ivar key_vault_properties: The properties of the Key Vault which hosts CMK.
+    :vartype key_vault_properties: ~azure.mgmt.recoveryservices.models.CmkKeyVaultProperties
+    :ivar kek_identity: The details of the identity used for CMK.
+    :vartype kek_identity: ~azure.mgmt.recoveryservices.models.CmkKekIdentity
+    :ivar infrastructure_encryption: Enabling/Disabling the Double Encryption state. Possible
      values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
+    :vartype infrastructure_encryption: str or
      ~azure.mgmt.recoveryservices.models.InfrastructureEncryptionState
     """
 
@@ -1800,28 +2208,85 @@ class VaultPropertiesEncryption(msrest.serialization.Model):
         infrastructure_encryption: Optional[Union[str, "InfrastructureEncryptionState"]] = None,
         **kwargs
     ):
+        """
+        :keyword key_vault_properties: The properties of the Key Vault which hosts CMK.
+        :paramtype key_vault_properties: ~azure.mgmt.recoveryservices.models.CmkKeyVaultProperties
+        :keyword kek_identity: The details of the identity used for CMK.
+        :paramtype kek_identity: ~azure.mgmt.recoveryservices.models.CmkKekIdentity
+        :keyword infrastructure_encryption: Enabling/Disabling the Double Encryption state. Possible
+         values include: "Enabled", "Disabled".
+        :paramtype infrastructure_encryption: str or
+         ~azure.mgmt.recoveryservices.models.InfrastructureEncryptionState
+        """
         super(VaultPropertiesEncryption, self).__init__(**kwargs)
         self.key_vault_properties = key_vault_properties
         self.kek_identity = kek_identity
         self.infrastructure_encryption = infrastructure_encryption
 
 
+class VaultPropertiesMoveDetails(msrest.serialization.Model):
+    """The details of the latest move operation performed on the Azure Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_id: OperationId of the Resource Move Operation.
+    :vartype operation_id: str
+    :ivar start_time_utc: Start Time of the Resource Move Operation.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar completion_time_utc: End Time of the Resource Move Operation.
+    :vartype completion_time_utc: ~datetime.datetime
+    :ivar source_resource_id: Source Resource of the Resource Move Operation.
+    :vartype source_resource_id: str
+    :ivar target_resource_id: Target Resource of the Resource Move Operation.
+    :vartype target_resource_id: str
+    """
+
+    _validation = {
+        'operation_id': {'readonly': True},
+        'start_time_utc': {'readonly': True},
+        'completion_time_utc': {'readonly': True},
+        'source_resource_id': {'readonly': True},
+        'target_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'start_time_utc': {'key': 'startTimeUtc', 'type': 'iso-8601'},
+        'completion_time_utc': {'key': 'completionTimeUtc', 'type': 'iso-8601'},
+        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
+        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(VaultPropertiesMoveDetails, self).__init__(**kwargs)
+        self.operation_id = None
+        self.start_time_utc = None
+        self.completion_time_utc = None
+        self.source_resource_id = None
+        self.target_resource_id = None
+
+
 class VaultUsage(msrest.serialization.Model):
     """Usages of a vault.
 
-    :param unit: Unit of the usage. Possible values include: "Count", "Bytes", "Seconds",
-     "Percent", "CountPerSecond", "BytesPerSecond".
-    :type unit: str or ~azure.mgmt.recoveryservices.models.UsagesUnit
-    :param quota_period: Quota period of usage.
-    :type quota_period: str
-    :param next_reset_time: Next reset time of usage.
-    :type next_reset_time: ~datetime.datetime
-    :param current_value: Current value of usage.
-    :type current_value: long
-    :param limit: Limit of usage.
-    :type limit: long
-    :param name: Name of usage.
-    :type name: ~azure.mgmt.recoveryservices.models.NameInfo
+    :ivar unit: Unit of the usage. Possible values include: "Count", "Bytes", "Seconds", "Percent",
+     "CountPerSecond", "BytesPerSecond".
+    :vartype unit: str or ~azure.mgmt.recoveryservices.models.UsagesUnit
+    :ivar quota_period: Quota period of usage.
+    :vartype quota_period: str
+    :ivar next_reset_time: Next reset time of usage.
+    :vartype next_reset_time: ~datetime.datetime
+    :ivar current_value: Current value of usage.
+    :vartype current_value: long
+    :ivar limit: Limit of usage.
+    :vartype limit: long
+    :ivar name: Name of usage.
+    :vartype name: ~azure.mgmt.recoveryservices.models.NameInfo
     """
 
     _attribute_map = {
@@ -1844,6 +2309,21 @@ class VaultUsage(msrest.serialization.Model):
         name: Optional["NameInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword unit: Unit of the usage. Possible values include: "Count", "Bytes", "Seconds",
+         "Percent", "CountPerSecond", "BytesPerSecond".
+        :paramtype unit: str or ~azure.mgmt.recoveryservices.models.UsagesUnit
+        :keyword quota_period: Quota period of usage.
+        :paramtype quota_period: str
+        :keyword next_reset_time: Next reset time of usage.
+        :paramtype next_reset_time: ~datetime.datetime
+        :keyword current_value: Current value of usage.
+        :paramtype current_value: long
+        :keyword limit: Limit of usage.
+        :paramtype limit: long
+        :keyword name: Name of usage.
+        :paramtype name: ~azure.mgmt.recoveryservices.models.NameInfo
+        """
         super(VaultUsage, self).__init__(**kwargs)
         self.unit = unit
         self.quota_period = quota_period
@@ -1856,8 +2336,8 @@ class VaultUsage(msrest.serialization.Model):
 class VaultUsageList(msrest.serialization.Model):
     """Usage for vault.
 
-    :param value: The list of usages for the given vault.
-    :type value: list[~azure.mgmt.recoveryservices.models.VaultUsage]
+    :ivar value: The list of usages for the given vault.
+    :vartype value: list[~azure.mgmt.recoveryservices.models.VaultUsage]
     """
 
     _attribute_map = {
@@ -1870,5 +2350,9 @@ class VaultUsageList(msrest.serialization.Model):
         value: Optional[List["VaultUsage"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of usages for the given vault.
+        :paramtype value: list[~azure.mgmt.recoveryservices.models.VaultUsage]
+        """
         super(VaultUsageList, self).__init__(**kwargs)
         self.value = value

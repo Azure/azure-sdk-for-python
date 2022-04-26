@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AuthType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the authentication type.
     """
 
@@ -36,7 +21,15 @@ class AuthType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCESS_CONTROL_SERVICE = "AccessControlService"
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BackupStorageVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Backup storage version
+    """
+
+    V1 = "V1"
+    V2 = "V2"
+    UNASSIGNED = "Unassigned"
+
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
 
@@ -45,14 +38,14 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class InfrastructureEncryptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class InfrastructureEncryptionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enabling/Disabling the Double Encryption state
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class PrivateEndpointConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the status.
     """
 
@@ -61,7 +54,7 @@ class PrivateEndpointConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, s
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets provisioning state of the private endpoint connection.
     """
 
@@ -70,7 +63,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     PENDING = "Pending"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
     implicitly created identity and a set of user-assigned identities. The type 'None' will remove
     any identities.
@@ -81,21 +74,36 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceMoveState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The State of the Resource after the move operation
+    """
+
+    UNKNOWN = "Unknown"
+    IN_PROGRESS = "InProgress"
+    PREPARE_FAILED = "PrepareFailed"
+    COMMIT_FAILED = "CommitFailed"
+    PREPARE_TIMEDOUT = "PrepareTimedout"
+    COMMIT_TIMEDOUT = "CommitTimedout"
+    MOVE_SUCCEEDED = "MoveSucceeded"
+    FAILURE = "Failure"
+    CRITICAL_FAILURE = "CriticalFailure"
+    PARTIAL_SUCCESS = "PartialSuccess"
+
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The Sku name.
     """
 
     STANDARD = "Standard"
     RS0 = "RS0"
 
-class TriggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TriggerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The way the vault upgrade was triggered.
     """
 
     USER_TRIGGERED = "UserTriggered"
     FORCED_UPGRADE = "ForcedUpgrade"
 
-class UsagesUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsagesUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Unit of the usage.
     """
 
@@ -106,14 +114,14 @@ class UsagesUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COUNT_PER_SECOND = "CountPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
 
-class VaultPrivateEndpointState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VaultPrivateEndpointState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Private endpoint state for backup.
     """
 
     NONE = "None"
     ENABLED = "Enabled"
 
-class VaultUpgradeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VaultUpgradeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the vault upgrade operation.
     """
 
