@@ -19,7 +19,7 @@ spec:
     duration: '10s'
     direction: to
     externalTargets:
-      - 'servicebus.windows.net'
+      - '{{ .Stress.ResourceGroupName }}.servicebus.windows.net'
     loss:
       loss: '100'
       correlation: '100'
