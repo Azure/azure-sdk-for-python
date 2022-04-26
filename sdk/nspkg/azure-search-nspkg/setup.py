@@ -16,7 +16,7 @@ if sys.version_info[0] < 3:
 
 setup(
     name="azure-search-nspkg",
-    version="1.0.0",
+    version="1.1.0b1",
     description="Microsoft Azure Search Namespace Package [Internal]",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",

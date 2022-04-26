@@ -1,12 +1,22 @@
 # Release History
 
-## 12.7.0b1 (Unreleased)
+## 12.7.0 (Unreleased)
 
 ### Features Added
-- Added support for `create_if_not_exists()` for `FileSystemClient`
+
+### Bugs Fixed
+
+## 12.7.0b1 (2022-04-14)
+
+### Features Added
+- Added support for service version 2021-06-08 as well as previous versions.
+- Added support for Customer-Provided Keys (cpk) to all required APIs.
+- The `get_paths()` API now returns `creation_time` and `expiry_time` for each path.
 
 ### Bugs Fixed
 - Updated `create_file_system()` docstring to have the correct return-type of `None`
+- Fixed parsing of extra `/` symbols not being stripped properly in `async` clients
+- Fixed a bug where `get_paths()` would fail if a path did not contain `last_modified` from the service.
 
 ## 12.6.0 (2022-03-08)
 

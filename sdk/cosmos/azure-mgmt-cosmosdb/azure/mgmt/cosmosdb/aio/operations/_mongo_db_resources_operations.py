@@ -22,7 +22,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._mongo_db_resources_operations import build_create_update_mongo_db_collection_request_initial, build_create_update_mongo_db_database_request_initial, build_create_update_mongo_role_definition_request_initial, build_create_update_mongo_user_definition_request_initial, build_delete_mongo_db_collection_request_initial, build_delete_mongo_db_database_request_initial, build_delete_mongo_role_definition_request_initial, build_delete_mongo_user_definition_request_initial, build_get_mongo_db_collection_request, build_get_mongo_db_collection_throughput_request, build_get_mongo_db_database_request, build_get_mongo_db_database_throughput_request, build_get_mongo_role_definition_request, build_get_mongo_user_definition_request, build_list_mongo_db_collections_request, build_list_mongo_db_databases_request, build_list_mongo_role_definitions_request, build_list_mongo_user_definitions_request, build_migrate_mongo_db_collection_to_autoscale_request_initial, build_migrate_mongo_db_collection_to_manual_throughput_request_initial, build_migrate_mongo_db_database_to_autoscale_request_initial, build_migrate_mongo_db_database_to_manual_throughput_request_initial, build_retrieve_continuous_backup_information_request_initial, build_update_mongo_db_collection_throughput_request_initial, build_update_mongo_db_database_throughput_request_initial
+from ...operations._mongo_db_resources_operations import build_create_update_mongo_db_collection_request_initial, build_create_update_mongo_db_database_request_initial, build_create_update_mongo_role_definition_request_initial, build_create_update_mongo_user_definition_request_initial, build_delete_mongo_db_collection_request_initial, build_delete_mongo_db_database_request_initial, build_delete_mongo_role_definition_request_initial, build_delete_mongo_user_definition_request_initial, build_get_mongo_db_collection_request, build_get_mongo_db_collection_throughput_request, build_get_mongo_db_database_request, build_get_mongo_db_database_throughput_request, build_get_mongo_role_definition_request, build_get_mongo_user_definition_request, build_list_mongo_db_collection_partition_merge_request_initial, build_list_mongo_db_collections_request, build_list_mongo_db_databases_request, build_list_mongo_role_definitions_request, build_list_mongo_user_definitions_request, build_migrate_mongo_db_collection_to_autoscale_request_initial, build_migrate_mongo_db_collection_to_manual_throughput_request_initial, build_migrate_mongo_db_database_to_autoscale_request_initial, build_migrate_mongo_db_database_to_manual_throughput_request_initial, build_retrieve_continuous_backup_information_request_initial, build_update_mongo_db_collection_throughput_request_initial, build_update_mongo_db_database_throughput_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -1196,6 +1196,137 @@ class MongoDBResourcesOperations:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_delete_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}'}  # type: ignore
+
+    async def _list_mongo_db_collection_partition_merge_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        database_name: str,
+        collection_name: str,
+        merge_parameters: "_models.MergeParameters",
+        **kwargs: Any
+    ) -> Optional["_models.PhysicalPartitionStorageInfoCollection"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PhysicalPartitionStorageInfoCollection"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(merge_parameters, 'MergeParameters')
+
+        request = build_list_mongo_db_collection_partition_merge_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            collection_name=collection_name,
+            content_type=content_type,
+            json=_json,
+            template_url=self._list_mongo_db_collection_partition_merge_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PhysicalPartitionStorageInfoCollection', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _list_mongo_db_collection_partition_merge_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/partitionMerge'}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_list_mongo_db_collection_partition_merge(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        database_name: str,
+        collection_name: str,
+        merge_parameters: "_models.MergeParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.PhysicalPartitionStorageInfoCollection"]:
+        """Merges the partitions of a MongoDB Collection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
+        :param merge_parameters: The parameters for the merge operation.
+        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either
+         PhysicalPartitionStorageInfoCollection or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhysicalPartitionStorageInfoCollection"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._list_mongo_db_collection_partition_merge_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                database_name=database_name,
+                collection_name=collection_name,
+                merge_parameters=merge_parameters,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('PhysicalPartitionStorageInfoCollection', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_list_mongo_db_collection_partition_merge.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/partitionMerge'}  # type: ignore
 
     @distributed_trace_async
     async def get_mongo_db_collection_throughput(

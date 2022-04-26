@@ -5,24 +5,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
+import pytest
 import unittest
 from datetime import datetime, timedelta
-import pytest
-
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from azure.core import MatchConditions
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
-from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess, generate_account_sas, ResourceTypes, \
-    AccountSasPermissions
+from azure.storage.filedatalake import(
+    AccessPolicy,
+    AccountSasPermissions,
+    DataLakeServiceClient,
+    FileSystemSasPermissions,
+    PublicAccess,
+    ResourceTypes,
+    generate_account_sas)
 from settings.testcase import DataLakePreparer
 from devtools_testutils.storage import StorageTestCase
-# ------------------------------------------------------------------------------
-from azure.storage.filedatalake import AccessPolicy, FileSystemSasPermissions
-from azure.storage.filedatalake._list_paths_helper import DirectoryPrefix
-from azure.storage.filedatalake._models import DeletedPathProperties
 
+# ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
@@ -73,32 +74,17 @@ class FileSystemTest(StorageTestCase):
         self.assertTrue(created)
 
     @DataLakePreparer()
-    def test_create_file_system_if_not_exists_without_existing_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
+    def test_create_file_system_extra_backslash(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = self._get_file_system_reference()
 
         # Act
-        file_system_client = self.dsc.get_file_system_client(file_system_name)
-        created = file_system_client.create_if_not_exists()
+        file_system_client = self.dsc.get_file_system_client(file_system_name + '/')
+        created = file_system_client.create_file_system()
 
         # Assert
         self.assertTrue(created)
-
-    @DataLakePreparer()
-    def test_create_file_system_if_not_exists_with_existing_file_system(self, datalake_storage_account_name,
-                                                                           datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # Arrange
-        file_system_name = self._get_file_system_reference()
-
-        # Act
-        file_system_client = self.dsc.get_file_system_client(file_system_name)
-        file_system_client.create_file_system()
-        created = file_system_client.create_if_not_exists()
-
-        # Assert
-        self.assertIsNone(created)
 
     @DataLakePreparer()
     def test_file_system_exists(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -426,6 +412,40 @@ class FileSystemTest(StorageTestCase):
 
         self.assertEqual(len(paths), 6)
         self.assertTrue(isinstance(paths[0].last_modified, datetime))
+
+    @DataLakePreparer()
+    def test_list_paths_create_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = self._create_file_system()
+        file_client = file_system.create_file('file1')
+
+        expires_on = datetime.utcnow() + timedelta(days=1)
+        file_client.set_file_expiry("Absolute", expires_on=expires_on)
+
+        # Act
+        paths = list(file_system.get_paths(upn=True))
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        props = file_client.get_file_properties()
+        # Properties do not include microseconds so let them vary by 1 second
+        self.assertAlmostEqual(props.creation_time, paths[0].creation_time, delta=timedelta(seconds=1))
+        self.assertAlmostEqual(props.expiry_time, paths[0].expiry_time, delta=timedelta(seconds=1))
+
+    @DataLakePreparer()
+    def test_list_paths_no_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = self._create_file_system()
+        file_system.create_file('file1')
+
+        # Act
+        paths = list(file_system.get_paths(upn=True))
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        self.assertIsNone(paths[0].expiry_time)
 
     @DataLakePreparer()
     def test_get_deleted_paths(self, datalake_storage_account_name, datalake_storage_account_key):
