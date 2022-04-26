@@ -9,11 +9,14 @@
 from ._backup_vaults_operations import BackupVaultsOperations
 from ._operation_result_operations import OperationResultOperations
 from ._operation_status_operations import OperationStatusOperations
+from ._operation_status_backup_vault_context_operations import OperationStatusBackupVaultContextOperations
+from ._operation_status_resource_group_context_operations import OperationStatusResourceGroupContextOperations
 from ._backup_vault_operation_results_operations import BackupVaultOperationResultsOperations
 from ._data_protection_operations import DataProtectionOperations
 from ._data_protection_operations_operations import DataProtectionOperationsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
 from ._backup_instances_operations import BackupInstancesOperations
+from ._backup_instances_extension_routing_operations import BackupInstancesExtensionRoutingOperations
 from ._recovery_points_operations import RecoveryPointsOperations
 from ._jobs_operations import JobsOperations
 from ._restorable_time_ranges_operations import RestorableTimeRangesOperations
@@ -25,11 +28,14 @@ __all__ = [
     'BackupVaultsOperations',
     'OperationResultOperations',
     'OperationStatusOperations',
+    'OperationStatusBackupVaultContextOperations',
+    'OperationStatusResourceGroupContextOperations',
     'BackupVaultOperationResultsOperations',
     'DataProtectionOperations',
     'DataProtectionOperationsOperations',
     'BackupPoliciesOperations',
     'BackupInstancesOperations',
+    'BackupInstancesExtensionRoutingOperations',
     'RecoveryPointsOperations',
     'JobsOperations',
     'RestorableTimeRangesOperations',

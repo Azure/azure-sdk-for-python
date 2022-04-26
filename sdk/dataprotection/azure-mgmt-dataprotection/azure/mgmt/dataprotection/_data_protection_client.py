@@ -6,37 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
+
+from . import models
+from ._configuration import DataProtectionClientConfiguration
+from .operations import BackupInstancesExtensionRoutingOperations, BackupInstancesOperations, BackupPoliciesOperations, BackupVaultOperationResultsOperations, BackupVaultsOperations, DataProtectionOperations, DataProtectionOperationsOperations, ExportJobsOperationResultOperations, ExportJobsOperations, JobsOperations, OperationResultOperations, OperationStatusBackupVaultContextOperations, OperationStatusOperations, OperationStatusResourceGroupContextOperations, RecoveryPointsOperations, ResourceGuardsOperations, RestorableTimeRangesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import DataProtectionClientConfiguration
-from .operations import BackupVaultsOperations
-from .operations import OperationResultOperations
-from .operations import OperationStatusOperations
-from .operations import BackupVaultOperationResultsOperations
-from .operations import DataProtectionOperations
-from .operations import DataProtectionOperationsOperations
-from .operations import BackupPoliciesOperations
-from .operations import BackupInstancesOperations
-from .operations import RecoveryPointsOperations
-from .operations import JobsOperations
-from .operations import RestorableTimeRangesOperations
-from .operations import ExportJobsOperations
-from .operations import ExportJobsOperationResultOperations
-from .operations import ResourceGuardsOperations
-from . import models
-
-
-class DataProtectionClient(object):
+class DataProtectionClient:    # pylint: disable=too-many-instance-attributes
     """Open API 2.0 Specs for Azure Data Protection service.
 
     :ivar backup_vaults: BackupVaultsOperations operations
@@ -45,100 +31,114 @@ class DataProtectionClient(object):
     :vartype operation_result: azure.mgmt.dataprotection.operations.OperationResultOperations
     :ivar operation_status: OperationStatusOperations operations
     :vartype operation_status: azure.mgmt.dataprotection.operations.OperationStatusOperations
+    :ivar operation_status_backup_vault_context: OperationStatusBackupVaultContextOperations
+     operations
+    :vartype operation_status_backup_vault_context:
+     azure.mgmt.dataprotection.operations.OperationStatusBackupVaultContextOperations
+    :ivar operation_status_resource_group_context: OperationStatusResourceGroupContextOperations
+     operations
+    :vartype operation_status_resource_group_context:
+     azure.mgmt.dataprotection.operations.OperationStatusResourceGroupContextOperations
     :ivar backup_vault_operation_results: BackupVaultOperationResultsOperations operations
-    :vartype backup_vault_operation_results: azure.mgmt.dataprotection.operations.BackupVaultOperationResultsOperations
+    :vartype backup_vault_operation_results:
+     azure.mgmt.dataprotection.operations.BackupVaultOperationResultsOperations
     :ivar data_protection: DataProtectionOperations operations
     :vartype data_protection: azure.mgmt.dataprotection.operations.DataProtectionOperations
     :ivar data_protection_operations: DataProtectionOperationsOperations operations
-    :vartype data_protection_operations: azure.mgmt.dataprotection.operations.DataProtectionOperationsOperations
+    :vartype data_protection_operations:
+     azure.mgmt.dataprotection.operations.DataProtectionOperationsOperations
     :ivar backup_policies: BackupPoliciesOperations operations
     :vartype backup_policies: azure.mgmt.dataprotection.operations.BackupPoliciesOperations
     :ivar backup_instances: BackupInstancesOperations operations
     :vartype backup_instances: azure.mgmt.dataprotection.operations.BackupInstancesOperations
+    :ivar backup_instances_extension_routing: BackupInstancesExtensionRoutingOperations operations
+    :vartype backup_instances_extension_routing:
+     azure.mgmt.dataprotection.operations.BackupInstancesExtensionRoutingOperations
     :ivar recovery_points: RecoveryPointsOperations operations
     :vartype recovery_points: azure.mgmt.dataprotection.operations.RecoveryPointsOperations
     :ivar jobs: JobsOperations operations
     :vartype jobs: azure.mgmt.dataprotection.operations.JobsOperations
     :ivar restorable_time_ranges: RestorableTimeRangesOperations operations
-    :vartype restorable_time_ranges: azure.mgmt.dataprotection.operations.RestorableTimeRangesOperations
+    :vartype restorable_time_ranges:
+     azure.mgmt.dataprotection.operations.RestorableTimeRangesOperations
     :ivar export_jobs: ExportJobsOperations operations
     :vartype export_jobs: azure.mgmt.dataprotection.operations.ExportJobsOperations
     :ivar export_jobs_operation_result: ExportJobsOperationResultOperations operations
-    :vartype export_jobs_operation_result: azure.mgmt.dataprotection.operations.ExportJobsOperationResultOperations
+    :vartype export_jobs_operation_result:
+     azure.mgmt.dataprotection.operations.ExportJobsOperationResultOperations
     :ivar resource_guards: ResourceGuardsOperations operations
     :vartype resource_guards: azure.mgmt.dataprotection.operations.ResourceGuardsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription Id.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-03-31-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = DataProtectionClientConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = DataProtectionClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_result = OperationResultOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_status = OperationStatusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_status_backup_vault_context = OperationStatusBackupVaultContextOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_status_resource_group_context = OperationStatusResourceGroupContextOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_vault_operation_results = BackupVaultOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_protection = DataProtectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_protection_operations = DataProtectionOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_policies = BackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_instances = BackupInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_instances_extension_routing = BackupInstancesExtensionRoutingOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.recovery_points = RecoveryPointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_time_ranges = RestorableTimeRangesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.export_jobs = ExportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.export_jobs_operation_result = ExportJobsOperationResultOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.resource_guards = ResourceGuardsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.backup_vaults = BackupVaultsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operation_result = OperationResultOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operation_status = OperationStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backup_vault_operation_results = BackupVaultOperationResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.data_protection = DataProtectionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.data_protection_operations = DataProtectionOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backup_policies = BackupPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backup_instances = BackupInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.recovery_points = RecoveryPointsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.restorable_time_ranges = RestorableTimeRangesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.export_jobs = ExportJobsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.export_jobs_operation_result = ExportJobsOperationResultOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.resource_guards = ResourceGuardsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

@@ -19,7 +19,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -27,13 +27,19 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 def build_list_request(
+    resource_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-03-31-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.DataProtection/operations")
+    _url = kwargs.pop("template_url", "/{resourceId}/providers/Microsoft.DataProtection/backupInstances")
+    path_format_arguments = {
+        "resourceId": _SERIALIZER.url("resource_id", resource_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -51,8 +57,8 @@ def build_list_request(
         **kwargs
     )
 
-class DataProtectionOperationsOperations(object):
-    """DataProtectionOperationsOperations operations.
+class BackupInstancesExtensionRoutingOperations(object):
+    """BackupInstancesExtensionRoutingOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -76,19 +82,23 @@ class DataProtectionOperationsOperations(object):
     @distributed_trace
     def list(
         self,
+        resource_id: str,
         **kwargs: Any
-    ) -> Iterable["_models.ClientDiscoveryResponse"]:
-        """Returns the list of available operations.
+    ) -> Iterable["_models.BackupInstanceResourceList"]:
+        """Gets a list backup instances associated with a tracked resource.
 
+        :param resource_id: ARM path of the resource to be protected using Microsoft.DataProtection.
+        :type resource_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ClientDiscoveryResponse or the result of
+        :return: An iterator like instance of either BackupInstanceResourceList or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.dataprotection.models.ClientDiscoveryResponse]
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.dataprotection.models.BackupInstanceResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-03-31-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClientDiscoveryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupInstanceResourceList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -97,6 +107,7 @@ class DataProtectionOperationsOperations(object):
             if not next_link:
                 
                 request = build_list_request(
+                    resource_id=resource_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
@@ -106,6 +117,7 @@ class DataProtectionOperationsOperations(object):
             else:
                 
                 request = build_list_request(
+                    resource_id=resource_id,
                     api_version=api_version,
                     template_url=next_link,
                 )
@@ -115,7 +127,7 @@ class DataProtectionOperationsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("ClientDiscoveryResponse", pipeline_response)
+            deserialized = self._deserialize("BackupInstanceResourceList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -141,4 +153,4 @@ class DataProtectionOperationsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/providers/Microsoft.DataProtection/operations"}  # type: ignore
+    list.metadata = {'url': "/{resourceId}/providers/Microsoft.DataProtection/backupInstances"}  # type: ignore

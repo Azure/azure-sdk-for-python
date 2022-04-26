@@ -17,12 +17,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._export_jobs_operation_result_operations import build_get_request
+from ...operations._operation_status_resource_group_context_operations import build_get_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ExportJobsOperationResultOperations:
-    """ExportJobsOperationResultOperations async operations.
+class OperationStatusResourceGroupContextOperations:
+    """OperationStatusResourceGroupContextOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,26 +47,23 @@ class ExportJobsOperationResultOperations:
     async def get(
         self,
         resource_group_name: str,
-        vault_name: str,
         operation_id: str,
         **kwargs: Any
-    ) -> Optional["_models.ExportJobsResult"]:
-        """Gets the operation result of operation triggered by Export Jobs API. If the operation is
-        successful, then it also contains URL of a Blob and a SAS key to access the same. The blob
-        contains exported jobs in JSON serialized format.
+    ) -> "_models.OperationResource":
+        """Gets the operation status for an operation over a ResourceGroup's context.
+
+        Gets the operation status for an operation over a ResourceGroup's context.
 
         :param resource_group_name: The name of the resource group where the backup vault is present.
         :type resource_group_name: str
-        :param vault_name: The name of the backup vault.
-        :type vault_name: str
-        :param operation_id: OperationID which represents the export job.
+        :param operation_id:
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExportJobsResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.dataprotection.models.ExportJobsResult or None
+        :return: OperationResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.dataprotection.models.OperationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ExportJobsResult"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -76,9 +73,8 @@ class ExportJobsOperationResultOperations:
 
         
         request = build_get_request(
-            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            vault_name=vault_name,
+            subscription_id=self._config.subscription_id,
             operation_id=operation_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
@@ -93,18 +89,16 @@ class ExportJobsOperationResultOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ExportJobsResult', pipeline_response)
+        deserialized = self._deserialize('OperationResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupJobs/operations/{operationId}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/operationStatus/{operationId}"}  # type: ignore
 
