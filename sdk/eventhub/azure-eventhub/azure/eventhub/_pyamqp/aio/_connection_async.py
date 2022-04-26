@@ -59,7 +59,7 @@ class Connection(object):
     :param list(str) offered_capabilities: The extension capabilities the sender supports.
     :param list(str) desired_capabilities: The extension capabilities the sender may use if the receiver supports
     :param dict properties: Connection properties.
-    :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket.
+    :keyword str transport_type: Required. Determines if the transport type is Amqp or AmqpOverWebSocket.
     :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
