@@ -6311,7 +6311,8 @@ class GremlinGraphResource(msrest.serialization.Model):
     :vartype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :ivar conflict_resolution_policy: The conflict resolution policy for the graph.
     :vartype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
-    """
+    :ivar analytical_storage_ttl: Analytical TTL.
+    :vartype analytical_storage_ttl: int"""
 
     _validation = {
         'id': {'required': True},
@@ -6324,6 +6325,7 @@ class GremlinGraphResource(msrest.serialization.Model):
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
     }
 
     def __init__(
@@ -6335,6 +6337,7 @@ class GremlinGraphResource(msrest.serialization.Model):
         default_ttl: Optional[int] = None,
         unique_key_policy: Optional["UniqueKeyPolicy"] = None,
         conflict_resolution_policy: Optional["ConflictResolutionPolicy"] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs
     ):
         """
@@ -6353,6 +6356,8 @@ class GremlinGraphResource(msrest.serialization.Model):
         :paramtype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
         :keyword conflict_resolution_policy: The conflict resolution policy for the graph.
         :paramtype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+        :keyword analytical_storage_ttl: Analytical TTL.
+        :paramtype analytical_storage_ttl: int
         """
         super(GremlinGraphResource, self).__init__(**kwargs)
         self.id = id
@@ -6361,6 +6366,7 @@ class GremlinGraphResource(msrest.serialization.Model):
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.analytical_storage_ttl = analytical_storage_ttl
 
 
 class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraphResource):
@@ -6385,6 +6391,8 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
     :vartype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :ivar conflict_resolution_policy: The conflict resolution policy for the graph.
     :vartype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :ivar analytical_storage_ttl: Analytical TTL.
+    :vartype analytical_storage_ttl: int
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
@@ -6408,6 +6416,7 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
         'rid': {'key': '_rid', 'type': 'str'},
         'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
@@ -6422,6 +6431,7 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
         default_ttl: Optional[int] = None,
         unique_key_policy: Optional["UniqueKeyPolicy"] = None,
         conflict_resolution_policy: Optional["ConflictResolutionPolicy"] = None,
+        analytical_storage_ttl: Optional[int] = None,
         **kwargs
     ):
         """
@@ -6440,6 +6450,8 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
         :paramtype unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
         :keyword conflict_resolution_policy: The conflict resolution policy for the graph.
         :paramtype conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+        :keyword analytical_storage_ttl: Analytical TTL.
+        :paramtype analytical_storage_ttl: int
         """
         super(GremlinGraphGetPropertiesResource, self).__init__(id=id, indexing_policy=indexing_policy, partition_key=partition_key, default_ttl=default_ttl, unique_key_policy=unique_key_policy, conflict_resolution_policy=conflict_resolution_policy, **kwargs)
         self.id = id
@@ -6448,6 +6460,7 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.analytical_storage_ttl = analytical_storage_ttl
         self.rid = None
         self.ts = None
         self.etag = None

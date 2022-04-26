@@ -262,6 +262,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
           "location": AZURE_LOCATION,
           "resource": {
             "id": "graphName",
+            "analytical_storage_ttl": "500",
             "indexing_policy": {
               "indexing_mode": "Consistent",
               "automatic": True,

@@ -3049,6 +3049,8 @@ class GremlinGraphResource(msrest.serialization.Model):
     :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the graph.
     :type conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: int
     """
 
     _validation = {
@@ -3062,7 +3064,8 @@ class GremlinGraphResource(msrest.serialization.Model):
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
-    }
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
+  }
 
     def __init__(
         self,
@@ -3075,6 +3078,7 @@ class GremlinGraphResource(msrest.serialization.Model):
         self.default_ttl = kwargs.get('default_ttl', None)
         self.unique_key_policy = kwargs.get('unique_key_policy', None)
         self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+        self.analytical_storage_ttl = kwargs.get('analytical_storage_ttl', None)
 
 
 class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraphResource):
@@ -3099,6 +3103,8 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
     :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the graph.
     :type conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: int
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
@@ -3122,6 +3128,7 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
         'rid': {'key': '_rid', 'type': 'str'},
         'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
@@ -3138,6 +3145,7 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
         self.default_ttl = kwargs.get('default_ttl', None)
         self.unique_key_policy = kwargs.get('unique_key_policy', None)
         self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+        self.analytical_storage_ttl = kwargs.get('analytical_storage_ttl', None)
         self.rid = None
         self.ts = None
         self.etag = None
