@@ -911,7 +911,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 docs = models.MultiLanguageAnalysisInput(
                     documents=_validate_input(documents, "language", language)
                 )
-                return await self._client.begin_analyze_text_submit_job(
+                return await self._client.begin_analyze_text_submit_job(  # type: ignore
                     body=models.AnalyzeTextJobsInput(
                         analysis_input=docs,
                         display_name=display_name,

@@ -700,7 +700,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 docs = models.MultiLanguageAnalysisInput(
                     documents=_validate_input(documents, "language", language)
                 )
-                return self._client.begin_analyze_text_submit_job(
+                return self._client.begin_analyze_text_submit_job(  # type: ignore
                     body=models.AnalyzeTextJobsInput(
                         analysis_input=docs,
                         display_name=display_name,
