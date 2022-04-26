@@ -675,7 +675,7 @@ class WebSocketTransport(_AbstractTransport):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
         if self._http_proxy:
             http_proxy_host = self._http_proxy['proxy_hostname']
-            http_proxy_port = self._http_proxy['proxy_hostname']
+            http_proxy_port = self._http_proxy['proxy_port']
             username = self._http_proxy.get('username', None)
             password = self._http_proxy.get('password', None)
             if username or password:

@@ -113,7 +113,7 @@ class SASLWithWebSocket(WebSocketTransport, SASLTransportMixin):
         http_proxy = kwargs.pop('http_proxy', None)
         self._transport = WebSocketTransport(
             host,
-            port=WEBSOCKET_PORT,
+            port=port,
             connect_timeout=connect_timeout,
             ssl=ssl,
             http_proxy=http_proxy,
