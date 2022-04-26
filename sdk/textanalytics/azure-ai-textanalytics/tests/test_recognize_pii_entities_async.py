@@ -705,11 +705,11 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_explicit_set_string_index_type(self, client):
         def callback(response):
-            assert response.http_request.query["stringIndexType"] == "TextElements_v8"
+            assert response.http_request.query["stringIndexType"] == "TextElement_v8"
 
         res = await client.recognize_pii_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8",
+            string_index_type="TextElement_v8",
             raw_response_hook=callback
         )
 
@@ -722,7 +722,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
         res = await client.recognize_pii_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8",
+            string_index_type="TextElement_v8",
             raw_response_hook=callback
         )
 

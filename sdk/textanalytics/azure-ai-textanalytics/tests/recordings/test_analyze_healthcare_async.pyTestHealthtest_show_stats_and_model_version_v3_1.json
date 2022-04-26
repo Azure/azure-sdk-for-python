@@ -1,0 +1,148 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs?model-version=2021-01-11\u0026stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "241",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "56",
+            "text": ":)",
+            "language": "en"
+          },
+          {
+            "id": "0",
+            "text": ":(",
+            "language": "en"
+          },
+          {
+            "id": "22",
+            "text": "",
+            "language": "en"
+          },
+          {
+            "id": "19",
+            "text": ":P",
+            "language": "en"
+          },
+          {
+            "id": "1",
+            "text": ":D",
+            "language": "en"
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "509e0060-be4f-4a08-818e-7f26cbf48276",
+        "Date": "Tue, 26 Apr 2022 00:31:27 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/cb60be29-752b-407d-9803-ad3ee90a9c4b",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "249"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/cb60be29-752b-407d-9803-ad3ee90a9c4b?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "0987cd85-8022-473c-a16b-79f7ed925b5f",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 26 Apr 2022 00:31:32 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "155"
+      },
+      "ResponseBody": {
+        "jobId": "cb60be29-752b-407d-9803-ad3ee90a9c4b",
+        "lastUpdateDateTime": "2022-04-26T00:31:27Z",
+        "createdDateTime": "2022-04-26T00:31:27Z",
+        "expirationDateTime": "2022-04-27T00:31:27Z",
+        "status": "succeeded",
+        "errors": [],
+        "results": {
+          "statistics": {
+            "documentsCount": 5,
+            "validDocumentsCount": 4,
+            "erroneousDocumentsCount": 1,
+            "transactionsCount": 4
+          },
+          "documents": [
+            {
+              "id": "56",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "entities": [],
+              "relations": [],
+              "warnings": []
+            },
+            {
+              "id": "0",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "entities": [],
+              "relations": [],
+              "warnings": []
+            },
+            {
+              "id": "19",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "entities": [],
+              "relations": [],
+              "warnings": []
+            },
+            {
+              "id": "1",
+              "statistics": {
+                "charactersCount": 2,
+                "transactionsCount": 1
+              },
+              "entities": [],
+              "relations": [],
+              "warnings": []
+            }
+          ],
+          "errors": [
+            {
+              "id": "22",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid document in request.",
+                "innererror": {
+                  "code": "InvalidDocument",
+                  "message": "Document text is empty."
+                }
+              }
+            }
+          ],
+          "modelVersion": "2022-03-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

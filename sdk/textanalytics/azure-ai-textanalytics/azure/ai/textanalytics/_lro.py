@@ -154,6 +154,12 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
             return None
         return self._current_body.job_id
 
+    @property
+    def display_name(self):
+        if not self._current_body:
+            return None
+        return self._current_body.display_name
+
     def get_continuation_token(self):
         # type: () -> str
         import pickle
@@ -202,6 +208,18 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
         :rtype: str
         """
         return self.polling_method().id
+
+    @property
+    def display_name(self) -> str:
+        """Given display_name to the healthcare entities job
+
+        :return: Display name of the healthcare entities job.
+        :rtype: str
+
+        .. versionadded:: 2022-03-01-preview
+            *display_name* property.
+        """
+        return self.polling_method().display_name
 
     @classmethod
     def from_continuation_token(  # type: ignore
@@ -252,12 +270,17 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
             # Get a final status update.
             getattr(self._polling_method, "update_status")()
 
-            return getattr(
+            client = getattr(
                 self._polling_method, "_text_analytics_client"
-            ).begin_cancel_health_job(
-                self.id, polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
             )
-
+            try:
+                return client.begin_cancel_health_job(
+                    self.id, polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
+                )
+            except ValueError:  # language API compat
+                return client.begin_analyze_text_cancel_job(
+                    self.id, polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
+                )
         except HttpResponseError as error:
             from ._response_handlers import process_http_response_error
 

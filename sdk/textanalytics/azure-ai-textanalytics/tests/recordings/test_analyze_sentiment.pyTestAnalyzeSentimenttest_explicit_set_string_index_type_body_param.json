@@ -28,14 +28,14 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "dd60db28-7786-4485-b0d1-202feedb75c0",
+        "apim-request-id": "bef69eaf-4a32-4fe2-aee3-e21fd669638e",
         "Content-Length": "368",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Tue, 12 Apr 2022 23:51:02 GMT",
+        "Date": "Mon, 25 Apr 2022 22:49:08 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "15"
+        "x-envoy-upstream-service-time": "14"
       },
       "ResponseBody": {
         "kind": "SentimentAnalysisResults",

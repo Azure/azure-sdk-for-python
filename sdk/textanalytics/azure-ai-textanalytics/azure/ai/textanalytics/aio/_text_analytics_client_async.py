@@ -53,8 +53,8 @@ from .._models import (
     SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
-    is_language_api
 )
+from .._check import is_language_api
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
     AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
@@ -774,16 +774,18 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     def _healthcare_result_callback(
-        self, doc_id_order, raw_response, _, headers, show_stats=False
+        self, doc_id_order, raw_response, deserialized, headers, show_stats=False
     ):
-        healthcare_result = self._client.models(
-            api_version=self._api_version
-        ).HealthcareJobState.deserialize(raw_response)
+        if deserialized is None:
+            models = self._client.models(api_version=self._api_version)
+            response_cls = \
+                models.AnalyzeTextJobState if is_language_api(self._api_version) else models.HealthcareJobState
+            deserialized = response_cls.deserialize(raw_response)
         return healthcare_paged_result(
             doc_id_order,
-            self._client.health_status,
+            self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.health_status,
             raw_response,
-            healthcare_result,
+            deserialized,
             headers,
             show_stats=show_stats,
         )
@@ -821,6 +823,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Text Analytics API.
+        :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
@@ -848,6 +851,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
+        .. versionadded:: 2022-03-01-preview
+            The *display_name* keyword argument.
 
         .. admonition:: Example:
 
@@ -864,8 +869,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
-        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
+        string_index_type = _check_string_index_type_arg(
+            kwargs.pop("string_index_type", None),
+            self._api_version,
+            string_index_type_default=self._string_code_unit,
+        )
         disable_service_logs = kwargs.pop("disable_service_logs", None)
+        display_name = kwargs.pop("display_name", None)
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -894,8 +904,47 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 self._healthcare_result_callback, doc_id_order, show_stats=show_stats
             ),
         )
+        models = self._client.models(api_version=self._api_version)
 
         try:
+            if is_language_api(self._api_version):
+                docs = models.MultiLanguageAnalysisInput(
+                    documents=_validate_input(documents, "language", language)
+                )
+                return await self._client.begin_analyze_text_submit_job(
+                    body=models.AnalyzeTextJobsInput(
+                        analysis_input=docs,
+                        display_name=display_name,
+                        tasks=[
+                            models.HealthcareLROTask(
+                                task_name="0",
+                                parameters=models.HealthcareTaskParameters(
+                                    model_version=model_version,
+                                    logging_opt_out=disable_service_logs,
+                                    string_index_type=string_index_type,
+                                )
+                            )
+                        ]
+                    ),
+                    cls=my_cls,
+                    polling=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    poller_cls=AsyncAnalyzeHealthcareEntitiesLROPoller,
+                    **kwargs
+                )
+
+            # v3.1
             return await self._client.begin_health(
                 docs,
                 model_version=model_version,

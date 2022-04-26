@@ -9,6 +9,7 @@ from ._models import (
     TextDocumentInput,
     _AnalyzeActionsType,
 )
+from ._check import is_language_api
 
 
 def _validate_input(documents, hint, whole_input_hint):
@@ -110,7 +111,8 @@ def _check_string_index_type_arg(
             raise ValueError(
                 "'string_index_type' is only available for API version V3_1 and up"
             )
-
+    elif is_language_api(api_version) and string_index_type_arg == "TextElement_v8":
+        return "TextElements_v8"
     else:
         if string_index_type_arg is None:
             string_index_type = string_index_type_default

@@ -304,7 +304,12 @@ def healthcare_extract_page_data(
     return (
         health_job_state.next_link,
         healthcare_result(
-            doc_id_order, health_job_state.results, response_headers, lro=True
+            doc_id_order,
+            health_job_state.results
+            if hasattr(health_job_state, "results")
+            else health_job_state.tasks.items[0].results,
+            response_headers,
+            lro=True
         ),
     )
 
@@ -326,10 +331,13 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return single_category_classify_result
     if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
         return multi_category_classify_result
+    if task_type == _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES:
+        return healthcare_result
     return key_phrases_result
 
 
 def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-return-statements
+    """v3.1 only"""
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -338,18 +346,11 @@ def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-re
         return "entity_linking_tasks"
     if task_type == _AnalyzeActionsType.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
-    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
-        return "extractive_summarization_tasks"
-    if task_type == _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES:
-        return "custom_entity_recognition_tasks"
-    if task_type == _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY:
-        return "custom_single_classification_tasks"
-    if task_type == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY:
-        return "custom_multi_classification_tasks"
     return "key_phrase_extraction_tasks"
 
 
 def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-statements
+    """v3.1 only"""
     if task_type == ActionPointerKind.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == ActionPointerKind.RECOGNIZE_PII_ENTITIES:
@@ -358,14 +359,6 @@ def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-stateme
         return "entity_linking_tasks"
     if task_type == ActionPointerKind.ANALYZE_SENTIMENT:
         return "sentiment_analysis_tasks"
-    if task_type == ActionPointerKind.EXTRACT_SUMMARY:
-        return "extractive_summarization_tasks"
-    if task_type == ActionPointerKind.RECOGNIZE_CUSTOM_ENTITIES:
-        return "custom_entity_recognition_tasks"
-    if task_type == ActionPointerKind.SINGLE_CATEGORY_CLASSIFY:
-        return "custom_single_classification_tasks"
-    if task_type == ActionPointerKind.MULTI_CATEGORY_CLASSIFY:
-        return "custom_multi_classification_tasks"
     return "key_phrase_extraction_tasks"
 
 

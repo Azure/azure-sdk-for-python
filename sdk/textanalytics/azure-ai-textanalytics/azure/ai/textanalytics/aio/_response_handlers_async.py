@@ -17,7 +17,12 @@ async def healthcare_extract_page_data_async(
     return (
         health_job_state.next_link,
         healthcare_result(
-            doc_id_order, health_job_state.results, response_headers, lro=True
+            doc_id_order,
+            health_job_state.results
+            if hasattr(health_job_state, "results")
+            else health_job_state.tasks.items[0].results,
+            response_headers,
+            lro=True
         ),
     )
 
@@ -83,7 +88,7 @@ def analyze_paged_result(
     show_stats=False,  # pylint: disable=unused-argument
 ):
     return AsyncItemPaged(
-        functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
+        functools.partial(lro_get_next_page_async, analyze_status_callback, obj, show_stats=show_stats),
         functools.partial(
             analyze_extract_page_data_async, doc_id_order, task_order, response_headers
         ),
