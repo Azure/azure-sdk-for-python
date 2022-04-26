@@ -3,31 +3,28 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import codecs
-from dateutil import parser as date_parse
 import functools
 import json
 import logging
 import time
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline.policies import SansIOHTTPPolicy
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.keyvault.keys import (
-    ApiVersion,
-    JsonWebKey,
-    KeyClient,
-    KeyReleasePolicy,
-    KeyRotationLifetimeAction,
-    KeyRotationPolicy,
-    KeyRotationPolicyAction,
-    KeyType,
-)
-from azure.keyvault.keys._generated.v7_3.models import KeyRotationPolicy as _KeyRotationPolicy
 import pytest
+from azure.core.exceptions import (HttpResponseError, ResourceExistsError,
+                                   ResourceNotFoundError)
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.keyvault.keys import (ApiVersion, JsonWebKey, KeyClient,
+                                 KeyReleasePolicy, KeyRotationLifetimeAction,
+                                 KeyRotationPolicy, KeyRotationPolicyAction,
+                                 KeyType)
+from azure.keyvault.keys._generated.v7_3.models import \
+    KeyRotationPolicy as _KeyRotationPolicy
+from dateutil import parser as date_parse
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_attestation_token, get_decorator, get_release_policy, is_public_cloud, KeysClientPreparer
+from _test_case import (KeysClientPreparer, get_attestation_token,
+                        get_decorator, get_release_policy, is_public_cloud)
 
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)

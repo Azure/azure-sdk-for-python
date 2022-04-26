@@ -4,9 +4,9 @@
 # -------------------------------------
 import os
 
+from azure.keyvault.keys import KeyVaultKeyIdentifier
 from devtools_testutils import recorded_by_proxy
 
-from azure.keyvault.keys import KeyVaultKeyIdentifier
 from _shared.test_case import KeyVaultTestCase
 
 

@@ -5,9 +5,12 @@
 # -------------------------------------------------------------------------
 import asyncio
 import os
-import pytest
 from unittest import mock
-from devtools_testutils import is_live, test_proxy, add_oauth_response_sanitizer, add_general_regex_sanitizer
+
+import pytest
+from devtools_testutils import (add_general_regex_sanitizer,
+                                add_oauth_response_sanitizer, is_live,
+                                test_proxy)
 
 os.environ['PYTHONHASHSEED'] = '0'
 

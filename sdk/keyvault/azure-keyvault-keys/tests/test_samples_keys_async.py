@@ -5,13 +5,12 @@
 import asyncio
 import os
 
-from azure.keyvault.keys import KeyType
 import pytest
-
-from _shared.test_case_async import KeyVaultTestCase
-from _async_test_case import get_decorator, AsyncKeysClientPreparer
+from azure.keyvault.keys import KeyType
 from devtools_testutils.aio import recorded_by_proxy_async
 
+from _async_test_case import AsyncKeysClientPreparer, get_decorator
+from _shared.test_case_async import KeyVaultTestCase
 
 all_api_versions = get_decorator(is_async=True, only_vault=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)

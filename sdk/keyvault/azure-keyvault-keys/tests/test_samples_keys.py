@@ -3,16 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import print_function
-import time
-import os
-from devtools_testutils import recorded_by_proxy
-import pytest
 
+import os
+import time
+
+import pytest
 from azure.keyvault.keys import KeyType
+from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_decorator, KeysClientPreparer
-
+from _test_case import KeysClientPreparer, get_decorator
 
 all_api_versions = get_decorator(only_vault=True)
 only_hsm = get_decorator(only_hsm=True)

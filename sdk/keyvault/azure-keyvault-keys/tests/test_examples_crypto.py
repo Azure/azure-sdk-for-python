@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 import pytest
 from azure.keyvault.keys.crypto import CryptographyClient
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_decorator,KeysClientPreparer
-
+from _test_case import KeysClientPreparer, get_decorator
 
 all_api_versions = get_decorator(only_vault=True)
 
@@ -92,6 +91,7 @@ class TestCryptoExamples(KeyVaultTestCase):
 
         # [START sign]
         import hashlib
+
         from azure.keyvault.keys.crypto import SignatureAlgorithm
 
         digest = hashlib.sha256(b"plaintext").digest()

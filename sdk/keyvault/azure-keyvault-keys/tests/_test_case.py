@@ -5,12 +5,12 @@
 import json
 import os
 
+import pytest
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 from azure.keyvault.keys import KeyReleasePolicy
-from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
 from devtools_testutils import AzureRecordedTestCase
-import pytest
 
 
 def get_attestation_token(attestation_uri):

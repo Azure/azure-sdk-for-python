@@ -18,6 +18,7 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
+import pytest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
@@ -25,15 +26,13 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient
-from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared import (ChallengeAuthPolicy, HttpChallenge,
+                                         HttpChallengeCache)
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 
-import pytest
-
-from _shared.helpers import mock_response, Request, validating_transport
+from _shared.helpers import Request, mock_response, validating_transport
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_decorator, KeysClientPreparer
-
+from _test_case import KeysClientPreparer, get_decorator
 
 only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 

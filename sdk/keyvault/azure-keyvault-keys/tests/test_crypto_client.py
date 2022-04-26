@@ -3,10 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import codecs
-from datetime import datetime
 import hashlib
 import os
 import time
+from datetime import datetime
 
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
@@ -15,18 +15,21 @@ try:
 except ImportError:
     import mock
 
+import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
-from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from azure.keyvault.keys import (JsonWebKey, KeyCurveName, KeyOperation,
+                                 KeyVaultKey)
+from azure.keyvault.keys.crypto import (CryptographyClient,
+                                        EncryptionAlgorithm, KeyWrapAlgorithm,
+                                        SignatureAlgorithm)
 from azure.keyvault.keys.crypto._key_validity import _UTC
-from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
+from azure.keyvault.keys.crypto._providers import (
+    NoLocalCryptography, get_local_cryptography_provider)
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
-import pytest
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_decorator, KeysClientPreparer
-
+from _test_case import KeysClientPreparer, get_decorator
 
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])

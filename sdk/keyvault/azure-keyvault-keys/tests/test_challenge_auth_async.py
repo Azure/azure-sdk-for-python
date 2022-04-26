@@ -9,28 +9,27 @@ the challenge cache is global to the process.
 import asyncio
 import os
 import time
+from unittest.mock import Mock, patch
 from uuid import uuid4
 
-from unittest.mock import Mock, patch
-
+import pytest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio import ClientSecretCredential
-from azure.keyvault.keys.aio import KeyClient
-from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared import (AsyncChallengeAuthPolicy,
+                                         HttpChallenge, HttpChallengeCache)
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
-import pytest
-
-from _shared.helpers import mock_response, Request
-from _shared.helpers_async import async_validating_transport
-from _shared.test_case_async import KeyVaultTestCase
-from _async_test_case import get_decorator, AsyncKeysClientPreparer
-from test_challenge_auth import empty_challenge_cache, get_random_url
+from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils.aio import recorded_by_proxy_async
 
+from _async_test_case import AsyncKeysClientPreparer, get_decorator
+from _shared.helpers import Request, mock_response
+from _shared.helpers_async import async_validating_transport
+from _shared.test_case_async import KeyVaultTestCase
+from test_challenge_auth import empty_challenge_cache, get_random_url
 
 only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 
