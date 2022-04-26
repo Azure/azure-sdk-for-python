@@ -212,7 +212,7 @@ def example_send_and_receive_sync():
             print("Receiving: {}".format(message))
             print("Time to live: {}".format(message.time_to_live))
             print("Sequence number: {}".format(message.sequence_number))
-            print("Enqueued Sequence numger: {}".format(message.enqueued_sequence_number))
+            print("Enqueued Sequence number: {}".format(message.enqueued_sequence_number))
             print("Partition Key: {}".format(message.partition_key))
             print("Application Properties: {}".format(message.application_properties))
             print("Delivery count: {}".format(message.delivery_count))

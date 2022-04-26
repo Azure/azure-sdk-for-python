@@ -58,7 +58,7 @@ class PeriodicTask(threading.Thread):
     """
 
     def __init__(self, interval, function, *args, **kwargs):
-        super().__init__(name=kwargs.get('name'))
+        super().__init__(name=kwargs.pop('name', None))
         self.interval = interval
         self.function = function
         self.args = args or []
