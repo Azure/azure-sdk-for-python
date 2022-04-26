@@ -14,18 +14,19 @@ from msrest import Deserializer, Serializer
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import MonitorIngestionClientConfiguration
+from ._configuration import MonitorDataCollectionClientConfiguration
 from .operations import DataCollectionRuleOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Dict
 
-class MonitorIngestionClient:
-    """Azure Monitor Ingestion Python Client.
+class MonitorDataCollectionClient:
+    """Azure Monitor Data Collection Python Client.
 
     :ivar data_collection_rule: DataCollectionRuleOperations operations
-    :vartype data_collection_rule: monitor_ingestion_client.operations.DataCollectionRuleOperations
+    :vartype data_collection_rule:
+     monitor_data_collection_client.operations.DataCollectionRuleOperations
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule, for example
      https://dce-name.eastus-2.ingest.monitor.azure.com.
     :type endpoint: str
@@ -40,7 +41,7 @@ class MonitorIngestionClient:
         **kwargs: Any
     ) -> None:
         _endpoint = '{endpoint}'
-        self._config = MonitorIngestionClientConfiguration(endpoint=endpoint, **kwargs)
+        self._config = MonitorDataCollectionClientConfiguration(endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -86,7 +87,7 @@ class MonitorIngestionClient:
         self._client.close()
 
     def __enter__(self):
-        # type: () -> MonitorIngestionClient
+        # type: () -> MonitorDataCollectionClient
         self._client.__enter__()
         return self
 
