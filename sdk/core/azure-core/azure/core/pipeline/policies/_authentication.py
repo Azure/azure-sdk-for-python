@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
-class _HttpChallenge(object):
+class _HttpChallenge(object):  # pylint:disable=too-few-public-methods
     """Represents a parsed HTTP WWW-Authentication Bearer challenge from a server."""
 
     def __init__(self, request_uri, challenge):
