@@ -445,16 +445,11 @@ class WebSocketTransportAsync(WebSocketTransport):
                     )
 
     async def _write(self, s):
-        """Completely write a string to the peer."""
-        try:
-            """
-            ABNF, OPCODE_BINARY = 0x2
-            See http://tools.ietf.org/html/rfc5234
-            http://tools.ietf.org/html/rfc6455#section-5.2
-            """
-            from websocket import ABNF
-            await asyncio.get_event_loop().run_in_executor(
-                    None, self.ws.send, s, ABNF.OPCODE_BINARY
-                    )
-        except ImportError:
-            raise ValueError("Please install websocket-client library to use websocket transport.")
+        """Completely write a string to the peer.
+        ABNF, OPCODE_BINARY = 0x2
+        See http://tools.ietf.org/html/rfc5234
+        http://tools.ietf.org/html/rfc6455#section-5.2
+        """
+        await asyncio.get_event_loop().run_in_executor(
+                None, self.ws.send_binary, s
+                )

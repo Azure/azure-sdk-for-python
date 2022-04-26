@@ -101,8 +101,10 @@ class Connection(object):
         if transport:
             self._transport = transport
         elif 'sasl_credential' in kwargs:
-            func = SASLWithWebSocket if self._transport_type is TransportType.AmqpOverWebsocket else SASLTransport
-            self._transport = func(
+            sasl_transport = SASLWithWebSocket if (
+                self._transport_type is TransportType.AmqpOverWebsocket or kwargs.get("http_proxy")
+                ) else SASLTransport
+            self._transport = sasl_transport(
                 host=parsed_url.netloc,
                 credential=kwargs['sasl_credential'],
                 **kwargs

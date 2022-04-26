@@ -655,7 +655,8 @@ def Transport(host, connect_timeout=None, ssl=False, **kwargs):
     transport_type = kwargs.pop('transport_type')
     if transport_type == TransportType.AmqpOverWebsocket:
         transport = WebSocketTransport
-    transport = SSLTransport if ssl else TCPTransport
+    else:
+        transport = SSLTransport if ssl else TCPTransport
     return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
 class WebSocketTransport(_AbstractTransport):
@@ -719,14 +720,9 @@ class WebSocketTransport(_AbstractTransport):
         self.ws.close()
 
     def _write(self, s):
-        """Completely write a string to the peer."""
-        try:
-            """
-            ABNF, OPCODE_BINARY = 0x2
-            See http://tools.ietf.org/html/rfc5234
-            http://tools.ietf.org/html/rfc6455#section-5.2
-            """
-            from websocket import ABNF
-            self.ws.send(s, opcode=ABNF.OPCODE_BINARY)
-        except ImportError:
-            raise ValueError("Please install websocket-client library to use websocket transport.")
+        """Completely write a string to the peer.
+        ABNF, OPCODE_BINARY = 0x2
+        See http://tools.ietf.org/html/rfc5234
+        http://tools.ietf.org/html/rfc6455#section-5.2
+        """
+        self.ws.send_binary(s)
