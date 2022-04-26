@@ -140,9 +140,6 @@ class AnalyzeBatchInput(JobDescriptor, AnalysisInput, JobManifest):
         super(AnalyzeBatchInput, self).__init__(**kwargs)
         self.tasks = kwargs['tasks']
         self.analysis_input = kwargs['analysis_input']
-        self.tasks = kwargs['tasks']
-        self.display_name = kwargs.get('display_name', None)
-        self.analysis_input = kwargs['analysis_input']
         self.display_name = kwargs.get('display_name', None)
 
 
@@ -454,26 +451,6 @@ class AnalyzeJobState(AnalyzeJobMetadata, TasksState, AnalyzeJobErrorsAndStatist
         """
         super(AnalyzeJobState, self).__init__(**kwargs)
         self.next_link = kwargs.get('next_link', None)
-        self.errors = kwargs.get('errors', None)
-        self.statistics = kwargs.get('statistics', None)
-        self.tasks = kwargs['tasks']
-        self.next_link = kwargs.get('next_link', None)
-        self.errors = kwargs.get('errors', None)
-        self.statistics = kwargs.get('statistics', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.created_date_time = kwargs['created_date_time']
-        self.expiration_date_time = kwargs.get('expiration_date_time', None)
-        self.job_id = kwargs['job_id']
-        self.last_update_date_time = kwargs['last_update_date_time']
-        self.status = kwargs['status']
-        self.next_link = kwargs.get('next_link', None)
-        self.tasks = kwargs['tasks']
-        self.display_name = kwargs.get('display_name', None)
-        self.created_date_time = kwargs['created_date_time']
-        self.expiration_date_time = kwargs.get('expiration_date_time', None)
-        self.job_id = kwargs['job_id']
-        self.last_update_date_time = kwargs['last_update_date_time']
-        self.status = kwargs['status']
         self.errors = kwargs.get('errors', None)
         self.statistics = kwargs.get('statistics', None)
         self.tasks = kwargs['tasks']
@@ -2494,14 +2471,6 @@ class HealthcareJobState(JobMetadata, Pagination, HealthcareTaskResult):
         super(HealthcareJobState, self).__init__(**kwargs)
         self.results = kwargs.get('results', None)
         self.errors = kwargs.get('errors', None)
-        self.next_link = kwargs.get('next_link', None)
-        self.results = kwargs.get('results', None)
-        self.errors = kwargs.get('errors', None)
-        self.created_date_time = kwargs['created_date_time']
-        self.expiration_date_time = kwargs.get('expiration_date_time', None)
-        self.job_id = kwargs['job_id']
-        self.last_update_date_time = kwargs['last_update_date_time']
-        self.status = kwargs['status']
         self.next_link = kwargs.get('next_link', None)
         self.created_date_time = kwargs['created_date_time']
         self.expiration_date_time = kwargs.get('expiration_date_time', None)
