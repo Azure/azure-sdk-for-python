@@ -7,18 +7,18 @@ import functools
 import json
 import os
 
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpRequest, RequestsTransport
+from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
 from azure.keyvault.keys import KeyReleasePolicy
 from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
 from devtools_testutils import AzureRecordedTestCase
 import pytest
 
 
-def get_attestation_token(attestation_uri):
+async def get_attestation_token(attestation_uri):
     request = HttpRequest("GET", "{}/generate-test-token".format(attestation_uri))
-    with Pipeline(transport=RequestsTransport()) as pipeline:
-        response = pipeline.run(request)
+    async with AsyncPipeline(transport=AioHttpTransport()) as pipeline:
+        response = await pipeline.run(request)
         return json.loads(response.http_response.text())["token"]
 
 

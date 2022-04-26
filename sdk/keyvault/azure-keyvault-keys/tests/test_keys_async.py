@@ -516,7 +516,7 @@ class TestKeyVaultKey(KeyVaultTestCase):
     async def test_key_release(self, client, **kwargs):
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
-        attestation = get_attestation_token(attestation_uri)
+        attestation = await get_attestation_token(attestation_uri)
         release_policy = get_release_policy(attestation_uri)
 
         rsa_key_name = self.get_resource_name("rsa-key-name")
@@ -535,8 +535,9 @@ class TestKeyVaultKey(KeyVaultTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_imported_key_release(self, client, **kwargs):
+        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
-        attestation = get_attestation_token(attestation_uri)
+        attestation = await get_attestation_token(attestation_uri)
         release_policy = get_release_policy(attestation_uri)
 
         imported_key_name = self.get_resource_name("imported-key-name")
