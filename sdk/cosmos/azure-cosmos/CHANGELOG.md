@@ -4,6 +4,8 @@
 
 #### Other Changes
  - Deprecated offer-named methods in favor of their new throughput-named counterparts (`read_offer` -> `read_throughput`).
+ - Added samples showing how to configure retry options for both the sync and async clients.
+ - Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
 
 ### 4.3.0b4 (2022-04-07)
 

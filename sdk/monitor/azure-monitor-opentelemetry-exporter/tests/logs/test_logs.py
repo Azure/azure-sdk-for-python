@@ -9,7 +9,7 @@ from unittest import mock
 # pylint: disable=import-error
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.sdk import _logs
-from opentelemetry.sdk.util.instrumentation import InstrumentationInfo
+from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk._logs.export import LogExportResult
 from opentelemetry.sdk._logs.severity import SeverityNumber
@@ -20,7 +20,10 @@ from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
     _get_log_export_result,
     _get_severity_level,
 )
-from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
+from azure.monitor.opentelemetry.exporter._utils import (
+    azure_monitor_context,
+    ns_to_iso_str,
+)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -49,7 +52,6 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_text = "WARNING",
                 trace_flags = None,
                 severity_number = SeverityNumber.WARN,
-                name = None,
                 body = "Test message",
                 resource = Resource.create(
                     attributes={"asd":"test_resource"}
@@ -58,7 +60,7 @@ class TestAzureLogExporter(unittest.TestCase):
                     "test": "attribute"
                 },
             ),
-            InstrumentationInfo("test_name"),
+            InstrumentationScope("test_name"),
         )
         cls._exc_data = _logs.LogData(
             _logs.LogRecord(
@@ -68,7 +70,6 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_text = "EXCEPTION",
                 trace_flags = None,
                 severity_number = SeverityNumber.FATAL,
-                name = None,
                 body = "Test message",
                 resource = Resource.create(
                     attributes={"asd":"test_resource"}
@@ -80,7 +81,7 @@ class TestAzureLogExporter(unittest.TestCase):
                     SpanAttributes.EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
                 },
             ),
-            InstrumentationInfo("test_name"),
+            InstrumentationScope("test_name"),
         )
 
     @classmethod
@@ -200,6 +201,8 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data)
         record = self._log_data.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
         self.assertEqual(envelope.data.base_type, 'MessageData')
         self.assertEqual(envelope.data.base_data.message, record.body)
         self.assertEqual(envelope.data.base_data.severity_level, 2)
@@ -208,6 +211,9 @@ class TestAzureLogExporter(unittest.TestCase):
     def test_log_to_envelope_exception(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
+        record = self._log_data.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
         self.assertEqual(envelope.data.base_type, 'ExceptionData')
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
