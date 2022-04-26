@@ -377,7 +377,7 @@ def test_multitenant_policy_disable_tenant_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(get_token=Mock(wraps=get_token))
-        policy = MultitenantCredentialPolicy(credential, "scope", enable_tenant_discovery=False)
+        policy = MultitenantCredentialPolicy(credential, "scope", discover_tenant=False)
         pipeline = Pipeline(policies=[policy], transport=Mock(send=send))
         pipeline.run(http_request("GET", "https://localhost"))
 
@@ -437,7 +437,7 @@ def test_multitenant_policy_disable_scopes_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(get_token=Mock(wraps=get_token))
-        policy = MultitenantCredentialPolicy(credential, "scope", enable_scopes_discovery=False)
+        policy = MultitenantCredentialPolicy(credential, "scope", discover_scopes=False)
         pipeline = Pipeline(policies=[policy], transport=Mock(send=send))
         pipeline.run(http_request("GET", "https://localhost"))
 
@@ -489,7 +489,7 @@ def test_multitenant_policy_disable_any_discovery(http_request):
 
         credential = Mock(get_token=Mock(wraps=get_token))
         policy = MultitenantCredentialPolicy(
-            credential, "scope", enable_tenant_discovery=False, enable_scopes_discovery=False
+            credential, "scope", discover_tenant=False, discover_scopes=False
         )
         pipeline = Pipeline(policies=[policy], transport=Mock(send=send))
         pipeline.run(http_request("GET", "https://localhost"))

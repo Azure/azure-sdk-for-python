@@ -139,15 +139,22 @@ class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
-    :keyword bool enable_tenant_discovery: Determines if tenant discovery should be enabled. Defaults to True.
-    :keyword bool enable_scopes_discovery: Determines if scopes from authentication challenges should be provided to
-        token requests, instead of the scopes given to the policy's constructor. Defaults to True.
+    :keyword bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
+    :keyword bool discover_scopes: Determines if scopes from authentication challenges should be provided to token
+        requests, instead of the scopes given to the policy's constructor. Defaults to True.
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any") -> None:
-        self._discover_tenant = kwargs.pop("enable_tenant_discovery", True)
-        self._discover_scopes = kwargs.pop("enable_scopes_discovery", True)
+    def __init__(
+        self,
+        credential: "AsyncTokenCredential",
+        *scopes: str,
+        discover_tenant: bool = True,
+        discover_scopes: bool = True,
+        **kwargs: "Any"
+    ) -> None:
+        self._discover_tenant = discover_tenant
+        self._discover_scopes = discover_scopes
         super().__init__(credential, *scopes, **kwargs)
 
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
@@ -162,7 +169,7 @@ class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         try:
             challenge = _HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            scope = challenge.get_scope() or challenge.get_resource() + "/.default"
+            scope = challenge.scope or challenge.resource + "/.default"
         except ValueError:
             return False
 
