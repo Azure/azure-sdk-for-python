@@ -659,11 +659,11 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_explicit_set_string_index_type(self, client):
         def callback(response):
-            assert response.http_request.query["stringIndexType"] == "TextElements_v8"
+            assert response.http_request.query["stringIndexType"] == "TextElement_v8"
 
         res = client.recognize_linked_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8",
+            string_index_type="TextElement_v8",
             raw_response_hook=callback
         )
 
@@ -676,7 +676,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
         res = client.recognize_linked_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8",
+            string_index_type="TextElement_v8",
             raw_response_hook=callback
         )
 

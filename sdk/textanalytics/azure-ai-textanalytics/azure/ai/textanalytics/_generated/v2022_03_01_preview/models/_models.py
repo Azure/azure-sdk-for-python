@@ -1150,8 +1150,8 @@ class CustomTaskParameters(TaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
     }
 
     def __init__(
@@ -1197,8 +1197,8 @@ class CustomEntitiesTaskParameters(CustomTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -1563,8 +1563,8 @@ class CustomMultiLabelClassificationTaskParameters(CustomTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
     }
 
     def __init__(
@@ -1862,8 +1862,8 @@ class CustomSingleLabelClassificationTaskParameters(CustomTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
     }
 
     def __init__(

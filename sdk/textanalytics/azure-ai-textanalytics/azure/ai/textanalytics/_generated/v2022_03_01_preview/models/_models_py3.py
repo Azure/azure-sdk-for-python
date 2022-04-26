@@ -954,8 +954,8 @@ class CustomResult(msrest.serialization.Model):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
     }
 
     def __init__(
@@ -1014,8 +1014,8 @@ class CustomEntitiesResult(CustomResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[CustomEntitiesResultDocumentsItem]'},
     }
 
@@ -1245,8 +1245,8 @@ class CustomTaskParameters(TaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
     }
 
     def __init__(
@@ -1296,8 +1296,8 @@ class CustomEntitiesTaskParameters(CustomTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -1534,8 +1534,8 @@ class CustomMultiLabelClassificationResult(CustomResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[CustomMultiLabelClassificationResultDocumentsItem]'},
     }
 
@@ -1696,8 +1696,8 @@ class CustomMultiLabelClassificationTaskParameters(CustomTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
     }
 
     def __init__(
@@ -1861,8 +1861,8 @@ class CustomSingleLabelClassificationResult(CustomResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[CustomSingleLabelClassificationResultDocumentsItem]'},
     }
 
@@ -2023,8 +2023,8 @@ class CustomSingleLabelClassificationTaskParameters(CustomTaskParameters):
 
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
-        'project_name': {'key': 'projectName', 'type': 'str'},
-        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
+        'project_name': {'key': 'project-name', 'type': 'str'},
+        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
     }
 
     def __init__(

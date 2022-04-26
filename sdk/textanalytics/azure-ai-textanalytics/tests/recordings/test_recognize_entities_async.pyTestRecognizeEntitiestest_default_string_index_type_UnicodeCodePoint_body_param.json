@@ -27,14 +27,14 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "7a2253b2-a7e4-4946-8857-cc702f66c137",
+        "apim-request-id": "4b65bde7-c56d-4874-9529-70240157334e",
         "Content-Length": "140",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1",
-        "Date": "Wed, 13 Apr 2022 00:23:11 GMT",
+        "Date": "Mon, 25 Apr 2022 22:49:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "21"
+        "x-envoy-upstream-service-time": "18"
       },
       "ResponseBody": {
         "kind": "EntityRecognitionResults",

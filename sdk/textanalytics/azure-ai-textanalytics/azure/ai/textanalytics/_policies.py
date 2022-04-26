@@ -31,9 +31,9 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
             if self._is_lro and (not data or data.get("status") not in _FINISHED):
                 return
             if data:
-                data = data.get("results", data)  # language API compat
-                statistics = data.get("statistics", None)
-                model_version = data.get("modelVersion", None)
+                inner = data.get("results", data)  # language API compat
+                statistics = inner.get("statistics", None)
+                model_version = inner.get("modelVersion", None)
 
                 if statistics or model_version:
                     batch_statistics = TextDocumentBatchStatistics._from_generated(  # pylint: disable=protected-access

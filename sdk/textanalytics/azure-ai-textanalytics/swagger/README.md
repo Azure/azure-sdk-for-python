@@ -78,7 +78,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_2022_03_01_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_2022_03_01_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/dev-cognitiveservices-Language-2022-03-01-preview/specification/cognitiveservices/data-plane/Language/preview/2022-03-01-preview/textanalytics.json
+input-file: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/swagger/textanalytics.json
 namespace: azure.ai.textanalytics.v2022_03_01_preview
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_03_01_preview
 ```
