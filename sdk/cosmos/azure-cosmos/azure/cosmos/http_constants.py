@@ -269,18 +269,9 @@ class CookieHeaders(object):
 class Versions(object):
     """Constants of versions.
     """
-    current_version = "2018-12-31"
-    SDK_name = "azure-cosmos"
-    query_version = "1.0"
-    api_versions = [
-        "2018-06-18",  # multi-master and partition migration
-        "2018-08-31",  # throughput-split
-        "2018-09-17",  # IndexV2/ updated policy (composite and additional spatial indexes)
-        "2018-12-31",  # non-partitioned collection deprecation and migration of existing collections
-        "2019-10-14",  # Merge support in SDK
-        "2020-07-15",  # Sub-partitioned collections
-        "2020-11-05",  # Materialized views
-    ]
+    CurrentVersion = "2018-12-31"
+    SDKName = "azure-cosmos"
+    QueryVersion = "1.0"
 
 
 class Delimiters(object):
