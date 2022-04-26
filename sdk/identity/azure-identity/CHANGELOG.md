@@ -1,12 +1,12 @@
 # Release History
 
-## 1.10.0b2 (Unreleased)
-
-### Features Added
+## 1.10.0 (Unreleased)
 
 ### Breaking Changes
 
-### Bugs Fixed
+> These changes do not impact the API of stable versions such as 1.9.0.
+> Only code written against a beta version such as 1.10.0b1 may be affected.
+- `validate_authority` support is not available in 1.10.0.
 
 ### Other Changes
 
@@ -26,6 +26,8 @@
 
 ### Breaking Changes
 
+> These changes do not impact the API of stable versions such as 1.8.0.
+> Only code written against a beta version such as 1.9.0b1 may be affected.
 - `validate_authority` support is not available in 1.9.0.
 
 ### Bugs Fixed
