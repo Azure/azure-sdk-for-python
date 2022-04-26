@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from azure.core.pipeline import AsyncPipeline
@@ -65,6 +65,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
          shared access key, or an instance of a TokenCredentials class from azure.identity.
          If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
          - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+     :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -91,15 +94,15 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             **kwargs)
         # to override the class field _container_client sync version
         kwargs.pop('_hosts', None)
-        self._container_client = ContainerClient(self._blob_account_url, file_system_name,
+        self._container_client = ContainerClient(self._blob_account_url, self.file_system_name,
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url,
-                                                   file_system=file_system_name, pipeline=self._pipeline)
+                                                   file_system=self.file_system_name, pipeline=self._pipeline)
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
                                                                                base_url=self._container_client.url,
-                                                                               file_system=file_system_name,
+                                                                               file_system=self.file_system_name,
                                                                                pipeline=self._pipeline)
         api_version = get_api_version(kwargs)
         self._client._config.version = api_version  # pylint: disable=protected-access
@@ -208,28 +211,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
                                                              **kwargs)
-
-    @distributed_trace_async
-    async def create_if_not_exists(self, **kwargs):
-        # type: (Any) -> None
-        """Creates a new file system under the specified account.
-
-        If the file system with the same name already exists, it is not changed.
-
-        :keyword Dict(str,str) metadata:
-            A dict with name-value pairs to associate with the
-            file system as metadata. Example: `{'Category':'test'}`
-        :keyword public_access:
-            To specify whether data in the file system may be accessed publicly and the level of access.
-        :type public_access: ~azure.storage.filedatalake.PublicAccess
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :rtype: None
-        """
-        try:
-            return await self.create_file_system(**kwargs)
-        except ResourceExistsError:
-            return None
 
     @distributed_trace_async
     async def exists(self, **kwargs):

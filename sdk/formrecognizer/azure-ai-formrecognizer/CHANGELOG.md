@@ -1,8 +1,16 @@
 # Release History
 
-## 3.2.0b4 (Unreleased)
+## 3.2.0b5 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 3.2.0b4 (2022-04-05)
 
 ### Breaking Changes
 - Renamed `begin_copy_model()` to `begin_copy_model_to()`.
