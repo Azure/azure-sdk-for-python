@@ -61,7 +61,7 @@ def sample_conv_pii_transcript_input():
                                     text="It is john doe.",
                                     lexical="It is john doe",
                                     itn="It is john doe",
-                                    maskedItn="It is john doe",
+                                    masked_itn="It is john doe",
                                 ),
                                 TranscriptConversationItem(
                                     id=2,
@@ -69,14 +69,14 @@ def sample_conv_pii_transcript_input():
                                     text="Yes, 633-27-8199 is my phone",
                                     lexical="yes six three three two seven eight one nine nine is my phone",
                                     itn="yes 633278199 is my phone",
-                                    maskedItn="yes 633278199 is my phone",
+                                    masked_itn="yes 633278199 is my phone",
                                 ),
                                 TranscriptConversationItem(
                                     id=3,
                                     participant_id=1,
                                     text="j.doe@yahoo.com is my email",
                                     lexical="j dot doe at yahoo dot com is my email",
-                                    maskedItn="j.doe@yahoo.com is my email",
+                                    masked_itn="j.doe@yahoo.com is my email",
                                     itn="j.doe@yahoo.com is my email",
                                 )
                             ]
