@@ -154,7 +154,7 @@ directive:
         delete $.properties["stringIndexType"]
 ```
 
-## Temporary changes
+## Fix Swagger/API mismatch errors
 
 ### Change api version
 
@@ -164,4 +164,24 @@ directive:
       where: $["info"]
       transform: >
           $["version"] = "2022-04-01-preview";
+```
+
+### Invalid urls
+
+### Mismatching task types
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnalyzeConversationSummarizationTask"]
+      transform: >
+        $["x-ms-discriminator-value"] = "IssueResolutionSummarization";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnalyzeConversationPIITask"]
+      transform: >
+        $["x-ms-discriminator-value"] = "ConversationPII";
 ```

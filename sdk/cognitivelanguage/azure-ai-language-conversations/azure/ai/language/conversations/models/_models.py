@@ -624,7 +624,7 @@ class AnalyzeConversationLROTask(TaskIdentifier):
     }
 
     _subtype_map = {
-        'kind': {'ConversationalPIITask': 'AnalyzeConversationPIITask', 'ConversationalSummarizationTask': 'AnalyzeConversationSummarizationTask'}
+        'kind': {'ConversationPII': 'AnalyzeConversationPIITask', 'IssueResolutionSummarization': 'AnalyzeConversationSummarizationTask'}
     }
 
     def __init__(
@@ -743,7 +743,7 @@ class AnalyzeConversationPIITask(AnalyzeConversationLROTask):
         :paramtype parameters: ~azure.ai.language.conversations.models.ConversationPIITaskParameters
         """
         super(AnalyzeConversationPIITask, self).__init__(task_name=task_name, **kwargs)
-        self.kind = 'ConversationalPIITask'  # type: str
+        self.kind = 'ConversationPII'  # type: str
         self.parameters = parameters
 
 
@@ -896,7 +896,7 @@ class AnalyzeConversationSummarizationTask(AnalyzeConversationLROTask):
          ~azure.ai.language.conversations.models.ConversationSummarizationTaskParameters
         """
         super(AnalyzeConversationSummarizationTask, self).__init__(task_name=task_name, **kwargs)
-        self.kind = 'ConversationalSummarizationTask'  # type: str
+        self.kind = 'IssueResolutionSummarization'  # type: str
         self.parameters = parameters
 
 
