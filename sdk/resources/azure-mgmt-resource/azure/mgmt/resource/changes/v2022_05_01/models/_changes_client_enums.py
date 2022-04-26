@@ -19,8 +19,6 @@ class ChangeCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     USER = "User"
     #: System initiated change.
     SYSTEM = "System"
-    #: A newly created resource.
-    CREATE = "Create"
 
 class ChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of change that was captured in the resource
@@ -28,6 +26,8 @@ class ChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     #: An existing resource underwent a change.
     UPDATE = "Update"
+    #: An existing resource was deleted.
+    DELETE = "Delete"
     #: A newly created resource.
     CREATE = "Create"
 
