@@ -28,23 +28,23 @@ class ConfluentAgreementResource(msrest.serialization.Model):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.confluent.models.SystemData
-    :param publisher: Publisher identifier string.
-    :type publisher: str
-    :param product: Product identifier string.
-    :type product: str
-    :param plan: Plan identifier string.
-    :type plan: str
-    :param license_text_link: Link to HTML with Microsoft and Publisher terms.
-    :type license_text_link: str
-    :param privacy_policy_link: Link to the privacy policy of the publisher.
-    :type privacy_policy_link: str
-    :param retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
-     if Accepted is false.
-    :type retrieve_datetime: ~datetime.datetime
-    :param signature: Terms signature.
-    :type signature: str
-    :param accepted: If any version of the terms have been accepted, otherwise false.
-    :type accepted: bool
+    :ivar publisher: Publisher identifier string.
+    :vartype publisher: str
+    :ivar product: Product identifier string.
+    :vartype product: str
+    :ivar plan: Plan identifier string.
+    :vartype plan: str
+    :ivar license_text_link: Link to HTML with Microsoft and Publisher terms.
+    :vartype license_text_link: str
+    :ivar privacy_policy_link: Link to the privacy policy of the publisher.
+    :vartype privacy_policy_link: str
+    :ivar retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty if
+     Accepted is false.
+    :vartype retrieve_datetime: ~datetime.datetime
+    :ivar signature: Terms signature.
+    :vartype signature: str
+    :ivar accepted: If any version of the terms have been accepted, otherwise false.
+    :vartype accepted: bool
     """
 
     _validation = {
@@ -82,6 +82,25 @@ class ConfluentAgreementResource(msrest.serialization.Model):
         accepted: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword publisher: Publisher identifier string.
+        :paramtype publisher: str
+        :keyword product: Product identifier string.
+        :paramtype product: str
+        :keyword plan: Plan identifier string.
+        :paramtype plan: str
+        :keyword license_text_link: Link to HTML with Microsoft and Publisher terms.
+        :paramtype license_text_link: str
+        :keyword privacy_policy_link: Link to the privacy policy of the publisher.
+        :paramtype privacy_policy_link: str
+        :keyword retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
+         if Accepted is false.
+        :paramtype retrieve_datetime: ~datetime.datetime
+        :keyword signature: Terms signature.
+        :paramtype signature: str
+        :keyword accepted: If any version of the terms have been accepted, otherwise false.
+        :paramtype accepted: bool
+        """
         super(ConfluentAgreementResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -100,10 +119,10 @@ class ConfluentAgreementResource(msrest.serialization.Model):
 class ConfluentAgreementResourceListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~azure.mgmt.confluent.models.ConfluentAgreementResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.confluent.models.ConfluentAgreementResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -118,6 +137,12 @@ class ConfluentAgreementResourceListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.confluent.models.ConfluentAgreementResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(ConfluentAgreementResourceListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -156,6 +181,8 @@ class ErrorResponseBody(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponseBody, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -166,22 +193,24 @@ class ErrorResponseBody(msrest.serialization.Model):
 class OfferDetail(msrest.serialization.Model):
     """Confluent Offer detail.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param publisher_id: Required. Publisher Id.
-    :type publisher_id: str
-    :param id: Required. Offer Id.
-    :type id: str
-    :param plan_id: Required. Offer Plan Id.
-    :type plan_id: str
-    :param plan_name: Required. Offer Plan Name.
-    :type plan_name: str
-    :param term_unit: Required. Offer Plan Term unit.
-    :type term_unit: str
-    :param status: SaaS Offer Status. Possible values include: "Started",
-     "PendingFulfillmentStart", "InProgress", "Subscribed", "Suspended", "Reinstated", "Succeeded",
-     "Failed", "Unsubscribed", "Updating".
-    :type status: str or ~azure.mgmt.confluent.models.SaaSOfferStatus
+    :ivar publisher_id: Required. Publisher Id.
+    :vartype publisher_id: str
+    :ivar id: Required. Offer Id.
+    :vartype id: str
+    :ivar plan_id: Required. Offer Plan Id.
+    :vartype plan_id: str
+    :ivar plan_name: Required. Offer Plan Name.
+    :vartype plan_name: str
+    :ivar term_unit: Required. Offer Plan Term unit.
+    :vartype term_unit: str
+    :ivar status: SaaS Offer Status. Possible values include: "Started", "PendingFulfillmentStart",
+     "InProgress", "Subscribed", "Suspended", "Reinstated", "Succeeded", "Failed", "Unsubscribed",
+     "Updating".
+    :vartype status: str or ~azure.mgmt.confluent.models.SaaSOfferStatus
     """
 
     _validation = {
@@ -190,6 +219,7 @@ class OfferDetail(msrest.serialization.Model):
         'plan_id': {'required': True, 'max_length': 50, 'min_length': 0},
         'plan_name': {'required': True, 'max_length': 50, 'min_length': 0},
         'term_unit': {'required': True, 'max_length': 25, 'min_length': 0},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -209,29 +239,40 @@ class OfferDetail(msrest.serialization.Model):
         plan_id: str,
         plan_name: str,
         term_unit: str,
-        status: Optional[Union[str, "SaaSOfferStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword publisher_id: Required. Publisher Id.
+        :paramtype publisher_id: str
+        :keyword id: Required. Offer Id.
+        :paramtype id: str
+        :keyword plan_id: Required. Offer Plan Id.
+        :paramtype plan_id: str
+        :keyword plan_name: Required. Offer Plan Name.
+        :paramtype plan_name: str
+        :keyword term_unit: Required. Offer Plan Term unit.
+        :paramtype term_unit: str
+        """
         super(OfferDetail, self).__init__(**kwargs)
         self.publisher_id = publisher_id
         self.id = id
         self.plan_id = plan_id
         self.plan_name = plan_name
         self.term_unit = term_unit
-        self.status = status
+        self.status = None
 
 
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Confluent.
-    :type provider: str
-    :param resource: Type on which the operation is performed, e.g., 'clusters'.
-    :type resource: str
-    :param operation: Operation type, e.g., read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation, e.g., 'Write confluent'.
-    :type description: str
+    :ivar provider: Service provider: Microsoft.Confluent.
+    :vartype provider: str
+    :ivar resource: Type on which the operation is performed, e.g., 'clusters'.
+    :vartype resource: str
+    :ivar operation: Operation type, e.g., read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation, e.g., 'Write confluent'.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -250,6 +291,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.Confluent.
+        :paramtype provider: str
+        :keyword resource: Type on which the operation is performed, e.g., 'clusters'.
+        :paramtype resource: str
+        :keyword operation: Operation type, e.g., read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation, e.g., 'Write confluent'.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -260,10 +311,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of GET request to list Confluent operations.
 
-    :param value: List of Confluent operations supported by the Microsoft.Confluent provider.
-    :type value: list[~azure.mgmt.confluent.models.OperationResult]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of Confluent operations supported by the Microsoft.Confluent provider.
+    :vartype value: list[~azure.mgmt.confluent.models.OperationResult]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -278,6 +329,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Confluent operations supported by the Microsoft.Confluent provider.
+        :paramtype value: list[~azure.mgmt.confluent.models.OperationResult]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -286,12 +343,12 @@ class OperationListResult(msrest.serialization.Model):
 class OperationResult(msrest.serialization.Model):
     """An Confluent REST API operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.confluent.models.OperationDisplay
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.confluent.models.OperationDisplay
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
     """
 
     _attribute_map = {
@@ -308,6 +365,14 @@ class OperationResult(msrest.serialization.Model):
         is_data_action: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.confluent.models.OperationDisplay
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        """
         super(OperationResult, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -329,10 +394,10 @@ class OrganizationResource(msrest.serialization.Model):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.confluent.models.SystemData
-    :param tags: A set of tags. Organization resource tags.
-    :type tags: dict[str, str]
-    :param location: Location of Organization resource.
-    :type location: str
+    :ivar tags: A set of tags. Organization resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Location of Organization resource.
+    :vartype location: str
     :ivar created_time: The creation time of the resource.
     :vartype created_time: ~datetime.datetime
     :ivar provisioning_state: Provision states for confluent RP. Possible values include:
@@ -343,10 +408,10 @@ class OrganizationResource(msrest.serialization.Model):
     :vartype organization_id: str
     :ivar sso_url: SSO url for the Confluent organization.
     :vartype sso_url: str
-    :param offer_detail: Required. Confluent offer detail.
-    :type offer_detail: ~azure.mgmt.confluent.models.OfferDetail
-    :param user_detail: Required. Subscriber detail.
-    :type user_detail: ~azure.mgmt.confluent.models.UserDetail
+    :ivar offer_detail: Required. Confluent offer detail.
+    :vartype offer_detail: ~azure.mgmt.confluent.models.OfferDetail
+    :ivar user_detail: Required. Subscriber detail.
+    :vartype user_detail: ~azure.mgmt.confluent.models.UserDetail
     """
 
     _validation = {
@@ -386,6 +451,16 @@ class OrganizationResource(msrest.serialization.Model):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Organization resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Location of Organization resource.
+        :paramtype location: str
+        :keyword offer_detail: Required. Confluent offer detail.
+        :paramtype offer_detail: ~azure.mgmt.confluent.models.OfferDetail
+        :keyword user_detail: Required. Subscriber detail.
+        :paramtype user_detail: ~azure.mgmt.confluent.models.UserDetail
+        """
         super(OrganizationResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -404,10 +479,10 @@ class OrganizationResource(msrest.serialization.Model):
 class OrganizationResourceListResult(msrest.serialization.Model):
     """The response of a list operation.
 
-    :param value: Result of a list operation.
-    :type value: list[~azure.mgmt.confluent.models.OrganizationResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Result of a list operation.
+    :vartype value: list[~azure.mgmt.confluent.models.OrganizationResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -422,6 +497,12 @@ class OrganizationResourceListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Result of a list operation.
+        :paramtype value: list[~azure.mgmt.confluent.models.OrganizationResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(OrganizationResourceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -430,8 +511,8 @@ class OrganizationResourceListResult(msrest.serialization.Model):
 class OrganizationResourceUpdate(msrest.serialization.Model):
     """Organization Resource update.
 
-    :param tags: A set of tags. ARM resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. ARM resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -444,6 +525,10 @@ class OrganizationResourceUpdate(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. ARM resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(OrganizationResourceUpdate, self).__init__(**kwargs)
         self.tags = tags
 
@@ -469,6 +554,8 @@ class ResourceProviderDefaultErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ResourceProviderDefaultErrorResponse, self).__init__(**kwargs)
         self.error = None
 
@@ -476,20 +563,20 @@ class ResourceProviderDefaultErrorResponse(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -512,6 +599,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -526,12 +629,12 @@ class UserDetail(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param first_name: First name.
-    :type first_name: str
-    :param last_name: Last name.
-    :type last_name: str
-    :param email_address: Required. Email address.
-    :type email_address: str
+    :ivar first_name: First name.
+    :vartype first_name: str
+    :ivar last_name: Last name.
+    :vartype last_name: str
+    :ivar email_address: Required. Email address.
+    :vartype email_address: str
     """
 
     _validation = {
@@ -554,6 +657,14 @@ class UserDetail(msrest.serialization.Model):
         last_name: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword first_name: First name.
+        :paramtype first_name: str
+        :keyword last_name: Last name.
+        :paramtype last_name: str
+        :keyword email_address: Required. Email address.
+        :paramtype email_address: str
+        """
         super(UserDetail, self).__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
