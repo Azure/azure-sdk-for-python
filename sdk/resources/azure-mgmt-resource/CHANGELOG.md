@@ -1,7 +1,10 @@
 # Release History
 
-## 0.0.0 (2022-04-26)
+## 21.1.0 (2022-04-26)
 
+**Features**
+
+  - Model ChangeBase.change_category remove the enum Create.
 
 
 ## 21.1.0b1 (2022-04-19)
