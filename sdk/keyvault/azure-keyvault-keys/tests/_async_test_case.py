@@ -89,7 +89,8 @@ class AsyncKeysClientPreparer(AzureRecordedTestCase):
                 kwargs.update({"logging_enable": False})
             endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
             client = self.create_key_client(endpoint_url, api_version=api_version, **kwargs)
-            await fn(test_class, client, is_hsm=is_hsm, managed_hsm_url = self.managed_hsm_url, vault_url = self.vault_url)
+            async with client:
+                await fn(test_class, client, is_hsm=is_hsm, managed_hsm_url = self.managed_hsm_url, vault_url = self.vault_url)
 
         return _preparer
         
