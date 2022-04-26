@@ -106,7 +106,7 @@ The following sections provide several code snippets covering some of the most c
 ### Encoding
 
 Use the `AvroEncoder.encode` method to encode content with the given Avro schema.
-The method will use a schema previously registered to the Schema Registry service and keep the schema cached for future encoding usage. In order to avoid pre-registering the schema to the service and automatically register with the `encode` method, the keyword argument `auto_register=True` should be passed to the `AvroEncoder` constructor.
+The method will use a schema previously registered to the Schema Registry service and keep the schema cached for future encoding usage. In order to avoid pre-registering the schema to the service and automatically register it with the `encode` method, the keyword argument `auto_register=True` should be passed to the `AvroEncoder` constructor.
 
 ```python
 import os
@@ -261,7 +261,7 @@ with eventhub_consumer, avro_encoder:
 
 ### General
 
-Azure Schema Registry Avro Encoder raises exceptions defined in [Azure Core][azure_core] if errors are encountered when communicating with the Schema Registry service. Errors related to invalid content and content types will be raised as `azure.schemaregistry.encoder.avroencoder.InvalidContentError`, where `__cause__` will contain the underlying exception raised by the Apache Avro library. Errors related to invalid schema will be raised as `azure.schemaregistry.encoder.avroencoder.InvalidSchemaError`, where `__cause__` will contain the underlying exception raised by the Apache Avro library.
+Azure Schema Registry Avro Encoder raises exceptions defined in [Azure Core][azure_core] if errors are encountered when communicating with the Schema Registry service. Errors related to invalid content/content types and invalid schemas will be raised as `azure.schemaregistry.encoder.avroencoder.InvalidContentError` and `azure.schemaregistry.encoder.avroencoder.InvalidSchemaError`, respectively, where `__cause__` will contain the underlying exception raised by the Apache Avro library.
 
 ### Logging
 This library uses the standard

@@ -36,7 +36,7 @@ class MessageType(Protocol):
 
     def __message_content__(self) -> MessageContent:
         """
-        A MessageContent object, with `content` and `content_type` values set to
+        A MessageContent object, with `content` and `content_type` set to
          the values of their respective properties on the MessageType object.
 
         :rtype: ~azure.schemaregistry.encoder.avroencoder.MessageContent

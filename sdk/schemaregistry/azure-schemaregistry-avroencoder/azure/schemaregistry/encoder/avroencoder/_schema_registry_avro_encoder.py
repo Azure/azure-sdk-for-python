@@ -61,10 +61,11 @@ class AvroEncoder(object):
     AvroEncoder provides the ability to encode and decode content according
     to the given avro schema. It would automatically register, get and cache the schema.
 
-    :keyword client: Required. The schema registry client
-     which is used to register schema and retrieve schema from the service.
+    :keyword client: Required. The schema registry client which is used to register schema
+     and retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
-    :keyword Optional[str] group_name: Schema group under which schema should be registered.
+    :keyword Optional[str] group_name: Required for encoding. Not used for decoding.
+     Schema group under which schema should be registered.
     :keyword bool auto_register: When true, register new schemas passed to encode.
      Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
 
@@ -200,7 +201,7 @@ class AvroEncoder(object):
 
         raw_input_schema = schema
         if not self._schema_group:
-            raise TypeError(f"'group_name' cannot be None.")
+            raise TypeError("'group_name' in constructor cannot be None, if encoding.")
         schema_fullname = validate_schema(self._avro_encoder, raw_input_schema)
 
         cache_misses = (

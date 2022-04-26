@@ -28,10 +28,10 @@ FILE: encode_and_decode_with_message_content.py
 DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating a sync SchemaRegistryClient to be used by the AvroEncoder.
-     - Passing in content and schema to the AvroEncoder, to be returned a dict containing
+     - Passing in content and schema to the AvroEncoder, which will return a dict containing
       encoded content and corresponding content type.
      - Passing in a dict containing Avro-encoded content and corresponding content type to
-      the AvroEncoder, to be returned the decoded content.
+      the AvroEncoder, which will return the decoded content.
 USAGE:
     python encode_and_decode_with_message_content.py
     Set the environment variables with your own values before running the sample:

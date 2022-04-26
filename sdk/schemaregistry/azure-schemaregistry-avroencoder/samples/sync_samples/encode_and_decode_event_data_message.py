@@ -28,10 +28,10 @@ FILE: encode_and_decode_event_data_message.py
 DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating a sync SchemaRegistryClient to be used by the AvroEncoder.
-     - Passing in content, schema, and EventData class to the AvroEncoder, to be returned an
+     - Passing in content, schema, and EventData class to the AvroEncoder, which will return an
       EventData object containing encoded content and corresponding content type.
      - Passing in an `EventData` object with `body` set to Avro-encoded content and `content_type`
-      set to corresponding content type to the AvroEncoder, to be returned the decoded content.
+      set to corresponding content type to the AvroEncoder, which will return the decoded content.
 USAGE:
     python encode_and_decode_event_data_message.py
     Set the environment variables with your own values before running the sample:
