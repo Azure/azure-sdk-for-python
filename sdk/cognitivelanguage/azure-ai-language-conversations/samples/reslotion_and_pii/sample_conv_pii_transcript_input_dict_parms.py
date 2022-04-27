@@ -106,28 +106,25 @@ def sample_conv_pii_transcript_input_dict_parms():
             }
         )
 
-        # wait till done
-        poller.result()
-
         # view result
-        result = client.get_conversation_job_status()
+        result = poller.result()
         task_result = result.tasks.items[0]
-        print("... view task status:")
+        print("... view task status ...")
         print("status: {}".format(task_result.status))
         conv_pii_result = task_result.results
         if conv_pii_result.errors:
-            print("... errors occured:")
+            print("... errors occured ...")
             for error in conv_pii_result.errors:
                 print(error)
         conversation_result = conv_pii_result.conversations[0]
         if conversation_result.warnings:
-            print("... view warnings:")
+            print("... view warnings ...")
             for warning in conversation_result.warnings:
                 print(warning)
-        print("... view task result:")
+        print("... view task result ...")
         for conversation in conversation_result.conversation_items:
             print("conversation id: {}".format(conversation.id))
-            print("... entities: ")
+            print("... entities ...")
             for entity in conversation.entities:
                 print("text: {}".format(entity.text))
                 print("category: {}".format(entity.category))

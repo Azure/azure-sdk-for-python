@@ -35,6 +35,7 @@ def sample_conv_pii_transcript_input():
         MultiLanguageConversationAnalysisInput,
         TranscriptConversation,
         TranscriptConversationItem,
+        TranscriptConversationItemContent,
         AnalyzeConversationPIITask,
         ConversationPIITaskParameters
     )
@@ -58,26 +59,32 @@ def sample_conv_pii_transcript_input():
                                 TranscriptConversationItem(
                                     id=1,
                                     participant_id=0,
-                                    text="It is john doe.",
-                                    lexical="It is john doe",
-                                    itn="It is john doe",
-                                    masked_itn="It is john doe",
+                                    content=TranscriptConversationItemContent(
+                                        text="It is john doe.",
+                                        lexical="It is john doe",
+                                        itn="It is john doe",
+                                        masked_itn="It is john doe"
+                                    )
                                 ),
                                 TranscriptConversationItem(
                                     id=2,
                                     participant_id=1,
-                                    text="Yes, 633-27-8199 is my phone",
-                                    lexical="yes six three three two seven eight one nine nine is my phone",
-                                    itn="yes 633278199 is my phone",
-                                    masked_itn="yes 633278199 is my phone",
+                                    content=TranscriptConversationItemContent(
+                                        text="Yes, 633-27-8199 is my phone",
+                                        lexical="yes six three three two seven eight one nine nine is my phone",
+                                        itn="yes 633278199 is my phone",
+                                        masked_itn="yes 633278199 is my phone"
+                                    )
                                 ),
                                 TranscriptConversationItem(
                                     id=3,
                                     participant_id=1,
-                                    text="j.doe@yahoo.com is my email",
-                                    lexical="j dot doe at yahoo dot com is my email",
-                                    masked_itn="j.doe@yahoo.com is my email",
-                                    itn="j.doe@yahoo.com is my email",
+                                    content=TranscriptConversationItemContent(
+                                        text="j.doe@yahoo.com is my email",
+                                        lexical="j dot doe at yahoo dot com is my email",
+                                        masked_itn="j.doe@yahoo.com is my email",
+                                        itn="j.doe@yahoo.com is my email"
+                                    )
                                 )
                             ]
                         )
@@ -93,28 +100,25 @@ def sample_conv_pii_transcript_input():
             )
         )
 
-        # wait till done
-        poller.result()
-
         # view result
-        result = client.get_conversation_job_status()
+        result = poller.result()
         task_result = result.tasks.items[0]
-        print("... view task status:")
+        print("... view task status ...")
         print("status: {}".format(task_result.status))
         conv_pii_result = task_result.results
         if conv_pii_result.errors:
-            print("... errors occured:")
+            print("... errors occured ...")
             for error in conv_pii_result.errors:
                 print(error)
         conversation_result = conv_pii_result.conversations[0]
         if conversation_result.warnings:
-            print("... view warnings:")
+            print("... view warnings ...")
             for warning in conversation_result.warnings:
                 print(warning)
-        print("... view task result:")
+        print("... view task result ...")
         for conversation in conversation_result.conversation_items:
             print("conversation id: {}".format(conversation.id))
-            print("... entities: ")
+            print("... entities ...")
             for entity in conversation.entities:
                 print("text: {}".format(entity.text))
                 print("category: {}".format(entity.category))
