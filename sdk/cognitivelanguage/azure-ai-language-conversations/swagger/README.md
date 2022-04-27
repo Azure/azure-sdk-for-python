@@ -281,3 +281,100 @@ directive:
       transform: >
         $["x-ms-discriminator-value"] = "conversationPIIResults";
 ```
+
+### Fix mis-match in `TranscriptConversationItem` item structure
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["TranscriptConversationItem"]
+      transform: >
+        delete $["properties"]["itn"];
+        delete $["properties"]["maskedItn"];
+        delete $["properties"]["text"];
+        delete $["properties"]["lexical"];
+        delete $["properties"]["audioTimings"];
+        delete $["required"];
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["TranscriptConversationItem"]
+      transform: >
+        $["properties"]["content"] = {
+            "$ref": "#/definitions/TranscriptConversationItemContent"
+          };
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]
+      transform: >
+        $["TranscriptConversationItemContent"] = {
+            "type": "object",
+            "description": "Additional properties for supporting transcript conversation.",
+            "required": [
+                "text",
+                "lexical",
+                "itn",
+                "maskedItn"
+            ],
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "description": "The display form of the recognized text from speech to text API, with punctuation and capitalization added."
+                },
+                "lexical": {
+                    "type": "string",
+                    "description": "The lexical form of the recognized text from speech to text API with the actual words recognized."
+                },
+                "itn": {
+                    "type": "string",
+                    "description": "Inverse Text Normalization representation of input. The inverse-text-normalized form is the recognized text from Microsoft’s Speech to Text API, with phone numbers, numbers, abbreviations, and other transformations applied."
+                },
+                "maskedItn": {
+                    "type": "string",
+                    "description": "The Inverse Text Normalized format with profanity masking applied."
+                },
+                "audioTimings": {
+                    "type": "array",
+                    "description": "The list of word level audio timing information",
+                    "items": {
+                        "$ref": "#/definitions/WordLevelTiming"
+                    }
+                }
+            }
+        };
+```
+
+
+
+<!-- ### Fix `participant name` values
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["TextConversationItem"]
+    transform: >
+        delete $.properties["participantId"]
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["TextConversationItem"]
+      transform: >
+        $["properties"]["participantId"] = {
+            "type": "string",
+            "description": "The participant ID of a conversation item.",
+            "enum": [
+                "Agent",
+                "Customer"
+            ],
+            "x-ms-enum": {
+                "name": "participantIdEnum",
+                "modelAsString": true
+          };
+``` -->

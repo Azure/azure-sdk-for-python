@@ -4430,30 +4430,14 @@ class TranscriptConversationItem(ConversationItemBase):
     :vartype modality: str or ~azure.ai.language.conversations.models.Modality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
-    :ivar itn: Required. Inverse Text Normalization representation of input. The
-     inverse-text-normalized form is the recognized text from Microsoft’s Speech to Text API, with
-     phone numbers, numbers, abbreviations, and other transformations applied.
-    :vartype itn: str
-    :ivar masked_itn: Required. The Inverse Text Normalized format with profanity masking applied.
-    :vartype masked_itn: str
-    :ivar text: Required. The display form of the recognized text from speech to text API, with
-     punctuation and capitalization added.
-    :vartype text: str
-    :ivar lexical: Required. The lexical form of the recognized text from speech to text API with
-     the actual words recognized.
-    :vartype lexical: str
-    :ivar audio_timings: The list of word level audio timing information.
-    :vartype audio_timings: list[~azure.ai.language.conversations.models.WordLevelTiming]
+    :ivar content: Additional properties for supporting transcript conversation.
+    :vartype content: ~azure.ai.language.conversations.models.TranscriptConversationItemContent
     """
 
     _validation = {
         'id': {'required': True},
         'participant_id': {'required': True},
         'modality': {'required': True},
-        'itn': {'required': True},
-        'masked_itn': {'required': True},
-        'text': {'required': True},
-        'lexical': {'required': True},
     }
 
     _attribute_map = {
@@ -4463,11 +4447,7 @@ class TranscriptConversationItem(ConversationItemBase):
         'language': {'key': 'language', 'type': 'str'},
         'modality': {'key': 'modality', 'type': 'str'},
         'role': {'key': 'role', 'type': 'str'},
-        'itn': {'key': 'itn', 'type': 'str'},
-        'masked_itn': {'key': 'maskedItn', 'type': 'str'},
-        'text': {'key': 'text', 'type': 'str'},
-        'lexical': {'key': 'lexical', 'type': 'str'},
-        'audio_timings': {'key': 'audioTimings', 'type': '[WordLevelTiming]'},
+        'content': {'key': 'content', 'type': 'TranscriptConversationItemContent'},
     }
 
     def __init__(
@@ -4475,14 +4455,10 @@ class TranscriptConversationItem(ConversationItemBase):
         *,
         id: str = "1",
         participant_id: str = "1",
-        itn: str,
-        masked_itn: str,
-        text: str,
-        lexical: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         language: Optional[str] = None,
         role: Optional[Union[str, "_models.Role"]] = None,
-        audio_timings: Optional[List["_models.WordLevelTiming"]] = None,
+        content: Optional["_models.TranscriptConversationItemContent"] = None,
         **kwargs
     ):
         """
@@ -4498,6 +4474,67 @@ class TranscriptConversationItem(ConversationItemBase):
         :paramtype language: str
         :keyword role: The role of the participant. Known values are: "agent", "customer", "generic".
         :paramtype role: str or ~azure.ai.language.conversations.models.Role
+        :keyword content: Additional properties for supporting transcript conversation.
+        :paramtype content: ~azure.ai.language.conversations.models.TranscriptConversationItemContent
+        """
+        super(TranscriptConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, role=role, **kwargs)
+        self.modality = 'transcript'  # type: str
+        self.content = content
+
+
+class TranscriptConversationItemContent(msrest.serialization.Model):
+    """Additional properties for supporting transcript conversation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar text: Required. The display form of the recognized text from speech to text API, with
+     punctuation and capitalization added.
+    :vartype text: str
+    :ivar lexical: Required. The lexical form of the recognized text from speech to text API with
+     the actual words recognized.
+    :vartype lexical: str
+    :ivar itn: Required. Inverse Text Normalization representation of input. The
+     inverse-text-normalized form is the recognized text from Microsoft’s Speech to Text API, with
+     phone numbers, numbers, abbreviations, and other transformations applied.
+    :vartype itn: str
+    :ivar masked_itn: Required. The Inverse Text Normalized format with profanity masking applied.
+    :vartype masked_itn: str
+    :ivar audio_timings: The list of word level audio timing information.
+    :vartype audio_timings: list[~azure.ai.language.conversations.models.WordLevelTiming]
+    """
+
+    _validation = {
+        'text': {'required': True},
+        'lexical': {'required': True},
+        'itn': {'required': True},
+        'masked_itn': {'required': True},
+    }
+
+    _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
+        'lexical': {'key': 'lexical', 'type': 'str'},
+        'itn': {'key': 'itn', 'type': 'str'},
+        'masked_itn': {'key': 'maskedItn', 'type': 'str'},
+        'audio_timings': {'key': 'audioTimings', 'type': '[WordLevelTiming]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        text: str,
+        lexical: str,
+        itn: str,
+        masked_itn: str,
+        audio_timings: Optional[List["_models.WordLevelTiming"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword text: Required. The display form of the recognized text from speech to text API, with
+         punctuation and capitalization added.
+        :paramtype text: str
+        :keyword lexical: Required. The lexical form of the recognized text from speech to text API
+         with the actual words recognized.
+        :paramtype lexical: str
         :keyword itn: Required. Inverse Text Normalization representation of input. The
          inverse-text-normalized form is the recognized text from Microsoft’s Speech to Text API, with
          phone numbers, numbers, abbreviations, and other transformations applied.
@@ -4505,21 +4542,14 @@ class TranscriptConversationItem(ConversationItemBase):
         :keyword masked_itn: Required. The Inverse Text Normalized format with profanity masking
          applied.
         :paramtype masked_itn: str
-        :keyword text: Required. The display form of the recognized text from speech to text API, with
-         punctuation and capitalization added.
-        :paramtype text: str
-        :keyword lexical: Required. The lexical form of the recognized text from speech to text API
-         with the actual words recognized.
-        :paramtype lexical: str
         :keyword audio_timings: The list of word level audio timing information.
         :paramtype audio_timings: list[~azure.ai.language.conversations.models.WordLevelTiming]
         """
-        super(TranscriptConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, role=role, **kwargs)
-        self.modality = 'transcript'  # type: str
-        self.itn = itn
-        self.masked_itn = masked_itn
+        super(TranscriptConversationItemContent, self).__init__(**kwargs)
         self.text = text
         self.lexical = lexical
+        self.itn = itn
+        self.masked_itn = masked_itn
         self.audio_timings = audio_timings
 
 

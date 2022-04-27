@@ -95,6 +95,7 @@ from ._models import TextConversation
 from ._models import TextConversationItem
 from ._models import TranscriptConversation
 from ._models import TranscriptConversationItem
+from ._models import TranscriptConversationItemContent
 from ._models import VolumeResolution
 from ._models import WeightResolution
 from ._models import WordLevelTiming
@@ -226,6 +227,7 @@ __all__ = [
     'TextConversationItem',
     'TranscriptConversation',
     'TranscriptConversationItem',
+    'TranscriptConversationItemContent',
     'VolumeResolution',
     'WeightResolution',
     'WordLevelTiming',
