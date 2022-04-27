@@ -35,9 +35,6 @@ only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSIO
 
 
 class TestChallengeAuth(KeyVaultTestCase):
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, match_body=False, **kwargs)
-
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm",only_default_version)
     @AsyncKeysClientPreparer()

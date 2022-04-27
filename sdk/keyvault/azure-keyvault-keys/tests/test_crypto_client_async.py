@@ -12,7 +12,7 @@ from unittest import mock
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import (ApiVersion, JsonWebKey, KeyCurveName,
+from azure.keyvault.keys import (JsonWebKey, KeyCurveName,
                                  KeyOperation, KeyVaultKey)
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import (
