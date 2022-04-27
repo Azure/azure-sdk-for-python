@@ -21,7 +21,6 @@ class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: this is the default version
     V2022_03_01_PREVIEW = "2022-03-01-preview"
-    V3_2_PREVIEW = "v3.2-preview.2"
     V3_1 = "v3.1"
     V3_0 = "v3.0"
 

@@ -20,6 +20,7 @@ credential-scopes: https://cognitiveservices.azure.com/.default
 no-namespace-folders: true
 python: true
 multiapi: true
+python3-only: true
 ```
 
 ## Multiapi Batch Execution
@@ -28,7 +29,6 @@ multiapi: true
 batch:
   - tag: release_3_0
   - tag: release_3_1
-  - tag: release_3_2_preview.2
   - tag: release_2022_03_01_preview
   - multiapiscript: true
 ```
@@ -61,17 +61,6 @@ input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/sp
 namespace: azure.ai.textanalytics.v3_1
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_1
 ```
-
-## Release 3.2-preview.2
-
-These settings apply only when `--tag=release_3_2_preview.2` is specified on the command line.
-
-```yaml $(tag) == 'release_3_2_preview.2'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/TextAnalytics/preview/v3.2-preview.2/TextAnalytics.json
-namespace: azure.ai.textanalytics.v3_2_preview_2
-output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_2_preview_2
-```
-
 
 ## Release v2022_03_01_preview
 
@@ -134,17 +123,6 @@ directive:
     where: '$["x-ms-parameterized-host"]'
     transform: >
       $["hostTemplate"] = "{Endpoint}/text/analytics/v3.1";
-      $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
-```
-
-### Override parameterizing the ApiVersion v3.2-preview.2
-
-```yaml $(tag) == 'release_3_2_preview.2'
-directive:
-  - from: swagger-document
-    where: '$["x-ms-parameterized-host"]'
-    transform: >
-      $["hostTemplate"] = "{Endpoint}/text/analytics/v3.2-preview.2";
       $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
 ```
 
