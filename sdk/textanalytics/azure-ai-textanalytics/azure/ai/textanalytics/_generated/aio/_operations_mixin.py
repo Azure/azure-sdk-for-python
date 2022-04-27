@@ -51,8 +51,6 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('analyze_status')
         if api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -167,8 +165,6 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze')
         if api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze'".format(api_version))
         mixin_instance = OperationClass()
@@ -280,8 +276,6 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('begin_cancel_health_job')
         if api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_cancel_health_job'".format(api_version))
         mixin_instance = OperationClass()
@@ -339,8 +333,6 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('begin_health')
         if api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_health'".format(api_version))
         mixin_instance = OperationClass()
@@ -396,8 +388,6 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_linking'".format(api_version))
         mixin_instance = OperationClass()
@@ -409,7 +399,7 @@ class TextAnalyticsClientOperationsMixin(object):
         # FIXME: this is handwritten
         if api_version == 'v3.0':
             return await mixin_instance.entities_linking(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
+        elif api_version == 'v3.1':
             return await mixin_instance.entities_linking(documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs)
 
     async def entities_recognition_general(
@@ -458,8 +448,6 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_general'".format(api_version))
         mixin_instance = OperationClass()
@@ -471,7 +459,7 @@ class TextAnalyticsClientOperationsMixin(object):
         # FIXME: this is handwritten
         if api_version == 'v3.0':
             return await mixin_instance.entities_recognition_general(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
+        elif api_version == 'v3.1':
             return await mixin_instance.entities_recognition_general(documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs)
 
     async def entities_recognition_pii(
@@ -526,8 +514,6 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('entities_recognition_pii')
         if api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_pii'".format(api_version))
         mixin_instance = OperationClass()
@@ -569,8 +555,6 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('health_status')
         if api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'health_status'".format(api_version))
         mixin_instance = OperationClass()
@@ -621,8 +605,6 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'key_phrases'".format(api_version))
         mixin_instance = OperationClass()
@@ -634,7 +616,7 @@ class TextAnalyticsClientOperationsMixin(object):
         # FIXME: this is handwritten
         if api_version == 'v3.0':
             return await mixin_instance.key_phrases(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
+        elif api_version == 'v3.1':
             return await mixin_instance.key_phrases(documents, model_version, show_stats, logging_opt_out, **kwargs)
 
     async def languages(
@@ -678,8 +660,6 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'languages'".format(api_version))
         mixin_instance = OperationClass()
@@ -691,7 +671,7 @@ class TextAnalyticsClientOperationsMixin(object):
         # FIXME: this is handwritten
         if api_version == 'v3.0':
             return await mixin_instance.languages(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
+        elif api_version == 'v3.1':
             return await mixin_instance.languages(documents, model_version, show_stats, logging_opt_out, **kwargs)
 
     async def sentiment(
@@ -743,8 +723,6 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1':
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.2':
-            from ..v3_2_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'sentiment'".format(api_version))
         mixin_instance = OperationClass()
@@ -756,5 +734,5 @@ class TextAnalyticsClientOperationsMixin(object):
         # FIXME: this is handwritten
         if api_version == 'v3.0':
             return await mixin_instance.sentiment(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
+        elif api_version == 'v3.1':
             return await mixin_instance.sentiment(documents, model_version, show_stats, logging_opt_out, opinion_mining, string_index_type, **kwargs)

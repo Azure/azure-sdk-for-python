@@ -954,8 +954,8 @@ class CustomResult(msrest.serialization.Model):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'project_name': {'key': 'project-name', 'type': 'str'},
-        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
     }
 
     def __init__(
@@ -1014,8 +1014,8 @@ class CustomEntitiesResult(CustomResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'project_name': {'key': 'project-name', 'type': 'str'},
-        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[CustomEntitiesResultDocumentsItem]'},
     }
 
@@ -1534,8 +1534,8 @@ class CustomMultiLabelClassificationResult(CustomResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'project_name': {'key': 'project-name', 'type': 'str'},
-        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[CustomMultiLabelClassificationResultDocumentsItem]'},
     }
 
@@ -1861,8 +1861,8 @@ class CustomSingleLabelClassificationResult(CustomResult):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-        'project_name': {'key': 'project-name', 'type': 'str'},
-        'deployment_name': {'key': 'deployment-name', 'type': 'str'},
+        'project_name': {'key': 'projectName', 'type': 'str'},
+        'deployment_name': {'key': 'deploymentName', 'type': 'str'},
         'documents': {'key': 'documents', 'type': '[CustomSingleLabelClassificationResultDocumentsItem]'},
     }
 
@@ -2511,12 +2511,13 @@ class EntitiesTaskResult(AnalyzeTextTaskResult):
      "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTaskResultsKind
-    :ivar results:
+    :ivar results: Required.
     :vartype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.EntitiesResult
     """
 
     _validation = {
         'kind': {'required': True},
+        'results': {'required': True},
     }
 
     _attribute_map = {
@@ -2527,11 +2528,11 @@ class EntitiesTaskResult(AnalyzeTextTaskResult):
     def __init__(
         self,
         *,
-        results: Optional["EntitiesResult"] = None,
+        results: "EntitiesResult",
         **kwargs
     ):
         """
-        :keyword results:
+        :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.EntitiesResult
         """
         super(EntitiesTaskResult, self).__init__(**kwargs)
@@ -2940,12 +2941,13 @@ class EntityLinkingTaskResult(AnalyzeTextTaskResult):
      "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTaskResultsKind
-    :ivar results:
+    :ivar results: Required.
     :vartype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.EntityLinkingResult
     """
 
     _validation = {
         'kind': {'required': True},
+        'results': {'required': True},
     }
 
     _attribute_map = {
@@ -2956,11 +2958,11 @@ class EntityLinkingTaskResult(AnalyzeTextTaskResult):
     def __init__(
         self,
         *,
-        results: Optional["EntityLinkingResult"] = None,
+        results: "EntityLinkingResult",
         **kwargs
     ):
         """
-        :keyword results:
+        :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.EntityLinkingResult
         """
         super(EntityLinkingTaskResult, self).__init__(**kwargs)
@@ -4651,12 +4653,13 @@ class KeyPhraseTaskResult(AnalyzeTextTaskResult):
      "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTaskResultsKind
-    :ivar results:
+    :ivar results: Required.
     :vartype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.KeyPhraseResult
     """
 
     _validation = {
         'kind': {'required': True},
+        'results': {'required': True},
     }
 
     _attribute_map = {
@@ -4667,11 +4670,11 @@ class KeyPhraseTaskResult(AnalyzeTextTaskResult):
     def __init__(
         self,
         *,
-        results: Optional["KeyPhraseResult"] = None,
+        results: "KeyPhraseResult",
         **kwargs
     ):
         """
-        :keyword results:
+        :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.KeyPhraseResult
         """
         super(KeyPhraseTaskResult, self).__init__(**kwargs)
@@ -4854,12 +4857,13 @@ class LanguageDetectionTaskResult(AnalyzeTextTaskResult):
      "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTaskResultsKind
-    :ivar results:
+    :ivar results: Required.
     :vartype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.LanguageDetectionResult
     """
 
     _validation = {
         'kind': {'required': True},
+        'results': {'required': True},
     }
 
     _attribute_map = {
@@ -4870,11 +4874,11 @@ class LanguageDetectionTaskResult(AnalyzeTextTaskResult):
     def __init__(
         self,
         *,
-        results: Optional["LanguageDetectionResult"] = None,
+        results: "LanguageDetectionResult",
         **kwargs
     ):
         """
-        :keyword results:
+        :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.LanguageDetectionResult
         """
         super(LanguageDetectionTaskResult, self).__init__(**kwargs)
@@ -5526,12 +5530,13 @@ class PiiTaskResult(AnalyzeTextTaskResult):
      "EntityLinkingResults".
     :vartype kind: str or
      ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTaskResultsKind
-    :ivar results:
+    :ivar results: Required.
     :vartype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.PiiResult
     """
 
     _validation = {
         'kind': {'required': True},
+        'results': {'required': True},
     }
 
     _attribute_map = {
@@ -5542,11 +5547,11 @@ class PiiTaskResult(AnalyzeTextTaskResult):
     def __init__(
         self,
         *,
-        results: Optional["PiiResult"] = None,
+        results: "PiiResult",
         **kwargs
     ):
         """
-        :keyword results:
+        :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_03_01_preview.models.PiiResult
         """
         super(PiiTaskResult, self).__init__(**kwargs)
