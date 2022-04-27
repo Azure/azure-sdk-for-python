@@ -96,7 +96,7 @@ directive:
           $["operationId"] = "getConversationJobStatus";
 ```
 
-## CLU Directives
+## Sync API Directives
 
 ### Rename `body` to `tasks`
 
@@ -154,6 +154,21 @@ directive:
         delete $.properties["stringIndexType"]
 ```
 
+## Async APIs Directives
+
+```yaml
+directive:
+  - from: swagger-document
+    where: '$.paths["/analyze-conversation/jobs"].post'
+    transform: >
+      $["responses"]["200"] = {
+          "description": "dummy schema to get poller response when calling .result()",
+          "schema": {
+              "$ref": "#/definitions/AnalyzeConversationJobState"
+          }
+      };
+```
+
 ## Fix Swagger/API mismatch errors
 
 ### Change api version
@@ -166,9 +181,9 @@ directive:
           $["version"] = "2022-04-01-preview";
 ```
 
-### Invalid urls
+<!-- ### Invalid urls -->
 
-### Mismatching task types
+### Fix mis-matching task types
 
 ```yaml
 directive:
@@ -240,5 +255,3 @@ directive:
             }
           };
 ```
-
-

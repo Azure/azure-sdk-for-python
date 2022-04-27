@@ -196,11 +196,11 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
 
 
-    def _submit_conversation_job_initial(  # pylint: disable=inconsistent-return-statements
+    def _submit_conversation_job_initial(
         self,
         body: _models.AnalyzeConversationJobsInput,
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[_models.AnalyzeConversationJobState]:
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -211,7 +211,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.AnalyzeConversationJobState]]
 
         _json = self._serialize.body(body, 'AnalyzeConversationJobsInput')
 
@@ -234,25 +234,32 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+        if response.status_code == 200:
+            deserialized = self._deserialize('AnalyzeConversationJobState', pipeline_response)
 
+        if response.status_code == 202:
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+            
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
 
 
     @distributed_trace
-    def begin_submit_conversation_job(  # pylint: disable=inconsistent-return-statements
+    def begin_submit_conversation_job(
         self,
         body: _models.AnalyzeConversationJobsInput,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.AnalyzeConversationJobState]:
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
@@ -267,8 +274,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns AnalyzeConversationJobState
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.models.AnalyzeConversationJobState]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -276,7 +284,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeConversationJobState]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -296,8 +304,10 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('AnalyzeConversationJobState', pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
         path_format_arguments = {
