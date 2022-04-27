@@ -88,7 +88,8 @@ def _build_connection_policy(kwargs):
 
     return policy
 
-class CosmosClient(object):
+
+class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """A client-side logical representation of an Azure Cosmos DB account.
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
