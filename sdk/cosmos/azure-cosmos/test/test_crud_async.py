@@ -477,7 +477,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
         self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
 
-        documentlist = list(created_collection.read_all_items())
+        documentlist = [document async for document in created_collection.read_all_items()]
         self.assertEqual(2, len(documentlist))
 
         # delete document
