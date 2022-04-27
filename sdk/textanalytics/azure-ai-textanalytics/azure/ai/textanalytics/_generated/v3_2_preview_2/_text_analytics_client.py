@@ -9,8 +9,9 @@
 from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core import PipelineClient
 
 from . import models
 from ._configuration import TextAnalyticsClientConfiguration
@@ -24,7 +25,12 @@ if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse
 
 class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
-    """The Text Analytics API is a suite of natural language processing (NLP) services built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. Functionality for analysis of text specific to the healthcare domain and personal information are also available in the API. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    """The Text Analytics API is a suite of natural language processing (NLP) services built with
+    best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
+    unstructured text for tasks such as sentiment analysis, key phrase extraction and language
+    detection. Functionality for analysis of text specific to the healthcare domain and personal
+    information are also available in the API. Further documentation can be found in :code:`<a
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -43,7 +49,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
     ):
         # type: (...) -> None
         _base_url = '{Endpoint}/text/analytics/v3.2-preview.2'
-        self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
+        self._config = TextAnalyticsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

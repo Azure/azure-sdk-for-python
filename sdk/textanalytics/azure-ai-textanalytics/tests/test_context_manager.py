@@ -3,11 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    from unittest import mock  # type: ignore
-
+from unittest import mock
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from azure.ai.textanalytics import TextAnalyticsClient
