@@ -12,7 +12,7 @@ from typing import List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._microsoft_service_linker_enums import *
+from ._service_linker_management_client_enums import *
 
 
 class AuthInfoBase(msrest.serialization.Model):
@@ -26,7 +26,7 @@ class AuthInfoBase(msrest.serialization.Model):
     :ivar auth_type: Required. The authentication type.Constant filled by server. Possible values
      include: "systemAssignedIdentity", "userAssignedIdentity", "servicePrincipalSecret",
      "servicePrincipalCertificate", "secret".
-    :vartype auth_type: str or ~microsoft_service_linker.models.AuthType
+    :vartype auth_type: str or ~azure.mgmt.servicelinker.models.AuthType
     """
 
     _validation = {
@@ -49,6 +49,227 @@ class AuthInfoBase(msrest.serialization.Model):
         """
         super(AuthInfoBase, self).__init__(**kwargs)
         self.auth_type = None  # type: Optional[str]
+
+
+class AzureResourcePropertiesBase(msrest.serialization.Model):
+    """The azure resource properties.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureKeyVaultProperties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. The azure resource type.Constant filled by server. Possible values
+     include: "AzureResource", "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "KeyVault".
+    :vartype type: str or ~azure.mgmt.servicelinker.models.Type
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'KeyVault': 'AzureKeyVaultProperties'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(AzureResourcePropertiesBase, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+
+
+class AzureKeyVaultProperties(AzureResourcePropertiesBase):
+    """The resource properties when type is Azure Key Vault.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. The azure resource type.Constant filled by server. Possible values
+     include: "AzureResource", "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "KeyVault".
+    :vartype type: str or ~azure.mgmt.servicelinker.models.Type
+    :ivar connect_as_kubernetes_csi_driver: True if connect via Kubernetes CSI Driver.
+    :vartype connect_as_kubernetes_csi_driver: bool
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'connect_as_kubernetes_csi_driver': {'key': 'connectAsKubernetesCsiDriver', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        connect_as_kubernetes_csi_driver: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword connect_as_kubernetes_csi_driver: True if connect via Kubernetes CSI Driver.
+        :paramtype connect_as_kubernetes_csi_driver: bool
+        """
+        super(AzureKeyVaultProperties, self).__init__(**kwargs)
+        self.type = 'KeyVault'  # type: str
+        self.connect_as_kubernetes_csi_driver = connect_as_kubernetes_csi_driver
+
+
+class TargetServiceBase(msrest.serialization.Model):
+    """The target service properties.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureResource, ConfluentBootstrapServer, ConfluentSchemaRegistry.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. The target service type.Constant filled by server. Possible values
+     include: "AzureResource", "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "KeyVault".
+    :vartype type: str or ~azure.mgmt.servicelinker.models.Type
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'AzureResource': 'AzureResource', 'ConfluentBootstrapServer': 'ConfluentBootstrapServer', 'ConfluentSchemaRegistry': 'ConfluentSchemaRegistry'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(TargetServiceBase, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+
+
+class AzureResource(TargetServiceBase):
+    """The azure resource info when target service type is AzureResource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. The target service type.Constant filled by server. Possible values
+     include: "AzureResource", "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "KeyVault".
+    :vartype type: str or ~azure.mgmt.servicelinker.models.Type
+    :ivar id: The Id of azure resource.
+    :vartype id: str
+    :ivar resource_properties: The azure resource connection related properties.
+    :vartype resource_properties: ~azure.mgmt.servicelinker.models.AzureResourcePropertiesBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'resource_properties': {'key': 'resourceProperties', 'type': 'AzureResourcePropertiesBase'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        resource_properties: Optional["AzureResourcePropertiesBase"] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: The Id of azure resource.
+        :paramtype id: str
+        :keyword resource_properties: The azure resource connection related properties.
+        :paramtype resource_properties: ~azure.mgmt.servicelinker.models.AzureResourcePropertiesBase
+        """
+        super(AzureResource, self).__init__(**kwargs)
+        self.type = 'AzureResource'  # type: str
+        self.id = id
+        self.resource_properties = resource_properties
+
+
+class ConfluentBootstrapServer(TargetServiceBase):
+    """The service properties when target service type is ConfluentBootstrapServer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. The target service type.Constant filled by server. Possible values
+     include: "AzureResource", "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "KeyVault".
+    :vartype type: str or ~azure.mgmt.servicelinker.models.Type
+    :ivar endpoint: The endpoint of service.
+    :vartype endpoint: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'endpoint': {'key': 'endpoint', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        endpoint: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword endpoint: The endpoint of service.
+        :paramtype endpoint: str
+        """
+        super(ConfluentBootstrapServer, self).__init__(**kwargs)
+        self.type = 'ConfluentBootstrapServer'  # type: str
+        self.endpoint = endpoint
+
+
+class ConfluentSchemaRegistry(TargetServiceBase):
+    """The service properties when target service type is ConfluentSchemaRegistry.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. The target service type.Constant filled by server. Possible values
+     include: "AzureResource", "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "KeyVault".
+    :vartype type: str or ~azure.mgmt.servicelinker.models.Type
+    :ivar endpoint: The endpoint of service.
+    :vartype endpoint: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'endpoint': {'key': 'endpoint', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        endpoint: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword endpoint: The endpoint of service.
+        :paramtype endpoint: str
+        """
+        super(ConfluentSchemaRegistry, self).__init__(**kwargs)
+        self.type = 'ConfluentSchemaRegistry'  # type: str
+        self.endpoint = endpoint
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -95,9 +316,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~microsoft_service_linker.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.servicelinker.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~microsoft_service_linker.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.servicelinker.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -134,7 +355,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~microsoft_service_linker.models.ErrorDetail
+    :vartype error: ~azure.mgmt.servicelinker.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -149,10 +370,124 @@ class ErrorResponse(msrest.serialization.Model):
     ):
         """
         :keyword error: The error object.
-        :paramtype error: ~microsoft_service_linker.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.servicelinker.models.ErrorDetail
         """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
+
+
+class SecretInfoBase(msrest.serialization.Model):
+    """The secret info.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: KeyVaultSecretReferenceSecretInfo, KeyVaultSecretUriSecretInfo, ValueSecretInfo.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar secret_type: Required. The secret type.Constant filled by server. Possible values
+     include: "rawValue", "keyVaultSecretUri", "keyVaultSecretReference".
+    :vartype secret_type: str or ~azure.mgmt.servicelinker.models.SecretType
+    """
+
+    _validation = {
+        'secret_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'secret_type': {'key': 'secretType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'secret_type': {'keyVaultSecretReference': 'KeyVaultSecretReferenceSecretInfo', 'keyVaultSecretUri': 'KeyVaultSecretUriSecretInfo', 'rawValue': 'ValueSecretInfo'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(SecretInfoBase, self).__init__(**kwargs)
+        self.secret_type = None  # type: Optional[str]
+
+
+class KeyVaultSecretReferenceSecretInfo(SecretInfoBase):
+    """The secret info when type is keyVaultSecretReference. It's for scenario that user provides a secret stored in user's keyvault and source is Azure Kubernetes. The key Vault's resource id is linked to secretStore.keyVaultId.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar secret_type: Required. The secret type.Constant filled by server. Possible values
+     include: "rawValue", "keyVaultSecretUri", "keyVaultSecretReference".
+    :vartype secret_type: str or ~azure.mgmt.servicelinker.models.SecretType
+    :ivar name: Name of the Key Vault secret.
+    :vartype name: str
+    :ivar version: Version of the Key Vault secret.
+    :vartype version: str
+    """
+
+    _validation = {
+        'secret_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'secret_type': {'key': 'secretType', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: Name of the Key Vault secret.
+        :paramtype name: str
+        :keyword version: Version of the Key Vault secret.
+        :paramtype version: str
+        """
+        super(KeyVaultSecretReferenceSecretInfo, self).__init__(**kwargs)
+        self.secret_type = 'keyVaultSecretReference'  # type: str
+        self.name = name
+        self.version = version
+
+
+class KeyVaultSecretUriSecretInfo(SecretInfoBase):
+    """The secret info when type is keyVaultSecretUri. It's for scenario that user provides a secret stored in user's keyvault and source is Web App, Spring Cloud or Container App.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar secret_type: Required. The secret type.Constant filled by server. Possible values
+     include: "rawValue", "keyVaultSecretUri", "keyVaultSecretReference".
+    :vartype secret_type: str or ~azure.mgmt.servicelinker.models.SecretType
+    :ivar value: URI to the keyvault secret.
+    :vartype value: str
+    """
+
+    _validation = {
+        'secret_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'secret_type': {'key': 'secretType', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: URI to the keyvault secret.
+        :paramtype value: str
+        """
+        super(KeyVaultSecretUriSecretInfo, self).__init__(**kwargs)
+        self.secret_type = 'keyVaultSecretUri'  # type: str
+        self.value = value
 
 
 class LinkerList(msrest.serialization.Model):
@@ -161,7 +496,7 @@ class LinkerList(msrest.serialization.Model):
     :ivar next_link: The link used to get the next page of Linker list.
     :vartype next_link: str
     :ivar value: The list of Linkers.
-    :vartype value: list[~microsoft_service_linker.models.LinkerResource]
+    :vartype value: list[~azure.mgmt.servicelinker.models.LinkerResource]
     """
 
     _attribute_map = {
@@ -180,7 +515,7 @@ class LinkerList(msrest.serialization.Model):
         :keyword next_link: The link used to get the next page of Linker list.
         :paramtype next_link: str
         :keyword value: The list of Linkers.
-        :paramtype value: list[~microsoft_service_linker.models.LinkerResource]
+        :paramtype value: list[~azure.mgmt.servicelinker.models.LinkerResource]
         """
         super(LinkerList, self).__init__(**kwargs)
         self.next_link = next_link
@@ -192,19 +527,21 @@ class LinkerPatch(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar target_id: The resource Id of target service.
-    :vartype target_id: str
+    :ivar target_service: The target service properties.
+    :vartype target_service: ~azure.mgmt.servicelinker.models.TargetServiceBase
     :ivar auth_info: The authentication type.
-    :vartype auth_info: ~microsoft_service_linker.models.AuthInfoBase
+    :vartype auth_info: ~azure.mgmt.servicelinker.models.AuthInfoBase
     :ivar client_type: The application client type. Possible values include: "none", "dotnet",
      "java", "python", "go", "php", "ruby", "django", "nodejs", "springBoot".
-    :vartype client_type: str or ~microsoft_service_linker.models.ClientType
+    :vartype client_type: str or ~azure.mgmt.servicelinker.models.ClientType
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :ivar v_net_solution: The VNet solution.
-    :vartype v_net_solution: ~microsoft_service_linker.models.VNetSolution
+    :vartype v_net_solution: ~azure.mgmt.servicelinker.models.VNetSolution
     :ivar secret_store: An option to store secret value in secure place.
-    :vartype secret_store: ~microsoft_service_linker.models.SecretStore
+    :vartype secret_store: ~azure.mgmt.servicelinker.models.SecretStore
+    :ivar scope: connection scope in source service.
+    :vartype scope: str
     """
 
     _validation = {
@@ -212,44 +549,49 @@ class LinkerPatch(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'target_id': {'key': 'properties.targetId', 'type': 'str'},
+        'target_service': {'key': 'properties.targetService', 'type': 'TargetServiceBase'},
         'auth_info': {'key': 'properties.authInfo', 'type': 'AuthInfoBase'},
         'client_type': {'key': 'properties.clientType', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'v_net_solution': {'key': 'properties.vNetSolution', 'type': 'VNetSolution'},
         'secret_store': {'key': 'properties.secretStore', 'type': 'SecretStore'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        target_id: Optional[str] = None,
+        target_service: Optional["TargetServiceBase"] = None,
         auth_info: Optional["AuthInfoBase"] = None,
         client_type: Optional[Union[str, "ClientType"]] = None,
         v_net_solution: Optional["VNetSolution"] = None,
         secret_store: Optional["SecretStore"] = None,
+        scope: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword target_id: The resource Id of target service.
-        :paramtype target_id: str
+        :keyword target_service: The target service properties.
+        :paramtype target_service: ~azure.mgmt.servicelinker.models.TargetServiceBase
         :keyword auth_info: The authentication type.
-        :paramtype auth_info: ~microsoft_service_linker.models.AuthInfoBase
+        :paramtype auth_info: ~azure.mgmt.servicelinker.models.AuthInfoBase
         :keyword client_type: The application client type. Possible values include: "none", "dotnet",
          "java", "python", "go", "php", "ruby", "django", "nodejs", "springBoot".
-        :paramtype client_type: str or ~microsoft_service_linker.models.ClientType
+        :paramtype client_type: str or ~azure.mgmt.servicelinker.models.ClientType
         :keyword v_net_solution: The VNet solution.
-        :paramtype v_net_solution: ~microsoft_service_linker.models.VNetSolution
+        :paramtype v_net_solution: ~azure.mgmt.servicelinker.models.VNetSolution
         :keyword secret_store: An option to store secret value in secure place.
-        :paramtype secret_store: ~microsoft_service_linker.models.SecretStore
+        :paramtype secret_store: ~azure.mgmt.servicelinker.models.SecretStore
+        :keyword scope: connection scope in source service.
+        :paramtype scope: str
         """
         super(LinkerPatch, self).__init__(**kwargs)
-        self.target_id = target_id
+        self.target_service = target_service
         self.auth_info = auth_info
         self.client_type = client_type
         self.provisioning_state = None
         self.v_net_solution = v_net_solution
         self.secret_store = secret_store
+        self.scope = scope
 
 
 class Resource(msrest.serialization.Model):
@@ -341,20 +683,22 @@ class LinkerResource(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar system_data: The system data.
-    :vartype system_data: ~microsoft_service_linker.models.SystemData
-    :ivar target_id: The resource Id of target service.
-    :vartype target_id: str
+    :vartype system_data: ~azure.mgmt.servicelinker.models.SystemData
+    :ivar target_service: The target service properties.
+    :vartype target_service: ~azure.mgmt.servicelinker.models.TargetServiceBase
     :ivar auth_info: The authentication type.
-    :vartype auth_info: ~microsoft_service_linker.models.AuthInfoBase
+    :vartype auth_info: ~azure.mgmt.servicelinker.models.AuthInfoBase
     :ivar client_type: The application client type. Possible values include: "none", "dotnet",
      "java", "python", "go", "php", "ruby", "django", "nodejs", "springBoot".
-    :vartype client_type: str or ~microsoft_service_linker.models.ClientType
+    :vartype client_type: str or ~azure.mgmt.servicelinker.models.ClientType
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :ivar v_net_solution: The VNet solution.
-    :vartype v_net_solution: ~microsoft_service_linker.models.VNetSolution
+    :vartype v_net_solution: ~azure.mgmt.servicelinker.models.VNetSolution
     :ivar secret_store: An option to store secret value in secure place.
-    :vartype secret_store: ~microsoft_service_linker.models.SecretStore
+    :vartype secret_store: ~azure.mgmt.servicelinker.models.SecretStore
+    :ivar scope: connection scope in source service.
+    :vartype scope: str
     """
 
     _validation = {
@@ -370,45 +714,50 @@ class LinkerResource(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'target_id': {'key': 'properties.targetId', 'type': 'str'},
+        'target_service': {'key': 'properties.targetService', 'type': 'TargetServiceBase'},
         'auth_info': {'key': 'properties.authInfo', 'type': 'AuthInfoBase'},
         'client_type': {'key': 'properties.clientType', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'v_net_solution': {'key': 'properties.vNetSolution', 'type': 'VNetSolution'},
         'secret_store': {'key': 'properties.secretStore', 'type': 'SecretStore'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        target_id: Optional[str] = None,
+        target_service: Optional["TargetServiceBase"] = None,
         auth_info: Optional["AuthInfoBase"] = None,
         client_type: Optional[Union[str, "ClientType"]] = None,
         v_net_solution: Optional["VNetSolution"] = None,
         secret_store: Optional["SecretStore"] = None,
+        scope: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword target_id: The resource Id of target service.
-        :paramtype target_id: str
+        :keyword target_service: The target service properties.
+        :paramtype target_service: ~azure.mgmt.servicelinker.models.TargetServiceBase
         :keyword auth_info: The authentication type.
-        :paramtype auth_info: ~microsoft_service_linker.models.AuthInfoBase
+        :paramtype auth_info: ~azure.mgmt.servicelinker.models.AuthInfoBase
         :keyword client_type: The application client type. Possible values include: "none", "dotnet",
          "java", "python", "go", "php", "ruby", "django", "nodejs", "springBoot".
-        :paramtype client_type: str or ~microsoft_service_linker.models.ClientType
+        :paramtype client_type: str or ~azure.mgmt.servicelinker.models.ClientType
         :keyword v_net_solution: The VNet solution.
-        :paramtype v_net_solution: ~microsoft_service_linker.models.VNetSolution
+        :paramtype v_net_solution: ~azure.mgmt.servicelinker.models.VNetSolution
         :keyword secret_store: An option to store secret value in secure place.
-        :paramtype secret_store: ~microsoft_service_linker.models.SecretStore
+        :paramtype secret_store: ~azure.mgmt.servicelinker.models.SecretStore
+        :keyword scope: connection scope in source service.
+        :paramtype scope: str
         """
         super(LinkerResource, self).__init__(**kwargs)
         self.system_data = None
-        self.target_id = target_id
+        self.target_service = target_service
         self.auth_info = auth_info
         self.client_type = client_type
         self.provisioning_state = None
         self.v_net_solution = v_net_solution
         self.secret_store = secret_store
+        self.scope = scope
 
 
 class Operation(msrest.serialization.Model):
@@ -423,14 +772,14 @@ class Operation(msrest.serialization.Model):
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :ivar display: Localized display information for this particular operation.
-    :vartype display: ~microsoft_service_linker.models.OperationDisplay
+    :vartype display: ~azure.mgmt.servicelinker.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
      "system", "user,system".
-    :vartype origin: str or ~microsoft_service_linker.models.Origin
+    :vartype origin: str or ~azure.mgmt.servicelinker.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
      internal only APIs. Possible values include: "Internal".
-    :vartype action_type: str or ~microsoft_service_linker.models.ActionType
+    :vartype action_type: str or ~azure.mgmt.servicelinker.models.ActionType
     """
 
     _validation = {
@@ -456,7 +805,7 @@ class Operation(msrest.serialization.Model):
     ):
         """
         :keyword display: Localized display information for this particular operation.
-        :paramtype display: ~microsoft_service_linker.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.servicelinker.models.OperationDisplay
         """
         super(Operation, self).__init__(**kwargs)
         self.name = None
@@ -518,7 +867,7 @@ class OperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~microsoft_service_linker.models.Operation]
+    :vartype value: list[~azure.mgmt.servicelinker.models.Operation]
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
@@ -552,11 +901,11 @@ class SecretAuthInfo(AuthInfoBase):
     :ivar auth_type: Required. The authentication type.Constant filled by server. Possible values
      include: "systemAssignedIdentity", "userAssignedIdentity", "servicePrincipalSecret",
      "servicePrincipalCertificate", "secret".
-    :vartype auth_type: str or ~microsoft_service_linker.models.AuthType
+    :vartype auth_type: str or ~azure.mgmt.servicelinker.models.AuthType
     :ivar name: Username or account name for secret auth.
     :vartype name: str
-    :ivar secret: Password or account key for secret auth.
-    :vartype secret: str
+    :ivar secret_info: Password or key vault secret for secret auth.
+    :vartype secret_info: ~azure.mgmt.servicelinker.models.SecretInfoBase
     """
 
     _validation = {
@@ -566,26 +915,26 @@ class SecretAuthInfo(AuthInfoBase):
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'secret': {'key': 'secret', 'type': 'str'},
+        'secret_info': {'key': 'secretInfo', 'type': 'SecretInfoBase'},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        secret: Optional[str] = None,
+        secret_info: Optional["SecretInfoBase"] = None,
         **kwargs
     ):
         """
         :keyword name: Username or account name for secret auth.
         :paramtype name: str
-        :keyword secret: Password or account key for secret auth.
-        :paramtype secret: str
+        :keyword secret_info: Password or key vault secret for secret auth.
+        :paramtype secret_info: ~azure.mgmt.servicelinker.models.SecretInfoBase
         """
         super(SecretAuthInfo, self).__init__(**kwargs)
         self.auth_type = 'secret'  # type: str
         self.name = name
-        self.secret = secret
+        self.secret_info = secret_info
 
 
 class SecretStore(msrest.serialization.Model):
@@ -621,7 +970,7 @@ class ServicePrincipalCertificateAuthInfo(AuthInfoBase):
     :ivar auth_type: Required. The authentication type.Constant filled by server. Possible values
      include: "systemAssignedIdentity", "userAssignedIdentity", "servicePrincipalSecret",
      "servicePrincipalCertificate", "secret".
-    :vartype auth_type: str or ~microsoft_service_linker.models.AuthType
+    :vartype auth_type: str or ~azure.mgmt.servicelinker.models.AuthType
     :ivar client_id: Required. Application clientId for servicePrincipal auth.
     :vartype client_id: str
     :ivar principal_id: Required. Principal Id for servicePrincipal auth.
@@ -675,7 +1024,7 @@ class ServicePrincipalSecretAuthInfo(AuthInfoBase):
     :ivar auth_type: Required. The authentication type.Constant filled by server. Possible values
      include: "systemAssignedIdentity", "userAssignedIdentity", "servicePrincipalSecret",
      "servicePrincipalCertificate", "secret".
-    :vartype auth_type: str or ~microsoft_service_linker.models.AuthType
+    :vartype auth_type: str or ~azure.mgmt.servicelinker.models.AuthType
     :ivar client_id: Required. ServicePrincipal application clientId for servicePrincipal auth.
     :vartype client_id: str
     :ivar principal_id: Required. Principal Id for servicePrincipal auth.
@@ -757,7 +1106,7 @@ class SourceConfigurationResult(msrest.serialization.Model):
     """Configurations for source resource, include appSettings, connectionString and serviceBindings.
 
     :ivar configurations: The configuration properties for source resource.
-    :vartype configurations: list[~microsoft_service_linker.models.SourceConfiguration]
+    :vartype configurations: list[~azure.mgmt.servicelinker.models.SourceConfiguration]
     """
 
     _attribute_map = {
@@ -772,7 +1121,7 @@ class SourceConfigurationResult(msrest.serialization.Model):
     ):
         """
         :keyword configurations: The configuration properties for source resource.
-        :paramtype configurations: list[~microsoft_service_linker.models.SourceConfiguration]
+        :paramtype configurations: list[~azure.mgmt.servicelinker.models.SourceConfiguration]
         """
         super(SourceConfigurationResult, self).__init__(**kwargs)
         self.configurations = configurations
@@ -786,7 +1135,7 @@ class SystemAssignedIdentityAuthInfo(AuthInfoBase):
     :ivar auth_type: Required. The authentication type.Constant filled by server. Possible values
      include: "systemAssignedIdentity", "userAssignedIdentity", "servicePrincipalSecret",
      "servicePrincipalCertificate", "secret".
-    :vartype auth_type: str or ~microsoft_service_linker.models.AuthType
+    :vartype auth_type: str or ~azure.mgmt.servicelinker.models.AuthType
     """
 
     _validation = {
@@ -814,14 +1163,14 @@ class SystemData(msrest.serialization.Model):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Possible values include:
      "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~microsoft_service_linker.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.servicelinker.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~microsoft_service_linker.models.CreatedByType
+    :vartype last_modified_by_type: str or ~azure.mgmt.servicelinker.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -851,14 +1200,14 @@ class SystemData(msrest.serialization.Model):
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Possible values
          include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~microsoft_service_linker.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.servicelinker.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
          values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~microsoft_service_linker.models.CreatedByType
+        :paramtype last_modified_by_type: str or ~azure.mgmt.servicelinker.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
@@ -879,17 +1228,15 @@ class UserAssignedIdentityAuthInfo(AuthInfoBase):
     :ivar auth_type: Required. The authentication type.Constant filled by server. Possible values
      include: "systemAssignedIdentity", "userAssignedIdentity", "servicePrincipalSecret",
      "servicePrincipalCertificate", "secret".
-    :vartype auth_type: str or ~microsoft_service_linker.models.AuthType
-    :ivar client_id: Required. Client Id for userAssignedIdentity.
+    :vartype auth_type: str or ~azure.mgmt.servicelinker.models.AuthType
+    :ivar client_id: Client Id for userAssignedIdentity.
     :vartype client_id: str
-    :ivar subscription_id: Required. Subscription id for userAssignedIdentity.
+    :ivar subscription_id: Subscription id for userAssignedIdentity.
     :vartype subscription_id: str
     """
 
     _validation = {
         'auth_type': {'required': True},
-        'client_id': {'required': True},
-        'subscription_id': {'required': True},
     }
 
     _attribute_map = {
@@ -901,14 +1248,14 @@ class UserAssignedIdentityAuthInfo(AuthInfoBase):
     def __init__(
         self,
         *,
-        client_id: str,
-        subscription_id: str,
+        client_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword client_id: Required. Client Id for userAssignedIdentity.
+        :keyword client_id: Client Id for userAssignedIdentity.
         :paramtype client_id: str
-        :keyword subscription_id: Required. Subscription id for userAssignedIdentity.
+        :keyword subscription_id: Subscription id for userAssignedIdentity.
         :paramtype subscription_id: str
         """
         super(UserAssignedIdentityAuthInfo, self).__init__(**kwargs)
@@ -920,79 +1267,177 @@ class UserAssignedIdentityAuthInfo(AuthInfoBase):
 class ValidateResult(msrest.serialization.Model):
     """The validation result for a linker.
 
-    :ivar name: The linker name.
-    :vartype name: str
-    :ivar linker_status: Specifies if the linker is healthy. Possible values include: "Healthy",
-     "Not healthy".
-    :vartype linker_status: str or ~microsoft_service_linker.models.LinkerStatus
-    :ivar reason: The reason of the error.
-    :vartype reason: str
+    :ivar linker_name: The linker name.
+    :vartype linker_name: str
+    :ivar is_connection_available: A boolean value indicating whether the connection is available
+     or not.
+    :vartype is_connection_available: bool
     :ivar report_start_time_utc: The start time of the validation report.
     :vartype report_start_time_utc: ~datetime.datetime
     :ivar report_end_time_utc: The end time of the validation report.
     :vartype report_end_time_utc: ~datetime.datetime
+    :ivar source_id: The resource id of the linker source application.
+    :vartype source_id: str
     :ivar target_id: The resource Id of target service.
     :vartype target_id: str
     :ivar auth_type: The authentication type. Possible values include: "systemAssignedIdentity",
      "userAssignedIdentity", "servicePrincipalSecret", "servicePrincipalCertificate", "secret".
-    :vartype auth_type: str or ~microsoft_service_linker.models.AuthType
+    :vartype auth_type: str or ~azure.mgmt.servicelinker.models.AuthType
+    :ivar validation_detail: The detail of validation result.
+    :vartype validation_detail: list[~azure.mgmt.servicelinker.models.ValidationResultItem]
+    """
+
+    _attribute_map = {
+        'linker_name': {'key': 'linkerName', 'type': 'str'},
+        'is_connection_available': {'key': 'isConnectionAvailable', 'type': 'bool'},
+        'report_start_time_utc': {'key': 'reportStartTimeUtc', 'type': 'iso-8601'},
+        'report_end_time_utc': {'key': 'reportEndTimeUtc', 'type': 'iso-8601'},
+        'source_id': {'key': 'sourceId', 'type': 'str'},
+        'target_id': {'key': 'targetId', 'type': 'str'},
+        'auth_type': {'key': 'authType', 'type': 'str'},
+        'validation_detail': {'key': 'validationDetail', 'type': '[ValidationResultItem]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        linker_name: Optional[str] = None,
+        is_connection_available: Optional[bool] = None,
+        report_start_time_utc: Optional[datetime.datetime] = None,
+        report_end_time_utc: Optional[datetime.datetime] = None,
+        source_id: Optional[str] = None,
+        target_id: Optional[str] = None,
+        auth_type: Optional[Union[str, "AuthType"]] = None,
+        validation_detail: Optional[List["ValidationResultItem"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword linker_name: The linker name.
+        :paramtype linker_name: str
+        :keyword is_connection_available: A boolean value indicating whether the connection is
+         available or not.
+        :paramtype is_connection_available: bool
+        :keyword report_start_time_utc: The start time of the validation report.
+        :paramtype report_start_time_utc: ~datetime.datetime
+        :keyword report_end_time_utc: The end time of the validation report.
+        :paramtype report_end_time_utc: ~datetime.datetime
+        :keyword source_id: The resource id of the linker source application.
+        :paramtype source_id: str
+        :keyword target_id: The resource Id of target service.
+        :paramtype target_id: str
+        :keyword auth_type: The authentication type. Possible values include: "systemAssignedIdentity",
+         "userAssignedIdentity", "servicePrincipalSecret", "servicePrincipalCertificate", "secret".
+        :paramtype auth_type: str or ~azure.mgmt.servicelinker.models.AuthType
+        :keyword validation_detail: The detail of validation result.
+        :paramtype validation_detail: list[~azure.mgmt.servicelinker.models.ValidationResultItem]
+        """
+        super(ValidateResult, self).__init__(**kwargs)
+        self.linker_name = linker_name
+        self.is_connection_available = is_connection_available
+        self.report_start_time_utc = report_start_time_utc
+        self.report_end_time_utc = report_end_time_utc
+        self.source_id = source_id
+        self.target_id = target_id
+        self.auth_type = auth_type
+        self.validation_detail = validation_detail
+
+
+class ValidationResultItem(msrest.serialization.Model):
+    """The validation item for a linker.
+
+    :ivar name: The validation item name.
+    :vartype name: str
+    :ivar description: The display name of validation item.
+    :vartype description: str
+    :ivar result: The result of validation. Possible values include: "success", "failed",
+     "warning".
+    :vartype result: str or ~azure.mgmt.servicelinker.models.ValidationResultStatus
+    :ivar error_message: The error message of validation result.
+    :vartype error_message: str
+    :ivar error_code: The error code of validation result.
+    :vartype error_code: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'linker_status': {'key': 'linkerStatus', 'type': 'str'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'report_start_time_utc': {'key': 'reportStartTimeUtc', 'type': 'iso-8601'},
-        'report_end_time_utc': {'key': 'reportEndTimeUtc', 'type': 'iso-8601'},
-        'target_id': {'key': 'targetId', 'type': 'str'},
-        'auth_type': {'key': 'authType', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'result': {'key': 'result', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'error_code': {'key': 'errorCode', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        linker_status: Optional[Union[str, "LinkerStatus"]] = None,
-        reason: Optional[str] = None,
-        report_start_time_utc: Optional[datetime.datetime] = None,
-        report_end_time_utc: Optional[datetime.datetime] = None,
-        target_id: Optional[str] = None,
-        auth_type: Optional[Union[str, "AuthType"]] = None,
+        description: Optional[str] = None,
+        result: Optional[Union[str, "ValidationResultStatus"]] = None,
+        error_message: Optional[str] = None,
+        error_code: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword name: The linker name.
+        :keyword name: The validation item name.
         :paramtype name: str
-        :keyword linker_status: Specifies if the linker is healthy. Possible values include: "Healthy",
-         "Not healthy".
-        :paramtype linker_status: str or ~microsoft_service_linker.models.LinkerStatus
-        :keyword reason: The reason of the error.
-        :paramtype reason: str
-        :keyword report_start_time_utc: The start time of the validation report.
-        :paramtype report_start_time_utc: ~datetime.datetime
-        :keyword report_end_time_utc: The end time of the validation report.
-        :paramtype report_end_time_utc: ~datetime.datetime
-        :keyword target_id: The resource Id of target service.
-        :paramtype target_id: str
-        :keyword auth_type: The authentication type. Possible values include: "systemAssignedIdentity",
-         "userAssignedIdentity", "servicePrincipalSecret", "servicePrincipalCertificate", "secret".
-        :paramtype auth_type: str or ~microsoft_service_linker.models.AuthType
+        :keyword description: The display name of validation item.
+        :paramtype description: str
+        :keyword result: The result of validation. Possible values include: "success", "failed",
+         "warning".
+        :paramtype result: str or ~azure.mgmt.servicelinker.models.ValidationResultStatus
+        :keyword error_message: The error message of validation result.
+        :paramtype error_message: str
+        :keyword error_code: The error code of validation result.
+        :paramtype error_code: str
         """
-        super(ValidateResult, self).__init__(**kwargs)
+        super(ValidationResultItem, self).__init__(**kwargs)
         self.name = name
-        self.linker_status = linker_status
-        self.reason = reason
-        self.report_start_time_utc = report_start_time_utc
-        self.report_end_time_utc = report_end_time_utc
-        self.target_id = target_id
-        self.auth_type = auth_type
+        self.description = description
+        self.result = result
+        self.error_message = error_message
+        self.error_code = error_code
+
+
+class ValueSecretInfo(SecretInfoBase):
+    """The secret info when type is rawValue. It's for scenarios that user input the secret.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar secret_type: Required. The secret type.Constant filled by server. Possible values
+     include: "rawValue", "keyVaultSecretUri", "keyVaultSecretReference".
+    :vartype secret_type: str or ~azure.mgmt.servicelinker.models.SecretType
+    :ivar value: The actual value of the secret.
+    :vartype value: str
+    """
+
+    _validation = {
+        'secret_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'secret_type': {'key': 'secretType', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The actual value of the secret.
+        :paramtype value: str
+        """
+        super(ValueSecretInfo, self).__init__(**kwargs)
+        self.secret_type = 'rawValue'  # type: str
+        self.value = value
 
 
 class VNetSolution(msrest.serialization.Model):
     """The VNet solution for linker.
 
     :ivar type: Type of VNet solution. Possible values include: "serviceEndpoint", "privateLink".
-    :vartype type: str or ~microsoft_service_linker.models.VNetSolutionType
+    :vartype type: str or ~azure.mgmt.servicelinker.models.VNetSolutionType
     """
 
     _attribute_map = {
@@ -1008,7 +1453,7 @@ class VNetSolution(msrest.serialization.Model):
         """
         :keyword type: Type of VNet solution. Possible values include: "serviceEndpoint",
          "privateLink".
-        :paramtype type: str or ~microsoft_service_linker.models.VNetSolutionType
+        :paramtype type: str or ~azure.mgmt.servicelinker.models.VNetSolutionType
         """
         super(VNetSolution, self).__init__(**kwargs)
         self.type = type

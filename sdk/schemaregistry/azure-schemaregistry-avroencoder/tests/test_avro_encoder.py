@@ -26,6 +26,7 @@
 import functools
 import pytest
 import json
+import pdb
 
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder import AvroEncoder
@@ -165,8 +166,21 @@ class TestAvroEncoder(AzureRecordedTestCase):
         assert decoded_content_obj["name"] == u"Ben"
         assert decoded_content_obj["favorite_number"] == 7
         assert decoded_content_obj["favorite_color"] == u"red"
-
+        sr_client.close()
         sr_avro_encoder.close()
+
+        # no group_name passed into constructor, check encode fails, but decode works
+        extra_sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_avro_encoder_no_group = AvroEncoder(client=extra_sr_client, auto_register=True)
+        decoded_content = sr_avro_encoder_no_group.decode(encoded_message_content)
+        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["favorite_number"] == 7
+        assert decoded_content["favorite_color"] == u"red"
+        with pytest.raises(TypeError):
+            encoded_message_content = sr_avro_encoder_no_group.encode(dict_content, schema=schema_str)
+        sr_avro_encoder_no_group.close()
+        extra_sr_client.close()
+
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy

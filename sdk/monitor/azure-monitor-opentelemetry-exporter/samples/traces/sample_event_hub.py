@@ -1,7 +1,7 @@
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
-with the storage SDK and exporting to Azure monitor backend.
-This example traces calls for creating a container using storage SDK.
+with the event hub SDK and exporting to Azure monitor backend.
+This example traces calls for sending event data using event hub SDK.
 The telemetry will be collected automatically and sent to Application
 Insights via the AzureMonitorTraceExporter
 """
@@ -32,12 +32,19 @@ span_processor = BatchSpanProcessor(
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
-# Example with Servicebus SDKs
-from azure.storage.blob import BlobServiceClient
+# Example with EventHub SDKs
+from azure.eventhub import EventHubProducerClient, EventData
 
-connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-container_name = os.environ['AZURE_STORAGE_BLOB_CONTAINER_NAME']
+CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-with tracer.start_as_current_span(name="MyStorageApplication"):
-    client = BlobServiceClient.from_connection_string(connection_string)
-    client.create_container(container_name)  # Call will be traced
+producer = EventHubProducerClient.from_connection_string(
+    conn_str=CONNECTION_STR,
+    eventhub_name=EVENTHUB_NAME
+)
+
+with tracer.start_as_current_span(name="MyEventHub"):
+    with producer:
+        event_data_batch = producer.create_batch()
+        event_data_batch.add(EventData('Single message'))
+        producer.send_batch(event_data_batch)

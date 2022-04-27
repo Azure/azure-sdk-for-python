@@ -7,57 +7,65 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
+from azure.core import PipelineClient
+
 from . import models
-from ._configuration import MicrosoftServiceLinkerConfiguration
-from .operations import LinkerOperations, Operations
+from ._configuration import TextAnalyticsClientConfiguration
+from .operations import TextAnalyticsClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
+
     from azure.core.credentials import TokenCredential
+    from azure.core.rest import HttpRequest, HttpResponse
 
-class MicrosoftServiceLinker:
-    """Microsoft.ServiceLinker provider.
+class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
+    """The language service API is a suite of natural language processing (NLP) skills built with
+    best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
+    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
+    detection and question answering. Further documentation can be found in :code:`<a
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.0.
 
-    :ivar linker: LinkerOperations operations
-    :vartype linker: microsoft_service_linker.operations.LinkerOperations
-    :ivar operations: Operations operations
-    :vartype operations: microsoft_service_linker.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
-    :type base_url: str
+    :param endpoint: Supported Cognitive Services endpoint (e.g.,
+     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+    :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2022-03-01-preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential: "TokenCredential",
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
-    ) -> None:
-        self._config = MicrosoftServiceLinkerConfiguration(credential=credential, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        credential,  # type: "TokenCredential"
+        endpoint,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        _base_url = '{Endpoint}/language'
+        self._config = TextAnalyticsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.linker = LinkerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
         self,
         request,  # type: HttpRequest
-        **kwargs: Any
-    ) -> HttpResponse:
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -76,7 +84,11 @@ class MicrosoftServiceLinker:
         """
 
         request_copy = deepcopy(request)
-        request_copy.url = self._client.format_url(request_copy.url)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
@@ -84,7 +96,7 @@ class MicrosoftServiceLinker:
         self._client.close()
 
     def __enter__(self):
-        # type: () -> MicrosoftServiceLinker
+        # type: () -> TextAnalyticsClient
         self._client.__enter__()
         return self
 
