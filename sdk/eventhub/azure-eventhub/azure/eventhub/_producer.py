@@ -34,61 +34,6 @@ from ._utils import (
     transform_outbound_single_message,
 )
 from ._constants import TIMEOUT_SYMBOL
-from .amqp import AmqpAnnotatedMessage
-
-_LOGGER = logging.getLogger(__name__)
-
-if TYPE_CHECKING:
-    from uamqp.authentication import JWTTokenAuth  # pylint: disable=ungrouped-imports
-    from ._producer_client import EventHubProducerClient
-
-
-def _set_partition_key(event_datas, partition_key):
-    # type: (Iterable[EventData], AnyStr) -> Iterable[EventData]
-    for ed in iter(event_datas):
-        set_message_partition_key(ed.message, partition_key)
-        yield ed
-
-
-def _set_trace_message(event_datas, parent_span=None):
-    # type: (Iterable[EventData], Optional[AbstractSpan]) -> Iterable[EventData]
-    for ed in iter(event_datas):
-        # --------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
-
-import uuid
-import logging
-import time
-import threading
-from typing import (
-    Iterable,
-    Union,
-    Optional,
-    Any,
-    AnyStr,
-    List,
-    TYPE_CHECKING,
-)  # pylint: disable=unused-import
-
-from uamqp import types, constants, errors
-from uamqp import SendClient
-
-from azure.core.tracing import AbstractSpan
-
-from .exceptions import _error_handler, OperationTimeoutError
-from ._common import EventData, EventDataBatch
-from ._client_base import ConsumerProducerMixin
-from ._utils import (
-    create_properties,
-    set_message_partition_key,
-    trace_message,
-    send_context_manager,
-    transform_outbound_single_message,
-)
-from ._constants import TIMEOUT_SYMBOL
 
 _LOGGER = logging.getLogger(__name__)
 
