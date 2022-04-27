@@ -1,0 +1,138 @@
+{
+    "chosen_version": "2020-11-20",
+    "total_api_version_list": ["2020-11-20"],
+    "client": {
+        "name": "ProviderHub",
+        "filename": "_provider_hub",
+        "description": "Microsoft ProviderHub.",
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ProviderHubConfiguration\"], \"._operations_mixin\": [\"ProviderHubOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ProviderHubConfiguration\"], \"._operations_mixin\": [\"ProviderHubOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "custom_rollouts": "CustomRolloutsOperations",
+        "default_rollouts": "DefaultRolloutsOperations",
+        "notification_registrations": "NotificationRegistrationsOperations",
+        "operations": "Operations",
+        "provider_registrations": "ProviderRegistrationsOperations",
+        "resource_type_registrations": "ResourceTypeRegistrationsOperations",
+        "skus": "SkusOperations"
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "operations": {
+            "generate_manifest" : {
+                "sync": {
+                    "signature": "def generate_manifest(\n    self,\n    provider_namespace,  # type: str\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.ResourceProviderManifest\"\n",
+                    "doc": "\"\"\"Generates the manifest for the given provider.\n\n:param provider_namespace: The name of the resource provider hosted within ProviderHub.\n:type provider_namespace: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ResourceProviderManifest, or the result of cls(response)\n:rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def generate_manifest(\n    self,\n    provider_namespace: str,\n    **kwargs: Any\n) -\u003e \"_models.ResourceProviderManifest\":\n",
+                    "doc": "\"\"\"Generates the manifest for the given provider.\n\n:param provider_namespace: The name of the resource provider hosted within ProviderHub.\n:type provider_namespace: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ResourceProviderManifest, or the result of cls(response)\n:rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "provider_namespace"
+            },
+            "checkin_manifest" : {
+                "sync": {
+                    "signature": "def checkin_manifest(\n    self,\n    provider_namespace,  # type: str\n    checkin_manifest_params,  # type: \"_models.CheckinManifestParams\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.CheckinManifestInfo\"\n",
+                    "doc": "\"\"\"Checkin the manifest.\n\n:param provider_namespace: The name of the resource provider hosted within ProviderHub.\n:type provider_namespace: str\n:param checkin_manifest_params: The required body parameters supplied to the checkin manifest\n operation.\n:type checkin_manifest_params: ~azure.mgmt.providerhub.models.CheckinManifestParams\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckinManifestInfo, or the result of cls(response)\n:rtype: ~azure.mgmt.providerhub.models.CheckinManifestInfo\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def checkin_manifest(\n    self,\n    provider_namespace: str,\n    checkin_manifest_params: \"_models.CheckinManifestParams\",\n    **kwargs: Any\n) -\u003e \"_models.CheckinManifestInfo\":\n",
+                    "doc": "\"\"\"Checkin the manifest.\n\n:param provider_namespace: The name of the resource provider hosted within ProviderHub.\n:type provider_namespace: str\n:param checkin_manifest_params: The required body parameters supplied to the checkin manifest\n operation.\n:type checkin_manifest_params: ~azure.mgmt.providerhub.models.CheckinManifestParams\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckinManifestInfo, or the result of cls(response)\n:rtype: ~azure.mgmt.providerhub.models.CheckinManifestInfo\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "provider_namespace, checkin_manifest_params"
+            }
+        }
+    }
+}
