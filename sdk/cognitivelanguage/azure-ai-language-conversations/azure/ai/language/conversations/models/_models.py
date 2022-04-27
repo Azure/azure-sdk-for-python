@@ -1429,6 +1429,9 @@ class ConversationIntent(msrest.serialization.Model):
 class ConversationItemBase(msrest.serialization.Model):
     """The abstract base for a user input formatted conversation (e.g., Text, Transcript).
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: TextConversationItem, TranscriptConversationItem.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
@@ -1440,8 +1443,8 @@ class ConversationItemBase(msrest.serialization.Model):
     :vartype participant_id: str
     :ivar language: The override language of a conversation item in BCP 47 language representation.
     :vartype language: str
-    :ivar modality: Enumeration of supported conversational modalities. Known values are:
-     "transcript", "text".
+    :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
+     server. Known values are: "transcript", "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.Modality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
@@ -1450,6 +1453,7 @@ class ConversationItemBase(msrest.serialization.Model):
     _validation = {
         'id': {'required': True},
         'participant_id': {'required': True},
+        'modality': {'required': True},
     }
 
     _attribute_map = {
@@ -1461,6 +1465,10 @@ class ConversationItemBase(msrest.serialization.Model):
         'role': {'key': 'role', 'type': 'str'},
     }
 
+    _subtype_map = {
+        'modality': {'text': 'TextConversationItem', 'transcript': 'TranscriptConversationItem'}
+    }
+
     def __init__(
         self,
         *,
@@ -1468,7 +1476,6 @@ class ConversationItemBase(msrest.serialization.Model):
         participant_id: str = "1",
         additional_properties: Optional[Dict[str, Any]] = None,
         language: Optional[str] = None,
-        modality: Optional[Union[str, "_models.Modality"]] = None,
         role: Optional[Union[str, "_models.Role"]] = None,
         **kwargs
     ):
@@ -1483,9 +1490,6 @@ class ConversationItemBase(msrest.serialization.Model):
         :keyword language: The override language of a conversation item in BCP 47 language
          representation.
         :paramtype language: str
-        :keyword modality: Enumeration of supported conversational modalities. Known values are:
-         "transcript", "text".
-        :paramtype modality: str or ~azure.ai.language.conversations.models.Modality
         :keyword role: The role of the participant. Known values are: "agent", "customer", "generic".
         :paramtype role: str or ~azure.ai.language.conversations.models.Role
         """
@@ -1494,7 +1498,7 @@ class ConversationItemBase(msrest.serialization.Model):
         self.id = id
         self.participant_id = participant_id
         self.language = language
-        self.modality = modality
+        self.modality = 'ConversationItemBase'  # type: str
         self.role = role
 
 
@@ -4288,8 +4292,8 @@ class TextConversationItem(ConversationItemBase):
     :vartype participant_id: str
     :ivar language: The override language of a conversation item in BCP 47 language representation.
     :vartype language: str
-    :ivar modality: Enumeration of supported conversational modalities. Known values are:
-     "transcript", "text".
+    :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
+     server. Known values are: "transcript", "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.Modality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
@@ -4300,6 +4304,7 @@ class TextConversationItem(ConversationItemBase):
     _validation = {
         'id': {'required': True},
         'participant_id': {'required': True},
+        'modality': {'required': True},
         'text': {'required': True},
     }
 
@@ -4321,7 +4326,6 @@ class TextConversationItem(ConversationItemBase):
         text: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         language: Optional[str] = None,
-        modality: Optional[Union[str, "_models.Modality"]] = None,
         role: Optional[Union[str, "_models.Role"]] = None,
         **kwargs
     ):
@@ -4336,15 +4340,13 @@ class TextConversationItem(ConversationItemBase):
         :keyword language: The override language of a conversation item in BCP 47 language
          representation.
         :paramtype language: str
-        :keyword modality: Enumeration of supported conversational modalities. Known values are:
-         "transcript", "text".
-        :paramtype modality: str or ~azure.ai.language.conversations.models.Modality
         :keyword role: The role of the participant. Known values are: "agent", "customer", "generic".
         :paramtype role: str or ~azure.ai.language.conversations.models.Role
         :keyword text: Required. The single input query.
         :paramtype text: str
         """
-        super(TextConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, modality=modality, role=role, **kwargs)
+        super(TextConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, role=role, **kwargs)
+        self.modality = 'text'  # type: str
         self.text = text
 
 
@@ -4425,8 +4427,8 @@ class TranscriptConversationItem(ConversationItemBase):
     :vartype participant_id: str
     :ivar language: The override language of a conversation item in BCP 47 language representation.
     :vartype language: str
-    :ivar modality: Enumeration of supported conversational modalities. Known values are:
-     "transcript", "text".
+    :ivar modality: Required. Enumeration of supported conversational modalities.Constant filled by
+     server. Known values are: "transcript", "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.Modality
     :ivar role: The role of the participant. Known values are: "agent", "customer", "generic".
     :vartype role: str or ~azure.ai.language.conversations.models.Role
@@ -4449,6 +4451,7 @@ class TranscriptConversationItem(ConversationItemBase):
     _validation = {
         'id': {'required': True},
         'participant_id': {'required': True},
+        'modality': {'required': True},
         'itn': {'required': True},
         'masked_itn': {'required': True},
         'text': {'required': True},
@@ -4480,7 +4483,6 @@ class TranscriptConversationItem(ConversationItemBase):
         lexical: str,
         additional_properties: Optional[Dict[str, Any]] = None,
         language: Optional[str] = None,
-        modality: Optional[Union[str, "_models.Modality"]] = None,
         role: Optional[Union[str, "_models.Role"]] = None,
         audio_timings: Optional[List["_models.WordLevelTiming"]] = None,
         **kwargs
@@ -4496,9 +4498,6 @@ class TranscriptConversationItem(ConversationItemBase):
         :keyword language: The override language of a conversation item in BCP 47 language
          representation.
         :paramtype language: str
-        :keyword modality: Enumeration of supported conversational modalities. Known values are:
-         "transcript", "text".
-        :paramtype modality: str or ~azure.ai.language.conversations.models.Modality
         :keyword role: The role of the participant. Known values are: "agent", "customer", "generic".
         :paramtype role: str or ~azure.ai.language.conversations.models.Role
         :keyword itn: Required. Inverse Text Normalization representation of input. The
@@ -4517,7 +4516,8 @@ class TranscriptConversationItem(ConversationItemBase):
         :keyword audio_timings: The list of word level audio timing information.
         :paramtype audio_timings: list[~azure.ai.language.conversations.models.WordLevelTiming]
         """
-        super(TranscriptConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, modality=modality, role=role, **kwargs)
+        super(TranscriptConversationItem, self).__init__(additional_properties=additional_properties, id=id, participant_id=participant_id, language=language, role=role, **kwargs)
+        self.modality = 'transcript'  # type: str
         self.itn = itn
         self.masked_itn = masked_itn
         self.text = text

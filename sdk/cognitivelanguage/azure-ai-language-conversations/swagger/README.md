@@ -185,3 +185,37 @@ directive:
       transform: >
         $["x-ms-discriminator-value"] = "ConversationPII";
 ```
+
+### Fix `modality` required errors and default values
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationItemBase"]
+      transform: >
+        $["required"] = ["id", "participantId", "modality"];
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]
+      transform: >
+        $["ConversationItemBase"]["discriminator"] = "modality";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]
+      transform: >
+        $["TextConversationItem"]["x-ms-discriminator-value"] = "text";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]
+      transform: >
+        $["TranscriptConversationItem"]["x-ms-discriminator-value"] = "transcript";
+```
