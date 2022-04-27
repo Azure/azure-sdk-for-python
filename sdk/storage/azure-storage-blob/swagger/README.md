@@ -150,7 +150,7 @@ directive:
     $["x-ms-parameterized-host"] = undefined;
 ```
 
-### Add url parameter to each operation and add url to path
+### Add url parameter to each operation and add url to the path
 ``` yaml
 directive:
 - from: swagger-document
