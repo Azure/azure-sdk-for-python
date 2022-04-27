@@ -132,5 +132,5 @@ def _serialize_manifest(manifest):
 def _compute_digest(data):
     # type: (IO) -> str
     data.seek(0)
-    # return "sha256:" + hashlib.sha256(data.read()).hexdigest()
-    return "sha256:e2fffb656966c98a0b7712672e996a58327eff7705fb3d8d9581fc16ef412d13"
+    return "sha256:" + hashlib.sha256(data.read()).hexdigest()
+    # return "sha256:e2fffb656966c98a0b7712672e996a58327eff7705fb3d8d9581fc16ef412d13"

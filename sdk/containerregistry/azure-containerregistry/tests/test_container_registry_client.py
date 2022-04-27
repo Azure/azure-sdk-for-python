@@ -628,8 +628,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         manifest = self.create_oci_manifest()
         client = self.create_registry_client(containerregistry_endpoint)
         
-        self.upload_manifest_prerequisites()
-        client.upload_manifest(repo, manifest, tag="")
+        self.upload_manifest_prerequisites(repo, client)
+        client.upload_manifest(repo, manifest, tag="v1")
         
     @acr_preparer()
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
@@ -639,8 +639,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         manifest_stream = BytesIO(manifest_bytes)
         client = self.create_registry_client(containerregistry_endpoint)
         
-        self.upload_manifest_prerequisites()
-        client.upload_manifest(repo, manifest_stream, tag="")
+        self.upload_manifest_prerequisites(repo, client)
+        client.upload_manifest(repo, manifest_stream, tag="v1")
     
     @acr_preparer()
     def test_upload_blob(self, containerregistry_endpoint):
@@ -648,6 +648,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
         
         blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
-        path = os.path.join(os.getcwd(), "tests", "data", "oci_artifact", blob)
+        path = os.path.join(self.get_test_directory, "data", "oci_artifact", blob)
         
         client.upload_blob(repo, open(path, "rb"))
