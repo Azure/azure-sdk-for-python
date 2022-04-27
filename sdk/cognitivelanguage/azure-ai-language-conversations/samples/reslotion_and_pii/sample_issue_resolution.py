@@ -54,17 +54,17 @@ def sample_issue_resolution():
                             conversation_items=[
                                 TextConversationItem(
                                     id=1,
-                                    participant_id="agent",
+                                    participant_id="Agent",
                                     text="Hello, how can I help you?"
                                 ),
                                 TextConversationItem(
                                     id=2,
-                                    participant_id="customer",
+                                    participant_id="Customer",
                                     text="How to upgrade Office? I am getting error messages the whole day."
                                 ),
                                 TextConversationItem(
                                     id=3,
-                                    participant_id="agent",
+                                    participant_id="Agent",
                                     text="Press the upgrade button please. Then sign in and follow the instructions."
                                 )
                             ]
@@ -74,33 +74,30 @@ def sample_issue_resolution():
                 tasks=[
                     AnalyzeConversationSummarizationTask(
                         parameters=ConversationSummarizationTaskParameters(
-                            summary_aspects=["Issue", "Resolution"]
+                            summary_aspects="Issue, Resolution"
                         )
                     )
                 ]
             )
         )
 
-        # wait till done
-        poller.result()
-
         # view result
-        result = client.get_conversation_job_status()
+        result = poller.result()
         task_result = result.tasks.items[0]
-        print("... view task status:")
+        print("... view task status ...")
         print("status: {}".format(task_result.status))
         issue_resolution_result = task_result.results
         if issue_resolution_result.errors:
-            print("... errors occured:")
+            print("... errors occured ...")
             for error in issue_resolution_result.errors:
                 print(error)
         conversation_result = issue_resolution_result.conversations[0]
         if conversation_result.warnings:
-            print("... view warnings:")
+            print("... view warnings ...")
             for warning in conversation_result.warnings:
                 print(warning)
         summaries = conversation_result.summaries
-        print("... view task result:")
+        print("... view task result ...")
         print("issue: {}".format(summaries[0].text))
         print("resolution: {}".format(summaries[1].text))
 
