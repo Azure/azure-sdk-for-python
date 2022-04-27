@@ -1,0 +1,122 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 27 Apr 2022 21:50:37 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagenamestorname.blob.core.windows.net/containercec91366?restype=container&timeout=5
+  response:
+    body:
+      string: ''
+    headers:
+      date: Wed, 27 Apr 2022 21:50:37 GMT
+      etag: '"0x8DA2897F7550990"'
+      last-modified: Wed, 27 Apr 2022 21:50:38 GMT
+      transfer-encoding: chunked
+      x-ms-version: '2021-08-06'
+    status:
+      code: 201
+      message: Created
+    url: https://12uxscnapby3pev24a.blob.core.windows.net/containercec91366?restype=container&timeout=5
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-date:
+      - Wed, 27 Apr 2022 21:50:38 GMT
+      x-ms-tags:
+      - tag1=firsttag
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagenamestorname.blob.core.windows.net/containercec91366/blobcec91366
+  response:
+    body:
+      string: ''
+    headers:
+      date: Wed, 27 Apr 2022 21:50:37 GMT
+      etag: '"0x8DA2897F75F95D1"'
+      last-modified: Wed, 27 Apr 2022 21:50:38 GMT
+      transfer-encoding: chunked
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+      x-ms-version-id: '2022-04-27T21:50:38.1755857Z'
+    status:
+      code: 201
+      message: Created
+    url: https://12uxscnapby3pev24a.blob.core.windows.net/containercec91366/blobcec91366
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-date:
+      - Wed, 27 Apr 2022 21:50:38 GMT
+      x-ms-tags:
+      - tag1=firsttag
+      x-ms-version:
+      - '2021-08-06'
+    method: PUT
+    uri: https://storagenamestorname.blob.core.windows.net/containercec91366/blobcec91366
+  response:
+    body:
+      string: ''
+    headers:
+      date: Wed, 27 Apr 2022 21:50:37 GMT
+      etag: '"0x8DA2897F766C1BE"'
+      last-modified: Wed, 27 Apr 2022 21:50:38 GMT
+      transfer-encoding: chunked
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-08-06'
+      x-ms-version-id: '2022-04-27T21:50:38.2236004Z'
+    status:
+      code: 201
+      message: Created
+    url: https://12uxscnapby3pev24a.blob.core.windows.net/containercec91366/blobcec91366
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.12.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 27 Apr 2022 21:50:48 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagenamestorname.blob.core.windows.net/?comp=blobs&where=%22tag1%22%3D'firsttag'&maxresults=2&include=versions
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<EnumerationResults
+        ServiceEndpoint=\"https://storagenamestorname.blob.core.windows.net/\"><Where>&quot;tag1&quot;=&apos;firsttag&apos;</Where><MaxResults>2</MaxResults><Blobs><Blob><Name>blob603710e9</Name><ContainerName>container603710e9</ContainerName><VersionId>2022-04-27T21:49:56.0115361Z</VersionId><Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag></TagSet></Tags></Blob><Blob><Name>blob603710e9</Name><ContainerName>container603710e9</ContainerName><VersionId>2022-04-27T21:49:56.1415448Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag></TagSet></Tags></Blob></Blobs><NextMarker>2!252!MDAwMDM0IWNvbnRhaW5lcmNlYzkxMzY2ATAxRDg1QTdBNEU5QTUxREQhMDAwMDEyIWJsb2JjZWM5MTM2NiEwMDAwMTYhCAAAAAgAAABmaXJzdHRhZyEwMDAwMDEhMCEwMDAwMjghMjAyMi0wNC0yN1QyMTowMzo1Ni4wMTc5OTgzWiEwMDAwMzYhYTcxMDJmNWMtNTczZi00OWM4LTg2ODQtOWVlODA1MmZlZjYzITAwMDAwNCF0YWcxIQ--</NextMarker></EnumerationResults>"
+    headers:
+      content-type: application/xml
+      date: Wed, 27 Apr 2022 21:50:48 GMT
+      transfer-encoding: chunked
+      x-ms-version: '2021-08-06'
+    status:
+      code: 200
+      message: OK
+    url: https://12uxscnapby3pev24a.blob.core.windows.net/?comp=blobs&where=%22tag1%22%3D'firsttag'&maxresults=2&include=versions
+version: 1

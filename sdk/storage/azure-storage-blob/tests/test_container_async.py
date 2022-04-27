@@ -1987,4 +1987,43 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         self.assertEqual(downloaded_data, data)
 
+    @BlobPreparer()
+    async def test_filter_blobs_versions(self, versioned_storage_account_name, versioned_storage_account_key):
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container_name = "container1"
+        blob_name = "blob1"
+        blob_client = bsc.get_blob_client(container_name, blob_name)
+        container_client = bsc.get_container_client(container_name)
+
+        try:
+            await container_client.create_container()
+        except ResourceExistsError:
+            pass
+
+        tags1 = {"tag1": "firsttag"}
+        include_list = ['versions']
+        where = "\"tag1\"='firsttag'"
+
+        # Act
+        await blob_client.create_append_blob(tags=tags1)
+        await blob_client.create_append_blob(tags=tags1)
+
+        if self.is_live:
+            sleep(10)
+
+        blob_list = container_client.find_blobs_by_tags(filter_expression=where, results_per_page=2,
+                                                        include=include_list).by_page()
+        first_page = (await blob_list.__anext__())
+        items_on_page1 = list()
+        async for item in first_page:
+            items_on_page1.append(item)
+        first_page = items_on_page1
+
+        # Assert
+        self.assertEqual(2, len(first_page))
+        self.assertIsNone(first_page[0].is_current_version)
+        self.assertIsNotNone(first_page[0].version_id)
+        self.assertTrue(first_page[1].is_current_version)
+        self.assertIsNotNone(first_page[1].version_id)
+
 #------------------------------------------------------------------------------

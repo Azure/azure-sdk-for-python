@@ -27,7 +27,7 @@ class AzureBlobStorageConfiguration(Configuration):  # pylint: disable=too-many-
      desired operation.
     :type url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2021-04-10". Note that overriding this default value may result in unsupported behavior.
+     is "2021-08-06". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -38,7 +38,7 @@ class AzureBlobStorageConfiguration(Configuration):  # pylint: disable=too-many-
     ):
         # type: (...) -> None
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
-        version = kwargs.pop('version', "2021-04-10")  # type: str
+        version = kwargs.pop('version', "2021-08-06")  # type: str
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")

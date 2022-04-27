@@ -44,7 +44,7 @@ class AzureBlobStorage(object):
     :param base_url: Service URL. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2021-04-10". Note that overriding this default value may result in unsupported behavior.
+     is "2021-08-06". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -62,12 +62,24 @@ class AzureBlobStorage(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.container = ContainerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.blob = BlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.page_blob = PageBlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.append_blob = AppendBlobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.block_blob = BlockBlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.container = ContainerOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.blob = BlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.page_blob = PageBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.append_blob = AppendBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.block_blob = BlockBlobOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(
