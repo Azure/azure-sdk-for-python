@@ -12,4 +12,3 @@ stages:
       MaxParallel: 1
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
-      TestMarkArgument: not globaldb
