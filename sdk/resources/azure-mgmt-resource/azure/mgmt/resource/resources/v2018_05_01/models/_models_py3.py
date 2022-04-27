@@ -683,12 +683,15 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar on_error_deployment: The deployment on error behavior.
     :vartype on_error_deployment:
      ~azure.mgmt.resource.resources.v2018_05_01.models.OnErrorDeploymentExtended
+    :ivar error: The deployment error.
+    :vartype error: ~azure.mgmt.resource.resources.v2018_05_01.models.ErrorResponse
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
         'correlation_id': {'readonly': True},
         'timestamp': {'readonly': True},
+        'error': {'readonly': True},
     }
 
     _attribute_map = {
@@ -705,6 +708,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeploymentExtended'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
     def __init__(
@@ -762,6 +766,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         self.mode = mode
         self.debug_setting = debug_setting
         self.on_error_deployment = on_error_deployment
+        self.error = None
 
 
 class DeploymentValidateResult(msrest.serialization.Model):

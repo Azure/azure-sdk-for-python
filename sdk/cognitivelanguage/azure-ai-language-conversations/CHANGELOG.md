@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (2022-04-14)
+## 1.0.0b3 (2022-04-19)
 
 ### Features Added
 * Entity resolutions

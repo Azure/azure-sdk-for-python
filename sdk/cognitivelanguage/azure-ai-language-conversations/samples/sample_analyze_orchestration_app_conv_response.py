@@ -17,10 +17,10 @@ USAGE:
     python sample_analyze_orchestration_app_conv_response.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CLU_ENDPOINT                       - endpoint for your CLU resource.
-    2) AZURE_CLU_KEY                            - API key for your CLU resource.
-    3) AZURE_CLU_ORCHESTRATION_PROJECT_NAME     - project name for your CLU orchestration project.
-    4) AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
+    1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
+    2) AZURE_CONVERSATIONS_KEY                            - API key for your CLU resource.
+    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME     - project name for your CLU orchestration project.
+    4) AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
 def sample_analyze_orchestration_app_conv_response():
@@ -38,10 +38,10 @@ def sample_analyze_orchestration_app_conv_response():
     )
 
     # get secrets
-    clu_endpoint = os.environ["AZURE_CLU_ENDPOINT"]
-    clu_key = os.environ["AZURE_CLU_KEY"]
-    project_name = os.environ["AZURE_CLU_ORCHESTRATION_PROJECT_NAME"]
-    deployment_name = os.environ["AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME"]
+    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    project_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
 
     # analyze query
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))

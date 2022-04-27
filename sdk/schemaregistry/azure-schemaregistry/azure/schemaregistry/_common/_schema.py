@@ -34,15 +34,24 @@ class SchemaProperties(object):
     :vartype id: str
     :ivar format: Format for the schema being stored.
     :vartype format: ~azure.schemaregistry.SchemaFormat
+    :ivar group_name: Schema group under which schema is stored.
+    :vartype group_name: str
+    :ivar name: Name of schema.
+    :vartype name: str
     """
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.id = kwargs.pop("id")
         self.format = kwargs.pop("format")
+        self.group_name = kwargs.pop("group_name")
+        self.name = kwargs.pop("name")
 
     def __repr__(self):
-        return "SchemaProperties(id={}, format={})".format(self.id, self.format)[:1024]
+        return (
+            f"SchemaProperties(id={self.id}, format={self.format}, "
+            f"group_name={self.group_name}, name={self.name})"[:1024]
+        )
 
 
 class Schema(object):
