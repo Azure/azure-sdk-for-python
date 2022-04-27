@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs?stringIndexType=UnicodeCodePoint",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs?stringIndexType=UnicodeCodePoint",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json, text/json",
@@ -9,48 +9,54 @@
         "Connection": "keep-alive",
         "Content-Length": "69",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "3c4004e9-5d10-11ec-8d5a-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022Hello world\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "0",
+            "text": "Hello world",
+            "language": "en"
+          }
+        ]
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "8ef5b291-62fb-401b-94d3-8bcbf03f3205",
-        "Date": "Tue, 14 Dec 2021 19:01:25 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/cb13e605-1d24-4325-baa8-8925f94c853e",
+        "apim-request-id": "c8ca7a7d-228c-4b5c-a0c2-73b32b916846",
+        "Date": "Mon, 25 Apr 2022 23:13:02 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/583a6861-fbf3-404b-a6af-02f562ebe4b5",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "237"
+        "x-envoy-upstream-service-time": "206"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/entities/health/jobs/cb13e605-1d24-4325-baa8-8925f94c853e",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/583a6861-fbf3-404b-a6af-02f562ebe4b5",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "3c4004e9-5d10-11ec-8d5a-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "52cab925-712b-470c-a24a-cd978ce0d89f",
+        "apim-request-id": "830c9465-e11d-42b9-9428-eba44071bd76",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 19:01:30 GMT",
+        "Date": "Mon, 25 Apr 2022 23:13:07 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "47"
+        "x-envoy-upstream-service-time": "50"
       },
       "ResponseBody": {
-        "jobId": "cb13e605-1d24-4325-baa8-8925f94c853e",
-        "lastUpdateDateTime": "2021-12-14T19:01:26Z",
-        "createdDateTime": "2021-12-14T19:01:25Z",
-        "expirationDateTime": "2021-12-15T19:01:25Z",
+        "jobId": "583a6861-fbf3-404b-a6af-02f562ebe4b5",
+        "lastUpdateDateTime": "2022-04-25T23:13:03Z",
+        "createdDateTime": "2022-04-25T23:13:03Z",
+        "expirationDateTime": "2022-04-26T23:13:03Z",
         "status": "succeeded",
         "errors": [],
         "results": {
@@ -63,7 +69,7 @@
             }
           ],
           "errors": [],
-          "modelVersion": "2021-05-15"
+          "modelVersion": "2022-03-01"
         }
       }
     }

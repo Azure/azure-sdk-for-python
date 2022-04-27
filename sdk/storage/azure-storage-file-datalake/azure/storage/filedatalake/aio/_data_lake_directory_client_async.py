@@ -4,7 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from typing import Any
+from typing import ( # pylint: disable=unused-import
+    Any, Dict, Optional, Union,
+    TYPE_CHECKING)
 
 try:
     from urllib.parse import quote, unquote
@@ -17,6 +19,9 @@ from .._models import DirectoryProperties, FileProperties
 from .._deserialize import deserialize_dir_properties
 from ._path_client_async import PathClient
 from .._shared.base_client_async import AsyncTransportWrapper
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
@@ -46,6 +51,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -115,6 +123,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
@@ -208,6 +219,10 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the directory was created with a customer-provided key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: DirectoryProperties
@@ -366,6 +381,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeDirectoryClient for the subdirectory.
@@ -464,6 +482,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: DataLakeFileClient

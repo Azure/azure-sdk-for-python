@@ -21,7 +21,7 @@ except ImportError:
 import six
 
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
@@ -302,34 +302,6 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-
-    @distributed_trace
-    def create_container_if_not_exists(self, **kwargs):
-        # type: (**Any) -> None
-        """
-        Creates a new container under the specified account. If the container
-        with the same name already exists, it is not changed.
-
-        :keyword Dict[str, str] metadata:
-            A dict with name_value pairs to associate with the
-            container as metadata. Example:{'Category':'test'}
-        :keyword ~azure.storage.blob.PublicAccess public_access:
-            Possible values include: 'container', 'blob'.
-        :keyword container_encryption_scope:
-            Specifies the default encryption scope to set on the container and use for
-            all future writes.
-
-            .. versionadded:: 12.2.0
-
-        :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :rtype: None
-        """
-        try:
-            return self.create_container(**kwargs)
-        except ResourceExistsError:
-            return None
 
     @distributed_trace
     def _rename_container(self, new_name, **kwargs):
@@ -987,6 +959,11 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
         :keyword str encoding:
             Defaults to UTF-8.
+        :keyword progress_hook:
+            A callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transfered
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], None]
         :returns: A BlobClient to interact with the newly uploaded blob.
         :rtype: ~azure.storage.blob.BlobClient
 

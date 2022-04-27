@@ -12,7 +12,6 @@ urlFragment: conversationslanguageunderstanding-samples
 # Samples for Azure Conversational Language Understanding client library for Python
 
 These code samples show common scenario operations with the Azure Conversational Language Understanding client library.
-The async versions of the samples require Python 3.6 or later.
 
 You can authenticate your client with a Conversational Language Understanding API key:
 
@@ -29,7 +28,7 @@ These sample programs show common scenarios for the Conversational Language Unde
 
 ## Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package (3.6 or later if using asyncio)
+- Python 3.6 or later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and an
   [Azure CLU account][azure_clu_account] to run these samples.
 

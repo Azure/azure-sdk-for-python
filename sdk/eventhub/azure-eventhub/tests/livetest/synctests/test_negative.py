@@ -33,6 +33,26 @@ def test_send_batch_with_invalid_hostname(invalid_hostname):
             batch.add(EventData("test data"))
             client.send_batch(batch)
 
+    # test setting callback
+    def on_error(events, pid, err):
+        assert len(events) == 1
+        assert not pid
+        on_error.err = err
+
+    on_error.err = None
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, on_error=on_error)
+    with client:
+        batch = EventDataBatch()
+        batch.add(EventData("test data"))
+        client.send_batch(batch)
+    assert isinstance(on_error.err, ConnectError)
+
+    on_error.err = None
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, on_error=on_error)
+    with client:
+        client.send_event(EventData("test data"))
+    assert isinstance(on_error.err, ConnectError)
+
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_hostname_sync(invalid_hostname):

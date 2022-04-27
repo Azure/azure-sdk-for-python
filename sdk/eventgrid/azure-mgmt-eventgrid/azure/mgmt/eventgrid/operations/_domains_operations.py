@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -22,25 +22,20 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}')
@@ -70,15 +65,17 @@ def build_get_request(
 
 
 def build_create_or_update_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-12-01"
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}')
@@ -105,18 +102,19 @@ def build_create_or_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}')
     path_format_arguments = {
@@ -140,15 +138,17 @@ def build_delete_request_initial(
 
 
 def build_update_request_initial(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-12-01"
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}')
@@ -175,19 +175,20 @@ def build_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_by_subscription_request(
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/domains')
@@ -219,15 +220,14 @@ def build_list_by_subscription_request(
 
 
 def build_list_by_resource_group_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    top = kwargs.pop('top', None)  # type: Optional[int]
-
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains')
@@ -260,13 +260,12 @@ def build_list_by_resource_group_request(
 
 
 def build_list_shared_access_keys_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-12-01"
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/listKeys')
@@ -296,15 +295,17 @@ def build_list_shared_access_keys_request(
 
 
 def build_regenerate_key_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    domain_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    subscription_id: str,
+    resource_group_name: str,
+    domain_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-12-01"
+    api_version = "2021-10-15-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/regenerateKey')
@@ -331,10 +332,11 @@ def build_regenerate_key_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class DomainsOperations(object):
     """DomainsOperations operations.
 
@@ -360,11 +362,10 @@ class DomainsOperations(object):
     @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.Domain"
+        resource_group_name: str,
+        domain_name: str,
+        **kwargs: Any
+    ) -> "_models.Domain":
         """Get a domain.
 
         Get properties of a domain.
@@ -413,12 +414,11 @@ class DomainsOperations(object):
 
     def _create_or_update_initial(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_info,  # type: "_models.Domain"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.Domain"
+        resource_group_name: str,
+        domain_name: str,
+        domain_info: "_models.Domain",
+        **kwargs: Any
+    ) -> "_models.Domain":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -460,12 +460,11 @@ class DomainsOperations(object):
     @distributed_trace
     def begin_create_or_update(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_info,  # type: "_models.Domain"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.Domain"]
+        resource_group_name: str,
+        domain_name: str,
+        domain_info: "_models.Domain",
+        **kwargs: Any
+    ) -> LROPoller["_models.Domain"]:
         """Create or update a domain.
 
         Asynchronously creates or updates a new domain with the specified parameters.
@@ -532,11 +531,10 @@ class DomainsOperations(object):
 
     def _delete_initial(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        resource_group_name: str,
+        domain_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -569,11 +567,10 @@ class DomainsOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        resource_group_name: str,
+        domain_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete a domain.
 
         Delete existing domain.
@@ -632,12 +629,11 @@ class DomainsOperations(object):
 
     def _update_initial(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_update_parameters,  # type: "_models.DomainUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.Domain"]
+        resource_group_name: str,
+        domain_name: str,
+        domain_update_parameters: "_models.DomainUpdateParameters",
+        **kwargs: Any
+    ) -> Optional["_models.Domain"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Domain"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -681,12 +677,11 @@ class DomainsOperations(object):
     @distributed_trace
     def begin_update(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        domain_update_parameters,  # type: "_models.DomainUpdateParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.Domain"]
+        resource_group_name: str,
+        domain_name: str,
+        domain_update_parameters: "_models.DomainUpdateParameters",
+        **kwargs: Any
+    ) -> LROPoller["_models.Domain"]:
         """Update a domain.
 
         Asynchronously updates a domain with the specified parameters.
@@ -754,11 +749,10 @@ class DomainsOperations(object):
     @distributed_trace
     def list_by_subscription(
         self,
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.DomainsListResult"]
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.DomainsListResult"]:
         """List domains under an Azure subscription.
 
         List all the domains under an Azure subscription.
@@ -837,12 +831,11 @@ class DomainsOperations(object):
     @distributed_trace
     def list_by_resource_group(
         self,
-        resource_group_name,  # type: str
-        filter=None,  # type: Optional[str]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.DomainsListResult"]
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.DomainsListResult"]:
         """List domains under a resource group.
 
         List all the domains under a resource group.
@@ -925,11 +918,10 @@ class DomainsOperations(object):
     @distributed_trace
     def list_shared_access_keys(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DomainSharedAccessKeys"
+        resource_group_name: str,
+        domain_name: str,
+        **kwargs: Any
+    ) -> "_models.DomainSharedAccessKeys":
         """List keys for a domain.
 
         List the two keys used to publish to a domain.
@@ -979,12 +971,11 @@ class DomainsOperations(object):
     @distributed_trace
     def regenerate_key(
         self,
-        resource_group_name,  # type: str
-        domain_name,  # type: str
-        regenerate_key_request,  # type: "_models.DomainRegenerateKeyRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DomainSharedAccessKeys"
+        resource_group_name: str,
+        domain_name: str,
+        regenerate_key_request: "_models.DomainRegenerateKeyRequest",
+        **kwargs: Any
+    ) -> "_models.DomainSharedAccessKeys":
         """Regenerate key for a domain.
 
         Regenerate a shared access key for a domain.

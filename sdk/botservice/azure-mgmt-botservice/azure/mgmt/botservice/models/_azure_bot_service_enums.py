@@ -26,6 +26,7 @@ class ChannelName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SMS_CHANNEL = "SmsChannel"
     LINE_CHANNEL = "LineChannel"
     DIRECT_LINE_SPEECH_CHANNEL = "DirectLineSpeechChannel"
+    OUTLOOK_CHANNEL = "OutlookChannel"
 
 class Key(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Determines which key is to be regenerated
