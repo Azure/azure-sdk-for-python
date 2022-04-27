@@ -184,9 +184,9 @@ class SchemaRegistryClient(object):
         as matched by schema definition comparison.
 
         :param str group_name: Schema group under which schema should be registered.
-        :param str name: Name of schema being registered.
-        :param str definition: String representation of the schema being registered.
-        :param format: Format for the schema being registered.
+        :param str name: Name of schema for which properties should be retrieved.
+        :param str definition: String representation of the schema for which properties should be retrieved.
+        :param format: Format for the schema for which properties should be retrieved.
         :type format: Union[str, SchemaFormat]
         :rtype: ~azure.schemaregistry.SchemaProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

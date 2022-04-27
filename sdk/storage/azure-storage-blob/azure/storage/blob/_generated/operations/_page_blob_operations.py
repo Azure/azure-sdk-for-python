@@ -455,6 +455,8 @@ def build_get_page_ranges_request(
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
     if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    marker = kwargs.pop('marker', None)  # type: Optional[str]
+    maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
 
     accept = "application/xml"
     # Construct URL
@@ -472,6 +474,10 @@ def build_get_page_ranges_request(
         _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if timeout is not None:
         _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+    if marker is not None:
+        _query_parameters['marker'] = _SERIALIZER.query("marker", marker, 'str')
+    if maxresults is not None:
+        _query_parameters['maxresults'] = _SERIALIZER.query("maxresults", maxresults, 'int', minimum=1)
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -522,6 +528,8 @@ def build_get_page_ranges_diff_request(
     if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
     if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    marker = kwargs.pop('marker', None)  # type: Optional[str]
+    maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
 
     accept = "application/xml"
     # Construct URL
@@ -541,6 +549,10 @@ def build_get_page_ranges_diff_request(
         _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
     if prevsnapshot is not None:
         _query_parameters['prevsnapshot'] = _SERIALIZER.query("prevsnapshot", prevsnapshot, 'str')
+    if marker is not None:
+        _query_parameters['marker'] = _SERIALIZER.query("marker", marker, 'str')
+    if maxresults is not None:
+        _query_parameters['maxresults'] = _SERIALIZER.query("maxresults", maxresults, 'int', minimum=1)
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -1529,6 +1541,8 @@ class PageBlobOperations(object):
         timeout=None,  # type: Optional[int]
         range=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
+        marker=None,  # type: Optional[str]
+        maxresults=None,  # type: Optional[int]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
@@ -1554,6 +1568,20 @@ class PageBlobOperations(object):
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :type marker: str
+        :param maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Note that if the listing operation crosses a partition boundary, then the service
+         will return a continuation token for retrieving the remainder of the results. For this reason,
+         it is possible that the service will return fewer results than specified by maxresults, or than
+         the default of 5000. Default value is None.
+        :type maxresults: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -1603,6 +1631,8 @@ class PageBlobOperations(object):
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            marker=marker,
+            maxresults=maxresults,
             template_url=self.get_page_ranges.metadata['url'],
         )
         request = _convert_request(request)
@@ -1648,6 +1678,8 @@ class PageBlobOperations(object):
         prev_snapshot_url=None,  # type: Optional[str]
         range=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
+        marker=None,  # type: Optional[str]
+        maxresults=None,  # type: Optional[int]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
@@ -1685,6 +1717,20 @@ class PageBlobOperations(object):
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :type marker: str
+        :param maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Note that if the listing operation crosses a partition boundary, then the service
+         will return a continuation token for retrieving the remainder of the results. For this reason,
+         it is possible that the service will return fewer results than specified by maxresults, or than
+         the default of 5000. Default value is None.
+        :type maxresults: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -1736,6 +1782,8 @@ class PageBlobOperations(object):
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            marker=marker,
+            maxresults=maxresults,
             template_url=self.get_page_ranges_diff.metadata['url'],
         )
         request = _convert_request(request)

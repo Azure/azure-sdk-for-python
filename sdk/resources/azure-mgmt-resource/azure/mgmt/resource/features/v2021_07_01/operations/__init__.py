@@ -6,9 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._feature_client_operations import FeatureClientOperationsMixin
-from ._features_operations import FeaturesOperations
-from ._subscription_feature_registrations_operations import SubscriptionFeatureRegistrationsOperations
+from ._operations import FeatureClientOperationsMixin
+from ._operations import FeaturesOperations
+from ._operations import SubscriptionFeatureRegistrationsOperations
 
 __all__ = [
     'FeatureClientOperationsMixin',
