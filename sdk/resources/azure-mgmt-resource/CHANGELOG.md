@@ -4,7 +4,7 @@
 
 **Features**
 
-  - Model ChangeBase.change_category remove the enum Create.
+  - GA `azure.mgmt.resource.changes`
 
 
 ## 21.1.0b1 (2022-04-19)
