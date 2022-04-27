@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._operations._operations import build_analyze_conversation_request, build_get_conversation_job_status_request, build_submit_conversation_job_request_initial
+from ..._operations._operations import build_analyze_conversation_request, build_submit_conversation_job_request_initial
 from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -221,73 +221,5 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 deserialization_callback=get_long_running_output
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-
-
-    @distributed_trace_async
-    async def get_conversation_job_status(
-        self,
-        job_id: str,
-        *,
-        show_stats: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.AnalyzeConversationJobState:
-        """Get analysis status and results.
-
-        Get the status of an analysis job. A job may consist of one or more tasks. Once all tasks are
-        succeeded, the job will transition to the succeeded state and results will be available for
-        each task.
-
-        :param job_id: Job ID.
-        :type job_id: str
-        :keyword show_stats: (Optional) if set to true, response will contain request and document
-         level statistics. Default value is None.
-        :paramtype show_stats: bool
-        :return: AnalyzeConversationJobState
-        :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationJobState
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-04-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeConversationJobState]
-
-        
-        request = build_get_conversation_job_status_request(
-            job_id=job_id,
-            api_version=api_version,
-            show_stats=show_stats,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('AnalyzeConversationJobState', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
 
 

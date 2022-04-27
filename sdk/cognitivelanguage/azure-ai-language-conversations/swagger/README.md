@@ -86,14 +86,14 @@ directive:
           $["operationId"] = "submitConversationJob";
 ```
 
-### Async Analyze Operation GET
+### Remove unnecessary Async Analyze Operation GET
 
 ```yaml
 directive:
     - from: swagger-document
-      where: $["paths"]["/analyze-conversation/jobs/{jobId}"]["get"]
+      where: $["paths"]
       transform: >
-          $["operationId"] = "getConversationJobStatus";
+          delete $["/analyze-conversation/jobs/{jobId}"];
 ```
 
 ## Sync API Directives
@@ -348,33 +348,3 @@ directive:
             }
         };
 ```
-
-
-
-<!-- ### Fix `participant name` values
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["TextConversationItem"]
-    transform: >
-        delete $.properties["participantId"]
-```
-
-```yaml
-directive:
-    - from: swagger-document
-      where: $["definitions"]["TextConversationItem"]
-      transform: >
-        $["properties"]["participantId"] = {
-            "type": "string",
-            "description": "The participant ID of a conversation item.",
-            "enum": [
-                "Agent",
-                "Customer"
-            ],
-            "x-ms-enum": {
-                "name": "participantIdEnum",
-                "modelAsString": true
-          };
-``` -->
