@@ -6,187 +6,257 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    SMB = "SMB"  #: Server Message Block protocol(SMB).
-    NFS = "NFS"  #: Network File System protocol(NFS).
+    #: Server Message Block protocol(SMB).
+    SMB = "SMB"
+    #: Network File System protocol(NFS).
+    NFS = "NFS"
 
-class AddressType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AddressType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of address.
     """
 
-    NONE = "None"  #: Address type not known.
-    RESIDENTIAL = "Residential"  #: Residential Address.
-    COMMERCIAL = "Commercial"  #: Commercial Address.
+    #: Address type not known.
+    NONE = "None"
+    #: Residential Address.
+    RESIDENTIAL = "Residential"
+    #: Commercial Address.
+    COMMERCIAL = "Commercial"
 
-class AddressValidationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AddressValidationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The address validation status.
     """
 
-    VALID = "Valid"  #: Address provided is valid.
-    INVALID = "Invalid"  #: Address provided is invalid or not supported.
-    AMBIGUOUS = "Ambiguous"  #: Address provided is ambiguous, please choose one of the alternate addresses returned.
+    #: Address provided is valid.
+    VALID = "Valid"
+    #: Address provided is invalid or not supported.
+    INVALID = "Invalid"
+    #: Address provided is ambiguous, please choose one of the alternate addresses returned.
+    AMBIGUOUS = "Ambiguous"
 
-class ClassDiscriminator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ClassDiscriminator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the type of job details.
     """
 
-    DATA_BOX = "DataBox"  #: Databox orders.
-    DATA_BOX_DISK = "DataBoxDisk"  #: DataboxDisk orders.
-    DATA_BOX_HEAVY = "DataBoxHeavy"  #: DataboxHeavy orders.
+    #: Databox orders.
+    DATA_BOX = "DataBox"
+    #: DataboxDisk orders.
+    DATA_BOX_DISK = "DataBoxDisk"
+    #: DataboxHeavy orders.
+    DATA_BOX_HEAVY = "DataBoxHeavy"
 
-class CopyStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CopyStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The Status of the copy
     """
 
-    NOT_STARTED = "NotStarted"  #: Data copy hasn't started yet.
-    IN_PROGRESS = "InProgress"  #: Data copy is in progress.
-    COMPLETED = "Completed"  #: Data copy completed.
-    COMPLETED_WITH_ERRORS = "CompletedWithErrors"  #: Data copy completed with errors.
-    FAILED = "Failed"  #: Data copy failed. No data was copied.
-    NOT_RETURNED = "NotReturned"  #: No copy triggered as device was not returned.
-    HARDWARE_ERROR = "HardwareError"  #: The Device has hit hardware issues.
-    DEVICE_FORMATTED = "DeviceFormatted"  #: Data copy failed. The Device was formatted by user.
-    DEVICE_METADATA_MODIFIED = "DeviceMetadataModified"  #: Data copy failed. Device metadata was modified by user.
-    STORAGE_ACCOUNT_NOT_ACCESSIBLE = "StorageAccountNotAccessible"  #: Data copy failed. Storage Account was not accessible during copy.
-    UNSUPPORTED_DATA = "UnsupportedData"  #: Data copy failed. The Device data content is not supported.
+    #: Data copy hasn't started yet.
+    NOT_STARTED = "NotStarted"
+    #: Data copy is in progress.
+    IN_PROGRESS = "InProgress"
+    #: Data copy completed.
+    COMPLETED = "Completed"
+    #: Data copy completed with errors.
+    COMPLETED_WITH_ERRORS = "CompletedWithErrors"
+    #: Data copy failed. No data was copied.
+    FAILED = "Failed"
+    #: No copy triggered as device was not returned.
+    NOT_RETURNED = "NotReturned"
+    #: The Device has hit hardware issues.
+    HARDWARE_ERROR = "HardwareError"
+    #: Data copy failed. The Device was formatted by user.
+    DEVICE_FORMATTED = "DeviceFormatted"
+    #: Data copy failed. Device metadata was modified by user.
+    DEVICE_METADATA_MODIFIED = "DeviceMetadataModified"
+    #: Data copy failed. Storage Account was not accessible during copy.
+    STORAGE_ACCOUNT_NOT_ACCESSIBLE = "StorageAccountNotAccessible"
+    #: Data copy failed. The Device data content is not supported.
+    UNSUPPORTED_DATA = "UnsupportedData"
 
-class DataDestinationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataDestinationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Data Destination Type.
     """
 
-    STORAGE_ACCOUNT = "StorageAccount"  #: Storage Accounts .
-    MANAGED_DISK = "ManagedDisk"  #: Azure Managed disk storage.
+    #: Storage Accounts .
+    STORAGE_ACCOUNT = "StorageAccount"
+    #: Azure Managed disk storage.
+    MANAGED_DISK = "ManagedDisk"
 
-class JobDeliveryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JobDeliveryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Delivery type of Job.
     """
 
-    NON_SCHEDULED = "NonScheduled"  #: Non Scheduled job.
-    SCHEDULED = "Scheduled"  #: Scheduled job.
+    #: Non Scheduled job.
+    NON_SCHEDULED = "NonScheduled"
+    #: Scheduled job.
+    SCHEDULED = "Scheduled"
 
-class NotificationStageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NotificationStageName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the stage.
     """
 
-    DEVICE_PREPARED = "DevicePrepared"  #: Notification at device prepared stage.
-    DISPATCHED = "Dispatched"  #: Notification at device dispatched stage.
-    DELIVERED = "Delivered"  #: Notification at device delivered stage.
-    PICKED_UP = "PickedUp"  #: Notification at device picked up from user stage.
-    AT_AZURE_DC = "AtAzureDC"  #: Notification at device received at azure datacenter stage.
-    DATA_COPY = "DataCopy"  #: Notification at data copy started stage.
+    #: Notification at device prepared stage.
+    DEVICE_PREPARED = "DevicePrepared"
+    #: Notification at device dispatched stage.
+    DISPATCHED = "Dispatched"
+    #: Notification at device delivered stage.
+    DELIVERED = "Delivered"
+    #: Notification at device picked up from user stage.
+    PICKED_UP = "PickedUp"
+    #: Notification at device received at azure datacenter stage.
+    AT_AZURE_DC = "AtAzureDC"
+    #: Notification at data copy started stage.
+    DATA_COPY = "DataCopy"
 
-class OverallValidationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OverallValidationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Overall validation status.
     """
 
-    ALL_VALID_TO_PROCEED = "AllValidToProceed"  #: Every input request is valid.
-    INPUTS_REVISIT_REQUIRED = "InputsRevisitRequired"  #: Some input requests are not valid.
-    CERTAIN_INPUT_VALIDATIONS_SKIPPED = "CertainInputValidationsSkipped"  #: Certain input validations skipped.
+    #: Every input request is valid.
+    ALL_VALID_TO_PROCEED = "AllValidToProceed"
+    #: Some input requests are not valid.
+    INPUTS_REVISIT_REQUIRED = "InputsRevisitRequired"
+    #: Certain input validations skipped.
+    CERTAIN_INPUT_VALIDATIONS_SKIPPED = "CertainInputValidationsSkipped"
 
-class ShareDestinationFormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ShareDestinationFormatType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the share.
     """
 
-    UNKNOWN_TYPE = "UnknownType"  #: Unknown format.
-    HCS = "HCS"  #: Storsimple data format.
-    BLOCK_BLOB = "BlockBlob"  #: Azure storage block blob format.
-    PAGE_BLOB = "PageBlob"  #: Azure storage page blob format.
-    AZURE_FILE = "AzureFile"  #: Azure storage file format.
-    MANAGED_DISK = "ManagedDisk"  #: Azure Compute Disk.
+    #: Unknown format.
+    UNKNOWN_TYPE = "UnknownType"
+    #: Storsimple data format.
+    HCS = "HCS"
+    #: Azure storage block blob format.
+    BLOCK_BLOB = "BlockBlob"
+    #: Azure storage page blob format.
+    PAGE_BLOB = "PageBlob"
+    #: Azure storage file format.
+    AZURE_FILE = "AzureFile"
+    #: Azure Compute Disk.
+    MANAGED_DISK = "ManagedDisk"
 
-class SkuDisabledReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuDisabledReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Reason why the Sku is disabled.
     """
 
-    NONE = "None"  #: SKU is not disabled.
-    COUNTRY = "Country"  #: SKU is not available in the requested country.
-    REGION = "Region"  #: SKU is not available to push data to the requested Azure region.
-    FEATURE = "Feature"  #: Required features are not enabled for the SKU.
-    OFFER_TYPE = "OfferType"  #: Subscription does not have required offer types for the SKU.
-    NO_SUBSCRIPTION_INFO = "NoSubscriptionInfo"  #: Subscription has not registered to Microsoft.DataBox and Service does not have the subscription notification.
+    #: SKU is not disabled.
+    NONE = "None"
+    #: SKU is not available in the requested country.
+    COUNTRY = "Country"
+    #: SKU is not available to push data to the requested Azure region.
+    REGION = "Region"
+    #: Required features are not enabled for the SKU.
+    FEATURE = "Feature"
+    #: Subscription does not have required offer types for the SKU.
+    OFFER_TYPE = "OfferType"
+    #: Subscription has not registered to Microsoft.DataBox and Service does not have the subscription
+    #: notification.
+    NO_SUBSCRIPTION_INFO = "NoSubscriptionInfo"
 
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    DATA_BOX = "DataBox"  #: Databox.
-    DATA_BOX_DISK = "DataBoxDisk"  #: DataboxDisk.
-    DATA_BOX_HEAVY = "DataBoxHeavy"  #: DataboxHeavy.
+    #: Databox.
+    DATA_BOX = "DataBox"
+    #: DataboxDisk.
+    DATA_BOX_DISK = "DataBoxDisk"
+    #: DataboxHeavy.
+    DATA_BOX_HEAVY = "DataBoxHeavy"
 
-class StageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StageName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the stage which is in progress.
     """
 
-    DEVICE_ORDERED = "DeviceOrdered"  #: An order has been created.
-    DEVICE_PREPARED = "DevicePrepared"  #: A device has been prepared for the order.
-    DISPATCHED = "Dispatched"  #: Device has been dispatched to the user of the order.
-    DELIVERED = "Delivered"  #: Device has been delivered to the user of the order.
-    PICKED_UP = "PickedUp"  #: Device has been picked up from user and in transit to azure datacenter.
-    AT_AZURE_DC = "AtAzureDC"  #: Device has been received at azure datacenter from the user.
-    DATA_COPY = "DataCopy"  #: Data copy from the device at azure datacenter.
-    COMPLETED = "Completed"  #: Order has completed.
-    COMPLETED_WITH_ERRORS = "CompletedWithErrors"  #: Order has completed with errors.
-    CANCELLED = "Cancelled"  #: Order has been cancelled.
-    FAILED_ISSUE_REPORTED_AT_CUSTOMER = "Failed_IssueReportedAtCustomer"  #: Order has failed due to issue reported by user.
-    FAILED_ISSUE_DETECTED_AT_AZURE_DC = "Failed_IssueDetectedAtAzureDC"  #: Order has failed due to issue detected at azure datacenter.
-    ABORTED = "Aborted"  #: Order has been aborted.
-    COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"  #: Order has completed with warnings.
-    READY_TO_DISPATCH_FROM_AZURE_DC = "ReadyToDispatchFromAzureDC"  #: Device is ready to be handed to customer from Azure DC.
-    READY_TO_RECEIVE_AT_AZURE_DC = "ReadyToReceiveAtAzureDC"  #: Device can be dropped off at Azure DC.
+    #: An order has been created.
+    DEVICE_ORDERED = "DeviceOrdered"
+    #: A device has been prepared for the order.
+    DEVICE_PREPARED = "DevicePrepared"
+    #: Device has been dispatched to the user of the order.
+    DISPATCHED = "Dispatched"
+    #: Device has been delivered to the user of the order.
+    DELIVERED = "Delivered"
+    #: Device has been picked up from user and in transit to azure datacenter.
+    PICKED_UP = "PickedUp"
+    #: Device has been received at azure datacenter from the user.
+    AT_AZURE_DC = "AtAzureDC"
+    #: Data copy from the device at azure datacenter.
+    DATA_COPY = "DataCopy"
+    #: Order has completed.
+    COMPLETED = "Completed"
+    #: Order has completed with errors.
+    COMPLETED_WITH_ERRORS = "CompletedWithErrors"
+    #: Order has been cancelled.
+    CANCELLED = "Cancelled"
+    #: Order has failed due to issue reported by user.
+    FAILED_ISSUE_REPORTED_AT_CUSTOMER = "Failed_IssueReportedAtCustomer"
+    #: Order has failed due to issue detected at azure datacenter.
+    FAILED_ISSUE_DETECTED_AT_AZURE_DC = "Failed_IssueDetectedAtAzureDC"
+    #: Order has been aborted.
+    ABORTED = "Aborted"
+    #: Order has completed with warnings.
+    COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
+    #: Device is ready to be handed to customer from Azure DC.
+    READY_TO_DISPATCH_FROM_AZURE_DC = "ReadyToDispatchFromAzureDC"
+    #: Device can be dropped off at Azure DC.
+    READY_TO_RECEIVE_AT_AZURE_DC = "ReadyToReceiveAtAzureDC"
 
-class StageStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StageStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the job stage.
     """
 
-    NONE = "None"  #: No status available yet.
-    IN_PROGRESS = "InProgress"  #: Stage is in progress.
-    SUCCEEDED = "Succeeded"  #: Stage has succeeded.
-    FAILED = "Failed"  #: Stage has failed.
-    CANCELLED = "Cancelled"  #: Stage has been cancelled.
-    CANCELLING = "Cancelling"  #: Stage is cancelling.
-    SUCCEEDED_WITH_ERRORS = "SucceededWithErrors"  #: Stage has succeeded with errors.
+    #: No status available yet.
+    NONE = "None"
+    #: Stage is in progress.
+    IN_PROGRESS = "InProgress"
+    #: Stage has succeeded.
+    SUCCEEDED = "Succeeded"
+    #: Stage has failed.
+    FAILED = "Failed"
+    #: Stage has been cancelled.
+    CANCELLED = "Cancelled"
+    #: Stage is cancelling.
+    CANCELLING = "Cancelling"
+    #: Stage has succeeded with errors.
+    SUCCEEDED_WITH_ERRORS = "SucceededWithErrors"
 
-class TransportShipmentTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TransportShipmentTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Transport Shipment Type supported for given region.
     """
 
-    CUSTOMER_MANAGED = "CustomerManaged"  #: Shipment Logistics is handled by the customer.
-    MICROSOFT_MANAGED = "MicrosoftManaged"  #: Shipment Logistics is handled by Microsoft.
+    #: Shipment Logistics is handled by the customer.
+    CUSTOMER_MANAGED = "CustomerManaged"
+    #: Shipment Logistics is handled by Microsoft.
+    MICROSOFT_MANAGED = "MicrosoftManaged"
 
-class ValidationInputDiscriminator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ValidationInputDiscriminator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Identifies the type of validation request.
     """
 
-    VALIDATE_ADDRESS = "ValidateAddress"  #: Identify request and response of address validation.
-    VALIDATE_DATA_DESTINATION_DETAILS = "ValidateDataDestinationDetails"  #: Identify request and response of data destination details validation.
-    VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB = "ValidateSubscriptionIsAllowedToCreateJob"  #: Identify request and response for validation of subscription permission to create job.
-    VALIDATE_PREFERENCES = "ValidatePreferences"  #: Identify request and response of preference validation.
-    VALIDATE_CREATE_ORDER_LIMIT = "ValidateCreateOrderLimit"  #: Identify request and response of create order limit for subscription validation.
-    VALIDATE_SKU_AVAILABILITY = "ValidateSkuAvailability"  #: Identify request and response of active job limit for sku availability.
+    #: Identify request and response of address validation.
+    VALIDATE_ADDRESS = "ValidateAddress"
+    #: Identify request and response of data destination details validation.
+    VALIDATE_DATA_DESTINATION_DETAILS = "ValidateDataDestinationDetails"
+    #: Identify request and response for validation of subscription permission to create job.
+    VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB = "ValidateSubscriptionIsAllowedToCreateJob"
+    #: Identify request and response of preference validation.
+    VALIDATE_PREFERENCES = "ValidatePreferences"
+    #: Identify request and response of create order limit for subscription validation.
+    VALIDATE_CREATE_ORDER_LIMIT = "ValidateCreateOrderLimit"
+    #: Identify request and response of active job limit for sku availability.
+    VALIDATE_SKU_AVAILABILITY = "ValidateSkuAvailability"
 
-class ValidationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ValidationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Create order limit validation status.
     """
 
-    VALID = "Valid"  #: Validation is successful.
-    INVALID = "Invalid"  #: Validation is not successful.
-    SKIPPED = "Skipped"  #: Validation is skipped.
+    #: Validation is successful.
+    VALID = "Valid"
+    #: Validation is not successful.
+    INVALID = "Invalid"
+    #: Validation is skipped.
+    SKIPPED = "Skipped"

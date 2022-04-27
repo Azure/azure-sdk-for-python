@@ -1,0 +1,122 @@
+{
+    "chosen_version": "2022-02-01",
+    "total_api_version_list": ["2022-02-01"],
+    "client": {
+        "name": "DataBoxManagementClient",
+        "filename": "_data_box_management_client",
+        "description": "The DataBox Client.",
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"DataBoxManagementClientConfiguration\"], \"._operations_mixin\": [\"DataBoxManagementClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"DataBoxManagementClientConfiguration\"], \"._operations_mixin\": [\"DataBoxManagementClientOperationsMixin\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The Subscription Id.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The Subscription Id.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "operations": "Operations",
+        "jobs": "JobsOperations",
+        "service": "ServiceOperations"
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "operations": {
+            "mitigate" : {
+                "sync": {
+                    "signature": "def mitigate(  # pylint: disable=inconsistent-return-statements\n    self,\n    job_name,  # type: str\n    resource_group_name,  # type: str\n    mitigate_job_request,  # type: \"_models.MitigateJobRequest\"\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e None\n",
+                    "doc": "\"\"\"Request to mitigate for a given job.\n\n:param job_name: The name of the job Resource within the specified resource group. job names\n must be between 3 and 24 characters in length and use any alphanumeric and underscore only.\n:type job_name: str\n:param resource_group_name: The Resource Group Name.\n:type resource_group_name: str\n:param mitigate_job_request: Mitigation Request.\n:type mitigate_job_request: ~azure.mgmt.databox.v2022_02_01.models.MitigateJobRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def mitigate(  # pylint: disable=inconsistent-return-statements\n    self,\n    job_name: str,\n    resource_group_name: str,\n    mitigate_job_request: \"_models.MitigateJobRequest\",\n    **kwargs: Any\n) -\u003e None:\n",
+                    "doc": "\"\"\"Request to mitigate for a given job.\n\n:param job_name: The name of the job Resource within the specified resource group. job names\n must be between 3 and 24 characters in length and use any alphanumeric and underscore only.\n:type job_name: str\n:param resource_group_name: The Resource Group Name.\n:type resource_group_name: str\n:param mitigate_job_request: Mitigation Request.\n:type mitigate_job_request: ~azure.mgmt.databox.v2022_02_01.models.MitigateJobRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "job_name, resource_group_name, mitigate_job_request"
+            }
+        }
+    }
+}
