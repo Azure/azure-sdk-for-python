@@ -2316,8 +2316,8 @@ class ConversationSummarizationTaskParameters(PreBuiltTaskParameters):
     :vartype logging_opt_out: bool
     :ivar model_version:
     :vartype model_version: str
-    :ivar summary_aspects: Required.
-    :vartype summary_aspects: list[str or ~azure.ai.language.conversations.models.SummaryAspect]
+    :ivar summary_aspects: Required. Known values are: "Issue", "Resolution", "Issue, Resolution".
+    :vartype summary_aspects: str or ~azure.ai.language.conversations.models.SummaryAspectEnum
     """
 
     _validation = {
@@ -2327,13 +2327,13 @@ class ConversationSummarizationTaskParameters(PreBuiltTaskParameters):
     _attribute_map = {
         'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
         'model_version': {'key': 'modelVersion', 'type': 'str'},
-        'summary_aspects': {'key': 'summaryAspects', 'type': '[str]'},
+        'summary_aspects': {'key': 'summaryAspects', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        summary_aspects: List[Union[str, "_models.SummaryAspect"]],
+        summary_aspects: Union[str, "_models.SummaryAspectEnum"],
         logging_opt_out: Optional[bool] = False,
         model_version: Optional[str] = "latest",
         **kwargs
@@ -2343,8 +2343,9 @@ class ConversationSummarizationTaskParameters(PreBuiltTaskParameters):
         :paramtype logging_opt_out: bool
         :keyword model_version:
         :paramtype model_version: str
-        :keyword summary_aspects: Required.
-        :paramtype summary_aspects: list[str or ~azure.ai.language.conversations.models.SummaryAspect]
+        :keyword summary_aspects: Required. Known values are: "Issue", "Resolution", "Issue,
+         Resolution".
+        :paramtype summary_aspects: str or ~azure.ai.language.conversations.models.SummaryAspectEnum
         """
         super(ConversationSummarizationTaskParameters, self).__init__(logging_opt_out=logging_opt_out, model_version=model_version, **kwargs)
         self.summary_aspects = summary_aspects

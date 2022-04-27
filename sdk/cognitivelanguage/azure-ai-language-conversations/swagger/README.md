@@ -219,3 +219,26 @@ directive:
       transform: >
         $["TranscriptConversationItem"]["x-ms-discriminator-value"] = "transcript";
 ```
+
+### Fix `summary aspects` to be string instead of enum
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["ConversationSummarizationTaskParameters"]
+      transform: >
+        $["properties"]["summaryAspects"] = {
+            "type": "string",
+            "enum": [
+              "Issue",
+              "Resolution",
+              "Issue, Resolution"
+            ],
+            "x-ms-enum": {
+              "name": "SummaryAspectEnum",
+              "modelAsString": true
+            }
+          };
+```
+
+

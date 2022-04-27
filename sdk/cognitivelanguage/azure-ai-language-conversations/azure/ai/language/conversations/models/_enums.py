@@ -308,10 +308,11 @@ class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CENTIMETERS_PER_MILLISECOND = "CentimetersPerMillisecond"
     KILOMETERS_PER_MILLISECOND = "KilometersPerMillisecond"
 
-class SummaryAspect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class SummaryAspectEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
-    SUMMARY = "summary"
-    RESOLUTION = "resolution"
+    ISSUE = "Issue"
+    RESOLUTION = "Resolution"
+    ISSUE_RESOLUTION = "Issue, Resolution"
 
 class TargetProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of a target service.
