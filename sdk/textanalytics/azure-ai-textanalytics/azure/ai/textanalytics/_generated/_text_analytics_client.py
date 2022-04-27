@@ -82,8 +82,6 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
             base_url = '{Endpoint}/text/analytics/v3.0'
         elif api_version == 'v3.1':
             base_url = '{Endpoint}/text/analytics/v3.1'
-        elif api_version == 'v3.2-preview.2':
-            base_url = '{Endpoint}/text/analytics/v3.2-preview.2'
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
@@ -104,7 +102,6 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
            * 2022-03-01-preview: :mod:`v2022_03_01_preview.models<azure.ai.textanalytics.v2022_03_01_preview.models>`
            * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
            * v3.1: :mod:`v3_1.models<azure.ai.textanalytics.v3_1.models>`
-           * v3.2-preview.2: :mod:`v3_2_preview_2.models<azure.ai.textanalytics.v3_2_preview_2.models>`
         """
         if api_version == '2022-03-01-preview':
             from .v2022_03_01_preview import models
@@ -114,9 +111,6 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
             return models
         elif api_version == 'v3.1':
             from .v3_1 import models
-            return models
-        elif api_version == 'v3.2-preview.2':
-            from .v3_2_preview_2 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
