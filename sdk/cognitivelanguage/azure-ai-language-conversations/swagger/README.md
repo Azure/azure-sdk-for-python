@@ -255,3 +255,29 @@ directive:
             }
           };
 ```
+
+### Fix `kind` enum values in action results
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnalyzeConversationResultsKind"]
+      transform: >
+        $["enum"] = ["issueResolutionSummaryResults", "conversationPIIResults"];
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnalyzeConversationSummarizationResult"]
+      transform: >
+        $["x-ms-discriminator-value"] = "issueResolutionSummaryResults";
+```
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["definitions"]["AnalyzeConversationConversationPIIResult"]
+      transform: >
+        $["x-ms-discriminator-value"] = "conversationPIIResults";
+```

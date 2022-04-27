@@ -259,8 +259,7 @@ class AnalyzeConversationJobResult(TaskIdentifier, TaskState):
     :ivar task_name:
     :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Conversation Analysis task results.Constant
-     filled by server. Known values are: "ConversationalPIIResults",
-     "ConversationalSummarizationResults".
+     filled by server. Known values are: "issueResolutionSummaryResults", "conversationPIIResults".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultsKind
     """
 
@@ -278,7 +277,7 @@ class AnalyzeConversationJobResult(TaskIdentifier, TaskState):
     }
 
     _subtype_map = {
-        'kind': {'ConversationalPIIResults': 'AnalyzeConversationPIIResult', 'ConversationalSummarizationResults': 'AnalyzeConversationSummarizationResult'}
+        'kind': {'conversationPIIResults': 'AnalyzeConversationPIIResult', 'issueResolutionSummaryResults': 'AnalyzeConversationSummarizationResult'}
     }
 
     def __init__(
@@ -654,8 +653,7 @@ class AnalyzeConversationPIIResult(AnalyzeConversationJobResult):
     :ivar task_name:
     :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Conversation Analysis task results.Constant
-     filled by server. Known values are: "ConversationalPIIResults",
-     "ConversationalSummarizationResults".
+     filled by server. Known values are: "issueResolutionSummaryResults", "conversationPIIResults".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultsKind
     :ivar results: Required. The result from PII detection and redaction operation for each
      conversation.
@@ -699,7 +697,7 @@ class AnalyzeConversationPIIResult(AnalyzeConversationJobResult):
         :paramtype results: ~azure.ai.language.conversations.models.ConversationPIIResults
         """
         super(AnalyzeConversationPIIResult, self).__init__(last_update_date_time=last_update_date_time, status=status, task_name=task_name, **kwargs)
-        self.kind = 'ConversationalPIIResults'  # type: str
+        self.kind = 'conversationPIIResults'  # type: str
         self.results = results
 
 
@@ -808,8 +806,7 @@ class AnalyzeConversationSummarizationResult(AnalyzeConversationJobResult):
     :ivar task_name:
     :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Conversation Analysis task results.Constant
-     filled by server. Known values are: "ConversationalPIIResults",
-     "ConversationalSummarizationResults".
+     filled by server. Known values are: "issueResolutionSummaryResults", "conversationPIIResults".
     :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultsKind
     :ivar results: Required.
     :vartype results: ~azure.ai.language.conversations.models.SummaryResult
@@ -851,7 +848,7 @@ class AnalyzeConversationSummarizationResult(AnalyzeConversationJobResult):
         :paramtype results: ~azure.ai.language.conversations.models.SummaryResult
         """
         super(AnalyzeConversationSummarizationResult, self).__init__(last_update_date_time=last_update_date_time, status=status, task_name=task_name, **kwargs)
-        self.kind = 'ConversationalSummarizationResults'  # type: str
+        self.kind = 'issueResolutionSummaryResults'  # type: str
         self.results = results
 
 

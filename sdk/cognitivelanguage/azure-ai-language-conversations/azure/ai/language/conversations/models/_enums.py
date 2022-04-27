@@ -31,8 +31,8 @@ class AnalyzeConversationResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Enumeration of supported Conversation Analysis task results.
     """
 
-    CONVERSATIONAL_PII_RESULTS = "ConversationalPIIResults"
-    CONVERSATIONAL_SUMMARIZATION_RESULTS = "ConversationalSummarizationResults"
+    ISSUE_RESOLUTION_SUMMARY_RESULTS = "issueResolutionSummaryResults"
+    CONVERSATION_PII_RESULTS = "conversationPIIResults"
 
 class AnalyzeConversationTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Conversation tasks.
