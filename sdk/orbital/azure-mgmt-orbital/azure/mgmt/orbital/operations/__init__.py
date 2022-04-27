@@ -11,6 +11,7 @@ from ._spacecrafts_operations import SpacecraftsOperations
 from ._contacts_operations import ContactsOperations
 from ._contact_profiles_operations import ContactProfilesOperations
 from ._available_ground_stations_operations import AvailableGroundStationsOperations
+from ._operations_results_operations import OperationsResultsOperations
 
 __all__ = [
     'Operations',
@@ -18,4 +19,5 @@ __all__ = [
     'ContactsOperations',
     'ContactProfilesOperations',
     'AvailableGroundStationsOperations',
+    'OperationsResultsOperations',
 ]

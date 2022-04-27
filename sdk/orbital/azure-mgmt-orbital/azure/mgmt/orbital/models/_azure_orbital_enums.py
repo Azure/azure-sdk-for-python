@@ -6,41 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
     """
 
     INTERNAL = "Internal"
 
-class AuthorizationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Authorization status of spacecraft.
-    """
+class ApiVersionParameter(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    ALLOWED = "Allowed"
-    PENDING = "Pending"
-    DENIED = "Denied"
+    TWO_THOUSAND_TWENTY09_01_PREVIEW = "2020-09-01-preview"
+    TWO_THOUSAND_TWENTY_ONE04_04_PREVIEW = "2021-04-04-preview"
+    TWO_THOUSAND_TWENTY_TWO03_01 = "2022-03-01"
 
-class AutoTrackingConfiguration(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AutoTrackingConfiguration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Auto track configuration.
     """
 
@@ -48,14 +31,41 @@ class AutoTrackingConfiguration(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     X_BAND = "xBand"
     S_BAND = "sBand"
 
-class Capability(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Capability(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Capability of the Ground Station.
     """
 
     EARTH_OBSERVATION = "EarthObservation"
     COMMUNICATION = "Communication"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CapabilityParameter(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    EARTH_OBSERVATION = "EarthObservation"
+    COMMUNICATION = "Communication"
+
+class ContactProfilesPropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current state of the resource's creation, deletion, or modification
+    """
+
+    CREATING = "Creating"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
+class ContactsPropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current state of the resource's creation, deletion, or modification
+    """
+
+    CREATING = "Creating"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
 
@@ -64,19 +74,14 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class Direction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Direction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Direction (uplink or downlink)
     """
 
     UPLINK = "uplink"
     DOWNLINK = "downlink"
 
-class Enum6(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    EARTH_OBSERVATION = "EarthObservation"
-    COMMUNICATION = "Communication"
-
-class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system"
     """
@@ -85,24 +90,52 @@ class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class Polarization(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Polarization(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """polarization. eg (RHCP, LHCP)
     """
 
     RHCP = "RHCP"
     LHCP = "LHCP"
-    DUAL_RHCP_LHCP = "dualRhcpLhcp"
     LINEAR_VERTICAL = "linearVertical"
     LINEAR_HORIZONTAL = "linearHorizontal"
 
-class Protocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Protocol either UDP or TCP.
     """
 
     TCP = "TCP"
     UDP = "UDP"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current state of the resource's creation, deletion, or modification
+    """
+
+    CREATING = "Creating"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
+class ReleaseMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Release Status of a ground station
+    """
+
+    PREVIEW = "Preview"
+    GA = "GA"
+
+class SpacecraftsPropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current state of the resource's creation, deletion, or modification
+    """
+
+    CREATING = "Creating"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
+class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of a contact.
     """
 
@@ -111,3 +144,5 @@ class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "succeeded"
     FAILED = "failed"
     PROVIDER_CANCELLED = "providerCancelled"
+    CANCELED = "Canceled"
+    RUNNING = "Running"
