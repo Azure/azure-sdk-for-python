@@ -839,7 +839,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             eg. "\"yourtagname\"='firsttag' and \"yourtagname2\"='secondtag'"
         :keyword int results_per_page:
             The max result per page when paginating.
-        :keyword list[str] include: 
+        :keyword list[str] include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'versions'.
 

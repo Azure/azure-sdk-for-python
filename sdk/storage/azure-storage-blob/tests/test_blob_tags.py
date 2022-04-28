@@ -392,25 +392,24 @@ class StorageBlobTagsTest(StorageTestCase):
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         tags1 = {"tag1": "firsttag"}
         include_list = ['versions']
-        where = "\"tag1\"='firsttag'"
+        where = "@container='{}' and \"tag1\"='firsttag'".format(self.container_name)
 
         # Act
         blob_client.create_append_blob(tags=tags1)
-        blob_client.create_append_blob(tags=tags1)
-
         if self.is_live:
-            sleep(10)
+            sleep(5)
+        blob_client.create_append_blob(tags=tags1)
+        if self.is_live:
+            sleep(5)
 
-        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2,
-                                                include=include_list).by_page()
-        first_page = list(next(blob_list))
+        blob_list = list(self.bsc.find_blobs_by_tags(filter_expression=where, include=include_list))
 
         # Assert
-        self.assertEqual(2, len(first_page))
-        self.assertIsNone(first_page[0].is_current_version)
-        self.assertIsNotNone(first_page[0].version_id)
-        self.assertTrue(first_page[1].is_current_version)
-        self.assertIsNotNone(first_page[1].version_id)
+        self.assertEqual(2, len(blob_list))
+        self.assertIsNone(blob_list[0].is_current_version)
+        self.assertIsNotNone(blob_list[0].version_id)
+        self.assertTrue(blob_list[1].is_current_version)
+        self.assertIsNotNone(blob_list[1].version_id)
 
     @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/23693 ; Test failing after resolving odd service versioning skip behavior.")
     @pytest.mark.live_test_only

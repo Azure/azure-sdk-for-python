@@ -139,7 +139,8 @@ class FilteredBlobPaged(AsyncPageIterator):
             tags = parse_tags(item.tags)
             blob = FilteredBlob(name=item.name,
                                 container_name=item.container_name,
-                                tags=tags, version_id=item.version_id,
+                                tags=tags,
+                                version_id=item.version_id,
                                 is_current_version=item.is_current_version)
             return blob
         return item
