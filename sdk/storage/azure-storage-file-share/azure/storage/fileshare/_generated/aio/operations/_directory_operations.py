@@ -48,8 +48,9 @@ class DirectoryOperations:
         file_permission: Optional[str] = "inherit",
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
-        file_creation_time: str = "now",
-        file_last_write_time: str = "now",
+        file_creation_time: Optional[str] = "now",
+        file_last_write_time: Optional[str] = "now",
+        file_change_time: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new directory under the specified share or parent directory.
@@ -82,6 +83,9 @@ class DirectoryOperations:
         :param file_last_write_time: Last write time for the file/directory. Default value: Now.
          Default value is "now".
         :type file_last_write_time: str
+        :param file_change_time: Change time for the file/directory. Default value: Now. Default value
+         is None.
+        :type file_change_time: str
         :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
@@ -110,6 +114,7 @@ class DirectoryOperations:
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
@@ -303,8 +308,9 @@ class DirectoryOperations:
         file_permission: Optional[str] = "inherit",
         file_permission_key: Optional[str] = None,
         file_attributes: str = "none",
-        file_creation_time: str = "now",
-        file_last_write_time: str = "now",
+        file_creation_time: Optional[str] = "now",
+        file_last_write_time: Optional[str] = "now",
+        file_change_time: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Sets properties on the directory.
@@ -334,6 +340,9 @@ class DirectoryOperations:
         :param file_last_write_time: Last write time for the file/directory. Default value: Now.
          Default value is "now".
         :type file_last_write_time: str
+        :param file_change_time: Change time for the file/directory. Default value: Now. Default value
+         is None.
+        :type file_change_time: str
         :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
@@ -366,6 +375,7 @@ class DirectoryOperations:
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
             template_url=self.set_properties.metadata['url'],
         )
         request = _convert_request(request)
@@ -850,6 +860,7 @@ class DirectoryOperations:
         _file_attributes = None
         _file_creation_time = None
         _file_last_write_time = None
+        _file_change_time = None
         if source_lease_access_conditions is not None:
             _source_lease_id = source_lease_access_conditions.source_lease_id
         if destination_lease_access_conditions is not None:
@@ -858,6 +869,7 @@ class DirectoryOperations:
             _file_attributes = copy_file_smb_info.file_attributes
             _file_creation_time = copy_file_smb_info.file_creation_time
             _file_last_write_time = copy_file_smb_info.file_last_write_time
+            _file_change_time = copy_file_smb_info.file_change_time
 
         request = build_rename_request(
             url=self._config.url,
@@ -873,6 +885,7 @@ class DirectoryOperations:
             file_attributes=_file_attributes,
             file_creation_time=_file_creation_time,
             file_last_write_time=_file_last_write_time,
+            file_change_time=_file_change_time,
             file_permission=file_permission,
             file_permission_key=file_permission_key,
             metadata=metadata,

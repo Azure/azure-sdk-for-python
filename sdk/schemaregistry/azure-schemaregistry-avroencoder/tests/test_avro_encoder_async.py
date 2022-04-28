@@ -132,6 +132,18 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             assert decoded_content_obj["favorite_number"] == 7
             assert decoded_content_obj["favorite_color"] == u"red"
 
+        # no group_name passed into constructor, check encode fails, but decode works
+        extra_sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_avro_encoder_no_group = AvroEncoder(client=extra_sr_client, auto_register=True)
+        decoded_content = await sr_avro_encoder_no_group.decode(encoded_message_content)
+        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["favorite_number"] == 7
+        assert decoded_content["favorite_color"] == u"red"
+        with pytest.raises(TypeError):
+            encoded_message_content = await sr_avro_encoder_no_group.encode(dict_content, schema=schema_str)
+        await sr_avro_encoder_no_group.close()
+        await extra_sr_client.close()
+
     @pytest.mark.asyncio
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy_async

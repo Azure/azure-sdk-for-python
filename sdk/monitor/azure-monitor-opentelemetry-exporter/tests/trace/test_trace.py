@@ -12,6 +12,7 @@ from unittest import mock
 # pylint: disable=import-error
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
+from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
@@ -774,6 +775,109 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.data.base_data.properties["_MS.links"]
         )[0]
         self.assertEqual(json_dict["id"], "a6f5d48acb4d31da")
+
+    def test_span_events_to_envelopes_exception(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=SpanContext(
+                trace_id=36873507687745823477771305566750195432,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            kind=SpanKind.CLIENT,
+        )
+        attributes = {
+            SpanAttributes.EXCEPTION_TYPE: "ZeroDivisionError",
+            SpanAttributes.EXCEPTION_MESSAGE: "zero division error",
+            SpanAttributes.EXCEPTION_STACKTRACE: "Traceback: ZeroDivisionError, division by zero",
+            SpanAttributes.EXCEPTION_ESCAPED: "True",
+        }
+        span.add_event("exception", attributes, time)
+        span.start()
+        span.end()
+        span._status = Status(status_code=StatusCode.OK)
+        envelopes = exporter._span_events_to_envelopes(span)
+  
+        self.assertEqual(len(envelopes), 1)
+        envelope = envelopes[0]
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.Exception"
+        )
+        self.assertEqual(envelope.instrumentation_key,
+                         "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertIsNotNone(envelope.tags)
+        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
+        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
+        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
+        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
+        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertEqual(envelope.data.base_data.properties[SpanAttributes.EXCEPTION_ESCAPED], "True")
+        self.assertEqual(len(envelope.data.base_data.exceptions), 1)
+        self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
+        self.assertEqual(envelope.data.base_data.exceptions[0].message, "zero division error")
+        self.assertEqual(envelope.data.base_data.exceptions[0].has_full_stack, True)
+        self.assertEqual(envelope.data.base_data.exceptions[0].stack, "Traceback: ZeroDivisionError, division by zero")
+        self.assertEqual(envelope.data.base_type, "ExceptionData")
+
+    def test_span_events_to_envelopes_message(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=SpanContext(
+                trace_id=36873507687745823477771305566750195432,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            kind=SpanKind.CLIENT,
+        )
+        attributes = {
+            "test": "asd",
+        }
+        span.add_event("test event", attributes, time)
+        span.start()
+        span.end()
+        span._status = Status(status_code=StatusCode.OK)
+        envelopes = exporter._span_events_to_envelopes(span)
+  
+        self.assertEqual(len(envelopes), 1)
+        envelope = envelopes[0]
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.Message"
+        )
+        self.assertEqual(envelope.instrumentation_key,
+                         "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertIsNotNone(envelope.tags)
+        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
+        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
+        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
+        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
+        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertEqual(envelope.data.base_data.properties["test"], "asd")
+        self.assertEqual(envelope.data.base_data.message, "test event")
+        self.assertEqual(envelope.data.base_type, "MessageData")
 
 
 class TestAzureTraceExporterUtils(unittest.TestCase):

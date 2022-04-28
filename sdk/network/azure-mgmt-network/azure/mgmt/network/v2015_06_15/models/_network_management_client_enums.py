@@ -6,34 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ApplicationGatewayCookieBasedAffinity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationGatewayCookieBasedAffinity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Cookie based affinity. Possible values are: 'Enabled' and 'Disabled'.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class ApplicationGatewayOperationalState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationGatewayOperationalState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Operational state of the application gateway resource. Possible values are: 'Stopped',
     'Started', 'Running', and 'Stopping'.
     """
@@ -43,21 +28,21 @@ class ApplicationGatewayOperationalState(with_metaclass(_CaseInsensitiveEnumMeta
     RUNNING = "Running"
     STOPPING = "Stopping"
 
-class ApplicationGatewayProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationGatewayProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Protocol. Possible values are: 'Http' and 'Https'.
     """
 
     HTTP = "Http"
     HTTPS = "Https"
 
-class ApplicationGatewayRequestRoutingRuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationGatewayRequestRoutingRuleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Rule type. Possible values are: 'Basic' and 'PathBasedRouting'.
     """
 
     BASIC = "Basic"
     PATH_BASED_ROUTING = "PathBasedRouting"
 
-class ApplicationGatewaySkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationGatewaySkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of an application gateway SKU. Possible values are: 'Standard_Small', 'Standard_Medium',
     'Standard_Large', 'WAF_Medium', and 'WAF_Large'.
     """
@@ -66,20 +51,20 @@ class ApplicationGatewaySkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     STANDARD_MEDIUM = "Standard_Medium"
     STANDARD_LARGE = "Standard_Large"
 
-class ApplicationGatewayTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationGatewayTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Tier of an application gateway.
     """
 
     STANDARD = "Standard"
 
-class AuthorizationUseStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AuthorizationUseStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """AuthorizationUseStatus. Possible values are: 'Available' and 'InUse'.
     """
 
     AVAILABLE = "Available"
     IN_USE = "InUse"
 
-class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """AdvertisedPublicPrefixState of the Peering resource. Possible values are 'NotConfigured',
     'Configuring', 'Configured', and 'ValidationNeeded'.
     """
@@ -89,14 +74,14 @@ class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(with_metaclass(_Case
     CONFIGURED = "Configured"
     VALIDATION_NEEDED = "ValidationNeeded"
 
-class ExpressRouteCircuitPeeringState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExpressRouteCircuitPeeringState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The state of peering. Possible values are: 'Disabled' and 'Enabled'
     """
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class ExpressRouteCircuitPeeringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExpressRouteCircuitPeeringType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The PeeringType. Possible values are: 'AzurePublicPeering', 'AzurePrivatePeering', and
     'MicrosoftPeering'.
     """
@@ -105,28 +90,28 @@ class ExpressRouteCircuitPeeringType(with_metaclass(_CaseInsensitiveEnumMeta, st
     AZURE_PRIVATE_PEERING = "AzurePrivatePeering"
     MICROSOFT_PEERING = "MicrosoftPeering"
 
-class ExpressRouteCircuitSkuFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExpressRouteCircuitSkuFamily(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The family of the SKU. Possible values are: 'UnlimitedData' and 'MeteredData'.
     """
 
     UNLIMITED_DATA = "UnlimitedData"
     METERED_DATA = "MeteredData"
 
-class ExpressRouteCircuitSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ExpressRouteCircuitSkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The tier of the SKU. Possible values are 'Standard' and 'Premium'.
     """
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class IPAllocationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class IPAllocationMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """PrivateIP allocation method. Possible values are: 'Static' and 'Dynamic'.
     """
 
     STATIC = "Static"
     DYNAMIC = "Dynamic"
 
-class LoadDistribution(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LoadDistribution(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The load distribution policy for this rule. Possible values are 'Default', 'SourceIP', and
     'SourceIPProtocol'.
     """
@@ -135,7 +120,7 @@ class LoadDistribution(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SOURCE_IP = "SourceIP"
     SOURCE_IP_PROTOCOL = "SourceIPProtocol"
 
-class NetworkOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NetworkOperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the Azure async operation. Possible values are: 'InProgress', 'Succeeded', and
     'Failed'.
     """
@@ -144,7 +129,7 @@ class NetworkOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class ProbeProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProbeProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The protocol of the end point. Possible values are: 'Http' or 'Tcp'. If 'Tcp' is specified, a
     received ACK is required for the probe to be successful. If 'Http' is specified, a 200 OK
     response from the specifies URI is required for the probe to be successful.
@@ -153,14 +138,14 @@ class ProbeProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HTTP = "Http"
     TCP = "Tcp"
 
-class ProcessorArchitecture(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProcessorArchitecture(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """VPN client Processor Architecture. Possible values are: 'AMD64' and 'X86'.
     """
 
     AMD64 = "Amd64"
     X86 = "X86"
 
-class RouteNextHopType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RouteNextHopType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Gets NextHopType.
     """
 
@@ -170,14 +155,14 @@ class RouteNextHopType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VIRTUAL_APPLIANCE = "VirtualAppliance"
     NONE = "None"
 
-class SecurityRuleAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SecurityRuleAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The network traffic is allowed or denied. Possible values are: 'Allow' and 'Deny'.
     """
 
     ALLOW = "Allow"
     DENY = "Deny"
 
-class SecurityRuleDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SecurityRuleDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The direction of the rule. The direction specifies if rule will be evaluated on incoming or
     outgoing traffic. Possible values are: 'Inbound' and 'Outbound'.
     """
@@ -185,7 +170,7 @@ class SecurityRuleDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
-class SecurityRuleProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SecurityRuleProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Network protocol this rule applies to. Possible values are 'Tcp', 'Udp', and '*'.
     """
 
@@ -193,7 +178,7 @@ class SecurityRuleProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UDP = "Udp"
     ASTERISK = "*"
 
-class ServiceProviderProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceProviderProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The ServiceProviderProvisioningState state of the resource. Possible values are
     'NotProvisioned', 'Provisioning', 'Provisioned', and 'Deprovisioning'.
     """
@@ -203,20 +188,20 @@ class ServiceProviderProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, 
     PROVISIONED = "Provisioned"
     DEPROVISIONING = "Deprovisioning"
 
-class TransportProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TransportProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The transport protocol for the external endpoint. Possible values are 'Udp' or 'Tcp'
     """
 
     UDP = "Udp"
     TCP = "Tcp"
 
-class UsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enum describing the unit of measurement.
     """
 
     COUNT = "Count"
 
-class VirtualNetworkGatewayConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VirtualNetworkGatewayConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Virtual network Gateway connection status. Possible values are 'Unknown', 'Connecting',
     'Connected' and 'NotConnected'.
     """
@@ -226,7 +211,7 @@ class VirtualNetworkGatewayConnectionStatus(with_metaclass(_CaseInsensitiveEnumM
     CONNECTED = "Connected"
     NOT_CONNECTED = "NotConnected"
 
-class VirtualNetworkGatewayConnectionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VirtualNetworkGatewayConnectionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Gateway connection type. Possible values are: 'IPsec','Vnet2Vnet','ExpressRoute', and
     'VPNClient.
     """
@@ -236,7 +221,7 @@ class VirtualNetworkGatewayConnectionType(with_metaclass(_CaseInsensitiveEnumMet
     EXPRESS_ROUTE = "ExpressRoute"
     VPN_CLIENT = "VPNClient"
 
-class VirtualNetworkGatewaySkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VirtualNetworkGatewaySkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Gateway sku name -Basic/HighPerformance/Standard
     """
 
@@ -244,7 +229,7 @@ class VirtualNetworkGatewaySkuName(with_metaclass(_CaseInsensitiveEnumMeta, str,
     HIGH_PERFORMANCE = "HighPerformance"
     STANDARD = "Standard"
 
-class VirtualNetworkGatewaySkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VirtualNetworkGatewaySkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Gateway sku tier -Basic/HighPerformance/Standard
     """
 
@@ -252,14 +237,14 @@ class VirtualNetworkGatewaySkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str,
     HIGH_PERFORMANCE = "HighPerformance"
     STANDARD = "Standard"
 
-class VirtualNetworkGatewayType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VirtualNetworkGatewayType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of this virtual network gateway. Possible values are: 'Vpn' and 'ExpressRoute'.
     """
 
     VPN = "Vpn"
     EXPRESS_ROUTE = "ExpressRoute"
 
-class VpnType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VpnType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of this virtual network gateway. Possible values are: 'PolicyBased' and 'RouteBased'.
     """
 

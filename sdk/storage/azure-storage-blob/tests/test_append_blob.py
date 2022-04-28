@@ -30,6 +30,7 @@ from azure.storage.blob._shared.policies import StorageContentValidation
 
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
+from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -1365,5 +1366,32 @@ class StorageAppendBlobTest(StorageTestCase):
             blob.set_legal_hold(False)
             blob.delete_blob()
             mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+
+    @BlobPreparer()
+    def test_upload_progress_chunked(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        self._setup(bsc)
+
+        blob_name = self._get_blob_reference()
+        data = b'a' * 5 * 1024
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_block_size=1024)
+
+        blob_client.upload_blob(
+            data,
+            blob_type=BlobType.AppendBlob,
+            overwrite=True,
+            max_concurrency=1,
+            progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
 
 # ------------------------------------------------------------------------------

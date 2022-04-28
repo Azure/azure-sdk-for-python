@@ -1,0 +1,109 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Sat, 12 Mar 2022 00:39:13 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare100d195f?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sat, 12 Mar 2022 00:39:13 GMT
+      etag: '"0x8DA03C0BAFD59B0"'
+      last-modified: Sat, 12 Mar 2022 00:39:13 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.file.core.windows.net/utshare100d195f?restype=share
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Sat, 12 Mar 2022 00:39:13 GMT
+      x-ms-file-attributes:
+      - ReadOnly|Directory
+      x-ms-file-change-time:
+      - '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-creation-time:
+      - '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-last-write-time:
+      - '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-permission:
+      - inherit
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare100d195f/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sat, 12 Mar 2022 00:39:13 GMT
+      etag: '"0x8DA027EC4121240"'
+      last-modified: Thu, 10 Mar 2022 10:14:30 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: ReadOnly | Directory
+      x-ms-file-change-time: '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-creation-time: '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 13361685536844353511*15111010650564761710
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.file.core.windows.net/utshare100d195f/dir1?restype=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Sat, 12 Mar 2022 00:39:13 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare100d195f/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sat, 12 Mar 2022 00:39:13 GMT
+      etag: '"0x8DA027EC4121240"'
+      last-modified: Thu, 10 Mar 2022 10:14:30 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: ReadOnly | Directory
+      x-ms-file-change-time: '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-creation-time: '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 13361685536844353511*15111010650564761710
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.file.core.windows.net/utshare100d195f/dir1?restype=directory
+version: 1

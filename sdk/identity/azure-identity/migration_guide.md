@@ -114,7 +114,7 @@ control -- for example, by adding the credential file name to your project's `.g
 
 The global documentation for authenticating Python apps on Azure is available [here][authenticate_docs].
 
-[authenticate_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-authenticate?tabs=cmd
+[authenticate_docs]: https://docs.microsoft.com/azure/developer/python/sdk/authentication-overview?tabs=cmd
 [cli_cred]: https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureCliCredential
 [client_from_json]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-json-dict-client-class--config-dict----kwargs-
 [client_from_auth_file]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-auth-file-client-class--auth-path-none----kwargs-

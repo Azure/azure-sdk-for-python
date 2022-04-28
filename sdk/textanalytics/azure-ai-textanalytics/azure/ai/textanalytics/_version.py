@@ -4,4 +4,4 @@
 # ------------------------------------
 
 VERSION = "5.2.0b4"
-DEFAULT_API_VERSION = "v3.2-preview.2"
+DEFAULT_API_VERSION = "2022-03-01-preview"

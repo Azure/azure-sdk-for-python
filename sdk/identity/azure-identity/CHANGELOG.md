@@ -1,5 +1,17 @@
 # Release History
 
+## 1.10.0 (2022-04-28)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.9.0.
+> Only code written against a beta version such as 1.10.0b1 may be affected.
+- `validate_authority` support is not available in 1.10.0.
+
+### Other Changes
+
+- Supported msal-extensions version 1.0.0    ([#23927](https://github.com/Azure/azure-sdk-for-python/issues/23927))
+
 ## 1.10.0b1 (2022-04-07)
 
 ### Features Added
@@ -14,6 +26,8 @@
 
 ### Breaking Changes
 
+> These changes do not impact the API of stable versions such as 1.8.0.
+> Only code written against a beta version such as 1.9.0b1 may be affected.
 - `validate_authority` support is not available in 1.9.0.
 
 ### Bugs Fixed
