@@ -36,12 +36,19 @@ if ($LASTEXITCODE) {
     exit $LASTEXITCODE
 }
 
-Write-Host "The following packages are installed"
-Write-Host pip list
+Write-Host "The following packages are installed:"
+pip list
 if ($LASTEXITCODE) {
     exit $LASTEXITCODE
 }
 Pop-Location
 
+
+$fileName = Join-Path $repoRoot scripts devops_tasks smoke_tests.py
+python $fileName
+if ($LASTEXITCODE) {
+    exit $LASTEXITCODE
+}
+
 # Clean-up the directory created
-# Remove-Item -Path $smoketestsDir -Recurse -Force
+Remove-Item -Path $smoketestsDir -Recurse -Force

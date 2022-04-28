@@ -43,5 +43,12 @@ if ($LASTEXITCODE) {
 }
 Pop-Location
 
+
+$fileName = Join-Path $repoRoot scripts devops_tasks smoke_tests.py
+python $fileName
+if ($LASTEXITCODE) {
+    exit $LASTEXITCODE
+}
+
 # Clean-up the directory created
-# Remove-Item -Path $smoketestsDir -Recurse -Force
+Remove-Item -Path $smoketestsDir -Recurse -Force
