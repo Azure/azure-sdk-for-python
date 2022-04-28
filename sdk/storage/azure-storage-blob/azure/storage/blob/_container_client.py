@@ -959,6 +959,11 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
         :keyword str encoding:
             Defaults to UTF-8.
+        :keyword progress_hook:
+            A callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transfered
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], None]
         :returns: A BlobClient to interact with the newly uploaded blob.
         :rtype: ~azure.storage.blob.BlobClient
 

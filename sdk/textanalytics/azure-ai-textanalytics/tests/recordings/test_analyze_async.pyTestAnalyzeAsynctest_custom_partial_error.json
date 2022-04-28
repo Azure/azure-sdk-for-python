@@ -1,0 +1,342 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "1021",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "1",
+              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities.",
+              "language": "en"
+            },
+            {
+              "id": "2",
+              "text": "",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "taskName": "0",
+            "kind": "CustomSingleLabelClassification",
+            "parameters": {
+              "project-name": "single_category_classify_project_name",
+              "deployment-name": "single_category_classify_project_name"
+            }
+          },
+          {
+            "taskName": "1",
+            "kind": "CustomMultiLabelClassification",
+            "parameters": {
+              "project-name": "multi_category_classify_project_name",
+              "deployment-name": "multi_category_classify_project_name"
+            }
+          },
+          {
+            "taskName": "2",
+            "kind": "CustomEntityRecognition",
+            "parameters": {
+              "project-name": "custom_entities_project_name",
+              "deployment-name": "custom_entities_project_name",
+              "stringIndexType": "UnicodeCodePoint"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "3d77fb62-791b-44e0-bd76-f86cd9cbcaad",
+        "Content-Length": "0",
+        "Date": "Wed, 20 Apr 2022 23:55:25 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/fcec0442-b9df-4b1c-82a2-5b649f718c28?api-version=2022-03-01-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "273"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/fcec0442-b9df-4b1c-82a2-5b649f718c28?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "02744b50-f2e8-47e6-8e03-9af6d8dffb81",
+        "Content-Length": "3702",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 20 Apr 2022 23:55:30 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "120"
+      },
+      "ResponseBody": {
+        "jobId": "fcec0442-b9df-4b1c-82a2-5b649f718c28",
+        "lastUpdateDateTime": "2022-04-20T23:55:26Z",
+        "createdDateTime": "2022-04-20T23:55:25Z",
+        "expirationDateTime": "2022-04-21T23:55:25Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 3,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 3,
+          "items": [
+            {
+              "kind": "CustomSingleLabelClassificationLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-04-20T23:55:26.3074017Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 2,
+                  "validDocumentsCount": 1,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 1
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "class": {
+                      "category": "RateBook",
+                      "confidenceScore": 0.76
+                    },
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "2",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "projectName": "single_category_classify_project_name",
+                "deploymentName": "single_category_classify_project_name"
+              }
+            },
+            {
+              "kind": "CustomMultiLabelClassificationLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-04-20T23:55:26.3547116Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 2,
+                  "validDocumentsCount": 1,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 1
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "class": [],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "2",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "projectName": "multi_category_classify_project_name",
+                "deploymentName": "multi_category_classify_project_name"
+              }
+            },
+            {
+              "kind": "CustomEntityRecognitionLROResults",
+              "taskName": "2",
+              "lastUpdateDateTime": "2022-04-20T23:55:26.2717243Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 2,
+                  "validDocumentsCount": 1,
+                  "erroneousDocumentsCount": 1,
+                  "transactionsCount": 1
+                },
+                "documents": [
+                  {
+                    "id": "1",
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "entities": [
+                      {
+                        "text": "Government",
+                        "category": "restaurant_name",
+                        "offset": 23,
+                        "length": 10,
+                        "confidenceScore": 0.05
+                      },
+                      {
+                        "text": "Office",
+                        "category": "restaurant_name",
+                        "offset": 49,
+                        "length": 6,
+                        "confidenceScore": 0.11
+                      },
+                      {
+                        "text": "GAO",
+                        "category": "restaurant_name",
+                        "offset": 57,
+                        "length": 3,
+                        "confidenceScore": 0.04
+                      },
+                      {
+                        "text": "Accountability",
+                        "category": "geographic_poi",
+                        "offset": 34,
+                        "length": 14,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "natural",
+                        "category": "geographic_poi",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.04
+                      },
+                      {
+                        "text": "dramatic",
+                        "category": "sort",
+                        "offset": 77,
+                        "length": 8,
+                        "confidenceScore": 0.03
+                      },
+                      {
+                        "text": "oil",
+                        "category": "restaurant_type",
+                        "offset": 98,
+                        "length": 3,
+                        "confidenceScore": 0.03
+                      },
+                      {
+                        "text": "gas",
+                        "category": "restaurant_type",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.09
+                      },
+                      {
+                        "text": "and",
+                        "category": "served_dish",
+                        "offset": 102,
+                        "length": 3,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "development",
+                        "category": "object_type",
+                        "offset": 118,
+                        "length": 11,
+                        "confidenceScore": 0.06
+                      },
+                      {
+                        "text": "federal",
+                        "category": "state",
+                        "offset": 133,
+                        "length": 7,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "protection",
+                        "category": "state",
+                        "offset": 267,
+                        "length": 10,
+                        "confidenceScore": 0.05
+                      },
+                      {
+                        "text": "lands",
+                        "category": "poi",
+                        "offset": 141,
+                        "length": 5,
+                        "confidenceScore": 0.04
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "poi",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "the",
+                        "category": "timeRange",
+                        "offset": 152,
+                        "length": 3,
+                        "confidenceScore": 0.24
+                      },
+                      {
+                        "text": "past six years",
+                        "category": "timeRange",
+                        "offset": 156,
+                        "length": 14,
+                        "confidenceScore": 0.54
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [
+                  {
+                    "id": "2",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid document in request.",
+                      "innererror": {
+                        "code": "InvalidDocument",
+                        "message": "Document text is empty."
+                      }
+                    }
+                  }
+                ],
+                "projectName": "custom_entities_project_name",
+                "deploymentName": "custom_entities_project_name"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
