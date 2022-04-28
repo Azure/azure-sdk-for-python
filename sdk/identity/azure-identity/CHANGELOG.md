@@ -1,8 +1,10 @@
 # Release History
 
-## 1.10.1 (Unreleased)
+## 1.11.0b1 (Unreleased)
 
 ### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
 
 ### Breaking Changes
 
