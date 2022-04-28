@@ -194,6 +194,7 @@ class StorageQueueTest(StorageTestCase):
         self.assertEqual(len(listed_queue.metadata), 2)
         self.assertEqual(listed_queue.metadata['val1'], 'test')
 
+    @pytest.mark.live_test_only
     @QueuePreparer()
     def test_list_queues_account_sas(self, storage_account_name, storage_account_key):
         # Action
