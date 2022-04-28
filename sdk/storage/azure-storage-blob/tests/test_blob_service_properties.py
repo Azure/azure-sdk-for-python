@@ -385,7 +385,7 @@ class ServicePropertiesTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_get_service_properties_sas(self, storage_account_name, storage_account_key):
+    def test_get_service_properties_account_sas(self, storage_account_name, storage_account_key):
         # Arrange
         sas_token = generate_account_sas(
             account_name=storage_account_name,

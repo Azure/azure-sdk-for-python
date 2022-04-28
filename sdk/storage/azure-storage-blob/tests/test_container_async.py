@@ -418,7 +418,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
     @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_list_containers_with_account_sas(self, storage_account_name, storage_account_key):
+    async def test_list_containers_account_sas(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = await self._create_container(bsc)
 

@@ -160,7 +160,7 @@ class FileSystemTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    def test_list_file_systems_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+    def test_list_file_systems_account_sas(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system_name = self._get_file_system_reference()

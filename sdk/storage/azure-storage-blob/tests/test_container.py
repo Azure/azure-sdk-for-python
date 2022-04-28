@@ -329,7 +329,7 @@ class StorageContainerTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_list_containers_with_account_sas(self, storage_account_name, storage_account_key):
+    def test_list_containers_account_sas(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
 

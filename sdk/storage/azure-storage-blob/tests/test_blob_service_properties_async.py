@@ -415,7 +415,7 @@ class ServicePropertiesTestAsync(AsyncStorageTestCase):
     @pytest.mark.live_test_only
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_get_service_properties_sas(self, storage_account_name, storage_account_key):
+    async def test_get_service_properties_account_sas(self, storage_account_name, storage_account_key):
         # Arrange
         sas_token = generate_account_sas(
             account_name=storage_account_name,
