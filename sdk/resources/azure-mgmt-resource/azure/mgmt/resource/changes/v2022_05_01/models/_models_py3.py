@@ -67,11 +67,10 @@ class ChangeBase(msrest.serialization.Model):
     :ivar property_change_type: The type of change that occurred. Possible values include:
      "Update", "Insert", "Remove".
     :vartype property_change_type: str or
-     ~azure.mgmt.resource.changes.v2022_03_01_preview.models.PropertyChangeType
+     ~azure.mgmt.resource.changes.v2022_05_01.models.PropertyChangeType
     :ivar change_category: The entity that made the change. Possible values include: "User",
-     "System", "Create".
-    :vartype change_category: str or
-     ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeCategory
+     "System".
+    :vartype change_category: str or ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeCategory
     :ivar previous_value: The target resource property value before the change.
     :vartype previous_value: str
     :ivar new_value: The target resource property value after the change.
@@ -115,14 +114,13 @@ class ChangeProperties(msrest.serialization.Model):
     :ivar target_resource_type: The namespace and type of the resource.
     :vartype target_resource_type: str
     :ivar change_type: The type of change that was captured in the resource. Possible values
-     include: "Update", "Create".
-    :vartype change_type: str or ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeType
+     include: "Update", "Delete", "Create".
+    :vartype change_type: str or ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeType
     :ivar change_attributes: Details about the change resource.
-    :vartype change_attributes:
-     ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeAttributes
+    :vartype change_attributes: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeAttributes
     :ivar changes: A dictionary with changed property name as a key and the change details as the
      value.
-    :vartype changes: dict[str, ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeBase]
+    :vartype changes: dict[str, ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeBase]
     """
 
     _validation = {
@@ -148,12 +146,10 @@ class ChangeProperties(msrest.serialization.Model):
     ):
         """
         :keyword change_attributes: Details about the change resource.
-        :paramtype change_attributes:
-         ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeAttributes
+        :paramtype change_attributes: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeAttributes
         :keyword changes: A dictionary with changed property name as a key and the change details as
          the value.
-        :paramtype changes: dict[str,
-         ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeBase]
+        :paramtype changes: dict[str, ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeBase]
         """
         super(ChangeProperties, self).__init__(**kwargs)
         self.target_resource_id = None
@@ -169,8 +165,7 @@ class ChangeResourceListResult(msrest.serialization.Model):
     :ivar next_link: The link used to get the next page of Change Resources.
     :vartype next_link: str
     :ivar value: The list of resources.
-    :vartype value:
-     list[~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeResourceResult]
+    :vartype value: list[~azure.mgmt.resource.changes.v2022_05_01.models.ChangeResourceResult]
     """
 
     _attribute_map = {
@@ -189,8 +184,7 @@ class ChangeResourceListResult(msrest.serialization.Model):
         :keyword next_link: The link used to get the next page of Change Resources.
         :paramtype next_link: str
         :keyword value: The list of resources.
-        :paramtype value:
-         list[~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeResourceResult]
+        :paramtype value: list[~azure.mgmt.resource.changes.v2022_05_01.models.ChangeResourceResult]
         """
         super(ChangeResourceListResult, self).__init__(**kwargs)
         self.next_link = next_link
@@ -250,7 +244,7 @@ class ChangeResourceResult(Resource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar properties: The properties of a change.
-    :vartype properties: ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeProperties
+    :vartype properties: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeProperties
     """
 
     _validation = {
@@ -274,7 +268,7 @@ class ChangeResourceResult(Resource):
     ):
         """
         :keyword properties: The properties of a change.
-        :paramtype properties: ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeProperties
+        :paramtype properties: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeProperties
         """
         super(ChangeResourceResult, self).__init__(**kwargs)
         self.properties = properties
@@ -324,10 +318,10 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.resource.changes.v2022_03_01_preview.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.resource.changes.v2022_05_01.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~azure.mgmt.resource.changes.v2022_03_01_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.resource.changes.v2022_05_01.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -364,7 +358,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ErrorDetail
+    :vartype error: ~azure.mgmt.resource.changes.v2022_05_01.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -379,7 +373,7 @@ class ErrorResponse(msrest.serialization.Model):
     ):
         """
         :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.resource.changes.v2022_05_01.models.ErrorDetail
         """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
