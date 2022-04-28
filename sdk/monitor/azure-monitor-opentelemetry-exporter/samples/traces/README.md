@@ -267,7 +267,6 @@ $ # from this directory
 $ python sample_event_grid.py
 ```
 
-
 ## Explore the data
 
 After running the applications, data would be available in [Azure](

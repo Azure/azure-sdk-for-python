@@ -49,4 +49,5 @@ event = EventGridEvent(
 credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send(event)
+with tracer.start_as_current_span(name="EventGridSpan"):
+    client.send(event)
