@@ -774,8 +774,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if tag is None:
             tag_or_digest = _compute_digest(data)
 
-        data.seek(0)
-
         await self._client.container_registry.create_manifest(
             name=repository, reference=tag_or_digest, payload=data, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs)
 
@@ -800,9 +798,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             start_upload_response['Location'], data, cls=_return_response, **kwargs
         )
         digest = _compute_digest(data)
-        data.seek(0)
         await self._client.container_registry_blob.complete_upload(
-            digest=digest, next_link=upload_chunk_response['Location'], value=data, cls=_return_response, **kwargs
+            digest=digest, next_link=upload_chunk_response['Location'], cls=_return_response, **kwargs
         )
 
     @distributed_trace_async

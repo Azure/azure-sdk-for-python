@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING, Any, IO, Optional, overload, Union
+from io import BytesIO
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -24,15 +25,16 @@ from ._helpers import (
     OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
 )
-from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties
+from ._models import RepositoryProperties, ArtifactTagProperties, ArtifactManifestProperties, DownloadBlobResult
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from typing import Dict
     from ._generated.models import ManifestWrapper
 
-def _return_response(_response, _, response_header):
+def _return_response_header(_response, _, response_header):
     return response_header
+
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, credential=None, **kwargs):
@@ -752,7 +754,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def upload_manifest(
         self, repository: str, manifest: "Union['OCIManifest', 'IO']", *, tag: "Optional[str]" = None, **kwargs: "Any"
-    ) -> None:
+    ) -> str:
         """Upload a manifest for an OCI artifact.
 
         :param str repository: Name of the repository
@@ -760,8 +762,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type manifest: ~azure.containerregistry.models.OCIManifest or IO
         :keyword tag: Tag of the manifest.
         :paramtype tag: str or None
-        :returns: None
-        :rtype: None
+        :returns: The digest of the uploaded manifest, calculated by the registry.
+        :rtype: str
         :raises ValueError: If the parameter repository or manifest is None.
         """
         if repository is None or manifest is None:
@@ -773,39 +775,43 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         tag_or_digest = tag
         if tag is None:
             tag_or_digest = _compute_digest(data)
-
-        data.seek(0)
         
-        self._client.container_registry.create_manifest(
-            name=repository, reference=tag_or_digest, payload=data, content_type=OCI_MANIFEST_MEDIA_TYPE, **kwargs
+        response = self._client.container_registry.create_manifest(
+            name=repository,
+            reference=tag_or_digest,
+            payload=data,
+            content_type=OCI_MANIFEST_MEDIA_TYPE,
+            cls=_return_response_header,
+            **kwargs
         )
+        return response['Docker-Content-Digest']
 
     @distributed_trace
     def upload_blob(self, repository, data, **kwargs):
-        # type: (str, IO, **Any) -> None
+        # type: (str, IO, **Any) -> str
         """Upload an artifact blob.
 
         :param str repository: Name of the repository
         :param data: The blob to upload.
         :type data: IO
-        :returns: None
-        :rtype: None
+        :returns: The digest of the uploaded blob, calculated by the registry.
+        :rtype: str
         :raises ValueError: If the parameter repository or data is None.
         """
         if repository is None or data is None:
             raise ValueError("The parameter repository and data cannot be None.")
 
-        start_upload_respose = self._client.container_registry_blob.start_upload(
-            repository, cls=_return_response, **kwargs
+        start_upload_response = self._client.container_registry_blob.start_upload(
+            repository, cls=_return_response_header, **kwargs
         )
         upload_chunk_response = self._client.container_registry_blob.upload_chunk(
-            start_upload_respose['Location'], data, cls=_return_response, **kwargs
+            start_upload_response['Location'], data, cls=_return_response_header, **kwargs
         )
         digest = _compute_digest(data)
-        data.seek(0)
-        self._client.container_registry_blob.complete_upload(
-            digest=digest, next_link=upload_chunk_response['Location'], value=data, cls=_return_response, **kwargs
+        complete_upload_response = self._client.container_registry_blob.complete_upload(
+            digest=digest, next_link=upload_chunk_response['Location'], cls=_return_response_header, **kwargs
         )
+        return complete_upload_response['Docker-Content-Digest']
 
     @distributed_trace
     def download_manifest(self, repository, tag_or_digest, **kwargs):
@@ -827,19 +833,27 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def download_blob(self, repository, digest, **kwargs):
-        # type: (str, str, **Any) -> IO | None
+        # type: (str, str, **Any) -> DownloadBlobResult | None
         """Download a blob that is part of an artifact.
 
         :param str repository: Name of the repository
         :param str digest: The digest of the blob to download.
-        :returns: IO or None
-        :rtype: IO or None
+        :returns: DownloadBlobResult or None
+        :rtype: ~azure.containerregistry.DownloadBlobResult or None
         :raises ValueError: If the parameter repository or digest is None.
         """
         if repository is None or digest is None:
             raise ValueError("The parameter repository and digest cannot be None.")
 
-        return self._client.container_registry_blob.get_blob(repository, digest, **kwargs)
+        result = self._client.container_registry_blob.get_blob(repository, digest, **kwargs)
+        
+        if not result:
+            return result
+        
+        data = BytesIO(result.response.internal_response.content)
+        digest = _compute_digest(data)
+        return DownloadBlobResult(data=data, digest=digest)
+            
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):

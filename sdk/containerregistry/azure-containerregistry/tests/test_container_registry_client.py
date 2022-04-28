@@ -602,37 +602,64 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             last_udpated_on = properties.last_udpated_on
         last_updated_on = properties.last_updated_on
         assert last_udpated_on == last_updated_on
-    
+
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_oci_manifest(self, containerregistry_endpoint):
+        # Arrange
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         client = self.create_registry_client(containerregistry_endpoint)
-        
-        client.upload_manifest(repo, manifest)
-    
+
+        self.upload_manifest_prerequisites(repo, client)
+
+        # Act
+        digest = client.upload_manifest(repo, manifest)
+
+        # Assert
+        res = client.download_manifest(repo, digest)
+        print(res)
+
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
+        # Arrange
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         manifest_bytes = json.dumps(manifest.serialize()).encode("utf-8")
-        manifest_stream = BytesIO(manifest_bytes)
-        
+        manifest_stream = BytesIO(manifest_bytes)        
         client = self.create_registry_client(containerregistry_endpoint)
-        
-        client.upload_manifest(repo, manifest_stream)
-    
+
+        self.upload_manifest_prerequisites(repo, client)
+
+        # Act
+        digest = client.upload_manifest(repo, manifest_stream)
+
+        # Assert
+        res = client.download_manifest(repo, digest)
+        print(res)
+
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
+        # Arrange
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         client = self.create_registry_client(containerregistry_endpoint)
         
         self.upload_manifest_prerequisites(repo, client)
-        client.upload_manifest(repo, manifest, tag="v1")
         
+        # Act
+        digest = client.upload_manifest(repo, manifest, tag="v1")
+        
+        # Assert
+        res = client.download_manifest(repo, digest)
+        print(res)
+        
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
+        # Arrange
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         manifest_bytes = json.dumps(manifest.serialize()).encode("utf-8")
@@ -640,14 +667,30 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
         
         self.upload_manifest_prerequisites(repo, client)
-        client.upload_manifest(repo, manifest_stream, tag="v1")
+        
+        # Act
+        digest = client.upload_manifest(repo, manifest_stream, tag="v1")
+        
+        # Assert
+        res = client.download_manifest(repo, digest)
+        print(res)
     
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_blob(self, containerregistry_endpoint):
+        # Arrange
         repo = self.get_resource_name("repo")
-        client = self.create_registry_client(containerregistry_endpoint)
-        
+        client = self.create_registry_client(containerregistry_endpoint)       
         blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
-        path = os.path.join(self.get_test_directory, "data", "oci_artifact", blob)
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
         
-        client.upload_blob(repo, open(path, "rb"))
+        # Act
+        data = open(path, "rb")
+        digest = client.upload_blob(repo, data)
+        
+        # Assert
+        res = client.download_blob(repo, digest)
+        assert len(res.data.read()) == len(data.read())
+        assert res.digest == digest
+        
+        client.delete_blob(repo, digest)
