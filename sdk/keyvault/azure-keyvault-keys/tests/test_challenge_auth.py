@@ -26,8 +26,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient
-from azure.keyvault.keys._shared import (ChallengeAuthPolicy, HttpChallenge,
-                                         HttpChallengeCache)
+from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 
 from _shared.helpers import Request, mock_response, validating_transport
