@@ -30,7 +30,7 @@ class ChangesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.changes.v2022_03_01_preview.models
+    :type models: ~azure.mgmt.resource.changes.v2022_05_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -74,10 +74,10 @@ class ChangesOperations:
         :return: An iterator like instance of either ChangeResourceListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeResourceListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.changes.v2022_05_01.models.ChangeResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-01")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChangeResourceListResult"]
         error_map = {
@@ -170,7 +170,7 @@ class ChangesOperations:
         :type change_resource_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ChangeResourceResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.changes.v2022_03_01_preview.models.ChangeResourceResult
+        :rtype: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeResourceResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChangeResourceResult"]
@@ -179,7 +179,7 @@ class ChangesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-05-01")  # type: str
 
         
         request = build_changes_get_request(
