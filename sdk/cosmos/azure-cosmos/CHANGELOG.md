@@ -2,6 +2,9 @@
 
 ### 4.3.0b5 (Unreleased)
 
+#### Bugfixes
+- Raise 401 errors when fetching DatabaseAccount information on client initialization.
+
 #### Other Changes
 - Marked the GetAuthorizationMethod for deprecation since it will no longer be public in a future release.
 - Added samples showing how to configure retry options for both the sync and async clients.

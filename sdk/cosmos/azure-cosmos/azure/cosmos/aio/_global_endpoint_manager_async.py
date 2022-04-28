@@ -26,7 +26,7 @@ database service.
 import asyncio
 from urllib.parse import urlparse
 from .. import _constants as constants
-from .. import exceptions
+from .. import exceptions, http_constants
 from .._location_cache import LocationCache
 
 # pylint: disable=protected-access
@@ -123,7 +123,9 @@ class _GlobalEndpointManager(object):
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except exceptions.CosmosHttpResponseError:
+        except exceptions.CosmosHttpResponseError as e:
+            if e.status_code == http_constants.StatusCodes.UNAUTHORIZED:
+                raise
             for location_name in self.PreferredLocations:
                 locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
