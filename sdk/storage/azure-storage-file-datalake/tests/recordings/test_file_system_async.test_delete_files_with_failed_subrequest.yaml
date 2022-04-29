@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:14 GMT
+      - Fri, 29 Apr 2022 23:15:52 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
-      etag: '"0x8DA24A47EA7F559"'
-      last-modified: Fri, 22 Apr 2022 21:10:14 GMT
+      date: Fri, 29 Apr 2022 23:15:51 GMT
+      etag: '"0x8DA2A3634953257"'
+      last-modified: Fri, 29 Apr 2022 23:15:52 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-06-08'
     status:
@@ -32,9 +32,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:14 GMT
+      - Fri, 29 Apr 2022 23:15:52 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -44,9 +44,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
-      etag: '"0x8DA24A47EE6C9E1"'
-      last-modified: Fri, 22 Apr 2022 21:10:14 GMT
+      date: Fri, 29 Apr 2022 23:15:52 GMT
+      etag: '"0x8DA2A3634E45187"'
+      last-modified: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
@@ -64,9 +64,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:52 GMT
       x-ms-version:
       - '2021-06-08'
     method: PATCH
@@ -76,7 +76,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
+      date: Fri, 29 Apr 2022 23:15:52 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
@@ -90,11 +90,11 @@ interactions:
       Accept:
       - application/json
       If-Match:
-      - '"0x8DA24A47EE6C9E1"'
+      - '"0x8DA2A3634E45187"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: PATCH
@@ -104,9 +104,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
-      etag: '"0x8DA24A47F02B7F5"'
-      last-modified: Fri, 22 Apr 2022 21:10:15 GMT
+      date: Fri, 29 Apr 2022 23:15:52 GMT
+      etag: '"0x8DA2A3634FE6D67"'
+      last-modified: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'false'
       x-ms-version: '2021-06-08'
@@ -120,9 +120,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -132,9 +132,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
-      etag: '"0x8DA24A47F0E6644"'
-      last-modified: Fri, 22 Apr 2022 21:10:15 GMT
+      date: Fri, 29 Apr 2022 23:15:52 GMT
+      etag: '"0x8DA2A36350B301D"'
+      last-modified: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
@@ -152,9 +152,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: PATCH
@@ -164,7 +164,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
+      date: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
@@ -178,11 +178,11 @@ interactions:
       Accept:
       - application/json
       If-Match:
-      - '"0x8DA24A47F0E6644"'
+      - '"0x8DA2A36350B301D"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: PATCH
@@ -192,9 +192,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
-      etag: '"0x8DA24A47F294170"'
-      last-modified: Fri, 22 Apr 2022 21:10:15 GMT
+      date: Fri, 29 Apr 2022 23:15:53 GMT
+      etag: '"0x8DA2A363524A516"'
+      last-modified: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'false'
       x-ms-version: '2021-06-08'
@@ -208,9 +208,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -220,9 +220,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
-      etag: '"0x8DA24A47F35F18A"'
-      last-modified: Fri, 22 Apr 2022 21:10:15 GMT
+      date: Fri, 29 Apr 2022 23:15:53 GMT
+      etag: '"0x8DA2A363531248E"'
+      last-modified: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
@@ -240,9 +240,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: PATCH
@@ -252,7 +252,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
+      date: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
@@ -266,11 +266,11 @@ interactions:
       Accept:
       - application/json
       If-Match:
-      - '"0x8DA24A47F35F18A"'
+      - '"0x8DA2A363531248E"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: PATCH
@@ -280,9 +280,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
-      etag: '"0x8DA24A47F501205"'
-      last-modified: Fri, 22 Apr 2022 21:10:15 GMT
+      date: Fri, 29 Apr 2022 23:15:53 GMT
+      etag: '"0x8DA2A36354A8D8A"'
+      last-modified: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'false'
       x-ms-version: '2021-06-08'
@@ -296,9 +296,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:15 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -308,9 +308,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:14 GMT
-      etag: '"0x8DA24A47F63E401"'
-      last-modified: Fri, 22 Apr 2022 21:10:15 GMT
+      date: Fri, 29 Apr 2022 23:15:53 GMT
+      etag: '"0x8DA2A36355D55C4"'
+      last-modified: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2021-06-08'
@@ -319,65 +319,65 @@ interactions:
       message: Created
     url: https://vincenttrancanary.dfs.core.windows.net/fs13fa31a04/dir1%2Ffile4?resource=file
 - request:
-    body: "--===============6240228388607899284==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
+    body: "--===============5388320915730764782==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
       binary\r\nContent-ID: 0\r\n\r\nDELETE /fs13fa31a04/file1? HTTP/1.1\r\nx-ms-date:
-      Fri, 22 Apr 2022 21:10:16 GMT\r\nx-ms-client-request-id: 9b718b91-c280-11ec-97fa-4851c58829e0\r\n\r\n\r\n--===============6240228388607899284==\r\nContent-Type:
+      Fri, 29 Apr 2022 23:15:53 GMT\r\nx-ms-client-request-id: 5122253d-c812-11ec-826f-4851c58829e0\r\n\r\n\r\n--===============5388320915730764782==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
-      /fs13fa31a04/file2? HTTP/1.1\r\nx-ms-date: Fri, 22 Apr 2022 21:10:16 GMT\r\nx-ms-client-request-id:
-      9b718b92-c280-11ec-8c33-4851c58829e0\r\n\r\n\r\n--===============6240228388607899284==\r\nContent-Type:
+      /fs13fa31a04/file2? HTTP/1.1\r\nx-ms-date: Fri, 29 Apr 2022 23:15:53 GMT\r\nx-ms-client-request-id:
+      5122253e-c812-11ec-9455-4851c58829e0\r\n\r\n\r\n--===============5388320915730764782==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
-      /fs13fa31a04/file3? HTTP/1.1\r\nx-ms-date: Fri, 22 Apr 2022 21:10:16 GMT\r\nx-ms-client-request-id:
-      9b718b93-c280-11ec-aa6e-4851c58829e0\r\n\r\n\r\n--===============6240228388607899284==\r\nContent-Type:
+      /fs13fa31a04/file3? HTTP/1.1\r\nx-ms-date: Fri, 29 Apr 2022 23:15:53 GMT\r\nx-ms-client-request-id:
+      5122253f-c812-11ec-af89-4851c58829e0\r\n\r\n\r\n--===============5388320915730764782==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 3\r\n\r\nDELETE
-      /fs13fa31a04/dir1? HTTP/1.1\r\nx-ms-date: Fri, 22 Apr 2022 21:10:16 GMT\r\nx-ms-client-request-id:
-      9b718b94-c280-11ec-a054-4851c58829e0\r\n\r\n\r\n--===============6240228388607899284==\r\nContent-Type:
+      /fs13fa31a04/dir1? HTTP/1.1\r\nx-ms-date: Fri, 29 Apr 2022 23:15:53 GMT\r\nx-ms-client-request-id:
+      51222540-c812-11ec-ae90-4851c58829e0\r\n\r\n\r\n--===============5388320915730764782==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 4\r\n\r\nDELETE
-      /fs13fa31a04/dir8? HTTP/1.1\r\nx-ms-date: Fri, 22 Apr 2022 21:10:16 GMT\r\nx-ms-client-request-id:
-      9b718b95-c280-11ec-845e-4851c58829e0\r\n\r\n\r\n--===============6240228388607899284==--\r\n"
+      /fs13fa31a04/dir8? HTTP/1.1\r\nx-ms-date: Fri, 29 Apr 2022 23:15:53 GMT\r\nx-ms-client-request-id:
+      51224c4c-c812-11ec-806d-4851c58829e0\r\n\r\n\r\n--===============5388320915730764782==--\r\n"
     headers:
       Content-Length:
       - '1830'
       Content-Type:
-      - multipart/mixed; boundary================6240228388607899284==
+      - multipart/mixed; boundary================5388320915730764782==
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:16 GMT
+      - Fri, 29 Apr 2022 23:15:53 GMT
       x-ms-version:
       - '2021-06-08'
     method: POST
     uri: https://storagename.blob.core.windows.net/fs13fa31a04?restype=container&comp=batch
   response:
     body:
-      string: "--batchresponse_73c55858-1106-4fa4-b987-07cb4da67e9a\r\nContent-Type:
+      string: "--batchresponse_951f3c90-7539-4738-9fde-82715d92828c\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: 5726a72c-901e-0054-5e8d-5695951e52dc\r\nx-ms-version:
-        2021-06-08\r\nx-ms-client-request-id: 9b718b91-c280-11ec-97fa-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_73c55858-1106-4fa4-b987-07cb4da67e9a\r\nContent-Type:
+        true\r\nx-ms-request-id: 4004887b-f01e-007d-4c1f-5cabe11ebfbd\r\nx-ms-version:
+        2021-06-08\r\nx-ms-client-request-id: 5122253d-c812-11ec-826f-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_951f3c90-7539-4738-9fde-82715d92828c\r\nContent-Type:
         application/http\r\nContent-ID: 1\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: 5726a72c-901e-0054-5e8d-5695951e52de\r\nx-ms-version:
-        2021-06-08\r\nx-ms-client-request-id: 9b718b92-c280-11ec-8c33-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_73c55858-1106-4fa4-b987-07cb4da67e9a\r\nContent-Type:
+        true\r\nx-ms-request-id: 4004887b-f01e-007d-4c1f-5cabe11ebfbf\r\nx-ms-version:
+        2021-06-08\r\nx-ms-client-request-id: 5122253e-c812-11ec-9455-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_951f3c90-7539-4738-9fde-82715d92828c\r\nContent-Type:
         application/http\r\nContent-ID: 2\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: 5726a72c-901e-0054-5e8d-5695951e52df\r\nx-ms-version:
-        2021-06-08\r\nx-ms-client-request-id: 9b718b93-c280-11ec-aa6e-4851c58829e0\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_73c55858-1106-4fa4-b987-07cb4da67e9a\r\nContent-Type:
+        true\r\nx-ms-request-id: 4004887b-f01e-007d-4c1f-5cabe11ebfc0\r\nx-ms-version:
+        2021-06-08\r\nx-ms-client-request-id: 5122253f-c812-11ec-af89-4851c58829e0\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_951f3c90-7539-4738-9fde-82715d92828c\r\nContent-Type:
         application/http\r\nContent-ID: 3\r\n\r\nHTTP/1.1 409 The directory involved
         in this operation is not empty\r\nx-ms-error-code: DirectoryNotEmpty\r\nx-ms-request-id:
-        5726a72c-901e-0054-5e8d-5695951e52e0\r\nx-ms-version: 2021-06-08\r\nx-ms-client-request-id:
-        9b718b94-c280-11ec-a054-4851c58829e0\r\nContent-Length: 240\r\nContent-Type:
+        4004887b-f01e-007d-4c1f-5cabe11ebfc1\r\nx-ms-version: 2021-06-08\r\nx-ms-client-request-id:
+        51222540-c812-11ec-ae90-4851c58829e0\r\nContent-Length: 240\r\nContent-Type:
         application/xml\r\nServer: Windows-Azure-Blob/1.0\r\n\r\n\uFEFF<?xml version=\"1.0\"
         encoding=\"utf-8\"?>\n<Error><Code>DirectoryNotEmpty</Code><Message>The directory
-        involved in this operation is not empty\nRequestId:5726a72c-901e-0054-5e8d-5695951e52e0\nTime:2022-04-22T21:10:16.3578582Z</Message></Error>\r\n--batchresponse_73c55858-1106-4fa4-b987-07cb4da67e9a\r\nContent-Type:
+        involved in this operation is not empty\nRequestId:4004887b-f01e-007d-4c1f-5cabe11ebfc1\nTime:2022-04-29T23:15:54.2659985Z</Message></Error>\r\n--batchresponse_951f3c90-7539-4738-9fde-82715d92828c\r\nContent-Type:
         application/http\r\nContent-ID: 4\r\n\r\nHTTP/1.1 404 The specified blob does
-        not exist.\r\nx-ms-error-code: BlobNotFound\r\nx-ms-request-id: 5726a72c-901e-0054-5e8d-5695951e52ee\r\nx-ms-version:
-        2021-06-08\r\nx-ms-client-request-id: 9b718b95-c280-11ec-845e-4851c58829e0\r\nContent-Length:
+        not exist.\r\nx-ms-error-code: BlobNotFound\r\nx-ms-request-id: 4004887b-f01e-007d-4c1f-5cabe11ebfc2\r\nx-ms-version:
+        2021-06-08\r\nx-ms-client-request-id: 51224c4c-c812-11ec-806d-4851c58829e0\r\nContent-Length:
         216\r\nContent-Type: application/xml\r\nServer: Windows-Azure-Blob/1.0\r\n\r\n\uFEFF<?xml
         version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>BlobNotFound</Code><Message>The
-        specified blob does not exist.\nRequestId:5726a72c-901e-0054-5e8d-5695951e52ee\nTime:2022-04-22T21:10:16.3508623Z</Message></Error>\r\n--batchresponse_73c55858-1106-4fa4-b987-07cb4da67e9a--"
+        specified blob does not exist.\nRequestId:4004887b-f01e-007d-4c1f-5cabe11ebfc2\nTime:2022-04-29T23:15:54.2550045Z</Message></Error>\r\n--batchresponse_951f3c90-7539-4738-9fde-82715d92828c--"
     headers:
-      content-type: multipart/mixed; boundary=batchresponse_73c55858-1106-4fa4-b987-07cb4da67e9a
-      date: Fri, 22 Apr 2022 21:10:16 GMT
+      content-type: multipart/mixed; boundary=batchresponse_951f3c90-7539-4738-9fde-82715d92828c
+      date: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2021-06-08'
@@ -391,9 +391,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 22 Apr 2022 21:10:16 GMT
+      - Fri, 29 Apr 2022 23:15:54 GMT
       x-ms-version:
       - '2021-06-08'
     method: DELETE
@@ -403,7 +403,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 22 Apr 2022 21:10:16 GMT
+      date: Fri, 29 Apr 2022 23:15:53 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-06-08'
     status:

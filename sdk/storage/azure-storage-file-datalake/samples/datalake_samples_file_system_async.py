@@ -246,7 +246,6 @@ class FileSystemSamplesAsync(object):
         except:
             pass
 
-        # Act
         response = await file_system_client.delete_files(
             'file1',
             'file2',
@@ -256,10 +255,10 @@ class FileSystemSamplesAsync(object):
             raise_on_any_failure=False
         )
         print("Total number of sub-responses: " + len(response) + "\n")
-        print("First failure: " + response[0][0] + "\n")
-        print("First failure error code: " + response[0][1] + "\n")
-        print("Second failure: " + response[1][0] + "\n")
-        print("Second failure error code: " + response[1][1] + "\n")
+        print("First failure error code: " + response[3].error_code + "\n")
+        print("First failure status code: " + response[3].status_code + "\n")
+        print("Second failure error code: " + response[4].error_code + "\n")
+        print("Second failure status code: " + response[4].status_code + "\n")
         # [END batch_delete_files_or_empty_directories]
 
 

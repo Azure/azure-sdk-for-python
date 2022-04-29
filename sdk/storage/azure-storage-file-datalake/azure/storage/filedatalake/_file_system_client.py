@@ -822,7 +822,7 @@ class FileSystemClient(StorageAccountHostsMixin):
     def delete_files(
         self,
         *files: str,
-        **kwargs) -> List[Tuple[str, HttpResponseError]]:
+        **kwargs) -> List[Optional[HttpResponseError]]:
         """Marks the specified files or empty directories for deletion.
 
         The files/empty directories are later deleted during garbage collection.
@@ -853,8 +853,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             is raised even if there is a single operation failure.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A list of tuples mapping the input to an error. Empty list if no errors occuured.
-        :rtype: List[Tuple[str, HttpResponseError]]
+        :return: A list containing None for successful operations and HttpResponseError objects for unsuccessful operations.
+        :rtype: List[Optional[HttpResponseError]]
 
         .. admonition:: Example:
 
@@ -868,9 +868,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         results = self._container_client.delete_blobs(*files, **kwargs)
 
         errors = []
-        for i, result in enumerate(results):
+        for result in results:
             if not 200 <= result.status_code < 300:
-                errors.append((files[i], _decode_error(result, result.reason)))
+                errors.append(_decode_error(result, result.reason))
+            else:
+                errors.append(None)
 
         return errors
 

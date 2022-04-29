@@ -676,25 +676,26 @@ class FileSystemTest(StorageTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         filesystem = self._create_file_system("fs1")
         data = b'hello world'
+        files = ['file1', 'file2', 'file3', 'dir1', 'dir2']
 
         try:
             # create file1
-            filesystem.get_file_client('file1').upload_data(data, overwrite=True)
+            filesystem.get_file_client(files[0]).upload_data(data, overwrite=True)
 
             # create file2
-            file2 = filesystem.get_file_client('file2')
+            file2 = filesystem.get_file_client(files[1])
             file2.upload_data(data, overwrite=True)
 
             # create file3
-            file3 = filesystem.get_file_client('file3')
+            file3 = filesystem.get_file_client(files[2])
             file3.upload_data(data, overwrite=True)
 
             # create dir1
             # empty directory can be deleted using delete_files
-            filesystem.get_directory_client('dir1').create_directory(),
+            filesystem.get_directory_client(files[3]).create_directory(),
 
             # create dir2
-            dir2 = filesystem.get_directory_client('dir2')
+            dir2 = filesystem.get_directory_client(files[4])
             dir2.create_directory()
 
         except:
@@ -702,16 +703,21 @@ class FileSystemTest(StorageTestCase):
 
         # Act
         response = filesystem.delete_files(
-            'file1',
-            'file2',
-            'file3',
-            'dir1',
-            'dir2',
+            files[0],
+            files[1],
+            files[2],
+            files[3],
+            files[4],
             raise_on_any_failure=False
         )
 
         # Assert
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), len(files))
+        self.assertIsNone(response[0])
+        self.assertIsNone(response[1])
+        self.assertIsNone(response[2])
+        self.assertIsNone(response[3])
+        self.assertIsNone(response[4])
 
     @DataLakePreparer()
     def test_delete_files_with_failed_subrequest(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -719,48 +725,45 @@ class FileSystemTest(StorageTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         filesystem = self._create_file_system("fs2")
         data = b'hello world'
+        files = ['file1', 'file2', 'file3', 'dir1', 'dir8']
 
         try:
             # create file1
-            filesystem.get_file_client('file1').upload_data(data, overwrite=True)
+            filesystem.get_file_client(files[0]).upload_data(data, overwrite=True)
 
             # create file2
-            file2 = filesystem.get_file_client('file2')
+            file2 = filesystem.get_file_client(files[1])
             file2.upload_data(data, overwrite=True)
 
             # create file3
-            file3 = filesystem.get_file_client('file3')
+            file3 = filesystem.get_file_client(files[2])
             file3.upload_data(data, overwrite=True)
 
-            # create dir1
-            dir1 = filesystem.get_directory_client('dir1')
+            # create dir1 with file4 inside
+            dir1 = filesystem.get_directory_client(files[3])
             dir1.create_file("file4")
-
-            # create dir2
-            dir2 = filesystem.get_directory_client('dir2')
-            dir2.create_directory()
-
         except:
             pass
 
         # Act
         response = filesystem.delete_files(
-            'file1',
-            'file2',
-            'file3',
-            'dir1',  # dir1 is not empty
-            'dir8',  # dir8 doesn't exist
+            files[0],
+            files[1],
+            files[2],
+            files[3],  # dir1 is not empty
+            files[4],  # dir8 doesn't exist
             raise_on_any_failure=False
         )
 
         # Assert
-        self.assertEqual(len(response), 2)
-        self.assertEqual(response[0][0], 'dir1')
-        self.assertEqual(response[1][0], 'dir8')
-        self.assertEqual(response[0][1].error_code, StorageErrorCode.directory_not_empty)
-        self.assertEqual(response[1][1].error_code, StorageErrorCode.path_not_found)
-        self.assertEqual(response[0][1].status_code, 409)
-        self.assertEqual(response[1][1].status_code, 404)
+        self.assertEqual(len(response), len(files))
+        self.assertIsNone(response[0])
+        self.assertIsNone(response[1])
+        self.assertIsNone(response[2])
+        self.assertEqual(response[3].error_code, StorageErrorCode.directory_not_empty)
+        self.assertEqual(response[3].status_code, 409)
+        self.assertEqual(response[4].error_code, StorageErrorCode.path_not_found)
+        self.assertEqual(response[4].status_code, 404)
 
     @DataLakePreparer()
     def test_serialized_error(self, datalake_storage_account_name, datalake_storage_account_key):
