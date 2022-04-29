@@ -39,7 +39,7 @@ def build_list_by_account_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
@@ -65,23 +65,115 @@ def build_list_by_account_request(
     )
 
 
+def build_validate_request(
+    subscription_id: str,
+    resource_group_name: str,
+    account_name: str,
+    private_endpoint_connection_proxy_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}/validate")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "accountName": _SERIALIZER.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[A-Za-z0-9]+(-[A-Za-z0-9]+)*$'),
+        "privateEndpointConnectionProxyId": _SERIALIZER.url("private_endpoint_connection_proxy_id", private_endpoint_connection_proxy_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
+    )
+
+
+def build_update_private_endpoint_properties_request(
+    subscription_id: str,
+    resource_group_name: str,
+    account_name: str,
+    private_endpoint_connection_proxy_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}/updatePrivateEndpointProperties")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "accountName": _SERIALIZER.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[A-Za-z0-9]+(-[A-Za-z0-9]+)*$'),
+        "privateEndpointConnectionProxyId": _SERIALIZER.url("private_endpoint_connection_proxy_id", private_endpoint_connection_proxy_id, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
+    )
+
+
 def build_get_request(
     subscription_id: str,
     resource_group_name: str,
     account_name: str,
-    private_endpoint_connection_name: str,
+    private_endpoint_connection_proxy_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "accountName": _SERIALIZER.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[A-Za-z0-9]+(-[A-Za-z0-9]+)*$'),
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        "privateEndpointConnectionProxyId": _SERIALIZER.url("private_endpoint_connection_proxy_id", private_endpoint_connection_proxy_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -107,7 +199,7 @@ def build_create_or_update_request_initial(
     subscription_id: str,
     resource_group_name: str,
     account_name: str,
-    private_endpoint_connection_name: str,
+    private_endpoint_connection_proxy_id: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -118,12 +210,12 @@ def build_create_or_update_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "accountName": _SERIALIZER.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[A-Za-z0-9]+(-[A-Za-z0-9]+)*$'),
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        "privateEndpointConnectionProxyId": _SERIALIZER.url("private_endpoint_connection_proxy_id", private_endpoint_connection_proxy_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -153,19 +245,19 @@ def build_delete_request_initial(
     subscription_id: str,
     resource_group_name: str,
     account_name: str,
-    private_endpoint_connection_name: str,
+    private_endpoint_connection_proxy_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
         "accountName": _SERIALIZER.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[A-Za-z0-9]+(-[A-Za-z0-9]+)*$'),
-        "privateEndpointConnectionName": _SERIALIZER.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+        "privateEndpointConnectionProxyId": _SERIALIZER.url("private_endpoint_connection_proxy_id", private_endpoint_connection_proxy_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -186,8 +278,8 @@ def build_delete_request_initial(
         **kwargs
     )
 
-class PrivateEndpointConnectionsOperations(object):
-    """PrivateEndpointConnectionsOperations operations.
+class PrivateEndpointConnectionProxiesOperations(object):
+    """PrivateEndpointConnectionProxiesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -214,22 +306,24 @@ class PrivateEndpointConnectionsOperations(object):
         resource_group_name: str,
         account_name: str,
         **kwargs: Any
-    ) -> Iterable["_models.PrivateEndpointConnectionListResult"]:
-        """List all private endpoint connections in a device update account.
+    ) -> Iterable["_models.PrivateEndpointConnectionProxyListResult"]:
+        """(INTERNAL - DO NOT USE) List all private endpoint connection proxies in a device update
+        account.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param account_name: Account name.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result
-         of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~device_update.models.PrivateEndpointConnectionListResult]
+        :return: An iterator like instance of either PrivateEndpointConnectionProxyListResult or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~device_update.models.PrivateEndpointConnectionProxyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionProxyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -262,7 +356,7 @@ class PrivateEndpointConnectionsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PrivateEndpointConnectionListResult", pipeline_response)
+            deserialized = self._deserialize("PrivateEndpointConnectionProxyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -289,31 +383,169 @@ class PrivateEndpointConnectionsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_account.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections"}  # type: ignore
+    list_by_account.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies"}  # type: ignore
+
+    @distributed_trace
+    def validate(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        account_name: str,
+        private_endpoint_connection_proxy_id: str,
+        private_endpoint_connection_proxy: "_models.PrivateEndpointConnectionProxy",
+        **kwargs: Any
+    ) -> None:
+        """(INTERNAL - DO NOT USE) Validates a private endpoint connection proxy object.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param account_name: Account name.
+        :type account_name: str
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
+        :param private_endpoint_connection_proxy: The parameters for creating a private endpoint
+         connection proxy.
+        :type private_endpoint_connection_proxy: ~device_update.models.PrivateEndpointConnectionProxy
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(private_endpoint_connection_proxy, 'PrivateEndpointConnectionProxy')
+
+        request = build_validate_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.validate.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    validate.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}/validate"}  # type: ignore
+
+
+    @distributed_trace
+    def update_private_endpoint_properties(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        account_name: str,
+        private_endpoint_connection_proxy_id: str,
+        private_endpoint_update: "_models.PrivateEndpointUpdate",
+        **kwargs: Any
+    ) -> None:
+        """(INTERNAL - DO NOT USE) Updates a private endpoint inside the private endpoint connection proxy
+        object.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param account_name: Account name.
+        :type account_name: str
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
+        :param private_endpoint_update: The parameters for updating a private endpoint connection
+         proxy.
+        :type private_endpoint_update: ~device_update.models.PrivateEndpointUpdate
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(private_endpoint_update, 'PrivateEndpointUpdate')
+
+        request = build_update_private_endpoint_properties_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update_private_endpoint_properties.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    update_private_endpoint_properties.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}/updatePrivateEndpointProperties"}  # type: ignore
+
 
     @distributed_trace
     def get(
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
+        private_endpoint_connection_proxy_id: str,
         **kwargs: Any
-    ) -> "_models.PrivateEndpointConnection":
-        """Get the specified private endpoint connection associated with the device update account.
+    ) -> "_models.PrivateEndpointConnectionProxy":
+        """(INTERNAL - DO NOT USE) Get the specified private endpoint connection proxy associated with the
+        device update account.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param account_name: Account name.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the Azure resource.
-        :type private_endpoint_connection_name: str
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~device_update.models.PrivateEndpointConnection
+        :return: PrivateEndpointConnectionProxy, or the result of cls(response)
+        :rtype: ~device_update.models.PrivateEndpointConnectionProxy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionProxy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -326,7 +558,7 @@ class PrivateEndpointConnectionsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -345,25 +577,25 @@ class PrivateEndpointConnectionsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionProxy', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
 
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
-        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        private_endpoint_connection_proxy_id: str,
+        private_endpoint_connection_proxy: "_models.PrivateEndpointConnectionProxy",
         **kwargs: Any
-    ) -> "_models.PrivateEndpointConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+    ) -> "_models.PrivateEndpointConnectionProxy":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionProxy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -372,13 +604,13 @@ class PrivateEndpointConnectionsOperations(object):
         api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
+        _json = self._serialize.body(private_endpoint_connection_proxy, 'PrivateEndpointConnectionProxy')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -398,14 +630,14 @@ class PrivateEndpointConnectionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionProxy', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
 
 
     @distributed_trace
@@ -413,22 +645,23 @@ class PrivateEndpointConnectionsOperations(object):
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
-        private_endpoint_connection: "_models.PrivateEndpointConnection",
+        private_endpoint_connection_proxy_id: str,
+        private_endpoint_connection_proxy: "_models.PrivateEndpointConnectionProxy",
         **kwargs: Any
-    ) -> LROPoller["_models.PrivateEndpointConnection"]:
-        """Update the state of specified private endpoint connection associated with the device update
-        account.
+    ) -> LROPoller["_models.PrivateEndpointConnectionProxy"]:
+        """(INTERNAL - DO NOT USE) Creates or updates the specified private endpoint connection proxy
+        resource associated with the device update account.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param account_name: Account name.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the Azure resource.
-        :type private_endpoint_connection_name: str
-        :param private_endpoint_connection: The parameters for creating a private endpoint connection.
-        :type private_endpoint_connection: ~device_update.models.PrivateEndpointConnection
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
+        :param private_endpoint_connection_proxy: The parameters for creating a private endpoint
+         connection proxy.
+        :type private_endpoint_connection_proxy: ~device_update.models.PrivateEndpointConnectionProxy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -437,15 +670,15 @@ class PrivateEndpointConnectionsOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either PrivateEndpointConnection or the result
-         of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~device_update.models.PrivateEndpointConnection]
+        :return: An instance of LROPoller that returns either PrivateEndpointConnectionProxy or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~device_update.models.PrivateEndpointConnectionProxy]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionProxy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -455,8 +688,8 @@ class PrivateEndpointConnectionsOperations(object):
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
-                private_endpoint_connection=private_endpoint_connection,
+                private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
+                private_endpoint_connection_proxy=private_endpoint_connection_proxy,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -466,7 +699,7 @@ class PrivateEndpointConnectionsOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+            deserialized = self._deserialize('PrivateEndpointConnectionProxy', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -484,13 +717,13 @@ class PrivateEndpointConnectionsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
+        private_endpoint_connection_proxy_id: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -506,7 +739,7 @@ class PrivateEndpointConnectionsOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -527,7 +760,7 @@ class PrivateEndpointConnectionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
 
 
     @distributed_trace
@@ -535,18 +768,19 @@ class PrivateEndpointConnectionsOperations(object):
         self,
         resource_group_name: str,
         account_name: str,
-        private_endpoint_connection_name: str,
+        private_endpoint_connection_proxy_id: str,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes the specified private endpoint connection associated with the device update account.
+        """(INTERNAL - DO NOT USE) Deletes the specified private endpoint connection proxy associated with
+        the device update account.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param account_name: Account name.
         :type account_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the Azure resource.
-        :type private_endpoint_connection_name: str
+        :param private_endpoint_connection_proxy_id: The ID of the private endpoint connection proxy
+         object.
+        :type private_endpoint_connection_proxy_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -571,7 +805,7 @@ class PrivateEndpointConnectionsOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
+                private_endpoint_connection_proxy_id=private_endpoint_connection_proxy_id,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -595,4 +829,4 @@ class PrivateEndpointConnectionsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DeviceUpdate/accounts/{accountName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyId}"}  # type: ignore
