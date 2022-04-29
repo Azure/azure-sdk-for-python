@@ -77,12 +77,16 @@ class Connection(object):
      Default value is `0.1`.
     :keyword bool network_trace: Whether to log the network traffic. Default value is `False`. If enabled, frames
      will be logged at the logging.INFO level.
+    :keyword str custom_endpoint: blah
+    :keyword str connection_verify: blah
     """
 
     def __init__(self, endpoint, **kwargs):
         # type(str, Any) -> None
+        self._encoding="UTF-8"
         parsed_url = urlparse(endpoint)
-        self._hostname = parsed_url.hostname
+        self._custom_endpoint = (kwargs.get("custom_endpoint")).encode(self._encoding)
+        self._hostname = (kwargs.get("custom_endpoint")).encode(self._encoding) or parsed_url.hostname
         if parsed_url.port:
             self._port = parsed_url.port
         elif parsed_url.scheme == 'amqps':

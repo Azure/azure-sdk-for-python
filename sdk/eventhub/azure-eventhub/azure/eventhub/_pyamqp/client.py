@@ -124,7 +124,7 @@ class AMQPClient(object):
     """
 
     def __init__(self, hostname, auth=None, **kwargs):
-        self._hostname = hostname
+        self._hostname = hostname #kwargs.get("custom_endpoint") or 
         self._auth = auth
         self._name = kwargs.pop("client_name", str(uuid.uuid4()))
         self._shutdown = False
@@ -137,6 +137,10 @@ class AMQPClient(object):
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
+
+        # Custom Endpoint
+        self._custom_endpoint = kwargs.get("custom_endpoint")
+        self._connection_verify = kwargs.get("connection_verify")
 
         # Connection settings
         self._max_frame_size = kwargs.pop('max_frame_size', None) or MAX_FRAME_SIZE_BYTES
@@ -232,15 +236,17 @@ class AMQPClient(object):
         _logger.debug("Opening client connection.")
         if not self._connection:
             self._connection = Connection(
+                # I think this hostname has to be the servicebus name b/c amqps?
                 "amqps://" + self._hostname,
                 sasl_credential=self._auth.sasl,
-                ssl={'ca_certs':certifi.where()},
+                ssl={'ca_certs':certifi.where()},  #self._connection_verify or 
                 container_id=self._name,
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
                 idle_timeout=self._idle_timeout,
                 properties=self._properties,
-                network_trace=self._network_trace
+                network_trace=self._network_trace,
+                custom_endpoint=self._custom_endpoint,
             )
             self._connection.open()
         if not self._session:

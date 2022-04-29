@@ -86,7 +86,7 @@ class EventHubProducerClient(ClientBase):
             **kwargs
         )
         self._producers = {
-            ALL_PARTITIONS: self._create_producer()
+            ALL_PARTITIONS: self._create_producer(**kwargs)
         }  # type: Dict[str, Optional[EventHubProducer]]
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
@@ -145,7 +145,7 @@ class EventHubProducerClient(ClientBase):
                     send_timeout=send_timeout,
                 )
 
-    def _create_producer(self, partition_id=None, send_timeout=None):
+    def _create_producer(self, partition_id=None, send_timeout=None, **kwargs):
         # type: (Optional[str], Optional[Union[int, float]]) -> EventHubProducer
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = (
@@ -158,6 +158,7 @@ class EventHubProducerClient(ClientBase):
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
+            **kwargs
         )
         return handler
 

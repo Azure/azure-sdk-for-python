@@ -281,11 +281,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._mgmt_target = "amqps://{}/{}".format(
             self._address.hostname, self.eventhub_name
         )
+        # self._connection_verify = kwargs.get("connection_verify")
+        # self._custom_endpoint = kwargs.get("custom_endpoint")
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
+  
 
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):

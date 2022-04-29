@@ -125,7 +125,8 @@ class JWTTokenAuth(_CBSAuth):
         :type token_type: str
 
         """
-        super(JWTTokenAuth, self).__init__(uri, audience, kwargs.pop("kwargs", TOKEN_TYPE_JWT), get_token)
+        # Custom endpoint is passed into here
+        super(JWTTokenAuth, self).__init__(uri, audience, kwargs.pop("kwargs", TOKEN_TYPE_JWT), get_token, **kwargs)
         self.get_token = get_token
 
 
@@ -178,5 +179,6 @@ class SASTokenAuth(_CBSAuth):
             kwargs.pop("token_type", TOKEN_TYPE_SASTOKEN),
             self.get_token,
             expires_in=expires_in,
-            expires_on=expires_on
+            expires_on=expires_on,
+            **kwargs
         )

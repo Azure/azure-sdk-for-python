@@ -85,6 +85,14 @@ class EventHubProducer(
      periods of inactivity. The default value is `None`, i.e. no keep alive pings.
     :keyword bool auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
      Default value is `True`.
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
     """
 
     def __init__(self, client, target, **kwargs):
@@ -94,6 +102,9 @@ class EventHubProducer(
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         idle_timeout = kwargs.get("idle_timeout", None)
+
+        self._custom_endpoint=kwargs.get("custom_endpoint_address")
+        self._connection_verify=kwargs.get("connection_verify")
 
         self.running = False
         self.closed = False
@@ -136,6 +147,8 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
+            custom_endpoint=self._custom_endpoint,
+            connection_verify=self._connection_verify
         )
 
     def _open_with_retry(self):

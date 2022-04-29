@@ -147,12 +147,13 @@ class _AbstractTransport(object):
         self.sock = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host, port)
+        self.host, self.port = to_host_port(kwargs.get("custom_endpoint") or host, port) #kwargs.pop("custom_endpoint") or 
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
+        self.cert = kwargs.get("connection_verify")
 
     def connect(self):
         try:
@@ -268,6 +269,12 @@ class _AbstractTransport(object):
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
+                # It is failing here:
+                # host=sb://20.232.175.131
+                host=host.split("//")[1]
+                # port=443
+                # family=AddressFamilt.AF_INET:2
+                #sslopts=path to my CA_certs for the custom endpoint
                 entries = socket.getaddrinfo(
                     host, port, family, socket.SOCK_STREAM, SOL_TCP)
                 entries_num = len(entries)
@@ -467,10 +474,11 @@ class SSLTransport(_AbstractTransport):
     """Transport that works over SSL."""
 
     def __init__(self, host, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
+        self._encoding="UTF-8"
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._read_buffer = BytesIO()
         super(SSLTransport, self).__init__(
-            host,
+            kwargs.get("custom_endpoint") or host,
             port=port,
             connect_timeout=connect_timeout,
             **kwargs
@@ -654,4 +662,4 @@ def Transport(host, connect_timeout=None, ssl=False, **kwargs):
     select and create a subclass of _AbstractTransport.
     """
     transport = SSLTransport if ssl else TCPTransport
-    return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+    return transport(kwargs.pop("custom_endpoint") or host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
