@@ -1,14 +1,8 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
+## 1.0.0b4 (2022-05-10)
 ### Other Changes
+Deprecated.
 
 ## 1.0.0b3 (2021-11-09)
 
