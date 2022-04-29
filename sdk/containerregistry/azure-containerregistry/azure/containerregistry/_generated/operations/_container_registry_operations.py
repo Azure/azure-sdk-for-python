@@ -59,7 +59,7 @@ def build_get_manifest_request(
     # type: (...) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = kwargs.pop('accept', _headers.pop('accept', None))  # type: Optional[str]
+    accept = kwargs.pop('accept', None)  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
