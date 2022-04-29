@@ -793,6 +793,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             reference=tag_or_digest,
             payload=data,
             content_type=OCI_MANIFEST_MEDIA_TYPE,
+            headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
             cls=_return_response_header,
             **kwargs
         )
@@ -847,7 +848,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             raise ValueError("The parameter repository and tag_or_digest cannot be None.")
 
         response = self._client.container_registry.get_manifest(
-            name=repository, reference=tag_or_digest, headers=OCI_MANIFEST_MEDIA_TYPE, cls=_return_response, **kwargs
+            name=repository,
+            reference=tag_or_digest,
+            accept=OCI_MANIFEST_MEDIA_TYPE,
+            headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
+            cls=_return_response,
+            **kwargs
         )
         digest = response.http_response.headers['Docker-Content-Digest']
         content = response.http_response.internal_response._content
