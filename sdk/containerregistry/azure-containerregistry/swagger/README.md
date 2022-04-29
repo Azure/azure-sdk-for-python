@@ -109,21 +109,6 @@ directive:
       $.required = true
 ```
 
-# Add content-type parameter
-``` yaml
-directive:
-    from: swagger-document
-    where: $.paths["/v2/{name}/manifests/{reference}"].put
-    transform: >
-        $.parameters.push({
-            "name": "Content-Type",
-            "in": "header",
-            "type": "string",
-            "description": "The manifest's Content-Type."
-        });
-        delete $.responses["201"].schema;
-```
-
 # Change NextLink client name to nextLink
 ``` yaml
 directive:
