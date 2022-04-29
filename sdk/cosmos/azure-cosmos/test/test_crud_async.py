@@ -100,7 +100,7 @@ class CRUDTests(unittest.TestCase):
     @classmethod
     async def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.database = await cls.client.create_database_if_nflot_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.databaseForTest = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     async def setUp(self):
         self.client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
@@ -161,12 +161,12 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_db.id, database_id)
 
         # Verify offer throughput for database
-        offer = created_db.read_offer()
+        offer = await created_db.read_offer()
         self.assertEqual(offer.offer_throughput, offer_throughput)
 
         # Update database offer throughput
         new_offer_throughput = 2000
-        offer = created_db.replace_throughput(new_offer_throughput)
+        offer = await created_db.replace_throughput(new_offer_throughput)
         self.assertEqual(offer.offer_throughput, new_offer_throughput)
         await self.client.delete_database(created_db.id)
 
@@ -205,17 +205,17 @@ class CRUDTests(unittest.TestCase):
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
         created_recorder = RecordDiagnostics()
-        created_collection = created_db.create_container(id=collection_id,
-                                                         indexing_policy=collection_indexing_policy,
-                                                         partition_key=PartitionKey(path="/pk", kind="Hash"),
-                                                         response_hook=created_recorder)
+        created_collection = await created_db.create_container(id=collection_id,
+                                                               indexing_policy=collection_indexing_policy,
+                                                               partition_key=PartitionKey(path="/pk", kind="Hash"),
+                                                               response_hook=created_recorder)
         self.assertEqual(collection_id, created_collection.id)
         assert isinstance(created_recorder.headers, Mapping)
         assert 'Content-Type' in created_recorder.headers
         assert isinstance(created_recorder.body, Mapping)
         assert 'id' in created_recorder.body
 
-        created_properties = created_collection.read()
+        created_properties = await created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
 
         # read collections after creation
@@ -234,23 +234,23 @@ class CRUDTests(unittest.TestCase):
 
         self.assertTrue(collections)
         # delete collection
-        created_db.delete_container(created_collection.id)
+        await created_db.delete_container(created_collection.id)
         # read collection after deletion
-        created_container = created_db.get_container_client(created_collection.id)
+        created_container = await created_db.get_container_client(created_collection.id)
         await self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                                  created_container.read)
 
-        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
+        container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
                                                                     partition_key=PartitionKey(path='/id', kind='Hash'))
         self.assertEqual(created_collection.id, container_proxy.id)
         self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
 
-        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
+        container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
                                                                     partition_key=created_properties['partitionKey'])
         self.assertEqual(created_container.id, container_proxy.id)
         self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
 
-        created_db.delete_container(created_collection.id)
+        await created_db.delete_container(created_collection.id)
 
     async def test_partitioned_collection(self):
         created_db = self.databaseForTest
@@ -264,36 +264,36 @@ class CRUDTests(unittest.TestCase):
                                  }
 
         offer_throughput = 10100
-        created_collection = created_db.create_container(id=collection_definition['id'],
+        created_collection = await created_db.create_container(id=collection_definition['id'],
                                                          partition_key=collection_definition['partitionKey'],
                                                          offer_throughput=offer_throughput)
 
         self.assertEqual(collection_definition.get('id'), created_collection.id)
 
-        created_collection_properties = created_collection.read()
+        created_collection_properties = await created_collection.read()
         self.assertEqual(collection_definition.get('partitionKey').get('paths')[0],
                          created_collection_properties['partitionKey']['paths'][0])
         self.assertEqual(collection_definition.get('partitionKey').get('kind'),
                          created_collection_properties['partitionKey']['kind'])
 
-        expected_offer = created_collection.read_offer()
+        expected_offer = await created_collection.read_offer()
 
         self.assertIsNotNone(expected_offer)
 
         self.assertEqual(expected_offer.offer_throughput, offer_throughput)
 
-        created_db.delete_container(created_collection.id)
+        await created_db.delete_container(created_collection.id)
 
     async def test_partitioned_collection_quota(self):
         created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
-        retrieved_collection = created_db.get_container_client(
+        retrieved_collection = await created_db.get_container_client(
             container=created_collection.id
         )
 
-        retrieved_collection_properties = retrieved_collection.read(
+        retrieved_collection_properties = await retrieved_collection.read(
             populate_partition_key_range_statistics=True,
             populate_quota_info=True)
         self.assertIsNotNone(retrieved_collection_properties.get("statistics"))
@@ -303,7 +303,7 @@ class CRUDTests(unittest.TestCase):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
-        created_collection = created_db.create_container(
+        created_collection = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
         )
@@ -319,7 +319,7 @@ class CRUDTests(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
-        created_document = created_collection.create_item(body=document_definition)
+        created_document = await created_collection.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[1], '["WA"]')
         del self.last_headers[:]
@@ -328,7 +328,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_document.get('address').get('state'), document_definition.get('address').get('state'))
 
         collection_id = 'test_partitioned_collection_partition_key_extraction1 ' + str(uuid.uuid4())
-        created_collection1 = created_db.create_container(
+        created_collection1 = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address', kind=documents.PartitionKind.Hash)
         )
@@ -344,7 +344,7 @@ class CRUDTests(unittest.TestCase):
         # self.assertEqual(options['partitionKey'], documents.Undefined)
 
         collection_id = 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4())
-        created_collection2 = created_db.create_container(
+        created_collection2 = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address/state/city', kind=documents.PartitionKind.Hash)
         )
@@ -352,23 +352,23 @@ class CRUDTests(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present in the document
-        created_document = created_collection2.create_item(document_definition)
+        created_document = await created_collection2.create_item(document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[1], [{}])
         del self.last_headers[:]
 
         # self.assertEqual(options['partitionKey'], documents.Undefined)
 
-        created_db.delete_container(created_collection.id)
-        created_db.delete_container(created_collection1.id)
-        created_db.delete_container(created_collection2.id)
+        await created_db.delete_container(created_collection.id)
+        await created_db.delete_container(created_collection1.id)
+        await created_db.delete_container(created_collection2.id)
 
     async def test_partitioned_collection_partition_key_extraction_special_chars(self):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
 
-        created_collection1 = created_db.create_container(
+        created_collection1 = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/\"level\' 1*()\"/\"le/vel2\"', kind=documents.PartitionKind.Hash)
         )
@@ -394,7 +394,7 @@ class CRUDTests(unittest.TestCase):
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4())
 
-        created_collection2 = created_db.create_container(
+        created_collection2 = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/\'level\" 1*()\'/\'le/vel2\'', kind=documents.PartitionKind.Hash)
         )
@@ -406,13 +406,13 @@ class CRUDTests(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
-        created_document = created_collection2.create_item(body=document_definition)
+        created_document = await created_collection2.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[1], '["val2"]')
         del self.last_headers[:]
 
-        created_db.delete_container(created_collection1.id)
-        created_db.delete_container(created_collection2.id)
+        await created_db.delete_container(created_collection1.id)
+        await created_db.delete_container(created_collection2.id)
 
     async def test_partitioned_collection_path_parser(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -438,7 +438,7 @@ class CRUDTests(unittest.TestCase):
         document_definition = {'id': 'document',
                                'key': 'value'}
 
-        created_document = created_collection.create_item(
+        created_document = await created_collection.create_item(
             body=document_definition
         )
 
@@ -446,7 +446,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_document.get('key'), document_definition.get('key'))
 
         # read document
-        read_document = created_collection.read_item(
+        read_document = await created_collection.read_item(
             item=created_document.get('id'),
             partition_key=created_document.get('id')
         )
@@ -461,7 +461,7 @@ class CRUDTests(unittest.TestCase):
         # replace document
         document_definition['key'] = 'new value'
 
-        replaced_document = created_collection.replace_item(
+        replaced_document = await created_collection.replace_item(
             item=read_document,
             body=document_definition
         )
@@ -472,7 +472,7 @@ class CRUDTests(unittest.TestCase):
         document_definition['id'] = 'document2'
         document_definition['key'] = 'value2'
 
-        upserted_document = created_collection.upsert_item(body=document_definition)
+        upserted_document = await created_collection.upsert_item(body=document_definition)
 
         self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
         self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
@@ -520,19 +520,19 @@ class CRUDTests(unittest.TestCase):
 
         collection_id = 'test_partitioned_collection_permissions all collection' + str(uuid.uuid4())
 
-        all_collection = created_db.create_container(
+        all_collection = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
         )
 
         collection_id = 'test_partitioned_collection_permissions read collection' + str(uuid.uuid4())
 
-        read_collection = created_db.create_container(
+        read_collection = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
         )
 
-        user = created_db.create_user(body={'id': 'user' + str(uuid.uuid4())})
+        user = await created_db.create_user(body={'id': 'user' + str(uuid.uuid4())})
 
         permission_definition = {
             'id': 'all permission',
@@ -541,7 +541,7 @@ class CRUDTests(unittest.TestCase):
             'resourcePartitionKey': [1]
         }
 
-        all_permission = user.create_permission(body=permission_definition)
+        all_permission = await user.create_permission(body=permission_definition)
 
         permission_definition = {
             'id': 'read permission',
@@ -550,7 +550,7 @@ class CRUDTests(unittest.TestCase):
             'resourcePartitionKey': [1]
         }
 
-        read_permission = user.create_permission(body=permission_definition)
+        read_permission = await user.create_permission(body=permission_definition)
 
         resource_tokens = {}
         # storing the resource tokens based on Resource IDs
@@ -565,11 +565,11 @@ class CRUDTests(unittest.TestCase):
                                'key': 1
                                }
 
-        all_collection.client_connection = restricted_client.client_connection
-        read_collection.client_connection = restricted_client.client_connection
+        all_collection.client_connection = await restricted_client.client_connection
+        read_collection.client_connection = await restricted_client.client_connection
 
         # Create document in all_collection should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object and it has all permissions
-        created_document = all_collection.create_item(body=document_definition)
+        created_document = await all_collection.create_item(body=document_definition)
 
         # Create document in read_collection should fail since it has only read permissions for this collection
         await self.__AssertHTTPFailureWithStatus(
@@ -597,8 +597,8 @@ class CRUDTests(unittest.TestCase):
             document_definition['id']
         )
 
-        created_db.delete_container(all_collection)
-        created_db.delete_container(read_collection)
+        await created_db.delete_container(all_collection)
+        await created_db.delete_container(read_collection)
 
     async def test_partitioned_collection_execute_stored_procedure(self):
         created_db = self.databaseForTest
@@ -618,10 +618,10 @@ class CRUDTests(unittest.TestCase):
                     '   });}')
         }
 
-        created_sproc = created_collection.scripts.create_stored_procedure(body=sproc)
+        created_sproc = await created_collection.scripts.create_stored_procedure(body=sproc)
 
         # Partiton Key value same as what is specified in the stored procedure body
-        result = created_collection.scripts.execute_stored_procedure(sproc=created_sproc['id'], partition_key=2)
+        result = await created_collection.scripts.execute_stored_procedure(sproc=created_sproc['id'], partition_key=2)
         self.assertEqual(result, 1)
 
         # Partiton Key value different than what is specified in the stored procedure body will cause a bad request(400) error
@@ -634,7 +634,7 @@ class CRUDTests(unittest.TestCase):
     async def test_partitioned_collection_partition_key_value_types(self):
         created_db = self.databaseForTest
 
-        created_collection = created_db.create_container(
+        created_collection = await created_db.create_container(
             id='test_partitioned_collection_partition_key_value_types ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash')
         )
@@ -644,41 +644,41 @@ class CRUDTests(unittest.TestCase):
                                'spam': 'eggs'}
 
         # create document with partitionKey set as None here
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'spam': 'eggs'}
 
         # create document with partitionKey set as Undefined here
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': True,
                                'spam': 'eggs'}
 
         # create document with bool partitionKey
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': 'value',
                                'spam': 'eggs'}
 
         # create document with string partitionKey
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': 100,
                                'spam': 'eggs'}
 
         # create document with int partitionKey
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': 10.50,
                                'spam': 'eggs'}
 
         # create document with float partitionKey
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         document_definition = {'name': 'sample document',
                                'spam': 'eggs',
@@ -691,7 +691,7 @@ class CRUDTests(unittest.TestCase):
             document_definition
         )
 
-        created_db.delete_container(created_collection)
+        await created_db.delete_container(created_collection)
 
     async def test_partitioned_collection_conflict_crud_and_query(self):
         created_db = self.databaseForTest
@@ -766,7 +766,7 @@ class CRUDTests(unittest.TestCase):
                                'spam': 'eggs',
                                'key': 'value'}
 
-        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
+        created_document = await created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
 
@@ -775,7 +775,7 @@ class CRUDTests(unittest.TestCase):
                                'key': 'value',
                                'id': str(uuid.uuid4())}
 
-        created_document = created_collection.create_item(body=document_definition)
+        created_document = await created_collection.create_item(body=document_definition)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
         self.assertEqual(created_document.get('id'),
@@ -816,7 +816,7 @@ class CRUDTests(unittest.TestCase):
         created_document['name'] = 'replaced document'
         created_document['spam'] = 'not eggs'
         old_etag = created_document['_etag']
-        replaced_document = created_collection.replace_item(
+        replaced_document = await created_collection.replace_item(
             item=created_document['id'],
             body=created_document
         )
@@ -874,7 +874,7 @@ class CRUDTests(unittest.TestCase):
             )
 
         # should pass for most recent etag
-        replaced_document_conditional = created_collection.replace_item(
+        replaced_document_conditional = await created_collection.replace_item(
             match_condition=MatchConditions.IfNotModified,
             etag=replaced_document['_etag'],
             item=replaced_document['id'],
@@ -890,14 +890,14 @@ class CRUDTests(unittest.TestCase):
                          replaced_document['id'],
                          'document id should stay the same')
         # read document
-        one_document_from_read = created_collection.read_item(
+        one_document_from_read = await created_collection.read_item(
             item=replaced_document['id'],
             partition_key=replaced_document['id']
         )
         self.assertEqual(replaced_document['id'],
                          one_document_from_read['id'])
         # delete document
-        created_collection.delete_item(
+        await created_collection.delete_item(
             item=replaced_document,
             partition_key=replaced_document['id']
         )
@@ -925,7 +925,7 @@ class CRUDTests(unittest.TestCase):
                                'key': 'value'}
 
         # create document using Upsert API
-        created_document = created_collection.upsert_item(body=document_definition)
+        created_document = await created_collection.upsert_item(body=document_definition)
 
         # verify id property
         self.assertEqual(created_document['id'],
@@ -934,7 +934,7 @@ class CRUDTests(unittest.TestCase):
         # test error for non-string id
         with pytest.raises(TypeError):
             document_definition['id'] = 7
-            created_collection.upsert_item(body=document_definition)
+            await created_collection.upsert_item(body=document_definition)
 
         # read documents after creation and verify updated count
         documents = [document async for document in created_collection.read_all_items()]
@@ -948,7 +948,7 @@ class CRUDTests(unittest.TestCase):
         created_document['spam'] = 'not eggs'
 
         # should replace document since it already exists
-        upserted_document = created_collection.upsert_item(body=created_document)
+        upserted_document = await created_collection.upsert_item(body=created_document)
 
         # verify the changed properties
         self.assertEqual(upserted_document['name'],
@@ -973,13 +973,13 @@ class CRUDTests(unittest.TestCase):
         created_document['id'] = 'new id'
 
         # Upsert should create new document since the id is different
-        new_document = created_collection.upsert_item(body=created_document)
+        new_document = await created_collection.upsert_item(body=created_document)
 
         # Test modified access conditions
         created_document['spam'] = 'more eggs'
-        created_collection.upsert_item(body=created_document)
+        await created_collection.upsert_item(body=created_document)
         with pytest.raises(exceptions.CosmosHttpResponseError):
-            created_collection.upsert_item(
+            await created_collection.upsert_item(
                 body=created_document,
                 match_condition=MatchConditions.IfNotModified,
                 etag=new_document['_etag'])
@@ -997,8 +997,8 @@ class CRUDTests(unittest.TestCase):
             'upsert should increase the number of documents')
 
         # delete documents
-        created_collection.delete_item(item=upserted_document, partition_key=upserted_document['id'])
-        created_collection.delete_item(item=new_document, partition_key=new_document['id'])
+        await created_collection.delete_item(item=upserted_document, partition_key=upserted_document['id'])
+        await created_collection.delete_item(item=new_document, partition_key=new_document['id'])
 
         # read documents after delete and verify count is same as original
         documents = [document async for document in created_collection.read_all_items()]
@@ -1010,7 +1010,7 @@ class CRUDTests(unittest.TestCase):
     async def _test_spatial_index(self):
         db = self.databaseForTest
         # partial policy specified
-        collection = db.create_container(
+        collection = await db.create_container(
             id='collection with spatial index ' + str(uuid.uuid4()),
             indexing_policy={
                 'includedPaths': [
@@ -1030,7 +1030,7 @@ class CRUDTests(unittest.TestCase):
             },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
-        collection.create_item(
+        await collection.create_item(
             body={
                 'id': 'loc1',
                 'Location': {
@@ -1039,7 +1039,7 @@ class CRUDTests(unittest.TestCase):
                 }
             }
         )
-        collection.create_item(
+        await collection.create_item(
             body={
                 'id': 'loc2',
                 'Location': {
@@ -1055,7 +1055,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(1, len(results))
         self.assertEqual('loc1', results[0]['id'])
 
-        db.delete_container(container=collection)
+        await db.delete_container(container=collection)
 
     # CRUD test for User resource
     async def test_user_crud(self):
@@ -1067,7 +1067,7 @@ class CRUDTests(unittest.TestCase):
         before_create_count = len(users)
         # create user
         user_id = 'new user' + str(uuid.uuid4())
-        user = db.create_user(body={'id': user_id})
+        user = await db.create_user(body={'id': user_id})
         self.assertEqual(user.id, user_id, 'user id error')
         # list users after creation
         users = [user async for user in db.list_users()]
@@ -1083,9 +1083,9 @@ class CRUDTests(unittest.TestCase):
 
         # replace user
         replaced_user_id = 'replaced user' + str(uuid.uuid4())
-        user_properties = user.read()
+        user_properties = await user.read()
         user_properties['id'] = replaced_user_id
-        replaced_user = db.replace_user(user_id, user_properties)
+        replaced_user = await db.replace_user(user_id, user_properties)
         self.assertEqual(replaced_user.id,
                          replaced_user_id,
                          'user id should change')
@@ -1093,12 +1093,12 @@ class CRUDTests(unittest.TestCase):
                          replaced_user.id,
                          'user id should stay the same')
         # read user
-        user = db.get_user_client(replaced_user.id)
+        user = await db.get_user_client(replaced_user.id)
         self.assertEqual(replaced_user.id, user.id)
         # delete user
-        db.delete_user(user.id)
+        await db.delete_user(user.id)
         # read user after deletion
-        deleted_user = db.get_user_client(user.id)
+        deleted_user = await db.get_user_client(user.id)
         await self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                                  deleted_user.read)
 
@@ -1112,7 +1112,7 @@ class CRUDTests(unittest.TestCase):
 
         # create user using Upsert API
         user_id = 'user' + str(uuid.uuid4())
-        user = db.upsert_user(body={'id': user_id})
+        user = await db.upsert_user(body={'id': user_id})
 
         # verify id property
         self.assertEqual(user.id, user_id, 'user id error')
@@ -1122,8 +1122,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(users), before_create_count + 1)
 
         # Should replace the user since it already exists, there is no public property to change here
-        user_properties = user.read()
-        upserted_user = db.upsert_user(user_properties)
+        user_properties = await user.read()
+        upserted_user = await db.upsert_user(user_properties)
 
         # verify id property
         self.assertEqual(upserted_user.id,
@@ -1134,12 +1134,12 @@ class CRUDTests(unittest.TestCase):
         users = [user async for user in db.list_users()]
         self.assertEqual(len(users), before_create_count + 1)
 
-        user_properties = user.read()
+        user_properties = await user.read()
         user_properties['id'] = 'new user' + str(uuid.uuid4())
         user.id = user_properties['id']
 
         # Upsert should create new user since id is different
-        new_user = db.upsert_user(user_properties)
+        new_user = await db.upsert_user(user_properties)
 
         # verify id property
         self.assertEqual(new_user.id, user.id, 'user id error')
@@ -1149,8 +1149,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(users), before_create_count + 2)
 
         # delete users
-        db.delete_user(upserted_user.id)
-        db.delete_user(new_user.id)
+        await db.delete_user(upserted_user.id)
+        await db.delete_user(new_user.id)
 
         # read users after delete and verify count remains the same
         users = [user async for user in db.list_users()]
@@ -1161,7 +1161,7 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # create user
-        user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
+        user = await db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
         # list permissions
         permissions = [permission async for permission in user.list_permissions()]
         before_create_count = len(permissions)
@@ -1171,7 +1171,7 @@ class CRUDTests(unittest.TestCase):
             'resource': 'dbs/AQAAAA==/colls/AQAAAJ0fgTc='  # A random one.
         }
         # create permission
-        permission = user.create_permission(permission)
+        permission = await user.create_permission(permission)
         self.assertEqual(permission.id,
                          'new permission',
                          'permission id error')
@@ -1188,7 +1188,7 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(results)
 
         # replace permission
-        change_permission = permission.properties.copy()
+        change_permission = await permission.properties.copy()
         permission.properties['id'] = 'replaced permission'
         permission.id = permission.properties['id']
         replaced_permission = user.replace_permission(change_permission['id'], permission.properties)
@@ -1199,10 +1199,10 @@ class CRUDTests(unittest.TestCase):
                          replaced_permission.id,
                          'permission id should stay the same')
         # read permission
-        permission = user.get_permission(replaced_permission.id)
+        permission = await user.get_permission(replaced_permission.id)
         self.assertEqual(replaced_permission.id, permission.id)
         # delete permission
-        user.delete_permission(replaced_permission.id)
+        await user.delete_permission(replaced_permission.id)
         # read permission after deletion
         await self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                                  user.get_permission,
@@ -1213,7 +1213,7 @@ class CRUDTests(unittest.TestCase):
         db = self.databaseForTest
 
         # create user
-        user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
+        user = await db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
 
         # read permissions and check count
         permissions = [permission async for permission in user.list_permissions()]
@@ -1226,7 +1226,7 @@ class CRUDTests(unittest.TestCase):
         }
 
         # create permission using Upsert API
-        created_permission = user.upsert_permission(permission_definition)
+        created_permission = await user.upsert_permission(permission_definition)
 
         # verify id property
         self.assertEqual(created_permission.id,
@@ -1241,7 +1241,7 @@ class CRUDTests(unittest.TestCase):
         permission_definition['permissionMode'] = documents.PermissionMode.All
 
         # should repace the permission since it already exists
-        upserted_permission = user.upsert_permission(permission_definition)
+        upserted_permission = await user.upsert_permission(permission_definition)
         # verify id property
         self.assertEqual(upserted_permission.id,
                          created_permission.id,
@@ -1264,7 +1264,7 @@ class CRUDTests(unittest.TestCase):
         created_permission.resource_link = created_permission.properties['resource']
 
         # should create new permission since id has changed
-        new_permission = user.upsert_permission(created_permission.properties)
+        new_permission = await user.upsert_permission(created_permission.properties)
 
         # verify id and resource property
         self.assertEqual(new_permission.id,
@@ -1280,8 +1280,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(permissions), before_create_count + 2)
 
         # delete permissions
-        user.delete_permission(upserted_permission.id)
-        user.delete_permission(new_permission.id)
+        await user.delete_permission(upserted_permission.id)
+        await user.delete_permission(new_permission.id)
 
         # read permissions and verify count remains the same
         permissions = [permission async for permission in user.list_permissions()]
@@ -1302,19 +1302,19 @@ class CRUDTests(unittest.TestCase):
             # create database
             db = self.databaseForTest
             # create collection
-            collection = db.create_container(
+            collection = await db.create_container(
                 id='test_authorization' + str(uuid.uuid4()),
                 partition_key=PartitionKey(path='/id', kind='Hash')
             )
             # create document1
-            document = collection.create_item(
+            document = await collection.create_item(
                 body={'id': 'doc1',
                       'spam': 'eggs',
                       'key': 'value'},
             )
 
             # create user
-            user = db.create_user(body={'id': 'user' + str(uuid.uuid4())})
+            user = await db.create_user(body={'id': 'user' + str(uuid.uuid4())})
 
             # create permission for collection
             permission = {
@@ -1322,7 +1322,7 @@ class CRUDTests(unittest.TestCase):
                 'permissionMode': documents.PermissionMode.Read,
                 'resource': "dbs/" + db.id + "/colls/" + collection.id
             }
-            permission_on_coll = user.create_permission(body=permission)
+            permission_on_coll = await user.create_permission(body=permission)
             self.assertIsNotNone(permission_on_coll.properties['_token'],
                                  'permission token is invalid')
 
@@ -1332,7 +1332,7 @@ class CRUDTests(unittest.TestCase):
                 'permissionMode': documents.PermissionMode.All,
                 'resource': "dbs/" + db.id + "/colls/" + collection.id + "/docs/" + document["id"]
             }
-            permission_on_doc = user.create_permission(body=permission)
+            permission_on_doc = await user.create_permission(body=permission)
             self.assertIsNotNone(permission_on_doc.properties['_token'],
                                  'permission token is invalid')
 
@@ -1357,17 +1357,17 @@ class CRUDTests(unittest.TestCase):
                                             "Session",
                                             connection_policy=CRUDTests.connectionPolicy)
         # setup entities
-        entities = __SetupEntities(client)
+        entities = await __SetupEntities(client)
         resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
                                entities['permissionOnColl'].properties['_token']}
         col_client = cosmos_client.CosmosClient(
             CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
         db = entities['db']
 
-        old_client_connection = db.client_connection
-        db.client_connection = col_client.client_connection
+        old_client_connection = await db.client_connection
+        db.client_connection = await col_client.client_connection
         # 1. Success-- Use Col Permission to Read
-        success_coll = db.get_container_client(container=entities['coll'])
+        success_coll = await db.get_container_client(container=entities['coll'])
         # 2. Failure-- Use Col Permission to delete
         await self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
                                                  db.delete_container,
@@ -1382,7 +1382,7 @@ class CRUDTests(unittest.TestCase):
         # 4. Success-- Use Col Permission to Read Doc
 
         docId = entities['doc']['id']
-        success_doc = success_coll.read_item(
+        success_doc = await success_coll.read_item(
             item=docId,
             partition_key=docId
         )
@@ -1404,14 +1404,15 @@ class CRUDTests(unittest.TestCase):
             CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
 
         # 6. Success-- Use Doc permission to read doc
-        read_doc = await doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(docId, docId)
+        read_doc = await doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(docId,
+                                                                                                               docId)
         self.assertEqual(read_doc["id"], docId)
 
         # 6. Success-- Use Doc permission to delete doc
         await doc_client.get_database_client(db.id).get_container_client(success_coll.id).delete_item(docId, docId)
         self.assertEqual(read_doc["id"], docId)
 
-        db.client_connection = old_client_connection
+        db.client_connection = await old_client_connection
         db.delete_container(entities['coll'])
 
     async def test_trigger_crud(self):
@@ -1429,7 +1430,7 @@ class CRUDTests(unittest.TestCase):
             'triggerType': documents.TriggerType.Pre,
             'triggerOperation': documents.TriggerOperation.All
         }
-        trigger = collection.scripts.create_trigger(body=trigger_definition)
+        trigger = await collection.scripts.create_trigger(body=trigger_definition)
         for property in trigger_definition:
             if property != "serverScript":
                 self.assertEqual(
@@ -1455,9 +1456,9 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(triggers)
 
         # replace trigger
-        change_trigger = trigger.copy()
+        change_trigger = await trigger.copy()
         trigger['body'] = 'function() {var x = 20;}'
-        replaced_trigger = collection.scripts.replace_trigger(change_trigger['id'], trigger)
+        replaced_trigger = await collection.scripts.replace_trigger(change_trigger['id'], trigger)
         for property in trigger_definition:
             if property != "serverScript":
                 self.assertEqual(
@@ -1469,10 +1470,10 @@ class CRUDTests(unittest.TestCase):
                                  'function() {var x = 20;}')
 
         # read trigger
-        trigger = collection.scripts.get_trigger(replaced_trigger['id'])
+        trigger = await collection.scripts.get_trigger(replaced_trigger['id'])
         self.assertEqual(replaced_trigger['id'], trigger['id'])
         # delete trigger
-        collection.scripts.delete_trigger(replaced_trigger['id'])
+        await collection.scripts.delete_trigger(replaced_trigger['id'])
         # read triggers after deletion
         await self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                                  collection.scripts.delete_trigger,
@@ -1491,7 +1492,7 @@ class CRUDTests(unittest.TestCase):
             'id': 'sample udf',
             'body': 'function() {var x = 10;}'
         }
-        udf = collection.scripts.create_user_defined_function(body=udf_definition)
+        udf = await collection.scripts.create_user_defined_function(body=udf_definition)
         for property in udf_definition:
             self.assertEqual(
                 udf[property],
@@ -1512,19 +1513,19 @@ class CRUDTests(unittest.TestCase):
         )]
         self.assertTrue(results)
         # replace udf
-        change_udf = udf.copy()
+        change_udf = await udf.copy()
         udf['body'] = 'function() {var x = 20;}'
-        replaced_udf = collection.scripts.replace_user_defined_function(udf=udf['id'], body=udf)
+        replaced_udf = await collection.scripts.replace_user_defined_function(udf=udf['id'], body=udf)
         for property in udf_definition:
             self.assertEqual(
                 replaced_udf[property],
                 udf[property],
                 'property {property} should match'.format(property=property))
         # read udf
-        udf = collection.scripts.get_user_defined_function(replaced_udf['id'])
+        udf = await collection.scripts.get_user_defined_function(replaced_udf['id'])
         self.assertEqual(replaced_udf['id'], udf['id'])
         # delete udf
-        collection.scripts.delete_user_defined_function(replaced_udf['id'])
+        await collection.scripts.delete_user_defined_function(replaced_udf['id'])
         # read udfs after deletion
         await self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                                  collection.scripts.get_user_defined_function,
@@ -1543,7 +1544,7 @@ class CRUDTests(unittest.TestCase):
             'id': 'sample sproc',
             'serverScript': 'function() {var x = 10;}'
         }
-        sproc = collection.scripts.create_stored_procedure(body=sproc_definition)
+        sproc = await collection.scripts.create_stored_procedure(body=sproc_definition)
         for property in sproc_definition:
             if property != "serverScript":
                 self.assertEqual(
@@ -1567,9 +1568,9 @@ class CRUDTests(unittest.TestCase):
         )]
         self.assertIsNotNone(sprocs)
         # replace sproc
-        change_sproc = sproc.copy()
+        change_sproc = await sproc.copy()
         sproc['body'] = 'function() {var x = 20;}'
-        replaced_sproc = collection.scripts.replace_stored_procedure(sproc=change_sproc['id'], body=sproc)
+        replaced_sproc = await collection.scripts.replace_stored_procedure(sproc=change_sproc['id'], body=sproc)
         for property in sproc_definition:
             if property != 'serverScript':
                 self.assertEqual(
@@ -1580,10 +1581,10 @@ class CRUDTests(unittest.TestCase):
                 self.assertEqual(replaced_sproc['body'],
                                  "function() {var x = 20;}")
         # read sproc
-        sproc = collection.scripts.get_stored_procedure(replaced_sproc['id'])
+        sproc = await collection.scripts.get_stored_procedure(replaced_sproc['id'])
         self.assertEqual(replaced_sproc['id'], sproc['id'])
         # delete sproc
-        collection.scripts.delete_stored_procedure(replaced_sproc['id'])
+        await collection.scripts.delete_stored_procedure(replaced_sproc['id'])
         # read sprocs after deletion
         await self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                                  collection.scripts.get_stored_procedure,
@@ -1610,9 +1611,9 @@ class CRUDTests(unittest.TestCase):
                     '}')
         }
 
-        created_sproc = created_collection.scripts.create_stored_procedure(body=sproc)
+        created_sproc = await created_collection.scripts.create_stored_procedure(body=sproc)
 
-        result = created_collection.scripts.execute_stored_procedure(
+        result = await created_collection.scripts.execute_stored_procedure(
             sproc=created_sproc['id'],
             partition_key=1
         )
@@ -1621,7 +1622,7 @@ class CRUDTests(unittest.TestCase):
         self.assertFalse(
             HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
 
-        result = created_collection.scripts.execute_stored_procedure(
+        result = await created_collection.scripts.execute_stored_procedure(
             sproc=created_sproc['id'],
             enable_script_logging=True,
             partition_key=1
@@ -1632,7 +1633,7 @@ class CRUDTests(unittest.TestCase):
                          created_collection.scripts.client_connection.last_response_headers.get(
                              HttpHeaders.ScriptLogResults))
 
-        result = created_collection.scripts.execute_stored_procedure(
+        result = await created_collection.scripts.execute_stored_procedure(
             sproc=created_sproc['id'],
             enable_script_logging=False,
             partition_key=1
@@ -1646,19 +1647,19 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = db.create_container(
+        collection = await db.create_container(
             id='test_collection_indexing_policy default policy' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
 
-        collection_properties = collection.read()
+        collection_properties = await collection.read()
         self.assertEqual(collection_properties['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Consistent,
                          'default indexing mode should be consistent')
 
-        db.delete_container(container=collection)
+        await db.delete_container(container=collection)
 
-        consistent_collection = db.create_container(
+        consistent_collection = await db.create_container(
             id='test_collection_indexing_policy consistent collection ' + str(uuid.uuid4()),
             indexing_policy={
                 'indexingMode': documents.IndexingMode.Consistent
@@ -1666,14 +1667,14 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
 
-        consistent_collection_properties = consistent_collection.read()
+        consistent_collection_properties = await consistent_collection.read()
         self.assertEqual(consistent_collection_properties['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Consistent,
                          'indexing mode should be consistent')
 
-        db.delete_container(container=consistent_collection)
+        await db.delete_container(container=consistent_collection)
 
-        collection_with_indexing_policy = db.create_container(
+        collection_with_indexing_policy = await db.create_container(
             id='CollectionWithIndexingPolicy ' + str(uuid.uuid4()),
             indexing_policy={
                 'automatic': True,
@@ -1699,52 +1700,52 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
 
-        collection_with_indexing_policy_properties = collection_with_indexing_policy.read()
+        collection_with_indexing_policy_properties = await collection_with_indexing_policy.read()
         self.assertEqual(1,
                          len(collection_with_indexing_policy_properties['indexingPolicy']['includedPaths']),
                          'Unexpected includedPaths length')
         self.assertEqual(2,
                          len(collection_with_indexing_policy_properties['indexingPolicy']['excludedPaths']),
                          'Unexpected excluded path count')
-        db.delete_container(container=collection_with_indexing_policy)
+        await db.delete_container(container=collection_with_indexing_policy)
 
     async def test_create_default_indexing_policy(self):
         # create database
         db = self.databaseForTest
 
         # no indexing policy specified
-        collection = db.create_container(
+        collection = await db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
-        collection_properties = collection.read()
+        collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        db.delete_container(container=collection)
+        await db.delete_container(container=collection)
 
         # partial policy specified
-        collection = db.create_container(
+        collection = await db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
             indexing_policy={
                 'indexingMode': documents.IndexingMode.Consistent, 'automatic': True
             },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
-        collection_properties = collection.read()
+        collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        db.delete_container(container=collection)
+        await db.delete_container(container=collection)
 
         # default policy
-        collection = db.create_container(
+        collection = await db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy03' + str(uuid.uuid4()),
             indexing_policy={},
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
-        collection_properties = collection.read()
+        collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        db.delete_container(container=collection)
+        await db.delete_container(container=collection)
 
         # missing indexes
-        collection = db.create_container(
+        collection = await db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy04' + str(uuid.uuid4()),
             indexing_policy={
                 'includedPaths': [
@@ -1755,12 +1756,12 @@ class CRUDTests(unittest.TestCase):
             },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
-        collection_properties = collection.read()
+        collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        db.delete_container(container=collection)
+        await db.delete_container(container=collection)
 
         # missing precision
-        collection = db.create_container(
+        collection = await db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy05' + str(uuid.uuid4()),
             indexing_policy={
                 'includedPaths': [
@@ -1781,9 +1782,9 @@ class CRUDTests(unittest.TestCase):
             },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
-        collection_properties = collection.read()
+        collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        db.delete_container(container=collection)
+        await db.delete_container(container=collection)
 
     async def test_create_indexing_policy_with_composite_and_spatial_indexes(self):
         # create database
@@ -1843,7 +1844,7 @@ class CRUDTests(unittest.TestCase):
         }
 
         custom_logger = logging.getLogger("CustomLogger")
-        created_container = db.create_container(
+        created_container = await db.create_container(
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
             partition_key=PartitionKey(path='/id', kind='Hash'),
@@ -1853,8 +1854,8 @@ class CRUDTests(unittest.TestCase):
             logging_enable=True,
             logger=custom_logger,
         )
-        created_properties = created_container.read(logger=custom_logger)
-        read_indexing_policy = created_properties['indexingPolicy']
+        created_properties = await created_container.read(logger=custom_logger)
+        read_indexing_policy = await created_properties['indexingPolicy']
 
         if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
             self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
@@ -1863,7 +1864,7 @@ class CRUDTests(unittest.TestCase):
             self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
 
         self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
-        db.delete_container(container=created_container)
+        await db.delete_container(container=created_container)
 
     async def _check_default_indexing_policy_paths(self, indexing_policy):
         async def __get_first(array):
@@ -1877,7 +1878,7 @@ class CRUDTests(unittest.TestCase):
         # included paths should be 1: '/'.
         self.assertEqual(1, len(indexing_policy['includedPaths']))
 
-        root_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
+        root_included_path = await __get_first([included_path for included_path in indexing_policy['includedPaths']
                                           if included_path['path'] == '/*'])
         self.assertFalse(root_included_path.get('indexes'))
 
@@ -1910,12 +1911,12 @@ class CRUDTests(unittest.TestCase):
                                        connection_policy=connection_policy)
 
     async def test_client_connection_retry_configuration(self):
-        total_time_for_two_retries = self.initialize_client_with_connection_urllib_retry_config(2)
-        total_time_for_three_retries = self.initialize_client_with_connection_urllib_retry_config(3)
+        total_time_for_two_retries = await self.initialize_client_with_connection_urllib_retry_config(2)
+        total_time_for_three_retries = await self.initialize_client_with_connection_urllib_retry_config(3)
         self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
 
-        total_time_for_two_retries = self.initialize_client_with_connection_core_retry_config(2)
-        total_time_for_three_retries = self.initialize_client_with_connection_core_retry_config(3)
+        total_time_for_two_retries = await self.initialize_client_with_connection_core_retry_config(2)
+        total_time_for_three_retries = await self.initialize_client_with_connection_core_retry_config(3)
         self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
 
     async def initialize_client_with_connection_urllib_retry_config(self, retries):
@@ -1994,7 +1995,7 @@ class CRUDTests(unittest.TestCase):
             databases = [database async for database in databases]
 
     async def test_query_iterable_functionality(self):
-        def __create_resources(client):
+        async def __create_resources(client):
             """Creates resources for this test.
 
             :Parameters:
@@ -2005,9 +2006,9 @@ class CRUDTests(unittest.TestCase):
 
             """
             collection = self.configs.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
-            doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1'})
-            doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2'})
-            doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3'})
+            doc1 = await collection.create_item(body={'id': 'doc1', 'prop1': 'value1'})
+            doc2 = await collection.create_item(body={'id': 'doc2', 'prop1': 'value2'})
+            doc3 = await collection.create_item(body={'id': 'doc3', 'prop1': 'value3'})
             resources = {
                 'coll': collection,
                 'doc1': doc1,
@@ -2017,8 +2018,8 @@ class CRUDTests(unittest.TestCase):
             return resources
 
         # Validate QueryIterable by converting it to a list.
-        resources = __create_resources(self.client)
-        results = resources['coll'].read_all_items(max_item_count=2)
+        resources = await __create_resources(self.client)
+        results = await resources['coll'].read_all_items(max_item_count=2)
         docs = [doc async for doc in results]
         self.assertEqual(3,
                          len(docs),
@@ -2029,7 +2030,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(resources['doc3']['id'], docs[2]['id'])
 
         # Validate QueryIterable iterator with 'for'.
-        results = resources['coll'].read_all_items(max_item_count=2)
+        results = await resources['coll'].read_all_items(max_item_count=2)
         counter = 0
         # test QueryIterable with 'for'.
         for doc in iter(results):
@@ -2049,9 +2050,9 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(counter, 3)
 
         # Get query results page by page.
-        results = resources['coll'].read_all_items(max_item_count=2)
+        results = await resources['coll'].read_all_items(max_item_count=2)
 
-        page_iter = results.by_page()
+        page_iter = await results.by_page()
         first_block = [page async for page in next(page_iter)]
         self.assertEqual(2, len(first_block), 'First block should have 2 entries.')
         self.assertEqual(resources['doc1']['id'], first_block[0]['id'])
@@ -2137,7 +2138,7 @@ class CRUDTests(unittest.TestCase):
 
             """
             for trigger_i in triggers:
-                trigger = collection.scripts.create_trigger(body=trigger_i)
+                trigger = await collection.scripts.create_trigger(body=trigger_i)
                 for property in trigger_i:
                     self.assertEqual(
                         trigger[property],
@@ -2148,11 +2149,11 @@ class CRUDTests(unittest.TestCase):
         db = self.databaseForTest
         # create collections
         pkd = PartitionKey(path='/id', kind='Hash')
-        collection1 = db.create_container(id='test_trigger_functionality 1 ' + str(uuid.uuid4()),
+        collection1 = await db.create_container(id='test_trigger_functionality 1 ' + str(uuid.uuid4()),
                                           partition_key=PartitionKey(path='/key', kind='Hash'))
-        collection2 = db.create_container(id='test_trigger_functionality 2 ' + str(uuid.uuid4()),
+        collection2 = await db.create_container(id='test_trigger_functionality 2 ' + str(uuid.uuid4()),
                                           partition_key=PartitionKey(path='/key', kind='Hash'))
-        collection3 = db.create_container(id='test_trigger_functionality 3 ' + str(uuid.uuid4()),
+        collection3 = await db.create_container(id='test_trigger_functionality 3 ' + str(uuid.uuid4()),
                                           partition_key=PartitionKey(path='/key', kind='Hash'))
         # create triggers
         await __CreateTriggers(collection1, triggers_in_collection1)
@@ -2170,14 +2171,14 @@ class CRUDTests(unittest.TestCase):
                          'DOC1t1',
                          'id should be capitalized')
 
-        document_1_2 = collection1.create_item(
+        document_1_2 = await collection1.create_item(
             body={'id': 'testing post trigger', 'key': 'value'},
             pre_trigger_include='t1',
             post_trigger_include='response1',
         )
         self.assertEqual(document_1_2['id'], 'TESTING POST TRIGGERt1')
 
-        document_1_3 = collection1.create_item(
+        document_1_3 = await collection1.create_item(
             body={'id': 'responseheaders', 'key': 'value'},
             pre_trigger_include='t1'
         )
@@ -2185,7 +2186,7 @@ class CRUDTests(unittest.TestCase):
 
         triggers_2 = [trigger async for trigger in collection2.scripts.list_triggers()]
         self.assertEqual(len(triggers_2), 2)
-        document_2_1 = collection2.create_item(
+        document_2_1 = await collection2.create_item(
             body={'id': 'doc2',
                   'key': 'value2'},
             pre_trigger_include='t2'
@@ -2193,7 +2194,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(document_2_1['id'],
                          'doc2',
                          'id shouldn\'t change')
-        document_2_2 = collection2.create_item(
+        document_2_2 = await collection2.create_item(
             body={'id': 'Doc3',
                   'prop': 'empty',
                   'key': 'value2'},
@@ -2208,9 +2209,9 @@ class CRUDTests(unittest.TestCase):
                 post_trigger_include='triggerOpType'
             )
 
-        db.delete_container(collection1)
-        db.delete_container(collection2)
-        db.delete_container(collection3)
+        await db.delete_container(collection1)
+        await db.delete_container(collection2)
+        await db.delete_container(collection3)
 
     async def test_stored_procedure_functionality(self):
         # create database
@@ -2230,8 +2231,8 @@ class CRUDTests(unittest.TestCase):
                     '}')
         }
 
-        retrieved_sproc = collection.scripts.create_stored_procedure(body=sproc1)
-        result = collection.scripts.execute_stored_procedure(
+        retrieved_sproc = await collection.scripts.create_stored_procedure(body=sproc1)
+        result = await collection.scripts.execute_stored_procedure(
             sproc=retrieved_sproc['id'],
             partition_key=1
         )
@@ -2245,8 +2246,8 @@ class CRUDTests(unittest.TestCase):
                     '  }' +
                     '}')
         }
-        retrieved_sproc2 = collection.scripts.create_stored_procedure(body=sproc2)
-        result = collection.scripts.execute_stored_procedure(
+        retrieved_sproc2 = await collection.scripts.create_stored_procedure(body=sproc2)
+        result = await collection.scripts.execute_stored_procedure(
             sproc=retrieved_sproc2['id'],
             partition_key=1
         )
@@ -2259,8 +2260,8 @@ class CRUDTests(unittest.TestCase):
                     '      \'a\' + input.temp);' +
                     '}')
         }
-        retrieved_sproc3 = collection.scripts.create_stored_procedure(body=sproc3)
-        result = collection.scripts.execute_stored_procedure(
+        retrieved_sproc3 = await collection.scripts.create_stored_procedure(body=sproc3)
+        result = await collection.scripts.execute_stored_procedure(
             sproc=retrieved_sproc3['id'],
             params={'temp': 'so'},
             partition_key=1
@@ -2284,17 +2285,17 @@ class CRUDTests(unittest.TestCase):
         db = self.databaseForTest
 
         # Create collection.
-        collection = db.create_container(
+        collection = await db.create_container(
             id='test_offer_read_and_query ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         # Read the offer.
-        expected_offer = collection.read_offer()
-        collection_properties = collection.read()
+        expected_offer = await collection.read_offer()
+        collection_properties = await collection.read()
         await self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
 
         # Now delete the collection.
-        db.delete_container(container=collection)
+        await db.delete_container(container=collection)
         # Reading fails.
         await self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, collection.read_offer)
 
@@ -2304,12 +2305,12 @@ class CRUDTests(unittest.TestCase):
         # Create collection.
         collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # Read Offer
-        expected_offer = collection.read_offer()
-        collection_properties = collection.read()
+        expected_offer = await collection.read_offer()
+        collection_properties = await collection.read()
         await self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
         # Replace the offer.
-        replaced_offer = collection.replace_throughput(expected_offer.offer_throughput + 100)
-        collection_properties = collection.read()
+        replaced_offer = await collection.replace_throughput(expected_offer.offer_throughput + 100)
+        collection_properties = await collection.read()
         await self.__ValidateOfferResponseBody(replaced_offer, collection_properties.get('_self'), None)
         # Check if the replaced offer is what we expect.
         self.assertEqual(expected_offer.properties.get('content').get('offerThroughput') + 100,
@@ -2319,35 +2320,35 @@ class CRUDTests(unittest.TestCase):
 
     async def test_database_account_functionality(self):
         # Validate database account functionality.
-        database_account = self.client.get_database_account()
+        database_account = await self.client.get_database_account()
         self.assertEqual(database_account.DatabasesLink, '/dbs/')
         self.assertEqual(database_account.MediaLink, '/media/')
         if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
+                await self.client.client_connection.last_response_headers):
             self.assertEqual(
                 database_account.MaxMediaStorageUsageInMB,
                 self.client.client_connection.last_response_headers[
                     HttpHeaders.MaxMediaStorageUsageInMB])
         if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
+                await self.client.client_connection.last_response_headers):
             self.assertEqual(
                 database_account.CurrentMediaStorageUsageInMB,
-                self.client.client_connection.last_response_headers[
+                await self.client.client_connection.last_response_headers[
                     HttpHeaders.CurrentMediaStorageUsageInMB])
         self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
 
     async def test_index_progress_headers(self):
         created_db = self.databaseForTest
-        consistent_coll = created_db.create_container(
+        consistent_coll = await created_db.create_container(
             id='test_index_progress_headers consistent_coll ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id", kind='Hash'),
         )
-        created_container = created_db.get_container_client(container=consistent_coll)
-        created_container.read(populate_quota_info=True)
+        created_container = await created_db.get_container_client(container=consistent_coll)
+        await created_container.read(populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-        none_coll = created_db.create_container(
+        none_coll = await created_db.create_container(
             id='test_index_progress_headers none_coll ' + str(uuid.uuid4()),
             indexing_policy={
                 'indexingMode': documents.IndexingMode.NoIndex,
@@ -2355,13 +2356,13 @@ class CRUDTests(unittest.TestCase):
             },
             partition_key=PartitionKey(path="/id", kind='Hash')
         )
-        created_container = created_db.get_container_client(container=none_coll)
-        created_container.read(populate_quota_info=True)
+        created_container = await created_db.get_container_client(container=none_coll)
+        await created_container.read(populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-        created_db.delete_container(consistent_coll)
-        created_db.delete_container(none_coll)
+        await created_db.delete_container(consistent_coll)
+        await created_db.delete_container(none_coll)
 
     async def test_id_validation(self):
         # Id shouldn't end with space.
@@ -2400,7 +2401,7 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual('Id contains illegal chars.', e.args[0])
 
         # Id can begin with space
-        db = self.client.create_database(id=' id_begin_space')
+        db = await self.client.create_database(id=' id_begin_space')
         self.assertTrue(True)
 
         await self.client.delete_database(database=db)
@@ -2419,13 +2420,13 @@ class CRUDTests(unittest.TestCase):
 
         # create 2 collections with different casing of IDs
         # pascalCase
-        created_collection1 = created_db.create_container(
+        created_collection1 = await created_db.create_container(
             id=collection_id1,
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
 
         # CamelCase
-        created_collection2 = created_db.create_container(
+        created_collection2 = await created_db.create_container(
             id=collection_id2,
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
@@ -2439,8 +2440,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_id1, created_collection1.id)
         self.assertEqual(collection_id2, created_collection2.id)
 
-        created_db.delete_container(created_collection1)
-        created_db.delete_container(created_collection2)
+        await created_db.delete_container(created_collection1)
+        await created_db.delete_container(created_collection2)
 
     # TODO: fix test
     @pytest.mark.skip
@@ -2455,11 +2456,11 @@ class CRUDTests(unittest.TestCase):
         collection_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
 
         # verify that collections are created with specified IDs
-        created_collection1 = created_db.create_container(
+        created_collection1 = await created_db.create_container(
             id=collection_id1,
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
-        created_collection2 = created_db.create_container(
+        created_collection2 = await created_db.create_container(
             id=collection_id2,
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
@@ -2470,8 +2471,8 @@ class CRUDTests(unittest.TestCase):
         created_collection1_properties = created_collection1.read()
         created_collection2_properties = created_collection2.read()
 
-        created_db.client_connection.DeleteContainer(created_collection1_properties['_self'])
-        created_db.client_connection.DeleteContainer(created_collection2_properties['_self'])
+        await created_db.client_connection.DeleteContainer(created_collection1_properties['_self'])
+        await created_db.client_connection.DeleteContainer(created_collection2_properties['_self'])
 
     async def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
@@ -2491,42 +2492,42 @@ class CRUDTests(unittest.TestCase):
         created_container = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         # read container with id
-        read_container = created_db.get_container_client(created_container.id)
+        read_container = await created_db.get_container_client(created_container.id)
         self.assertEqual(read_container.id, created_container.id)
 
         # read container with instance
-        read_container = created_db.get_container_client(created_container)
+        read_container = await created_db.get_container_client(created_container)
         self.assertEqual(read_container.id, created_container.id)
 
         # read container with properties
-        created_properties = created_container.read()
-        read_container = created_db.get_container_client(created_properties)
+        created_properties = await created_container.read()
+        read_container = await created_db.get_container_client(created_properties)
         self.assertEqual(read_container.id, created_container.id)
 
-        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4())})
+        created_item = await created_container.create_item({'id': '1' + str(uuid.uuid4())})
 
         # read item with id
-        read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['id'])
+        read_item = await created_container.read_item(item=created_item['id'], partition_key=created_item['id'])
         self.assertEqual(read_item['id'], created_item['id'])
 
         # read item with properties
-        read_item = created_container.read_item(item=created_item, partition_key=created_item['id'])
+        read_item = await created_container.read_item(item=created_item, partition_key=created_item['id'])
         self.assertEqual(read_item['id'], created_item['id'])
 
-        created_sproc = created_container.scripts.create_stored_procedure({
+        created_sproc = await created_container.scripts.create_stored_procedure({
             'id': 'storedProcedure' + str(uuid.uuid4()),
             'body': 'function () { }'
         })
 
         # read sproc with id
-        read_sproc = created_container.scripts.get_stored_procedure(created_sproc['id'])
+        read_sproc = await created_container.scripts.get_stored_procedure(created_sproc['id'])
         self.assertEqual(read_sproc['id'], created_sproc['id'])
 
         # read sproc with properties
-        read_sproc = created_container.scripts.get_stored_procedure(created_sproc)
+        read_sproc = await created_container.scripts.get_stored_procedure(created_sproc)
         self.assertEqual(read_sproc['id'], created_sproc['id'])
 
-        created_trigger = created_container.scripts.create_trigger({
+        created_trigger = await created_container.scripts.create_trigger({
             'id': 'sample trigger' + str(uuid.uuid4()),
             'serverScript': 'function() {var x = 10;}',
             'triggerType': documents.TriggerType.Pre,
@@ -2541,37 +2542,37 @@ class CRUDTests(unittest.TestCase):
         read_trigger = created_container.scripts.get_trigger(created_trigger)
         self.assertEqual(read_trigger['id'], created_trigger['id'])
 
-        created_udf = created_container.scripts.create_user_defined_function({
+        created_udf = await created_container.scripts.create_user_defined_function({
             'id': 'sample udf' + str(uuid.uuid4()),
             'body': 'function() {var x = 10;}'
         })
 
         # read udf with id
-        read_udf = created_container.scripts.get_user_defined_function(created_udf['id'])
+        read_udf = await created_container.scripts.get_user_defined_function(created_udf['id'])
         self.assertEqual(created_udf['id'], read_udf['id'])
 
         # read udf with properties
-        read_udf = created_container.scripts.get_user_defined_function(created_udf)
+        read_udf = await created_container.scripts.get_user_defined_function(created_udf)
         self.assertEqual(created_udf['id'], read_udf['id'])
 
-        created_user = created_db.create_user({
+        created_user = await created_db.create_user({
             'id': 'user' + str(uuid.uuid4())
         })
 
         # read user with id
-        read_user = created_db.get_user_client(created_user.id)
+        read_user = await created_db.get_user_client(created_user.id)
         self.assertEqual(read_user.id, created_user.id)
 
         # read user with instance
-        read_user = created_db.get_user_client(created_user)
+        read_user = await created_db.get_user_client(created_user)
         self.assertEqual(read_user.id, created_user.id)
 
         # read user with properties
-        created_user_properties = created_user.read()
-        read_user = created_db.get_user_client(created_user_properties)
+        created_user_properties = await created_user.read()
+        read_user = await created_db.get_user_client(created_user_properties)
         self.assertEqual(read_user.id, created_user.id)
 
-        created_permission = created_user.create_permission({
+        created_permission = await created_user.create_permission({
             'id': 'all permission' + str(uuid.uuid4()),
             'permissionMode': documents.PermissionMode.All,
             'resource': created_container.container_link,
@@ -2579,15 +2580,15 @@ class CRUDTests(unittest.TestCase):
         })
 
         # read permission with id
-        read_permission = created_user.get_permission(created_permission.id)
+        read_permission = await created_user.get_permission(created_permission.id)
         self.assertEqual(read_permission.id, created_permission.id)
 
         # read permission with instance
-        read_permission = created_user.get_permission(created_permission)
+        read_permission = await created_user.get_permission(created_permission)
         self.assertEqual(read_permission.id, created_permission.id)
 
         # read permission with properties
-        read_permission = created_user.get_permission(created_permission.properties)
+        read_permission = await created_user.get_permission(created_permission.properties)
         self.assertEqual(read_permission.id, created_permission.id)
 
     # Temporarily commenting analytical storage tests until emulator support comes.
