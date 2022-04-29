@@ -5,15 +5,13 @@
 import base64
 import os
 
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 import pytest
-
 from azure.keyvault.certificates import CertificatePolicy, WellKnownIssuerNames
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from OpenSSL import crypto
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_decorator, CertificatesClientPreparer
-
+from _test_case import CertificatesClientPreparer, get_decorator
 
 all_api_versions = get_decorator()
 

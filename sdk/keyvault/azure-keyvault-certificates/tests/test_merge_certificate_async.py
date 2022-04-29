@@ -4,18 +4,15 @@
 # ------------------------------------
 import base64
 import os
-from devtools_testutils import set_bodiless_matcher
 
 import pytest
-
 from azure.keyvault.certificates import CertificatePolicy, WellKnownIssuerNames
+from devtools_testutils import set_bodiless_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
 from OpenSSL import crypto
 
-from _shared.json_attribute_matcher import json_attribute_matcher
+from _async_test_case import AsyncCertificatesClientPreparer, get_decorator
 from _shared.test_case_async import KeyVaultTestCase
-from _async_test_case import get_decorator, AsyncCertificatesClientPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
-
 
 all_api_versions = get_decorator(is_async=True)
 

@@ -3,9 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-
-from azure_devtools.scenario_tests.patches import patch_time_sleep_api
-from devtools_testutils import AzureRecordedTestCase, AzureTestCase
+from azure.keyvault.certificates._shared import HttpChallengeCache
+from devtools_testutils import AzureRecordedTestCase
 
 
 class KeyVaultTestCase(AzureRecordedTestCase):

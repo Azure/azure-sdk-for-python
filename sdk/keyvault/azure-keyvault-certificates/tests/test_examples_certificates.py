@@ -3,21 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import print_function
+
 import time
-from devtools_testutils import recorded_by_proxy
 
 import pytest
-
-from azure.keyvault.certificates import (
-    ApiVersion,
-    CertificatePolicy,
-    CertificateContentType,
-    WellKnownIssuerNames,
-)
+from azure.keyvault.certificates import ApiVersion, CertificateContentType, CertificatePolicy, WellKnownIssuerNames
+from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import get_decorator, CertificatesClientPreparer
-
+from _test_case import CertificatesClientPreparer, get_decorator
 
 all_api_versions = get_decorator()
 exclude_2016_10_01 = get_decorator(api_versions=[v for v in ApiVersion if v != ApiVersion.V2016_10_01])
@@ -48,7 +42,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         cert_name = self.get_resource_name("cert-name")
 
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
+        from azure.keyvault.certificates import (CertificateContentType,
+                                                 CertificatePolicy,
+                                                 WellKnownIssuerNames)
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
