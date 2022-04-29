@@ -56,7 +56,10 @@ def build_get_manifest_request(
     # type: (...) -> HttpRequest
     accept = kwargs.pop('accept', None)  # type: Optional[str]
 
-    accept = "application/json"
+    if accept:
+        accept += ", application/json"
+    else:
+        accept = "application/json"
     # Construct URL
     _url = kwargs.pop("template_url", "/v2/{name}/manifests/{reference}")
     path_format_arguments = {
