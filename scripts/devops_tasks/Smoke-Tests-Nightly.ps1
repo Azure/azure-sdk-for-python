@@ -16,7 +16,7 @@ New-Item -Path $smoketestsDir -ItemType Directory
 # Run smoketests python script to create requirements.txt
 Write-Host "Creating requirements.txt in the smoketest folder"
 virtualenv envnightly
-source envnightly/bin/activate
+envnightly/bin/activate
 if ($LASTEXITCODE) {
     exit $LASTEXITCODE
 }
