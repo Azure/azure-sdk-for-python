@@ -1,0 +1,179 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 29 Apr 2022 03:42:40 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://rooms-ppe-us.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000011-134b-87e4-83fe-0848220020ad"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '101'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 Apr 2022 03:42:41 GMT
+      ms-cv:
+      - +zCyy+Nd1keAt3D+E2fXsg.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 27ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 29 Apr 2022 03:42:41 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://rooms-ppe-us.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000011-134b-883e-83fe-0848220020ae"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '101'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 Apr 2022 03:42:41 GMT
+      ms-cv:
+      - 5SPp5z9jXEiRFJp9V/a0ug.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 27ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 29 Apr 2022 03:42:41 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://rooms-ppe-us.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000011-134b-888f-83fe-0848220020af"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '101'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 Apr 2022 03:42:41 GMT
+      ms-cv:
+      - 2f15AxD9uESrFi/c9YSb7g.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 30ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"validFrom": "2022-11-28T20:42:41.239118Z"}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/json
+      Repeatability-First-Sent:
+      - '2022-04-29T03:42:41.239118Z'
+      Repeatability-Request-ID:
+      - 6be8cb12-c76e-11ec-9fb6-985fd3c6ae82
+      User-Agent:
+      - azsdk-python-communication-rooms/1.1.0 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 29 Apr 2022 03:42:41 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://rooms-ppe-us.ppe.communication.azure.net/rooms?api-version=2022-02-01
+  response:
+    body:
+      string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.1","title":"One
+        or more validation errors occurred.","status":400,"traceId":"00-ed24e4ab521c2a10491bd24ccadb25dd-784cb30469a749a5-00","errors":{"ValidFrom":["Value
+        is incorrect or more than 180 days in the future"]}}'
+    headers:
+      content-type: application/problem+json; charset=utf-8
+      date: Fri, 29 Apr 2022 03:42:41 GMT
+      ms-cv: SQlFYNRN20iRU6KgNdYibw.0
+      transfer-encoding: chunked
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 400
+      message: Bad Request
+    url: https://rooms-ppe-us.ppe.communication.azure.net/rooms?api-version=2022-02-01
+version: 1

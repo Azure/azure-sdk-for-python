@@ -1,0 +1,181 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 29 Apr 2022 03:43:02 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://rooms-ppe-us.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000011-134b-dcf9-88f7-084822002d13"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '101'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 Apr 2022 03:43:02 GMT
+      ms-cv:
+      - WfFDVg2kL0eetZEJ82al+A.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 29ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 29 Apr 2022 03:43:02 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://rooms-ppe-us.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000011-134b-dd68-88f7-084822002d14"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '101'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 Apr 2022 03:43:02 GMT
+      ms-cv:
+      - 6pJh7kqoiUCyc4mcWHLtmg.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 30ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.2.0 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 29 Apr 2022 03:43:02 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://rooms-ppe-us.ppe.communication.azure.net/identities?api-version=2021-10-31-preview
+  response:
+    body:
+      string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000011-134b-ddd9-88f7-084822002d15"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
+        2021-11-01, 2022-06-01
+      content-length:
+      - '101'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 Apr 2022 03:43:02 GMT
+      ms-cv:
+      - KHt5kZyWME+bLwM/NrhcXg.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 26ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-rooms/1.1.0 Python/3.10.4 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 29 Apr 2022 03:43:03 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://rooms-ppe-us.ppe.communication.azure.net/rooms/78469124725336262?api-version=2022-02-01
+  response:
+    body:
+      string: '{"error":{"code":"NotFound","message":"Resource not found"}}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07, 2022-02-01
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 Apr 2022 03:43:03 GMT
+      ms-cv:
+      - rxn/Iqph9EmcKIMX5Zom+w.0
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 404
+      message: Not Found
+version: 1
