@@ -1,1 +1,1 @@
-api-stub-generator==0.2.11
+api-stub-generator==0.3
