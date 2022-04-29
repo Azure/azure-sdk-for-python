@@ -36,15 +36,9 @@ directive:
   - from: swagger-document
     where: "$.definitions"
     transform: >
-      $.UpsertClassificationPolicyRequest.properties.workerSelectors.items["$ref"] = "#/definitions/LabelSelectorAttachment";
-
-      $.UpsertClassificationPolicyResponse.properties.workerSelectors.items["$ref"] = "#/definitions/LabelSelectorAttachment";
-
-      $.ClassificationPolicy.properties.workerSelectors.items["$ref"] = "#/definitions/LabelSelectorAttachment";;
-
+      $.ClassificationPolicy.properties.workerSelectors.items["$ref"] = "#/definitions/WorkerSelectorAttachment";
+      $.ClassificationPolicy.properties.queueSelectors.items["$ref"] = "#/definitions/QueueSelectorAttachment";
       $.ExceptionRule.properties.actions.items["$ref"] = "#/definitions/ExceptionAction";
-            
-      $.QueueLabelSelector.properties.labelSelectors.items["$ref"] = "#/definitions/LabelSelectorAttachment";
 ```
 
 ### Rename CommunicationError to JobRouterError

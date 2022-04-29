@@ -6,119 +6,13 @@
     "version": "2021-10-20-preview2"
   },
   "paths": {
-    "/routing/classificationPolicies": {
-      "post": {
-        "tags": [
-          "ClassificationPolicies"
-        ],
-        "summary": "Creates a new classification policy.",
-        "operationId": "JobRouter_CreateClassificationPolicy",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "repeatability-request-id",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "in": "header",
-            "name": "repeatability-first-sent",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "in": "body",
-            "name": "classificationPolicy",
-            "description": "Model of classification policy to create",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ClassificationPolicy"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "201": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/ClassificationPolicy"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Creates a Classification policy": {
-            "$ref": "./examples/ClassificationPolicies_CreateClassificationPolicy.json"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "ClassificationPolicies"
-        ],
-        "summary": "Retrieves existing classification policies",
-        "operationId": "JobRouter_ListClassificationPolicies",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "maxpagesize",
-            "description": "Maximum page size",
-            "type": "integer",
-            "format": "int32",
-            "default": 20
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/ClassificationPolicyCollection"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Get Classification policies with pagination (max page size)": {
-            "$ref": "./examples/ClassificationPolicies_ListClassificationPoliciesWithPageSize.json"
-          }
-        },
-        "x-ms-pageable": {
-          "nextLinkName": "nextLink",
-          "itemName": "value"
-        }
-      }
-    },
     "/routing/classificationPolicies/{id}": {
       "patch": {
         "tags": [
           "ClassificationPolicies"
         ],
-        "summary": "Updates a classification policy.",
-        "operationId": "JobRouter_UpdateClassificationPolicy",
+        "summary": "Upsert a classification policy.",
+        "operationId": "JobRouter_UpsertClassificationPolicy",
         "consumes": [
           "application/merge-patch+json"
         ],
@@ -129,7 +23,7 @@
           {
             "in": "path",
             "name": "id",
-            "description": "The id of classification policy.",
+            "description": "Id of the classification policy",
             "required": true,
             "type": "string"
           },
@@ -139,8 +33,7 @@
           {
             "in": "body",
             "name": "patch",
-            "description": "JSON Document contained the partial update for the classification policy.",
-            "required": true,
+            "description": "Model of classification policy properties to be patched. See also: https://datatracker.ietf.org/doc/html/rfc7386",
             "schema": {
               "$ref": "#/definitions/ClassificationPolicy"
             }
@@ -161,6 +54,9 @@
           }
         },
         "x-ms-examples": {
+          "Creates a Classification policy": {
+            "$ref": "./examples/ClassificationPolicies_CreateClassificationPolicy.json"
+          },
           "Update a Classification policy": {
             "$ref": "./examples/ClassificationPolicies_UpdateClassificationPolicy.json"
           }
@@ -246,71 +142,13 @@
         }
       }
     },
-    "/routing/distributionPolicies": {
-      "post": {
-        "tags": [
-          "DistributionPolicies"
-        ],
-        "summary": "Creates a new distribution policy.",
-        "operationId": "JobRouter_CreateDistributionPolicy",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "repeatability-request-id",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "in": "header",
-            "name": "repeatability-first-sent",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "in": "body",
-            "name": "distributionPolicy",
-            "description": "Request to create distribution policy",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/DistributionPolicy"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "201": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/DistributionPolicy"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Creates a Distribution policy": {
-            "$ref": "./examples/DistributionPolicies_CreateDistributionPolicy.json"
-          }
-        }
-      },
+    "/routing/classificationPolicies": {
       "get": {
         "tags": [
-          "DistributionPolicies"
+          "ClassificationPolicies"
         ],
-        "summary": "Retrieves existing distribution policies",
-        "operationId": "JobRouter_ListDistributionPolicies",
+        "summary": "Retrieves existing classification policies",
+        "operationId": "JobRouter_ListClassificationPolicies",
         "produces": [
           "application/json"
         ],
@@ -337,13 +175,13 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/DistributionPolicyCollection"
+              "$ref": "#/definitions/ClassificationPolicyCollection"
             }
           }
         },
         "x-ms-examples": {
-          "Get Distribution policies with pagination (max page size)": {
-            "$ref": "./examples/DistributionPolicies_ListDistributionPoliciesWithPageSize.json"
+          "Get Classification policies with pagination (max page size)": {
+            "$ref": "./examples/ClassificationPolicies_ListClassificationPoliciesWithPageSize.json"
           }
         },
         "x-ms-pageable": {
@@ -357,8 +195,8 @@
         "tags": [
           "DistributionPolicies"
         ],
-        "summary": "Updates a distribution policy.",
-        "operationId": "JobRouter_UpdateDistributionPolicy",
+        "summary": "Upsert a distribution policy.",
+        "operationId": "JobRouter_UpsertDistributionPolicy",
         "consumes": [
           "application/merge-patch+json"
         ],
@@ -400,6 +238,9 @@
           }
         },
         "x-ms-examples": {
+          "Creates a Distribution policy": {
+            "$ref": "./examples/DistributionPolicies_CreateDistributionPolicy.json"
+          },
           "Update a Distribution policy": {
             "$ref": "./examples/DistributionPolicies_UpdateDistributionPolicy.json"
           }
@@ -485,71 +326,13 @@
         }
       }
     },
-    "/routing/exceptionPolicies": {
-      "post": {
-        "tags": [
-          "ExceptionPolicies"
-        ],
-        "summary": "Creates an exception policy",
-        "operationId": "JobRouter_CreateExceptionPolicy",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "repeatability-request-id",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "in": "header",
-            "name": "repeatability-first-sent",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "in": "body",
-            "name": "exceptionPolicy",
-            "description": "Model of exception policy to be created",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ExceptionPolicy"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "201": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/ExceptionPolicy"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Create a Exception policy": {
-            "$ref": "./examples/ExceptionPolicies_CreateExceptionPolicy.json"
-          }
-        }
-      },
+    "/routing/distributionPolicies": {
       "get": {
         "tags": [
-          "ExceptionPolicies"
+          "DistributionPolicies"
         ],
-        "summary": "Retrieves existing exception policies",
-        "operationId": "JobRouter_ListExceptionPolicies",
+        "summary": "Retrieves existing distribution policies",
+        "operationId": "JobRouter_ListDistributionPolicies",
         "produces": [
           "application/json"
         ],
@@ -557,7 +340,7 @@
           {
             "in": "query",
             "name": "maxpagesize",
-            "description": "Number of objects to return per page",
+            "description": "Maximum page size",
             "type": "integer",
             "format": "int32",
             "default": 20
@@ -576,13 +359,13 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/ExceptionPolicyCollection"
+              "$ref": "#/definitions/DistributionPolicyCollection"
             }
           }
         },
         "x-ms-examples": {
-          "Get Exception policies with pagination (max page size)": {
-            "$ref": "./examples/ExceptionPolicies_ListExceptionPoliciesWithPageSize.json"
+          "Get Distribution policies with pagination (max page size)": {
+            "$ref": "./examples/DistributionPolicies_ListDistributionPoliciesWithPageSize.json"
           }
         },
         "x-ms-pageable": {
@@ -596,8 +379,8 @@
         "tags": [
           "ExceptionPolicies"
         ],
-        "summary": "Updates an exception policy",
-        "operationId": "JobRouter_UpdateExceptionPolicy",
+        "summary": "Upsert a exception policy.",
+        "operationId": "JobRouter_UpsertExceptionPolicy",
         "consumes": [
           "application/merge-patch+json"
         ],
@@ -618,7 +401,7 @@
           {
             "in": "body",
             "name": "patch",
-            "description": "Model of exception policy to be updated",
+            "description": "Model of exception policy properties to be patched. See also: https://datatracker.ietf.org/doc/html/rfc7386",
             "schema": {
               "$ref": "#/definitions/ExceptionPolicy"
             }
@@ -639,6 +422,9 @@
           }
         },
         "x-ms-examples": {
+          "Creates a Exception policy": {
+            "$ref": "./examples/ExceptionPolicies_CreateExceptionPolicy.json"
+          },
           "Update a Exception policy": {
             "$ref": "./examples/ExceptionPolicies_UpdateExceptionPolicy.json"
           }
@@ -724,109 +510,17 @@
         }
       }
     },
-    "/routing/jobs": {
-      "post": {
-        "tags": [
-          "Jobs"
-        ],
-        "summary": "Creates a new job to be routed.",
-        "operationId": "JobRouter_CreateJob",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "repeatability-request-id",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "in": "header",
-            "name": "repeatability-first-sent",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "in": "body",
-            "name": "routerJob",
-            "description": "Model of job to be created",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RouterJob"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "201": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/RouterJob"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Creates a new Job": {
-            "$ref": "./examples/Jobs_CreateJob.json"
-          }
-        }
-      },
+    "/routing/exceptionPolicies": {
       "get": {
         "tags": [
-          "Jobs"
+          "ExceptionPolicies"
         ],
-        "summary": "Retrieves list of jobs based on filter parameters",
-        "operationId": "JobRouter_ListJobs",
+        "summary": "Retrieves existing exception policies",
+        "operationId": "JobRouter_ListExceptionPolicies",
         "produces": [
           "application/json"
         ],
         "parameters": [
-          {
-            "in": "query",
-            "name": "status",
-            "description": "(Optional) If specified, filter jobs by status.",
-            "type": "string",
-            "default": "all",
-            "enum": [
-              "all",
-              "pendingClassification",
-              "queued",
-              "assigned",
-              "completed",
-              "closed",
-              "cancelled",
-              "classificationFailed",
-              "active"
-            ],
-            "x-ms-enum": {
-              "name": "JobStateSelector",
-              "modelAsString": false
-            }
-          },
-          {
-            "in": "query",
-            "name": "queueId",
-            "description": "(Optional) If specified, filter jobs by queue.",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "channelId",
-            "description": "(Optional) If specified, filter jobs by channel.",
-            "type": "string"
-          },
           {
             "in": "query",
             "name": "maxpagesize",
@@ -849,18 +543,72 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/JobCollection"
+              "$ref": "#/definitions/ExceptionPolicyCollection"
             }
           }
         },
         "x-ms-examples": {
-          "Gets a list of jobs with pagination (max page size)": {
-            "$ref": "./examples/Jobs_GetJobsWithPageSize.json"
+          "Get Exception policies with pagination (max page size)": {
+            "$ref": "./examples/ExceptionPolicies_ListExceptionPoliciesWithPageSize.json"
           }
         },
         "x-ms-pageable": {
           "nextLinkName": "nextLink",
           "itemName": "value"
+        }
+      }
+    },
+    "/routing/jobs/{jobId}": {
+      "patch": {
+        "tags": [
+          "Jobs"
+        ],
+        "operationId": "JobRouter_UpsertJob",
+        "consumes": [
+          "application/merge-patch+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jobId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "patch",
+            "schema": {
+              "$ref": "#/definitions/RouterJob"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/CommunicationErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/RouterWorker"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Creates a new Job": {
+            "$ref": "./examples/Jobs_CreateJob.json"
+          },
+          "Update a job": {
+            "$ref": "./examples/Jobs_UpdateJob.json"
+          }
         }
       }
     },
@@ -903,58 +651,6 @@
         "x-ms-examples": {
           "Get a single Job": {
             "$ref": "./examples/Jobs_GetJob.json"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Jobs"
-        ],
-        "summary": "Update job by id.",
-        "operationId": "JobRouter_UpdateJob",
-        "consumes": [
-          "application/merge-patch+json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "description": "Id of the job",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "in": "body",
-            "name": "patch",
-            "description": "Request model for patching a job",
-            "schema": {
-              "$ref": "#/definitions/RouterJob"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/RouterJob"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Update a job": {
-            "$ref": "./examples/Jobs_UpdateJob.json"
           }
         }
       },
@@ -1223,6 +919,88 @@
         }
       }
     },
+    "/routing/jobs": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Retrieves list of jobs based on filter parameters",
+        "operationId": "JobRouter_ListJobs",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "description": "(Optional) If specified, filter jobs by status.",
+            "type": "string",
+            "default": "all",
+            "enum": [
+              "all",
+              "pendingClassification",
+              "queued",
+              "assigned",
+              "completed",
+              "closed",
+              "cancelled",
+              "classificationFailed",
+              "active"
+            ],
+            "x-ms-enum": {
+              "name": "JobStateSelector",
+              "modelAsString": false
+            }
+          },
+          {
+            "in": "query",
+            "name": "queueId",
+            "description": "(Optional) If specified, filter jobs by queue.",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "channelId",
+            "description": "(Optional) If specified, filter jobs by channel.",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "maxpagesize",
+            "description": "Number of objects to return per page",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/CommunicationErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/JobCollection"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Gets a list of jobs with pagination (max page size)": {
+            "$ref": "./examples/Jobs_GetJobsWithPageSize.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink",
+          "itemName": "value"
+        }
+      }
+    },
     "/routing/jobs/{id}/position": {
       "get": {
         "tags": [
@@ -1366,119 +1144,13 @@
         }
       }
     },
-    "/routing/queues": {
-      "post": {
-        "tags": [
-          "Queues"
-        ],
-        "summary": "Creates a queue.",
-        "operationId": "JobRouter_CreateQueue",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "repeatability-request-id",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "in": "header",
-            "name": "repeatability-first-sent",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "in": "body",
-            "name": "jobQueue",
-            "description": "Model of queue to be created",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/JobQueue"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "201": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/JobQueue"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Create a Queue": {
-            "$ref": "./examples/Queues_CreateQueue.json"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Queues"
-        ],
-        "summary": "Retrieves existing queues",
-        "operationId": "JobRouter_ListQueues",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "maxpagesize",
-            "description": "Number of objects to return per page",
-            "type": "integer",
-            "format": "int32",
-            "default": 20
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/QueueCollection"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Get Queues with pagination (max page size)": {
-            "$ref": "./examples/Queues_ListQueuesWithPageSize.json"
-          }
-        },
-        "x-ms-pageable": {
-          "nextLinkName": "nextLink",
-          "itemName": "value"
-        }
-      }
-    },
-    "/routing/queues/{id}": {
+    "/routing/queues/{queueId}": {
       "patch": {
         "tags": [
           "Queues"
         ],
         "summary": "Updates a queue.",
-        "operationId": "JobRouter_UpdateQueue",
+        "operationId": "JobRouter_UpsertQueue",
         "consumes": [
           "application/merge-patch+json"
         ],
@@ -1488,8 +1160,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "id",
-            "description": "Id of the queue",
+            "name": "queueId",
             "required": true,
             "type": "string"
           },
@@ -1520,11 +1191,16 @@
           }
         },
         "x-ms-examples": {
-          "Create or Update a Queue": {
+          "Update a Queue": {
             "$ref": "./examples/Queues_UpdateQueue.json"
+          },
+          "Create a Queue": {
+            "$ref": "./examples/Queues_CreatetQueue.json"
           }
         }
-      },
+      }
+    },
+    "/routing/queues/{id}": {
       "get": {
         "tags": [
           "Queues"
@@ -1605,6 +1281,54 @@
         }
       }
     },
+    "/routing/queues": {
+      "get": {
+        "tags": [
+          "Queues"
+        ],
+        "summary": "Retrieves existing queues",
+        "operationId": "JobRouter_ListQueues",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "maxpagesize",
+            "description": "Number of objects to return per page",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/CommunicationErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/QueueCollection"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Queues with pagination (max page size)": {
+            "$ref": "./examples/Queues_ListQueuesWithPageSize.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink",
+          "itemName": "value"
+        }
+      }
+    },
     "/routing/queues/{id}/statistics": {
       "get": {
         "tags": [
@@ -1648,157 +1372,13 @@
         }
       }
     },
-    "/routing/workers": {
-      "post": {
-        "tags": [
-          "Workers"
-        ],
-        "summary": "Create a worker to process jobs.",
-        "operationId": "JobRouter_CreateWorker",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "repeatability-request-id",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "in": "header",
-            "name": "repeatability-first-sent",
-            "description": "As described in https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.",
-            "type": "string"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "in": "body",
-            "name": "routerWorker",
-            "description": "Request to create a worker",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RouterWorker"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/RouterWorker"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "Create a Worker": {
-            "$ref": "./examples/Workers_CreateWorker.json"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Workers"
-        ],
-        "summary": "Retrieves existing workers.",
-        "operationId": "JobRouter_ListWorkers",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "status",
-            "description": "(Optional) If specified, select workers by worker status.",
-            "type": "string",
-            "default": "all",
-            "enum": [
-              "active",
-              "draining",
-              "inactive",
-              "all"
-            ],
-            "x-ms-enum": {
-              "name": "WorkerStateSelector",
-              "modelAsString": false
-            }
-          },
-          {
-            "in": "query",
-            "name": "channelId",
-            "description": "(Optional) If specified, select workers who have a channel configuration with this channel",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "queueId",
-            "description": "(Optional) If specified, select workers who are assigned to this queue",
-            "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "hasCapacity",
-            "description": "(Optional) If set to true, select only workers who have capacity for the channel specified by `channelId` or for any channel\r\n            if `channelId` not specified. If set to false, then will return all workers including workers without any capacity for jobs. Defaults to false.",
-            "type": "boolean"
-          },
-          {
-            "in": "query",
-            "name": "maxpagesize",
-            "description": "Number of objects to return per page",
-            "type": "integer",
-            "format": "int32",
-            "default": 20
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            }
-          },
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/WorkerCollection"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "List workers with pagination (max page size)": {
-            "$ref": "./examples/Workers_GetWorkersWithPageSize.json"
-          },
-          "List available Workers by channel": {
-            "$ref": "./examples/Workers_GetAvailableWorkersByChannel.json"
-          }
-        },
-        "x-ms-pageable": {
-          "nextLinkName": "nextLink",
-          "itemName": "value"
-        }
-      }
-    },
     "/routing/workers/{workerId}": {
       "patch": {
         "tags": [
           "Workers"
         ],
         "summary": "Updates a worker.",
-        "operationId": "JobRouter_UpdateWorker",
+        "operationId": "JobRouter_UpsertWorker",
         "consumes": [
           "application/merge-patch+json"
         ],
@@ -1840,6 +1420,9 @@
           }
         },
         "x-ms-examples": {
+          "Create a Worker": {
+            "$ref": "./examples/Workers_CreateWorker.json"
+          },
           "Update a Worker properties": {
             "$ref": "./examples/Workers_UpdateWorker.json"
           },
@@ -1931,6 +1514,92 @@
           "Delete a Worker and all of its traces": {
             "$ref": "./examples/Workers_DeleteWorker.json"
           }
+        }
+      }
+    },
+    "/routing/workers": {
+      "get": {
+        "tags": [
+          "Workers"
+        ],
+        "summary": "Retrieves existing workers.",
+        "operationId": "JobRouter_ListWorkers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "description": "(Optional) If specified, select workers by worker status.",
+            "type": "string",
+            "default": "all",
+            "enum": [
+              "active",
+              "draining",
+              "inactive",
+              "all"
+            ],
+            "x-ms-enum": {
+              "name": "WorkerStateSelector",
+              "modelAsString": false
+            }
+          },
+          {
+            "in": "query",
+            "name": "channelId",
+            "description": "(Optional) If specified, select workers who have a channel configuration with this channel",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "queueId",
+            "description": "(Optional) If specified, select workers who are assigned to this queue",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "hasCapacity",
+            "description": "(Optional) If set to true, select only workers who have capacity for the channel specified by `channelId` or for any channel\r\n            if `channelId` not specified. If set to false, then will return all workers including workers without any capacity for jobs. Defaults to false.",
+            "type": "boolean"
+          },
+          {
+            "in": "query",
+            "name": "maxpagesize",
+            "description": "Number of objects to return per page",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/CommunicationErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/WorkerCollection"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "List workers with pagination (max page size)": {
+            "$ref": "./examples/Workers_GetWorkersWithPageSize.json"
+          },
+          "List available Workers by channel": {
+            "$ref": "./examples/Workers_GetAvailableWorkersByChannel.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink",
+          "itemName": "value"
         }
       }
     }
@@ -2785,7 +2454,8 @@
             "completed",
             "closed",
             "cancelled",
-            "classificationFailed"
+            "classificationFailed",
+            "created"
           ],
           "type": "string",
           "readOnly": true,
@@ -3276,7 +2946,8 @@
             "completed",
             "closed",
             "cancelled",
-            "classificationFailed"
+            "classificationFailed",
+            "created"
           ],
           "type": "string",
           "readOnly": true,

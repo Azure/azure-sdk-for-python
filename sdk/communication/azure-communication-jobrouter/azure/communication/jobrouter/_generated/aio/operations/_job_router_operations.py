@@ -20,7 +20,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._job_router_operations import build_accept_job_action_request, build_cancel_job_action_request, build_close_job_action_request, build_complete_job_action_request, build_create_classification_policy_request, build_create_distribution_policy_request, build_create_exception_policy_request, build_create_job_request, build_create_queue_request, build_create_worker_request, build_decline_job_action_request, build_delete_classification_policy_request, build_delete_distribution_policy_request, build_delete_exception_policy_request, build_delete_job_request, build_delete_queue_request, build_delete_worker_request, build_get_classification_policy_request, build_get_distribution_policy_request, build_get_exception_policy_request, build_get_in_queue_position_request, build_get_job_request, build_get_queue_request, build_get_queue_statistics_request, build_get_worker_request, build_list_classification_policies_request, build_list_distribution_policies_request, build_list_exception_policies_request, build_list_jobs_request, build_list_queues_request, build_list_workers_request, build_reclassify_job_request, build_update_classification_policy_request, build_update_distribution_policy_request, build_update_exception_policy_request, build_update_job_request, build_update_queue_request, build_update_worker_request
+from ...operations._job_router_operations import build_accept_job_action_request, build_cancel_job_action_request, build_close_job_action_request, build_complete_job_action_request, build_decline_job_action_request, build_delete_classification_policy_request, build_delete_distribution_policy_request, build_delete_exception_policy_request, build_delete_job_request, build_delete_queue_request, build_delete_worker_request, build_get_classification_policy_request, build_get_distribution_policy_request, build_get_exception_policy_request, build_get_in_queue_position_request, build_get_job_request, build_get_queue_request, build_get_queue_statistics_request, build_get_worker_request, build_list_classification_policies_request, build_list_distribution_policies_request, build_list_exception_policies_request, build_list_jobs_request, build_list_queues_request, build_list_workers_request, build_reclassify_job_request, build_upsert_classification_policy_request, build_upsert_distribution_policy_request, build_upsert_exception_policy_request, build_upsert_job_request, build_upsert_queue_request, build_upsert_worker_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,194 +45,20 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace_async
-    async def create_classification_policy(
-        self,
-        classification_policy: _models.ClassificationPolicy,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.ClassificationPolicy:
-        """Creates a new classification policy.
-
-        Creates a new classification policy.
-
-        :param classification_policy: Model of classification policy to create.
-        :type classification_policy: ~azure.communication.jobrouter.models.ClassificationPolicy
-        :param repeatability_request_id: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_request_id: str
-        :param repeatability_first_sent: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_first_sent: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ClassificationPolicy, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ClassificationPolicy]
-
-        _json = self._serialize.body(classification_policy, 'ClassificationPolicy')
-
-        request = build_create_classification_policy_request(
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            template_url=self.create_classification_policy.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('ClassificationPolicy', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    create_classification_policy.metadata = {'url': "/routing/classificationPolicies"}  # type: ignore
-
-
-    @distributed_trace
-    def list_classification_policies(
-        self,
-        maxpagesize: Optional[int] = 20,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.ClassificationPolicyCollection]:
-        """Retrieves existing classification policies.
-
-        Retrieves existing classification policies.
-
-        :param maxpagesize: Maximum page size. Default value is 20.
-        :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ClassificationPolicyCollection or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.ClassificationPolicyCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ClassificationPolicyCollection]
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_classification_policies_request(
-                    api_version=api_version,
-                    maxpagesize=maxpagesize,
-                    template_url=self.list_classification_policies.metadata['url'],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            else:
-                
-                request = build_list_classification_policies_request(
-                    api_version=api_version,
-                    maxpagesize=maxpagesize,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ClassificationPolicyCollection", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_classification_policies.metadata = {'url': "/routing/classificationPolicies"}  # type: ignore
-
-    @distributed_trace_async
-    async def update_classification_policy(
+    async def upsert_classification_policy(
         self,
         id: str,
-        patch: _models.ClassificationPolicy,
+        patch: Optional[_models.ClassificationPolicy] = None,
         **kwargs: Any
     ) -> _models.ClassificationPolicy:
-        """Updates a classification policy.
+        """Upsert a classification policy.
 
-        Updates a classification policy.
+        Upsert a classification policy.
 
-        :param id: The id of classification policy.
+        :param id: Id of the classification policy.
         :type id: str
-        :param patch: JSON Document contained the partial update for the classification policy.
+        :param patch: Model of classification policy properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
         :type patch: ~azure.communication.jobrouter.models.ClassificationPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ClassificationPolicy, or the result of cls(response)
@@ -251,14 +77,17 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ClassificationPolicy]
 
-        _json = self._serialize.body(patch, 'ClassificationPolicy')
+        if patch is not None:
+            _json = self._serialize.body(patch, 'ClassificationPolicy')
+        else:
+            _json = None
 
-        request = build_update_classification_policy_request(
+        request = build_upsert_classification_policy_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.update_classification_policy.metadata['url'],
+            template_url=self.upsert_classification_policy.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -287,7 +116,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    update_classification_policy.metadata = {'url': "/routing/classificationPolicies/{id}"}  # type: ignore
+    upsert_classification_policy.metadata = {'url': "/routing/classificationPolicies/{id}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -414,109 +243,30 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     delete_classification_policy.metadata = {'url': "/routing/classificationPolicies/{id}"}  # type: ignore
 
 
-    @distributed_trace_async
-    async def create_distribution_policy(
-        self,
-        distribution_policy: _models.DistributionPolicy,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.DistributionPolicy:
-        """Creates a new distribution policy.
-
-        Creates a new distribution policy.
-
-        :param distribution_policy: Request to create distribution policy.
-        :type distribution_policy: ~azure.communication.jobrouter.models.DistributionPolicy
-        :param repeatability_request_id: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_request_id: str
-        :param repeatability_first_sent: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_first_sent: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DistributionPolicy, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DistributionPolicy]
-
-        _json = self._serialize.body(distribution_policy, 'DistributionPolicy')
-
-        request = build_create_distribution_policy_request(
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            template_url=self.create_distribution_policy.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('DistributionPolicy', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    create_distribution_policy.metadata = {'url': "/routing/distributionPolicies"}  # type: ignore
-
-
     @distributed_trace
-    def list_distribution_policies(
+    def list_classification_policies(
         self,
         maxpagesize: Optional[int] = 20,
         **kwargs: Any
-    ) -> AsyncIterable[_models.DistributionPolicyCollection]:
-        """Retrieves existing distribution policies.
+    ) -> AsyncIterable[_models.ClassificationPolicyCollection]:
+        """Retrieves existing classification policies.
 
-        Retrieves existing distribution policies.
+        Retrieves existing classification policies.
 
         :param maxpagesize: Maximum page size. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DistributionPolicyCollection or the result of
+        :return: An iterator like instance of either ClassificationPolicyCollection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.DistributionPolicyCollection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.ClassificationPolicyCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DistributionPolicyCollection]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ClassificationPolicyCollection]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -525,10 +275,10 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_distribution_policies_request(
+                request = build_list_classification_policies_request(
                     api_version=api_version,
                     maxpagesize=maxpagesize,
-                    template_url=self.list_distribution_policies.metadata['url'],
+                    template_url=self.list_classification_policies.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -540,7 +290,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
             else:
                 
-                request = build_list_distribution_policies_request(
+                request = build_list_classification_policies_request(
                     api_version=api_version,
                     maxpagesize=maxpagesize,
                     template_url=next_link,
@@ -560,7 +310,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DistributionPolicyCollection", pipeline_response)
+            deserialized = self._deserialize("ClassificationPolicyCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -587,18 +337,18 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_distribution_policies.metadata = {'url': "/routing/distributionPolicies"}  # type: ignore
+    list_classification_policies.metadata = {'url': "/routing/classificationPolicies"}  # type: ignore
 
     @distributed_trace_async
-    async def update_distribution_policy(
+    async def upsert_distribution_policy(
         self,
         id: str,
         patch: Optional[_models.DistributionPolicy] = None,
         **kwargs: Any
     ) -> _models.DistributionPolicy:
-        """Updates a distribution policy.
+        """Upsert a distribution policy.
 
-        Updates a distribution policy.
+        Upsert a distribution policy.
 
         :param id: Id of the distribution policy.
         :type id: str
@@ -627,12 +377,12 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = None
 
-        request = build_update_distribution_policy_request(
+        request = build_upsert_distribution_policy_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.update_distribution_policy.metadata['url'],
+            template_url=self.upsert_distribution_policy.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -661,7 +411,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    update_distribution_policy.metadata = {'url': "/routing/distributionPolicies/{id}"}  # type: ignore
+    upsert_distribution_policy.metadata = {'url': "/routing/distributionPolicies/{id}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -788,109 +538,30 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     delete_distribution_policy.metadata = {'url': "/routing/distributionPolicies/{id}"}  # type: ignore
 
 
-    @distributed_trace_async
-    async def create_exception_policy(
-        self,
-        exception_policy: _models.ExceptionPolicy,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.ExceptionPolicy:
-        """Creates an exception policy.
-
-        Creates an exception policy.
-
-        :param exception_policy: Model of exception policy to be created.
-        :type exception_policy: ~azure.communication.jobrouter.models.ExceptionPolicy
-        :param repeatability_request_id: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_request_id: str
-        :param repeatability_first_sent: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_first_sent: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExceptionPolicy, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExceptionPolicy]
-
-        _json = self._serialize.body(exception_policy, 'ExceptionPolicy')
-
-        request = build_create_exception_policy_request(
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            template_url=self.create_exception_policy.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('ExceptionPolicy', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    create_exception_policy.metadata = {'url': "/routing/exceptionPolicies"}  # type: ignore
-
-
     @distributed_trace
-    def list_exception_policies(
+    def list_distribution_policies(
         self,
         maxpagesize: Optional[int] = 20,
         **kwargs: Any
-    ) -> AsyncIterable[_models.ExceptionPolicyCollection]:
-        """Retrieves existing exception policies.
+    ) -> AsyncIterable[_models.DistributionPolicyCollection]:
+        """Retrieves existing distribution policies.
 
-        Retrieves existing exception policies.
+        Retrieves existing distribution policies.
 
-        :param maxpagesize: Number of objects to return per page. Default value is 20.
+        :param maxpagesize: Maximum page size. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ExceptionPolicyCollection or the result of
+        :return: An iterator like instance of either DistributionPolicyCollection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.ExceptionPolicyCollection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.DistributionPolicyCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExceptionPolicyCollection]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DistributionPolicyCollection]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -899,10 +570,10 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_exception_policies_request(
+                request = build_list_distribution_policies_request(
                     api_version=api_version,
                     maxpagesize=maxpagesize,
-                    template_url=self.list_exception_policies.metadata['url'],
+                    template_url=self.list_distribution_policies.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -914,7 +585,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
             else:
                 
-                request = build_list_exception_policies_request(
+                request = build_list_distribution_policies_request(
                     api_version=api_version,
                     maxpagesize=maxpagesize,
                     template_url=next_link,
@@ -934,7 +605,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ExceptionPolicyCollection", pipeline_response)
+            deserialized = self._deserialize("DistributionPolicyCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -961,22 +632,23 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_exception_policies.metadata = {'url': "/routing/exceptionPolicies"}  # type: ignore
+    list_distribution_policies.metadata = {'url': "/routing/distributionPolicies"}  # type: ignore
 
     @distributed_trace_async
-    async def update_exception_policy(
+    async def upsert_exception_policy(
         self,
         id: str,
         patch: Optional[_models.ExceptionPolicy] = None,
         **kwargs: Any
     ) -> _models.ExceptionPolicy:
-        """Updates an exception policy.
+        """Upsert a exception policy.
 
-        Updates an exception policy.
+        Upsert a exception policy.
 
         :param id: Id of the exception policy.
         :type id: str
-        :param patch: Model of exception policy to be updated. Default value is None.
+        :param patch: Model of exception policy properties to be patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
         :type patch: ~azure.communication.jobrouter.models.ExceptionPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExceptionPolicy, or the result of cls(response)
@@ -1000,12 +672,12 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = None
 
-        request = build_update_exception_policy_request(
+        request = build_upsert_exception_policy_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.update_exception_policy.metadata['url'],
+            template_url=self.upsert_exception_policy.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1034,7 +706,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    update_exception_policy.metadata = {'url': "/routing/exceptionPolicies/{id}"}  # type: ignore
+    upsert_exception_policy.metadata = {'url': "/routing/exceptionPolicies/{id}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -1161,117 +833,30 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     delete_exception_policy.metadata = {'url': "/routing/exceptionPolicies/{id}"}  # type: ignore
 
 
-    @distributed_trace_async
-    async def create_job(
-        self,
-        router_job: _models.RouterJob,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.RouterJob:
-        """Creates a new job to be routed.
-
-        Creates a new job to be routed.
-
-        :param router_job: Model of job to be created.
-        :type router_job: ~azure.communication.jobrouter.models.RouterJob
-        :param repeatability_request_id: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_request_id: str
-        :param repeatability_first_sent: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_first_sent: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterJob, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJob]
-
-        _json = self._serialize.body(router_job, 'RouterJob')
-
-        request = build_create_job_request(
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            template_url=self.create_job.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('RouterJob', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    create_job.metadata = {'url': "/routing/jobs"}  # type: ignore
-
-
     @distributed_trace
-    def list_jobs(
+    def list_exception_policies(
         self,
-        status: Optional[Union[str, "_models.JobStateSelector"]] = "all",
-        queue_id: Optional[str] = None,
-        channel_id: Optional[str] = None,
         maxpagesize: Optional[int] = 20,
         **kwargs: Any
-    ) -> AsyncIterable[_models.JobCollection]:
-        """Retrieves list of jobs based on filter parameters.
+    ) -> AsyncIterable[_models.ExceptionPolicyCollection]:
+        """Retrieves existing exception policies.
 
-        Retrieves list of jobs based on filter parameters.
+        Retrieves existing exception policies.
 
-        :param status: (Optional) If specified, filter jobs by status. Default value is "all".
-        :type status: str or ~azure.communication.jobrouter.models.JobStateSelector
-        :param queue_id: (Optional) If specified, filter jobs by queue. Default value is None.
-        :type queue_id: str
-        :param channel_id: (Optional) If specified, filter jobs by channel. Default value is None.
-        :type channel_id: str
         :param maxpagesize: Number of objects to return per page. Default value is 20.
         :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either JobCollection or the result of cls(response)
+        :return: An iterator like instance of either ExceptionPolicyCollection or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.JobCollection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.ExceptionPolicyCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobCollection]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExceptionPolicyCollection]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1280,13 +865,10 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_jobs_request(
+                request = build_list_exception_policies_request(
                     api_version=api_version,
-                    status=status,
-                    queue_id=queue_id,
-                    channel_id=channel_id,
                     maxpagesize=maxpagesize,
-                    template_url=self.list_jobs.metadata['url'],
+                    template_url=self.list_exception_policies.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -1298,11 +880,8 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
             else:
                 
-                request = build_list_jobs_request(
+                request = build_list_exception_policies_request(
                     api_version=api_version,
-                    status=status,
-                    queue_id=queue_id,
-                    channel_id=channel_id,
                     maxpagesize=maxpagesize,
                     template_url=next_link,
                     headers=_headers,
@@ -1321,7 +900,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("JobCollection", pipeline_response)
+            deserialized = self._deserialize("ExceptionPolicyCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1348,7 +927,79 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_jobs.metadata = {'url': "/routing/jobs"}  # type: ignore
+    list_exception_policies.metadata = {'url': "/routing/exceptionPolicies"}  # type: ignore
+
+    @distributed_trace_async
+    async def upsert_job(
+        self,
+        job_id: str,
+        patch: Optional[_models.RouterJob] = None,
+        **kwargs: Any
+    ) -> _models.RouterWorker:
+        """upsert_job.
+
+        :param job_id:
+        :type job_id: str
+        :param patch:  Default value is None.
+        :type patch: ~azure.communication.jobrouter.models.RouterJob
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RouterWorker, or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterWorker]
+
+        if patch is not None:
+            _json = self._serialize.body(patch, 'RouterJob')
+        else:
+            _json = None
+
+        request = build_upsert_job_request(
+            job_id=job_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.upsert_job.metadata['url'],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('RouterWorker', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    upsert_job.metadata = {'url': "/routing/jobs/{jobId}"}  # type: ignore
+
 
     @distributed_trace_async
     async def get_job(
@@ -1412,80 +1063,6 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         return deserialized
 
     get_job.metadata = {'url': "/routing/jobs/{id}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def update_job(
-        self,
-        id: str,
-        patch: Optional[_models.RouterJob] = None,
-        **kwargs: Any
-    ) -> _models.RouterJob:
-        """Update job by id.
-
-        Update job by id.
-
-        :param id: Id of the job.
-        :type id: str
-        :param patch: Request model for patching a job. Default value is None.
-        :type patch: ~azure.communication.jobrouter.models.RouterJob
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterJob, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJob]
-
-        if patch is not None:
-            _json = self._serialize.body(patch, 'RouterJob')
-        else:
-            _json = None
-
-        request = build_update_job_request(
-            id=id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.update_job.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('RouterJob', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    update_job.metadata = {'url': "/routing/jobs/{id}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -1879,6 +1456,116 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     close_job_action.metadata = {'url': "/routing/jobs/{id}:close"}  # type: ignore
 
 
+    @distributed_trace
+    def list_jobs(
+        self,
+        status: Optional[Union[str, "_models.JobStateSelector"]] = "all",
+        queue_id: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        maxpagesize: Optional[int] = 20,
+        **kwargs: Any
+    ) -> AsyncIterable[_models.JobCollection]:
+        """Retrieves list of jobs based on filter parameters.
+
+        Retrieves list of jobs based on filter parameters.
+
+        :param status: (Optional) If specified, filter jobs by status. Default value is "all".
+        :type status: str or ~azure.communication.jobrouter.models.JobStateSelector
+        :param queue_id: (Optional) If specified, filter jobs by queue. Default value is None.
+        :type queue_id: str
+        :param channel_id: (Optional) If specified, filter jobs by channel. Default value is None.
+        :type channel_id: str
+        :param maxpagesize: Number of objects to return per page. Default value is 20.
+        :type maxpagesize: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either JobCollection or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.JobCollection]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobCollection]
+
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_jobs_request(
+                    api_version=api_version,
+                    status=status,
+                    queue_id=queue_id,
+                    channel_id=channel_id,
+                    maxpagesize=maxpagesize,
+                    template_url=self.list_jobs.metadata['url'],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                
+                request = build_list_jobs_request(
+                    api_version=api_version,
+                    status=status,
+                    queue_id=queue_id,
+                    channel_id=channel_id,
+                    maxpagesize=maxpagesize,
+                    template_url=next_link,
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("JobCollection", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_jobs.metadata = {'url': "/routing/jobs"}  # type: ignore
+
     @distributed_trace_async
     async def get_in_queue_position(
         self,
@@ -2082,183 +1769,9 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace_async
-    async def create_queue(
+    async def upsert_queue(
         self,
-        job_queue: _models.JobQueue,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.JobQueue:
-        """Creates a queue.
-
-        Creates a queue.
-
-        :param job_queue: Model of queue to be created.
-        :type job_queue: ~azure.communication.jobrouter.models.JobQueue
-        :param repeatability_request_id: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_request_id: str
-        :param repeatability_first_sent: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_first_sent: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobQueue, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobQueue]
-
-        _json = self._serialize.body(job_queue, 'JobQueue')
-
-        request = build_create_queue_request(
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            template_url=self.create_queue.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('JobQueue', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    create_queue.metadata = {'url': "/routing/queues"}  # type: ignore
-
-
-    @distributed_trace
-    def list_queues(
-        self,
-        maxpagesize: Optional[int] = 20,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.QueueCollection]:
-        """Retrieves existing queues.
-
-        Retrieves existing queues.
-
-        :param maxpagesize: Number of objects to return per page. Default value is 20.
-        :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either QueueCollection or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.QueueCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.QueueCollection]
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_queues_request(
-                    api_version=api_version,
-                    maxpagesize=maxpagesize,
-                    template_url=self.list_queues.metadata['url'],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            else:
-                
-                request = build_list_queues_request(
-                    api_version=api_version,
-                    maxpagesize=maxpagesize,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("QueueCollection", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_queues.metadata = {'url': "/routing/queues"}  # type: ignore
-
-    @distributed_trace_async
-    async def update_queue(
-        self,
-        id: str,
+        queue_id: str,
         patch: Optional[_models.JobQueue] = None,
         **kwargs: Any
     ) -> _models.JobQueue:
@@ -2266,8 +1779,8 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         Updates a queue.
 
-        :param id: Id of the queue.
-        :type id: str
+        :param queue_id:
+        :type queue_id: str
         :param patch: Model of queue properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
         :type patch: ~azure.communication.jobrouter.models.JobQueue
@@ -2293,12 +1806,12 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = None
 
-        request = build_update_queue_request(
-            id=id,
+        request = build_upsert_queue_request(
+            queue_id=queue_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.update_queue.metadata['url'],
+            template_url=self.upsert_queue.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -2327,7 +1840,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    update_queue.metadata = {'url': "/routing/queues/{id}"}  # type: ignore
+    upsert_queue.metadata = {'url': "/routing/queues/{queueId}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -2454,6 +1967,101 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     delete_queue.metadata = {'url': "/routing/queues/{id}"}  # type: ignore
 
 
+    @distributed_trace
+    def list_queues(
+        self,
+        maxpagesize: Optional[int] = 20,
+        **kwargs: Any
+    ) -> AsyncIterable[_models.QueueCollection]:
+        """Retrieves existing queues.
+
+        Retrieves existing queues.
+
+        :param maxpagesize: Number of objects to return per page. Default value is 20.
+        :type maxpagesize: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either QueueCollection or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.QueueCollection]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.QueueCollection]
+
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_queues_request(
+                    api_version=api_version,
+                    maxpagesize=maxpagesize,
+                    template_url=self.list_queues.metadata['url'],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                
+                request = build_list_queues_request(
+                    api_version=api_version,
+                    maxpagesize=maxpagesize,
+                    template_url=next_link,
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("QueueCollection", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_queues.metadata = {'url': "/routing/queues"}  # type: ignore
+
     @distributed_trace_async
     async def get_queue_statistics(
         self,
@@ -2519,207 +2127,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace_async
-    async def create_worker(
-        self,
-        router_worker: _models.RouterWorker,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.RouterWorker:
-        """Create a worker to process jobs.
-
-        Create a worker to process jobs.
-
-        :param router_worker: Request to create a worker.
-        :type router_worker: ~azure.communication.jobrouter.models.RouterWorker
-        :param repeatability_request_id: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_request_id: str
-        :param repeatability_first_sent: As described in
-         https://docs.oasis-open.org/odata/repeatable-requests/v1.0/cs01/repeatable-requests-v1.0-cs01.html.
-         Default value is None.
-        :type repeatability_first_sent: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterWorker, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.RouterWorker
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterWorker]
-
-        _json = self._serialize.body(router_worker, 'RouterWorker')
-
-        request = build_create_worker_request(
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            template_url=self.create_worker.metadata['url'],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('RouterWorker', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    create_worker.metadata = {'url': "/routing/workers"}  # type: ignore
-
-
-    @distributed_trace
-    def list_workers(
-        self,
-        status: Optional[Union[str, "_models.WorkerStateSelector"]] = "all",
-        channel_id: Optional[str] = None,
-        queue_id: Optional[str] = None,
-        has_capacity: Optional[bool] = None,
-        maxpagesize: Optional[int] = 20,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.WorkerCollection]:
-        """Retrieves existing workers.
-
-        Retrieves existing workers.
-
-        :param status: (Optional) If specified, select workers by worker status. Default value is
-         "all".
-        :type status: str or ~azure.communication.jobrouter.models.WorkerStateSelector
-        :param channel_id: (Optional) If specified, select workers who have a channel configuration
-         with this channel. Default value is None.
-        :type channel_id: str
-        :param queue_id: (Optional) If specified, select workers who are assigned to this queue.
-         Default value is None.
-        :type queue_id: str
-        :param has_capacity: (Optional) If set to true, select only workers who have capacity for the
-         channel specified by ``channelId`` or for any channel
-                     if ``channelId`` not specified. If set to false, then will return all workers
-         including workers without any capacity for jobs. Defaults to false. Default value is None.
-        :type has_capacity: bool
-        :param maxpagesize: Number of objects to return per page. Default value is 20.
-        :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either WorkerCollection or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.WorkerCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.WorkerCollection]
-
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_workers_request(
-                    api_version=api_version,
-                    status=status,
-                    channel_id=channel_id,
-                    queue_id=queue_id,
-                    has_capacity=has_capacity,
-                    maxpagesize=maxpagesize,
-                    template_url=self.list_workers.metadata['url'],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            else:
-                
-                request = build_list_workers_request(
-                    api_version=api_version,
-                    status=status,
-                    channel_id=channel_id,
-                    queue_id=queue_id,
-                    has_capacity=has_capacity,
-                    maxpagesize=maxpagesize,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("WorkerCollection", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_workers.metadata = {'url': "/routing/workers"}  # type: ignore
-
-    @distributed_trace_async
-    async def update_worker(
+    async def upsert_worker(
         self,
         worker_id: str,
         patch: Optional[_models.RouterWorker] = None,
@@ -2756,12 +2164,12 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = None
 
-        request = build_update_worker_request(
+        request = build_upsert_worker_request(
             worker_id=worker_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.update_worker.metadata['url'],
+            template_url=self.upsert_worker.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -2790,7 +2198,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    update_worker.metadata = {'url': "/routing/workers/{workerId}"}  # type: ignore
+    upsert_worker.metadata = {'url': "/routing/workers/{workerId}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -2916,3 +2324,124 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
     delete_worker.metadata = {'url': "/routing/workers/{workerId}"}  # type: ignore
 
+
+    @distributed_trace
+    def list_workers(
+        self,
+        status: Optional[Union[str, "_models.WorkerStateSelector"]] = "all",
+        channel_id: Optional[str] = None,
+        queue_id: Optional[str] = None,
+        has_capacity: Optional[bool] = None,
+        maxpagesize: Optional[int] = 20,
+        **kwargs: Any
+    ) -> AsyncIterable[_models.WorkerCollection]:
+        """Retrieves existing workers.
+
+        Retrieves existing workers.
+
+        :param status: (Optional) If specified, select workers by worker status. Default value is
+         "all".
+        :type status: str or ~azure.communication.jobrouter.models.WorkerStateSelector
+        :param channel_id: (Optional) If specified, select workers who have a channel configuration
+         with this channel. Default value is None.
+        :type channel_id: str
+        :param queue_id: (Optional) If specified, select workers who are assigned to this queue.
+         Default value is None.
+        :type queue_id: str
+        :param has_capacity: (Optional) If set to true, select only workers who have capacity for the
+         channel specified by ``channelId`` or for any channel
+                     if ``channelId`` not specified. If set to false, then will return all workers
+         including workers without any capacity for jobs. Defaults to false. Default value is None.
+        :type has_capacity: bool
+        :param maxpagesize: Number of objects to return per page. Default value is 20.
+        :type maxpagesize: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either WorkerCollection or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.WorkerCollection]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.WorkerCollection]
+
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_workers_request(
+                    api_version=api_version,
+                    status=status,
+                    channel_id=channel_id,
+                    queue_id=queue_id,
+                    has_capacity=has_capacity,
+                    maxpagesize=maxpagesize,
+                    template_url=self.list_workers.metadata['url'],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                
+                request = build_list_workers_request(
+                    api_version=api_version,
+                    status=status,
+                    channel_id=channel_id,
+                    queue_id=queue_id,
+                    has_capacity=has_capacity,
+                    maxpagesize=maxpagesize,
+                    template_url=next_link,
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("WorkerCollection", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_workers.metadata = {'url': "/routing/workers"}  # type: ignore

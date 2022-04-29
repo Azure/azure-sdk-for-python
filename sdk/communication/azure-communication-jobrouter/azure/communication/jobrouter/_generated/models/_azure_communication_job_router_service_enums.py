@@ -33,6 +33,7 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLOSED = "closed"
     CANCELLED = "cancelled"
     CLASSIFICATION_FAILED = "classificationFailed"
+    CREATED = "created"
 
 class LabelOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes how the value of the label is compared to the value pass through

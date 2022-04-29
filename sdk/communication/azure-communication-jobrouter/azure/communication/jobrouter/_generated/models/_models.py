@@ -1813,7 +1813,7 @@ class PagedJob(msrest.serialization.Model):
     :ivar channel_reference: Reference to an external parent context, eg. call ID.
     :vartype channel_reference: str
     :ivar job_status: The state of the Job. Known values are: "pendingClassification", "queued",
-     "assigned", "completed", "closed", "cancelled", "classificationFailed".
+     "assigned", "completed", "closed", "cancelled", "classificationFailed", "created".
     :vartype job_status: str or ~azure.communication.jobrouter.models.JobStatus
     :ivar enqueue_time_utc: The time a job was queued.
     :vartype enqueue_time_utc: ~datetime.datetime
@@ -2501,7 +2501,7 @@ class RouterJob(msrest.serialization.Model):
     :ivar channel_reference: Reference to an external parent context, eg. call ID.
     :vartype channel_reference: str
     :ivar job_status: The state of the Job. Known values are: "pendingClassification", "queued",
-     "assigned", "completed", "closed", "cancelled", "classificationFailed".
+     "assigned", "completed", "closed", "cancelled", "classificationFailed", "created".
     :vartype job_status: str or ~azure.communication.jobrouter.models.JobStatus
     :ivar enqueue_time_utc: The time a job was queued.
     :vartype enqueue_time_utc: ~datetime.datetime
