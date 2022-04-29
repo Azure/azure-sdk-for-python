@@ -8,10 +8,11 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysClientPreparer, get_decorator
+from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(only_vault=True)
 
-class TestCryptoExamples(KeyVaultTestCase):
+class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy

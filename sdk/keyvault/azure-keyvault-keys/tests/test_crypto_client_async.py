@@ -28,6 +28,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from _async_test_case import AsyncKeysClientPreparer, get_decorator
 from _shared.helpers_async import get_completed_future
 from _shared.test_case_async import KeyVaultTestCase
+from _keys_test_case import KeysTestCase
 
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
@@ -37,7 +38,7 @@ only_hsm = get_decorator(only_hsm=True, is_async=True)
 no_get = get_decorator(is_async=True, permissions=NO_GET)
 
 
-class TestCryptoClient(KeyVaultTestCase):
+class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
     iv = codecs.decode("89b8adbfb07345e3598932a09c517441", "hex_codec")
     aad = b"test"

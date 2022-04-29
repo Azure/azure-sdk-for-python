@@ -13,6 +13,7 @@ from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysClientPreparer, get_decorator
+from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(only_vault=True)
 only_hsm = get_decorator(only_hsm=True)
@@ -35,7 +36,7 @@ def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(KeyVaultTestCase):
+class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy

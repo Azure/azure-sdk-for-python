@@ -26,6 +26,8 @@ from _shared.test_case import KeyVaultTestCase
 from _test_case import (KeysClientPreparer, get_attestation_token,
                         get_decorator, get_release_policy, is_public_cloud)
 
+from _keys_test_case import KeysTestCase
+
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3 = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3])
@@ -60,7 +62,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class TestKeyClient(KeyVaultTestCase):
+class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     def _assert_jwks_equal(self, jwk1, jwk2):
         for field in JsonWebKey._FIELDS:
             if field != "key_ops":

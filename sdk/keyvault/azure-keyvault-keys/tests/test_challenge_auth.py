@@ -32,10 +32,11 @@ from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from _shared.helpers import Request, mock_response, validating_transport
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysClientPreparer, get_decorator
+from _keys_test_case import KeysTestCase
 
 only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
-class TestChallengeAuth(KeyVaultTestCase):
+class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", only_default_version)
     @KeysClientPreparer()
     @recorded_by_proxy

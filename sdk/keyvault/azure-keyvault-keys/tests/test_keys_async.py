@@ -28,6 +28,7 @@ from _async_test_case import get_attestation_token, get_decorator, get_release_p
 from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_policies_equal
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
+from _keys_test_case import KeysTestCase
 
 
 all_api_versions = get_decorator(is_async=True)
@@ -51,7 +52,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class TestKeyVaultKey(KeyVaultTestCase):
+class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
     def _assert_jwks_equal(self, jwk1, jwk2):
         for field in JsonWebKey._FIELDS:
