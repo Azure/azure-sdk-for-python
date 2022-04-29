@@ -1,8 +1,8 @@
 # Release History
 
-## 1.4.0 (2022-04-29)
+## 1.3.1 (2022-04-28)
 
-### Changed
+### Other Changes
 
 - Updated required `azure-core` version
 
