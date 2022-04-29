@@ -20,7 +20,6 @@ except (ModuleNotFoundError, ImportError) as e:
     # If I'm started by my main directly
     from venvtools import create_venv_with_package
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -37,15 +36,20 @@ def parse_input(input_parameter):
 
 
 def create_empty_report():
-    return {"models": {"enums": {}, "exceptions": {}, "models": {}}, "operations": {}}
+    return {"client": {}, "models": {"enums": {}, "exceptions": {}, "models": {}}, "operations": {}}
 
 
 def create_report(module_name: str) -> Dict[str, Any]:
     module_to_generate = importlib.import_module(module_name)
+    client_name = getattr(module_to_generate, '__all__')
 
     report = create_empty_report()
 
     # Look for models first
+    try:
+        report["client"] = client_name
+    except:
+        report["client"] = []
     model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
     for model_name in model_names:
         model_cls = getattr(module_to_generate.models, model_name)
@@ -160,15 +164,14 @@ def merge_report(report_paths):
 
 
 def main(
-    input_parameter: str,
-    version: Optional[str] = None,
-    no_venv: bool = False,
-    pypi: bool = False,
-    last_pypi: bool = False,
-    output: Optional[str] = None,
-    metadata_path: Optional[str] = None,
+        input_parameter: str,
+        version: Optional[str] = None,
+        no_venv: bool = False,
+        pypi: bool = False,
+        last_pypi: bool = False,
+        output: Optional[str] = None,
+        metadata_path: Optional[str] = None,
 ):
-
     output_msg = output if output else "default folder"
     _LOGGER.info(
         f"Building code report of {input_parameter} for version {version} in {output_msg} ({no_venv}/{pypi}/{last_pypi})"
@@ -195,7 +198,7 @@ def main(
         for version in versions:
             _LOGGER.info(f"Installing version {version} of {package_name} in a venv")
             with create_venv_with_package(
-                [f"{package_name}=={version}"]
+                    [f"{package_name}=={version}"]
             ) as venv, tempfile.TemporaryDirectory() as temp_dir:
                 metadata_path = str(Path(temp_dir, f"metadata_{version}.json"))
                 args = [
@@ -304,7 +307,7 @@ def get_sub_module_part(package_name, module_name):
     if not module_name.startswith(sub_module_from_package):
         _LOGGER.warning(f"Submodule {module_name} does not start with package name {package_name}")
         return
-    return module_name[len(sub_module_from_package) + 1 :]
+    return module_name[len(sub_module_from_package) + 1:]
 
 
 if __name__ == "__main__":
