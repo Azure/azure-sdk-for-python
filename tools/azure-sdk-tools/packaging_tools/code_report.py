@@ -308,7 +308,7 @@ def get_sub_module_part(package_name, module_name):
     if not module_name.startswith(sub_module_from_package):
         _LOGGER.warning(f"Submodule {module_name} does not start with package name {package_name}")
         return
-    return module_name[len(sub_module_from_package) + 1:]
+    return module_name[len(sub_module_from_package) + 1 :]
 
 
 if __name__ == "__main__":
