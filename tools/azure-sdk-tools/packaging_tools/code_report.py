@@ -45,11 +45,12 @@ def create_report(module_name: str) -> Dict[str, Any]:
 
     report = create_empty_report()
 
-    # Look for models first
     try:
         report["client"] = client_name
     except:
         report["client"] = []
+        
+    # Look for models first
     model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
     for model_name in model_names:
         model_cls = getattr(module_to_generate.models, model_name)
@@ -164,13 +165,13 @@ def merge_report(report_paths):
 
 
 def main(
-        input_parameter: str,
-        version: Optional[str] = None,
-        no_venv: bool = False,
-        pypi: bool = False,
-        last_pypi: bool = False,
-        output: Optional[str] = None,
-        metadata_path: Optional[str] = None,
+    input_parameter: str,
+    version: Optional[str] = None,
+    no_venv: bool = False,
+    pypi: bool = False,
+    last_pypi: bool = False,
+    output: Optional[str] = None,
+    metadata_path: Optional[str] = None,
 ):
     output_msg = output if output else "default folder"
     _LOGGER.info(
@@ -198,7 +199,7 @@ def main(
         for version in versions:
             _LOGGER.info(f"Installing version {version} of {package_name} in a venv")
             with create_venv_with_package(
-                    [f"{package_name}=={version}"]
+                [f"{package_name}=={version}"]
             ) as venv, tempfile.TemporaryDirectory() as temp_dir:
                 metadata_path = str(Path(temp_dir, f"metadata_{version}.json"))
                 args = [
