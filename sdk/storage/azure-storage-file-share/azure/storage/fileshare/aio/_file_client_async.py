@@ -1012,6 +1012,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         validate_content = kwargs.pop('validate_content', False)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
@@ -1026,6 +1027,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
+                file_last_written_mode=file_last_write_mode,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs

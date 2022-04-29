@@ -1136,6 +1136,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         validate_content = kwargs.pop('validate_content', False)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if isinstance(data, six.text_type):
@@ -1151,6 +1152,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 optionalbody=data,
                 timeout=timeout,
                 validate_content=validate_content,
+                file_last_written_mode=file_last_write_mode,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
@@ -1180,6 +1182,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         source_authorization = kwargs.pop('source_authorization', None)
         source_mod_conditions = get_source_conditions(kwargs)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
 
         options = {
             'copy_source_authorization': source_authorization,
@@ -1187,6 +1190,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             'content_length': 0,
             'source_range': source_range,
             'range': destination_range,
+            'file_last_written_mode': file_last_write_mode,
             'source_modified_access_conditions': source_mod_conditions,
             'lease_access_conditions': access_conditions,
             'timeout': kwargs.pop('timeout', None),
