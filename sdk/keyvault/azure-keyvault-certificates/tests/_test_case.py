@@ -2,14 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
 import os
 
 from azure.keyvault.certificates import ApiVersion
-from azure.keyvault.certificates._shared import HttpChallengeCache
 from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
-from devtools_testutils import AzureMgmtRecordedTestCase, AzureRecordedTestCase, AzureTestCase, PowerShellPreparer, is_live
-from parameterized import parameterized, param
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 
 
