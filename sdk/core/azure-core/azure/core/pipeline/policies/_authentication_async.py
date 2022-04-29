@@ -166,21 +166,19 @@ class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :returns: a bool indicating whether the policy should send the request
         """
+        if not self._discover_tenant and not self._discover_scopes:
+            # We can't discover the tenant or use a different scope; the request will fail because it hasn't changed
+            return False
+
         try:
             challenge = _HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            scope = challenge.scope or challenge.resource + "/.default"
+            scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
         except ValueError:
             return False
 
         if self._discover_tenant:
-            await self.authorize_request(
-                request, scope if self._discover_scopes else self._scopes, tenant_id=challenge.tenant_id
-            )
+            await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
         else:
-            if self._discover_scopes:
-                await self.authorize_request(request, scope)
-            else:
-                # we can't discover the tenant or use a different scope; the request will fail because it hasn't changed
-                return False
+            await self.authorize_request(request, scope)
         return True
