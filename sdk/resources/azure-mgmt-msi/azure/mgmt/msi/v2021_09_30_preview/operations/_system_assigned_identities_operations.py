@@ -29,7 +29,7 @@ def build_get_by_scope_request(
     scope: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+    api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -63,7 +63,7 @@ class SystemAssignedIdentitiesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.msi.v2018_11_30.models
+    :type models: ~azure.mgmt.msi.v2021_09_30_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -91,7 +91,7 @@ class SystemAssignedIdentitiesOperations(object):
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SystemAssignedIdentity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.v2018_11_30.models.SystemAssignedIdentity
+        :rtype: ~azure.mgmt.msi.v2021_09_30_preview.models.SystemAssignedIdentity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SystemAssignedIdentity"]
@@ -100,7 +100,7 @@ class SystemAssignedIdentitiesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
         
         request = build_get_by_scope_request(
