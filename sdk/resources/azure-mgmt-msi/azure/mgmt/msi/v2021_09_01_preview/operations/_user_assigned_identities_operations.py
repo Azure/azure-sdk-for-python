@@ -31,7 +31,7 @@ def build_list_by_subscription_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+    api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -64,7 +64,7 @@ def build_list_by_resource_group_request(
     resource_group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+    api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -93,6 +93,58 @@ def build_list_by_resource_group_request(
     )
 
 
+def build_list_associated_resources_request(
+    subscription_id: str,
+    resource_group_name: str,
+    resource_name: str,
+    *,
+    filter: Optional[str] = None,
+    orderby: Optional[str] = None,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    skiptoken: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}/listAssociatedResources")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if filter is not None:
+        _query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    if orderby is not None:
+        _query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+    if top is not None:
+        _query_parameters['$top'] = _SERIALIZER.query("top", top, 'int', minimum=1)
+    if skip is not None:
+        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int', minimum=1)
+    if skiptoken is not None:
+        _query_parameters['$skiptoken'] = _SERIALIZER.query("skiptoken", skiptoken, 'str')
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
 def build_create_or_update_request(
     subscription_id: str,
     resource_group_name: str,
@@ -102,7 +154,7 @@ def build_create_or_update_request(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+    api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -146,7 +198,7 @@ def build_update_request(
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+    api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -187,7 +239,7 @@ def build_get_request(
     resource_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+    api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -223,7 +275,7 @@ def build_delete_request(
     resource_name: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+    api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -259,7 +311,7 @@ class UserAssignedIdentitiesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.msi.v2018_11_30.models
+    :type models: ~azure.mgmt.msi.v2021_09_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -285,10 +337,10 @@ class UserAssignedIdentitiesOperations(object):
         :return: An iterator like instance of either UserAssignedIdentitiesListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.msi.v2018_11_30.models.UserAssignedIdentitiesListResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.msi.v2021_09_01_preview.models.UserAssignedIdentitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserAssignedIdentitiesListResult"]
         error_map = {
@@ -361,10 +413,10 @@ class UserAssignedIdentitiesOperations(object):
         :return: An iterator like instance of either UserAssignedIdentitiesListResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.msi.v2018_11_30.models.UserAssignedIdentitiesListResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.msi.v2021_09_01_preview.models.UserAssignedIdentitiesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UserAssignedIdentitiesListResult"]
         error_map = {
@@ -426,6 +478,117 @@ class UserAssignedIdentitiesOperations(object):
     list_by_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities"}  # type: ignore
 
     @distributed_trace
+    def list_associated_resources(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        filter: Optional[str] = None,
+        orderby: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        skiptoken: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AssociatedResourcesListResult"]:
+        """Lists the associated resources for this identity.
+
+        :param resource_group_name: The name of the Resource Group to which the identity belongs.
+        :type resource_group_name: str
+        :param resource_name: The name of the identity resource.
+        :type resource_name: str
+        :param filter: OData filter expression to apply to the query. Default value is None.
+        :type filter: str
+        :param orderby: OData orderBy expression to apply to the query. Default value is None.
+        :type orderby: str
+        :param top: Number of records to return. Default value is None.
+        :type top: int
+        :param skip: Number of records to skip. Default value is None.
+        :type skip: int
+        :param skiptoken: A skip token is used to continue retrieving items after an operation returns
+         a partial result. If a previous response contains a nextLink element, the value of the nextLink
+         element will include a skipToken parameter that specifies a starting point to use for
+         subsequent calls. Default value is None.
+        :type skiptoken: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either AssociatedResourcesListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.msi.v2021_09_01_preview.models.AssociatedResourcesListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
+
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AssociatedResourcesListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_associated_resources_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
+                    api_version=api_version,
+                    filter=filter,
+                    orderby=orderby,
+                    top=top,
+                    skip=skip,
+                    skiptoken=skiptoken,
+                    template_url=self.list_associated_resources.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                
+                request = build_list_associated_resources_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
+                    api_version=api_version,
+                    filter=filter,
+                    orderby=orderby,
+                    top=top,
+                    skip=skip,
+                    skiptoken=skiptoken,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("AssociatedResourcesListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_associated_resources.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}/listAssociatedResources"}  # type: ignore
+
+    @distributed_trace
     def create_or_update(
         self,
         resource_group_name: str,
@@ -440,10 +603,10 @@ class UserAssignedIdentitiesOperations(object):
         :param resource_name: The name of the identity resource.
         :type resource_name: str
         :param parameters: Parameters to create or update the identity.
-        :type parameters: ~azure.mgmt.msi.v2018_11_30.models.Identity
+        :type parameters: ~azure.mgmt.msi.v2021_09_01_preview.models.Identity
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
+        :rtype: ~azure.mgmt.msi.v2021_09_01_preview.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
@@ -452,7 +615,7 @@ class UserAssignedIdentitiesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'Identity')
@@ -509,10 +672,10 @@ class UserAssignedIdentitiesOperations(object):
         :param resource_name: The name of the identity resource.
         :type resource_name: str
         :param parameters: Parameters to update the identity.
-        :type parameters: ~azure.mgmt.msi.v2018_11_30.models.IdentityUpdate
+        :type parameters: ~azure.mgmt.msi.v2021_09_01_preview.models.IdentityUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
+        :rtype: ~azure.mgmt.msi.v2021_09_01_preview.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
@@ -521,7 +684,7 @@ class UserAssignedIdentitiesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'IdentityUpdate')
@@ -574,7 +737,7 @@ class UserAssignedIdentitiesOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Identity, or the result of cls(response)
-        :rtype: ~azure.mgmt.msi.v2018_11_30.models.Identity
+        :rtype: ~azure.mgmt.msi.v2021_09_01_preview.models.Identity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Identity"]
@@ -583,7 +746,7 @@ class UserAssignedIdentitiesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
         
         request = build_get_request(
@@ -641,7 +804,7 @@ class UserAssignedIdentitiesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
         
         request = build_delete_request(
