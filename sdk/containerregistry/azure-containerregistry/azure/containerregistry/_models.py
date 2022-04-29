@@ -367,7 +367,7 @@ class DownloadManifestResult(object):
         return self._digest
 
 
-class ArtifactArchitecture(str, Enum):
+class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     AMD64 = "amd64"
     ARM = "arm"
@@ -384,7 +384,7 @@ class ArtifactArchitecture(str, Enum):
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum):
+class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     AIX = "aix"
     ANDROID = "android"

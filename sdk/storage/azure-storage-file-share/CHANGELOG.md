@@ -1,9 +1,24 @@
 # Release History
 
-## 12.7.1 (Unreleased)
+## 12.8.0 (Unreleased)
 
 ### Features Added
-- Added support for `create_if_not_exists()` for `FileShareClient`
+
+### Bugs Fixed
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
+
+## 12.8.0b1 (2022-04-14)
+
+### Features Added
+- Added support for service version 2021-06-08.
+- Added support for missing parameters on `create_directory()` including `file_attributes`, `file_creation_time`,
+`file_last_write_time`, `file_permission` and `file_permission_key`.
+- Added support for setting `content_type` on `rename_file()`.
+- Added support for setting `file_change_time` on `create_directory()`, `set_http_headers()` (directory)
+`rename_directory()`, `create_file()`, `set_http_headers()` (file) and `rename_file()`.
+- Added support for setting `file_last_written_mode` on `upload_range()` and `upload_range_from_url()`
+with possible values of `Now` or `Preserve`.
 
 ### Bugs Fixed
 - Updated `create_share()` docstring to have the correct return-type of `None`

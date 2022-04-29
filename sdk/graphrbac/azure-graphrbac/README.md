@@ -10,7 +10,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 
 
-For code examples, see [Graph RBAC](https://docs.microsoft.com/python/api/overview/azure/activedirectory) on docs.microsoft.com.
+For code examples, see [Graph RBAC](https://docs.microsoft.com/python/api/overview/azure/active-directory) on docs.microsoft.com.
 
 
 # Provide Feedback

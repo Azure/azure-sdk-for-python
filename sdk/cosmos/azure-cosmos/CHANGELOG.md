@@ -1,14 +1,24 @@
 ## Release History
 
-### 4.3.0b4 (Unreleased)
-
-#### Features Added
+### 4.3.0b5 (Unreleased)
 
 #### Breaking Changes
-
-#### Bugs Fixed
+- Bugfix: Automatic Id generation for items was turned on for `upsert_items()` method when no 'id' value was present in document body.
+Method call will now require an 'id' field to be present in the document body.
 
 #### Other Changes
+- Marked the GetAuthorizationMethod for deprecation since it will no longer be public in a future release.
+- Added samples showing how to configure retry options for both the sync and async clients.
+- Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
+
+### 4.3.0b4 (2022-04-07)
+
+#### Features Added
+- Added support for AAD authentication for the async client.
+- Added support for AAD authentication for the sync client.
+
+#### Other Changes
+- Changed `_set_partition_key` return typehint in async client.
 
 ### 4.3.0b3 (2022-03-10)
 
