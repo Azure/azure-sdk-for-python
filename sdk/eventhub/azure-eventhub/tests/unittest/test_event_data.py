@@ -2,6 +2,7 @@ import platform
 import pytest
 import uamqp
 from packaging import version
+from azure.eventhub._transport.uamqp_plugins.message import TransportMessage
 from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub import _common
 
@@ -70,7 +71,7 @@ def test_sys_properties():
     properties.group_id = "group_id"
     properties.group_sequence = 1
     properties.reply_to_group_id = "reply_to_group_id"
-    message = uamqp.Message(properties=properties)
+    message = TransportMessage(properties=properties)
     message.annotations = {_common.PROP_OFFSET: "@latest"}
     ed = EventData._from_message(message)  # type: EventData
 
@@ -108,7 +109,7 @@ def test_event_data_batch():
         batch.add(EventData("A"))
 
 def test_event_data_from_message():
-    message = uamqp.Message('A')
+    message = TransportMessage('A')
     event = EventData._from_message(message)
     assert event.content_type is None
     assert event.correlation_id is None

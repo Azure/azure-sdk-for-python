@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping, Callable
 
 import six
 
@@ -271,8 +271,8 @@ def parse_sas_credential(credential):
     return (sas, expiry)
 
 
-def transform_outbound_single_message(message, message_type):
-    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
+def transform_outbound_single_message(message, message_type, to_outgoing_amqp_message):
+    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData], Callable) -> EventData
     """
     This method serves multiple goals:
     1. update the internal message to reflect any updates to settable properties on EventData
@@ -284,16 +284,17 @@ def transform_outbound_single_message(message, message_type):
     :rtype: EventData
     """
     try:
-        # EventData
         # pylint: disable=protected-access
-        return message._to_outgoing_message()  # type: ignore
+        # EventData.message stores uamqp/pyamqp.Message during sending
+        message.message = to_outgoing_amqp_message(message.raw_amqp_message)
+        return message  # type: ignore
     except AttributeError:
-        # AmqpAnnotatedMessage
         # pylint: disable=protected-access
+        # AmqpAnnotatedMessage is converted to uamqp/pyamqp.Message during sending
+        amqp_message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message_type._from_message(
-            message=message._to_outgoing_amqp_message(), raw_amqp_message=message  # type: ignore
+            message=amqp_message, raw_amqp_message=message  # type: ignore
         )
-
 
 def decode_with_recurse(data, encoding="UTF-8"):
     # type: (Any, str) -> Any

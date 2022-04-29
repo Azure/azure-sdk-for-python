@@ -119,7 +119,7 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
-    async def _get_max_mesage_size(self) -> None:
+    async def _get_max_message_size(self) -> None:
         # pylint: disable=protected-access,line-too-long
         async with self._lock:
             if not self._max_message_size_on_link:
@@ -380,7 +380,7 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
 
         """
         if not self._max_message_size_on_link:
-            await self._get_max_mesage_size()
+            await self._get_max_message_size()
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(

@@ -92,6 +92,14 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
         **kwargs  # type: Any
     ):
         # type:(...) -> None
+        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
+        if self._uamqp_transport:
+            from ._transport import uamqp_plugins as transport_plugins
+            self._transport_plugins = transport_plugins
+        else:
+            # TODO: add pyamqp support, will have to switch if/else default
+            pass
+
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
@@ -119,7 +127,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
-    def _get_max_mesage_size(self):
+    def _get_max_message_size(self):
         # type: () -> None
         # pylint: disable=protected-access,line-too-long
         with self._lock:
@@ -345,7 +353,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
 
         """
         if not self._max_message_size_on_link:
-            self._get_max_mesage_size()
+            self._get_max_message_size()
 
         max_size_in_bytes = kwargs.get("max_size_in_bytes", None)
         partition_id = kwargs.get("partition_id", None)

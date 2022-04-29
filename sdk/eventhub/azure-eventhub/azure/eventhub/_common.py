@@ -17,12 +17,11 @@ from typing import (
     List,
     TYPE_CHECKING,
     cast,
+    Callable
 )
 from typing_extensions import TypedDict
 
 import six
-
-from uamqp import BatchMessage, Message, constants
 
 from ._utils import (
     set_message_partition_key,
@@ -125,7 +124,7 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        self.message = (self._raw_amqp_message._message)  # pylint:disable=protected-access
+        self.message = None # amqp message to be set right before sending
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -224,15 +223,15 @@ class EventData(object):
         event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 
-    def _encode_message(self):
-        # type: () -> bytes
-        # pylint: disable=protected-access
-        return self._raw_amqp_message._message.encode_message()
+    #def _encode_message(self):
+    #    # type: () -> bytes
+    #    # pylint: disable=protected-access
+    #    return self._raw_amqp_message._message.encode_message()
 
     def _decode_non_data_body_as_str(self, encoding="UTF-8"):
         # type: (str) -> str
         # pylint: disable=protected-access
-        body = self.raw_amqp_message._message._body
+        body = self.raw_amqp_message.body
         if self.body_type == AmqpMessageBodyType.VALUE:
             if not body.data:
                 return ""
@@ -240,11 +239,6 @@ class EventData(object):
 
         seq_list = [d for seq_section in body.data for d in seq_section]
         return str(decode_with_recurse(seq_list, encoding))
-
-    def _to_outgoing_message(self):
-        # type: () -> EventData
-        self.message = (self._raw_amqp_message._to_outgoing_amqp_message())  # pylint:disable=protected-access
-        return self
 
     @property
     def raw_amqp_message(self):
@@ -513,8 +507,22 @@ class EventDataBatch(object):
      Event Hub decided by the service.
     """
 
-    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
-        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
+    def __init__(
+        self,
+        max_size_in_bytes: Optional [int] = None,
+        partition_id: Optional[str] = None,
+        partition_key: Optional[Union[str, bytes]] = None,
+        **kwargs
+    ) -> None:
+        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
+        if self._uamqp_transport:
+            from ._transport.uamqp_plugins import utils as transport_utils, constants as transport_constants
+            self._transport_utils = transport_utils
+            self._transport_constants = transport_constants
+            self._to_outgoing_amqp_message = self._transport_utils.to_outgoing_amqp_message
+        else:
+            # TODO: add pyamqp support, will have to switch default to pyamqp
+            pass
 
         if partition_key and not isinstance(
             partition_key, (six.text_type, six.binary_type)
@@ -526,8 +534,8 @@ class EventDataBatch(object):
                 "partition_key to only be string type, they might fail to parse the non-string value."
             )
 
-        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
-        self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+        self.max_size_in_bytes = max_size_in_bytes or self._transport_constants.MAX_MESSAGE_LENGTH_BYTES
+        self.message = self._transport_constants.BATCH_MESSAGE(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
 
@@ -546,9 +554,11 @@ class EventDataBatch(object):
         return self._count
 
     @classmethod
-    def _from_batch(cls, batch_data, partition_key=None):
-        # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
-        outgoing_batch_data = [transform_outbound_single_message(m, EventData) for m in batch_data]
+    def _from_batch(cls, batch_data, to_outgoing_amqp_message, partition_key=None):
+        # type: (Iterable[EventData], Callable, Optional[AnyStr]) -> EventDataBatch
+        outgoing_batch_data = [
+            transform_outbound_single_message(m, EventData, to_outgoing_amqp_message) for m in batch_data
+        ]
         batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
             outgoing_batch_data
@@ -589,7 +599,7 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
 
-        outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+        outgoing_event_data = transform_outbound_single_message(event_data, EventData, self._to_outgoing_amqp_message)
 
         if self._partition_key:
             if (
