@@ -20,7 +20,7 @@ from uamqp.message import MessageHeader
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
-from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
+from .amqp import AmqpAnnotatedMessage
 from ._version import VERSION
 from ._constants import (
     PROP_PARTITION_KEY_AMQP_SYMBOL,
@@ -110,28 +110,6 @@ def create_properties(user_agent=None):
         )
     properties[types.AMQPSymbol("user-agent")] = final_user_agent
     return properties
-
-
-def set_event_partition_key(event, partition_key):
-    # type: (Union[AmqpAnnotatedMessage, EventData], Optional[Union[bytes, str]]) -> None
-    if not partition_key:
-        return
-
-    try:
-        raw_message = event.raw_amqp_message  # type: ignore
-    except AttributeError:
-        raw_message = event
-
-    annotations = raw_message.annotations
-    if annotations is None:
-        annotations = dict()
-    annotations[
-        PROP_PARTITION_KEY_AMQP_SYMBOL
-    ] = partition_key  # pylint:disable=protected-access
-    if not raw_message.header:
-        raw_message.header = AmqpMessageHeader(header=True)
-    else:
-        raw_message.header.durable = True
 
 
 def set_message_partition_key(message, partition_key):
