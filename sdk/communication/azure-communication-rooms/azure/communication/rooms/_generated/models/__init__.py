@@ -20,9 +20,7 @@ except (SyntaxError, ImportError):
     from ._models import RoomModel  # type: ignore
     from ._models import RoomParticipantInternal  # type: ignore
     from ._models import UpdateRoomRequest  # type: ignore
-from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
-from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
     'CommunicationError',
     'CommunicationErrorResponse',
@@ -31,5 +29,3 @@ __all__ = [
     'RoomParticipantInternal',
     'UpdateRoomRequest',
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
-_patch_sdk()

@@ -43,12 +43,8 @@ class RoomsClientTest(CommunicationTestCase):
 
     def setUp(self):
         super(RoomsClientTest, self).setUp()
-        if self.is_playback():
+        if not self.is_playback():
             self.recording_processors.extend([
-                BodyReplacerProcessor(keys=["participants","invalid_participants"])])
-        else:
-            self.recording_processors.extend([
-                BodyReplacerProcessor(keys=["participants", "invalid_participants"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])
         # create multiple users users
         self.identity_client = CommunicationIdentityClient.from_connection_string(

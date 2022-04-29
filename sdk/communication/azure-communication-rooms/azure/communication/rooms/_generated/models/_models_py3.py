@@ -7,14 +7,10 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
 
 
 class CommunicationError(msrest.serialization.Model):
@@ -53,8 +49,8 @@ class CommunicationError(msrest.serialization.Model):
         code: str,
         message: str,
         target: Optional[str] = None,
-        details: Optional[List["_models.CommunicationError"]] = None,
-        inner_error: Optional["_models.CommunicationError"] = None,
+        details: Optional[List["CommunicationError"]] = None,
+        inner_error: Optional["CommunicationError"] = None,
         **kwargs
     ):
         """
@@ -97,7 +93,7 @@ class CommunicationErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        communication_error: "_models.CommunicationError",
+        communication_error: "CommunicationError",
         **kwargs
     ):
         """
@@ -132,7 +128,7 @@ class CreateRoomRequest(msrest.serialization.Model):
         *,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        participants: Optional[Dict[str, "_models.RoomParticipantInternal"]] = None,
+        participants: Optional[Dict[str, "RoomParticipantInternal"]] = None,
         **kwargs
     ):
         """
@@ -184,7 +180,7 @@ class RoomModel(msrest.serialization.Model):
         created_date_time: Optional[datetime.datetime] = None,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        participants: Optional[Dict[str, "_models.RoomParticipantInternal"]] = None,
+        participants: Optional[Dict[str, "RoomParticipantInternal"]] = None,
         **kwargs
     ):
         """
@@ -259,7 +255,7 @@ class UpdateRoomRequest(msrest.serialization.Model):
         *,
         valid_from: Optional[datetime.datetime] = None,
         valid_until: Optional[datetime.datetime] = None,
-        participants: Optional[Dict[str, "_models.RoomParticipantInternal"]] = None,
+        participants: Optional[Dict[str, "RoomParticipantInternal"]] = None,
         **kwargs
     ):
         """

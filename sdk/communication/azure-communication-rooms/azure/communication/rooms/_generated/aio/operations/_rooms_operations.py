@@ -14,7 +14,6 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -35,21 +34,21 @@ class RoomsOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
     async def create_room(
         self,
-        create_room_request: _models.CreateRoomRequest,
+        create_room_request: "_models.CreateRoomRequest",
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> "_models.RoomModel":
         """Creates a new room.
 
         Creates a new room.
@@ -73,6 +72,7 @@ class RoomsOperations:
         :rtype: ~azure.communication.rooms.models.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoomModel"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -83,14 +83,10 @@ class RoomsOperations:
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
             501: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-02-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RoomModel]
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(create_room_request, 'CreateRoomRequest')
 
@@ -101,16 +97,14 @@ class RoomsOperations:
             repeatability_request_id=repeatability_request_id,
             repeatability_first_sent=repeatability_first_sent,
             template_url=self.create_room.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -136,7 +130,7 @@ class RoomsOperations:
         self,
         room_id: str,
         **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> "_models.RoomModel":
         """Retrieves an existing room by Id.
 
         Retrieves an existing room by Id.
@@ -148,6 +142,7 @@ class RoomsOperations:
         :rtype: ~azure.communication.rooms.models.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoomModel"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -156,29 +151,23 @@ class RoomsOperations:
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-02-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RoomModel]
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_get_room_request(
             room_id=room_id,
             api_version=api_version,
             template_url=self.get_room.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -203,9 +192,9 @@ class RoomsOperations:
     async def update_room(
         self,
         room_id: str,
-        patch_room_request: Optional[_models.UpdateRoomRequest] = None,
+        patch_room_request: Optional["_models.UpdateRoomRequest"] = None,
         **kwargs: Any
-    ) -> _models.RoomModel:
+    ) -> "_models.RoomModel":
         """Update a room with given changes.
 
         Update a room with given changes.
@@ -219,6 +208,7 @@ class RoomsOperations:
         :rtype: ~azure.communication.rooms.models.RoomModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoomModel"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -227,14 +217,10 @@ class RoomsOperations:
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-02-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RoomModel]
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
+        content_type = kwargs.pop('content_type', "application/merge-patch+json")  # type: Optional[str]
 
         if patch_room_request is not None:
             _json = self._serialize.body(patch_room_request, 'UpdateRoomRequest')
@@ -247,16 +233,14 @@ class RoomsOperations:
             content_type=content_type,
             json=_json,
             template_url=self.update_room.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -294,6 +278,7 @@ class RoomsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -302,29 +287,23 @@ class RoomsOperations:
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
             500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-02-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
 
         
         request = build_delete_room_request(
             room_id=room_id,
             api_version=api_version,
             template_url=self.delete_room.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
