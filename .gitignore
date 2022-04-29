@@ -93,6 +93,7 @@ src/build
 # [begoldsm] ignore virtual env if it exists.
 adlEnv/
 venv/
+.venv/
 code_reports
 
 # Azure Storage test credentials
