@@ -849,7 +849,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        await file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Now")
+        await file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Now")
 
         # Assert
         new_last_write_time = (await file_client.get_file_properties()).last_write_time
@@ -864,7 +864,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         data = b'abcdefghijklmnop' * 32
-        await file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Preserve")
+        await file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Preserve")
 
         # Assert
         new_last_write_time = (await file_client.get_file_properties()).last_write_time
@@ -1052,7 +1052,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                            file_last_written_mode="Now")
+                                                            file_last_write_mode="Now")
 
         # Assert
         new_last_write_time = (await destination_file_client.get_file_properties()).last_write_time
@@ -1085,7 +1085,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Act
         await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                            file_last_written_mode="Preserve")
+                                                            file_last_write_mode="Preserve")
 
         # Assert
         new_last_write_time = (await destination_file_client.get_file_properties()).last_write_time

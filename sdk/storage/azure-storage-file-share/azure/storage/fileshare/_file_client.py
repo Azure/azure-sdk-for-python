@@ -1111,7 +1111,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
-        :keyword file_last_written_mode:
+        :keyword file_last_write_mode:
             If the file last write time should be preserved or overwritten. Possible values
             are "preserve" or "now". If not specified, file last write time will be changed to
             the current date/time.
@@ -1119,7 +1119,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
-        :paramtype file_last_written_mode: Literal["preserve", "now"]
+        :paramtype file_last_write_mode: Literal["preserve", "now"]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1241,7 +1241,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
-        :keyword file_last_written_mode:
+        :keyword file_last_write_mode:
             If the file last write time should be preserved or overwritten. Possible values
             are "preserve" or "now". If not specified, file last write time will be changed to
             the current date/time.
@@ -1249,7 +1249,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
-        :paramtype file_last_written_mode: Literal["preserve", "now"]
+        :paramtype file_last_write_mode: Literal["preserve", "now"]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.

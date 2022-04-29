@@ -257,7 +257,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
     @distributed_trace
     def create_container(self, metadata=None, public_access=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> Dict[str, Union[str, datetime]]
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -277,7 +277,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 

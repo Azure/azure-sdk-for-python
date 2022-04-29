@@ -13,7 +13,7 @@ class ProgressTracker:
         self.step = step
         self.current = 0
 
-    def assert_progress(self, current: int, total: Optional[int]):
+    async def assert_progress(self, current: int, total: Optional[int]):
         if self.current != self.total:
             self.current += self.step
 
