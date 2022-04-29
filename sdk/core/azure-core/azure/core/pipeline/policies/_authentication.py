@@ -25,22 +25,22 @@ if TYPE_CHECKING:
 class _HttpChallenge(object):  # pylint:disable=too-few-public-methods
     """Represents a parsed HTTP WWW-Authentication Bearer challenge from a server."""
 
-    def __init__(self, request_uri, challenge):
-        self.source_authority = self._get_request_authority(request_uri)
-        self.source_uri = request_uri
+    def __init__(self, challenge):
+        if not challenge:
+            raise ValueError("Challenge cannot be empty")
+
         self._parameters = {}
 
-        # Get the scheme of the challenge and remove it from the challenge string
-        trimmed_challenge = self._get_challenge_parts(challenge)
+        # Split the scheme ("Bearer") from the challenge parameters
+        trimmed_challenge = challenge.strip()
         split_challenge = trimmed_challenge.split(" ", 1)
-        self.scheme = split_challenge[0]
         trimmed_challenge = split_challenge[1]
 
         # Split trimmed challenge into name=value pairs; these pairs are expected to be split by either commas or spaces
         # Values may be surrounded by quotes, which are stripped here
         separator = "," if "," in trimmed_challenge else " "
         for item in trimmed_challenge.split(separator):
-            # process name=value pairs
+            # Process 'name=value' pairs
             comps = item.split("=")
             if len(comps) == 2:
                 key = comps[0].strip(' "')
@@ -61,29 +61,6 @@ class _HttpChallenge(object):  # pylint:disable=too-few-public-methods
 
         self.scope = self._parameters.get("scope") or ""
         self.resource = self._parameters.get("resource") or self._parameters.get("resource_id") or ""
-
-    # pylint:disable=no-self-use
-    def _get_challenge_parts(self, challenge):
-        """Verifies that the challenge is a valid auth challenge and returns the key=value pairs."""
-        if not challenge:
-            raise ValueError("Challenge cannot be empty")
-
-        return challenge.strip()
-
-    # pylint:disable=no-self-use
-    def _get_request_authority(self, uri):
-        """Extracts the host authority from the given URI."""
-        if not uri:
-            raise ValueError("request_uri cannot be empty")
-
-        uri = urllib.parse.urlparse(uri)
-        if not uri.netloc:
-            raise ValueError("request_uri must be an absolute URI")
-
-        if uri.scheme.lower() not in ["http", "https"]:
-            raise ValueError("request_uri must be HTTP or HTTPS")
-
-        return uri.netloc
 
 
 # pylint:disable=too-few-public-methods
@@ -273,23 +250,21 @@ class MultitenantCredentialPolicy(BearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :returns: a bool indicating whether the policy should send the request
         """
+        if not self._discover_tenant and not self._discover_scopes:
+            # We can't discover the tenant or use a different scope; the request will fail because it hasn't changed
+            return False
+
         try:
-            challenge = _HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
+            challenge = _HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
-            scope = challenge.scope or challenge.resource + "/.default"
+            scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
         except ValueError:
             return False
 
         if self._discover_tenant:
-            self.authorize_request(
-                request, scope if self._discover_scopes else self._scopes, tenant_id=challenge.tenant_id
-            )
+            self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
         else:
-            if self._discover_scopes:
-                self.authorize_request(request, scope)
-            else:
-                # we can't discover the tenant or use a different scope; the request will fail because it hasn't changed
-                return False
+            self.authorize_request(request, scope)
         return True
 
 

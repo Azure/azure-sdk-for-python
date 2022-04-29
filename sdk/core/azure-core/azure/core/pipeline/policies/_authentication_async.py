@@ -167,7 +167,7 @@ class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :returns: a bool indicating whether the policy should send the request
         """
         try:
-            challenge = _HttpChallenge(request.http_request.url, response.http_response.headers.get("WWW-Authenticate"))
+            challenge = _HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             scope = challenge.scope or challenge.resource + "/.default"
         except ValueError:
