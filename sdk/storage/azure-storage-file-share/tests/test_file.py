@@ -2357,20 +2357,17 @@ class StorageFileTest(StorageTestCase):
     def test_rename_file_content_type(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         source_file = self._create_file('file1')
-
-        content_settings = ContentSettings (
-            content_type='text/plain'
-        )
+        content_type = 'text/plain'
 
         # Act
         new_file = source_file.rename_file(
             'file2',
-            content_settings=content_settings)
+            content_type=content_type)
 
         # Assert
         props = new_file.get_file_properties()
         self.assertIsNotNone(props)
-        self.assertEqual(content_settings.content_type, props.content_settings.content_type)
+        self.assertEqual(content_type, props.content_settings.content_type)
 
     @FileSharePreparer()
     def test_rename_file_with_lease(self, storage_account_name, storage_account_key):

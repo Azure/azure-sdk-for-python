@@ -854,9 +854,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
-        :keyword ~azure.storage.fileshare.ContentSettings content_settings:
-            ContentSettings object used to set file properties of new file.
-            Rename operation currently only supports content type.
+        :keyword str content_type:
+            The Content Type of the new file.
 
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
@@ -896,10 +895,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         kwargs.update(get_rename_smb_properties(kwargs))
 
         file_http_headers = None
-        content_settings = kwargs.pop('content_settings', None)
-        if content_settings:
+        content_type = kwargs.pop('content_type', None)
+        if content_type:
             file_http_headers = FileHTTPHeaders(
-                file_content_type=content_settings.content_type
+                file_content_type=content_type
             )
 
         timeout = kwargs.pop('timeout', None)
