@@ -20,7 +20,7 @@ from ._helpers import _host_only, _is_tag, _strip_alg
 if TYPE_CHECKING:
     from typing import IO
     from datetime import datetime
-    from ._generated.models import ManifestAttributesBase
+    from ._generated.models import ManifestAttributesBase, OCIManifest
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
@@ -324,6 +324,37 @@ class DownloadBlobResult(object):
     def __init__(self, **kwargs):
         self._data = kwargs.get("data")
         self._digest = kwargs.get("digest")
+
+    @property
+    def data(self):
+        # type: () -> IO
+        return self._data
+
+    @property
+    def digest(self):
+        # type: () -> str
+        return self._digest
+
+
+class DownloadManifestResult(object):
+    """The result from downloading a manifest from the registry.
+
+    :ivar manifest: The OCI manifest that was downloaded.
+    :vartype manifest: ~azure.containerregistry.models.OCIManifest
+    :ivar data: The manifest stream that was downloaded.
+    :vartype data: IO
+    :ivar str digest: The manifest's digest, calculated by the registry.
+    """
+
+    def __init__(self, **kwargs):
+        self._manifest = kwargs.get("manifest")
+        self._data = kwargs.get("data")
+        self._digest = kwargs.get("digest")
+
+    @property
+    def manifest(self):
+        # type: () -> OCIManifest
+        return self._manifest
 
     @property
     def data(self):

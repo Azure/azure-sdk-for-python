@@ -197,6 +197,18 @@ class ContainerRegistryTestClass(AzureTestCase):
         assert properties.can_write == value
         assert properties.can_list == value
 
+    def assert_manifest(self, manifest, expected):
+        assert manifest is not None
+        assert manifest.schema_version == expected.schema_version
+        assert manifest.config is not None
+        assert_manifest_config_or_layer_properties(manifest.config, expected.config)
+        assert manifest.layers is not None
+        assert len(manifest.layers) == len(expected.layers)
+        count = 0
+        for layer in manifest.layers:
+            assert_manifest_config_or_layer_properties(layer, expected.layers[count])
+            count += 1
+
     def create_fully_qualified_reference(self, registry, repository, digest):
         return "{}/{}{}{}".format(
             registry,
@@ -357,3 +369,8 @@ def load_registry():
             import_image(authority, repo, tag)
         except Exception as e:
             print(e)
+
+def assert_manifest_config_or_layer_properties(value, expected):
+    assert value.media_type == expected.media_type
+    assert value.digest == expected.digest
+    assert value.size == expected.size

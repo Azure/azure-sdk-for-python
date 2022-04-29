@@ -606,6 +606,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_oci_manifest(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
@@ -617,12 +618,17 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         digest = client.upload_manifest(repo, manifest)
 
         # Assert
-        res = client.download_manifest(repo, digest)
-        print(res)
+        response = client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+        
+        client.delete_manifest(repo, digest)
 
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
@@ -636,48 +642,83 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         digest = client.upload_manifest(repo, manifest_stream)
 
         # Assert
-        res = client.download_manifest(repo, digest)
-        print(res)
+        response = client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+        
+        client.delete_manifest(repo, digest)
 
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         client = self.create_registry_client(containerregistry_endpoint)
+        tag = "v1"
         
         self.upload_manifest_prerequisites(repo, client)
         
         # Act
-        digest = client.upload_manifest(repo, manifest, tag="v1")
+        digest = client.upload_manifest(repo, manifest, tag=tag)
         
         # Assert
-        res = client.download_manifest(repo, digest)
-        print(res)
+        response = client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        response = client.download_manifest(repo, tag)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        tags = client.get_manifest_properties(repo, digest).tags
+        assert len(tags) == 1
+        assert tags[0] == tag
+        
+        client.delete_manifest(repo, digest)
         
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         manifest_bytes = json.dumps(manifest.serialize()).encode("utf-8")
         manifest_stream = BytesIO(manifest_bytes)
         client = self.create_registry_client(containerregistry_endpoint)
+        tag = "v1"
         
         self.upload_manifest_prerequisites(repo, client)
         
         # Act
-        digest = client.upload_manifest(repo, manifest_stream, tag="v1")
+        digest = client.upload_manifest(repo, manifest_stream, tag=tag)
         
         # Assert
-        res = client.download_manifest(repo, digest)
-        print(res)
+        response = client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        response = client.download_manifest(repo, tag)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        tags = client.get_manifest_properties(repo, digest).tags
+        assert len(tags) == 1
+        assert tags[0] == tag
+        
+        client.delete_manifest(repo, digest)
     
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_upload_blob(self, containerregistry_endpoint):
+        # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
         client = self.create_registry_client(containerregistry_endpoint)       

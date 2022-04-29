@@ -16,11 +16,11 @@ except ImportError:
     from urlparse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
+from ._generated.models import OCIManifest
 
 if TYPE_CHECKING:
     from typing import List, Dict, IO
     from azure.core.pipeline import PipelineRequest
-    from ._generated.models import OCIManifest
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
@@ -129,9 +129,21 @@ def _serialize_manifest(manifest):
     data = json.dumps(manifest.serialize()).encode('utf-8')
     return BytesIO(data)
 
+def _deserialize_manifest(data):
+    # type: (IO) -> OCIManifest
+    data.seek(0)
+    value = data.read()
+    data.seek(0)
+    return OCIManifest.deserialize(json.loads(value.decode()))
+
 def _compute_digest(data):
     # type: (IO) -> str
     data.seek(0)
     value = data.read()
     data.seek(0)
     return "sha256:" + hashlib.sha256(value).hexdigest()
+
+def _validate_digest(data, digest):
+    # type: (IO, str) -> bool
+    data_digest = _compute_digest(data)
+    return data_digest == digest
