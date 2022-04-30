@@ -111,7 +111,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -187,7 +187,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -260,7 +260,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -324,7 +324,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -375,7 +375,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -438,7 +438,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -489,7 +489,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -552,7 +552,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -766,8 +766,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -850,8 +850,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`]].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
