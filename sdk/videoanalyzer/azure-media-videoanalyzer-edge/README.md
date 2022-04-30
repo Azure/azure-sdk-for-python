@@ -1,4 +1,4 @@
-# Deprecated. Azure Video Analyzer Edge client library for Python
+# Azure Video Analyzer Edge client library for Python
 
 Deprecated. We’re retiring the Azure Video Analyzer preview service, you're advised to transition your applications off of Video Analyzer by 01 December 2022. This SDK is not longer maintained.
 
