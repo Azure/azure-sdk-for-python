@@ -519,3 +519,46 @@ def get_all_track2_packages(path):
                     # Skip setup.py if the package cannot be parsed
                     pass
     return eligible_libraries
+
+def get_package_details(setup_filename):
+    mock_setup = textwrap.dedent(
+        """\
+    def setup(*args, **kwargs):
+        __setup_calls__.append((args, kwargs))
+    """
+    )
+    parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
+    with io.open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
+        parsed = ast.parse(setup_file.read())
+        for index, node in enumerate(parsed.body[:]):
+            if (
+                not isinstance(node, ast.Expr)
+                or not isinstance(node.value, ast.Call)
+                or not hasattr(node.value.func, "id")
+                or node.value.func.id != "setup"
+            ):
+                continue
+            parsed.body[index:index] = parsed_mock_setup.body
+            break
+
+    fixed = ast.fix_missing_locations(parsed)
+    codeobj = compile(fixed, setup_filename, "exec")
+    local_vars = {}
+    global_vars = {"__setup_calls__": []}
+    current_dir = os.getcwd()
+    working_dir = os.path.dirname(setup_filename)
+    os.chdir(working_dir)
+    exec(codeobj, global_vars, local_vars)
+    os.chdir(current_dir)
+    _, kwargs = global_vars["__setup_calls__"][0]
+
+    package_name = kwargs["name"]
+    # default namespace for the package
+    name_space = package_name.replace("-", ".")
+    if "packages" in kwargs.keys():
+        packages = kwargs["packages"]
+        if packages:
+            name_space = packages[0]
+            logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
+
+    return package_name, name_space, kwargs["version"]
