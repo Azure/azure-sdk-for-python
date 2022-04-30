@@ -40,7 +40,7 @@ if ($LASTEXITCODE) {
     exit $LASTEXITCODE
 }
 
-Write-Host "The following packages are installed:"
+Write-Host "The following packages are installed"
 pip list
 if ($LASTEXITCODE) {
     exit $LASTEXITCODE
