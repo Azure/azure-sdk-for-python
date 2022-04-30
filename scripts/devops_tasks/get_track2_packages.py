@@ -40,7 +40,6 @@ def build_requirements_release(packages):
             f.write(pkg_name + '\n')
         except Exception as err:
             logging.info(err)
-            print("Skipping Package {} since it is not available on PyPI".format(pkg_name))
             logging.info("Skipping Package {} since it is not available on PyPI".format(pkg_name))
     f.close()
 
