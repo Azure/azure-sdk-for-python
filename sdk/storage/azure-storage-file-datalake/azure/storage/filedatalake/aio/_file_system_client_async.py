@@ -755,7 +755,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             is raised even if there is a single operation failure.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A list containing None for successful operations and HttpResponseError objects for unsuccessful operations.
+        :return: A list containing None for successful operations and
+        HttpResponseError objects for unsuccessful operations.
         :rtype: List[Optional[HttpResponseError]]
 
         .. admonition:: Example:

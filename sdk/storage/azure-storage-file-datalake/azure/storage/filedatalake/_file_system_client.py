@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 import functools
-from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Dict, List, Optional, TypeVar, Union
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -853,7 +853,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             is raised even if there is a single operation failure.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: A list containing None for successful operations and HttpResponseError objects for unsuccessful operations.
+        :return: A list containing None for successful operations and
+        HttpResponseError objects for unsuccessful operations.
         :rtype: List[Optional[HttpResponseError]]
 
         .. admonition:: Example:
