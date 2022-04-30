@@ -13,8 +13,8 @@ if __name__ == "__main__":
         qualified_namespace = get_package_details(pkg[2] + "/setup.py")[1]
         logging.info("Importing the library {}".format(qualified_namespace))
         try:
-            importlib.__import__(
-                qualified_namespace, globals(), locals(), ["__all__"], 0
-            )
+            package = importlib.__import__(qualified_namespace, fromlist=["__all__"])
+            clients = [p for p in package.__all__ if p.endswith('Client')]
+            importlib.__import__(qualified_namespace, fromlist=clients)
         except ModuleNotFoundError as err:
             logging.warning(err)
