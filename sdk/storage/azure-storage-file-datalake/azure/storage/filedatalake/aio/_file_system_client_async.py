@@ -769,12 +769,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         """
         response = await self._container_client.delete_blobs(*files, **kwargs)
 
-        results = []
-        async for item in response:
-            results.append(item)
-
         errors = []
-        for result in results:
+        async for result in response:
             if not 200 <= result.status_code < 300:
                 errors.append(_decode_error(result, result.reason))
             else:

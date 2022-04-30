@@ -209,7 +209,7 @@ class FileSystemSamples(object):
 
         file_system_client.delete_file_system()
 
-        # [START batch_delete_files_or_empty_directories]
+    # [START batch_delete_files_or_empty_directories]
     def batch_delete_files_or_empty_directories(self):
         from azure.storage.filedatalake import FileSystemClient
         file_system_client = FileSystemClient.from_connection_string(self.connection_string, "filesystem")
@@ -250,7 +250,7 @@ class FileSystemSamples(object):
         print("First failure status code: " + response[3].status_code + "\n")
         print("Second failure error code: " + response[4].error_code + "\n")
         print("Second failure status code: " + response[4].status_code + "\n")
-        # [END batch_delete_files_or_empty_directories]
+    # [END batch_delete_files_or_empty_directories]
 
 
 if __name__ == '__main__':
