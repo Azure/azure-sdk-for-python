@@ -1,3 +1,18 @@
+# Azure Communication Configuration for Python
+
+> see https://aka.ms/autorest
+
+### Setup
+```ps
+npm install -g autorest
+```
+
+### Generation
+```ps
+cd <swagger-folder>
+autorest SWAGGER.md
+```
+
 ### Settings
 
 ```yaml

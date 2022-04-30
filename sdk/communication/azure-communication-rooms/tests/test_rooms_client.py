@@ -33,13 +33,11 @@ class TestRoomsClient(unittest.TestCase):
 
         def mock_send(*_, **__):
             return mock_response(status_code=201, json_payload={
-                "room": {
-                    "id": room_id,
-                    "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                    "validFrom": valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                    "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                    "participants": participants
-                }
+                "id": room_id,
+                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
+                "validFrom": valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "participants": participants
             })
 
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
@@ -64,13 +62,11 @@ class TestRoomsClient(unittest.TestCase):
 
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
-                "room": {
-                    "id": room_id,
-                    "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
-                    "validFrom": valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                    "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                    "participants": {}
-                }
+                "id": room_id,
+                "createdDateTime": "2022-08-28T01:38:19.0359921+00:00",
+                "validFrom": valid_from.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "validUntil": valid_until.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                "participants": {}
             })
 
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))

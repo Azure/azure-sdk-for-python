@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import asyncio
+from sys import api_version
 from turtle import update
 import pytest
 from datetime import datetime
@@ -15,7 +16,9 @@ from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from azure.communication.rooms.aio import RoomsClient
+from azure.communication.rooms._api_versions import ApiVersion
 from azure.communication.rooms._models import RoomParticipant
+
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import (
     BodyReplacerProcessor,
@@ -31,14 +34,18 @@ class FakeTokenCredential(object):
     def get_token(self, *args):
         return self.token
 
-class RoomsClientTestAsync(AsyncCommunicationTestCase):
+class RoomsClientTestAsyncLastVersion(AsyncCommunicationTestCase):
     def __init__(self, method_name):
-        super(RoomsClientTestAsync, self).__init__(method_name)
+        super(RoomsClientTestAsyncLastVersion, self).__init__(method_name)
 
     def setUp(self):
-        super(RoomsClientTestAsync, self).setUp()
-        if not self.is_playback():
+        super(RoomsClientTestAsyncLastVersion, self).setUp()
+        if self.is_playback():
             self.recording_processors.extend([
+                BodyReplacerProcessor(keys=["participants","invalid_participants"])])
+        else:
+            self.recording_processors.extend([
+                BodyReplacerProcessor(keys=["participants", "invalid_participants"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])
         # create multiple users users
         self.identity_client = CommunicationIdentityClient.from_connection_string(
@@ -50,11 +57,12 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         }
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str,
+            api_version=ApiVersion.V2021_04_07_preview,
             http_logging_policy=get_http_logging_policy()
         )
 
     def tearDown(self):
-        super(RoomsClientTestAsync, self).tearDown()
+        super(RoomsClientTestAsyncLastVersion, self).tearDown()
 
         # delete created users and chat threads
         if not self.is_playback():
