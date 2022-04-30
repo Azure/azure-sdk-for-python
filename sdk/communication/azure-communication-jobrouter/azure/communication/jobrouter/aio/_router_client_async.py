@@ -91,72 +91,51 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
 #region DistributionPolicyAio
 
     @distributed_trace_async
-    async def create_distribution_policy(
+    async def upsert_distribution_policy(
             self,
-            offer_ttl_seconds: float,
-            mode: Union[BestWorkerMode, LongestIdleMode, RoundRobinMode],
             **kwargs: Any
     ) -> DistributionPolicy:
         #  type: (...) -> DistributionPolicy
-        """Creates a new distribution policy.
+        """Create or update a new distribution policy.
 
-        :param float offer_ttl_seconds: The expiry time of any offers created under this policy will
+        :keyword str identifier: Id of the distribution policy.
+        :keyword float offer_ttl_seconds: The expiry time of any offers created under this policy will
         be governed by the offer time to live.
 
-        :param mode: Specified distribution mode
+        :keyword mode: Specified distribution mode
         :type mode: Union[~azure.communication.jobrouter.BestWorkerMode, ~azure.communication.jobrouter.LongestIdleMode,
         ~azure.communication.jobrouter.RoundRobinMode]
 
         :keyword str name: The name of this policy.
 
-        :return DistributionPolicy
-        :rtype ~azure.communication.jobrouter.DistributionPolicy
-        :raises ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-        repeatability_headers = _add_repeatability_headers(**kwargs)
-
-        if not offer_ttl_seconds:
-            raise ValueError("offer_ttl_seconds cannot be None.")
-
-        if not mode:
-            raise ValueError("mode cannot be None.")
-
-        distribution_policy = DistributionPolicy(
-            name = kwargs.pop('name', None),
-            offer_ttl_seconds = offer_ttl_seconds,
-            mode = mode
-        )
-
-        return await self._client.job_router.create_distribution_policy(
-            distribution_policy = distribution_policy,
-            repeatability_request_id = repeatability_headers['repeatability_request_id'],
-            repeatability_first_sent = repeatability_headers['repeatability_first_sent'],
-            **kwargs
-        )
-
-    @distributed_trace_async
-    async def update_distribution_policy(
-            self,
-            identifier: str,
-            distribution_policy: DistributionPolicy,
-            **kwargs: Any
-    ) -> DistributionPolicy:
-        #  type: (...) -> DistributionPolicy
-        """Updates a distribution policy.
-
-        :param str identifier: Id of the distribution policy.
-
-        :param ~azure.communication.jobrouter.DistributionPolicy distribution_policy: Updated policy
+        :keyword DistributionPolicy distribution_policy: An instance of distribution policy
 
         :return DistributionPolicy
         :rtype ~azure.communication.jobrouter.DistributionPolicy
         :raises ~azure.core.exceptions.HttpResponseError, ValueError
         """
-
+        identifier = kwargs.pop("identifier", None)
         if not identifier:
-            raise ValueError("id cannot be None.")
+            raise ValueError("identifier cannot be None.")
 
-        return await self._client.job_router.update_distribution_policy(
+        distribution_policy = kwargs.pop("distribution_policy", None)
+
+        if not distribution_policy:
+            offer_ttl_seconds = kwargs.pop("offer_ttl_seconds", None)
+            if not offer_ttl_seconds:
+                raise ValueError("offer_ttl_seconds cannot be None.")
+
+            mode = kwargs.pop("mode", None)
+            if not mode:
+                raise ValueError("mode cannot be None.")
+
+            distribution_policy = DistributionPolicy(
+                name = kwargs.pop('name', None),
+                offer_ttl_seconds = offer_ttl_seconds,
+                mode = mode
+            )
+
+        return await self._client.job_router.upsert_distribution_policy(
             id = identifier,
             patch = distribution_policy,
             **kwargs

@@ -4,10 +4,31 @@
 # ------------------------------------
 import time
 
-from _shared.testcase import CommunicationTestCase
+from _shared.testcase import (
+    CommunicationTestCase,
+    BodyReplacerProcessor,
+    ResponseReplacerProcessor
+)
+from azure_devtools.scenario_tests import LargeResponseBodyReplacer
+from _recording_processors import (
+    RouterHeaderSanitizer,
+    RouterQuerySanitizer,
+    RouterURIIdentityReplacer
+)
 
 
 class RouterTestCase(CommunicationTestCase):
+    def setUp(self):
+        super(RouterTestCase, self).setUp()
+        self.recording_processors.extend([
+            BodyReplacerProcessor(keys = ["id"]),
+            LargeResponseBodyReplacer(),
+            ResponseReplacerProcessor(keys = [self._resource_name]),
+            RouterHeaderSanitizer(headers = ["etag"]),
+            RouterQuerySanitizer(exceptions = ["api-version"]),
+            RouterURIIdentityReplacer()
+        ])
+
     def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
 

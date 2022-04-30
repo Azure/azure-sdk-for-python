@@ -16,29 +16,34 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:19 GMT
+      - Sat, 30 Apr 2022 01:27:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_list_dp_1?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body:
-      string: '{"id":"tst_list_dp_1","name":"tst_list_dp_1","offerTTLSeconds":10,"mode":{"kind":"best-worker","scoringRuleOptions":{"scoringParameters":["jobLabels","workerSelectors"],"allowScoringBatchOfWorkers":false,"descendingOrder":true},"minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
+    body: '{"id": "sanitized", "name": "tst_list_dp_1", "offerTTLSeconds": 10, "mode":
+      {"kind": "best-worker", "scoringRuleOptions": {"scoringParameters": ["jobLabels",
+      "workerSelectors"], "allowScoringBatchOfWorkers": false, "descendingOrder":
+      true}, "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors":
+      false}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Apr 2022 02:18:09 GMT
+      - Sat, 30 Apr 2022 01:27:00 GMT
       etag:
-      - '"0f00819c-0000-0700-0000-626b4ae20000"'
+      - REDACTED
       last-modified:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:26:57 GMT
       request-context:
       - appId=
       trace-id:
-      - e7a64952fd000d06e4bfcab61a9d0875
+      - d48c0e2ec4f2d89bb8e41e3910ff625c
       transfer-encoding:
       - chunked
       x-cache:
@@ -63,29 +68,34 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:19 GMT
+      - Sat, 30 Apr 2022 01:27:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_list_dp_2?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body:
-      string: '{"id":"tst_list_dp_2","name":"tst_list_dp_2","offerTTLSeconds":10,"mode":{"kind":"best-worker","scoringRuleOptions":{"scoringParameters":["jobLabels","workerSelectors"],"allowScoringBatchOfWorkers":false,"descendingOrder":true},"minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
+    body: '{"id": "sanitized", "name": "tst_list_dp_2", "offerTTLSeconds": 10, "mode":
+      {"kind": "best-worker", "scoringRuleOptions": {"scoringParameters": ["jobLabels",
+      "workerSelectors"], "allowScoringBatchOfWorkers": false, "descendingOrder":
+      true}, "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors":
+      false}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:27:00 GMT
       etag:
-      - '"0f00829c-0000-0700-0000-626b4ae20000"'
+      - REDACTED
       last-modified:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:26:57 GMT
       request-context:
       - appId=
       trace-id:
-      - 826e3ab19bf89bb88479c2355a08ae0a
+      - 96470a248f58478d691325ab5a348566
       transfer-encoding:
       - chunked
       x-cache:
@@ -110,29 +120,34 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:19 GMT
+      - Sat, 30 Apr 2022 01:27:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_list_dp_3?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
-    body:
-      string: '{"id":"tst_list_dp_3","name":"tst_list_dp_3","offerTTLSeconds":10,"mode":{"kind":"best-worker","scoringRuleOptions":{"scoringParameters":["jobLabels","workerSelectors"],"allowScoringBatchOfWorkers":false,"descendingOrder":true},"minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}'
+    body: '{"id": "sanitized", "name": "tst_list_dp_3", "offerTTLSeconds": 10, "mode":
+      {"kind": "best-worker", "scoringRuleOptions": {"scoringParameters": ["jobLabels",
+      "workerSelectors"], "allowScoringBatchOfWorkers": false, "descendingOrder":
+      true}, "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors":
+      false}}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:27:00 GMT
       etag:
-      - '"0f00839c-0000-0700-0000-626b4ae20000"'
+      - REDACTED
       last-modified:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:26:57 GMT
       request-context:
       - appId=
       trace-id:
-      - 442c0c46fe79ac6eeec34bbae4e3106c
+      - e94a4cbf28e657a6b640d048b47d9d7f
       transfer-encoding:
       - chunked
       x-cache:
@@ -152,25 +167,32 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:19 GMT
+      - Sat, 30 Apr 2022 01:27:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=2&api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2
   response:
-    body:
-      string: '{"value":[{"etag":"\"0f00e16b-0000-0700-0000-626b3cde0000\"","id":"tst_create_dp_1","name":"tst_create_dp_1","offerTTLSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}},{"etag":"\"0f00e86b-0000-0700-0000-626b3ce00000\"","id":"tst_update_dp_1","name":"tst_update_dp_1","offerTTLSeconds":10,"mode":{"kind":"round-robin","minConcurrentOffers":2,"maxConcurrentOffers":2,"bypassSelectors":false}}],"nextLink":"/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRFJLWjBGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRkhRVWhwYlVWUlFVRlBRVDA5SWl3aWNtRnVaMlVpT25zaWJXbHVJam9pSWl3aWJXRjRJam9pUmtZaWZYMWQ%3D"}'
+    body: '{"value": [{"etag": "\"0f00e16b-0000-0700-0000-626b3cde0000\"", "id": "tst_create_dp_1",
+      "name": "tst_create_dp_1", "offerTTLSeconds": 10, "mode": {"kind": "round-robin",
+      "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors": false}},
+      {"etag": "\"0f00e86b-0000-0700-0000-626b3ce00000\"", "id": "tst_update_dp_1",
+      "name": "tst_update_dp_1", "offerTTLSeconds": 10, "mode": {"kind": "round-robin",
+      "minConcurrentOffers": 2, "maxConcurrentOffers": 2, "bypassSelectors": false}}],
+      "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRFJLWjBGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRkxRVWhwYlRSUlJWRklOMFZCVDBGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:27:00 GMT
       request-context:
       - appId=
       trace-id:
-      - cda53de1fa6c21370f406714d67c22ae
+      - b0037a09ade19c9f610065328611846e
       transfer-encoding:
       - chunked
       x-cache:
@@ -190,25 +212,32 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:20 GMT
+      - Sat, 30 Apr 2022 01:27:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=2&api-version=2021-10-20-preview2&continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRFJLWjBGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRkhRVWhwYlVWUlFVRlBRVDA5SWl3aWNtRnVaMlVpT25zaWJXbHVJam9pSWl3aWJXRjRJam9pUmtZaWZYMWQ%3D
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
   response:
-    body:
-      string: '{"value":[{"etag":"\"0f00819c-0000-0700-0000-626b4ae20000\"","id":"tst_list_dp_1","name":"tst_list_dp_1","offerTTLSeconds":10,"mode":{"kind":"best-worker","scoringRuleOptions":{"scoringParameters":["jobLabels","workerSelectors"],"allowScoringBatchOfWorkers":false,"descendingOrder":true},"minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}},{"etag":"\"0f00829c-0000-0700-0000-626b4ae20000\"","id":"tst_list_dp_2","name":"tst_list_dp_2","offerTTLSeconds":10,"mode":{"kind":"best-worker","scoringRuleOptions":{"scoringParameters":["jobLabels","workerSelectors"],"allowScoringBatchOfWorkers":false,"descendingOrder":true},"minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}],"nextLink":"/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiV05LWjBGQlFVRkJRVUZCUFQwalVsUTZNaU5VVWtNNk5DTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZhZDIxQlFVRkJRVUZCUVc1VFdVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
+    body: '{"value": [{"etag": "\"15003b3b-0000-0700-0000-626c8b980000\"", "id": "tst_create_dp_async",
+      "name": "tst_create_dp_async", "offerTTLSeconds": 10, "mode": {"kind": "round-robin",
+      "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors": false}},
+      {"etag": "\"1500413b-0000-0700-0000-626c8b990000\"", "id": "tst_get_dp_async",
+      "name": "tst_get_dp_async", "offerTTLSeconds": 10, "mode": {"kind": "round-robin",
+      "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors": false}}],
+      "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRzlMUVVGQlFVRkJRVUZCUFQwalVsUTZNaU5VVWtNNk5DTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRkpRVWRGYjBGQ0szaEJSR2RCSWl3aWNtRnVaMlVpT25zaWJXbHVJam9pSWl3aWJXRjRJam9pUmtZaWZYMWQ%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:27:00 GMT
       request-context:
       - appId=
       trace-id:
-      - cbe0fb7ec7e42cc1ec009d5f63dffe00
+      - 1d0a24a184b19a564f358cd0caa83146
       transfer-encoding:
       - chunked
       x-cache:
@@ -228,25 +257,172 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:20 GMT
+      - Sat, 30 Apr 2022 01:27:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=2&api-version=2021-10-20-preview2&continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiV05LWjBGQlFVRkJRVUZCUFQwalVsUTZNaU5VVWtNNk5DTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZhZDIxQlFVRkJRVUZCUVc1VFdVRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
   response:
-    body:
-      string: '{"value":[{"etag":"\"0f00839c-0000-0700-0000-626b4ae20000\"","id":"tst_list_dp_3","name":"tst_list_dp_3","offerTTLSeconds":10,"mode":{"kind":"best-worker","scoringRuleOptions":{"scoringParameters":["jobLabels","workerSelectors"],"allowScoringBatchOfWorkers":false,"descendingOrder":true},"minConcurrentOffers":1,"maxConcurrentOffers":1,"bypassSelectors":false}}]}'
+    body: '{"value": [{"etag": "\"1500423b-0000-0700-0000-626c8b9a0000\"", "id": "tst_list_dp_1_async",
+      "name": "tst_list_dp_1_async", "offerTTLSeconds": 10, "mode": {"kind": "best-worker",
+      "scoringRuleOptions": {"scoringParameters": ["jobLabels", "workerSelectors"],
+      "allowScoringBatchOfWorkers": false, "descendingOrder": true}, "minConcurrentOffers":
+      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "\"1500433b-0000-0700-0000-626c8b9a0000\"",
+      "id": "tst_list_dp_2_async", "name": "tst_list_dp_2_async", "offerTTLSeconds":
+      10, "mode": {"kind": "best-worker", "scoringRuleOptions": {"scoringParameters":
+      ["jobLabels", "workerSelectors"], "allowScoringBatchOfWorkers": false, "descendingOrder":
+      true}, "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors":
+      false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiSEZMUVVGQlFVRkJRVUZCUFQwalVsUTZNeU5VVWtNNk5pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRkpRVWRGYjBGQ2VYaEJSR2RCSWl3aWNtRnVaMlVpT25zaWJXbHVJam9pSWl3aWJXRjRJam9pUmtZaWZYMWQ%3D"}'
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:27:00 GMT
       request-context:
       - appId=
       trace-id:
-      - 35563bc56ed949d78658d5cccbaaf29f
+      - 95599caf4ca50ab6b6301a0434dd46c4
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sat, 30 Apr 2022 01:27:06 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+  response:
+    body: '{"value": [{"etag": "\"1500443b-0000-0700-0000-626c8b9a0000\"", "id": "tst_list_dp_3_async",
+      "name": "tst_list_dp_3_async", "offerTTLSeconds": 10, "mode": {"kind": "best-worker",
+      "scoringRuleOptions": {"scoringParameters": ["jobLabels", "workerSelectors"],
+      "allowScoringBatchOfWorkers": false, "descendingOrder": true}, "minConcurrentOffers":
+      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "\"1500533b-0000-0700-0000-626c8b9b0000\"",
+      "id": "tst_update_dp_async", "name": "tst_update_dp_async", "offerTTLSeconds":
+      10, "mode": {"kind": "round-robin", "minConcurrentOffers": 2, "maxConcurrentOffers":
+      2, "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiSE5MUVVGQlFVRkJRVUZCUFQwalVsUTZOQ05VVWtNNk9DTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRkhRVWQ1YjNOUlFUUkJRVDA5SWl3aWNtRnVaMlVpT25zaWJXbHVJam9pSWl3aWJXRjRJam9pUmtZaWZYMWQ%3D"}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 30 Apr 2022 01:27:00 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 4140d4785ea2825197edd1c52bb371ca
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sat, 30 Apr 2022 01:27:06 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+  response:
+    body: '{"value": [{"etag": "\"1500e657-0000-0700-0000-626c90610000\"", "id": "tst_list_dp_1",
+      "name": "tst_list_dp_1", "offerTTLSeconds": 10, "mode": {"kind": "best-worker",
+      "scoringRuleOptions": {"scoringParameters": ["jobLabels", "workerSelectors"],
+      "allowScoringBatchOfWorkers": false, "descendingOrder": true}, "minConcurrentOffers":
+      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "\"1500e757-0000-0700-0000-626c90610000\"",
+      "id": "tst_list_dp_2", "name": "tst_list_dp_2", "offerTTLSeconds": 10, "mode":
+      {"kind": "best-worker", "scoringRuleOptions": {"scoringParameters": ["jobLabels",
+      "workerSelectors"], "allowScoringBatchOfWorkers": false, "descendingOrder":
+      true}, "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors":
+      false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRhMnRMVVVGQlFVRkJRVUZCUFQwalVsUTZOU05VVWtNNk1UQWpTVk5XT2pJalNVVlBPalkxTlRZM0kwWlFRenBCVTFGd1FVRkJRVUZCUVVGS1UydEJRVUZCUVVGQlFUMGlMQ0p5WVc1blpTSTZleUp0YVc0aU9pSWlMQ0p0WVhnaU9pSkdSaUo5ZlYwPQ%3D%3D"}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 30 Apr 2022 01:27:00 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 883bceaa62370bc0761719fced042220
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sat, 30 Apr 2022 01:27:07 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
+  response:
+    body: '{"value": [{"etag": "\"1500e857-0000-0700-0000-626c90610000\"", "id": "tst_list_dp_3",
+      "name": "tst_list_dp_3", "offerTTLSeconds": 10, "mode": {"kind": "best-worker",
+      "scoringRuleOptions": {"scoringParameters": ["jobLabels", "workerSelectors"],
+      "allowScoringBatchOfWorkers": false, "descendingOrder": true}, "minConcurrentOffers":
+      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}]}'
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 30 Apr 2022 01:27:01 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 863d7e2c716e5130867d6b8809c0d942
       transfer-encoding:
       - chunked
       x-cache:
@@ -268,23 +444,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:20 GMT
+      - Sat, 30 Apr 2022 01:27:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_list_dp_1?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       date:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:27:01 GMT
       request-context:
       - appId=
       trace-id:
-      - e590017724654e8187c05192ef3b5e57
+      - 379152f92b5872d60da7a3ef32f12124
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -304,23 +482,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:20 GMT
+      - Sat, 30 Apr 2022 01:27:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_list_dp_2?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       date:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:27:01 GMT
       request-context:
       - appId=
       trace-id:
-      - 1ce49dae54189f4f63d8cd75ad35a580
+      - 914b3fc1f77a7ad09f05f76ac9fe7ea4
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -340,23 +520,25 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 29 Apr 2022 02:18:20 GMT
+      - Sat, 30 Apr 2022 01:27:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/tst_list_dp_3?api-version=2021-10-20-preview2
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       date:
-      - Fri, 29 Apr 2022 02:18:10 GMT
+      - Sat, 30 Apr 2022 01:27:01 GMT
       request-context:
       - appId=
       trace-id:
-      - bfd7eba7619276a3d7a4ba0a9cfc6d7b
+      - bbab21c9a0986c99a2a5fa661727179c
       x-cache:
       - CONFIG_NOCACHE
     status:

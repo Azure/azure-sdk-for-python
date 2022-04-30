@@ -14,7 +14,6 @@ from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
     RouterClient,
-    DistributionPolicy,
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode
