@@ -495,7 +495,8 @@ def get_package_properties(setup_py_path):
 
 def is_track2_package(reqs):
     for req in reqs:
-        if req.startswith('azure-core'):
+        # the package must be dependant on azure core or azure mgmt core
+        if req.startswith('azure-core') or req.startswith('azure-mgmt-core'):
             return True
     return False
 
