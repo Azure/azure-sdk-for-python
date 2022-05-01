@@ -9,7 +9,10 @@ if __name__ == "__main__":
         for p in pkg_resources.working_set
         if p.project_name.startswith("azure")
     ]
+    logging.info('')
     for pkg in packages:
+        if not pkg[0].startswith('azure'):
+            continue
         qualified_namespace = get_package_details(pkg[2] + "/setup.py")[1]
         logging.info("Importing the library {}".format(qualified_namespace))
         try:
