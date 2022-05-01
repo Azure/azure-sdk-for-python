@@ -1,18 +1,11 @@
 import logging
 import importlib
-import pkg_resources
-from common_tasks import get_package_details
+from common_tasks import get_package_details, get_all_track2_packages
 
 if __name__ == "__main__":
-    packages = [
-        (p.project_name, p.version, p.module_path)
-        for p in pkg_resources.working_set
-        if p.project_name.startswith("azure")
-    ]
-    logging.info('')
+    packages = get_all_track2_packages('.')
+    logging.info('list of packages being tested: {}'.format(packages))
     for pkg in packages:
-        if not pkg[0].startswith('azure'):
-            continue
         qualified_namespace = get_package_details(pkg[2] + "/setup.py")[1]
         logging.info("Importing the library {}".format(qualified_namespace))
         try:
