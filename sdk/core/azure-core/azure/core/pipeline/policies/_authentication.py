@@ -214,7 +214,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         return
 
 
-class MultitenantCredentialPolicy(BearerTokenCredentialPolicy):
+class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
     See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD

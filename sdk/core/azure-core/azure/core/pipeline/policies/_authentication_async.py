@@ -130,7 +130,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-class AsyncMultitenantCredentialPolicy(AsyncBearerTokenCredentialPolicy):
+class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
     See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD

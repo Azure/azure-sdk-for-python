@@ -13,7 +13,7 @@ from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
-    AsyncMultitenantCredentialPolicy,
+    AsyncBearerTokenChallengePolicy,
     SansIOHTTPPolicy,
 )
 import pytest
@@ -266,7 +266,7 @@ async def test_multitenant_policy_uses_scopes_and_tenant(http_request):
             return AccessToken(expected_token, 0)
 
         credential = Mock(get_token=Mock(wraps=get_token))
-        policy = AsyncMultitenantCredentialPolicy(credential, "scope")
+        policy = AsyncBearerTokenChallengePolicy(credential, "scope")
         pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
         await pipeline.run(http_request("GET", "https://localhost"))
 
@@ -338,7 +338,7 @@ async def test_multitenant_policy_disable_tenant_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(get_token=Mock(wraps=get_token))
-        policy = AsyncMultitenantCredentialPolicy(credential, "scope", discover_tenant=False)
+        policy = AsyncBearerTokenChallengePolicy(credential, "scope", discover_tenant=False)
         pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
         await pipeline.run(http_request("GET", "https://localhost"))
 
@@ -398,7 +398,7 @@ async def test_multitenant_policy_disable_scopes_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(get_token=Mock(wraps=get_token))
-        policy = AsyncMultitenantCredentialPolicy(credential, "scope", discover_scopes=False)
+        policy = AsyncBearerTokenChallengePolicy(credential, "scope", discover_scopes=False)
         pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
         await pipeline.run(http_request("GET", "https://localhost"))
 
@@ -449,7 +449,7 @@ async def test_multitenant_policy_disable_any_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(get_token=Mock(wraps=get_token))
-        policy = AsyncMultitenantCredentialPolicy(
+        policy = AsyncBearerTokenChallengePolicy(
             credential, "scope", discover_tenant=False, discover_scopes=False
         )
         pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
