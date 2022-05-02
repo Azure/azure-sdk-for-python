@@ -225,7 +225,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
     :keyword bool discover_scopes: Determines if scopes from authentication challenges should be provided to token
-        requests, instead of the scopes given to the policy's constructor. Defaults to True.
+        requests, instead of the scopes given to the policy's constructor, if any are present. Defaults to True.
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
@@ -257,7 +257,10 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
         try:
             challenge = _HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
+            # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
             scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
+            if scope == "/.default":
+                scope = self._scopes
         except ValueError:
             return False
 
