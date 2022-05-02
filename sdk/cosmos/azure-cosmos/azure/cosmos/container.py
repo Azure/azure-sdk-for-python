@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
+from typing import Any, Dict, List, Optional, Union, Iterable, cast, overload  # pylint: disable=unused-import
 
 
 import warnings
@@ -110,20 +110,29 @@ class ContainerProxy(object):
             return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
         return partition_key
 
+    @overload
+    def read(
+        self,
+        *,
+        populate_partition_key_range_statistics: Optional[bool] = None,
+        populate_quota_info: Optional[bool] = None,
+        **kwargs
+    ):
+        ...
+
+
     @distributed_trace
     def read(
         self,
-        populate_query_metrics=None,  # type: Optional[bool]
-        populate_partition_key_range_statistics=None,  # type: Optional[bool]
-        populate_quota_info=None,  # type: Optional[bool]
+        *args,
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Read the container properties.
 
-        :param populate_partition_key_range_statistics: Enable returning partition key
+        :keyword bool populate_partition_key_range_statistics: Enable returning partition key
             range statistics in response headers.
-        :param populate_quota_info: Enable returning collection storage quota information in response headers.
+        :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -134,12 +143,15 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
+        populate_query_metrics = args[0] if args else None or kwargs.pop('populate_query_metrics', None)
+        if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
+        populate_partition_key_range_statistics = kwargs.pop("populate_partition_key_range_statistics", None)
+        populate_quota_info = kwargs.pop("populate_quota_info", None)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
