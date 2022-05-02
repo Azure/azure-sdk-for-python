@@ -1,9 +1,9 @@
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
 with the Communication Chat SDK and exporting to Azure monitor backend.
-This example traces calls for creating a database and container using
-CosmosDb SDK. The telemetry will be collected automatically and sent
-to Application Insights via the AzureMonitorTraceExporter
+This example traces calls for creating a chat client and thread using
+Communication Chat SDK. The telemetry will be collected automatically
+and sent to Application Insights via the AzureMonitorTraceExporter
 """
 
 import os
