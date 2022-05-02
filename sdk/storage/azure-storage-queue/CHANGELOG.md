@@ -5,6 +5,8 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
 
 ## 12.3.0b1 (2022-04-14)
 

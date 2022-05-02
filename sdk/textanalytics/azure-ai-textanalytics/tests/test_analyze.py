@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     RecognizeEntitiesAction,
@@ -58,6 +58,7 @@ TextAnalyticsCustomPreparer = functools.partial(
     textanalytics_custom_entities_project_name="custom_entities_project_name",
     textanalytics_custom_entities_deployment_name="custom_entities_deployment_name",
 )
+
 
 class TestAnalyze(TextAnalyticsTest):
 
@@ -378,6 +379,68 @@ class TestAnalyze(TextAnalyticsTest):
                 assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
     @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
+    @recorded_by_proxy
+    def test_show_stats_and_model_version_multiple_tasks_v3_1(self, client):
+
+        def callback(resp):
+            assert resp.raw_response
+            tasks = resp.raw_response['tasks']
+            assert tasks['completed'] == 5
+            assert tasks['inProgress'] == 0
+            assert tasks['failed'] == 0
+            assert tasks['total'] == 5
+            num_tasks = 0
+            for key, task in tasks.items():
+                if "Tasks" in key:
+                    num_tasks += 1
+                    assert len(task) == 1
+                    task_stats = task[0]['results']['statistics']
+                    assert task_stats['documentsCount'] == 4
+                    assert task_stats['validDocumentsCount'] == 4
+                    assert task_stats['erroneousDocumentsCount'] == 0
+                    assert task_stats['transactionsCount'] == 4
+            assert num_tasks == 5
+
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+
+        poller = client.begin_analyze_actions(
+            docs,
+            actions=[
+                RecognizeEntitiesAction(model_version="latest"),
+                ExtractKeyPhrasesAction(model_version="latest"),
+                RecognizePiiEntitiesAction(model_version="latest"),
+                RecognizeLinkedEntitiesAction(model_version="latest"),
+                AnalyzeSentimentAction(model_version="latest"),
+            ],
+            show_stats=True,
+            polling_interval=self._interval(),
+            raw_response_hook=callback,
+        )
+
+        response = poller.result()
+
+        pages = list(response)
+        assert len(pages) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+        ]
+        for document_results in pages:
+            assert len(document_results) == len(action_order)
+            for document_result in document_results:
+                assert document_result.statistics
+                assert document_result.statistics.character_count
+                assert document_result.statistics.transaction_count
+
+    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_show_stats_and_model_version_multiple_tasks(self, client):
@@ -390,15 +453,13 @@ class TestAnalyze(TextAnalyticsTest):
             assert tasks['failed'] == 0
             assert tasks['total'] == 6
             num_tasks = 0
-            for key, task in tasks.items():
-                if "Tasks" in key:
-                    num_tasks += 1
-                    assert len(task) == 1
-                    task_stats = task[0]['results']['statistics']
-                    assert task_stats['documentsCount'] == 4
-                    assert task_stats['validDocumentsCount'] == 4
-                    assert task_stats['erroneousDocumentsCount'] == 0
-                    assert task_stats['transactionsCount'] == 4
+            for task in tasks["items"]:
+                num_tasks += 1
+                task_stats = task['results']['statistics']
+                assert task_stats['documentsCount'] == 4
+                assert task_stats['validDocumentsCount'] == 4
+                assert task_stats['erroneousDocumentsCount'] == 0
+                assert task_stats['transactionsCount'] == 4
             assert num_tasks == 6
 
         docs = [{"id": "56", "text": ":)"},
@@ -489,14 +550,15 @@ class TestAnalyze(TextAnalyticsTest):
             for doc in document_results:
                 assert doc.is_error
 
+    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_bad_model_version_error_multiple_tasks(self, client):
-        docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
+        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
         with pytest.raises(HttpResponseError):
-            client.begin_analyze_actions(
+            res = client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest"),
@@ -509,11 +571,12 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             ).result()
 
+    @pytest.mark.skip("service expects modelVersion in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
-        docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
+        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
         with pytest.raises(HttpResponseError):
             client.begin_analyze_actions(
@@ -652,10 +715,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )  # don't match on body for this test since we scrub the proj/deployment values
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
@@ -1014,10 +1074,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_single_category_classify_project_name,
             textanalytics_single_category_classify_deployment_name
     ):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )  # don't match on body for this test since we scrub the proj/deployment values
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1057,10 +1114,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_multi_category_classify_project_name,
             textanalytics_multi_category_classify_deployment_name
     ):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )  # don't match on body for this test since we scrub the proj/deployment values
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1101,10 +1155,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )  # don't match on body for this test since we scrub the proj/deployment values
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1138,8 +1189,9 @@ class TestAnalyze(TextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/12409536 and https://github.com/Azure/azure-sdk-for-python/issues/21369")
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
+    @recorded_by_proxy
     def test_custom_partial_error(
             self,
             textanalytics_custom_text_endpoint,
@@ -1151,6 +1203,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
         client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1243,20 +1296,11 @@ class TestAnalyze(TextAnalyticsTest):
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsCustomPreparer()
-    def test_generic_action_error_no_target(
+    @TextAnalyticsPreparer()
+    def test_generic_action_error_no_target_v3_1(
         self,
         **kwargs
     ):
-        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
-        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
-        textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
-        textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
-        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
-        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
-        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
-        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
@@ -1281,44 +1325,101 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), transport=transport)
+        endpoint = kwargs.pop("textanalytics_test_endpoint")
+        key = kwargs.pop("textanalytics_test_api_key")
+        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
 
         with pytest.raises(HttpResponseError) as e:
             response = list(client.begin_analyze_actions(
                 docs,
                 actions=[
-                    SingleCategoryClassifyAction(
-                        project_name=textanalytics_single_category_classify_project_name,
-                        deployment_name=textanalytics_single_category_classify_deployment_name
-                    ),
-                    MultiCategoryClassifyAction(
-                        project_name=textanalytics_multi_category_classify_project_name,
-                        deployment_name=textanalytics_multi_category_classify_deployment_name
-                    ),
-                    RecognizeCustomEntitiesAction(
-                        project_name=textanalytics_custom_entities_project_name,
-                        deployment_name=textanalytics_custom_entities_deployment_name
-                    )
+                    RecognizeEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    RecognizePiiEntitiesAction()
                 ],
                 show_stats=True,
                 polling_interval=self._interval(),
             ).result())
-        assert e.value.message == "(InternalServerError) 1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+        assert e.value.message == "(InternalServerError) 1 out of 3 job tasks failed. Failed job tasks : v3.1/entities/general."
 
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsCustomPreparer()
-    def test_action_errors_with_targets(
+    @TextAnalyticsPreparer()
+    def test_generic_action_error_no_target(
         self,
         **kwargs
     ):
-        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
-        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
-        textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
-        textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
-        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
-        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
-        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
-        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.Mock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_error_no_target_language.json",
+            )
+        )
+        with open(path_to_mock_json_response) as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
+        response.content_type = "application/json"
+        transport = mock.Mock(send=lambda request, **kwargs: response)
+
+        endpoint = kwargs.pop("textanalytics_test_endpoint")
+        key = kwargs.pop("textanalytics_test_api_key")
+        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport)
+
+        # workaround to get mocked response to work with deserialized polymorphic response type
+        def get_deserialized_for_mock(response, deserialized, headers):
+            from azure.ai.textanalytics._generated.models import AnalyzeTextJobState, AnalyzeTextJobsInput
+            from azure.ai.textanalytics._response_handlers import analyze_paged_result
+            deserialized = AnalyzeTextJobState.deserialize(response.raw_response)
+
+            return analyze_paged_result(
+                ["1", "2"],
+                [(_AnalyzeActionsType.RECOGNIZE_ENTITIES, '0'),
+                 (_AnalyzeActionsType.EXTRACT_KEY_PHRASES, '1'),
+                 (_AnalyzeActionsType.RECOGNIZE_PII_ENTITIES, '2'),
+                 (_AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES, '3'),
+                 (_AnalyzeActionsType.ANALYZE_SENTIMENT, '4'),
+                 (_AnalyzeActionsType.EXTRACT_SUMMARY, '5')
+                ],
+                client._client.analyze_text_job_status,
+                response,
+                deserialized,
+                headers,
+                show_stats=True,
+            )
+
+        with pytest.raises(HttpResponseError) as e:
+            response = list(client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction(),
+                    ExtractSummaryAction()
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+                raw_response_hook=lambda resp: resp,
+                cls=get_deserialized_for_mock
+            ).result())
+        assert e.value.message == "(InternalServerError) 1 out of 6 job tasks failed. Failed job tasks : keyphrasescomposite."
+
+    @TextAnalyticsPreparer()
+    def test_action_errors_with_targets_v3_1(
+        self,
+        **kwargs
+    ):
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
@@ -1344,7 +1445,9 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), transport=transport)
+        endpoint = kwargs.pop("textanalytics_test_endpoint")
+        key = kwargs.pop("textanalytics_test_api_key")
+        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
 
         response = list(client.begin_analyze_actions(
             docs,
@@ -1354,24 +1457,8 @@ class TestAnalyze(TextAnalyticsTest):
                 RecognizePiiEntitiesAction(),
                 RecognizeLinkedEntitiesAction(),
                 AnalyzeSentimentAction(),
-                ExtractSummaryAction(),
                 RecognizePiiEntitiesAction(domain_filter="phi"),
-                SingleCategoryClassifyAction(
-                    project_name=textanalytics_single_category_classify_project_name,
-                    deployment_name=textanalytics_single_category_classify_deployment_name
-                ),
-                MultiCategoryClassifyAction(
-                    project_name=textanalytics_multi_category_classify_project_name,
-                    deployment_name=textanalytics_multi_category_classify_deployment_name
-                ),
-                RecognizeCustomEntitiesAction(
-                    project_name=textanalytics_custom_entities_project_name,
-                    deployment_name=textanalytics_custom_entities_deployment_name
-                ),
-                SingleCategoryClassifyAction(
-                    project_name=textanalytics_single_category_classify_project_name,
-                    deployment_name=textanalytics_single_category_classify_deployment_name
-                ),
+                AnalyzeSentimentAction(),
             ],
             show_stats=True,
             polling_interval=self._interval(),
@@ -1379,9 +1466,9 @@ class TestAnalyze(TextAnalyticsTest):
         assert len(response) == len(docs)
         for idx, result in enumerate(response[0]):
             assert result.id == "1"
-            if idx == 10:
+            if idx == 6:
                 assert not result.is_error
-                assert isinstance(result, SingleCategoryClassifyResult)
+                assert isinstance(result, AnalyzeSentimentResult)
             else:
                 assert result.is_error
                 assert result.error.code == "InvalidRequest"
@@ -1390,23 +1477,111 @@ class TestAnalyze(TextAnalyticsTest):
         for idx, result in enumerate(response[1]):
             assert result.id == "2"
             assert result.is_error
-            if idx == 10:
+            if idx == 6:
                 assert result.error.code == "InvalidDocument"
                 assert result.error.message == "Document text is empty."
             else:
                 assert result.error.code == "InvalidRequest"
                 assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
 
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsCustomPreparer()
-    def test_action_job_failure(
+    @TextAnalyticsPreparer()
+    def test_action_errors_with_targets(
+        self,
+        **kwargs
+    ):
+        docs = [
+            {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.Mock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+
+        # a mix of action errors to translate to doc errors, regular doc errors, and a successful response
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_error_with_targets_language.json",
+            )
+        )
+        with open(path_to_mock_json_response) as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
+        response.content_type = "application/json"
+        transport = mock.Mock(send=lambda request, **kwargs: response)
+
+        endpoint = kwargs.pop("textanalytics_test_endpoint")
+        key = kwargs.pop("textanalytics_test_api_key")
+        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport)
+
+        # workaround to get mocked response to work with deserialized polymorphic response type
+        def get_deserialized_for_mock(response, deserialized, headers):
+            from azure.ai.textanalytics._generated.models import AnalyzeTextJobState, AnalyzeTextJobsInput
+            from azure.ai.textanalytics._response_handlers import analyze_paged_result
+            deserialized = AnalyzeTextJobState.deserialize(response.raw_response)
+            return analyze_paged_result(
+                ["1", "2"],
+                [(_AnalyzeActionsType.RECOGNIZE_ENTITIES, '0'),
+                 (_AnalyzeActionsType.EXTRACT_KEY_PHRASES, '1'),
+                 (_AnalyzeActionsType.RECOGNIZE_PII_ENTITIES, '2'),
+                 (_AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES, '3'),
+                 (_AnalyzeActionsType.ANALYZE_SENTIMENT, '4'),
+                 (_AnalyzeActionsType.RECOGNIZE_PII_ENTITIES, '5'),
+                 (_AnalyzeActionsType.ANALYZE_SENTIMENT, '6')
+                ],
+                client._client.analyze_text_job_status,
+                response,
+                deserialized,
+                headers,
+                show_stats=True,
+            )
+
+        response = list(client.begin_analyze_actions(
+            docs,
+            actions=[
+                RecognizeEntitiesAction(),
+                ExtractKeyPhrasesAction(),
+                RecognizePiiEntitiesAction(),
+                RecognizeLinkedEntitiesAction(),
+                AnalyzeSentimentAction(),
+                RecognizePiiEntitiesAction(domain_filter="phi"),
+                AnalyzeSentimentAction(),
+            ],
+            show_stats=True,
+            polling_interval=self._interval(),
+            raw_response_hook=lambda resp: resp,
+            cls=get_deserialized_for_mock
+        ).result())
+        assert len(response) == len(docs)
+        for idx, result in enumerate(response[0]):
+            assert result.id == "1"
+            if idx == 6:
+                assert not result.is_error
+                assert isinstance(result, AnalyzeSentimentResult)
+            else:
+                assert result.is_error
+                assert result.error.code == "InvalidRequest"
+                assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
+
+        for idx, result in enumerate(response[1]):
+            assert result.id == "2"
+            assert result.is_error
+            if idx == 6:
+                assert result.error.code == "InvalidDocument"
+                assert result.error.message == "Document text is empty."
+            else:
+                assert result.error.code == "InvalidRequest"
+                assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
+
+    @TextAnalyticsPreparer()
+    def test_action_job_failure_v3_1(
             self,
             **kwargs
     ):
-        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
-        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
-        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
-        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
         docs = [
             {"id": "1", "language": "en",
              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1433,23 +1608,87 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key),
-                                     transport=transport)
+        endpoint = kwargs.pop("textanalytics_test_endpoint")
+        key = kwargs.pop("textanalytics_test_api_key")
+        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
 
         with pytest.raises(HttpResponseError) as e:
             response = list(client.begin_analyze_actions(
                 docs,
                 actions=[
-                    RecognizeCustomEntitiesAction(
-                        project_name=textanalytics_custom_entities_project_name,
-                        deployment_name=textanalytics_custom_entities_deployment_name
-                    ),
+                    RecognizeEntitiesAction(),
                 ],
                 show_stats=True,
                 polling_interval=self._interval(),
             ).result())
             assert len(response) == len(docs)
-        assert e.value.message == "(InternalServerError) 1 out of 1 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+        assert e.value.message == "(InternalServerError) 1 out of 1 job tasks failed. Failed job tasks : v3.1/entities/general."
+
+    @TextAnalyticsPreparer()
+    def test_action_job_failure(
+            self,
+            **kwargs
+    ):
+        docs = [
+            {"id": "1", "language": "en",
+             "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
+            {"id": "2", "language": "en", "text": ""},
+        ]
+
+        response = mock.Mock(
+            status_code=200,
+            headers={"Content-Type": "application/json", "operation-location": "https://fakeurl.com"}
+        )
+
+        # action job failure with status=="failed", no partial results so we raise an exception in this case
+        path_to_mock_json_response = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__),
+                "..",
+                "./mock_test_responses/action_job_failure_language.json",
+            )
+        )
+        with open(path_to_mock_json_response) as fd:
+            mock_json_response = json.loads(fd.read())
+
+        response.text = lambda encoding=None: json.dumps(mock_json_response)
+        response.content_type = "application/json"
+        transport = mock.Mock(send=lambda request, **kwargs: response)
+
+        endpoint = kwargs.pop("textanalytics_test_endpoint")
+        key = kwargs.pop("textanalytics_test_api_key")
+        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key),
+                                     transport=transport)
+
+        # workaround to get mocked response to work with deserialized polymorphic response type
+        def get_deserialized_for_mock(response, deserialized, headers):
+            from azure.ai.textanalytics._generated.models import AnalyzeTextJobState, AnalyzeTextJobsInput
+            from azure.ai.textanalytics._response_handlers import analyze_paged_result
+            deserialized = AnalyzeTextJobState.deserialize(response.raw_response)
+
+            return analyze_paged_result(
+                ["1", "2"],
+                [(_AnalyzeActionsType.EXTRACT_KEY_PHRASES, '0')],
+                client._client.analyze_text_job_status,
+                response,
+                deserialized,
+                headers,
+                show_stats=True,
+            )
+
+        with pytest.raises(HttpResponseError) as e:
+            response = list(client.begin_analyze_actions(
+                docs,
+                actions=[
+                    ExtractKeyPhrasesAction()
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+                raw_response_hook=lambda resp: resp,
+                cls=get_deserialized_for_mock
+            ).result())
+            assert len(response) == len(docs)
+        assert e.value.message == "(InternalServerError) 1 out of 1 job tasks failed. Failed job tasks : keyphrasescomposite."
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})

@@ -8,6 +8,8 @@
 ### Bugs Fixed:
 - Fixed a bug in `BlobClient.from_blob_url()` such that users will receive a more helpful error
 message if they pass an incorrect URL without a full `/container/blob` path.
+- Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
+an Account SAS with certain service level operations.
 
 ## 12.12.0b1 (2022-04-14)
 

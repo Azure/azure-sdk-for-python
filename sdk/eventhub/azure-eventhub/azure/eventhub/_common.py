@@ -534,7 +534,6 @@ class EventDataBatch(object):
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
-        self._internal_events: List[Union[EventData, AmqpAnnotatedMessage]] = []
 
     def __repr__(self):
         # type: () -> str
@@ -551,8 +550,9 @@ class EventDataBatch(object):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
         outgoing_batch_data = [transform_outbound_single_message(m, EventData) for m in batch_data]
         batch_data_instance = cls(partition_key=partition_key)
-        for data in outgoing_batch_data:
-            batch_data_instance.add(data)
+        batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
+            outgoing_batch_data
+        )
         return batch_data_instance
 
     def _load_events(self, events):
@@ -621,7 +621,7 @@ class EventDataBatch(object):
                     self.max_size_in_bytes
                 )
             )
-        self._internal_events.append(event_data)
+
         self.message._body_gen.append(outgoing_event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1

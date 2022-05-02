@@ -426,7 +426,7 @@ class ContainerProxy(object):
         item_link = self._get_document_link(item)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
@@ -472,7 +472,7 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:

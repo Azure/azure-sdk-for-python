@@ -6,25 +6,28 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._network_managers_operations import NetworkManagersOperations
-from ._network_manager_commits_operations import NetworkManagerCommitsOperations
-from ._network_manager_deployment_status_operations import NetworkManagerDeploymentStatusOperations
-from ._effective_virtual_networks_operations import EffectiveVirtualNetworksOperations
-from ._active_connectivity_configurations_operations import ActiveConnectivityConfigurationsOperations
-from ._active_security_admin_rules_operations import ActiveSecurityAdminRulesOperations
-from ._active_security_user_rules_operations import ActiveSecurityUserRulesOperations
-from ._connectivity_configurations_operations import ConnectivityConfigurationsOperations
-from ._effective_connectivity_configurations_operations import EffectiveConnectivityConfigurationsOperations
-from ._network_manager_effective_security_admin_rules_operations import NetworkManagerEffectiveSecurityAdminRulesOperations
-from ._network_groups_operations import NetworkGroupsOperations
-from ._security_user_configurations_operations import SecurityUserConfigurationsOperations
-from ._user_rule_collections_operations import UserRuleCollectionsOperations
-from ._user_rules_operations import UserRulesOperations
-from ._security_admin_configurations_operations import SecurityAdminConfigurationsOperations
-from ._admin_rule_collections_operations import AdminRuleCollectionsOperations
-from ._admin_rules_operations import AdminRulesOperations
-from ._network_security_perimeters_operations import NetworkSecurityPerimetersOperations
-from ._perimeter_associable_resource_types_operations import PerimeterAssociableResourceTypesOperations
+from ._operations import NetworkManagersOperations
+from ._operations import NetworkManagerCommitsOperations
+from ._operations import NetworkManagerDeploymentStatusOperations
+from ._operations import EffectiveVirtualNetworksOperations
+from ._operations import ActiveConnectivityConfigurationsOperations
+from ._operations import ActiveSecurityAdminRulesOperations
+from ._operations import ActiveSecurityUserRulesOperations
+from ._operations import ConnectivityConfigurationsOperations
+from ._operations import EffectiveConnectivityConfigurationsOperations
+from ._operations import NetworkManagerEffectiveSecurityAdminRulesOperations
+from ._operations import NetworkGroupsOperations
+from ._operations import SecurityUserConfigurationsOperations
+from ._operations import UserRuleCollectionsOperations
+from ._operations import UserRulesOperations
+from ._operations import SecurityAdminConfigurationsOperations
+from ._operations import AdminRuleCollectionsOperations
+from ._operations import AdminRulesOperations
+from ._operations import NetworkSecurityPerimetersOperations
+from ._operations import NspProfilesOperations
+from ._operations import NspAccessRulesOperations
+from ._operations import NspAssociationsOperations
+from ._operations import PerimeterAssociableResourceTypesOperations
 
 __all__ = [
     'NetworkManagersOperations',
@@ -45,5 +48,8 @@ __all__ = [
     'AdminRuleCollectionsOperations',
     'AdminRulesOperations',
     'NetworkSecurityPerimetersOperations',
+    'NspProfilesOperations',
+    'NspAccessRulesOperations',
+    'NspAssociationsOperations',
     'PerimeterAssociableResourceTypesOperations',
 ]
