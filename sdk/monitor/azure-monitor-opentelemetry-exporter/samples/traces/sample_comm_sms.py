@@ -1,9 +1,9 @@
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
-with the Communication Phone SDK and exporting to Azure monitor backend.
-This example traces calls for creating a phone client getting phone numbers
-using Communication Phone SDK. The telemetry will be collected automatically
-and sent to Application Insights via the AzureMonitorTraceExporter
+with the Communication SMS SDK and exporting to Azure monitor backend.
+This example traces calls for sending an SMS message using Communication 
+SMS SDK. The telemetry will be collected automatically and sent to
+Application Insights via the AzureMonitorTraceExporter
 """
 
 import os
@@ -32,14 +32,17 @@ span_processor = BatchSpanProcessor(
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
-# Example with Communication Phone SDKs
-from azure.communication.phonenumbers import PhoneNumbersClient
+# Example with Communication SMS SDKs
+from azure.communication.sms import SmsClient
 
-# Create a Phone Client
+# Create a SMS Client
 connection_str = "endpoint=ENDPOINT;accessKey=KEY"
-phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
+sms_client = SmsClient.from_connection_string(connection_str)
 
-with tracer.start_as_current_span(name="PurchasedPhoneNumbers"):
-    purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
-    for acquired_phone_number in purchased_phone_numbers:
-        print(acquired_phone_number.phone_number)
+with tracer.start_as_current_span(name="SendSMS"):
+    sms_responses = sms_client.send(
+    from_="<from-phone-number>",
+    to="<to-phone-number-1>",
+    message="Hello World via SMS",
+    enable_delivery_report=True, # optional property
+    tag="custom-tag") # optional property
