@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, Optional, TypeVar
+from typing import Any, Dict, Union, TypeVar
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -89,14 +89,13 @@ class ScriptsProxy(object):
     def query_stored_procedures(
         self,
         query: str,
-        parameters: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all stored procedures matching the given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: Optional[List[str]]
+        :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :paramtype parameters: Optional[List[str]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An AsyncItemPaged of stored procedures (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -106,6 +105,7 @@ class ScriptsProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
+        parameters = kwargs.pop('parameters', None)
         return self.client_connection.QueryStoredProcedures(
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
@@ -197,8 +197,6 @@ class ScriptsProxy(object):
     async def execute_stored_procedure(
         self,
         sproc: Union[str, Dict[str, Any]],
-        partition_key: Optional[Union[str, int, float, bool]] = None,
-        params: Optional[List[Dict[str, Any]]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Execute a specified stored procedure.
@@ -207,11 +205,11 @@ class ScriptsProxy(object):
 
         :param sproc: The ID (name) or dict representing the stored procedure to be executed.
         :type sproc: Union[str, Dict[str, Any]]
-        :param partition_key: Specifies the partition key to indicate which partition the stored procedure should
+        :keyword partition_key: Specifies the partition key to indicate which partition the stored procedure should
             execute on.
-        :type partition_key: Optional[Union[str, int, float, bool]]
-        :param params: List of parameters to be passed to the stored procedure to be executed.
-        :type params: Optional[List[Dict[str, Any]]]
+        :paramtype partition_key: Union[str, int, float, bool]
+        :keyword params: List of parameters to be passed to the stored procedure to be executed.
+        :paramtype params: List[Dict[str, Any]]
         :keyword bool enable_script_logging: Enables or disables script logging for the current request.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
             or if the stored procedure with given id does not exists in the container.
@@ -220,6 +218,7 @@ class ScriptsProxy(object):
         """
 
         request_options = _build_options(kwargs)
+        partition_key = kwargs.pop("partition_key", None)
         if partition_key is not None:
             request_options["partitionKey"] = (
                 _CosmosClientConnection._return_undefined_or_empty_partition_key(
@@ -231,6 +230,7 @@ class ScriptsProxy(object):
         if enable_script_logging is not None:
             request_options["enableScriptLogging"] = enable_script_logging
 
+        params = kwargs.pop("params", None)
         return await self.client_connection.ExecuteStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
             params=params,
@@ -259,14 +259,13 @@ class ScriptsProxy(object):
     def query_triggers(
             self,
             query: str,
-            parameters: Optional[List[Dict[str, Any]]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all triggers matching the given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: Optional[List[Dict[str, Any]]]
+        :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An AsyncItemPaged of triggers (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -276,6 +275,7 @@ class ScriptsProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
+        parameters = kwargs.pop('parameters', None)
         return self.client_connection.QueryTriggers(
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
@@ -386,14 +386,13 @@ class ScriptsProxy(object):
     def query_user_defined_functions(
             self,
             query: str,
-            parameters: Optional[List[Dict[str, Any]]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return user-defined functions matching a given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: Optional[List[Dict[str, Any]]]
+        :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An AsyncItemPaged of user-defined functions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -403,6 +402,7 @@ class ScriptsProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
+        parameters = kwargs.pop('parameters', None)
         return self.client_connection.QueryUserDefinedFunctions(
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),

@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, cast, Awaitable
+from typing import Any, Dict, Optional, Union, cast, Awaitable
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace  # pylint: disable=unused-import
@@ -124,7 +124,7 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
@@ -180,7 +180,7 @@ class ContainerProxy(object):
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A dict representing the new item.
         :rtype: Dict[str, Any]
@@ -222,7 +222,7 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -266,7 +266,7 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -298,8 +298,6 @@ class ContainerProxy(object):
     def query_items(
             self,
             query: str,
-            parameters: Optional[List[Dict[str, Any]]] = None,
-            partition_key: Optional[Union[str, int, float, bool]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -310,13 +308,13 @@ class ContainerProxy(object):
         the WHERE clause.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query.
+        :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
-        :type parameters: Optional[List[Dict[str, Any]]]
-        :param partition_key: Specifies the partition key value for the item. If none is provided,
+        :paramtype parameters: List[Dict[str, Any]]
+        :keyword partition_key: Specifies the partition key value for the item. If none is provided,
             a cross-partition query will be executed.
-        :type partition_key: Optional[Union[str, int, float, bool]]
+        :paramtype partition_key: Union[str, int, float, bool]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
@@ -324,7 +322,7 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         **Provisional** keyword argument max_integrated_cache_staleness_in_ms
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -361,6 +359,7 @@ class ContainerProxy(object):
         enable_scan_in_query = kwargs.pop('enable_scan_in_query', None)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
+        partition_key = kwargs.pop('partition_key', None)
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
@@ -373,6 +372,7 @@ class ContainerProxy(object):
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
+        parameters = kwargs.pop('parameters', None)
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
@@ -388,28 +388,28 @@ class ContainerProxy(object):
     @distributed_trace
     def query_items_change_feed(
             self,
-            partition_key_range_id: Optional[str] = None,
             is_start_from_beginning: bool = False,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param Optional[str] partition_key_range_id: ChangeFeed requests can be executed against specific partition key
-            ranges. This is used to process the change feed in parallel across multiple consumers.
         :param bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default it's start from current (false).
+        :keyword str partition_key_range_id: ChangeFeed requests can be executed against specific partition key
+            ranges. This is used to process the change feed in parallel across multiple consumers.
         :keyword str continuation: e_tag value to be used as continuation for reading change feed.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword partition_key: partition key at which ChangeFeed requests are targeted.
         :paramtype partition_key: Union[str, int, float, bool]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         partition_key = kwargs.pop("partition_key", None)
+        partition_key_range_id = kwargs.pop("partition_key_range_id", None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         if partition_key is not None:
@@ -455,7 +455,7 @@ class ContainerProxy(object):
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A dict representing the upserted item.
         :rtype: Dict[str, Any]
@@ -503,7 +503,7 @@ class ContainerProxy(object):
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
             given id does not exist.
         :returns: A dict representing the item after replace went through.
@@ -551,7 +551,7 @@ class ContainerProxy(object):
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], None], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
@@ -578,7 +578,7 @@ class ContainerProxy(object):
         If no Offer already exists for the container, an exception is raised.
 
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], List[~azure.cosmos.Offer]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], List[Dict[str, Any]]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container or
             the offer could not be retrieved.
         :returns: Offer for the container.
@@ -610,7 +610,7 @@ class ContainerProxy(object):
 
         :param int throughput: The throughput to be set (an integer).
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container
             or the offer could not be updated.
         :returns: Offer for the container, updated with new throughput.
@@ -643,7 +643,7 @@ class ContainerProxy(object):
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of conflicts (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -664,21 +664,19 @@ class ContainerProxy(object):
     def query_conflicts(
             self,
             query: str,
-            parameters: Optional[List[Dict[str, Any]]] = None,
-            partition_key: Optional[Union[str, int, float, bool]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: Optional[List[Dict[str, Any]]]
-        :param partition_key: Specifies the partition key value for the item. If none is passed in, a
+        :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :paramtype parameters: List[Dict[str, Any]]
+        :keyword partition_key: Specifies the partition key value for the item. If none is passed in, a
             cross partition query will be executed.
-        :type partition_key: Union[str, int, float, bool]
+        :paramtype partition_key: Union[str, int, float, bool]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of conflicts (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -687,11 +685,13 @@ class ContainerProxy(object):
         max_item_count = kwargs.pop('max_item_count', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        partition_key = kwargs.pop("partition_key", None)
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
 
+        parameters = kwargs.pop('parameters', None)
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
@@ -716,7 +716,7 @@ class ContainerProxy(object):
         :param partition_key: Partition key for the conflict to retrieve.
         :type partition_key: Union[str, int, float, bool]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
         :returns: A dict representing the retrieved conflict.
         :rtype: Dict[str, Any]
@@ -747,7 +747,7 @@ class ContainerProxy(object):
         :param partition_key: Partition key for the conflict to retrieve.
         :type partition_key: Union[str, int, float, bool]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], None], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None

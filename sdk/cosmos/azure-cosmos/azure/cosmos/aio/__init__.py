@@ -19,16 +19,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .container import ContainerProxy
 from .cosmos_client import CosmosClient
-from .database import DatabaseProxy
-from .user import UserProxy
-from .scripts import ScriptsProxy
 
-__all__ = (
-    "CosmosClient",
-    "DatabaseProxy",
-    "ContainerProxy",
-    "ScriptsProxy",
-    "UserProxy"
-)
+__all__ = ("CosmosClient",)

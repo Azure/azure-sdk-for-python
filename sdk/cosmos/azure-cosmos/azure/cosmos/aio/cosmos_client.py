@@ -22,8 +22,9 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, List, TypeVar
+from typing import Any, Dict, Optional, Union, cast
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials import TokenCredential
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -35,8 +36,6 @@ from ._retry_utility_async import _ConnectionRetryPolicy
 from .database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
-
-ClassType = TypeVar("ClassType")
 
 __all__ = ("CosmosClient",)
 
@@ -98,7 +97,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials_async.AsyncTokenCredential]
-    :param str consistency_level: Consistency level to use for the session. Default value is None (account-level).
+    :keyword str consistency_level: Consistency level to use for the session. Default value is None (account-level).
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
 
     .. admonition:: Example:
@@ -115,7 +114,8 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def __init__(
             self,
             url: str,
-            credential: Union[str, Dict[str, str], ClassType],
+            credential: Union[str, Dict[str, str], TokenCredential],
+            *,
             consistency_level: Optional[str] = None,
             **kwargs: Any
     ) -> None:
@@ -147,32 +147,27 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     @classmethod
     def from_connection_string(
-            cls: ClassType,
+            cls,
             conn_str: str,
-            credential: Optional[Union[str, Dict[str, str]]] = None,
+            *,
             consistency_level: Optional[str] = None,
             **kwargs: Any
-    ) -> ClassType:
+    ) -> "CosmosClient":
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
         keyword arguments, see the CosmosClient constructor.
 
-        :param conn_str: The connection string.
-        :type conn_str: str
-        :param credential: Alternative credentials to use instead of the key
-            provided in the connection string.
-        :type credential: Optional[Union[str, Dict[str, str]]]
         :param str conn_str: The connection string.
-        :param str consistency_level: Consistency level to use for the session. Default value is None (account-level).
+        :keyword str consistency_level: Consistency level to use for the session. Default value is None (account-level).
             More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
         :returns: a CosmosClient instance
         :rtype: ~azure.cosmos.aio.CosmosClient
         """
-        settings = _parse_connection_str(conn_str, credential)
+        settings = _parse_connection_str(conn_str)
         return cls(
             url=settings['AccountEndpoint'],
-            credential=credential or settings['AccountKey'],
+            credential=settings['AccountKey'],
             consistency_level=consistency_level,
             **kwargs
         )
@@ -207,7 +202,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.aio.DatabaseProxy
@@ -258,7 +253,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -303,7 +298,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
@@ -322,20 +317,19 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def query_databases(
             self,
             query: str,
-            parameters: Optional[List[Dict[str, Any]]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query.
+        :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
-        :type parameters: Optional[List[Dict[str, Any]]]
+        :paramtype parameters: List[Dict[str, Any]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
@@ -345,6 +339,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
+        parameters = kwargs.pop('parameters', None)
         result = self.client_connection.QueryDatabases(
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
@@ -371,7 +366,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
@@ -388,7 +383,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """Retrieve the database account information.
 
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], Any]
+        :paramtype response_hook: Callable[[Dict[str, str]], None]
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
