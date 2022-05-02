@@ -59,9 +59,11 @@ class Connection(object):
     :param list(str) offered_capabilities: The extension capabilities the sender supports.
     :param list(str) desired_capabilities: The extension capabilities the sender may use if the receiver supports
     :param dict properties: Connection properties.
-    :keyword str transport_type: Required. Determines if the transport type is Amqp or AmqpOverWebSocket.
+    :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket.
+     Defaults to TransportType.Amqp. It will be AmqpOverWebSocket if using http_proxy.
     :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
+     the transport_type would be AmqpOverWebSocket.
      Additionally the following keys may also be present: `'username', 'password'`.
     """
 
@@ -77,7 +79,7 @@ class Connection(object):
             self.port = PORT
         self.state = None
 
-        transport = kwargs.get('transport')
+        transport = kwargs.get('transport', TransportType.Amqp)
         if transport:
             self.transport = transport
         elif 'sasl_credential' in kwargs:

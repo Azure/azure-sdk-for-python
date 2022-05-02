@@ -79,8 +79,10 @@ class Connection(object):
     :keyword bool network_trace: Whether to log the network traffic. Default value is `False`. If enabled, frames
      will be logged at the logging.INFO level.
     :keyword str transport_type: Determines if the transport type is Amqp or AmqpOverWebSocket.
+     Defaults to TransportType.Amqp. It will be AmqpOverWebSocket if using http_proxy.
     :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
+     the transport_type would be AmqpOverWebSocket.
      Additionally the following keys may also be present: `'username', 'password'`.
     """
 
@@ -97,7 +99,7 @@ class Connection(object):
         self.state = None  # type: Optional[ConnectionState]
 
         transport = kwargs.get('transport')
-        self._transport_type = kwargs.pop('transport_type')
+        self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
         if transport:
             self._transport = transport
         elif 'sasl_credential' in kwargs:
