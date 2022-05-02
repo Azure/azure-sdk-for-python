@@ -10,7 +10,5 @@ if __name__ == "__main__":
         logging.info("Importing the library {}".format(qualified_namespace))
         try:
             package = importlib.__import__(qualified_namespace, fromlist=["__all__"])
-            clients = [p for p in package.__all__ if p.endswith('Client')]
-            importlib.__import__(qualified_namespace, fromlist=clients)
         except ModuleNotFoundError as err:
             logging.warning(err)
