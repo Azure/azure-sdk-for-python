@@ -122,7 +122,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> Dict[str, Union[str, datetime]]
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -142,7 +142,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -820,10 +821,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword progress_hook:
-            A callback to track the progress of a long running upload. The signature is
+            An async callback to track the progress of a long running upload. The signature is
             function(current: int, total: Optional[int]) where current is the number of bytes transfered
             so far, and total is the size of the blob or None if the size is unknown.
-        :paramtype progress_hook: Callable[[int, Optional[int]], None]
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :returns: A BlobClient to interact with the newly uploaded blob.
         :rtype: ~azure.storage.blob.aio.BlobClient
 

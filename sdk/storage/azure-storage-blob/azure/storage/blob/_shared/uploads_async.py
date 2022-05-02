@@ -217,7 +217,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             self.progress_total += length
 
         if self.progress_hook:
-            self.progress_hook(self.progress_total, self.total_size)
+            await self.progress_hook(self.progress_total, self.total_size)
 
     async def _upload_chunk(self, chunk_offset, chunk_data):
         raise NotImplementedError("Must be implemented by child class.")
