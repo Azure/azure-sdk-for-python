@@ -163,3 +163,11 @@ directive:
   transform: >
     delete $["x-accessibility"]
 ```
+
+``` yaml
+directive:
+  from: swagger-document
+  where-operation: ContainerRegistry_GetManifest
+  transform: >
+    $.parameters = $.parameters.filter(item => item.name !== "accept")
+```
