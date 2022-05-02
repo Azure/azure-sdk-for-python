@@ -8,7 +8,7 @@ from enum import Enum
 import json
 import sys
 
-from azure.core.serialization import AzureJSONEncoder, NULL
+from azure.core.serialization import AzureJSONEncoder, NULL, SerializationError, DeserializationError
 import pytest
 
 
@@ -442,3 +442,25 @@ def test_model_recursion(json_dumps_with_encoder):
         ]
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
+
+def test_serialization_error():
+    message = "Oopsy bad input passed for serialization"
+    error = SerializationError(message)
+    with pytest.raises(SerializationError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+    with pytest.raises(ValueError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+def test_deserialization_error():
+    message = "Oopsy bad input passed for serialization"
+    error = DeserializationError(message)
+    with pytest.raises(DeserializationError) as ex:
+        raise error
+    assert str(ex.value) == message
+
+    with pytest.raises(ValueError) as ex:
+        raise error
+    assert str(ex.value) == message
