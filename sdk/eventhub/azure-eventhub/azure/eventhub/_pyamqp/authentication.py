@@ -126,7 +126,7 @@ class JWTTokenAuth(_CBSAuth):
 
         """
         # Custom endpoint is passed into here
-        super(JWTTokenAuth, self).__init__(uri, audience, kwargs.pop("kwargs", TOKEN_TYPE_JWT), get_token, **kwargs)
+        super(JWTTokenAuth, self).__init__(uri, audience, kwargs.pop("kwargs", TOKEN_TYPE_JWT), get_token)
         self.get_token = get_token
 
 

@@ -124,7 +124,7 @@ class AMQPClient(object):
     """
 
     def __init__(self, hostname, auth=None, **kwargs):
-        self._hostname = hostname #kwargs.get("custom_endpoint") or 
+        self._hostname = kwargs.get("custom_endpoint") or hostname
         self._auth = auth
         self._name = kwargs.pop("client_name", str(uuid.uuid4()))
         self._shutdown = False
@@ -235,11 +235,12 @@ class AMQPClient(object):
             return  # already open.
         _logger.debug("Opening client connection.")
         if not self._connection:
+
             self._connection = Connection(
                 # I think this hostname has to be the servicebus name b/c amqps?
-                "amqps://" + self._hostname,
+                "amqps://" + self._hostname, #self._custom_endpoint.split("//")[-1] or 
                 sasl_credential=self._auth.sasl,
-                ssl={'ca_certs':certifi.where()},  #self._connection_verify or 
+                ssl={'ca_certs':self._connection_verify or certifi.where()},  #self._connection_verify or 
                 container_id=self._name,
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
@@ -248,6 +249,7 @@ class AMQPClient(object):
                 network_trace=self._network_trace,
                 custom_endpoint=self._custom_endpoint,
             )
+            #Failing here
             self._connection.open()
         if not self._session:
             self._session = self._connection.create_session(

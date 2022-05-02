@@ -103,7 +103,7 @@ class EventHubProducer(
         auto_reconnect = kwargs.get("auto_reconnect", True)
         idle_timeout = kwargs.get("idle_timeout", None)
 
-        self._custom_endpoint=kwargs.get("custom_endpoint_address")
+        self._custom_endpoint=kwargs.get("custom_endpoint_hostname")
         self._connection_verify=kwargs.get("connection_verify")
 
         self.running = False

@@ -74,7 +74,7 @@ class SASLTransport(SSLTransport):
     def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
-        super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        super(SASLTransport, self).__init__(kwargs.get("custom_endpoint") or host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
     def negotiate(self):
         with self.block():

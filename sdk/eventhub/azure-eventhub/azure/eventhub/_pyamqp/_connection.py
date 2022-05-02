@@ -85,9 +85,13 @@ class Connection(object):
         # type(str, Any) -> None
         self._encoding="UTF-8"
         parsed_url = urlparse(endpoint)
-        self._custom_endpoint = (kwargs.get("custom_endpoint")).encode(self._encoding)
-        self._hostname = (kwargs.get("custom_endpoint")).encode(self._encoding) or parsed_url.hostname
-        if parsed_url.port:
+        self._custom_endpoint = None
+        if kwargs.get("custom_endpoint"):
+            self._custom_endpoint = (kwargs.get("custom_endpoint")).encode(self._encoding)
+        self._hostname = kwargs.get("custom_endpoint") or parsed_url.hostname
+        if kwargs.get("custom_endpoint"):
+            self._port = kwargs.get("custom_endpoint").split(":")[-1]
+        elif parsed_url.port:
             self._port = parsed_url.port
         elif parsed_url.scheme == 'amqps':
             self._port = SECURE_PORT
@@ -163,10 +167,13 @@ class Connection(object):
 
         :raises ValueError: If a reciprocating protocol header is not received during negotiation.
         """
+        #Fails here
         try:
             if not self.state:
                 self._transport.connect()
+                # It says it connects here
                 self._set_state(ConnectionState.START)
+            #Keeps restarting here why, I think it is failing its negotation
             self._transport.negotiate()
             self._outgoing_header()
             self._set_state(ConnectionState.HDR_SENT)
@@ -176,6 +183,7 @@ class Connection(object):
                     self._disconnect()
                     raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
             else:
+                #Gets to here and jums to exception
                 self._set_state(ConnectionState.HDR_SENT)
         except (OSError, IOError, SSLError, socket.error) as exc:
             raise AMQPConnectionError(
@@ -693,6 +701,7 @@ class Connection(object):
         self._outgoing_endpoints[assigned_channel] = session
         return session
 
+    #Failing here
     def open(self, wait=False):
         # type: (bool) -> None
         """Send an Open frame to start the connection.
@@ -703,6 +712,7 @@ class Connection(object):
         :raises ValueError: If `wait` is set to `False` and `allow_pipelined_open` is disabled.
         :rtype: None
         """
+        #Failing here
         self._connect()
         self._outgoing_open()
         if self.state == ConnectionState.HDR_EXCH:

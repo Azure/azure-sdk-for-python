@@ -140,7 +140,7 @@ class UnexpectedFrame(Exception):
 class _AbstractTransport(object):
     """Common superclass for TCP and SSL transports."""
 
-    def __init__(self, host, port=AMQP_PORT, connect_timeout=None,
+    def __init__(self, host, port=None, connect_timeout=None,
                  read_timeout=None, write_timeout=None,
                  socket_settings=None, raise_on_initial_eintr=True, **kwargs):
         self.connected = False
@@ -269,12 +269,6 @@ class _AbstractTransport(object):
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
-                # It is failing here:
-                # host=sb://20.232.175.131
-                host=host.split("//")[1]
-                # port=443
-                # family=AddressFamilt.AF_INET:2
-                #sslopts=path to my CA_certs for the custom endpoint
                 entries = socket.getaddrinfo(
                     host, port, family, socket.SOCK_STREAM, SOL_TCP)
                 entries_num = len(entries)
@@ -473,12 +467,13 @@ class _AbstractTransport(object):
 class SSLTransport(_AbstractTransport):
     """Transport that works over SSL."""
 
-    def __init__(self, host, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, port=None, connect_timeout=None, ssl=None, **kwargs):
         self._encoding="UTF-8"
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._read_buffer = BytesIO()
+        #Runs here multiple times -- Issue?
         super(SSLTransport, self).__init__(
-            kwargs.get("custom_endpoint") or host,
+            host,
             port=port,
             connect_timeout=connect_timeout,
             **kwargs
@@ -662,4 +657,4 @@ def Transport(host, connect_timeout=None, ssl=False, **kwargs):
     select and create a subclass of _AbstractTransport.
     """
     transport = SSLTransport if ssl else TCPTransport
-    return transport(kwargs.pop("custom_endpoint") or host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+    return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
