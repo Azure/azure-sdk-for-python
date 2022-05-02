@@ -16,7 +16,6 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
@@ -36,28 +35,25 @@ def build_download_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    snapshot = kwargs.pop('snapshot', None)  # type: Optional[str]
+    version_id = kwargs.pop('version_id', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    range = kwargs.pop('range', None)  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    range_get_content_md5 = kwargs.pop('range_get_content_md5', None)  # type: Optional[bool]
+    range_get_content_crc64 = kwargs.pop('range_get_content_crc64', None)  # type: Optional[bool]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', None)  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    snapshot = kwargs.pop('snapshot', _params.pop('snapshot', None))  # type: Optional[str]
-    version_id = kwargs.pop('version_id', _params.pop('versionid', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    range = kwargs.pop('range', _headers.pop('x-ms-range', None))  # type: Optional[str]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    range_get_content_md5 = kwargs.pop('range_get_content_md5', _headers.pop('x-ms-range-get-content-md5', None))  # type: Optional[bool]
-    range_get_content_crc64 = kwargs.pop('range_get_content_crc64', _headers.pop('x-ms-range-get-content-crc64', None))  # type: Optional[bool]
-    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
-    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
-    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -67,48 +63,50 @@ def build_download_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if snapshot is not None:
-        _params['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+        _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if version_id is not None:
-        _params['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
+        _query_parameters['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if range is not None:
-        _headers['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
+        _header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if range_get_content_md5 is not None:
-        _headers['x-ms-range-get-content-md5'] = _SERIALIZER.header("range_get_content_md5", range_get_content_md5, 'bool')
+        _header_parameters['x-ms-range-get-content-md5'] = _SERIALIZER.header("range_get_content_md5", range_get_content_md5, 'bool')
     if range_get_content_crc64 is not None:
-        _headers['x-ms-range-get-content-crc64'] = _SERIALIZER.header("range_get_content_crc64", range_get_content_crc64, 'bool')
+        _header_parameters['x-ms-range-get-content-crc64'] = _SERIALIZER.header("range_get_content_crc64", range_get_content_crc64, 'bool')
     if encryption_key is not None:
-        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -118,25 +116,22 @@ def build_get_properties_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    snapshot = kwargs.pop('snapshot', None)  # type: Optional[str]
+    version_id = kwargs.pop('version_id', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', None)  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    snapshot = kwargs.pop('snapshot', _params.pop('snapshot', None))  # type: Optional[str]
-    version_id = kwargs.pop('version_id', _params.pop('versionid', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
-    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
-    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -146,42 +141,44 @@ def build_get_properties_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if snapshot is not None:
-        _params['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+        _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if version_id is not None:
-        _params['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
+        _query_parameters['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if encryption_key is not None:
-        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="HEAD",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -191,24 +188,21 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    snapshot = kwargs.pop('snapshot', None)  # type: Optional[str]
+    version_id = kwargs.pop('version_id', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    delete_snapshots = kwargs.pop('delete_snapshots', None)  # type: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    blob_delete_type = kwargs.pop('blob_delete_type', "Permanent")  # type: Optional[str]
 
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    snapshot = kwargs.pop('snapshot', _params.pop('snapshot', None))  # type: Optional[str]
-    version_id = kwargs.pop('version_id', _params.pop('versionid', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    delete_snapshots = kwargs.pop('delete_snapshots', _headers.pop('x-ms-delete-snapshots', None))  # type: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    blob_delete_type = kwargs.pop('blob_delete_type', _params.pop('deletetype', "Permanent"))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -218,40 +212,42 @@ def build_delete_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if snapshot is not None:
-        _params['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+        _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if version_id is not None:
-        _params['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
+        _query_parameters['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
     if blob_delete_type is not None:
-        _params['deletetype'] = _SERIALIZER.query("blob_delete_type", blob_delete_type, 'str')
+        _query_parameters['deletetype'] = _SERIALIZER.query("blob_delete_type", blob_delete_type, 'str')
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if delete_snapshots is not None:
-        _headers['x-ms-delete-snapshots'] = _SERIALIZER.header("delete_snapshots", delete_snapshots, 'str')
+        _header_parameters['x-ms-delete-snapshots'] = _SERIALIZER.header("delete_snapshots", delete_snapshots, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -261,15 +257,12 @@ def build_undelete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "undelete")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "undelete"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -279,21 +272,23 @@ def build_undelete_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -303,17 +298,14 @@ def build_set_expiry_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp = kwargs.pop('comp', _params.pop('comp', "expiry"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    comp = kwargs.pop('comp', "expiry")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     expiry_options = kwargs.pop('expiry_options')  # type: Union[str, "_models.BlobExpiryOptions"]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    expires_on = kwargs.pop('expires_on', _headers.pop('x-ms-expiry-time', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    expires_on = kwargs.pop('expires_on', None)  # type: Optional[str]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -323,24 +315,26 @@ def build_set_expiry_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['x-ms-expiry-option'] = _SERIALIZER.header("expiry_options", expiry_options, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['x-ms-expiry-option'] = _SERIALIZER.header("expiry_options", expiry_options, 'str')
     if expires_on is not None:
-        _headers['x-ms-expiry-time'] = _SERIALIZER.header("expires_on", expires_on, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-expiry-time'] = _SERIALIZER.header("expires_on", expires_on, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -350,27 +344,24 @@ def build_set_http_headers_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "properties")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    blob_cache_control = kwargs.pop('blob_cache_control', None)  # type: Optional[str]
+    blob_content_type = kwargs.pop('blob_content_type', None)  # type: Optional[str]
+    blob_content_md5 = kwargs.pop('blob_content_md5', None)  # type: Optional[bytearray]
+    blob_content_encoding = kwargs.pop('blob_content_encoding', None)  # type: Optional[str]
+    blob_content_language = kwargs.pop('blob_content_language', None)  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    blob_content_disposition = kwargs.pop('blob_content_disposition', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    blob_cache_control = kwargs.pop('blob_cache_control', _headers.pop('x-ms-blob-cache-control', None))  # type: Optional[str]
-    blob_content_type = kwargs.pop('blob_content_type', _headers.pop('x-ms-blob-content-type', None))  # type: Optional[str]
-    blob_content_md5 = kwargs.pop('blob_content_md5', _headers.pop('x-ms-blob-content-md5', None))  # type: Optional[bytearray]
-    blob_content_encoding = kwargs.pop('blob_content_encoding', _headers.pop('x-ms-blob-content-encoding', None))  # type: Optional[str]
-    blob_content_language = kwargs.pop('blob_content_language', _headers.pop('x-ms-blob-content-language', None))  # type: Optional[str]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    blob_content_disposition = kwargs.pop('blob_content_disposition', _headers.pop('x-ms-blob-content-disposition', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -380,45 +371,47 @@ def build_set_http_headers_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if blob_cache_control is not None:
-        _headers['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
+        _header_parameters['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if blob_content_type is not None:
-        _headers['x-ms-blob-content-type'] = _SERIALIZER.header("blob_content_type", blob_content_type, 'str')
+        _header_parameters['x-ms-blob-content-type'] = _SERIALIZER.header("blob_content_type", blob_content_type, 'str')
     if blob_content_md5 is not None:
-        _headers['x-ms-blob-content-md5'] = _SERIALIZER.header("blob_content_md5", blob_content_md5, 'bytearray')
+        _header_parameters['x-ms-blob-content-md5'] = _SERIALIZER.header("blob_content_md5", blob_content_md5, 'bytearray')
     if blob_content_encoding is not None:
-        _headers['x-ms-blob-content-encoding'] = _SERIALIZER.header("blob_content_encoding", blob_content_encoding, 'str')
+        _header_parameters['x-ms-blob-content-encoding'] = _SERIALIZER.header("blob_content_encoding", blob_content_encoding, 'str')
     if blob_content_language is not None:
-        _headers['x-ms-blob-content-language'] = _SERIALIZER.header("blob_content_language", blob_content_language, 'str')
+        _header_parameters['x-ms-blob-content-language'] = _SERIALIZER.header("blob_content_language", blob_content_language, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
     if blob_content_disposition is not None:
-        _headers['x-ms-blob-content-disposition'] = _SERIALIZER.header("blob_content_disposition", blob_content_disposition, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-blob-content-disposition'] = _SERIALIZER.header("blob_content_disposition", blob_content_disposition, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -428,18 +421,15 @@ def build_set_immutability_policy_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "immutabilityPolicies")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', None)  # type: Optional[datetime.datetime]
+    immutability_policy_mode = kwargs.pop('immutability_policy_mode', None)  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "immutabilityPolicies"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', _headers.pop('x-ms-immutability-policy-until-date', None))  # type: Optional[datetime.datetime]
-    immutability_policy_mode = kwargs.pop('immutability_policy_mode', _headers.pop('x-ms-immutability-policy-mode', None))  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -449,27 +439,29 @@ def build_set_immutability_policy_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if immutability_policy_expiry is not None:
-        _headers['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        _header_parameters['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
     if immutability_policy_mode is not None:
-        _headers['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -479,15 +471,12 @@ def build_delete_immutability_policy_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "immutabilityPolicies")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "immutabilityPolicies"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -497,21 +486,23 @@ def build_delete_immutability_policy_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -521,16 +512,13 @@ def build_set_legal_hold_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp = kwargs.pop('comp', _params.pop('comp', "legalhold"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    comp = kwargs.pop('comp', "legalhold")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     legal_hold = kwargs.pop('legal_hold')  # type: bool
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -540,22 +528,24 @@ def build_set_legal_hold_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -565,26 +555,23 @@ def build_set_metadata_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "metadata")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', None)  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    encryption_scope = kwargs.pop('encryption_scope', None)  # type: Optional[str]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "metadata"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    metadata = kwargs.pop('metadata', _headers.pop('x-ms-meta', None))  # type: Optional[Dict[str, str]]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
-    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
-    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
-    encryption_scope = kwargs.pop('encryption_scope', _headers.pop('x-ms-encryption-scope', None))  # type: Optional[str]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -594,43 +581,45 @@ def build_set_metadata_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if metadata is not None:
-        _headers['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        _header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if encryption_key is not None:
-        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        _headers['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+        _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -640,23 +629,20 @@ def build_acquire_lease_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "lease")  # type: str
+    action = kwargs.pop('action', "acquire")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    duration = kwargs.pop('duration', None)  # type: Optional[int]
+    proposed_lease_id = kwargs.pop('proposed_lease_id', None)  # type: Optional[str]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-    action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "acquire"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    duration = kwargs.pop('duration', _headers.pop('x-ms-lease-duration', None))  # type: Optional[int]
-    proposed_lease_id = kwargs.pop('proposed_lease_id', _headers.pop('x-ms-proposed-lease-id', None))  # type: Optional[str]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -666,36 +652,38 @@ def build_acquire_lease_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
     if duration is not None:
-        _headers['x-ms-lease-duration'] = _SERIALIZER.header("duration", duration, 'int')
+        _header_parameters['x-ms-lease-duration'] = _SERIALIZER.header("duration", duration, 'int')
     if proposed_lease_id is not None:
-        _headers['x-ms-proposed-lease-id'] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, 'str')
+        _header_parameters['x-ms-proposed-lease-id'] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -705,22 +693,19 @@ def build_release_lease_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-    action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "release"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    comp = kwargs.pop('comp', "lease")  # type: str
+    action = kwargs.pop('action', "release")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     lease_id = kwargs.pop('lease_id')  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -730,33 +715,35 @@ def build_release_lease_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
-    _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
+    _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -766,22 +753,19 @@ def build_renew_lease_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-    action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "renew"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    comp = kwargs.pop('comp', "lease")  # type: str
+    action = kwargs.pop('action', "renew")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     lease_id = kwargs.pop('lease_id')  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -791,33 +775,35 @@ def build_renew_lease_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
-    _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
+    _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -827,23 +813,20 @@ def build_change_lease_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-    action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "change"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    comp = kwargs.pop('comp', "lease")  # type: str
+    action = kwargs.pop('action', "change")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     lease_id = kwargs.pop('lease_id')  # type: str
     proposed_lease_id = kwargs.pop('proposed_lease_id')  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -853,34 +836,36 @@ def build_change_lease_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
-    _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
-    _headers['x-ms-proposed-lease-id'] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
+    _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+    _header_parameters['x-ms-proposed-lease-id'] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -890,22 +875,19 @@ def build_break_lease_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "lease")  # type: str
+    action = kwargs.pop('action', "break")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    break_period = kwargs.pop('break_period', None)  # type: Optional[int]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-    action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "break"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    break_period = kwargs.pop('break_period', _headers.pop('x-ms-lease-break-period', None))  # type: Optional[int]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -915,34 +897,36 @@ def build_break_lease_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-lease-action'] = _SERIALIZER.header("action", action, 'str')
     if break_period is not None:
-        _headers['x-ms-lease-break-period'] = _SERIALIZER.header("break_period", break_period, 'int')
+        _header_parameters['x-ms-lease-break-period'] = _SERIALIZER.header("break_period", break_period, 'int')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -952,26 +936,23 @@ def build_create_snapshot_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "snapshot")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', None)  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    encryption_scope = kwargs.pop('encryption_scope', None)  # type: Optional[str]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "snapshot"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    metadata = kwargs.pop('metadata', _headers.pop('x-ms-meta', None))  # type: Optional[Dict[str, str]]
-    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
-    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
-    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
-    encryption_scope = kwargs.pop('encryption_scope', _headers.pop('x-ms-encryption-scope', None))  # type: Optional[str]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -981,43 +962,45 @@ def build_create_snapshot_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if metadata is not None:
-        _headers['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        _header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if encryption_key is not None:
-        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        _headers['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+        _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1027,34 +1010,31 @@ def build_start_copy_from_url_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     copy_source = kwargs.pop('copy_source')  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    metadata = kwargs.pop('metadata', _headers.pop('x-ms-meta', None))  # type: Optional[Dict[str, str]]
-    tier = kwargs.pop('tier', _headers.pop('x-ms-access-tier', None))  # type: Optional[Union[str, "_models.AccessTierOptional"]]
-    rehydrate_priority = kwargs.pop('rehydrate_priority', _headers.pop('x-ms-rehydrate-priority', None))  # type: Optional[Union[str, "_models.RehydratePriority"]]
-    source_if_modified_since = kwargs.pop('source_if_modified_since', _headers.pop('x-ms-source-if-modified-since', None))  # type: Optional[datetime.datetime]
-    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', _headers.pop('x-ms-source-if-unmodified-since', None))  # type: Optional[datetime.datetime]
-    source_if_match = kwargs.pop('source_if_match', _headers.pop('x-ms-source-if-match', None))  # type: Optional[str]
-    source_if_none_match = kwargs.pop('source_if_none_match', _headers.pop('x-ms-source-if-none-match', None))  # type: Optional[str]
-    source_if_tags = kwargs.pop('source_if_tags', _headers.pop('x-ms-source-if-tags', None))  # type: Optional[str]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    blob_tags_string = kwargs.pop('blob_tags_string', _headers.pop('x-ms-tags', None))  # type: Optional[str]
-    seal_blob = kwargs.pop('seal_blob', _headers.pop('x-ms-seal-blob', None))  # type: Optional[bool]
-    immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', _headers.pop('x-ms-immutability-policy-until-date', None))  # type: Optional[datetime.datetime]
-    immutability_policy_mode = kwargs.pop('immutability_policy_mode', _headers.pop('x-ms-immutability-policy-mode', None))  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
-    legal_hold = kwargs.pop('legal_hold', _headers.pop('x-ms-legal-hold', None))  # type: Optional[bool]
-    accept = _headers.pop('Accept', "application/xml")
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    tier = kwargs.pop('tier', None)  # type: Optional[Union[str, "_models.AccessTierOptional"]]
+    rehydrate_priority = kwargs.pop('rehydrate_priority', None)  # type: Optional[Union[str, "_models.RehydratePriority"]]
+    source_if_modified_since = kwargs.pop('source_if_modified_since', None)  # type: Optional[datetime.datetime]
+    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    source_if_match = kwargs.pop('source_if_match', None)  # type: Optional[str]
+    source_if_none_match = kwargs.pop('source_if_none_match', None)  # type: Optional[str]
+    source_if_tags = kwargs.pop('source_if_tags', None)  # type: Optional[str]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    blob_tags_string = kwargs.pop('blob_tags_string', None)  # type: Optional[str]
+    seal_blob = kwargs.pop('seal_blob', None)  # type: Optional[bool]
+    immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', None)  # type: Optional[datetime.datetime]
+    immutability_policy_mode = kwargs.pop('immutability_policy_mode', None)  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+    legal_hold = kwargs.pop('legal_hold', None)  # type: Optional[bool]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -1064,59 +1044,61 @@ def build_start_copy_from_url_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if metadata is not None:
-        _headers['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        _header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if tier is not None:
-        _headers['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
+        _header_parameters['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if rehydrate_priority is not None:
-        _headers['x-ms-rehydrate-priority'] = _SERIALIZER.header("rehydrate_priority", rehydrate_priority, 'str')
+        _header_parameters['x-ms-rehydrate-priority'] = _SERIALIZER.header("rehydrate_priority", rehydrate_priority, 'str')
     if source_if_modified_since is not None:
-        _headers['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
+        _header_parameters['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
     if source_if_unmodified_since is not None:
-        _headers['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
+        _header_parameters['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
     if source_if_match is not None:
-        _headers['x-ms-source-if-match'] = _SERIALIZER.header("source_if_match", source_if_match, 'str')
+        _header_parameters['x-ms-source-if-match'] = _SERIALIZER.header("source_if_match", source_if_match, 'str')
     if source_if_none_match is not None:
-        _headers['x-ms-source-if-none-match'] = _SERIALIZER.header("source_if_none_match", source_if_none_match, 'str')
+        _header_parameters['x-ms-source-if-none-match'] = _SERIALIZER.header("source_if_none_match", source_if_none_match, 'str')
     if source_if_tags is not None:
-        _headers['x-ms-source-if-tags'] = _SERIALIZER.header("source_if_tags", source_if_tags, 'str')
+        _header_parameters['x-ms-source-if-tags'] = _SERIALIZER.header("source_if_tags", source_if_tags, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-copy-source'] = _SERIALIZER.header("copy_source", copy_source, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-copy-source'] = _SERIALIZER.header("copy_source", copy_source, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if blob_tags_string is not None:
-        _headers['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
+        _header_parameters['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
     if seal_blob is not None:
-        _headers['x-ms-seal-blob'] = _SERIALIZER.header("seal_blob", seal_blob, 'bool')
+        _header_parameters['x-ms-seal-blob'] = _SERIALIZER.header("seal_blob", seal_blob, 'bool')
     if immutability_policy_expiry is not None:
-        _headers['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        _header_parameters['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
     if immutability_policy_mode is not None:
-        _headers['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        _header_parameters['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
     if legal_hold is not None:
-        _headers['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1126,36 +1108,33 @@ def build_copy_from_url_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    x_ms_requires_sync = kwargs.pop('x_ms_requires_sync', _headers.pop('x-ms-requires-sync', "true"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    x_ms_requires_sync = kwargs.pop('x_ms_requires_sync', "true")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     copy_source = kwargs.pop('copy_source')  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    metadata = kwargs.pop('metadata', _headers.pop('x-ms-meta', None))  # type: Optional[Dict[str, str]]
-    tier = kwargs.pop('tier', _headers.pop('x-ms-access-tier', None))  # type: Optional[Union[str, "_models.AccessTierOptional"]]
-    source_if_modified_since = kwargs.pop('source_if_modified_since', _headers.pop('x-ms-source-if-modified-since', None))  # type: Optional[datetime.datetime]
-    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', _headers.pop('x-ms-source-if-unmodified-since', None))  # type: Optional[datetime.datetime]
-    source_if_match = kwargs.pop('source_if_match', _headers.pop('x-ms-source-if-match', None))  # type: Optional[str]
-    source_if_none_match = kwargs.pop('source_if_none_match', _headers.pop('x-ms-source-if-none-match', None))  # type: Optional[str]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    source_content_md5 = kwargs.pop('source_content_md5', _headers.pop('x-ms-source-content-md5', None))  # type: Optional[bytearray]
-    blob_tags_string = kwargs.pop('blob_tags_string', _headers.pop('x-ms-tags', None))  # type: Optional[str]
-    immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', _headers.pop('x-ms-immutability-policy-until-date', None))  # type: Optional[datetime.datetime]
-    immutability_policy_mode = kwargs.pop('immutability_policy_mode', _headers.pop('x-ms-immutability-policy-mode', None))  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
-    legal_hold = kwargs.pop('legal_hold', _headers.pop('x-ms-legal-hold', None))  # type: Optional[bool]
-    copy_source_authorization = kwargs.pop('copy_source_authorization', _headers.pop('x-ms-copy-source-authorization', None))  # type: Optional[str]
-    encryption_scope = kwargs.pop('encryption_scope', _headers.pop('x-ms-encryption-scope', None))  # type: Optional[str]
-    copy_source_tags = kwargs.pop('copy_source_tags', _headers.pop('x-ms-copy-source-tag-option', None))  # type: Optional[Union[str, "_models.BlobCopySourceTags"]]
-    accept = _headers.pop('Accept', "application/xml")
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    tier = kwargs.pop('tier', None)  # type: Optional[Union[str, "_models.AccessTierOptional"]]
+    source_if_modified_since = kwargs.pop('source_if_modified_since', None)  # type: Optional[datetime.datetime]
+    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    source_if_match = kwargs.pop('source_if_match', None)  # type: Optional[str]
+    source_if_none_match = kwargs.pop('source_if_none_match', None)  # type: Optional[str]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    source_content_md5 = kwargs.pop('source_content_md5', None)  # type: Optional[bytearray]
+    blob_tags_string = kwargs.pop('blob_tags_string', None)  # type: Optional[str]
+    immutability_policy_expiry = kwargs.pop('immutability_policy_expiry', None)  # type: Optional[datetime.datetime]
+    immutability_policy_mode = kwargs.pop('immutability_policy_mode', None)  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
+    legal_hold = kwargs.pop('legal_hold', None)  # type: Optional[bool]
+    copy_source_authorization = kwargs.pop('copy_source_authorization', None)  # type: Optional[str]
+    encryption_scope = kwargs.pop('encryption_scope', None)  # type: Optional[str]
+    copy_source_tags = kwargs.pop('copy_source_tags', None)  # type: Optional[Union[str, "_models.BlobCopySourceTags"]]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -1165,62 +1144,64 @@ def build_copy_from_url_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-requires-sync'] = _SERIALIZER.header("x_ms_requires_sync", x_ms_requires_sync, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-requires-sync'] = _SERIALIZER.header("x_ms_requires_sync", x_ms_requires_sync, 'str')
     if metadata is not None:
-        _headers['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        _header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if tier is not None:
-        _headers['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
+        _header_parameters['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if source_if_modified_since is not None:
-        _headers['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
+        _header_parameters['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
     if source_if_unmodified_since is not None:
-        _headers['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
+        _header_parameters['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
     if source_if_match is not None:
-        _headers['x-ms-source-if-match'] = _SERIALIZER.header("source_if_match", source_if_match, 'str')
+        _header_parameters['x-ms-source-if-match'] = _SERIALIZER.header("source_if_match", source_if_match, 'str')
     if source_if_none_match is not None:
-        _headers['x-ms-source-if-none-match'] = _SERIALIZER.header("source_if_none_match", source_if_none_match, 'str')
+        _header_parameters['x-ms-source-if-none-match'] = _SERIALIZER.header("source_if_none_match", source_if_none_match, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-copy-source'] = _SERIALIZER.header("copy_source", copy_source, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-copy-source'] = _SERIALIZER.header("copy_source", copy_source, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if source_content_md5 is not None:
-        _headers['x-ms-source-content-md5'] = _SERIALIZER.header("source_content_md5", source_content_md5, 'bytearray')
+        _header_parameters['x-ms-source-content-md5'] = _SERIALIZER.header("source_content_md5", source_content_md5, 'bytearray')
     if blob_tags_string is not None:
-        _headers['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
+        _header_parameters['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
     if immutability_policy_expiry is not None:
-        _headers['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        _header_parameters['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
     if immutability_policy_mode is not None:
-        _headers['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        _header_parameters['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
     if legal_hold is not None:
-        _headers['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
+        _header_parameters['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
     if copy_source_authorization is not None:
-        _headers['x-ms-copy-source-authorization'] = _SERIALIZER.header("copy_source_authorization", copy_source_authorization, 'str')
+        _header_parameters['x-ms-copy-source-authorization'] = _SERIALIZER.header("copy_source_authorization", copy_source_authorization, 'str')
     if encryption_scope is not None:
-        _headers['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+        _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if copy_source_tags is not None:
-        _headers['x-ms-copy-source-tag-option'] = _SERIALIZER.header("copy_source_tags", copy_source_tags, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-copy-source-tag-option'] = _SERIALIZER.header("copy_source_tags", copy_source_tags, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1230,18 +1211,15 @@ def build_abort_copy_from_url_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp = kwargs.pop('comp', _params.pop('comp', "copy"))  # type: str
-    copy_action_abort_constant = kwargs.pop('copy_action_abort_constant', _headers.pop('x-ms-copy-action', "abort"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    comp = kwargs.pop('comp', "copy")  # type: str
+    copy_action_abort_constant = kwargs.pop('copy_action_abort_constant', "abort")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     copy_id = kwargs.pop('copy_id')  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -1251,25 +1229,27 @@ def build_abort_copy_from_url_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
-    _params['copyid'] = _SERIALIZER.query("copy_id", copy_id, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters['copyid'] = _SERIALIZER.query("copy_id", copy_id, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-copy-action'] = _SERIALIZER.header("copy_action_abort_constant", copy_action_abort_constant, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-copy-action'] = _SERIALIZER.header("copy_action_abort_constant", copy_action_abort_constant, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1279,21 +1259,18 @@ def build_set_tier_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp = kwargs.pop('comp', _params.pop('comp', "tier"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
+    comp = kwargs.pop('comp', "tier")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
     tier = kwargs.pop('tier')  # type: Union[str, "_models.AccessTierRequired"]
-    snapshot = kwargs.pop('snapshot', _params.pop('snapshot', None))  # type: Optional[str]
-    version_id = kwargs.pop('version_id', _params.pop('versionid', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    rehydrate_priority = kwargs.pop('rehydrate_priority', _headers.pop('x-ms-rehydrate-priority', None))  # type: Optional[Union[str, "_models.RehydratePriority"]]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
+    snapshot = kwargs.pop('snapshot', None)  # type: Optional[str]
+    version_id = kwargs.pop('version_id', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    rehydrate_priority = kwargs.pop('rehydrate_priority', None)  # type: Optional[Union[str, "_models.RehydratePriority"]]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
 
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -1303,32 +1280,34 @@ def build_set_tier_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if snapshot is not None:
-        _params['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+        _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if version_id is not None:
-        _params['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
+        _query_parameters['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    _headers['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if rehydrate_priority is not None:
-        _headers['x-ms-rehydrate-priority'] = _SERIALIZER.header("rehydrate_priority", rehydrate_priority, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-rehydrate-priority'] = _SERIALIZER.header("rehydrate_priority", rehydrate_priority, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1338,14 +1317,11 @@ def build_get_account_info_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    restype = kwargs.pop('restype', "account")  # type: str
+    comp = kwargs.pop('comp', "properties")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
 
-    restype = kwargs.pop('restype', _params.pop('restype', "account"))  # type: str
-    comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -1355,18 +1331,20 @@ def build_get_account_info_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['restype'] = _SERIALIZER.query("restype", restype, 'str')
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['restype'] = _SERIALIZER.query("restype", restype, 'str')
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1376,26 +1354,23 @@ def build_query_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "query")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    snapshot = kwargs.pop('snapshot', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
+    encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
+    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', None)  # type: Optional[str]
+    encryption_algorithm = kwargs.pop('encryption_algorithm', None)  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
+    if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)  # type: Optional[datetime.datetime]
+    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "query"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    snapshot = kwargs.pop('snapshot', _params.pop('snapshot', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    encryption_key = kwargs.pop('encryption_key', _headers.pop('x-ms-encryption-key', None))  # type: Optional[str]
-    encryption_key_sha256 = kwargs.pop('encryption_key_sha256', _headers.pop('x-ms-encryption-key-sha256', None))  # type: Optional[str]
-    encryption_algorithm = kwargs.pop('encryption_algorithm', _headers.pop('x-ms-encryption-algorithm', None))  # type: Optional[Union[str, "_models.EncryptionAlgorithmType"]]
-    if_modified_since = kwargs.pop('if_modified_since', _headers.pop('If-Modified-Since', None))  # type: Optional[datetime.datetime]
-    if_unmodified_since = kwargs.pop('if_unmodified_since', _headers.pop('If-Unmodified-Since', None))  # type: Optional[datetime.datetime]
-    if_match = kwargs.pop('if_match', _headers.pop('If-Match', None))  # type: Optional[str]
-    if_none_match = kwargs.pop('if_none_match', _headers.pop('If-None-Match', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -1405,43 +1380,45 @@ def build_query_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if snapshot is not None:
-        _params['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+        _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if encryption_key is not None:
-        _headers['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        _headers['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        _headers['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1451,19 +1428,16 @@ def build_get_tags_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "tags")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    snapshot = kwargs.pop('snapshot', None)  # type: Optional[str]
+    version_id = kwargs.pop('version_id', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "tags"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    snapshot = kwargs.pop('snapshot', _params.pop('snapshot', None))  # type: Optional[str]
-    version_id = kwargs.pop('version_id', _params.pop('versionid', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -1473,29 +1447,31 @@ def build_get_tags_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
     if snapshot is not None:
-        _params['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+        _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if version_id is not None:
-        _params['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
+        _query_parameters['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1505,21 +1481,18 @@ def build_set_tags_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+    comp = kwargs.pop('comp', "tags")  # type: str
+    version = kwargs.pop('version', "2021-04-10")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    timeout = kwargs.pop('timeout', None)  # type: Optional[int]
+    version_id = kwargs.pop('version_id', None)  # type: Optional[str]
+    transactional_content_md5 = kwargs.pop('transactional_content_md5', None)  # type: Optional[bytearray]
+    transactional_content_crc64 = kwargs.pop('transactional_content_crc64', None)  # type: Optional[bytearray]
+    request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
+    if_tags = kwargs.pop('if_tags', None)  # type: Optional[str]
+    lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
 
-    comp = kwargs.pop('comp', _params.pop('comp', "tags"))  # type: str
-    version = kwargs.pop('version', _headers.pop('x-ms-version', "2021-08-06"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    timeout = kwargs.pop('timeout', _params.pop('timeout', None))  # type: Optional[int]
-    version_id = kwargs.pop('version_id', _params.pop('versionid', None))  # type: Optional[str]
-    transactional_content_md5 = kwargs.pop('transactional_content_md5', _headers.pop('Content-MD5', None))  # type: Optional[bytearray]
-    transactional_content_crc64 = kwargs.pop('transactional_content_crc64', _headers.pop('x-ms-content-crc64', None))  # type: Optional[bytearray]
-    request_id_parameter = kwargs.pop('request_id_parameter', _headers.pop('x-ms-client-request-id', None))  # type: Optional[str]
-    if_tags = kwargs.pop('if_tags', _headers.pop('x-ms-if-tags', None))  # type: Optional[str]
-    lease_id = kwargs.pop('lease_id', _headers.pop('x-ms-lease-id', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/xml")
-
+    accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
     path_format_arguments = {
@@ -1529,33 +1502,35 @@ def build_set_tags_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
     if version_id is not None:
-        _params['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
+        _query_parameters['versionid'] = _SERIALIZER.query("version_id", version_id, 'str')
 
     # Construct headers
-    _headers['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if transactional_content_md5 is not None:
-        _headers['Content-MD5'] = _SERIALIZER.header("transactional_content_md5", transactional_content_md5, 'bytearray')
+        _header_parameters['Content-MD5'] = _SERIALIZER.header("transactional_content_md5", transactional_content_md5, 'bytearray')
     if transactional_content_crc64 is not None:
-        _headers['x-ms-content-crc64'] = _SERIALIZER.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
+        _header_parameters['x-ms-content-crc64'] = _SERIALIZER.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
     if request_id_parameter is not None:
-        _headers['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if if_tags is not None:
-        _headers['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
     if lease_id is not None:
-        _headers['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_params,
-        headers=_headers,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -1573,11 +1548,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
     models = _models
 
     def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
 
 
     @distributed_trace
@@ -1590,9 +1565,9 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         range_get_content_md5=None,  # type: Optional[bool]
         range_get_content_crc64=None,  # type: Optional[bool]
         request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
-        cpk_info=None,  # type: Optional[_models.CpkInfo]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> IO
@@ -1639,15 +1614,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        error_map.update(kwargs.pop('error_map', {}))
 
         _lease_id = None
         _encryption_key = None
@@ -1691,13 +1662,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.download.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=True,
             **kwargs
@@ -1818,9 +1787,9 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         version_id=None,  # type: Optional[str]
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
-        cpk_info=None,  # type: Optional[_models.CpkInfo]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1857,15 +1826,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map.update(kwargs.pop('error_map', {}))
 
         _lease_id = None
         _encryption_key = None
@@ -1906,13 +1871,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.get_properties.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1991,8 +1954,8 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         delete_snapshots=None,  # type: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]]
         request_id_parameter=None,  # type: Optional[str]
         blob_delete_type="Permanent",  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2033,8 +1996,8 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          value is None.
         :type request_id_parameter: str
         :param blob_delete_type: Optional.  Only possible value is 'permanent', which specifies to
-         permanently delete a blob if blob soft delete is enabled. Known values are "Permanent" or None.
-         Default value is "Permanent".
+         permanently delete a blob if blob soft delete is enabled. Possible values are "Permanent" or
+         None. Default value is "Permanent".
         :type blob_delete_type: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
@@ -2045,15 +2008,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map.update(kwargs.pop('error_map', {}))
 
         _lease_id = None
         _if_modified_since = None
@@ -2086,13 +2045,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             blob_delete_type=blob_delete_type,
             template_url=self.delete.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2144,16 +2101,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "undelete"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "undelete")  # type: str
 
         
         request = build_undelete_request(
@@ -2163,13 +2117,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.undelete.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2227,16 +2179,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "expiry"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "expiry")  # type: str
 
         
         request = build_set_expiry_request(
@@ -2248,13 +2197,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
             template_url=self.set_expiry.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2286,9 +2233,9 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         self,
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        blob_http_headers=None,  # type: Optional[_models.BlobHTTPHeaders]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        blob_http_headers=None,  # type: Optional["_models.BlobHTTPHeaders"]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2317,16 +2264,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "properties")  # type: str
 
         _blob_cache_control = None
         _blob_content_type = None
@@ -2376,13 +2320,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             blob_content_disposition=_blob_content_disposition,
             request_id_parameter=request_id_parameter,
             template_url=self.set_http_headers.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2417,7 +2359,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         request_id_parameter=None,  # type: Optional[str]
         immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
         immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2448,16 +2390,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "immutabilityPolicies"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "immutabilityPolicies")  # type: str
 
         _if_unmodified_since = None
         if modified_access_conditions is not None:
@@ -2473,13 +2412,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             template_url=self.set_immutability_policy.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2533,16 +2470,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "immutabilityPolicies"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "immutabilityPolicies")  # type: str
 
         
         request = build_delete_immutability_policy_request(
@@ -2552,13 +2486,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.delete_immutability_policy.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2613,16 +2545,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "legalhold"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "legalhold")  # type: str
 
         
         request = build_set_legal_hold_request(
@@ -2633,13 +2562,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.set_legal_hold.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2671,10 +2598,10 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         timeout=None,  # type: Optional[int]
         metadata=None,  # type: Optional[Dict[str, str]]
         request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
-        cpk_info=None,  # type: Optional[_models.CpkInfo]
-        cpk_scope_info=None,  # type: Optional[_models.CpkScopeInfo]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
+        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2714,16 +2641,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "metadata"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "metadata")  # type: str
 
         _lease_id = None
         _encryption_key = None
@@ -2768,13 +2692,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.set_metadata.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2812,7 +2734,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         duration=None,  # type: Optional[int]
         proposed_lease_id=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2849,17 +2771,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "acquire"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        action = kwargs.pop('action', "acquire")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -2888,13 +2807,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.acquire_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -2928,7 +2845,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         lease_id,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2959,17 +2876,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "release"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        action = kwargs.pop('action', "release")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -2997,13 +2911,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.release_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3036,7 +2948,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         lease_id,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -3067,17 +2979,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "renew"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        action = kwargs.pop('action', "renew")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -3105,13 +3014,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.renew_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3146,7 +3053,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         proposed_lease_id,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -3181,17 +3088,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "change"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        action = kwargs.pop('action', "change")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -3220,13 +3124,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.change_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3260,7 +3162,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         timeout=None,  # type: Optional[int]
         break_period=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -3297,17 +3199,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "break"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        action = kwargs.pop('action', "break")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -3335,13 +3234,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.break_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3375,10 +3272,10 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         timeout=None,  # type: Optional[int]
         metadata=None,  # type: Optional[Dict[str, str]]
         request_id_parameter=None,  # type: Optional[str]
-        cpk_info=None,  # type: Optional[_models.CpkInfo]
-        cpk_scope_info=None,  # type: Optional[_models.CpkScopeInfo]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
+        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -3417,16 +3314,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "snapshot"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "snapshot")  # type: str
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -3471,13 +3365,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             template_url=self.create_snapshot.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3521,9 +3413,9 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
         immutability_policy_mode=None,  # type: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]]
         legal_hold=None,  # type: Optional[bool]
-        source_modified_access_conditions=None,  # type: Optional[_models.SourceModifiedAccessConditions]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -3582,15 +3474,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map.update(kwargs.pop('error_map', {}))
 
         _source_if_modified_since = None
         _source_if_unmodified_since = None
@@ -3644,13 +3532,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             template_url=self.start_copy_from_url.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3695,10 +3581,10 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         legal_hold=None,  # type: Optional[bool]
         copy_source_authorization=None,  # type: Optional[str]
         copy_source_tags=None,  # type: Optional[Union[str, "_models.BlobCopySourceTags"]]
-        source_modified_access_conditions=None,  # type: Optional[_models.SourceModifiedAccessConditions]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
-        cpk_scope_info=None,  # type: Optional[_models.CpkScopeInfo]
+        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -3767,16 +3653,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        x_ms_requires_sync = kwargs.pop('x_ms_requires_sync', _headers.pop('x-ms-requires-sync', "true"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        x_ms_requires_sync = kwargs.pop('x_ms_requires_sync', "true")  # type: str
 
         _source_if_modified_since = None
         _source_if_unmodified_since = None
@@ -3833,13 +3716,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             encryption_scope=_encryption_scope,
             copy_source_tags=copy_source_tags,
             template_url=self.copy_from_url.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3878,7 +3759,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         copy_id,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -3910,17 +3791,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "copy"))  # type: str
-        copy_action_abort_constant = kwargs.pop('copy_action_abort_constant', _headers.pop('x-ms-copy-action', "abort"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "copy")  # type: str
+        copy_action_abort_constant = kwargs.pop('copy_action_abort_constant', "abort")  # type: str
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -3936,13 +3814,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             template_url=self.abort_copy_from_url.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -3976,8 +3852,8 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         timeout=None,  # type: Optional[int]
         rehydrate_priority=None,  # type: Optional[Union[str, "_models.RehydratePriority"]]
         request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -4023,16 +3899,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "tier"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "tier")  # type: str
 
         _lease_id = None
         _if_tags = None
@@ -4054,13 +3927,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             if_tags=_if_tags,
             template_url=self.set_tier.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -4110,17 +3981,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "account"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "account")  # type: str
+        comp = kwargs.pop('comp', "properties")  # type: str
 
         
         request = build_get_account_info_request(
@@ -4129,13 +3997,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             comp=comp,
             version=self._config.version,
             template_url=self.get_account_info.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -4168,10 +4034,10 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         snapshot=None,  # type: Optional[str]
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        query_request=None,  # type: Optional[_models.QueryRequest]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
-        cpk_info=None,  # type: Optional[_models.CpkInfo]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
+        query_request=None,  # type: Optional["_models.QueryRequest"]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
+        cpk_info=None,  # type: Optional["_models.CpkInfo"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> IO
@@ -4209,17 +4075,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "query"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        comp = kwargs.pop('comp', "query")  # type: str
+        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         _lease_id = None
         _encryption_key = None
@@ -4266,13 +4129,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.query.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=True,
             **kwargs
@@ -4373,11 +4234,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         request_id_parameter=None,  # type: Optional[str]
         snapshot=None,  # type: Optional[str]
         version_id=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.BlobTags
+        # type: (...) -> "_models.BlobTags"
         """The Get Tags operation enables users to get the tags associated with a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -4411,16 +4272,13 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: ~azure.storage.blob.models.BlobTags
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BlobTags"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "tags"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BlobTags]
+        comp = kwargs.pop('comp', "tags")  # type: str
 
         _if_tags = None
         _lease_id = None
@@ -4440,13 +4298,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             lease_id=_lease_id,
             template_url=self.get_tags.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -4482,9 +4338,9 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         transactional_content_md5=None,  # type: Optional[bytearray]
         transactional_content_crc64=None,  # type: Optional[bytearray]
         request_id_parameter=None,  # type: Optional[str]
-        tags=None,  # type: Optional[_models.BlobTags]
-        modified_access_conditions=None,  # type: Optional[_models.ModifiedAccessConditions]
-        lease_access_conditions=None,  # type: Optional[_models.LeaseAccessConditions]
+        tags=None,  # type: Optional["_models.BlobTags"]
+        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
+        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -4523,17 +4379,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "tags"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "tags")  # type: str
+        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         _if_tags = None
         _lease_id = None
@@ -4560,13 +4413,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             lease_id=_lease_id,
             template_url=self.set_tags.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

@@ -14,7 +14,6 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -35,11 +34,11 @@ class BlockBlobOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -56,11 +55,11 @@ class BlockBlobOperations:
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
-        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """The Upload Block Blob operation updates the content of an existing block blob. Updating an
@@ -125,17 +124,14 @@ class BlockBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "BlockBlob"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/octet-stream"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        blob_type = kwargs.pop('blob_type', "BlockBlob")  # type: str
+        content_type = kwargs.pop('content_type', "application/octet-stream")  # type: Optional[str]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -210,13 +206,11 @@ class BlockBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             template_url=self.upload.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -263,12 +257,12 @@ class BlockBlobOperations:
         copy_source_blob_properties: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
         copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
-        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
-        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
@@ -343,16 +337,13 @@ class BlockBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        blob_type = kwargs.pop('blob_type', _headers.pop('x-ms-blob-type', "BlockBlob"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        blob_type = kwargs.pop('blob_type', "BlockBlob")  # type: str
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -442,13 +433,11 @@ class BlockBlobOperations:
             copy_source_authorization=copy_source_authorization,
             copy_source_tags=copy_source_tags,
             template_url=self.put_blob_from_url.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -490,9 +479,9 @@ class BlockBlobOperations:
         transactional_content_crc64: Optional[bytearray] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
         **kwargs: Any
     ) -> None:
         """The Stage Block operation creates a new block to be committed as part of a blob.
@@ -534,17 +523,14 @@ class BlockBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "block"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/octet-stream"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "block")  # type: str
+        content_type = kwargs.pop('content_type', "application/octet-stream")  # type: Optional[str]
 
         _lease_id = None
         _encryption_key = None
@@ -579,13 +565,11 @@ class BlockBlobOperations:
             encryption_scope=_encryption_scope,
             request_id_parameter=request_id_parameter,
             template_url=self.stage_block.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -627,10 +611,10 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """The Stage Block operation creates a new block to be committed as part of a blob where the
@@ -681,16 +665,13 @@ class BlockBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "block"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "block")  # type: str
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -738,13 +719,11 @@ class BlockBlobOperations:
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
             template_url=self.stage_block_from_url.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -777,7 +756,7 @@ class BlockBlobOperations:
     @distributed_trace_async
     async def commit_block_list(  # pylint: disable=inconsistent-return-statements
         self,
-        blocks: _models.BlockLookupList,
+        blocks: "_models.BlockLookupList",
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytearray] = None,
         transactional_content_crc64: Optional[bytearray] = None,
@@ -788,11 +767,11 @@ class BlockBlobOperations:
         immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
-        blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        cpk_info: Optional[_models.CpkInfo] = None,
-        cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """The Commit Block List operation writes a blob by specifying the list of block IDs that make up
@@ -859,17 +838,14 @@ class BlockBlobOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "blocklist"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "blocklist")  # type: str
+        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         _blob_cache_control = None
         _blob_content_type = None
@@ -944,13 +920,11 @@ class BlockBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             template_url=self.commit_block_list.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -990,10 +964,10 @@ class BlockBlobOperations:
         list_type: Union[str, "_models.BlockListType"] = "committed",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
-    ) -> _models.BlockList:
+    ) -> "_models.BlockList":
         """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
         block blob.
 
@@ -1027,16 +1001,13 @@ class BlockBlobOperations:
         :rtype: ~azure.storage.blob.models.BlockList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BlockList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "blocklist"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BlockList]
+        comp = kwargs.pop('comp', "blocklist")  # type: str
 
         _lease_id = None
         _if_tags = None
@@ -1056,13 +1027,11 @@ class BlockBlobOperations:
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             template_url=self.get_block_list.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

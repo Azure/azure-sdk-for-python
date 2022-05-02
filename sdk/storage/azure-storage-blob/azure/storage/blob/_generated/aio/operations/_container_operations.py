@@ -13,7 +13,6 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -34,11 +33,11 @@ class ContainerOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
@@ -48,7 +47,7 @@ class ContainerOperations:
         metadata: Optional[Dict[str, str]] = None,
         access: Optional[Union[str, "_models.PublicAccessType"]] = None,
         request_id_parameter: Optional[str] = None,
-        container_cpk_scope_info: Optional[_models.ContainerCpkScopeInfo] = None,
+        container_cpk_scope_info: Optional["_models.ContainerCpkScopeInfo"] = None,
         **kwargs: Any
     ) -> None:
         """creates a new container under the specified account. If the container with the same name
@@ -84,16 +83,13 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "container")  # type: str
 
         _default_encryption_scope = None
         _prevent_encryption_scope_override = None
@@ -112,13 +108,11 @@ class ContainerOperations:
             default_encryption_scope=_default_encryption_scope,
             prevent_encryption_scope_override=_prevent_encryption_scope_override,
             template_url=self.create.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -150,7 +144,7 @@ class ContainerOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """returns all user-defined metadata and system properties for the specified container. The data
@@ -175,16 +169,13 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "container")  # type: str
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -198,13 +189,11 @@ class ContainerOperations:
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             template_url=self.get_properties.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -246,8 +235,8 @@ class ContainerOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """operation marks the specified container for deletion. The container and any blobs contained
@@ -274,16 +263,13 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "container")  # type: str
 
         _lease_id = None
         _if_modified_since = None
@@ -304,13 +290,11 @@ class ContainerOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.delete.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -341,8 +325,8 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """operation sets one or more user-defined name-value pairs for the specified container.
@@ -379,17 +363,14 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "metadata"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "metadata")  # type: str
 
         _lease_id = None
         _if_modified_since = None
@@ -409,13 +390,11 @@ class ContainerOperations:
             if_modified_since=_if_modified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.set_metadata.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -447,9 +426,9 @@ class ContainerOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         **kwargs: Any
-    ) -> List[_models.SignedIdentifier]:
+    ) -> List["_models.SignedIdentifier"]:
         """gets the permissions for the specified container. The permissions indicate whether container
         data may be accessed publicly.
 
@@ -475,17 +454,14 @@ class ContainerOperations:
         :rtype: list[~azure.storage.blob.models.SignedIdentifier]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.SignedIdentifier"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "acl"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.SignedIdentifier]]
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "acl")  # type: str
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -500,13 +476,11 @@ class ContainerOperations:
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             template_url=self.get_access_policy.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -543,9 +517,9 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         access: Optional[Union[str, "_models.PublicAccessType"]] = None,
         request_id_parameter: Optional[str] = None,
-        container_acl: Optional[List[_models.SignedIdentifier]] = None,
-        lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        container_acl: Optional[List["_models.SignedIdentifier"]] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
@@ -580,18 +554,15 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "acl"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/xml"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "acl")  # type: str
+        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         _lease_id = None
         _if_modified_since = None
@@ -621,13 +592,11 @@ class ContainerOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.set_access_policy.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -691,17 +660,14 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "undelete"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "undelete")  # type: str
 
         
         request = build_restore_request(
@@ -714,13 +680,11 @@ class ContainerOperations:
             deleted_container_name=deleted_container_name,
             deleted_container_version=deleted_container_version,
             template_url=self.restore.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -781,17 +745,14 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "rename"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "rename")  # type: str
 
         
         request = build_rename_request(
@@ -804,13 +765,11 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             source_lease_id=source_lease_id,
             template_url=self.rename.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -839,7 +798,6 @@ class ContainerOperations:
     async def submit_batch(
         self,
         content_length: int,
-        multipart_content_type: str,
         body: IO,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -849,9 +807,6 @@ class ContainerOperations:
 
         :param content_length: The length of the request.
         :type content_length: long
-        :param multipart_content_type: Required. The value of this header must be multipart/mixed with
-         a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
-        :type multipart_content_type: str
         :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -863,6 +818,9 @@ class ContainerOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
+         with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
+        :paramtype multipart_content_type: str
         :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
@@ -874,38 +832,34 @@ class ContainerOperations:
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "batch"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "batch")  # type: str
 
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
             url=self._config.url,
+            multipart_content_type=multipart_content_type,
             restype=restype,
             comp=comp,
             version=self._config.version,
             content=_content,
             content_length=content_length,
-            multipart_content_type=multipart_content_type,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.submit_batch.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=True,
             **kwargs
@@ -940,9 +894,8 @@ class ContainerOperations:
         where: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, "_models.FilterBlobsIncludeItem"]]] = None,
         **kwargs: Any
-    ) -> _models.FilterBlobSegment:
+    ) -> "_models.FilterBlobSegment":
         """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
         given search expression.  Filter blobs searches within the given container.
 
@@ -972,9 +925,6 @@ class ContainerOperations:
          it is possible that the service will return fewer results than specified by maxresults, or than
          the default of 5000. Default value is None.
         :type maxresults: int
-        :param include: Include this parameter to specify one or more datasets to include in the
-         response. Default value is None.
-        :type include: list[str or ~azure.storage.blob.models.FilterBlobsIncludeItem]
         :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
@@ -986,17 +936,14 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.FilterBlobSegment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FilterBlobSegment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "blobs"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FilterBlobSegment]
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "blobs")  # type: str
 
         
         request = build_filter_blobs_request(
@@ -1009,15 +956,12 @@ class ContainerOperations:
             where=where,
             marker=marker,
             maxresults=maxresults,
-            include=include,
             template_url=self.filter_blobs.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1052,7 +996,7 @@ class ContainerOperations:
         duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
@@ -1091,18 +1035,15 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "acquire"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        restype = kwargs.pop('restype', "container")  # type: str
+        action = kwargs.pop('action', "acquire")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1123,13 +1064,11 @@ class ContainerOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.acquire_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1163,7 +1102,7 @@ class ContainerOperations:
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
@@ -1196,18 +1135,15 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "release"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        restype = kwargs.pop('restype', "container")  # type: str
+        action = kwargs.pop('action', "release")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1227,13 +1163,11 @@ class ContainerOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.release_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1266,7 +1200,7 @@ class ContainerOperations:
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
@@ -1299,18 +1233,15 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "renew"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        restype = kwargs.pop('restype', "container")  # type: str
+        action = kwargs.pop('action', "renew")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1330,13 +1261,11 @@ class ContainerOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.renew_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1370,7 +1299,7 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         break_period: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
@@ -1409,18 +1338,15 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "break"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        restype = kwargs.pop('restype', "container")  # type: str
+        action = kwargs.pop('action', "break")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1440,13 +1366,11 @@ class ContainerOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.break_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1481,7 +1405,7 @@ class ContainerOperations:
         proposed_lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
@@ -1518,18 +1442,15 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        comp = kwargs.pop('comp', _params.pop('comp', "lease"))  # type: str
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        action = kwargs.pop('action', _headers.pop('x-ms-lease-action', "change"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        comp = kwargs.pop('comp', "lease")  # type: str
+        restype = kwargs.pop('restype', "container")  # type: str
+        action = kwargs.pop('action', "change")  # type: str
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1550,13 +1471,11 @@ class ContainerOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             template_url=self.change_lease.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1594,7 +1513,7 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ListBlobsFlatSegmentResponse:
+    ) -> "_models.ListBlobsFlatSegmentResponse":
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
         :param prefix: Filters the results to return only containers whose name begins with the
@@ -1637,17 +1556,14 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.ListBlobsFlatSegmentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListBlobsFlatSegmentResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "list"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ListBlobsFlatSegmentResponse]
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "list")  # type: str
 
         
         request = build_list_blob_flat_segment_request(
@@ -1662,13 +1578,11 @@ class ContainerOperations:
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.list_blob_flat_segment.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1708,7 +1622,7 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ListBlobsHierarchySegmentResponse:
+    ) -> "_models.ListBlobsHierarchySegmentResponse":
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
         :param delimiter: When the request includes this parameter, the operation returns a BlobPrefix
@@ -1756,17 +1670,14 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.ListBlobsHierarchySegmentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListBlobsHierarchySegmentResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "container"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "list"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ListBlobsHierarchySegmentResponse]
+        restype = kwargs.pop('restype', "container")  # type: str
+        comp = kwargs.pop('comp', "list")  # type: str
 
         
         request = build_list_blob_hierarchy_segment_request(
@@ -1782,13 +1693,11 @@ class ContainerOperations:
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             template_url=self.list_blob_hierarchy_segment.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1835,17 +1744,14 @@ class ContainerOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop('error_map', {}))
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        restype = kwargs.pop('restype', _params.pop('restype', "account"))  # type: str
-        comp = kwargs.pop('comp', _params.pop('comp', "properties"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        restype = kwargs.pop('restype', "account")  # type: str
+        comp = kwargs.pop('comp', "properties")  # type: str
 
         
         request = build_get_account_info_request(
@@ -1854,13 +1760,11 @@ class ContainerOperations:
             comp=comp,
             version=self._config.version,
             template_url=self.get_account_info.metadata['url'],
-            headers=_headers,
-            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
