@@ -137,6 +137,7 @@ class AMQPClient(object):
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
+        self._custom_endpoint = kwargs.get("custom_endpoint")
         self._connection_verify = kwargs.get("connection_verify")
         self._port = kwargs.get("port")
 
@@ -243,6 +244,7 @@ class AMQPClient(object):
                 idle_timeout=self._idle_timeout,
                 properties=self._properties,
                 network_trace=self._network_trace,
+                custom_endpoint=self._custom_endpoint,
                 port=self._port
             )
             self._connection.open()
