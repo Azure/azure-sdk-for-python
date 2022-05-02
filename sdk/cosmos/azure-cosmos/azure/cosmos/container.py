@@ -31,7 +31,7 @@ from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, validate_cache_staleness_value
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
-from .throughput_properties import ThroughputProperties
+from .offer import ThroughputProperties
 from .partition_key import NonePartitionKeyValue
 from .scripts import ScriptsProxy
 

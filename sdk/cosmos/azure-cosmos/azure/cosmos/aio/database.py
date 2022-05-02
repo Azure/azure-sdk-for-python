@@ -32,7 +32,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options
 from .container import ContainerProxy
-from ..throughput_properties import ThroughputProperties
+from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
 from ..exceptions import CosmosResourceNotFoundError
 from .user import UserProxy

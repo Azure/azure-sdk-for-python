@@ -34,3 +34,6 @@ class ThroughputProperties(object):
         # type: (int, Dict[str, Any]) -> None
         self.offer_throughput = offer_throughput
         self.properties = properties
+
+
+Offer = ThroughputProperties
