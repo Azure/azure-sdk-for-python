@@ -70,6 +70,7 @@ class TextAnalyticsClientBase:
                 "$top",
                 "$skip",
                 "opinionMining",
+                "api-version"
             }
         )
         try:

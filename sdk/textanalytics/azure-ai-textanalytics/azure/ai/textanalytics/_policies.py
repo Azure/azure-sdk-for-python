@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.pipeline.policies import ContentDecodePolicy
+import json
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ._models import TextDocumentBatchStatistics
 from ._lro import _FINISHED
@@ -25,21 +25,19 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
             # determine LRO based off of initial response. If 202, we say it's an LRO
             self._is_lro = response.http_response.status_code == 202
         if self._response_callback:
-            data = ContentDecodePolicy.deserialize_from_http_generics(
-                response.http_response
-            )
-            if self._is_lro and (not data or data.get("status") not in _FINISHED):
+            data = json.loads(response.http_response.text())
+            if self._is_lro and (not data or data.get("status", "").lower() not in _FINISHED):
+                return
+            if response.http_response.status_code == 429:
                 return
             if data:
                 inner = data.get("results", data)  # language API compat
                 statistics = inner.get("statistics", None)
                 model_version = inner.get("modelVersion", None)
-
-                if statistics or model_version:
-                    batch_statistics = TextDocumentBatchStatistics._from_generated(  # pylint: disable=protected-access
-                        statistics
-                    )
-                    response.statistics = batch_statistics
-                    response.model_version = model_version
+                batch_statistics = TextDocumentBatchStatistics._from_generated(  # pylint: disable=protected-access
+                    statistics
+                )
+                response.statistics = batch_statistics
+                response.model_version = model_version
             response.raw_response = data
             self._response_callback(response)
