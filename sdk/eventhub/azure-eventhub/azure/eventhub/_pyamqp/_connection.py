@@ -83,7 +83,9 @@ class Connection(object):
         # type(str, Any) -> None
         parsed_url = urlparse(endpoint)
         self._hostname = parsed_url.hostname
-        if parsed_url.port:
+        if kwargs.get("port"):
+            self._port=kwargs.get("port")
+        elif parsed_url.port:
             self._port = parsed_url.port
         elif parsed_url.scheme == 'amqps':
             self._port = SECURE_PORT

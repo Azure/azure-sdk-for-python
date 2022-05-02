@@ -287,6 +287,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._conn_manager = get_connection_manager(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
+        self.custom_endpoint_hostname=self._config.custom_endpoint_hostname
+        self.connection_verify=self._config.connection_verify
+
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
