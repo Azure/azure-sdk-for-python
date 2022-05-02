@@ -98,7 +98,6 @@ class ContainerRegistryOperations:
         self,
         name: str,
         reference: str,
-        accept: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ManifestWrapper:
         """Get the manifest identified by ``name`` and ``reference`` where ``reference`` can be a tag or
@@ -108,9 +107,6 @@ class ContainerRegistryOperations:
         :type name: str
         :param reference: A tag or a digest, pointing to a specific image.
         :type reference: str
-        :param accept: Accept header string delimited by comma. For example,
-         application/vnd.docker.distribution.manifest.v2+json. Default value is None.
-        :type accept: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManifestWrapper, or the result of cls(response)
         :rtype: ~container_registry.models.ManifestWrapper
@@ -130,7 +126,6 @@ class ContainerRegistryOperations:
         request = build_get_manifest_request(
             name=name,
             reference=reference,
-            accept=accept,
             template_url=self.get_manifest.metadata['url'],
             headers=_headers,
             params=_params,

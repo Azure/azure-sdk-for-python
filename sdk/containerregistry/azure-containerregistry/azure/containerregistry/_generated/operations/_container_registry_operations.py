@@ -59,7 +59,6 @@ def build_get_manifest_request(
     # type: (...) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = kwargs.pop('accept', None)  # type: Optional[str]
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -637,7 +636,6 @@ class ContainerRegistryOperations(object):
         self,
         name,  # type: str
         reference,  # type: str
-        accept=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> _models.ManifestWrapper
@@ -648,9 +646,6 @@ class ContainerRegistryOperations(object):
         :type name: str
         :param reference: A tag or a digest, pointing to a specific image.
         :type reference: str
-        :param accept: Accept header string delimited by comma. For example,
-         application/vnd.docker.distribution.manifest.v2+json. Default value is None.
-        :type accept: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManifestWrapper, or the result of cls(response)
         :rtype: ~container_registry.models.ManifestWrapper
@@ -670,7 +665,6 @@ class ContainerRegistryOperations(object):
         request = build_get_manifest_request(
             name=name,
             reference=reference,
-            accept=accept,
             template_url=self.get_manifest.metadata['url'],
             headers=_headers,
             params=_params,
