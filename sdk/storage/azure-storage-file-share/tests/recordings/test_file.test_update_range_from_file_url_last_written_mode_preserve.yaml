@@ -343,7 +343,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.8.0 Python/3.10.4 (Windows-10-10.0.17763-SP0)
       x-ms-copy-source:
-      - https://storagename.file.core.windows.net/utsharec1121c0e/testfile?se=2022-04-29T23%3A17%3A34Z&sp=r&sv=2021-06-08&sr=f&sig=IdVH4ky2%2Ba/ba5EId7fzQ5LWtCHxmSHrhgnSZBsxWr8%3D
+      - https://storagename.file.core.windows.net/utsharec1121c0e/testfile?se=2022-04-29T23%3A17%3A34Z&sp=r&sv=2021-06-08&sr=f&sig=xxx
       x-ms-date:
       - Fri, 29 Apr 2022 22:17:34 GMT
       x-ms-file-last-write-time:
