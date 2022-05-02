@@ -10,6 +10,7 @@ import base64
 import unittest
 import uuid
 from os import path, remove, sys, urandom
+from math import ceil
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
@@ -928,5 +929,90 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsNotNone(content.properties.content_settings.content_type)
         self.assertIsNone(content.properties.content_settings.content_md5)
 
+    @BlobPreparer()
+    def test_get_blob_read_empty(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b''
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        content = blob.download_blob().read()
+        content2 = blob.download_blob().read(512)
+
+        # Assert
+        self.assertEqual(data, content)
+        self.assertEqual(data, content2)
+
+    @BlobPreparer()
+    def test_get_blob_read_all(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        # Act
+        content = blob.download_blob().read()
+
+        # Assert
+        self.assertEqual(data, content)
+
+    @BlobPreparer()
+    def test_get_blob_read_small_chunks(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act / Assert
+        chunk_size = 512
+        num_chunks = int(ceil(len(data) / chunk_size))
+        for i in range(num_chunks):
+            content = stream.read(chunk_size)
+            start = i * chunk_size
+            end = start + chunk_size
+            self.assertEqual(data[start:end], content)
+
+    @BlobPreparer()
+    def test_get_blob_read_large_chunks(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        # Act / Assert
+        chunk_size = 1536
+        num_chunks = int(ceil(len(data) / chunk_size))
+        for i in range(num_chunks):
+            content = stream.read(chunk_size)
+            start = i * chunk_size
+            end = start + chunk_size
+            self.assertEqual(data[start:end], content)
+
+    @BlobPreparer()
+    def test_get_blob_read_progress(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'12345' * 205 * 5  # 5125 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+        stream = blob.download_blob()
+
+        def progress_hook(current, total):
+            print(f'Progress: {current / total}')
+
+        # Act / Assert
+        chunk_size = 1024
+        total = stream.size
+        current = 0
+        while True:
+            data = stream.read(chunk_size)
+            read_size = len(data)
+            current += read_size
+            progress_hook(current, total)
+
+            if current == total:
+                break
 
 # ------------------------------------------------------------------------------

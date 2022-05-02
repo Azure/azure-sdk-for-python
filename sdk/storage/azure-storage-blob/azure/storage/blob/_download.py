@@ -10,7 +10,7 @@ import time
 
 import warnings
 from io import BytesIO
-from typing import Iterator
+from typing import Iterator, Optional, Union
 
 import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
@@ -329,6 +329,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._file_size = None
         self._non_empty_ranges = None
         self._response = None
+        self.offset = 0
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -508,6 +509,60 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             content=self._current_content,
             downloader=iter_downloader,
             chunk_size=self._config.max_chunk_get_size)
+
+    def read(self, size: Optional[int] = -1) -> Union[bytes, str]:
+        """
+        Read up to size bytes from the object and return them. If size
+        is specified as -1, all bytes will be read.
+        """
+        if size == -1:
+            return self.readall()
+        if size == 0 or self.size == 0:
+            data = b''
+            if self._encoding:
+                return data.decode(self._encoding)
+            return data
+
+        stream = BytesIO()
+        remaining_size = size
+
+        # Start by reading from current_content if there is data left
+        if self.offset < len(self._current_content):
+            start = self.offset
+            end = min(remaining_size, len(self._current_content) - self.offset)
+            read = stream.write(self._current_content[start:end])
+
+            remaining_size -= read
+            self.offset += read
+
+        if remaining_size > 0:
+            end_range = min(self.offset + remaining_size, self.size)
+            downloader = _ChunkDownloader(
+                client=self._clients.blob,
+                non_empty_ranges=self._non_empty_ranges,
+                total_size=remaining_size,
+                chunk_size=self._config.max_chunk_get_size,
+                current_progress=0,
+                start_range=self.offset,
+                end_range=end_range,
+                stream=stream,
+                parallel=False,
+                validate_content=False,
+                encryption_options=self._encryption_options,
+                use_location=self._location_mode,
+                **self._request_options
+            )
+
+            chunks = downloader.get_chunk_offsets()
+            for chunk in chunks:
+                downloader.process_chunk(chunk)
+
+            self.offset += remaining_size
+
+        data = stream.getvalue()
+        if self._encoding:
+            return data.decode(self._encoding)
+        return data
 
     def readall(self):
         # type: () -> Union[bytes, str]
