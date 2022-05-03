@@ -679,17 +679,11 @@ class FilteredBlob(DictMixin):
     :type container_name: str
     :ivar tags: Key value pairs of blob tags.
     :type tags: Dict[str, str]
-    :ivar version_id: Version ID
-    :type version_id: str
-    :ivar is_current_version: Current version
-    :type is_current_version: bool
     """
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', None)
         self.container_name = kwargs.get('container_name', None)
         self.tags = kwargs.get('tags', None)
-        self.version_id = kwargs.get('version_id', None)
-        self.is_current_version = kwargs.get('is_current_version', None)
 
 
 class LeaseProperties(DictMixin):

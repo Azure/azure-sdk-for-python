@@ -376,34 +376,4 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertEqual(len(items_on_page2[0]['tags']), 2)
         self.assertEqual(items_on_page2[0]['tags']['tag1'], 'firsttag')
         self.assertEqual(items_on_page2[0]['tags']['tag2'], 'secondtag')
-
-    @BlobPreparer()
-    async def test_filter_blobs_versions(self, versioned_storage_account_name, versioned_storage_account_key):
-        await self._setup(versioned_storage_account_name, versioned_storage_account_key)
-
-        blob_name = self._get_blob_reference()
-        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
-        tags1 = {"tag1": "firsttag"}
-        include_list = ['versions']
-        where = "@container='{}' and \"tag1\"='firsttag'".format(self.container_name)
-
-        # Act
-        await blob_client.create_append_blob(tags=tags1)
-        if self.is_live:
-            sleep(5)
-        await blob_client.create_append_blob(tags=tags1)
-        if self.is_live:
-            sleep(5)
-
-        found_blobs = self.bsc.find_blobs_by_tags(filter_expression=where, include=include_list)
-        blob_list = list()
-        async for blob in found_blobs:
-            blob_list.append(blob)
-
-        # Assert
-        self.assertEqual(2, len(blob_list))
-        self.assertIsNone(blob_list[0].is_current_version)
-        self.assertIsNotNone(blob_list[0].version_id)
-        self.assertTrue(blob_list[1].is_current_version)
-        self.assertIsNotNone(blob_list[1].version_id)
 #------------------------------------------------------------------------------
