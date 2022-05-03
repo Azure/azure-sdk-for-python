@@ -37,7 +37,7 @@ class TestTableChallengeAuth(AzureRecordedTestCase, TableTestCase):
         service principal used for testing is enabled for multitenant authentication
         (https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
         TABLES_TENANT_ID environment variable to a different, existing tenant than the one the storage account exists
-        in, and set CORRECT_TABLES_TENANT_ID to the tenant that the storage account exists in.
+        in, and set CHALLENGE_TABLES_TENANT_ID to the tenant that the storage account exists in.
         """
 
         if is_live():
@@ -59,7 +59,7 @@ class TestTableChallengeAuth(AzureRecordedTestCase, TableTestCase):
         service principal used for testing is enabled for multitenant authentication
         (https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
         TABLES_TENANT_ID environment variable to a different, existing tenant than the one the storage account exists
-        in, and set CORRECT_TABLES_TENANT_ID to the tenant that the storage account exists in.
+        in, and set CHALLENGE_TABLES_TENANT_ID to the tenant that the storage account exists in.
         """
 
         if is_live():
