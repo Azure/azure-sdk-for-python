@@ -297,7 +297,7 @@ class ContainerProxy(object):
     @distributed_trace
     def query_items(
             self,
-            query: str,
+            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -307,7 +307,7 @@ class ContainerProxy(object):
         name is "products," and is aliased as "p" for easier referencing in
         the WHERE clause.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -663,12 +663,12 @@ class ContainerProxy(object):
     @distributed_trace
     def query_conflicts(
             self,
-            query: str,
+            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :paramtype parameters: List[Dict[str, Any]]
         :keyword partition_key: Specifies the partition key value for the item. If none is passed in, a

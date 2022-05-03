@@ -372,12 +372,12 @@ class DatabaseProxy(object):
     @distributed_trace
     def query_containers(
             self,
-            query: str,
+            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
@@ -596,12 +596,12 @@ class DatabaseProxy(object):
     @distributed_trace
     def query_users(
             self,
-            query: str,
+            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all users matching the given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.

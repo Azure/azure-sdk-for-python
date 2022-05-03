@@ -88,12 +88,12 @@ class ScriptsProxy(object):
     @distributed_trace
     def query_stored_procedures(
         self,
-        query: str,
+        query: Union[str, Dict[str, Any]],
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all stored procedures matching the given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :paramtype parameters: Optional[List[str]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -258,12 +258,12 @@ class ScriptsProxy(object):
     @distributed_trace
     def query_triggers(
             self,
-            query: str,
+            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all triggers matching the given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -385,12 +385,12 @@ class ScriptsProxy(object):
     @distributed_trace
     def query_user_defined_functions(
             self,
-            query: str,
+            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return user-defined functions matching a given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.

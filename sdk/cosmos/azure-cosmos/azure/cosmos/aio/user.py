@@ -118,12 +118,12 @@ class UserProxy(object):
     @distributed_trace
     def query_permissions(
         self,
-        query: str,
+        query: Union[str, Dict[str, Any]],
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all permissions matching the given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.

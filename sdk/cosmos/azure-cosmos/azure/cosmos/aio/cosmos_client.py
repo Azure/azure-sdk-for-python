@@ -316,12 +316,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def query_databases(
             self,
-            query: str,
+            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
         :paramtype parameters: List[Dict[str, Any]]
