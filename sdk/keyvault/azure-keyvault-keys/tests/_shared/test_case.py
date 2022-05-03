@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
-import pytest
 import time
 
 from azure.keyvault.keys._shared import HttpChallengeCache

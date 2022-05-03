@@ -24,13 +24,3 @@ class KeysTestCase(AzureRecordedTestCase):
             credential = self.get_credential(CryptographyClient)
 
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
-
-    def create_key_client(self, vault_uri, **kwargs):
-        if kwargs.pop("is_async", False):
-            from azure.keyvault.keys.aio import KeyClient
-            credential = self.get_credential(KeyClient, is_async=True)
-        else:
-            from azure.keyvault.keys import KeyClient
-            credential = self.get_credential(KeyClient)
-        
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)

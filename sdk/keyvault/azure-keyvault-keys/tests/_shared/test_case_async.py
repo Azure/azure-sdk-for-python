@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import pytest
-import os
 
 from devtools_testutils import AzureRecordedTestCase
 from azure.keyvault.keys._shared import HttpChallengeCache

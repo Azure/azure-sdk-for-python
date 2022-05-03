@@ -104,23 +104,6 @@ class AsyncKeysClientPreparer(AzureRecordedTestCase):
         
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
-    def create_crypto_client(self, key, **kwargs):
-        
-        from azure.keyvault.keys.crypto.aio import CryptographyClient
-
-        credential = self.get_credential(CryptographyClient, is_async=True)
-        return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
-
-    def _get_attestation_uri(self):
-        playback_uri = "https://fakeattestation.azurewebsites.net"
-        if self.is_live:
-            real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL")
-            if real_uri is None:
-                pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URL environment variable")
-            self._scrub_url(real_uri, playback_uri)
-            return real_uri
-        return playback_uri
-
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
             os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]

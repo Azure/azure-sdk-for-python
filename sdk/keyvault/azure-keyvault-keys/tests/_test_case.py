@@ -87,7 +87,7 @@ class KeysClientPreparer(AzureRecordedTestCase):
     def __call__(self, fn):
         def _preparer(test_class, api_version, is_hsm, **kwargs):
 
-            self._skip_if_not_configured(api_version, is_hsm)
+            #self._skip_if_not_configured(api_version, is_hsm)
             if not self.is_logging_enabled:
                 kwargs.update({"logging_enable": False})
             endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
@@ -107,23 +107,6 @@ class KeysClientPreparer(AzureRecordedTestCase):
         
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
-    def create_crypto_client(self, key, **kwargs):
-        
-        from azure.keyvault.keys.crypto import CryptographyClient
-
-        credential = self.get_credential(CryptographyClient)
-        return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
-
-    def _get_attestation_uri(self):
-        playback_uri = "https://fakeattestation.azurewebsites.net"
-        if self.is_live:
-            real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL")
-            real_uri = real_uri.rstrip("/")
-            if real_uri is None:
-                pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URL environment variable")
-            self._scrub_url(real_uri, playback_uri)
-            return real_uri
-        return playback_uri
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
