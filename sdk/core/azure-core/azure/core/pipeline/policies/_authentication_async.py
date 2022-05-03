@@ -8,7 +8,7 @@ import time
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase, _HttpChallenge
+from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase, HttpChallenge
 
 from .._tools_async import await_result
 
@@ -171,7 +171,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
             return False
 
         try:
-            challenge = _HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
+            challenge = HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
             scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes

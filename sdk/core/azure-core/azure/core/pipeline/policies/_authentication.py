@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
-class _HttpChallenge(object):  # pylint:disable=too-few-public-methods
+class HttpChallenge(object):  # pylint:disable=too-few-public-methods
     """Represents a parsed HTTP WWW-Authentication Bearer challenge from a server."""
 
     def __init__(self, challenge):
@@ -255,7 +255,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
             return False
 
         try:
-            challenge = _HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
+            challenge = HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
             scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
