@@ -19,8 +19,7 @@
 # --------------------------------------------------------------------------
 import functools
 import pytest
-import uuid
-import os
+import json
 
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.identity.aio import ClientSecretCredential
@@ -127,17 +126,23 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             with pytest.raises(ClientAuthenticationError):
                 await client.register_schema(schemaregistry_group, name, schema_str, format)
 
-    @pytest.mark.skip('test proxy/CI gives HttpResponseError, live test pipeline gives ServiceRequestError')
+    @pytest.mark.skip("Figure out why live_test_only mark not working for non-live mode")
+    @pytest.mark.live_test_only
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy_async
     async def test_schema_negative_wrong_endpoint_async(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(fully_qualified_namespace="nonexist.servicebus.windows.net")
+        client = self.create_client(fully_qualified_namespace="fake.servicebus.windows.net")
         async with client:
             name = self.get_resource_name('test-schema-nonexist-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
             format = "Avro"
-            with pytest.raises(ServiceRequestError):
+            # accepting both errors for now due to: https://github.com/Azure/azure-sdk-tools/issues/2907
+            with pytest.raises((ServiceRequestError, HttpResponseError)) as exc_info:
                 await client.register_schema(schemaregistry_group, name, schema_str, format)
+            if exc_info.type is HttpResponseError:
+                response_content = json.loads(exc_info.value.response.content)
+                assert "Name does not resolve" in response_content["Message"]
+
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()
