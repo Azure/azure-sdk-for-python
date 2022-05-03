@@ -103,6 +103,7 @@ class UsageDetailsOperations(object):
         skiptoken: Optional[str] = None,
         top: Optional[int] = None,
         metric: Optional[Union[str, "_models.Metrictype"]] = None,
+        params: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> Iterable["_models.UsageDetailsListResult"]:
         """Lists the usage details for the defined scope. Usage details are available via this API only
@@ -148,6 +149,8 @@ class UsageDetailsOperations(object):
         :type top: int
         :param metric: Allows to select different type of cost/usage records.
         :type metric: str or ~azure.mgmt.consumption.models.Metrictype
+        :param params: uri params to pass to underlying API call
+        :type params: dict
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either UsageDetailsListResult or the result of
          cls(response)
