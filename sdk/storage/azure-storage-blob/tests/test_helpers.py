@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import IOBase, UnsupportedOperation
+from typing import Optional
+
 
 class ProgressTracker:
     def __init__(self, total: int, step: int):
@@ -11,7 +13,7 @@ class ProgressTracker:
         self.step = step
         self.current = 0
 
-    def assert_progress(self, current: int, total: int):
+    def assert_progress(self, current: int, total: Optional[int]):
         if self.current != self.total:
             self.current += self.step
 
