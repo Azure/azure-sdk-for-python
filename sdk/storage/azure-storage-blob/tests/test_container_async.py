@@ -100,33 +100,6 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_create_container_if_not_exists_without_existing_container(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container_name = self._get_container_reference()
-
-        # Act
-        container = bsc.get_container_client(container_name)
-        created = await container.create_container_if_not_exists()
-
-        # Assert
-        self.assertTrue(created)
-
-    @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_create_container_if_not_exists_with_existing_container(self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        container_name = self._get_container_reference()
-
-        # Act
-        container = bsc.get_container_client(container_name)
-        await container.create_container()
-        created = await container.create_container_if_not_exists()
-
-        # Assert
-        self.assertIsNone(created)
-
-    @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
     async def test_create_cntnr_w_existing_cntnr_fail_on_exist(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container_name = self._get_container_reference()
@@ -441,6 +414,34 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(len(containers2), 2)
         self.assertNamedItemInContainer(containers2, container_names[2])
         self.assertNamedItemInContainer(containers2, container_names[3])
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_containers_account_sas(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+
+        sas_token = generate_account_sas(
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(service=True),
+            permission=AccountSasPermissions(list=True),
+            expiry=datetime.utcnow() + timedelta(hours=3)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=sas_token)
+
+        # Act
+        containers = []
+        async for c in bsc.list_containers(name_starts_with=container.container_name):
+            containers.append(c)
+
+        # Assert
+        self.assertIsNotNone(containers)
+        self.assertEqual(len(containers), 1)
+        self.assertIsNotNone(containers[0])
+        self.assertEqual(containers[0].name, container.container_name)
+        self.assertIsNone(containers[0].metadata)
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test

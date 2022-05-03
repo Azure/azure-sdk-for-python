@@ -13,21 +13,23 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._operations._operations import build_analyze_conversation_request
+from .._vendor import MixinABC
 T = TypeVar('T')
 JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ConversationAnalysisClientOperationsMixin:
+class ConversationAnalysisClientOperationsMixin(MixinABC):
 
     @distributed_trace_async
     async def analyze_conversation(
         self,
-        task: "_models.AnalyzeConversationTask",
+        task: _models.AnalyzeConversationTask,
         **kwargs: Any
-    ) -> "_models.AnalyzeConversationTaskResult":
+    ) -> _models.AnalyzeConversationTaskResult:
         """Analyzes the input conversation utterance.
 
         :param task: A single conversational task to execute.
@@ -36,14 +38,17 @@ class ConversationAnalysisClientOperationsMixin:
         :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationTaskResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeConversationTaskResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeConversationTaskResult]
 
         _json = self._serialize.body(task, 'AnalyzeConversationTask')
 
@@ -51,13 +56,15 @@ class ConversationAnalysisClientOperationsMixin:
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

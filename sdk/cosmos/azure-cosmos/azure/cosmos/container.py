@@ -448,7 +448,7 @@ class ContainerProxy(object):
         item_link = self._get_document_link(item)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -497,7 +497,7 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",

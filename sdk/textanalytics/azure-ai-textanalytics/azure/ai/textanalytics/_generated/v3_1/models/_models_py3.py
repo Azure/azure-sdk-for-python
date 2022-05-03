@@ -153,9 +153,6 @@ class AnalyzeBatchInput(JobDescriptor, AnalysisInput, JobManifest):
         super(AnalyzeBatchInput, self).__init__(display_name=display_name, analysis_input=analysis_input, tasks=tasks, **kwargs)
         self.tasks = tasks
         self.analysis_input = analysis_input
-        self.tasks = tasks
-        self.display_name = display_name
-        self.analysis_input = analysis_input
         self.display_name = display_name
 
 
@@ -500,26 +497,6 @@ class AnalyzeJobState(AnalyzeJobMetadata, TasksState, AnalyzeJobErrorsAndStatist
         """
         super(AnalyzeJobState, self).__init__(display_name=display_name, created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, tasks=tasks, errors=errors, statistics=statistics, next_link=next_link, **kwargs)
         self.next_link = next_link
-        self.errors = errors
-        self.statistics = statistics
-        self.tasks = tasks
-        self.next_link = next_link
-        self.errors = errors
-        self.statistics = statistics
-        self.display_name = display_name
-        self.created_date_time = created_date_time
-        self.expiration_date_time = expiration_date_time
-        self.job_id = job_id
-        self.last_update_date_time = last_update_date_time
-        self.status = status
-        self.next_link = next_link
-        self.tasks = tasks
-        self.display_name = display_name
-        self.created_date_time = created_date_time
-        self.expiration_date_time = expiration_date_time
-        self.job_id = job_id
-        self.last_update_date_time = last_update_date_time
-        self.status = status
         self.errors = errors
         self.statistics = statistics
         self.tasks = tasks
@@ -1866,14 +1843,6 @@ class HealthcareJobState(JobMetadata, Pagination, HealthcareTaskResult):
         super(HealthcareJobState, self).__init__(created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, next_link=next_link, results=results, errors=errors, **kwargs)
         self.results = results
         self.errors = errors
-        self.next_link = next_link
-        self.results = results
-        self.errors = errors
-        self.created_date_time = created_date_time
-        self.expiration_date_time = expiration_date_time
-        self.job_id = job_id
-        self.last_update_date_time = last_update_date_time
-        self.status = status
         self.next_link = next_link
         self.created_date_time = created_date_time
         self.expiration_date_time = expiration_date_time

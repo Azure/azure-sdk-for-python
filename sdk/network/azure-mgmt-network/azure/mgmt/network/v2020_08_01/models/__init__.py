@@ -6,1116 +6,561 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AadAuthenticationParameters
-    from ._models_py3 import AddressSpace
-    from ._models_py3 import ApplicationGateway
-    from ._models_py3 import ApplicationGatewayAuthenticationCertificate
-    from ._models_py3 import ApplicationGatewayAutoscaleConfiguration
-    from ._models_py3 import ApplicationGatewayAvailableSslOptions
-    from ._models_py3 import ApplicationGatewayAvailableSslPredefinedPolicies
-    from ._models_py3 import ApplicationGatewayAvailableWafRuleSetsResult
-    from ._models_py3 import ApplicationGatewayBackendAddress
-    from ._models_py3 import ApplicationGatewayBackendAddressPool
-    from ._models_py3 import ApplicationGatewayBackendHealth
-    from ._models_py3 import ApplicationGatewayBackendHealthHttpSettings
-    from ._models_py3 import ApplicationGatewayBackendHealthOnDemand
-    from ._models_py3 import ApplicationGatewayBackendHealthPool
-    from ._models_py3 import ApplicationGatewayBackendHealthServer
-    from ._models_py3 import ApplicationGatewayBackendHttpSettings
-    from ._models_py3 import ApplicationGatewayClientAuthConfiguration
-    from ._models_py3 import ApplicationGatewayConnectionDraining
-    from ._models_py3 import ApplicationGatewayCustomError
-    from ._models_py3 import ApplicationGatewayFirewallDisabledRuleGroup
-    from ._models_py3 import ApplicationGatewayFirewallExclusion
-    from ._models_py3 import ApplicationGatewayFirewallRule
-    from ._models_py3 import ApplicationGatewayFirewallRuleGroup
-    from ._models_py3 import ApplicationGatewayFirewallRuleSet
-    from ._models_py3 import ApplicationGatewayFrontendIPConfiguration
-    from ._models_py3 import ApplicationGatewayFrontendPort
-    from ._models_py3 import ApplicationGatewayHeaderConfiguration
-    from ._models_py3 import ApplicationGatewayHttpListener
-    from ._models_py3 import ApplicationGatewayIPConfiguration
-    from ._models_py3 import ApplicationGatewayListResult
-    from ._models_py3 import ApplicationGatewayOnDemandProbe
-    from ._models_py3 import ApplicationGatewayPathRule
-    from ._models_py3 import ApplicationGatewayPrivateEndpointConnection
-    from ._models_py3 import ApplicationGatewayPrivateEndpointConnectionListResult
-    from ._models_py3 import ApplicationGatewayPrivateLinkConfiguration
-    from ._models_py3 import ApplicationGatewayPrivateLinkIpConfiguration
-    from ._models_py3 import ApplicationGatewayPrivateLinkResource
-    from ._models_py3 import ApplicationGatewayPrivateLinkResourceListResult
-    from ._models_py3 import ApplicationGatewayProbe
-    from ._models_py3 import ApplicationGatewayProbeHealthResponseMatch
-    from ._models_py3 import ApplicationGatewayRedirectConfiguration
-    from ._models_py3 import ApplicationGatewayRequestRoutingRule
-    from ._models_py3 import ApplicationGatewayRewriteRule
-    from ._models_py3 import ApplicationGatewayRewriteRuleActionSet
-    from ._models_py3 import ApplicationGatewayRewriteRuleCondition
-    from ._models_py3 import ApplicationGatewayRewriteRuleSet
-    from ._models_py3 import ApplicationGatewaySku
-    from ._models_py3 import ApplicationGatewaySslCertificate
-    from ._models_py3 import ApplicationGatewaySslPolicy
-    from ._models_py3 import ApplicationGatewaySslPredefinedPolicy
-    from ._models_py3 import ApplicationGatewaySslProfile
-    from ._models_py3 import ApplicationGatewayTrustedClientCertificate
-    from ._models_py3 import ApplicationGatewayTrustedRootCertificate
-    from ._models_py3 import ApplicationGatewayUrlConfiguration
-    from ._models_py3 import ApplicationGatewayUrlPathMap
-    from ._models_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
-    from ._models_py3 import ApplicationRule
-    from ._models_py3 import ApplicationSecurityGroup
-    from ._models_py3 import ApplicationSecurityGroupListResult
-    from ._models_py3 import AuthorizationListResult
-    from ._models_py3 import AutoApprovedPrivateLinkService
-    from ._models_py3 import AutoApprovedPrivateLinkServicesResult
-    from ._models_py3 import Availability
-    from ._models_py3 import AvailableDelegation
-    from ._models_py3 import AvailableDelegationsResult
-    from ._models_py3 import AvailablePrivateEndpointType
-    from ._models_py3 import AvailablePrivateEndpointTypesResult
-    from ._models_py3 import AvailableProvidersList
-    from ._models_py3 import AvailableProvidersListCity
-    from ._models_py3 import AvailableProvidersListCountry
-    from ._models_py3 import AvailableProvidersListParameters
-    from ._models_py3 import AvailableProvidersListState
-    from ._models_py3 import AvailableServiceAlias
-    from ._models_py3 import AvailableServiceAliasesResult
-    from ._models_py3 import AzureAsyncOperationResult
-    from ._models_py3 import AzureFirewall
-    from ._models_py3 import AzureFirewallApplicationRule
-    from ._models_py3 import AzureFirewallApplicationRuleCollection
-    from ._models_py3 import AzureFirewallApplicationRuleProtocol
-    from ._models_py3 import AzureFirewallFqdnTag
-    from ._models_py3 import AzureFirewallFqdnTagListResult
-    from ._models_py3 import AzureFirewallIPConfiguration
-    from ._models_py3 import AzureFirewallIpGroups
-    from ._models_py3 import AzureFirewallListResult
-    from ._models_py3 import AzureFirewallNatRCAction
-    from ._models_py3 import AzureFirewallNatRule
-    from ._models_py3 import AzureFirewallNatRuleCollection
-    from ._models_py3 import AzureFirewallNetworkRule
-    from ._models_py3 import AzureFirewallNetworkRuleCollection
-    from ._models_py3 import AzureFirewallPublicIPAddress
-    from ._models_py3 import AzureFirewallRCAction
-    from ._models_py3 import AzureFirewallSku
-    from ._models_py3 import AzureReachabilityReport
-    from ._models_py3 import AzureReachabilityReportItem
-    from ._models_py3 import AzureReachabilityReportLatencyInfo
-    from ._models_py3 import AzureReachabilityReportLocation
-    from ._models_py3 import AzureReachabilityReportParameters
-    from ._models_py3 import AzureWebCategory
-    from ._models_py3 import AzureWebCategoryListResult
-    from ._models_py3 import BGPCommunity
-    from ._models_py3 import BackendAddressPool
-    from ._models_py3 import BastionActiveSession
-    from ._models_py3 import BastionActiveSessionListResult
-    from ._models_py3 import BastionHost
-    from ._models_py3 import BastionHostIPConfiguration
-    from ._models_py3 import BastionHostListResult
-    from ._models_py3 import BastionSessionDeleteResult
-    from ._models_py3 import BastionSessionState
-    from ._models_py3 import BastionShareableLink
-    from ._models_py3 import BastionShareableLinkListRequest
-    from ._models_py3 import BastionShareableLinkListResult
-    from ._models_py3 import BgpConnection
-    from ._models_py3 import BgpPeerStatus
-    from ._models_py3 import BgpPeerStatusListResult
-    from ._models_py3 import BgpServiceCommunity
-    from ._models_py3 import BgpServiceCommunityListResult
-    from ._models_py3 import BgpSettings
-    from ._models_py3 import BreakOutCategoryPolicies
-    from ._models_py3 import CheckPrivateLinkServiceVisibilityRequest
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties
-    from ._models_py3 import ConnectionMonitor
-    from ._models_py3 import ConnectionMonitorDestination
-    from ._models_py3 import ConnectionMonitorEndpoint
-    from ._models_py3 import ConnectionMonitorEndpointFilter
-    from ._models_py3 import ConnectionMonitorEndpointFilterItem
-    from ._models_py3 import ConnectionMonitorEndpointScope
-    from ._models_py3 import ConnectionMonitorEndpointScopeItem
-    from ._models_py3 import ConnectionMonitorHttpConfiguration
-    from ._models_py3 import ConnectionMonitorIcmpConfiguration
-    from ._models_py3 import ConnectionMonitorListResult
-    from ._models_py3 import ConnectionMonitorOutput
-    from ._models_py3 import ConnectionMonitorParameters
-    from ._models_py3 import ConnectionMonitorQueryResult
-    from ._models_py3 import ConnectionMonitorResult
-    from ._models_py3 import ConnectionMonitorResultProperties
-    from ._models_py3 import ConnectionMonitorSource
-    from ._models_py3 import ConnectionMonitorSuccessThreshold
-    from ._models_py3 import ConnectionMonitorTcpConfiguration
-    from ._models_py3 import ConnectionMonitorTestConfiguration
-    from ._models_py3 import ConnectionMonitorTestGroup
-    from ._models_py3 import ConnectionMonitorWorkspaceSettings
-    from ._models_py3 import ConnectionResetSharedKey
-    from ._models_py3 import ConnectionSharedKey
-    from ._models_py3 import ConnectionStateSnapshot
-    from ._models_py3 import ConnectivityDestination
-    from ._models_py3 import ConnectivityHop
-    from ._models_py3 import ConnectivityInformation
-    from ._models_py3 import ConnectivityIssue
-    from ._models_py3 import ConnectivityParameters
-    from ._models_py3 import ConnectivitySource
-    from ._models_py3 import Container
-    from ._models_py3 import ContainerNetworkInterface
-    from ._models_py3 import ContainerNetworkInterfaceConfiguration
-    from ._models_py3 import ContainerNetworkInterfaceIpConfiguration
-    from ._models_py3 import CustomDnsConfigPropertiesFormat
-    from ._models_py3 import CustomIpPrefix
-    from ._models_py3 import CustomIpPrefixListResult
-    from ._models_py3 import DdosCustomPolicy
-    from ._models_py3 import DdosProtectionPlan
-    from ._models_py3 import DdosProtectionPlanListResult
-    from ._models_py3 import DdosSettings
-    from ._models_py3 import Delegation
-    from ._models_py3 import DeviceProperties
-    from ._models_py3 import DhcpOptions
-    from ._models_py3 import Dimension
-    from ._models_py3 import DnsNameAvailabilityResult
-    from ._models_py3 import DnsSettings
-    from ._models_py3 import DscpConfiguration
-    from ._models_py3 import DscpConfigurationListResult
-    from ._models_py3 import EffectiveNetworkSecurityGroup
-    from ._models_py3 import EffectiveNetworkSecurityGroupAssociation
-    from ._models_py3 import EffectiveNetworkSecurityGroupListResult
-    from ._models_py3 import EffectiveNetworkSecurityRule
-    from ._models_py3 import EffectiveRoute
-    from ._models_py3 import EffectiveRouteListResult
-    from ._models_py3 import EffectiveRoutesParameters
-    from ._models_py3 import EndpointServiceResult
-    from ._models_py3 import EndpointServicesListResult
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorDetails
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import EvaluatedNetworkSecurityGroup
-    from ._models_py3 import ExpressRouteCircuit
-    from ._models_py3 import ExpressRouteCircuitArpTable
-    from ._models_py3 import ExpressRouteCircuitAuthorization
-    from ._models_py3 import ExpressRouteCircuitConnection
-    from ._models_py3 import ExpressRouteCircuitConnectionListResult
-    from ._models_py3 import ExpressRouteCircuitListResult
-    from ._models_py3 import ExpressRouteCircuitPeering
-    from ._models_py3 import ExpressRouteCircuitPeeringConfig
-    from ._models_py3 import ExpressRouteCircuitPeeringId
-    from ._models_py3 import ExpressRouteCircuitPeeringListResult
-    from ._models_py3 import ExpressRouteCircuitReference
-    from ._models_py3 import ExpressRouteCircuitRoutesTable
-    from ._models_py3 import ExpressRouteCircuitRoutesTableSummary
-    from ._models_py3 import ExpressRouteCircuitServiceProviderProperties
-    from ._models_py3 import ExpressRouteCircuitSku
-    from ._models_py3 import ExpressRouteCircuitStats
-    from ._models_py3 import ExpressRouteCircuitsArpTableListResult
-    from ._models_py3 import ExpressRouteCircuitsRoutesTableListResult
-    from ._models_py3 import ExpressRouteCircuitsRoutesTableSummaryListResult
-    from ._models_py3 import ExpressRouteConnection
-    from ._models_py3 import ExpressRouteConnectionId
-    from ._models_py3 import ExpressRouteConnectionList
-    from ._models_py3 import ExpressRouteCrossConnection
-    from ._models_py3 import ExpressRouteCrossConnectionListResult
-    from ._models_py3 import ExpressRouteCrossConnectionPeering
-    from ._models_py3 import ExpressRouteCrossConnectionPeeringList
-    from ._models_py3 import ExpressRouteCrossConnectionRoutesTableSummary
-    from ._models_py3 import ExpressRouteCrossConnectionsRoutesTableSummaryListResult
-    from ._models_py3 import ExpressRouteGateway
-    from ._models_py3 import ExpressRouteGatewayList
-    from ._models_py3 import ExpressRouteGatewayPropertiesAutoScaleConfiguration
-    from ._models_py3 import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
-    from ._models_py3 import ExpressRouteLink
-    from ._models_py3 import ExpressRouteLinkListResult
-    from ._models_py3 import ExpressRouteLinkMacSecConfig
-    from ._models_py3 import ExpressRoutePort
-    from ._models_py3 import ExpressRoutePortListResult
-    from ._models_py3 import ExpressRoutePortsLocation
-    from ._models_py3 import ExpressRoutePortsLocationBandwidths
-    from ._models_py3 import ExpressRoutePortsLocationListResult
-    from ._models_py3 import ExpressRouteServiceProvider
-    from ._models_py3 import ExpressRouteServiceProviderBandwidthsOffered
-    from ._models_py3 import ExpressRouteServiceProviderListResult
-    from ._models_py3 import ExtendedLocation
-    from ._models_py3 import FirewallPolicy
-    from ._models_py3 import FirewallPolicyCertificateAuthority
-    from ._models_py3 import FirewallPolicyFilterRuleCollection
-    from ._models_py3 import FirewallPolicyFilterRuleCollectionAction
-    from ._models_py3 import FirewallPolicyIntrusionDetection
-    from ._models_py3 import FirewallPolicyIntrusionDetectionBypassTrafficSpecifications
-    from ._models_py3 import FirewallPolicyIntrusionDetectionConfiguration
-    from ._models_py3 import FirewallPolicyIntrusionDetectionSignatureSpecification
-    from ._models_py3 import FirewallPolicyListResult
-    from ._models_py3 import FirewallPolicyNatRuleCollection
-    from ._models_py3 import FirewallPolicyNatRuleCollectionAction
-    from ._models_py3 import FirewallPolicyRule
-    from ._models_py3 import FirewallPolicyRuleApplicationProtocol
-    from ._models_py3 import FirewallPolicyRuleCollection
-    from ._models_py3 import FirewallPolicyRuleCollectionGroup
-    from ._models_py3 import FirewallPolicyRuleCollectionGroupListResult
-    from ._models_py3 import FirewallPolicySku
-    from ._models_py3 import FirewallPolicyThreatIntelWhitelist
-    from ._models_py3 import FirewallPolicyTransportSecurity
-    from ._models_py3 import FlowLog
-    from ._models_py3 import FlowLogFormatParameters
-    from ._models_py3 import FlowLogInformation
-    from ._models_py3 import FlowLogListResult
-    from ._models_py3 import FlowLogStatusParameters
-    from ._models_py3 import FrontendIPConfiguration
-    from ._models_py3 import GatewayRoute
-    from ._models_py3 import GatewayRouteListResult
-    from ._models_py3 import GenerateExpressRoutePortsLOARequest
-    from ._models_py3 import GenerateExpressRoutePortsLOAResult
-    from ._models_py3 import GetVpnSitesConfigurationRequest
-    from ._models_py3 import HTTPConfiguration
-    from ._models_py3 import HTTPHeader
-    from ._models_py3 import HopLink
-    from ._models_py3 import HubIPAddresses
-    from ._models_py3 import HubIpConfiguration
-    from ._models_py3 import HubPublicIPAddresses
-    from ._models_py3 import HubRoute
-    from ._models_py3 import HubRouteTable
-    from ._models_py3 import HubVirtualNetworkConnection
-    from ._models_py3 import IPAddressAvailabilityResult
-    from ._models_py3 import IPConfiguration
-    from ._models_py3 import IPConfigurationBgpPeeringAddress
-    from ._models_py3 import IPConfigurationProfile
-    from ._models_py3 import InboundNatPool
-    from ._models_py3 import InboundNatRule
-    from ._models_py3 import InboundNatRuleListResult
-    from ._models_py3 import InboundSecurityRule
-    from ._models_py3 import InboundSecurityRules
-    from ._models_py3 import IpAllocation
-    from ._models_py3 import IpAllocationListResult
-    from ._models_py3 import IpGroup
-    from ._models_py3 import IpGroupListResult
-    from ._models_py3 import IpTag
-    from ._models_py3 import IpsecPolicy
-    from ._models_py3 import Ipv6CircuitConnectionConfig
-    from ._models_py3 import Ipv6ExpressRouteCircuitPeeringConfig
-    from ._models_py3 import ListHubRouteTablesResult
-    from ._models_py3 import ListHubVirtualNetworkConnectionsResult
-    from ._models_py3 import ListP2SVpnGatewaysResult
-    from ._models_py3 import ListVirtualHubBgpConnectionResults
-    from ._models_py3 import ListVirtualHubIpConfigurationResults
-    from ._models_py3 import ListVirtualHubRouteTableV2SResult
-    from ._models_py3 import ListVirtualHubsResult
-    from ._models_py3 import ListVirtualWANsResult
-    from ._models_py3 import ListVpnConnectionsResult
-    from ._models_py3 import ListVpnGatewayNatRulesResult
-    from ._models_py3 import ListVpnGatewaysResult
-    from ._models_py3 import ListVpnServerConfigurationsResult
-    from ._models_py3 import ListVpnSiteLinkConnectionsResult
-    from ._models_py3 import ListVpnSiteLinksResult
-    from ._models_py3 import ListVpnSitesResult
-    from ._models_py3 import LoadBalancer
-    from ._models_py3 import LoadBalancerBackendAddress
-    from ._models_py3 import LoadBalancerBackendAddressPoolListResult
-    from ._models_py3 import LoadBalancerFrontendIPConfigurationListResult
-    from ._models_py3 import LoadBalancerListResult
-    from ._models_py3 import LoadBalancerLoadBalancingRuleListResult
-    from ._models_py3 import LoadBalancerOutboundRuleListResult
-    from ._models_py3 import LoadBalancerProbeListResult
-    from ._models_py3 import LoadBalancerSku
-    from ._models_py3 import LoadBalancingRule
-    from ._models_py3 import LocalNetworkGateway
-    from ._models_py3 import LocalNetworkGatewayListResult
-    from ._models_py3 import LogSpecification
-    from ._models_py3 import ManagedRuleGroupOverride
-    from ._models_py3 import ManagedRuleOverride
-    from ._models_py3 import ManagedRuleSet
-    from ._models_py3 import ManagedRulesDefinition
-    from ._models_py3 import ManagedServiceIdentity
-    from ._models_py3 import MatchCondition
-    from ._models_py3 import MatchVariable
-    from ._models_py3 import MatchedRule
-    from ._models_py3 import MetricSpecification
-    from ._models_py3 import NatGateway
-    from ._models_py3 import NatGatewayListResult
-    from ._models_py3 import NatGatewaySku
-    from ._models_py3 import NatRule
-    from ._models_py3 import NetworkConfigurationDiagnosticParameters
-    from ._models_py3 import NetworkConfigurationDiagnosticProfile
-    from ._models_py3 import NetworkConfigurationDiagnosticResponse
-    from ._models_py3 import NetworkConfigurationDiagnosticResult
-    from ._models_py3 import NetworkIntentPolicy
-    from ._models_py3 import NetworkIntentPolicyConfiguration
-    from ._models_py3 import NetworkInterface
-    from ._models_py3 import NetworkInterfaceAssociation
-    from ._models_py3 import NetworkInterfaceDnsSettings
-    from ._models_py3 import NetworkInterfaceIPConfiguration
-    from ._models_py3 import NetworkInterfaceIPConfigurationListResult
-    from ._models_py3 import NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties
-    from ._models_py3 import NetworkInterfaceListResult
-    from ._models_py3 import NetworkInterfaceLoadBalancerListResult
-    from ._models_py3 import NetworkInterfaceTapConfiguration
-    from ._models_py3 import NetworkInterfaceTapConfigurationListResult
-    from ._models_py3 import NetworkProfile
-    from ._models_py3 import NetworkProfileListResult
-    from ._models_py3 import NetworkRule
-    from ._models_py3 import NetworkSecurityGroup
-    from ._models_py3 import NetworkSecurityGroupListResult
-    from ._models_py3 import NetworkSecurityGroupResult
-    from ._models_py3 import NetworkSecurityRulesEvaluationResult
-    from ._models_py3 import NetworkVirtualAppliance
-    from ._models_py3 import NetworkVirtualApplianceListResult
-    from ._models_py3 import NetworkVirtualApplianceSiteListResult
-    from ._models_py3 import NetworkVirtualApplianceSku
-    from ._models_py3 import NetworkVirtualApplianceSkuInstances
-    from ._models_py3 import NetworkVirtualApplianceSkuListResult
-    from ._models_py3 import NetworkWatcher
-    from ._models_py3 import NetworkWatcherListResult
-    from ._models_py3 import NextHopParameters
-    from ._models_py3 import NextHopResult
-    from ._models_py3 import O365BreakOutCategoryPolicies
-    from ._models_py3 import O365PolicyProperties
-    from ._models_py3 import Office365PolicyProperties
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationPropertiesFormatServiceSpecification
-    from ._models_py3 import OutboundRule
-    from ._models_py3 import OwaspCrsExclusionEntry
-    from ._models_py3 import P2SConnectionConfiguration
-    from ._models_py3 import P2SVpnConnectionHealth
-    from ._models_py3 import P2SVpnConnectionHealthRequest
-    from ._models_py3 import P2SVpnConnectionRequest
-    from ._models_py3 import P2SVpnGateway
-    from ._models_py3 import P2SVpnProfileParameters
-    from ._models_py3 import PacketCapture
-    from ._models_py3 import PacketCaptureFilter
-    from ._models_py3 import PacketCaptureListResult
-    from ._models_py3 import PacketCaptureParameters
-    from ._models_py3 import PacketCaptureQueryStatusResult
-    from ._models_py3 import PacketCaptureResult
-    from ._models_py3 import PacketCaptureResultProperties
-    from ._models_py3 import PacketCaptureStorageLocation
-    from ._models_py3 import PatchRouteFilter
-    from ._models_py3 import PatchRouteFilterRule
-    from ._models_py3 import PeerExpressRouteCircuitConnection
-    from ._models_py3 import PeerExpressRouteCircuitConnectionListResult
-    from ._models_py3 import PeerRoute
-    from ._models_py3 import PeerRouteList
-    from ._models_py3 import PolicySettings
-    from ._models_py3 import PrepareNetworkPoliciesRequest
-    from ._models_py3 import PrivateDnsZoneConfig
-    from ._models_py3 import PrivateDnsZoneGroup
-    from ._models_py3 import PrivateDnsZoneGroupListResult
-    from ._models_py3 import PrivateEndpoint
-    from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointConnectionListResult
-    from ._models_py3 import PrivateEndpointListResult
-    from ._models_py3 import PrivateLinkService
-    from ._models_py3 import PrivateLinkServiceConnection
-    from ._models_py3 import PrivateLinkServiceConnectionState
-    from ._models_py3 import PrivateLinkServiceIpConfiguration
-    from ._models_py3 import PrivateLinkServiceListResult
-    from ._models_py3 import PrivateLinkServicePropertiesAutoApproval
-    from ._models_py3 import PrivateLinkServicePropertiesVisibility
-    from ._models_py3 import PrivateLinkServiceVisibility
-    from ._models_py3 import Probe
-    from ._models_py3 import PropagatedRouteTable
-    from ._models_py3 import ProtocolConfiguration
-    from ._models_py3 import ProtocolCustomSettingsFormat
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import PublicIPAddress
-    from ._models_py3 import PublicIPAddressDnsSettings
-    from ._models_py3 import PublicIPAddressListResult
-    from ._models_py3 import PublicIPAddressSku
-    from ._models_py3 import PublicIPPrefix
-    from ._models_py3 import PublicIPPrefixListResult
-    from ._models_py3 import PublicIPPrefixSku
-    from ._models_py3 import QosIpRange
-    from ._models_py3 import QosPortRange
-    from ._models_py3 import QueryTroubleshootingParameters
-    from ._models_py3 import RadiusServer
-    from ._models_py3 import RecordSet
-    from ._models_py3 import ReferencedPublicIpAddress
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceNavigationLink
-    from ._models_py3 import ResourceNavigationLinksListResult
-    from ._models_py3 import ResourceSet
-    from ._models_py3 import RetentionPolicyParameters
-    from ._models_py3 import Route
-    from ._models_py3 import RouteFilter
-    from ._models_py3 import RouteFilterListResult
-    from ._models_py3 import RouteFilterRule
-    from ._models_py3 import RouteFilterRuleListResult
-    from ._models_py3 import RouteListResult
-    from ._models_py3 import RouteTable
-    from ._models_py3 import RouteTableListResult
-    from ._models_py3 import RoutingConfiguration
-    from ._models_py3 import SecurityGroupNetworkInterface
-    from ._models_py3 import SecurityGroupViewParameters
-    from ._models_py3 import SecurityGroupViewResult
-    from ._models_py3 import SecurityPartnerProvider
-    from ._models_py3 import SecurityPartnerProviderListResult
-    from ._models_py3 import SecurityRule
-    from ._models_py3 import SecurityRuleAssociations
-    from ._models_py3 import SecurityRuleListResult
-    from ._models_py3 import ServiceAssociationLink
-    from ._models_py3 import ServiceAssociationLinksListResult
-    from ._models_py3 import ServiceEndpointPolicy
-    from ._models_py3 import ServiceEndpointPolicyDefinition
-    from ._models_py3 import ServiceEndpointPolicyDefinitionListResult
-    from ._models_py3 import ServiceEndpointPolicyListResult
-    from ._models_py3 import ServiceEndpointPropertiesFormat
-    from ._models_py3 import ServiceTagInformation
-    from ._models_py3 import ServiceTagInformationPropertiesFormat
-    from ._models_py3 import ServiceTagsListResult
-    from ._models_py3 import SessionIds
-    from ._models_py3 import StaticRoute
-    from ._models_py3 import SubResource
-    from ._models_py3 import Subnet
-    from ._models_py3 import SubnetAssociation
-    from ._models_py3 import SubnetListResult
-    from ._models_py3 import TagsObject
-    from ._models_py3 import Topology
-    from ._models_py3 import TopologyAssociation
-    from ._models_py3 import TopologyParameters
-    from ._models_py3 import TopologyResource
-    from ._models_py3 import TrafficAnalyticsConfigurationProperties
-    from ._models_py3 import TrafficAnalyticsProperties
-    from ._models_py3 import TrafficSelectorPolicy
-    from ._models_py3 import TroubleshootingDetails
-    from ._models_py3 import TroubleshootingParameters
-    from ._models_py3 import TroubleshootingRecommendedActions
-    from ._models_py3 import TroubleshootingResult
-    from ._models_py3 import TunnelConnectionHealth
-    from ._models_py3 import UnprepareNetworkPoliciesRequest
-    from ._models_py3 import Usage
-    from ._models_py3 import UsageName
-    from ._models_py3 import UsagesListResult
-    from ._models_py3 import VM
-    from ._models_py3 import VerificationIPFlowParameters
-    from ._models_py3 import VerificationIPFlowResult
-    from ._models_py3 import VirtualApplianceNicProperties
-    from ._models_py3 import VirtualApplianceSite
-    from ._models_py3 import VirtualApplianceSkuProperties
-    from ._models_py3 import VirtualHub
-    from ._models_py3 import VirtualHubEffectiveRoute
-    from ._models_py3 import VirtualHubEffectiveRouteList
-    from ._models_py3 import VirtualHubId
-    from ._models_py3 import VirtualHubRoute
-    from ._models_py3 import VirtualHubRouteTable
-    from ._models_py3 import VirtualHubRouteTableV2
-    from ._models_py3 import VirtualHubRouteV2
-    from ._models_py3 import VirtualNetwork
-    from ._models_py3 import VirtualNetworkBgpCommunities
-    from ._models_py3 import VirtualNetworkConnectionGatewayReference
-    from ._models_py3 import VirtualNetworkGateway
-    from ._models_py3 import VirtualNetworkGatewayConnection
-    from ._models_py3 import VirtualNetworkGatewayConnectionListEntity
-    from ._models_py3 import VirtualNetworkGatewayConnectionListResult
-    from ._models_py3 import VirtualNetworkGatewayIPConfiguration
-    from ._models_py3 import VirtualNetworkGatewayListConnectionsResult
-    from ._models_py3 import VirtualNetworkGatewayListResult
-    from ._models_py3 import VirtualNetworkGatewaySku
-    from ._models_py3 import VirtualNetworkListResult
-    from ._models_py3 import VirtualNetworkListUsageResult
-    from ._models_py3 import VirtualNetworkPeering
-    from ._models_py3 import VirtualNetworkPeeringListResult
-    from ._models_py3 import VirtualNetworkTap
-    from ._models_py3 import VirtualNetworkTapListResult
-    from ._models_py3 import VirtualNetworkUsage
-    from ._models_py3 import VirtualNetworkUsageName
-    from ._models_py3 import VirtualRouter
-    from ._models_py3 import VirtualRouterListResult
-    from ._models_py3 import VirtualRouterPeering
-    from ._models_py3 import VirtualRouterPeeringListResult
-    from ._models_py3 import VirtualWAN
-    from ._models_py3 import VirtualWanSecurityProvider
-    from ._models_py3 import VirtualWanSecurityProviders
-    from ._models_py3 import VirtualWanVpnProfileParameters
-    from ._models_py3 import VnetRoute
-    from ._models_py3 import VpnClientConfiguration
-    from ._models_py3 import VpnClientConnectionHealth
-    from ._models_py3 import VpnClientConnectionHealthDetail
-    from ._models_py3 import VpnClientConnectionHealthDetailListResult
-    from ._models_py3 import VpnClientIPsecParameters
-    from ._models_py3 import VpnClientParameters
-    from ._models_py3 import VpnClientRevokedCertificate
-    from ._models_py3 import VpnClientRootCertificate
-    from ._models_py3 import VpnConnection
-    from ._models_py3 import VpnConnectionPacketCaptureStartParameters
-    from ._models_py3 import VpnConnectionPacketCaptureStopParameters
-    from ._models_py3 import VpnDeviceScriptParameters
-    from ._models_py3 import VpnGateway
-    from ._models_py3 import VpnGatewayIpConfiguration
-    from ._models_py3 import VpnGatewayNatRule
-    from ._models_py3 import VpnGatewayPacketCaptureStartParameters
-    from ._models_py3 import VpnGatewayPacketCaptureStopParameters
-    from ._models_py3 import VpnLinkBgpSettings
-    from ._models_py3 import VpnLinkProviderProperties
-    from ._models_py3 import VpnNatRuleMapping
-    from ._models_py3 import VpnPacketCaptureStartParameters
-    from ._models_py3 import VpnPacketCaptureStopParameters
-    from ._models_py3 import VpnProfileResponse
-    from ._models_py3 import VpnServerConfigRadiusClientRootCertificate
-    from ._models_py3 import VpnServerConfigRadiusServerRootCertificate
-    from ._models_py3 import VpnServerConfigVpnClientRevokedCertificate
-    from ._models_py3 import VpnServerConfigVpnClientRootCertificate
-    from ._models_py3 import VpnServerConfiguration
-    from ._models_py3 import VpnServerConfigurationsResponse
-    from ._models_py3 import VpnSite
-    from ._models_py3 import VpnSiteId
-    from ._models_py3 import VpnSiteLink
-    from ._models_py3 import VpnSiteLinkConnection
-    from ._models_py3 import WebApplicationFirewallCustomRule
-    from ._models_py3 import WebApplicationFirewallPolicy
-    from ._models_py3 import WebApplicationFirewallPolicyListResult
-except (SyntaxError, ImportError):
-    from ._models import AadAuthenticationParameters  # type: ignore
-    from ._models import AddressSpace  # type: ignore
-    from ._models import ApplicationGateway  # type: ignore
-    from ._models import ApplicationGatewayAuthenticationCertificate  # type: ignore
-    from ._models import ApplicationGatewayAutoscaleConfiguration  # type: ignore
-    from ._models import ApplicationGatewayAvailableSslOptions  # type: ignore
-    from ._models import ApplicationGatewayAvailableSslPredefinedPolicies  # type: ignore
-    from ._models import ApplicationGatewayAvailableWafRuleSetsResult  # type: ignore
-    from ._models import ApplicationGatewayBackendAddress  # type: ignore
-    from ._models import ApplicationGatewayBackendAddressPool  # type: ignore
-    from ._models import ApplicationGatewayBackendHealth  # type: ignore
-    from ._models import ApplicationGatewayBackendHealthHttpSettings  # type: ignore
-    from ._models import ApplicationGatewayBackendHealthOnDemand  # type: ignore
-    from ._models import ApplicationGatewayBackendHealthPool  # type: ignore
-    from ._models import ApplicationGatewayBackendHealthServer  # type: ignore
-    from ._models import ApplicationGatewayBackendHttpSettings  # type: ignore
-    from ._models import ApplicationGatewayClientAuthConfiguration  # type: ignore
-    from ._models import ApplicationGatewayConnectionDraining  # type: ignore
-    from ._models import ApplicationGatewayCustomError  # type: ignore
-    from ._models import ApplicationGatewayFirewallDisabledRuleGroup  # type: ignore
-    from ._models import ApplicationGatewayFirewallExclusion  # type: ignore
-    from ._models import ApplicationGatewayFirewallRule  # type: ignore
-    from ._models import ApplicationGatewayFirewallRuleGroup  # type: ignore
-    from ._models import ApplicationGatewayFirewallRuleSet  # type: ignore
-    from ._models import ApplicationGatewayFrontendIPConfiguration  # type: ignore
-    from ._models import ApplicationGatewayFrontendPort  # type: ignore
-    from ._models import ApplicationGatewayHeaderConfiguration  # type: ignore
-    from ._models import ApplicationGatewayHttpListener  # type: ignore
-    from ._models import ApplicationGatewayIPConfiguration  # type: ignore
-    from ._models import ApplicationGatewayListResult  # type: ignore
-    from ._models import ApplicationGatewayOnDemandProbe  # type: ignore
-    from ._models import ApplicationGatewayPathRule  # type: ignore
-    from ._models import ApplicationGatewayPrivateEndpointConnection  # type: ignore
-    from ._models import ApplicationGatewayPrivateEndpointConnectionListResult  # type: ignore
-    from ._models import ApplicationGatewayPrivateLinkConfiguration  # type: ignore
-    from ._models import ApplicationGatewayPrivateLinkIpConfiguration  # type: ignore
-    from ._models import ApplicationGatewayPrivateLinkResource  # type: ignore
-    from ._models import ApplicationGatewayPrivateLinkResourceListResult  # type: ignore
-    from ._models import ApplicationGatewayProbe  # type: ignore
-    from ._models import ApplicationGatewayProbeHealthResponseMatch  # type: ignore
-    from ._models import ApplicationGatewayRedirectConfiguration  # type: ignore
-    from ._models import ApplicationGatewayRequestRoutingRule  # type: ignore
-    from ._models import ApplicationGatewayRewriteRule  # type: ignore
-    from ._models import ApplicationGatewayRewriteRuleActionSet  # type: ignore
-    from ._models import ApplicationGatewayRewriteRuleCondition  # type: ignore
-    from ._models import ApplicationGatewayRewriteRuleSet  # type: ignore
-    from ._models import ApplicationGatewaySku  # type: ignore
-    from ._models import ApplicationGatewaySslCertificate  # type: ignore
-    from ._models import ApplicationGatewaySslPolicy  # type: ignore
-    from ._models import ApplicationGatewaySslPredefinedPolicy  # type: ignore
-    from ._models import ApplicationGatewaySslProfile  # type: ignore
-    from ._models import ApplicationGatewayTrustedClientCertificate  # type: ignore
-    from ._models import ApplicationGatewayTrustedRootCertificate  # type: ignore
-    from ._models import ApplicationGatewayUrlConfiguration  # type: ignore
-    from ._models import ApplicationGatewayUrlPathMap  # type: ignore
-    from ._models import ApplicationGatewayWebApplicationFirewallConfiguration  # type: ignore
-    from ._models import ApplicationRule  # type: ignore
-    from ._models import ApplicationSecurityGroup  # type: ignore
-    from ._models import ApplicationSecurityGroupListResult  # type: ignore
-    from ._models import AuthorizationListResult  # type: ignore
-    from ._models import AutoApprovedPrivateLinkService  # type: ignore
-    from ._models import AutoApprovedPrivateLinkServicesResult  # type: ignore
-    from ._models import Availability  # type: ignore
-    from ._models import AvailableDelegation  # type: ignore
-    from ._models import AvailableDelegationsResult  # type: ignore
-    from ._models import AvailablePrivateEndpointType  # type: ignore
-    from ._models import AvailablePrivateEndpointTypesResult  # type: ignore
-    from ._models import AvailableProvidersList  # type: ignore
-    from ._models import AvailableProvidersListCity  # type: ignore
-    from ._models import AvailableProvidersListCountry  # type: ignore
-    from ._models import AvailableProvidersListParameters  # type: ignore
-    from ._models import AvailableProvidersListState  # type: ignore
-    from ._models import AvailableServiceAlias  # type: ignore
-    from ._models import AvailableServiceAliasesResult  # type: ignore
-    from ._models import AzureAsyncOperationResult  # type: ignore
-    from ._models import AzureFirewall  # type: ignore
-    from ._models import AzureFirewallApplicationRule  # type: ignore
-    from ._models import AzureFirewallApplicationRuleCollection  # type: ignore
-    from ._models import AzureFirewallApplicationRuleProtocol  # type: ignore
-    from ._models import AzureFirewallFqdnTag  # type: ignore
-    from ._models import AzureFirewallFqdnTagListResult  # type: ignore
-    from ._models import AzureFirewallIPConfiguration  # type: ignore
-    from ._models import AzureFirewallIpGroups  # type: ignore
-    from ._models import AzureFirewallListResult  # type: ignore
-    from ._models import AzureFirewallNatRCAction  # type: ignore
-    from ._models import AzureFirewallNatRule  # type: ignore
-    from ._models import AzureFirewallNatRuleCollection  # type: ignore
-    from ._models import AzureFirewallNetworkRule  # type: ignore
-    from ._models import AzureFirewallNetworkRuleCollection  # type: ignore
-    from ._models import AzureFirewallPublicIPAddress  # type: ignore
-    from ._models import AzureFirewallRCAction  # type: ignore
-    from ._models import AzureFirewallSku  # type: ignore
-    from ._models import AzureReachabilityReport  # type: ignore
-    from ._models import AzureReachabilityReportItem  # type: ignore
-    from ._models import AzureReachabilityReportLatencyInfo  # type: ignore
-    from ._models import AzureReachabilityReportLocation  # type: ignore
-    from ._models import AzureReachabilityReportParameters  # type: ignore
-    from ._models import AzureWebCategory  # type: ignore
-    from ._models import AzureWebCategoryListResult  # type: ignore
-    from ._models import BGPCommunity  # type: ignore
-    from ._models import BackendAddressPool  # type: ignore
-    from ._models import BastionActiveSession  # type: ignore
-    from ._models import BastionActiveSessionListResult  # type: ignore
-    from ._models import BastionHost  # type: ignore
-    from ._models import BastionHostIPConfiguration  # type: ignore
-    from ._models import BastionHostListResult  # type: ignore
-    from ._models import BastionSessionDeleteResult  # type: ignore
-    from ._models import BastionSessionState  # type: ignore
-    from ._models import BastionShareableLink  # type: ignore
-    from ._models import BastionShareableLinkListRequest  # type: ignore
-    from ._models import BastionShareableLinkListResult  # type: ignore
-    from ._models import BgpConnection  # type: ignore
-    from ._models import BgpPeerStatus  # type: ignore
-    from ._models import BgpPeerStatusListResult  # type: ignore
-    from ._models import BgpServiceCommunity  # type: ignore
-    from ._models import BgpServiceCommunityListResult  # type: ignore
-    from ._models import BgpSettings  # type: ignore
-    from ._models import BreakOutCategoryPolicies  # type: ignore
-    from ._models import CheckPrivateLinkServiceVisibilityRequest  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
-    from ._models import ConnectionMonitor  # type: ignore
-    from ._models import ConnectionMonitorDestination  # type: ignore
-    from ._models import ConnectionMonitorEndpoint  # type: ignore
-    from ._models import ConnectionMonitorEndpointFilter  # type: ignore
-    from ._models import ConnectionMonitorEndpointFilterItem  # type: ignore
-    from ._models import ConnectionMonitorEndpointScope  # type: ignore
-    from ._models import ConnectionMonitorEndpointScopeItem  # type: ignore
-    from ._models import ConnectionMonitorHttpConfiguration  # type: ignore
-    from ._models import ConnectionMonitorIcmpConfiguration  # type: ignore
-    from ._models import ConnectionMonitorListResult  # type: ignore
-    from ._models import ConnectionMonitorOutput  # type: ignore
-    from ._models import ConnectionMonitorParameters  # type: ignore
-    from ._models import ConnectionMonitorQueryResult  # type: ignore
-    from ._models import ConnectionMonitorResult  # type: ignore
-    from ._models import ConnectionMonitorResultProperties  # type: ignore
-    from ._models import ConnectionMonitorSource  # type: ignore
-    from ._models import ConnectionMonitorSuccessThreshold  # type: ignore
-    from ._models import ConnectionMonitorTcpConfiguration  # type: ignore
-    from ._models import ConnectionMonitorTestConfiguration  # type: ignore
-    from ._models import ConnectionMonitorTestGroup  # type: ignore
-    from ._models import ConnectionMonitorWorkspaceSettings  # type: ignore
-    from ._models import ConnectionResetSharedKey  # type: ignore
-    from ._models import ConnectionSharedKey  # type: ignore
-    from ._models import ConnectionStateSnapshot  # type: ignore
-    from ._models import ConnectivityDestination  # type: ignore
-    from ._models import ConnectivityHop  # type: ignore
-    from ._models import ConnectivityInformation  # type: ignore
-    from ._models import ConnectivityIssue  # type: ignore
-    from ._models import ConnectivityParameters  # type: ignore
-    from ._models import ConnectivitySource  # type: ignore
-    from ._models import Container  # type: ignore
-    from ._models import ContainerNetworkInterface  # type: ignore
-    from ._models import ContainerNetworkInterfaceConfiguration  # type: ignore
-    from ._models import ContainerNetworkInterfaceIpConfiguration  # type: ignore
-    from ._models import CustomDnsConfigPropertiesFormat  # type: ignore
-    from ._models import CustomIpPrefix  # type: ignore
-    from ._models import CustomIpPrefixListResult  # type: ignore
-    from ._models import DdosCustomPolicy  # type: ignore
-    from ._models import DdosProtectionPlan  # type: ignore
-    from ._models import DdosProtectionPlanListResult  # type: ignore
-    from ._models import DdosSettings  # type: ignore
-    from ._models import Delegation  # type: ignore
-    from ._models import DeviceProperties  # type: ignore
-    from ._models import DhcpOptions  # type: ignore
-    from ._models import Dimension  # type: ignore
-    from ._models import DnsNameAvailabilityResult  # type: ignore
-    from ._models import DnsSettings  # type: ignore
-    from ._models import DscpConfiguration  # type: ignore
-    from ._models import DscpConfigurationListResult  # type: ignore
-    from ._models import EffectiveNetworkSecurityGroup  # type: ignore
-    from ._models import EffectiveNetworkSecurityGroupAssociation  # type: ignore
-    from ._models import EffectiveNetworkSecurityGroupListResult  # type: ignore
-    from ._models import EffectiveNetworkSecurityRule  # type: ignore
-    from ._models import EffectiveRoute  # type: ignore
-    from ._models import EffectiveRouteListResult  # type: ignore
-    from ._models import EffectiveRoutesParameters  # type: ignore
-    from ._models import EndpointServiceResult  # type: ignore
-    from ._models import EndpointServicesListResult  # type: ignore
-    from ._models import Error  # type: ignore
-    from ._models import ErrorDetails  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import EvaluatedNetworkSecurityGroup  # type: ignore
-    from ._models import ExpressRouteCircuit  # type: ignore
-    from ._models import ExpressRouteCircuitArpTable  # type: ignore
-    from ._models import ExpressRouteCircuitAuthorization  # type: ignore
-    from ._models import ExpressRouteCircuitConnection  # type: ignore
-    from ._models import ExpressRouteCircuitConnectionListResult  # type: ignore
-    from ._models import ExpressRouteCircuitListResult  # type: ignore
-    from ._models import ExpressRouteCircuitPeering  # type: ignore
-    from ._models import ExpressRouteCircuitPeeringConfig  # type: ignore
-    from ._models import ExpressRouteCircuitPeeringId  # type: ignore
-    from ._models import ExpressRouteCircuitPeeringListResult  # type: ignore
-    from ._models import ExpressRouteCircuitReference  # type: ignore
-    from ._models import ExpressRouteCircuitRoutesTable  # type: ignore
-    from ._models import ExpressRouteCircuitRoutesTableSummary  # type: ignore
-    from ._models import ExpressRouteCircuitServiceProviderProperties  # type: ignore
-    from ._models import ExpressRouteCircuitSku  # type: ignore
-    from ._models import ExpressRouteCircuitStats  # type: ignore
-    from ._models import ExpressRouteCircuitsArpTableListResult  # type: ignore
-    from ._models import ExpressRouteCircuitsRoutesTableListResult  # type: ignore
-    from ._models import ExpressRouteCircuitsRoutesTableSummaryListResult  # type: ignore
-    from ._models import ExpressRouteConnection  # type: ignore
-    from ._models import ExpressRouteConnectionId  # type: ignore
-    from ._models import ExpressRouteConnectionList  # type: ignore
-    from ._models import ExpressRouteCrossConnection  # type: ignore
-    from ._models import ExpressRouteCrossConnectionListResult  # type: ignore
-    from ._models import ExpressRouteCrossConnectionPeering  # type: ignore
-    from ._models import ExpressRouteCrossConnectionPeeringList  # type: ignore
-    from ._models import ExpressRouteCrossConnectionRoutesTableSummary  # type: ignore
-    from ._models import ExpressRouteCrossConnectionsRoutesTableSummaryListResult  # type: ignore
-    from ._models import ExpressRouteGateway  # type: ignore
-    from ._models import ExpressRouteGatewayList  # type: ignore
-    from ._models import ExpressRouteGatewayPropertiesAutoScaleConfiguration  # type: ignore
-    from ._models import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds  # type: ignore
-    from ._models import ExpressRouteLink  # type: ignore
-    from ._models import ExpressRouteLinkListResult  # type: ignore
-    from ._models import ExpressRouteLinkMacSecConfig  # type: ignore
-    from ._models import ExpressRoutePort  # type: ignore
-    from ._models import ExpressRoutePortListResult  # type: ignore
-    from ._models import ExpressRoutePortsLocation  # type: ignore
-    from ._models import ExpressRoutePortsLocationBandwidths  # type: ignore
-    from ._models import ExpressRoutePortsLocationListResult  # type: ignore
-    from ._models import ExpressRouteServiceProvider  # type: ignore
-    from ._models import ExpressRouteServiceProviderBandwidthsOffered  # type: ignore
-    from ._models import ExpressRouteServiceProviderListResult  # type: ignore
-    from ._models import ExtendedLocation  # type: ignore
-    from ._models import FirewallPolicy  # type: ignore
-    from ._models import FirewallPolicyCertificateAuthority  # type: ignore
-    from ._models import FirewallPolicyFilterRuleCollection  # type: ignore
-    from ._models import FirewallPolicyFilterRuleCollectionAction  # type: ignore
-    from ._models import FirewallPolicyIntrusionDetection  # type: ignore
-    from ._models import FirewallPolicyIntrusionDetectionBypassTrafficSpecifications  # type: ignore
-    from ._models import FirewallPolicyIntrusionDetectionConfiguration  # type: ignore
-    from ._models import FirewallPolicyIntrusionDetectionSignatureSpecification  # type: ignore
-    from ._models import FirewallPolicyListResult  # type: ignore
-    from ._models import FirewallPolicyNatRuleCollection  # type: ignore
-    from ._models import FirewallPolicyNatRuleCollectionAction  # type: ignore
-    from ._models import FirewallPolicyRule  # type: ignore
-    from ._models import FirewallPolicyRuleApplicationProtocol  # type: ignore
-    from ._models import FirewallPolicyRuleCollection  # type: ignore
-    from ._models import FirewallPolicyRuleCollectionGroup  # type: ignore
-    from ._models import FirewallPolicyRuleCollectionGroupListResult  # type: ignore
-    from ._models import FirewallPolicySku  # type: ignore
-    from ._models import FirewallPolicyThreatIntelWhitelist  # type: ignore
-    from ._models import FirewallPolicyTransportSecurity  # type: ignore
-    from ._models import FlowLog  # type: ignore
-    from ._models import FlowLogFormatParameters  # type: ignore
-    from ._models import FlowLogInformation  # type: ignore
-    from ._models import FlowLogListResult  # type: ignore
-    from ._models import FlowLogStatusParameters  # type: ignore
-    from ._models import FrontendIPConfiguration  # type: ignore
-    from ._models import GatewayRoute  # type: ignore
-    from ._models import GatewayRouteListResult  # type: ignore
-    from ._models import GenerateExpressRoutePortsLOARequest  # type: ignore
-    from ._models import GenerateExpressRoutePortsLOAResult  # type: ignore
-    from ._models import GetVpnSitesConfigurationRequest  # type: ignore
-    from ._models import HTTPConfiguration  # type: ignore
-    from ._models import HTTPHeader  # type: ignore
-    from ._models import HopLink  # type: ignore
-    from ._models import HubIPAddresses  # type: ignore
-    from ._models import HubIpConfiguration  # type: ignore
-    from ._models import HubPublicIPAddresses  # type: ignore
-    from ._models import HubRoute  # type: ignore
-    from ._models import HubRouteTable  # type: ignore
-    from ._models import HubVirtualNetworkConnection  # type: ignore
-    from ._models import IPAddressAvailabilityResult  # type: ignore
-    from ._models import IPConfiguration  # type: ignore
-    from ._models import IPConfigurationBgpPeeringAddress  # type: ignore
-    from ._models import IPConfigurationProfile  # type: ignore
-    from ._models import InboundNatPool  # type: ignore
-    from ._models import InboundNatRule  # type: ignore
-    from ._models import InboundNatRuleListResult  # type: ignore
-    from ._models import InboundSecurityRule  # type: ignore
-    from ._models import InboundSecurityRules  # type: ignore
-    from ._models import IpAllocation  # type: ignore
-    from ._models import IpAllocationListResult  # type: ignore
-    from ._models import IpGroup  # type: ignore
-    from ._models import IpGroupListResult  # type: ignore
-    from ._models import IpTag  # type: ignore
-    from ._models import IpsecPolicy  # type: ignore
-    from ._models import Ipv6CircuitConnectionConfig  # type: ignore
-    from ._models import Ipv6ExpressRouteCircuitPeeringConfig  # type: ignore
-    from ._models import ListHubRouteTablesResult  # type: ignore
-    from ._models import ListHubVirtualNetworkConnectionsResult  # type: ignore
-    from ._models import ListP2SVpnGatewaysResult  # type: ignore
-    from ._models import ListVirtualHubBgpConnectionResults  # type: ignore
-    from ._models import ListVirtualHubIpConfigurationResults  # type: ignore
-    from ._models import ListVirtualHubRouteTableV2SResult  # type: ignore
-    from ._models import ListVirtualHubsResult  # type: ignore
-    from ._models import ListVirtualWANsResult  # type: ignore
-    from ._models import ListVpnConnectionsResult  # type: ignore
-    from ._models import ListVpnGatewayNatRulesResult  # type: ignore
-    from ._models import ListVpnGatewaysResult  # type: ignore
-    from ._models import ListVpnServerConfigurationsResult  # type: ignore
-    from ._models import ListVpnSiteLinkConnectionsResult  # type: ignore
-    from ._models import ListVpnSiteLinksResult  # type: ignore
-    from ._models import ListVpnSitesResult  # type: ignore
-    from ._models import LoadBalancer  # type: ignore
-    from ._models import LoadBalancerBackendAddress  # type: ignore
-    from ._models import LoadBalancerBackendAddressPoolListResult  # type: ignore
-    from ._models import LoadBalancerFrontendIPConfigurationListResult  # type: ignore
-    from ._models import LoadBalancerListResult  # type: ignore
-    from ._models import LoadBalancerLoadBalancingRuleListResult  # type: ignore
-    from ._models import LoadBalancerOutboundRuleListResult  # type: ignore
-    from ._models import LoadBalancerProbeListResult  # type: ignore
-    from ._models import LoadBalancerSku  # type: ignore
-    from ._models import LoadBalancingRule  # type: ignore
-    from ._models import LocalNetworkGateway  # type: ignore
-    from ._models import LocalNetworkGatewayListResult  # type: ignore
-    from ._models import LogSpecification  # type: ignore
-    from ._models import ManagedRuleGroupOverride  # type: ignore
-    from ._models import ManagedRuleOverride  # type: ignore
-    from ._models import ManagedRuleSet  # type: ignore
-    from ._models import ManagedRulesDefinition  # type: ignore
-    from ._models import ManagedServiceIdentity  # type: ignore
-    from ._models import MatchCondition  # type: ignore
-    from ._models import MatchVariable  # type: ignore
-    from ._models import MatchedRule  # type: ignore
-    from ._models import MetricSpecification  # type: ignore
-    from ._models import NatGateway  # type: ignore
-    from ._models import NatGatewayListResult  # type: ignore
-    from ._models import NatGatewaySku  # type: ignore
-    from ._models import NatRule  # type: ignore
-    from ._models import NetworkConfigurationDiagnosticParameters  # type: ignore
-    from ._models import NetworkConfigurationDiagnosticProfile  # type: ignore
-    from ._models import NetworkConfigurationDiagnosticResponse  # type: ignore
-    from ._models import NetworkConfigurationDiagnosticResult  # type: ignore
-    from ._models import NetworkIntentPolicy  # type: ignore
-    from ._models import NetworkIntentPolicyConfiguration  # type: ignore
-    from ._models import NetworkInterface  # type: ignore
-    from ._models import NetworkInterfaceAssociation  # type: ignore
-    from ._models import NetworkInterfaceDnsSettings  # type: ignore
-    from ._models import NetworkInterfaceIPConfiguration  # type: ignore
-    from ._models import NetworkInterfaceIPConfigurationListResult  # type: ignore
-    from ._models import NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties  # type: ignore
-    from ._models import NetworkInterfaceListResult  # type: ignore
-    from ._models import NetworkInterfaceLoadBalancerListResult  # type: ignore
-    from ._models import NetworkInterfaceTapConfiguration  # type: ignore
-    from ._models import NetworkInterfaceTapConfigurationListResult  # type: ignore
-    from ._models import NetworkProfile  # type: ignore
-    from ._models import NetworkProfileListResult  # type: ignore
-    from ._models import NetworkRule  # type: ignore
-    from ._models import NetworkSecurityGroup  # type: ignore
-    from ._models import NetworkSecurityGroupListResult  # type: ignore
-    from ._models import NetworkSecurityGroupResult  # type: ignore
-    from ._models import NetworkSecurityRulesEvaluationResult  # type: ignore
-    from ._models import NetworkVirtualAppliance  # type: ignore
-    from ._models import NetworkVirtualApplianceListResult  # type: ignore
-    from ._models import NetworkVirtualApplianceSiteListResult  # type: ignore
-    from ._models import NetworkVirtualApplianceSku  # type: ignore
-    from ._models import NetworkVirtualApplianceSkuInstances  # type: ignore
-    from ._models import NetworkVirtualApplianceSkuListResult  # type: ignore
-    from ._models import NetworkWatcher  # type: ignore
-    from ._models import NetworkWatcherListResult  # type: ignore
-    from ._models import NextHopParameters  # type: ignore
-    from ._models import NextHopResult  # type: ignore
-    from ._models import O365BreakOutCategoryPolicies  # type: ignore
-    from ._models import O365PolicyProperties  # type: ignore
-    from ._models import Office365PolicyProperties  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationPropertiesFormatServiceSpecification  # type: ignore
-    from ._models import OutboundRule  # type: ignore
-    from ._models import OwaspCrsExclusionEntry  # type: ignore
-    from ._models import P2SConnectionConfiguration  # type: ignore
-    from ._models import P2SVpnConnectionHealth  # type: ignore
-    from ._models import P2SVpnConnectionHealthRequest  # type: ignore
-    from ._models import P2SVpnConnectionRequest  # type: ignore
-    from ._models import P2SVpnGateway  # type: ignore
-    from ._models import P2SVpnProfileParameters  # type: ignore
-    from ._models import PacketCapture  # type: ignore
-    from ._models import PacketCaptureFilter  # type: ignore
-    from ._models import PacketCaptureListResult  # type: ignore
-    from ._models import PacketCaptureParameters  # type: ignore
-    from ._models import PacketCaptureQueryStatusResult  # type: ignore
-    from ._models import PacketCaptureResult  # type: ignore
-    from ._models import PacketCaptureResultProperties  # type: ignore
-    from ._models import PacketCaptureStorageLocation  # type: ignore
-    from ._models import PatchRouteFilter  # type: ignore
-    from ._models import PatchRouteFilterRule  # type: ignore
-    from ._models import PeerExpressRouteCircuitConnection  # type: ignore
-    from ._models import PeerExpressRouteCircuitConnectionListResult  # type: ignore
-    from ._models import PeerRoute  # type: ignore
-    from ._models import PeerRouteList  # type: ignore
-    from ._models import PolicySettings  # type: ignore
-    from ._models import PrepareNetworkPoliciesRequest  # type: ignore
-    from ._models import PrivateDnsZoneConfig  # type: ignore
-    from ._models import PrivateDnsZoneGroup  # type: ignore
-    from ._models import PrivateDnsZoneGroupListResult  # type: ignore
-    from ._models import PrivateEndpoint  # type: ignore
-    from ._models import PrivateEndpointConnection  # type: ignore
-    from ._models import PrivateEndpointConnectionListResult  # type: ignore
-    from ._models import PrivateEndpointListResult  # type: ignore
-    from ._models import PrivateLinkService  # type: ignore
-    from ._models import PrivateLinkServiceConnection  # type: ignore
-    from ._models import PrivateLinkServiceConnectionState  # type: ignore
-    from ._models import PrivateLinkServiceIpConfiguration  # type: ignore
-    from ._models import PrivateLinkServiceListResult  # type: ignore
-    from ._models import PrivateLinkServicePropertiesAutoApproval  # type: ignore
-    from ._models import PrivateLinkServicePropertiesVisibility  # type: ignore
-    from ._models import PrivateLinkServiceVisibility  # type: ignore
-    from ._models import Probe  # type: ignore
-    from ._models import PropagatedRouteTable  # type: ignore
-    from ._models import ProtocolConfiguration  # type: ignore
-    from ._models import ProtocolCustomSettingsFormat  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import PublicIPAddress  # type: ignore
-    from ._models import PublicIPAddressDnsSettings  # type: ignore
-    from ._models import PublicIPAddressListResult  # type: ignore
-    from ._models import PublicIPAddressSku  # type: ignore
-    from ._models import PublicIPPrefix  # type: ignore
-    from ._models import PublicIPPrefixListResult  # type: ignore
-    from ._models import PublicIPPrefixSku  # type: ignore
-    from ._models import QosIpRange  # type: ignore
-    from ._models import QosPortRange  # type: ignore
-    from ._models import QueryTroubleshootingParameters  # type: ignore
-    from ._models import RadiusServer  # type: ignore
-    from ._models import RecordSet  # type: ignore
-    from ._models import ReferencedPublicIpAddress  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceNavigationLink  # type: ignore
-    from ._models import ResourceNavigationLinksListResult  # type: ignore
-    from ._models import ResourceSet  # type: ignore
-    from ._models import RetentionPolicyParameters  # type: ignore
-    from ._models import Route  # type: ignore
-    from ._models import RouteFilter  # type: ignore
-    from ._models import RouteFilterListResult  # type: ignore
-    from ._models import RouteFilterRule  # type: ignore
-    from ._models import RouteFilterRuleListResult  # type: ignore
-    from ._models import RouteListResult  # type: ignore
-    from ._models import RouteTable  # type: ignore
-    from ._models import RouteTableListResult  # type: ignore
-    from ._models import RoutingConfiguration  # type: ignore
-    from ._models import SecurityGroupNetworkInterface  # type: ignore
-    from ._models import SecurityGroupViewParameters  # type: ignore
-    from ._models import SecurityGroupViewResult  # type: ignore
-    from ._models import SecurityPartnerProvider  # type: ignore
-    from ._models import SecurityPartnerProviderListResult  # type: ignore
-    from ._models import SecurityRule  # type: ignore
-    from ._models import SecurityRuleAssociations  # type: ignore
-    from ._models import SecurityRuleListResult  # type: ignore
-    from ._models import ServiceAssociationLink  # type: ignore
-    from ._models import ServiceAssociationLinksListResult  # type: ignore
-    from ._models import ServiceEndpointPolicy  # type: ignore
-    from ._models import ServiceEndpointPolicyDefinition  # type: ignore
-    from ._models import ServiceEndpointPolicyDefinitionListResult  # type: ignore
-    from ._models import ServiceEndpointPolicyListResult  # type: ignore
-    from ._models import ServiceEndpointPropertiesFormat  # type: ignore
-    from ._models import ServiceTagInformation  # type: ignore
-    from ._models import ServiceTagInformationPropertiesFormat  # type: ignore
-    from ._models import ServiceTagsListResult  # type: ignore
-    from ._models import SessionIds  # type: ignore
-    from ._models import StaticRoute  # type: ignore
-    from ._models import SubResource  # type: ignore
-    from ._models import Subnet  # type: ignore
-    from ._models import SubnetAssociation  # type: ignore
-    from ._models import SubnetListResult  # type: ignore
-    from ._models import TagsObject  # type: ignore
-    from ._models import Topology  # type: ignore
-    from ._models import TopologyAssociation  # type: ignore
-    from ._models import TopologyParameters  # type: ignore
-    from ._models import TopologyResource  # type: ignore
-    from ._models import TrafficAnalyticsConfigurationProperties  # type: ignore
-    from ._models import TrafficAnalyticsProperties  # type: ignore
-    from ._models import TrafficSelectorPolicy  # type: ignore
-    from ._models import TroubleshootingDetails  # type: ignore
-    from ._models import TroubleshootingParameters  # type: ignore
-    from ._models import TroubleshootingRecommendedActions  # type: ignore
-    from ._models import TroubleshootingResult  # type: ignore
-    from ._models import TunnelConnectionHealth  # type: ignore
-    from ._models import UnprepareNetworkPoliciesRequest  # type: ignore
-    from ._models import Usage  # type: ignore
-    from ._models import UsageName  # type: ignore
-    from ._models import UsagesListResult  # type: ignore
-    from ._models import VM  # type: ignore
-    from ._models import VerificationIPFlowParameters  # type: ignore
-    from ._models import VerificationIPFlowResult  # type: ignore
-    from ._models import VirtualApplianceNicProperties  # type: ignore
-    from ._models import VirtualApplianceSite  # type: ignore
-    from ._models import VirtualApplianceSkuProperties  # type: ignore
-    from ._models import VirtualHub  # type: ignore
-    from ._models import VirtualHubEffectiveRoute  # type: ignore
-    from ._models import VirtualHubEffectiveRouteList  # type: ignore
-    from ._models import VirtualHubId  # type: ignore
-    from ._models import VirtualHubRoute  # type: ignore
-    from ._models import VirtualHubRouteTable  # type: ignore
-    from ._models import VirtualHubRouteTableV2  # type: ignore
-    from ._models import VirtualHubRouteV2  # type: ignore
-    from ._models import VirtualNetwork  # type: ignore
-    from ._models import VirtualNetworkBgpCommunities  # type: ignore
-    from ._models import VirtualNetworkConnectionGatewayReference  # type: ignore
-    from ._models import VirtualNetworkGateway  # type: ignore
-    from ._models import VirtualNetworkGatewayConnection  # type: ignore
-    from ._models import VirtualNetworkGatewayConnectionListEntity  # type: ignore
-    from ._models import VirtualNetworkGatewayConnectionListResult  # type: ignore
-    from ._models import VirtualNetworkGatewayIPConfiguration  # type: ignore
-    from ._models import VirtualNetworkGatewayListConnectionsResult  # type: ignore
-    from ._models import VirtualNetworkGatewayListResult  # type: ignore
-    from ._models import VirtualNetworkGatewaySku  # type: ignore
-    from ._models import VirtualNetworkListResult  # type: ignore
-    from ._models import VirtualNetworkListUsageResult  # type: ignore
-    from ._models import VirtualNetworkPeering  # type: ignore
-    from ._models import VirtualNetworkPeeringListResult  # type: ignore
-    from ._models import VirtualNetworkTap  # type: ignore
-    from ._models import VirtualNetworkTapListResult  # type: ignore
-    from ._models import VirtualNetworkUsage  # type: ignore
-    from ._models import VirtualNetworkUsageName  # type: ignore
-    from ._models import VirtualRouter  # type: ignore
-    from ._models import VirtualRouterListResult  # type: ignore
-    from ._models import VirtualRouterPeering  # type: ignore
-    from ._models import VirtualRouterPeeringListResult  # type: ignore
-    from ._models import VirtualWAN  # type: ignore
-    from ._models import VirtualWanSecurityProvider  # type: ignore
-    from ._models import VirtualWanSecurityProviders  # type: ignore
-    from ._models import VirtualWanVpnProfileParameters  # type: ignore
-    from ._models import VnetRoute  # type: ignore
-    from ._models import VpnClientConfiguration  # type: ignore
-    from ._models import VpnClientConnectionHealth  # type: ignore
-    from ._models import VpnClientConnectionHealthDetail  # type: ignore
-    from ._models import VpnClientConnectionHealthDetailListResult  # type: ignore
-    from ._models import VpnClientIPsecParameters  # type: ignore
-    from ._models import VpnClientParameters  # type: ignore
-    from ._models import VpnClientRevokedCertificate  # type: ignore
-    from ._models import VpnClientRootCertificate  # type: ignore
-    from ._models import VpnConnection  # type: ignore
-    from ._models import VpnConnectionPacketCaptureStartParameters  # type: ignore
-    from ._models import VpnConnectionPacketCaptureStopParameters  # type: ignore
-    from ._models import VpnDeviceScriptParameters  # type: ignore
-    from ._models import VpnGateway  # type: ignore
-    from ._models import VpnGatewayIpConfiguration  # type: ignore
-    from ._models import VpnGatewayNatRule  # type: ignore
-    from ._models import VpnGatewayPacketCaptureStartParameters  # type: ignore
-    from ._models import VpnGatewayPacketCaptureStopParameters  # type: ignore
-    from ._models import VpnLinkBgpSettings  # type: ignore
-    from ._models import VpnLinkProviderProperties  # type: ignore
-    from ._models import VpnNatRuleMapping  # type: ignore
-    from ._models import VpnPacketCaptureStartParameters  # type: ignore
-    from ._models import VpnPacketCaptureStopParameters  # type: ignore
-    from ._models import VpnProfileResponse  # type: ignore
-    from ._models import VpnServerConfigRadiusClientRootCertificate  # type: ignore
-    from ._models import VpnServerConfigRadiusServerRootCertificate  # type: ignore
-    from ._models import VpnServerConfigVpnClientRevokedCertificate  # type: ignore
-    from ._models import VpnServerConfigVpnClientRootCertificate  # type: ignore
-    from ._models import VpnServerConfiguration  # type: ignore
-    from ._models import VpnServerConfigurationsResponse  # type: ignore
-    from ._models import VpnSite  # type: ignore
-    from ._models import VpnSiteId  # type: ignore
-    from ._models import VpnSiteLink  # type: ignore
-    from ._models import VpnSiteLinkConnection  # type: ignore
-    from ._models import WebApplicationFirewallCustomRule  # type: ignore
-    from ._models import WebApplicationFirewallPolicy  # type: ignore
-    from ._models import WebApplicationFirewallPolicyListResult  # type: ignore
+from ._models_py3 import AadAuthenticationParameters
+from ._models_py3 import AddressSpace
+from ._models_py3 import ApplicationGateway
+from ._models_py3 import ApplicationGatewayAuthenticationCertificate
+from ._models_py3 import ApplicationGatewayAutoscaleConfiguration
+from ._models_py3 import ApplicationGatewayAvailableSslOptions
+from ._models_py3 import ApplicationGatewayAvailableSslPredefinedPolicies
+from ._models_py3 import ApplicationGatewayAvailableWafRuleSetsResult
+from ._models_py3 import ApplicationGatewayBackendAddress
+from ._models_py3 import ApplicationGatewayBackendAddressPool
+from ._models_py3 import ApplicationGatewayBackendHealth
+from ._models_py3 import ApplicationGatewayBackendHealthHttpSettings
+from ._models_py3 import ApplicationGatewayBackendHealthOnDemand
+from ._models_py3 import ApplicationGatewayBackendHealthPool
+from ._models_py3 import ApplicationGatewayBackendHealthServer
+from ._models_py3 import ApplicationGatewayBackendHttpSettings
+from ._models_py3 import ApplicationGatewayClientAuthConfiguration
+from ._models_py3 import ApplicationGatewayConnectionDraining
+from ._models_py3 import ApplicationGatewayCustomError
+from ._models_py3 import ApplicationGatewayFirewallDisabledRuleGroup
+from ._models_py3 import ApplicationGatewayFirewallExclusion
+from ._models_py3 import ApplicationGatewayFirewallRule
+from ._models_py3 import ApplicationGatewayFirewallRuleGroup
+from ._models_py3 import ApplicationGatewayFirewallRuleSet
+from ._models_py3 import ApplicationGatewayFrontendIPConfiguration
+from ._models_py3 import ApplicationGatewayFrontendPort
+from ._models_py3 import ApplicationGatewayHeaderConfiguration
+from ._models_py3 import ApplicationGatewayHttpListener
+from ._models_py3 import ApplicationGatewayIPConfiguration
+from ._models_py3 import ApplicationGatewayListResult
+from ._models_py3 import ApplicationGatewayOnDemandProbe
+from ._models_py3 import ApplicationGatewayPathRule
+from ._models_py3 import ApplicationGatewayPrivateEndpointConnection
+from ._models_py3 import ApplicationGatewayPrivateEndpointConnectionListResult
+from ._models_py3 import ApplicationGatewayPrivateLinkConfiguration
+from ._models_py3 import ApplicationGatewayPrivateLinkIpConfiguration
+from ._models_py3 import ApplicationGatewayPrivateLinkResource
+from ._models_py3 import ApplicationGatewayPrivateLinkResourceListResult
+from ._models_py3 import ApplicationGatewayProbe
+from ._models_py3 import ApplicationGatewayProbeHealthResponseMatch
+from ._models_py3 import ApplicationGatewayRedirectConfiguration
+from ._models_py3 import ApplicationGatewayRequestRoutingRule
+from ._models_py3 import ApplicationGatewayRewriteRule
+from ._models_py3 import ApplicationGatewayRewriteRuleActionSet
+from ._models_py3 import ApplicationGatewayRewriteRuleCondition
+from ._models_py3 import ApplicationGatewayRewriteRuleSet
+from ._models_py3 import ApplicationGatewaySku
+from ._models_py3 import ApplicationGatewaySslCertificate
+from ._models_py3 import ApplicationGatewaySslPolicy
+from ._models_py3 import ApplicationGatewaySslPredefinedPolicy
+from ._models_py3 import ApplicationGatewaySslProfile
+from ._models_py3 import ApplicationGatewayTrustedClientCertificate
+from ._models_py3 import ApplicationGatewayTrustedRootCertificate
+from ._models_py3 import ApplicationGatewayUrlConfiguration
+from ._models_py3 import ApplicationGatewayUrlPathMap
+from ._models_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
+from ._models_py3 import ApplicationRule
+from ._models_py3 import ApplicationSecurityGroup
+from ._models_py3 import ApplicationSecurityGroupListResult
+from ._models_py3 import AuthorizationListResult
+from ._models_py3 import AutoApprovedPrivateLinkService
+from ._models_py3 import AutoApprovedPrivateLinkServicesResult
+from ._models_py3 import Availability
+from ._models_py3 import AvailableDelegation
+from ._models_py3 import AvailableDelegationsResult
+from ._models_py3 import AvailablePrivateEndpointType
+from ._models_py3 import AvailablePrivateEndpointTypesResult
+from ._models_py3 import AvailableProvidersList
+from ._models_py3 import AvailableProvidersListCity
+from ._models_py3 import AvailableProvidersListCountry
+from ._models_py3 import AvailableProvidersListParameters
+from ._models_py3 import AvailableProvidersListState
+from ._models_py3 import AvailableServiceAlias
+from ._models_py3 import AvailableServiceAliasesResult
+from ._models_py3 import AzureAsyncOperationResult
+from ._models_py3 import AzureFirewall
+from ._models_py3 import AzureFirewallApplicationRule
+from ._models_py3 import AzureFirewallApplicationRuleCollection
+from ._models_py3 import AzureFirewallApplicationRuleProtocol
+from ._models_py3 import AzureFirewallFqdnTag
+from ._models_py3 import AzureFirewallFqdnTagListResult
+from ._models_py3 import AzureFirewallIPConfiguration
+from ._models_py3 import AzureFirewallIpGroups
+from ._models_py3 import AzureFirewallListResult
+from ._models_py3 import AzureFirewallNatRCAction
+from ._models_py3 import AzureFirewallNatRule
+from ._models_py3 import AzureFirewallNatRuleCollection
+from ._models_py3 import AzureFirewallNetworkRule
+from ._models_py3 import AzureFirewallNetworkRuleCollection
+from ._models_py3 import AzureFirewallPublicIPAddress
+from ._models_py3 import AzureFirewallRCAction
+from ._models_py3 import AzureFirewallSku
+from ._models_py3 import AzureReachabilityReport
+from ._models_py3 import AzureReachabilityReportItem
+from ._models_py3 import AzureReachabilityReportLatencyInfo
+from ._models_py3 import AzureReachabilityReportLocation
+from ._models_py3 import AzureReachabilityReportParameters
+from ._models_py3 import AzureWebCategory
+from ._models_py3 import AzureWebCategoryListResult
+from ._models_py3 import BGPCommunity
+from ._models_py3 import BackendAddressPool
+from ._models_py3 import BastionActiveSession
+from ._models_py3 import BastionActiveSessionListResult
+from ._models_py3 import BastionHost
+from ._models_py3 import BastionHostIPConfiguration
+from ._models_py3 import BastionHostListResult
+from ._models_py3 import BastionSessionDeleteResult
+from ._models_py3 import BastionSessionState
+from ._models_py3 import BastionShareableLink
+from ._models_py3 import BastionShareableLinkListRequest
+from ._models_py3 import BastionShareableLinkListResult
+from ._models_py3 import BgpConnection
+from ._models_py3 import BgpPeerStatus
+from ._models_py3 import BgpPeerStatusListResult
+from ._models_py3 import BgpServiceCommunity
+from ._models_py3 import BgpServiceCommunityListResult
+from ._models_py3 import BgpSettings
+from ._models_py3 import BreakOutCategoryPolicies
+from ._models_py3 import CheckPrivateLinkServiceVisibilityRequest
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties
+from ._models_py3 import ConnectionMonitor
+from ._models_py3 import ConnectionMonitorDestination
+from ._models_py3 import ConnectionMonitorEndpoint
+from ._models_py3 import ConnectionMonitorEndpointFilter
+from ._models_py3 import ConnectionMonitorEndpointFilterItem
+from ._models_py3 import ConnectionMonitorEndpointScope
+from ._models_py3 import ConnectionMonitorEndpointScopeItem
+from ._models_py3 import ConnectionMonitorHttpConfiguration
+from ._models_py3 import ConnectionMonitorIcmpConfiguration
+from ._models_py3 import ConnectionMonitorListResult
+from ._models_py3 import ConnectionMonitorOutput
+from ._models_py3 import ConnectionMonitorParameters
+from ._models_py3 import ConnectionMonitorQueryResult
+from ._models_py3 import ConnectionMonitorResult
+from ._models_py3 import ConnectionMonitorResultProperties
+from ._models_py3 import ConnectionMonitorSource
+from ._models_py3 import ConnectionMonitorSuccessThreshold
+from ._models_py3 import ConnectionMonitorTcpConfiguration
+from ._models_py3 import ConnectionMonitorTestConfiguration
+from ._models_py3 import ConnectionMonitorTestGroup
+from ._models_py3 import ConnectionMonitorWorkspaceSettings
+from ._models_py3 import ConnectionResetSharedKey
+from ._models_py3 import ConnectionSharedKey
+from ._models_py3 import ConnectionStateSnapshot
+from ._models_py3 import ConnectivityDestination
+from ._models_py3 import ConnectivityHop
+from ._models_py3 import ConnectivityInformation
+from ._models_py3 import ConnectivityIssue
+from ._models_py3 import ConnectivityParameters
+from ._models_py3 import ConnectivitySource
+from ._models_py3 import Container
+from ._models_py3 import ContainerNetworkInterface
+from ._models_py3 import ContainerNetworkInterfaceConfiguration
+from ._models_py3 import ContainerNetworkInterfaceIpConfiguration
+from ._models_py3 import CustomDnsConfigPropertiesFormat
+from ._models_py3 import CustomIpPrefix
+from ._models_py3 import CustomIpPrefixListResult
+from ._models_py3 import DdosCustomPolicy
+from ._models_py3 import DdosProtectionPlan
+from ._models_py3 import DdosProtectionPlanListResult
+from ._models_py3 import DdosSettings
+from ._models_py3 import Delegation
+from ._models_py3 import DeviceProperties
+from ._models_py3 import DhcpOptions
+from ._models_py3 import Dimension
+from ._models_py3 import DnsNameAvailabilityResult
+from ._models_py3 import DnsSettings
+from ._models_py3 import DscpConfiguration
+from ._models_py3 import DscpConfigurationListResult
+from ._models_py3 import EffectiveNetworkSecurityGroup
+from ._models_py3 import EffectiveNetworkSecurityGroupAssociation
+from ._models_py3 import EffectiveNetworkSecurityGroupListResult
+from ._models_py3 import EffectiveNetworkSecurityRule
+from ._models_py3 import EffectiveRoute
+from ._models_py3 import EffectiveRouteListResult
+from ._models_py3 import EffectiveRoutesParameters
+from ._models_py3 import EndpointServiceResult
+from ._models_py3 import EndpointServicesListResult
+from ._models_py3 import Error
+from ._models_py3 import ErrorDetails
+from ._models_py3 import ErrorResponse
+from ._models_py3 import EvaluatedNetworkSecurityGroup
+from ._models_py3 import ExpressRouteCircuit
+from ._models_py3 import ExpressRouteCircuitArpTable
+from ._models_py3 import ExpressRouteCircuitAuthorization
+from ._models_py3 import ExpressRouteCircuitConnection
+from ._models_py3 import ExpressRouteCircuitConnectionListResult
+from ._models_py3 import ExpressRouteCircuitListResult
+from ._models_py3 import ExpressRouteCircuitPeering
+from ._models_py3 import ExpressRouteCircuitPeeringConfig
+from ._models_py3 import ExpressRouteCircuitPeeringId
+from ._models_py3 import ExpressRouteCircuitPeeringListResult
+from ._models_py3 import ExpressRouteCircuitReference
+from ._models_py3 import ExpressRouteCircuitRoutesTable
+from ._models_py3 import ExpressRouteCircuitRoutesTableSummary
+from ._models_py3 import ExpressRouteCircuitServiceProviderProperties
+from ._models_py3 import ExpressRouteCircuitSku
+from ._models_py3 import ExpressRouteCircuitStats
+from ._models_py3 import ExpressRouteCircuitsArpTableListResult
+from ._models_py3 import ExpressRouteCircuitsRoutesTableListResult
+from ._models_py3 import ExpressRouteCircuitsRoutesTableSummaryListResult
+from ._models_py3 import ExpressRouteConnection
+from ._models_py3 import ExpressRouteConnectionId
+from ._models_py3 import ExpressRouteConnectionList
+from ._models_py3 import ExpressRouteCrossConnection
+from ._models_py3 import ExpressRouteCrossConnectionListResult
+from ._models_py3 import ExpressRouteCrossConnectionPeering
+from ._models_py3 import ExpressRouteCrossConnectionPeeringList
+from ._models_py3 import ExpressRouteCrossConnectionRoutesTableSummary
+from ._models_py3 import ExpressRouteCrossConnectionsRoutesTableSummaryListResult
+from ._models_py3 import ExpressRouteGateway
+from ._models_py3 import ExpressRouteGatewayList
+from ._models_py3 import ExpressRouteGatewayPropertiesAutoScaleConfiguration
+from ._models_py3 import ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds
+from ._models_py3 import ExpressRouteLink
+from ._models_py3 import ExpressRouteLinkListResult
+from ._models_py3 import ExpressRouteLinkMacSecConfig
+from ._models_py3 import ExpressRoutePort
+from ._models_py3 import ExpressRoutePortListResult
+from ._models_py3 import ExpressRoutePortsLocation
+from ._models_py3 import ExpressRoutePortsLocationBandwidths
+from ._models_py3 import ExpressRoutePortsLocationListResult
+from ._models_py3 import ExpressRouteServiceProvider
+from ._models_py3 import ExpressRouteServiceProviderBandwidthsOffered
+from ._models_py3 import ExpressRouteServiceProviderListResult
+from ._models_py3 import ExtendedLocation
+from ._models_py3 import FirewallPolicy
+from ._models_py3 import FirewallPolicyCertificateAuthority
+from ._models_py3 import FirewallPolicyFilterRuleCollection
+from ._models_py3 import FirewallPolicyFilterRuleCollectionAction
+from ._models_py3 import FirewallPolicyIntrusionDetection
+from ._models_py3 import FirewallPolicyIntrusionDetectionBypassTrafficSpecifications
+from ._models_py3 import FirewallPolicyIntrusionDetectionConfiguration
+from ._models_py3 import FirewallPolicyIntrusionDetectionSignatureSpecification
+from ._models_py3 import FirewallPolicyListResult
+from ._models_py3 import FirewallPolicyNatRuleCollection
+from ._models_py3 import FirewallPolicyNatRuleCollectionAction
+from ._models_py3 import FirewallPolicyRule
+from ._models_py3 import FirewallPolicyRuleApplicationProtocol
+from ._models_py3 import FirewallPolicyRuleCollection
+from ._models_py3 import FirewallPolicyRuleCollectionGroup
+from ._models_py3 import FirewallPolicyRuleCollectionGroupListResult
+from ._models_py3 import FirewallPolicySku
+from ._models_py3 import FirewallPolicyThreatIntelWhitelist
+from ._models_py3 import FirewallPolicyTransportSecurity
+from ._models_py3 import FlowLog
+from ._models_py3 import FlowLogFormatParameters
+from ._models_py3 import FlowLogInformation
+from ._models_py3 import FlowLogListResult
+from ._models_py3 import FlowLogStatusParameters
+from ._models_py3 import FrontendIPConfiguration
+from ._models_py3 import GatewayRoute
+from ._models_py3 import GatewayRouteListResult
+from ._models_py3 import GenerateExpressRoutePortsLOARequest
+from ._models_py3 import GenerateExpressRoutePortsLOAResult
+from ._models_py3 import GetVpnSitesConfigurationRequest
+from ._models_py3 import HTTPConfiguration
+from ._models_py3 import HTTPHeader
+from ._models_py3 import HopLink
+from ._models_py3 import HubIPAddresses
+from ._models_py3 import HubIpConfiguration
+from ._models_py3 import HubPublicIPAddresses
+from ._models_py3 import HubRoute
+from ._models_py3 import HubRouteTable
+from ._models_py3 import HubVirtualNetworkConnection
+from ._models_py3 import IPAddressAvailabilityResult
+from ._models_py3 import IPConfiguration
+from ._models_py3 import IPConfigurationBgpPeeringAddress
+from ._models_py3 import IPConfigurationProfile
+from ._models_py3 import InboundNatPool
+from ._models_py3 import InboundNatRule
+from ._models_py3 import InboundNatRuleListResult
+from ._models_py3 import InboundSecurityRule
+from ._models_py3 import InboundSecurityRules
+from ._models_py3 import IpAllocation
+from ._models_py3 import IpAllocationListResult
+from ._models_py3 import IpGroup
+from ._models_py3 import IpGroupListResult
+from ._models_py3 import IpTag
+from ._models_py3 import IpsecPolicy
+from ._models_py3 import Ipv6CircuitConnectionConfig
+from ._models_py3 import Ipv6ExpressRouteCircuitPeeringConfig
+from ._models_py3 import ListHubRouteTablesResult
+from ._models_py3 import ListHubVirtualNetworkConnectionsResult
+from ._models_py3 import ListP2SVpnGatewaysResult
+from ._models_py3 import ListVirtualHubBgpConnectionResults
+from ._models_py3 import ListVirtualHubIpConfigurationResults
+from ._models_py3 import ListVirtualHubRouteTableV2SResult
+from ._models_py3 import ListVirtualHubsResult
+from ._models_py3 import ListVirtualWANsResult
+from ._models_py3 import ListVpnConnectionsResult
+from ._models_py3 import ListVpnGatewayNatRulesResult
+from ._models_py3 import ListVpnGatewaysResult
+from ._models_py3 import ListVpnServerConfigurationsResult
+from ._models_py3 import ListVpnSiteLinkConnectionsResult
+from ._models_py3 import ListVpnSiteLinksResult
+from ._models_py3 import ListVpnSitesResult
+from ._models_py3 import LoadBalancer
+from ._models_py3 import LoadBalancerBackendAddress
+from ._models_py3 import LoadBalancerBackendAddressPoolListResult
+from ._models_py3 import LoadBalancerFrontendIPConfigurationListResult
+from ._models_py3 import LoadBalancerListResult
+from ._models_py3 import LoadBalancerLoadBalancingRuleListResult
+from ._models_py3 import LoadBalancerOutboundRuleListResult
+from ._models_py3 import LoadBalancerProbeListResult
+from ._models_py3 import LoadBalancerSku
+from ._models_py3 import LoadBalancingRule
+from ._models_py3 import LocalNetworkGateway
+from ._models_py3 import LocalNetworkGatewayListResult
+from ._models_py3 import LogSpecification
+from ._models_py3 import ManagedRuleGroupOverride
+from ._models_py3 import ManagedRuleOverride
+from ._models_py3 import ManagedRuleSet
+from ._models_py3 import ManagedRulesDefinition
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import MatchCondition
+from ._models_py3 import MatchVariable
+from ._models_py3 import MatchedRule
+from ._models_py3 import MetricSpecification
+from ._models_py3 import NatGateway
+from ._models_py3 import NatGatewayListResult
+from ._models_py3 import NatGatewaySku
+from ._models_py3 import NatRule
+from ._models_py3 import NetworkConfigurationDiagnosticParameters
+from ._models_py3 import NetworkConfigurationDiagnosticProfile
+from ._models_py3 import NetworkConfigurationDiagnosticResponse
+from ._models_py3 import NetworkConfigurationDiagnosticResult
+from ._models_py3 import NetworkIntentPolicy
+from ._models_py3 import NetworkIntentPolicyConfiguration
+from ._models_py3 import NetworkInterface
+from ._models_py3 import NetworkInterfaceAssociation
+from ._models_py3 import NetworkInterfaceDnsSettings
+from ._models_py3 import NetworkInterfaceIPConfiguration
+from ._models_py3 import NetworkInterfaceIPConfigurationListResult
+from ._models_py3 import NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties
+from ._models_py3 import NetworkInterfaceListResult
+from ._models_py3 import NetworkInterfaceLoadBalancerListResult
+from ._models_py3 import NetworkInterfaceTapConfiguration
+from ._models_py3 import NetworkInterfaceTapConfigurationListResult
+from ._models_py3 import NetworkProfile
+from ._models_py3 import NetworkProfileListResult
+from ._models_py3 import NetworkRule
+from ._models_py3 import NetworkSecurityGroup
+from ._models_py3 import NetworkSecurityGroupListResult
+from ._models_py3 import NetworkSecurityGroupResult
+from ._models_py3 import NetworkSecurityRulesEvaluationResult
+from ._models_py3 import NetworkVirtualAppliance
+from ._models_py3 import NetworkVirtualApplianceListResult
+from ._models_py3 import NetworkVirtualApplianceSiteListResult
+from ._models_py3 import NetworkVirtualApplianceSku
+from ._models_py3 import NetworkVirtualApplianceSkuInstances
+from ._models_py3 import NetworkVirtualApplianceSkuListResult
+from ._models_py3 import NetworkWatcher
+from ._models_py3 import NetworkWatcherListResult
+from ._models_py3 import NextHopParameters
+from ._models_py3 import NextHopResult
+from ._models_py3 import O365BreakOutCategoryPolicies
+from ._models_py3 import O365PolicyProperties
+from ._models_py3 import Office365PolicyProperties
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import OperationPropertiesFormatServiceSpecification
+from ._models_py3 import OutboundRule
+from ._models_py3 import OwaspCrsExclusionEntry
+from ._models_py3 import P2SConnectionConfiguration
+from ._models_py3 import P2SVpnConnectionHealth
+from ._models_py3 import P2SVpnConnectionHealthRequest
+from ._models_py3 import P2SVpnConnectionRequest
+from ._models_py3 import P2SVpnGateway
+from ._models_py3 import P2SVpnProfileParameters
+from ._models_py3 import PacketCapture
+from ._models_py3 import PacketCaptureFilter
+from ._models_py3 import PacketCaptureListResult
+from ._models_py3 import PacketCaptureParameters
+from ._models_py3 import PacketCaptureQueryStatusResult
+from ._models_py3 import PacketCaptureResult
+from ._models_py3 import PacketCaptureResultProperties
+from ._models_py3 import PacketCaptureStorageLocation
+from ._models_py3 import PatchRouteFilter
+from ._models_py3 import PatchRouteFilterRule
+from ._models_py3 import PeerExpressRouteCircuitConnection
+from ._models_py3 import PeerExpressRouteCircuitConnectionListResult
+from ._models_py3 import PeerRoute
+from ._models_py3 import PeerRouteList
+from ._models_py3 import PolicySettings
+from ._models_py3 import PrepareNetworkPoliciesRequest
+from ._models_py3 import PrivateDnsZoneConfig
+from ._models_py3 import PrivateDnsZoneGroup
+from ._models_py3 import PrivateDnsZoneGroupListResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateEndpointListResult
+from ._models_py3 import PrivateLinkService
+from ._models_py3 import PrivateLinkServiceConnection
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import PrivateLinkServiceIpConfiguration
+from ._models_py3 import PrivateLinkServiceListResult
+from ._models_py3 import PrivateLinkServicePropertiesAutoApproval
+from ._models_py3 import PrivateLinkServicePropertiesVisibility
+from ._models_py3 import PrivateLinkServiceVisibility
+from ._models_py3 import Probe
+from ._models_py3 import PropagatedRouteTable
+from ._models_py3 import ProtocolConfiguration
+from ._models_py3 import ProtocolCustomSettingsFormat
+from ._models_py3 import ProxyResource
+from ._models_py3 import PublicIPAddress
+from ._models_py3 import PublicIPAddressDnsSettings
+from ._models_py3 import PublicIPAddressListResult
+from ._models_py3 import PublicIPAddressSku
+from ._models_py3 import PublicIPPrefix
+from ._models_py3 import PublicIPPrefixListResult
+from ._models_py3 import PublicIPPrefixSku
+from ._models_py3 import QosIpRange
+from ._models_py3 import QosPortRange
+from ._models_py3 import QueryTroubleshootingParameters
+from ._models_py3 import RadiusServer
+from ._models_py3 import RecordSet
+from ._models_py3 import ReferencedPublicIpAddress
+from ._models_py3 import Resource
+from ._models_py3 import ResourceNavigationLink
+from ._models_py3 import ResourceNavigationLinksListResult
+from ._models_py3 import ResourceSet
+from ._models_py3 import RetentionPolicyParameters
+from ._models_py3 import Route
+from ._models_py3 import RouteFilter
+from ._models_py3 import RouteFilterListResult
+from ._models_py3 import RouteFilterRule
+from ._models_py3 import RouteFilterRuleListResult
+from ._models_py3 import RouteListResult
+from ._models_py3 import RouteTable
+from ._models_py3 import RouteTableListResult
+from ._models_py3 import RoutingConfiguration
+from ._models_py3 import SecurityGroupNetworkInterface
+from ._models_py3 import SecurityGroupViewParameters
+from ._models_py3 import SecurityGroupViewResult
+from ._models_py3 import SecurityPartnerProvider
+from ._models_py3 import SecurityPartnerProviderListResult
+from ._models_py3 import SecurityRule
+from ._models_py3 import SecurityRuleAssociations
+from ._models_py3 import SecurityRuleListResult
+from ._models_py3 import ServiceAssociationLink
+from ._models_py3 import ServiceAssociationLinksListResult
+from ._models_py3 import ServiceEndpointPolicy
+from ._models_py3 import ServiceEndpointPolicyDefinition
+from ._models_py3 import ServiceEndpointPolicyDefinitionListResult
+from ._models_py3 import ServiceEndpointPolicyListResult
+from ._models_py3 import ServiceEndpointPropertiesFormat
+from ._models_py3 import ServiceTagInformation
+from ._models_py3 import ServiceTagInformationPropertiesFormat
+from ._models_py3 import ServiceTagsListResult
+from ._models_py3 import SessionIds
+from ._models_py3 import StaticRoute
+from ._models_py3 import SubResource
+from ._models_py3 import Subnet
+from ._models_py3 import SubnetAssociation
+from ._models_py3 import SubnetListResult
+from ._models_py3 import TagsObject
+from ._models_py3 import Topology
+from ._models_py3 import TopologyAssociation
+from ._models_py3 import TopologyParameters
+from ._models_py3 import TopologyResource
+from ._models_py3 import TrafficAnalyticsConfigurationProperties
+from ._models_py3 import TrafficAnalyticsProperties
+from ._models_py3 import TrafficSelectorPolicy
+from ._models_py3 import TroubleshootingDetails
+from ._models_py3 import TroubleshootingParameters
+from ._models_py3 import TroubleshootingRecommendedActions
+from ._models_py3 import TroubleshootingResult
+from ._models_py3 import TunnelConnectionHealth
+from ._models_py3 import UnprepareNetworkPoliciesRequest
+from ._models_py3 import Usage
+from ._models_py3 import UsageName
+from ._models_py3 import UsagesListResult
+from ._models_py3 import VM
+from ._models_py3 import VerificationIPFlowParameters
+from ._models_py3 import VerificationIPFlowResult
+from ._models_py3 import VirtualApplianceNicProperties
+from ._models_py3 import VirtualApplianceSite
+from ._models_py3 import VirtualApplianceSkuProperties
+from ._models_py3 import VirtualHub
+from ._models_py3 import VirtualHubEffectiveRoute
+from ._models_py3 import VirtualHubEffectiveRouteList
+from ._models_py3 import VirtualHubId
+from ._models_py3 import VirtualHubRoute
+from ._models_py3 import VirtualHubRouteTable
+from ._models_py3 import VirtualHubRouteTableV2
+from ._models_py3 import VirtualHubRouteV2
+from ._models_py3 import VirtualNetwork
+from ._models_py3 import VirtualNetworkBgpCommunities
+from ._models_py3 import VirtualNetworkConnectionGatewayReference
+from ._models_py3 import VirtualNetworkGateway
+from ._models_py3 import VirtualNetworkGatewayConnection
+from ._models_py3 import VirtualNetworkGatewayConnectionListEntity
+from ._models_py3 import VirtualNetworkGatewayConnectionListResult
+from ._models_py3 import VirtualNetworkGatewayIPConfiguration
+from ._models_py3 import VirtualNetworkGatewayListConnectionsResult
+from ._models_py3 import VirtualNetworkGatewayListResult
+from ._models_py3 import VirtualNetworkGatewaySku
+from ._models_py3 import VirtualNetworkListResult
+from ._models_py3 import VirtualNetworkListUsageResult
+from ._models_py3 import VirtualNetworkPeering
+from ._models_py3 import VirtualNetworkPeeringListResult
+from ._models_py3 import VirtualNetworkTap
+from ._models_py3 import VirtualNetworkTapListResult
+from ._models_py3 import VirtualNetworkUsage
+from ._models_py3 import VirtualNetworkUsageName
+from ._models_py3 import VirtualRouter
+from ._models_py3 import VirtualRouterListResult
+from ._models_py3 import VirtualRouterPeering
+from ._models_py3 import VirtualRouterPeeringListResult
+from ._models_py3 import VirtualWAN
+from ._models_py3 import VirtualWanSecurityProvider
+from ._models_py3 import VirtualWanSecurityProviders
+from ._models_py3 import VirtualWanVpnProfileParameters
+from ._models_py3 import VnetRoute
+from ._models_py3 import VpnClientConfiguration
+from ._models_py3 import VpnClientConnectionHealth
+from ._models_py3 import VpnClientConnectionHealthDetail
+from ._models_py3 import VpnClientConnectionHealthDetailListResult
+from ._models_py3 import VpnClientIPsecParameters
+from ._models_py3 import VpnClientParameters
+from ._models_py3 import VpnClientRevokedCertificate
+from ._models_py3 import VpnClientRootCertificate
+from ._models_py3 import VpnConnection
+from ._models_py3 import VpnConnectionPacketCaptureStartParameters
+from ._models_py3 import VpnConnectionPacketCaptureStopParameters
+from ._models_py3 import VpnDeviceScriptParameters
+from ._models_py3 import VpnGateway
+from ._models_py3 import VpnGatewayIpConfiguration
+from ._models_py3 import VpnGatewayNatRule
+from ._models_py3 import VpnGatewayPacketCaptureStartParameters
+from ._models_py3 import VpnGatewayPacketCaptureStopParameters
+from ._models_py3 import VpnLinkBgpSettings
+from ._models_py3 import VpnLinkProviderProperties
+from ._models_py3 import VpnNatRuleMapping
+from ._models_py3 import VpnPacketCaptureStartParameters
+from ._models_py3 import VpnPacketCaptureStopParameters
+from ._models_py3 import VpnProfileResponse
+from ._models_py3 import VpnServerConfigRadiusClientRootCertificate
+from ._models_py3 import VpnServerConfigRadiusServerRootCertificate
+from ._models_py3 import VpnServerConfigVpnClientRevokedCertificate
+from ._models_py3 import VpnServerConfigVpnClientRootCertificate
+from ._models_py3 import VpnServerConfiguration
+from ._models_py3 import VpnServerConfigurationsResponse
+from ._models_py3 import VpnSite
+from ._models_py3 import VpnSiteId
+from ._models_py3 import VpnSiteLink
+from ._models_py3 import VpnSiteLinkConnection
+from ._models_py3 import WebApplicationFirewallCustomRule
+from ._models_py3 import WebApplicationFirewallPolicy
+from ._models_py3 import WebApplicationFirewallPolicyListResult
+
 
 from ._network_management_client_enums import (
     Access,

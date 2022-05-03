@@ -30,6 +30,7 @@ import binascii
 from typing import Dict, Any
 
 from urllib.parse import quote as urllib_quote
+from urllib.parse import urlsplit
 
 from azure.core import MatchConditions
 
@@ -241,7 +242,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
-        authorization = auth.GetAuthorizationHeader(
+        authorization = auth.get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
@@ -661,6 +662,11 @@ def ParsePaths(paths):
             tokens.append(token)
 
     return tokens
+
+
+def create_scope_from_url(url):
+    parsed_url = urlsplit(url)
+    return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
 
 
 def validate_cache_staleness_value(max_integrated_cache_staleness):

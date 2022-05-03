@@ -16,7 +16,7 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
@@ -333,7 +333,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
-        :rtype: None
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -370,39 +370,6 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-
-    @distributed_trace
-    def create_share_if_not_exists(self, **kwargs):
-        # type: (Any) -> None
-        """Creates a new Share under the account. If a share with the
-        same name already exists, it is not changed.
-
-        :keyword Dict(str,str) metadata:
-            Name-value pairs associated with the share as metadata.
-        :keyword int quota:
-            The quota to be allotted.
-        :keyword access_tier:
-            Specifies the access tier of the share.
-            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
-        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
-
-            .. versionadded:: 12.4.0
-
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :keyword protocols:
-            Protocols to enable on the share. Only one protocol can be enabled on the share.
-        :paramtype protocols: str or ~azure.storage.fileshare.ShareProtocols
-        :keyword root_squash:
-            Root squash to set on the share.
-            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
-        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
-        :rtype: None
-        """
-        try:
-            return self.create_share(**kwargs)
-        except ResourceExistsError:
-            return None
 
     @distributed_trace
     def create_snapshot( # type: ignore

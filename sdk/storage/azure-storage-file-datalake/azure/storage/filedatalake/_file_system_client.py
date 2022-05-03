@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 import functools
-from typing import Optional, Any, Union, TypeVar
+from typing import Any, Dict, Optional, Type, TypeVar, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -15,7 +15,7 @@ except ImportError:
 import six
 
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
@@ -29,6 +29,9 @@ from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
 from ._deserialize import process_storage_error, is_file_path
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 ClassType = TypeVar("ClassType")
@@ -59,6 +62,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -250,7 +256,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -264,27 +271,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         return self._container_client.create_container(metadata=metadata,
                                                        public_access=public_access,
                                                        **kwargs)
-
-    def create_file_system_if_not_exists(self, **kwargs):
-        # type: (Any) -> None
-        """Creates a new file system under the specified account.
-
-        If the file system with the same name already exists, it is not changed.
-
-        :keyword Dict(str,str) metadata:
-            A dict with name-value pairs to associate with the
-            file system as metadata. Example: `{'Category':'test'}`
-        :keyword ~azure.storage.filedatalake.PublicAccess public_access:
-            To specify whether data in the file system may be accessed publicly and the level of access.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :rtype: None
-        """
-        try:
-            return self.create_file_system(**kwargs)
-        except ResourceExistsError:
-            return None
-
 
     def exists(self, **kwargs):
         # type: (**Any) -> bool

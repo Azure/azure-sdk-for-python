@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 import time
 import unittest
 from datetime import datetime, timedelta
@@ -12,29 +13,27 @@ from datetime import datetime, timedelta
 import pytest
 import requests
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError)
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.storage.fileshare import (
     AccessPolicy,
-    ShareSasPermissions,
+    AccountSasPermissions,
+    ResourceTypes,
     ShareAccessTier,
-    ShareServiceClient,
-    ShareDirectoryClient,
-    ShareFileClient,
     ShareClient,
-    generate_share_sas,
-    ShareRootSquash, ShareProtocols)
+    ShareFileClient,
+    ShareSasPermissions,
+    ShareServiceClient,
+    ShareProtocols,
+    ShareRootSquash,
+    generate_account_sas,
+    generate_share_sas,)
 
 from devtools_testutils.storage import StorageTestCase, LogCaptured
 from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
-
-
 # ------------------------------------------------------------------------------
 
 class StorageShareTest(StorageTestCase):
@@ -97,32 +96,6 @@ class StorageShareTest(StorageTestCase):
         # Assert
         self.assertTrue(created)
         self._delete_shares(share.share_name)
-
-    @FileSharePreparer()
-    def test_create_share_if_not_exists_without_existing_share(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-
-        # Act
-        created = self._create_share_if_not_exists()
-
-        # Assert
-        self.assertTrue(created)
-        self._delete_shares(share.share_name)
-
-    @FileSharePreparer()
-    def test_create_share_if_not_exists_with_existing_share(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-
-        # Act
-        self._create_share()
-        created = self._create_share_if_not_exists()
-
-        # Assert
-        self.assertIsNone(created)
-        self._delete_shares(share.share_name)
-
 
     @FileSharePreparer()
     def test_create_share_snapshot(self, storage_account_name, storage_account_key):
@@ -762,6 +735,30 @@ class StorageShareTest(StorageTestCase):
         self.assertEqual(len(shares2), 2)
         self.assertNamedItemInContainer(shares2, share_names[2])
         self.assertNamedItemInContainer(shares2, share_names[3])
+        self._delete_shares()
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_list_shares_account_sas(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share = self._create_share()
+        sas_token = generate_account_sas(
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        fsc = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=sas_token)
+        shares = list(fsc.list_shares())
+
+        # Assert
+        self.assertIsNotNone(shares)
+        self.assertGreaterEqual(len(shares), 1)
+        self.assertIsNotNone(shares[0])
+        self.assertNamedItemInContainer(shares, share.share_name)
         self._delete_shares()
 
     @FileSharePreparer()

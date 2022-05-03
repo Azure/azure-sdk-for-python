@@ -66,7 +66,7 @@ if TYPE_CHECKING:
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
 
-class EventGridPublisherClient(object):
+class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-version-keyword
     """EventGridPublisherClient publishes events to an EventGrid topic or domain.
     It can be used to publish either an EventGridEvent, a CloudEvent or a Custom Schema.
 

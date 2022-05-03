@@ -1,6 +1,6 @@
 # Release History
 
-## 0.12.1 (Unreleased)
+## 0.13.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.13.0 (2022-04-21)
+
+### Features
+
+  - Added operation group LinkConnectionOperations
 
 ## 0.12.0 (2022-03-07)
 
