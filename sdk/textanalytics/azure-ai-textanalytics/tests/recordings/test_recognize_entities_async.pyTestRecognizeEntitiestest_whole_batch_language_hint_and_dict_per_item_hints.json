@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -37,14 +37,14 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "347a3592-85b1-4fc2-be82-2a8690ca4678",
+        "apim-request-id": "a8121467-ea1f-4367-bcd0-c0623dd14ee1",
         "Content-Length": "501",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Wed, 13 Apr 2022 00:23:03 GMT",
+        "Date": "Tue, 03 May 2022 00:16:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "28"
+        "x-envoy-upstream-service-time": "30"
       },
       "ResponseBody": {
         "kind": "EntityRecognitionResults",

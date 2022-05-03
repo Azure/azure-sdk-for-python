@@ -13,7 +13,6 @@ import os
 
 class TestAuth(TextAnalyticsTest):
 
-    @pytest.mark.skip("AAD not deployed/configured for api version 2022-03-01-preview yet")
     @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     async def test_active_directory_auth(self, **kwargs):

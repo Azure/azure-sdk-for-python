@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -28,13 +28,13 @@
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "66f6138a-3e2e-4d6b-a367-87af48610cd2",
+        "apim-request-id": "fb7c586c-0934-47ec-a369-88499255bfc0",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 13 Apr 2022 00:23:07 GMT",
+        "Date": "Tue, 03 May 2022 00:16:31 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "4"
+        "x-envoy-upstream-service-time": "7"
       },
       "ResponseBody": {
         "error": {

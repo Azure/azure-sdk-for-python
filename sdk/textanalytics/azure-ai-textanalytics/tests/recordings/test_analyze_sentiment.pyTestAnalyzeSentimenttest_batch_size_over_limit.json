@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -5273,18 +5273,18 @@
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "2eace1c6-881d-4e32-a0b4-8e257743716c",
+        "apim-request-id": "8d7aa988-2bd5-48a7-b2b3-3741bfeb212b",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 12 Apr 2022 23:50:42 GMT",
+        "Date": "Tue, 03 May 2022 00:14:44 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "16"
+        "x-envoy-upstream-service-time": "11"
       },
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Invalid document in request.",
+          "message": "Invalid Document in request.",
           "innererror": {
             "code": "InvalidDocumentBatch",
             "message": "Batch request contains too many records. Max 10 records are permitted."

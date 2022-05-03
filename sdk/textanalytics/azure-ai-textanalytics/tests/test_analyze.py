@@ -701,6 +701,7 @@ class TestAnalyze(TextAnalyticsTest):
             )
         assert excinfo.value.status_code == 400
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
@@ -1064,6 +1065,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert not document_results[1][0].is_error
         assert isinstance(document_results[1][0], ExtractSummaryResult)
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
@@ -1104,6 +1106,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert result.classification.category
                 assert result.classification.confidence_score
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
@@ -1145,6 +1148,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
@@ -1189,6 +1193,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
