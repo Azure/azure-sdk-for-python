@@ -514,15 +514,7 @@ class EventDataBatch(object):
         partition_key: Optional[Union[str, bytes]] = None,
         **kwargs
     ) -> None:
-        self._uamqp_transport = kwargs.pop("uamqp_transport", True)
-        if self._uamqp_transport:
-            from ._transport.uamqp_plugins import utils as transport_utils, constants as transport_constants
-            self._transport_utils = transport_utils
-            self._transport_constants = transport_constants
-            self._to_outgoing_amqp_message = self._transport_utils.to_outgoing_amqp_message
-        else:
-            # TODO: add pyamqp support, will have to switch default to pyamqp
-            pass
+        self._amqp_transport = kwargs.pop("amqp_transport")
 
         if partition_key and not isinstance(
             partition_key, (six.text_type, six.binary_type)
@@ -534,8 +526,8 @@ class EventDataBatch(object):
                 "partition_key to only be string type, they might fail to parse the non-string value."
             )
 
-        self.max_size_in_bytes = max_size_in_bytes or self._transport_constants.MAX_MESSAGE_LENGTH_BYTES
-        self.message = self._transport_constants.BATCH_MESSAGE(data=[])
+        self.max_size_in_bytes = max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
+        self.message = self._amqp_transport.BATCH_MESSAGE(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
 
@@ -599,7 +591,9 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
 
-        outgoing_event_data = transform_outbound_single_message(event_data, EventData, self._to_outgoing_amqp_message)
+        outgoing_event_data = transform_outbound_single_message(
+            event_data, EventData, self._amqp_transport.to_outgoing_amqp_message
+        )
 
         if self._partition_key:
             if (

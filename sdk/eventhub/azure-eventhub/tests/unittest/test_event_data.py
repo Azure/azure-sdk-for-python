@@ -2,7 +2,7 @@ import platform
 import pytest
 import uamqp
 from packaging import version
-from azure.eventhub._transport.uamqp_plugins.message import TransportMessage
+from azure.eventhub._transport._uamqp_transport import TransportMessage, UamqpTransport
 from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub import _common
 
@@ -92,7 +92,7 @@ def test_sys_properties():
 
 
 def test_event_data_batch():
-    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par")
+    batch = EventDataBatch(max_size_in_bytes=110, partition_key="par", amqp_transport=UamqpTransport())
     batch.add(EventData("A"))
     assert str(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"
     assert repr(batch) == "EventDataBatch(max_size_in_bytes=110, partition_id=None, partition_key='par', event_count=1)"

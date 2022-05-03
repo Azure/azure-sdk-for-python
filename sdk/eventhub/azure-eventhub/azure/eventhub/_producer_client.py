@@ -7,14 +7,13 @@ import threading
 
 from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
 
-from uamqp import constants
-
 from .exceptions import ConnectError, EventHubError
 from .amqp import AmqpAnnotatedMessage
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
+from ._transport._uamqp_transport import UamqpTransport
 
 if TYPE_CHECKING:
     from ._client_base import CredentialTypes
@@ -93,18 +92,14 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
     ):
         # type:(...) -> None
         self._uamqp_transport = kwargs.pop("uamqp_transport", True)
-        if self._uamqp_transport:
-            from ._transport import uamqp_plugins as transport_plugins
-            self._transport_plugins = transport_plugins
-        else:
-            # TODO: add pyamqp support, will have to switch if/else default
-            pass
+        self._amqp_transport = UamqpTransport()
 
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=kwargs.get("logging_enable"),
+            transport=self._amqp_transport,
             **kwargs
         )
         self._producers = {
@@ -139,7 +134,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
                     self._producers[  # type: ignore
                         ALL_PARTITIONS
                     ]._handler.message_handler._link.peer_max_message_size
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
                 )
 
     def _start_producer(self, partition_id, send_timeout):
@@ -370,6 +365,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
+            amqp_transport=self._amqp_transport,
         )
 
         return event_data_batch
