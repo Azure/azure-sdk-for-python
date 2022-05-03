@@ -35,7 +35,7 @@ class AsyncCertificatesClientPreparer(AzureRecordedTestCase):
     def __call__(self, fn):
         async def _preparer(test_class, api_version, **kwargs):
 
-            #self._skip_if_not_configured(api_version)
+            self._skip_if_not_configured(api_version)
             if not self.is_logging_enabled:
                 kwargs.update({"logging_enable": False})
             client = self.create_client(self.azure_keyvault_url, api_version=api_version, **kwargs)

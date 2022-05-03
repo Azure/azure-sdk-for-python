@@ -7,6 +7,8 @@ import asyncio
 from azure_devtools.scenario_tests.patches import mock_in_unit_test
 from devtools_testutils import AzureRecordedTestCase
 
+from azure.keyvault.certificates._shared import HttpChallengeCache
+
 
 def skip_sleep(unit_test):
     async def immediate_return(_):
@@ -43,3 +45,8 @@ class KeyVaultTestCase(AzureRecordedTestCase):
             except expected_exception:
                 return
         self.fail("expected exception {expected_exception} was not raised")
+
+    def tear_down(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+
