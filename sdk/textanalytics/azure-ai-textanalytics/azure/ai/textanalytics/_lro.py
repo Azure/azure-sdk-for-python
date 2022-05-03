@@ -265,7 +265,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
 
         try:
             # Join the thread so we no longer have to wait for a result from it.
-            getattr(self, "_thread").join()
+            getattr(self, "_thread").join(timeout=0)
 
             # Get a final status update.
             getattr(self._polling_method, "update_status")()

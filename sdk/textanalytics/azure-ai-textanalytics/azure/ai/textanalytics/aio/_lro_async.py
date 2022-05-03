@@ -243,11 +243,11 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
                 self._polling_method, "_text_analytics_client"
             )
             try:
-                return client.begin_cancel_health_job(
+                return await client.begin_cancel_health_job(
                     self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
                 )
             except ValueError:  # language API compat
-                return client.begin_analyze_text_cancel_job(
+                return await client.begin_analyze_text_cancel_job(
                     self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
                 )
         except HttpResponseError as error:
