@@ -40,7 +40,7 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ... import models as _models
+from .. import models as _models
 from .._vendor import _convert_request
 from ..operations._text_analytics_client_operations import build_analyze_text_cancel_job_request_initial, build_analyze_text_job_status_request, build_analyze_text_request, build_analyze_text_submit_job_request_initial
 T = TypeVar('T')
