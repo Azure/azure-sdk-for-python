@@ -22,9 +22,10 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, Optional, Union, cast, TYPE_CHECKING
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.credentials import TokenCredential
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
