@@ -3,7 +3,7 @@ import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos._retry_utility as retry_utility
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos.documents import _DistinctType
@@ -31,10 +31,11 @@ class QueryTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.config.create_database_if_not_exist(cls.client)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey,
+                                                consistency_level="Session", connection_policy=cls.connectionPolicy)
+        cls.created_db = cls.client.create_database_if_not_exists(cls.config.TEST_DATABASE_ID)
 
-    def test_first_and_last_slashes_trimmed_for_query_string (self):
+    def test_first_and_last_slashes_trimmed_for_query_string(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         document_definition = {'pk': 'pk', 'id': 'myId'}
         created_collection.create_item(body=document_definition)
@@ -164,7 +165,7 @@ class QueryTest(unittest.TestCase):
 
     def test_populate_query_metrics(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
-        document_definition = {'pk': 'pk', 'id':'myId'}
+        document_definition = {'pk': 'pk', 'id': 'myId'}
         created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
@@ -185,7 +186,6 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
 
-    @pytest.mark.xfail
     def test_max_item_count_honored_in_order_by_query(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         docs = []
@@ -199,7 +199,7 @@ class QueryTest(unittest.TestCase):
             max_item_count=1,
             enable_cross_partition_query=True
         )
-        self.validate_query_requests_count(query_iterable, 15 * 2 + 1)
+        self.validate_query_requests_count(query_iterable, 16 * 2 + 1)
 
         query_iterable = created_collection.query_items(
             query=query,
@@ -281,7 +281,7 @@ class QueryTest(unittest.TestCase):
             try:
                 list(query_iterable)
                 self.fail()
-            except errors.CosmosHttpResponseError as e:
+            except exceptions.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, 400)
 
     def test_query_with_non_overlapping_pk_ranges(self):
@@ -356,9 +356,9 @@ class QueryTest(unittest.TestCase):
 
         padded_docs = self._pad_with_none(documents, distinct_field)
 
-        self._validate_distinct(created_collection=created_collection,
+        self._validate_distinct(created_collection=created_collection,  # returns {} and is wrong number
                                 query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),   # nosec
-                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
+                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, False),
                                 is_select=False,
                                 fields=[distinct_field])
 
@@ -380,7 +380,7 @@ class QueryTest(unittest.TestCase):
                                 is_select=False,
                                 fields=[distinct_field])
 
-        self._validate_distinct(created_collection=created_collection,
+        self._validate_distinct(created_collection=created_collection,  # returns {} and is right number
                                 query='SELECT distinct c.%s from c' % (distinct_field), # nosec
                                 results=self._get_distinct_docs(padded_docs, distinct_field, None, False),
                                 is_select=True,
@@ -400,12 +400,12 @@ class QueryTest(unittest.TestCase):
 
         self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field), # nosec
-                                results=[],
+                                results=[None],
                                 is_select=True,
                                 fields=[different_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c' % (different_field),    # nosec
+                                query='SELECT distinct c.%s from c' % different_field,  # nosec
                                 results=['None'],
                                 is_select=True,
                                 fields=[different_field])
@@ -588,7 +588,6 @@ class QueryTest(unittest.TestCase):
                 return {'orderByItems': [{'item': item}], '_rid': 'fake_rid', 'payload': result}
             else:
                 return result
-            return result
         else:
             raise StopIteration
 

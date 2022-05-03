@@ -20,9 +20,7 @@
 #SOFTWARE.
 
 import unittest
-import uuid
 import pytest
-import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 import os

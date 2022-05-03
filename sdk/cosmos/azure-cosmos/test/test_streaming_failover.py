@@ -1,5 +1,6 @@
 import unittest
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
+import azure.cosmos.cosmos_client as cosmos_client
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -12,6 +13,8 @@ import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.http_constants as http_constants
 
 pytestmark = pytest.mark.cosmosEmulator
+
+# TODO: Whole test class needs to be pretty much re-done.
 
 @pytest.mark.usefixtures("teardown")
 class TestStreamingFailover(unittest.TestCase):
@@ -56,7 +59,7 @@ class TestStreamingFailover(unittest.TestCase):
         # Next 8 requests hit forbidden write exceptions and the endpoint retry policy keeps 
         # flipping the resolved endpoint between the 2 write endpoints.
         # The 10th request returns the actual read document.
-        for i in range(0,8):
+        for i in range(0, 8):
             if i % 2 == 0:
                 self.assertEqual(self.endpoint_sequence[i], self.WRITE_ENDPOINT1)
             else:
@@ -65,7 +68,7 @@ class TestStreamingFailover(unittest.TestCase):
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
-    def mock_get_database_account(self, url_connection = None):
+    def mock_get_database_account(self, url_connection=None):
         database_account = documents.DatabaseAccount()
         database_account._EnableMultipleWritableLocations = True
         database_account._WritableLocations = [

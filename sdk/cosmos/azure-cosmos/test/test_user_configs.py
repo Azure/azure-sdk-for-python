@@ -52,16 +52,17 @@ class TestUserConfigs(unittest.TestCase):
     def test_invalid_connection_retry_configuration(self):
         try:
             cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey,
-                                       connection_retry_policy="Invalid Policy")
+                                       consistency_level="Session", connection_retry_policy="Invalid Policy")
         except TypeError as e:
             self.assertTrue(str(e).startswith('Unsupported retry policy'))
 
     def test_enable_endpoint_discovery(self):
         client_false = cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey,
-                                                  enable_endpoint_discovery=False)
-        client_default = cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey)
+                                                  consistency_level="Session", enable_endpoint_discovery=False)
+        client_default = cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey,
+                                                    consistency_level="Session")
         client_true = cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey,
-                                                 enable_endpoint_discovery=True)
+                                                 consistency_level="Session", enable_endpoint_discovery=True)
 
         self.assertFalse(client_false.client_connection.connection_policy.EnableEndpointDiscovery)
         self.assertTrue(client_default.client_connection.connection_policy.EnableEndpointDiscovery)
