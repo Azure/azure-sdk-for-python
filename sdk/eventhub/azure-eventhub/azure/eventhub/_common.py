@@ -199,8 +199,11 @@ class EventData(object):
 
     @classmethod
     def from_message_content(
-        cls, content: bytes, content_type: str, **kwargs: Any
-    ) -> "EventData":  # pylint: disable=unused-argument
+        cls,
+        content: bytes,
+        content_type: str,
+        **kwargs: Any  # pylint: disable=unused-argument
+    ) -> "EventData":
         """
         Creates an EventData object given content type and a content value to be set as body.
 
@@ -254,8 +257,8 @@ class EventData(object):
     def _to_outgoing_message(self):
         # type: () -> EventData
         self.message = (
-            self._raw_amqp_message._to_outgoing_amqp_message()
-        )  # pylint:disable=protected-access
+            self._raw_amqp_message._to_outgoing_amqp_message()  # pylint:disable=protected-access
+        )
         return self
 
     @property
@@ -636,8 +639,8 @@ class EventDataBatch(object):
                 )
             )
 
-        self.message._body_gen.append(
+        self.message._body_gen.append(  # pylint: disable=protected-access
             outgoing_event_data
-        )  # pylint: disable=protected-access
+        )
         self._size = size_after_add
         self._count += 1
