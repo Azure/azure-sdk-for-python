@@ -70,7 +70,7 @@ class KeyVaultBackupClientPreparer(AzureRecordedTestCase):
 
 class KeyVaultAccessControlClientPreparer(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
-        hsm_playback_url = "https://managedhsmname.managedhsm.azure.net"
+        hsm_playback_url = "https://managedhsmvaultname.vault.azure.net"
         container_playback_uri = "https://storagename.blob.core.windows.net/container"
         playback_sas_token = "fake-sas"
 

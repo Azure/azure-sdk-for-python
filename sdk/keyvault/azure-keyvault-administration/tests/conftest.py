@@ -28,6 +28,7 @@ def add_sanitizers(test_proxy):
     storage_name = os.environ.get("BLOB_STORAGE_ACCOUNT_NAME", "blob_storage_account_name")
     storage_endpoint_suffix = os.environ.get("KEYVAULT_STORAGE_ENDPOINT_SUFFIX", "keyvault_endpoint_suffix")
     container_name = os.environ.get("BLOB_CONTAINER_NAME", "blob_container_name")
+    client_id = os.environ.get("KEYVAULT_CLIENT_ID", "keyvault_client_id")
 
     add_general_regex_sanitizer(regex=azure_keyvault_url, value="https://vaultname.vault.azure.net")
     add_general_regex_sanitizer(regex=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
@@ -37,6 +38,7 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=storage_name, value = "blob_storage_account_name")
     add_general_regex_sanitizer(regex=storage_endpoint_suffix, value = "keyvault_endpoint_suffix")
     add_general_regex_sanitizer(regex=container_name, value = "blob_container_name")
+    #add_general_regex_sanitizer(regex=client_id, value = "keyvault_client_id")
     add_oauth_response_sanitizer()
 
 
