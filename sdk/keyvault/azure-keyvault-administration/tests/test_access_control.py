@@ -5,6 +5,7 @@
 import os
 import time
 import uuid
+from devtools_testutils import add_general_regex_sanitizer, recorded_by_proxy, set_bodiless_matcher
 
 import pytest
 
@@ -21,7 +22,6 @@ class TestAccessControl(KeyVaultTestCase):
     def get_replayable_uuid(self, replay_value):
         if self.is_live:
             value = str(uuid.uuid4())
-            self.scrubber.register_name_pair(value, replay_value)
             return value
         return replay_value
 
@@ -29,13 +29,15 @@ class TestAccessControl(KeyVaultTestCase):
         replay_value = "service-principal-id"
         if self.is_live:
             value = os.environ["AZURE_CLIENT_ID"]
-            self.scrubber.register_name_pair(value, replay_value)
+            #self.scrubber.register_name_pair(value, replay_value)
             return value
         return replay_value
 
     @pytest.mark.parametrize("api_version", all_api_versions)
     @KeyVaultAccessControlClientPreparer()
+    @recorded_by_proxy
     def test_role_definitions(self, client):
+        set_bodiless_matcher()
         # list initial role definitions
         scope = KeyVaultRoleScope.GLOBAL
         original_definitions = [d for d in client.list_role_definitions(scope)]
@@ -89,42 +91,44 @@ class TestAccessControl(KeyVaultTestCase):
         if self.is_live:
             time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
-#     @all_api_versions()
-#     @access_control_client_setup
-#     def test_role_assignment(self, client):
-#         scope = KeyVaultRoleScope.GLOBAL
-#         definitions = [d for d in client.list_role_definitions(scope)]
+    @pytest.mark.parametrize("api_version", all_api_versions)
+    @KeyVaultAccessControlClientPreparer()
+    @recorded_by_proxy
+    def test_role_assignment(self, client):
+        set_bodiless_matcher()
+        scope = KeyVaultRoleScope.GLOBAL
+        definitions = [d for d in client.list_role_definitions(scope)]
 
-#         # assign an arbitrary role to the service principal authenticating these requests
-#         definition = definitions[0]
-#         principal_id = self.get_service_principal_id()
-#         name = self.get_replayable_uuid("some-uuid")
+        # assign an arbitrary role to the service principal authenticating these requests
+        definition = definitions[0]
+        principal_id = self.get_service_principal_id()
+        name = self.get_replayable_uuid("some-uuid")
 
-#         created = client.create_role_assignment(scope, definition.id, principal_id, name=name)
-#         assert created.name == name
-#         assert created.properties.principal_id == principal_id
-#         assert created.properties.role_definition_id == definition.id
-#         assert created.properties.scope == scope
+        created = client.create_role_assignment(scope, definition.id, principal_id, name=name)
+        assert created.name == name
+        assert created.properties.principal_id == principal_id
+        assert created.properties.role_definition_id == definition.id
+        assert created.properties.scope == scope
 
-#         # should be able to get the new assignment
-#         got = client.get_role_assignment(scope, name)
-#         assert got.name == name
-#         assert got.properties.principal_id == principal_id
-#         assert got.properties.role_definition_id == definition.id
-#         assert got.properties.scope == scope
+        # should be able to get the new assignment
+        got = client.get_role_assignment(scope, name)
+        assert got.name == name
+        assert got.properties.principal_id == principal_id
+        assert got.properties.role_definition_id == definition.id
+        assert got.properties.scope == scope
 
-#         # new assignment should be in the list of all assignments
-#         matching_assignments = [
-#             a for a in client.list_role_assignments(scope) if a.role_assignment_id == created.role_assignment_id
-#         ]
-#         assert len(matching_assignments) == 1
+        # new assignment should be in the list of all assignments
+        matching_assignments = [
+            a for a in client.list_role_assignments(scope) if a.role_assignment_id == created.role_assignment_id
+        ]
+        assert len(matching_assignments) == 1
 
-#         # delete the assignment
-#         client.delete_role_assignment(scope, created.name)
+        # delete the assignment
+        client.delete_role_assignment(scope, created.name)
 
-#         assert not any(a.role_assignment_id == created.role_assignment_id for a in client.list_role_assignments(scope))
-#         if self.is_live:
-#             time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+        assert not any(a.role_assignment_id == created.role_assignment_id for a in client.list_role_assignments(scope))
+        if self.is_live:
+            time.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
 
 def assert_role_definitions_equal(d1, d2):
