@@ -43,8 +43,6 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -65,9 +63,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.10.0",
     ],
-    extras_require={
-        ":python_version<'3.0'": ["azure-nspkg"],
-    },
+    python_requires=">=3.6",
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-python",
