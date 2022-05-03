@@ -2,7 +2,7 @@
 
 ## 1.0.0 (2022-05-10)
 
-**Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure Schema Registry.
+**Note:** This is the first stable release of our efforts to create a user-friendly Pythonic Avro Encoder library that integrates with the Python client library for Azure Schema Registry.
 
 ### Features Added
 
