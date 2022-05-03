@@ -931,7 +931,7 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsNone(content.properties.content_settings.content_md5)
 
     @BlobPreparer()
-    def test_get_blob_progress_readall_single(self, storage_account_name, storage_account_key):
+    def test_get_blob_progress_single_get(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         data = b'a' * 512
         blob_name = self._get_blob_reference()
@@ -941,14 +941,13 @@ class StorageGetBlobTest(StorageTestCase):
         progress = ProgressTracker(len(data), len(data))
 
         # Act
-        stream = blob.download_blob(max_concurrency=1)
-        stream.readall(progress_hook=progress.assert_progress)
+        blob.download_blob(progress_hook=progress.assert_progress).readall()
 
         # Assert
         progress.assert_complete()
 
     @BlobPreparer()
-    def test_get_blob_progress_readall_chunked(self, storage_account_name, storage_account_key):
+    def test_get_blob_progress_chunked(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         data = b'a' * 5120
         blob_name = self._get_blob_reference()
@@ -958,15 +957,14 @@ class StorageGetBlobTest(StorageTestCase):
         progress = ProgressTracker(len(data), 1024)
 
         # Act
-        stream = blob.download_blob(max_concurrency=1)
-        stream.readall(progress_hook=progress.assert_progress)
+        blob.download_blob(max_concurrency=1, progress_hook=progress.assert_progress).readall()
 
         # Assert
         progress.assert_complete()
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_get_blob_progress_readall_chunked_parallel(self, storage_account_name, storage_account_key):
+    def test_get_blob_progress_chunked_parallel(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         self._setup(storage_account_name, storage_account_key)
         data = b'a' * 5120
@@ -977,15 +975,14 @@ class StorageGetBlobTest(StorageTestCase):
         progress = ProgressTracker(len(data), 1024)
 
         # Act
-        stream = blob.download_blob(max_concurrency=3)
-        stream.readall(progress_hook=progress.assert_progress)
+        blob.download_blob(max_concurrency=3, progress_hook=progress.assert_progress).readall()
 
         # Assert
         progress.assert_complete()
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_get_blob_progress_readall_range(self, storage_account_name, storage_account_key):
+    def test_get_blob_progress_range(self, storage_account_name, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         self._setup(storage_account_name, storage_account_key)
         data = b'a' * 5120
@@ -997,8 +994,12 @@ class StorageGetBlobTest(StorageTestCase):
         progress = ProgressTracker(length, 1024)
 
         # Act
-        stream = blob.download_blob(offset=512, length=length, max_concurrency=3)
-        stream.readall(progress_hook=progress.assert_progress)
+        blob.download_blob(
+            offset=512,
+            length=length,
+            max_concurrency=3,
+            progress_hook=progress.assert_progress
+        ).readall()
 
         # Assert
         progress.assert_complete()
@@ -1017,8 +1018,8 @@ class StorageGetBlobTest(StorageTestCase):
         result = BytesIO()
 
         # Act
-        stream = blob.download_blob(max_concurrency=3)
-        read = stream.readinto(result, progress_hook=progress.assert_progress)
+        stream = blob.download_blob(max_concurrency=3, progress_hook=progress.assert_progress)
+        read = stream.readinto(result)
 
         # Assert
         progress.assert_complete()

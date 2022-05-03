@@ -10,7 +10,7 @@ import time
 
 import warnings
 from io import BytesIO
-from typing import Any, BinaryIO, Callable, Iterator, Union
+from typing import Iterator, Union
 
 import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
@@ -327,6 +327,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._encoding = encoding
         self._validate_content = validate_content
         self._encryption_options = encryption_options or {}
+        self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -514,24 +515,15 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             downloader=iter_downloader,
             chunk_size=self._config.max_chunk_get_size)
 
-    def readall(
-            self,
-            *,
-            progress_hook: Callable[[int, int], None]
-        ) -> Union[bytes, str]:
+    def readall(self):
+        # type: () -> Union[bytes, str]
         """Download the contents of this blob.
 
         This operation is blocking until all data is downloaded.
-
-        :keyword progress_hook:
-            A callback to track the progress of a long running download. The signature is
-            function(current: int, total: int) where current is the number of bytes transfered
-            so far, and total is the size of the blob or None if the size is unknown.
-        :paramtype progress_hook: Callable[[int, int], None]
         :rtype: bytes or str
         """
         stream = BytesIO()
-        self.readinto(stream, progress_hook=progress_hook)
+        self.readinto(stream)
         data = stream.getvalue()
         if self._encoding:
             return data.decode(self._encoding)
@@ -572,23 +564,13 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._encoding = encoding
         return self.readall()
 
-    def readinto(
-            self,
-            stream: BinaryIO,
-            *,
-            progress_hook: Callable[[int, int], None]
-        ) -> int:
+    def readinto(self, stream):
         """Download the contents of this file to a stream.
 
-        :param BinaryIO stream:
+        :param stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
-        :keyword progress_hook:
-            A callback to track the progress of a long running download. The signature is
-            function(current: int, total: int) where current is the number of bytes transfered
-            so far, and total is the size of the blob or None if the size is unknown.
-        :paramtype progress_hook: Callable[[int, int], None]
         :returns: The number of bytes read.
         :rtype: int
         """
@@ -606,8 +588,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         # Write the content to the user stream
         stream.write(self._current_content)
-        if progress_hook:
-            progress_hook(len(self._current_content), self.size)
+        if self._progress_hook:
+            self._progress_hook(len(self._current_content), self.size)
 
         if self._download_complete:
             return self.size
@@ -630,7 +612,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
             use_location=self._location_mode,
-            progress_hook=progress_hook,
+            progress_hook=self._progress_hook,
             **self._request_options
         )
         if parallel:
