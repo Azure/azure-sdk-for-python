@@ -7,15 +7,74 @@
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
-from azure.core.rest import HttpRequest as RestHttpRequest
+from azure.data.tables.aio import TableServiceClient
 from azure.data.tables.aio._authentication_async import AsyncBearerTokenChallengePolicy
 import pytest
 
+from async_preparers import tables_decorator_async
+from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils.aio import recorded_by_proxy_async
+from _shared.asynctestcase import AsyncTableTestCase
+
 pytestmark = pytest.mark.asyncio
 
-HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
+# Try to use azure.core.rest request if azure-core version supports it -- fall back to basic request
+try:
+    from azure.core.rest import HttpRequest as RestHttpRequest
+    HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
+except ModuleNotFoundError:
+    HTTP_REQUESTS = [PipelineTransportHttpRequest]
+
+
+class TestTableChallengeAuthAsync(AzureRecordedTestCase, AsyncTableTestCase):
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_challenge_auth_supported_version(self, tables_storage_account_name):
+        """This test requires a client that uses an API version that supports 401 challenge responses.
+
+        Recorded using an incorrect tenant for the credential provided to our client. To run this live, ensure that the
+        service principal used for testing is enabled for multitenant authentication
+        (https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
+        TABLES_TENANT_ID environment variable to a different, existing tenant than the one the storage account exists
+        in, and set CORRECT_TABLES_TENANT_ID to the tenant that the storage account exists in.
+        """
+
+        if is_live():
+            pytest.skip("Playback testing and live manual testing only")
+
+        account_url = self.account_url(tables_storage_account_name, "table")
+        client = TableServiceClient(
+            credential=self.get_token_credential(), endpoint=account_url, api_version="2020-12-06"
+        )
+        stats = await client.get_service_stats()
+        self._assert_stats_default(stats)
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_challenge_auth_unsupported_version(self, tables_storage_account_name):
+        """This test requires a client that uses an API version that doesn't support 401 challenge responses.
+
+        Recorded using an incorrect tenant for the credential provided to our client. To run this live, ensure that the
+        service principal used for testing is enabled for multitenant authentication
+        (https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
+        TABLES_TENANT_ID environment variable to a different, existing tenant than the one the storage account exists
+        in, and set CORRECT_TABLES_TENANT_ID to the tenant that the storage account exists in.
+        """
+
+        if is_live():
+            pytest.skip("Playback testing and live manual testing only")
+
+        account_url = self.account_url(tables_storage_account_name, "table")
+        client = TableServiceClient(
+            credential=self.get_token_credential(), endpoint=account_url, api_version="2019-07-07"
+        )
+
+        # Our request fails because of the invalid token, prompting a 403 response
+        with pytest.raises(ClientAuthenticationError) as e:
+            await client.get_service_stats()
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
