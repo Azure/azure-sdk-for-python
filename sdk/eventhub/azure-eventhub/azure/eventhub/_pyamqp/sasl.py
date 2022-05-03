@@ -71,7 +71,7 @@ class SASLExternalCredential(object):
 
 class SASLTransport(SSLTransport):
 
-    def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, credential, port=None, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
         super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)

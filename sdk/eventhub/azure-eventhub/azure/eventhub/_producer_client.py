@@ -158,7 +158,7 @@ class EventHubProducerClient(ClientBase):
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
-            custom_endpoint=self._config.custom_endpoint_hostname,
+            custom_endpoint=self._config.custom_endpoint_address,
             connection_verify=self._config.connection_verify,
             port=self._config.connection_port,
         )

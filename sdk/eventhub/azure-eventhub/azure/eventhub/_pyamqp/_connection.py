@@ -81,11 +81,11 @@ class Connection(object):
 
     def __init__(self, endpoint, **kwargs):
         # type(str, Any) -> None
-        parsed_url = urlparse(endpoint)
+        parsed_url = urlparse(kwargs.get("custom_endpoint") or endpoint)
         self._hostname = parsed_url.hostname
-        if kwargs.get("port"):
-            self._port=kwargs.get("port")
-        elif parsed_url.port:
+        # if kwargs.get("port"):
+        #     self._port=kwargs.get("port")
+        if parsed_url.port:
             self._port = parsed_url.port
         elif parsed_url.scheme == 'amqps':
             self._port = SECURE_PORT
@@ -105,6 +105,8 @@ class Connection(object):
         else:
             self._transport = Transport(parsed_url.netloc, **kwargs)
 
+        self._connection_verify = kwargs.get("connection_verify")
+        
         self._container_id = kwargs.pop('container_id', None) or str(uuid.uuid4())  # type: str
         self._max_frame_size = kwargs.pop('max_frame_size', MAX_FRAME_SIZE_BYTES)  # type: int
         self._remote_max_frame_size = None  # type: Optional[int]

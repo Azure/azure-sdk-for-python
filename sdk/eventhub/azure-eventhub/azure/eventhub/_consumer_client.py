@@ -161,6 +161,10 @@ class EventHubConsumerClient(ClientBase):
         self._lock = threading.Lock()
         self._event_processors = {}  # type: Dict[Tuple[str, str], EventProcessor]
 
+        self._custom_endpoint=self._config.custom_endpoint_address,
+        self._connection_verify=self._config.connection_verify,
+        self._port=self._config.connection_port,
+
     def __enter__(self):
         return self
 
@@ -196,7 +200,7 @@ class EventHubConsumerClient(ClientBase):
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
-            custom_endpoint=self._config.custom_endpoint_hostname,
+            custom_endpoint=self._config.custom_endpoint_address,
             connection_verify=self._config.connection_verify,
             port=self._config.connection_port,
         )

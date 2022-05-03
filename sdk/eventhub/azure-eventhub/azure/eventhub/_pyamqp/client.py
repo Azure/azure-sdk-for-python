@@ -124,7 +124,7 @@ class AMQPClient(object):
     """
 
     def __init__(self, hostname, auth=None, **kwargs):
-        self._hostname = kwargs.get("custom_endpoint") or hostname
+        self._hostname = hostname
         self._auth = auth
         self._name = kwargs.pop("client_name", str(uuid.uuid4()))
         self._shutdown = False
@@ -245,6 +245,7 @@ class AMQPClient(object):
                 properties=self._properties,
                 network_trace=self._network_trace,
                 custom_endpoint=self._custom_endpoint,
+                connection_verify=self._connection_verify,
                 port=self._port
             )
             self._connection.open()

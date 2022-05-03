@@ -119,7 +119,7 @@ def get_errno(exc):
     return 0
 
 
-def to_host_port(host, port=AMQP_PORT):
+def to_host_port(host, port=None):
     """Convert hostname:port string to host, port tuple."""
     m = IPV6_LITERAL.match(host)
     if m:
@@ -147,12 +147,14 @@ class _AbstractTransport(object):
         self.sock = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(kwargs.get("custom_endspoint") or host, kwargs.get("port") or port)
+        self.host, self.port = to_host_port(host, port)
+        print(self.host,self.port)
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
+        self._connection_verify = kwargs.get("connection_verify")
 
     def connect(self):
         try:
@@ -163,6 +165,7 @@ class _AbstractTransport(object):
             self._init_socket(
                 self.socket_settings, self.read_timeout, self.write_timeout,
             )
+            print(self.sock)
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
@@ -270,6 +273,7 @@ class _AbstractTransport(object):
             try:
                 entries = socket.getaddrinfo(
                     host, port, family, socket.SOCK_STREAM, SOL_TCP)
+                print(entries)
                 entries_num = len(entries)
             except socket.gaierror:
                 # we may have depleted all our options
@@ -396,8 +400,10 @@ class _AbstractTransport(object):
 
             channel = struct.unpack('>H', frame_header[6:])[0]
             size = frame_header[0:4]
-            if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
+            # With no custom endpoint goes into this if statement
+            if size == AMQP_FRAME or size == memoryview(b'HTTP'):  # Empty frame or AMQP header negotiation TODO
                 return frame_header, channel, None
+            #This is freaking huge and recv_into only gets 353
             size = struct.unpack('>I', size)[0]
             offset = frame_header[4]
             frame_type = frame_header[5]
@@ -466,7 +472,7 @@ class _AbstractTransport(object):
 class SSLTransport(_AbstractTransport):
     """Transport that works over SSL."""
 
-    def __init__(self, host, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, port=None, connect_timeout=None, ssl=None, **kwargs):
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._read_buffer = BytesIO()
         super(SSLTransport, self).__init__(
@@ -490,7 +496,7 @@ class SSLTransport(_AbstractTransport):
     def _wrap_context(self, sock, sslopts, check_hostname=None, **ctx_options):
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
-        ctx.load_verify_locations(cafile=certifi.where())
+        ctx.load_verify_locations(cafile=self._connection_verify or certifi.where())
         ctx.check_hostname = check_hostname
         return ctx.wrap_socket(sock, **sslopts)
 
@@ -556,14 +562,18 @@ class SSLTransport(_AbstractTransport):
         # According to SSL_read(3), it can at most return 16kb of data.
         # Thus, we use an internal read buffer like TCPTransport._read
         # to get the exact number of bytes wanted.
+
+        #toread is too large
+        
         length = 0
         view = buffer or memoryview(bytearray(toread))
+        # nbytes = view.nbytes
         nbytes = self._read_buffer.readinto(view)
         toread -= nbytes
         length += nbytes
         try:
             while toread:
-                try:
+                try: # self.sock is an SSL socket
                     nbytes = self.sock.recv_into(view[length:])
                 except socket.error as exc:
                     # ssl.sock.read may cause a SSLerror without errno

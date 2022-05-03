@@ -117,6 +117,10 @@ class EventProcessor(
             self._partition_id,
         )
 
+        self._custom_endpoint=kwargs.get("custom_endpoint")
+        self._connection_verify=kwargs.get("connection_verify")
+        self._port=kwargs.get("port")
+
     def __repr__(self):
         # type: () -> str
         return "EventProcessor: id {}".format(self._id)
@@ -212,6 +216,9 @@ class EventProcessor(
                             initial_event_position,
                             event_postition_inclusive,
                             event_received_callback,
+                            custom_endpoint=self._custom_endpoint,
+                            connection_verify=self._connection_verify,
+                            port=self._port,
                         ),
                     )
                     self._initialize_partition_consumer(partition_id)

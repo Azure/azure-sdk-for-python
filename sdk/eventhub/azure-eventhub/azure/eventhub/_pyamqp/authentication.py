@@ -84,6 +84,9 @@ class _CBSAuth(object):
         self.get_token = get_token
         self.expires_in = kwargs.pop("expires_in", AUTH_DEFAULT_EXPIRATION_SECONDS)
         self.expires_on = kwargs.pop("expires_on", None)
+        self.custom_endpoint=kwargs.get("custom_endpoint")
+        self.connection_verify=kwargs.get("connection_verify")
+        self.port=kwargs.get("port")
 
     @staticmethod
     def _set_expiry(expires_in, expires_on):
@@ -106,6 +109,13 @@ class JWTTokenAuth(_CBSAuth):
         uri,
         audience,
         get_token,
+        port=None,
+        timeout=10,
+        verify=None,
+        token_type=b"servicebus.windows.net:sastoken",
+        http_proxy=None,
+        transport_type=None,
+        encoding='UTF-8',
         **kwargs
     ):
         """
@@ -125,8 +135,17 @@ class JWTTokenAuth(_CBSAuth):
         :type token_type: str
 
         """
-        super(JWTTokenAuth, self).__init__(uri, audience, kwargs.pop("kwargs", TOKEN_TYPE_JWT), get_token)
+        self._encoding = encoding
+        self.custom_endpoint=kwargs.get("custom_endpoint")
+        self.connection_verify=kwargs.get("connection_verify")
+        self.port=kwargs.get("port")
+        
+        super(JWTTokenAuth, self).__init__(uri, audience, kwargs.pop("kwargs", TOKEN_TYPE_JWT), get_token, **kwargs)
         self.get_token = get_token
+        self.cert_file = self.connection_verify
+        parsed = urlparse(uri)
+        self.hostname = (kwargs.get("custom_endpoint_hostname") or parsed.hostname).encode(self._encoding)
+       
 
 
 class SASTokenAuth(_CBSAuth):
