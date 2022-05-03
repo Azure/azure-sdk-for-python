@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 import functools
-from typing import Optional, Any, Union, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar, Union
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -28,7 +28,7 @@ from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
-from ._deserialize import process_storage_error, is_file_path
+from ._deserialize import _decode_error, process_storage_error, is_file_path
 
 
 ClassType = TypeVar("ClassType")
@@ -819,71 +819,63 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self.get_directory_client('/')
 
-    # TODO: Temporarily removing this for GA release.
-    # def delete_files(self, *files, **kwargs):
-    #     # type: (...) -> Iterator[HttpResponse]
-    #     """Marks the specified files or empty directories for deletion.
+    def delete_files(
+        self,
+        *files: str,
+        **kwargs) -> List[Optional[HttpResponseError]]:
+        """Marks the specified files or empty directories for deletion.
 
-    #     The files/empty directories are later deleted during garbage collection.
+        The files/empty directories are later deleted during garbage collection.
 
-    #     If a delete retention policy is enabled for the service, then this operation soft deletes the
-    #     files/empty directories and retains the files or snapshots for specified number of days.
-    #     After specified number of days, files' data is removed from the service during garbage collection.
-    #     Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
+        If a delete retention policy is enabled for the service, then this operation soft deletes the
+        files/empty directories and retains the files or snapshots for specified number of days.
+        After specified number of days, files' data is removed from the service during garbage collection.
+        Soft deleted files/empty directories are accessible through :func:`list_deleted_paths()`.
 
-    #     :param files:
-    #         The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
-    #         be supplied, where each value is either the name of the file/directory (str) or
-    #         FileProperties/DirectoryProperties.
+        :param str files:
+            The files/empty directories to delete. This can be a single file/empty directory, or multiple values can
+            be supplied, where each value is the name of the file/directory (str).
 
-    #         .. note::
-    #             When the file/dir type is dict, here's a list of keys, value rules.
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword bool raise_on_any_failure:
+            This is a boolean param which defaults to True. When this is set, an exception
+            is raised even if there is a single operation failure.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: A list containing None for successful operations and
+        HttpResponseError objects for unsuccessful operations.
+        :rtype: List[Optional[HttpResponseError]]
 
-    #             blob name:
-    #                 key: 'name', value type: str
-    #             if the file modified or not:
-    #                 key: 'if_modified_since', 'if_unmodified_since', value type: datetime
-    #             etag:
-    #                 key: 'etag', value type: str
-    #             match the etag or not:
-    #                 key: 'match_condition', value type: MatchConditions
-    #             lease:
-    #                 key: 'lease_id', value type: Union[str, LeaseClient]
-    #             timeout for subrequest:
-    #                 key: 'timeout', value type: int
+        .. admonition:: Example:
 
-    #     :type files: list[str], list[dict],
-    #         or list[Union[~azure.storage.filedatalake.FileProperties, ~azure.storage.filedatalake.DirectoryProperties]
-    #     :keyword ~datetime.datetime if_modified_since:
-    #         A DateTime value. Azure expects the date value passed in to be UTC.
-    #         If timezone is included, any non-UTC datetimes will be converted to UTC.
-    #         If a date is passed in without timezone info, it is assumed to be UTC.
-    #         Specify this header to perform the operation only
-    #         if the resource has been modified since the specified time.
-    #     :keyword ~datetime.datetime if_unmodified_since:
-    #         A DateTime value. Azure expects the date value passed in to be UTC.
-    #         If timezone is included, any non-UTC datetimes will be converted to UTC.
-    #         If a date is passed in without timezone info, it is assumed to be UTC.
-    #         Specify this header to perform the operation only if
-    #         the resource has not been modified since the specified date/time.
-    #     :keyword bool raise_on_any_failure:
-    #         This is a boolean param which defaults to True. When this is set, an exception
-    #         is raised even if there is a single operation failure.
-    #     :keyword int timeout:
-    #         The timeout parameter is expressed in seconds.
-    #     :return: An iterator of responses, one for each blob in order
-    #     :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START batch_delete_files_or_empty_directories]
+                :end-before: [END batch_delete_files_or_empty_directories]
+                :language: python
+                :dedent: 4
+                :caption: Deleting multiple files or empty directories.
+        """
+        results = self._container_client.delete_blobs(*files, **kwargs)
 
-    #     .. admonition:: Example:
+        errors = []
+        for result in results:
+            if not 200 <= result.status_code < 300:
+                errors.append(_decode_error(result, result.reason))
+            else:
+                errors.append(None)
 
-    #         .. literalinclude:: ../samples/datalake_samples_file_system_async.py
-    #             :start-after: [START batch_delete_files_or_empty_directories]
-    #             :end-before: [END batch_delete_files_or_empty_directories]
-    #             :language: python
-    #             :dedent: 4
-    #             :caption: Deleting multiple files or empty directories.
-    #     """
-    #     return self._container_client.delete_blobs(*files, **kwargs)
+        return errors
 
     def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
                              ):

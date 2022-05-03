@@ -115,20 +115,13 @@ def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argu
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
-def process_storage_error(storage_error):   # pylint:disable=too-many-statements
+def _decode_error(response, error_message=None, serialized_error=None):
     raise_error = HttpResponseError
-    serialized = False
-    if not storage_error.response:
-        raise storage_error
-    # If it is one of those three then it has been serialized prior by the generated layer.
-    if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
-        serialized = True
-    error_code = storage_error.response.headers.get('x-ms-error-code')
-    error_message = storage_error.message
+    error_code = response.headers.get('x-ms-error-code')
     additional_data = {}
     error_dict = {}
     try:
-        error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(response)
         # If it is an XML response
         if isinstance(error_body, Element):
             error_dict = {
@@ -152,9 +145,13 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     except DecodeError:
         pass
 
+    # Convert blob errors to datalake errors
+    if error_code in [StorageErrorCode.blob_not_found]:
+        error_code = StorageErrorCode.path_not_found
+
     try:
         # This check would be unnecessary if we have already serialized the error.
-        if error_code and not serialized:
+        if error_code and not serialized_error:
             error_code = StorageErrorCode(error_code)
             if error_code in [StorageErrorCode.condition_not_met]:
                 raise_error = ResourceModifiedError
@@ -198,17 +195,26 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     for name, info in additional_data.items():
         error_message += "\n{}:{}".format(name, info)
 
-    # No need to create an instance if it has already been serialized by the generated layer
-    if serialized:
-        storage_error.message = error_message
-        error = storage_error
+    if serialized_error:
+        serialized_error.message = error_message
+        error = serialized_error
     else:
-        error = raise_error(message=error_message, response=storage_error.response)
+        error = raise_error(message=error_message, response=response)
     # Ensure these properties are stored in the error instance as well (not just the error message)
     error.error_code = error_code
     error.additional_info = additional_data
     # error.args is what's surfaced on the traceback - show error message in all cases
     error.args = (error.message,)
+    return error
+
+
+def process_storage_error(storage_error):
+    if not storage_error.response:
+        raise storage_error
+    # If it is one of those three then it has been serialized prior by the generated layer.
+    serialized = isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError))
+    error = _decode_error(storage_error.response, storage_error.message, storage_error if serialized else None)
+
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         exec("raise error from None")   # pylint: disable=exec-used # nosec
