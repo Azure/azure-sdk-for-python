@@ -640,7 +640,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
-        .. versionadded:: 2022-03-01-preview
+        .. versionadded:: 2022-04-01-preview
             The *display_name* keyword argument.
 
         .. admonition:: Example:
@@ -1092,7 +1092,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
-        .. versionadded:: v3.2-preview
+        .. versionadded:: 2022-04-01-preview
             The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
             and *MultiCategoryClassifyAction* input options and the corresponding *ExtractSummaryResult*,
             *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*, and *MultiCategoryClassifyResult*
