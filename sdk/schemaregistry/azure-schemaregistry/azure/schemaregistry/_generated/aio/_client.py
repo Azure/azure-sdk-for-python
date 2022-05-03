@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from ._configuration import AzureSchemaRegistryConfiguration
 
@@ -22,14 +23,15 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 class AzureSchemaRegistry:
-    """Azure Schema Registry is as a central schema repository, with support for versioning, management, compatibility checking, and RBAC.
+    """Azure Schema Registry is as a central schema repository, with support for versioning,
+    management, compatibility checking, and RBAC.
 
     :param endpoint: The Schema Registry service endpoint, for example
      my-namespace.servicebus.windows.net.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2021-10". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """

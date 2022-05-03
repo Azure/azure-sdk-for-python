@@ -7,40 +7,41 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AzureSchemaRegistryConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional
+    from typing import Dict
 
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureSchemaRegistry(object):
-    """Azure Schema Registry is as a central schema repository, with support for versioning, management, compatibility checking, and RBAC.
+class AzureSchemaRegistry:
+    """Azure Schema Registry is as a central schema repository, with support for versioning,
+    management, compatibility checking, and RBAC.
 
     :param endpoint: The Schema Registry service endpoint, for example
      my-namespace.servicebus.windows.net.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. The default value is "2021-10". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2021-10". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
-        endpoint,  # type: str
-        credential,  # type: "TokenCredential"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        endpoint: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
         _endpoint = 'https://{endpoint}'
         self._config = AzureSchemaRegistryConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
@@ -52,10 +53,9 @@ class AzureSchemaRegistry(object):
 
     def send_request(
         self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         We have helper methods to create requests specific to this service in `azure.schemaregistry._generated.rest`.
