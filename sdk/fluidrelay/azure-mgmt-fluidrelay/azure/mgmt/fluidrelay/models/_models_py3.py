@@ -40,6 +40,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -57,9 +59,9 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~fluid_relay_management_client.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.fluidrelay.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~fluid_relay_management_client.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.fluidrelay.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -82,6 +84,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -93,8 +97,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~fluid_relay_management_client.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.fluidrelay.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -107,6 +111,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.fluidrelay.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -136,6 +144,8 @@ class FluidRelayEndpoints(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FluidRelayEndpoints, self).__init__(**kwargs)
         self.orderer_endpoints = None
         self.storage_endpoints = None
@@ -172,6 +182,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -193,10 +205,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -221,6 +233,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -241,22 +259,22 @@ class FluidRelayServer(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar system_data: System meta data for this resource, including creation and modification
      information.
-    :vartype system_data: ~fluid_relay_management_client.models.SystemData
-    :param identity: The type of identity used for the resource.
-    :type identity: ~fluid_relay_management_client.models.Identity
+    :vartype system_data: ~azure.mgmt.fluidrelay.models.SystemData
+    :ivar identity: The type of identity used for the resource.
+    :vartype identity: ~azure.mgmt.fluidrelay.models.Identity
     :ivar frs_tenant_id: The Fluid tenantId for this server.
     :vartype frs_tenant_id: str
     :ivar fluid_relay_endpoints: The Fluid Relay Service endpoints for this server.
-    :vartype fluid_relay_endpoints: ~fluid_relay_management_client.models.FluidRelayEndpoints
-    :param provisioning_state: Provision states for FluidRelay RP. Possible values include:
+    :vartype fluid_relay_endpoints: ~azure.mgmt.fluidrelay.models.FluidRelayEndpoints
+    :ivar provisioning_state: Provision states for FluidRelay RP. Possible values include:
      "Succeeded", "Failed", "Canceled".
-    :type provisioning_state: str or ~fluid_relay_management_client.models.ProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.fluidrelay.models.ProvisioningState
     """
 
     _validation = {
@@ -291,6 +309,17 @@ class FluidRelayServer(TrackedResource):
         provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        :keyword identity: The type of identity used for the resource.
+        :paramtype identity: ~azure.mgmt.fluidrelay.models.Identity
+        :keyword provisioning_state: Provision states for FluidRelay RP. Possible values include:
+         "Succeeded", "Failed", "Canceled".
+        :paramtype provisioning_state: str or ~azure.mgmt.fluidrelay.models.ProvisioningState
+        """
         super(FluidRelayServer, self).__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.identity = identity
@@ -324,6 +353,8 @@ class FluidRelayServerKeys(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(FluidRelayServerKeys, self).__init__(**kwargs)
         self.key1 = None
         self.key2 = None
@@ -334,10 +365,10 @@ class FluidRelayServerList(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. A sequence of FluidRelay servers.
-    :type value: list[~fluid_relay_management_client.models.FluidRelayServer]
-    :param next_link: A link to the next page of results, if any.
-    :type next_link: str
+    :ivar value: Required. A sequence of FluidRelay servers.
+    :vartype value: list[~azure.mgmt.fluidrelay.models.FluidRelayServer]
+    :ivar next_link: A link to the next page of results, if any.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -356,6 +387,12 @@ class FluidRelayServerList(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. A sequence of FluidRelay servers.
+        :paramtype value: list[~azure.mgmt.fluidrelay.models.FluidRelayServer]
+        :keyword next_link: A link to the next page of results, if any.
+        :paramtype next_link: str
+        """
         super(FluidRelayServerList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -364,10 +401,10 @@ class FluidRelayServerList(msrest.serialization.Model):
 class FluidRelayServerUpdate(msrest.serialization.Model):
     """The updatable properties of a Fluid Relay server.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: The type of identity used for the resource.
-    :type identity: ~fluid_relay_management_client.models.Identity
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The type of identity used for the resource.
+    :vartype identity: ~azure.mgmt.fluidrelay.models.Identity
     """
 
     _attribute_map = {
@@ -382,6 +419,12 @@ class FluidRelayServerUpdate(msrest.serialization.Model):
         identity: Optional["Identity"] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The type of identity used for the resource.
+        :paramtype identity: ~azure.mgmt.fluidrelay.models.Identity
+        """
         super(FluidRelayServerUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.identity = identity
@@ -396,8 +439,8 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: "SystemAssigned", "None".
-    :type type: str or ~fluid_relay_management_client.models.ResourceIdentityType
+    :ivar type: The identity type. Possible values include: "SystemAssigned", "None".
+    :vartype type: str or ~azure.mgmt.fluidrelay.models.ResourceIdentityType
     """
 
     _validation = {
@@ -417,6 +460,10 @@ class Identity(msrest.serialization.Model):
         type: Optional[Union[str, "ResourceIdentityType"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: The identity type. Possible values include: "SystemAssigned", "None".
+        :paramtype type: str or ~azure.mgmt.fluidrelay.models.ResourceIdentityType
+        """
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -426,14 +473,14 @@ class Identity(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.FluidRelay.
-    :type provider: str
-    :param resource: Type on which the operation is performed, e.g., 'servers'.
-    :type resource: str
-    :param operation: Operation type, e.g., read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation, e.g., 'Write confluent'.
-    :type description: str
+    :ivar provider: Service provider: Microsoft.FluidRelay.
+    :vartype provider: str
+    :ivar resource: Type on which the operation is performed, e.g., 'servers'.
+    :vartype resource: str
+    :ivar operation: Operation type, e.g., read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation, e.g., 'Write confluent'.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -452,6 +499,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.FluidRelay.
+        :paramtype provider: str
+        :keyword resource: Type on which the operation is performed, e.g., 'servers'.
+        :paramtype resource: str
+        :keyword operation: Operation type, e.g., read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation, e.g., 'Write confluent'.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -462,10 +519,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of GET request to list FluidRelay operations.
 
-    :param value: List of FluidRelay operations supported by the Microsoft.FluidRelay provider.
-    :type value: list[~fluid_relay_management_client.models.OperationResult]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of FluidRelay operations supported by the Microsoft.FluidRelay provider.
+    :vartype value: list[~azure.mgmt.fluidrelay.models.OperationResult]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -480,6 +537,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of FluidRelay operations supported by the Microsoft.FluidRelay provider.
+        :paramtype value: list[~azure.mgmt.fluidrelay.models.OperationResult]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -488,12 +551,12 @@ class OperationListResult(msrest.serialization.Model):
 class OperationResult(msrest.serialization.Model):
     """A FluidRelay REST API operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~fluid_relay_management_client.models.OperationDisplay
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.fluidrelay.models.OperationDisplay
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
     """
 
     _attribute_map = {
@@ -510,6 +573,14 @@ class OperationResult(msrest.serialization.Model):
         is_data_action: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.fluidrelay.models.OperationDisplay
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        """
         super(OperationResult, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -521,8 +592,8 @@ class RegenerateKeyRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. The key to regenerate. Possible values include: "key1", "key2".
-    :type key_name: str or ~fluid_relay_management_client.models.KeyName
+    :ivar key_name: Required. The key to regenerate. Possible values include: "key1", "key2".
+    :vartype key_name: str or ~azure.mgmt.fluidrelay.models.KeyName
     """
 
     _validation = {
@@ -539,6 +610,10 @@ class RegenerateKeyRequest(msrest.serialization.Model):
         key_name: Union[str, "KeyName"],
         **kwargs
     ):
+        """
+        :keyword key_name: Required. The key to regenerate. Possible values include: "key1", "key2".
+        :paramtype key_name: str or ~azure.mgmt.fluidrelay.models.KeyName
+        """
         super(RegenerateKeyRequest, self).__init__(**kwargs)
         self.key_name = key_name
 
@@ -546,20 +621,20 @@ class RegenerateKeyRequest(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~fluid_relay_management_client.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.fluidrelay.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~fluid_relay_management_client.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~azure.mgmt.fluidrelay.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -582,6 +657,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.fluidrelay.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.fluidrelay.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
