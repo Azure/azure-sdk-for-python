@@ -2,7 +2,13 @@
 
 ## 5.2.0b4 (Unreleased)
 
+- version now targets language
+
 ### Features Added
+
+- healthcare action
+- FHIR on input/output
+- display_name for healthcare
 
 ### Breaking Changes
 

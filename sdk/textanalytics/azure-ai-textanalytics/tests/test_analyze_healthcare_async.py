@@ -628,3 +628,20 @@ class TestHealth(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
         assert str(e.value) == "'display_name' is only available for API version 2022-04-01-preview and up.\n"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_healthcare_fhir_bundle(self, client):
+        async with client:
+            poller = await client.begin_analyze_healthcare_entities(
+                documents=[
+                    "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."
+                ],
+                fhir_version="4.0.1",
+                polling_interval=self._interval(),
+            )
+
+            response = await poller.result()
+            async for res in response:
+                assert res.fhir_bundle

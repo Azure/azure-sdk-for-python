@@ -65,6 +65,7 @@ from ._models import (
     SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
+    AnalyzeHealthcareEntitiesAction,
     _AnalyzeActionsType,
 )
 from ._check import is_language_api, string_index_type_compatibility
@@ -577,7 +578,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     @validate_multiapi_args(
         version_method_added="v3.1",
-        args_mapping={"2022-04-01-preview": ["display_name"]}
+        args_mapping={"2022-04-01-preview": ["display_name", "fhir_version"]}
     )
     def begin_analyze_healthcare_entities(
         self,
@@ -610,6 +611,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Text Analytics API.
         :keyword str display_name: An optional display name to set for the requested analysis.
+        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle.
+            For additional information see https://www.hl7.org/fhir/overview.html. The only acceptable
+            values to pass in are None and "4.0.1". The default value is None.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
@@ -639,7 +643,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
         .. versionadded:: 2022-04-01-preview
-            The *display_name* keyword argument.
+            The *display_name* and *fhir_version* keyword arguments.
 
         .. admonition:: Example:
 
@@ -659,6 +663,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         display_name = kwargs.pop("display_name", None)
+        fhir_version = kwargs.pop("fhir_version", None)
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -704,7 +709,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                                 parameters=models.HealthcareTaskParameters(
                                     model_version=model_version,
                                     logging_opt_out=disable_service_logs,
-                                    string_index_type=string_index_type_compatibility(string_index_type)
+                                    string_index_type=string_index_type_compatibility(string_index_type),
+                                    fhir_version=fhir_version,
                                 )
                             )
                         ]
@@ -1000,6 +1006,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 RecognizeCustomEntitiesAction,
                 SingleCategoryClassifyAction,
                 MultiCategoryClassifyAction,
+                AnalyzeHealthcareEntitiesAction,
             ]
         ],
         **kwargs: Any,
@@ -1016,6 +1023,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     RecognizeCustomEntitiesResult,
                     SingleCategoryClassifyResult,
                     MultiCategoryClassifyResult,
+                    AnalyzeHealthcareEntitiesResult,
                     DocumentError,
                 ]
             ]
@@ -1043,7 +1051,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
-            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or MultiCategoryClassifyAction]
+            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or
+            MultiCategoryClassifyAction or AnalyzeHealthcareEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1072,16 +1081,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
-            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or DocumentError]]]
+            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or AnalyzeHealthcareEntitiesResult or
+            DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: 2022-04-01-preview
             The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
-            and *MultiCategoryClassifyAction* input options and the corresponding *ExtractSummaryResult*,
-            *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*, and *MultiCategoryClassifyResult*
-            result objects
+            *MultiCategoryClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
+            corresponding *ExtractSummaryResult*, *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
+            *MultiCategoryClassifyResult*, and *AnalyzeHealthcareEntitiesResult* result objects
 
         .. admonition:: Example:
 
