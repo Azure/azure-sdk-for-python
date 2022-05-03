@@ -9,6 +9,7 @@ import pytest
 import base64
 import unittest
 import uuid
+from io import BytesIO
 from os import path, remove, sys, urandom
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -22,6 +23,7 @@ from azure.storage.blob import (
 )
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
+from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -928,5 +930,98 @@ class StorageGetBlobTest(StorageTestCase):
         self.assertIsNotNone(content.properties.content_settings.content_type)
         self.assertIsNone(content.properties.content_settings.content_md5)
 
+    @BlobPreparer()
+    def test_get_blob_progress_readall_single(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 512
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data)
+
+        progress = ProgressTracker(len(data), len(data))
+
+        # Act
+        stream = blob.download_blob(max_concurrency=1)
+        stream.readall(progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @BlobPreparer()
+    def test_get_blob_progress_readall_chunked(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        stream = blob.download_blob(max_concurrency=1)
+        stream.readall(progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_readall_chunked_parallel(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+
+        # Act
+        stream = blob.download_blob(max_concurrency=3)
+        stream.readall(progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_readall_range(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        length = 4096
+        progress = ProgressTracker(length, 1024)
+
+        # Act
+        stream = blob.download_blob(offset=512, length=length, max_concurrency=3)
+        stream.readall(progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_progress_readinto(self, storage_account_name, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        self._setup(storage_account_name, storage_account_key)
+        data = b'a' * 5120
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data, overwrite=True)
+
+        progress = ProgressTracker(len(data), 1024)
+        result = BytesIO()
+
+        # Act
+        stream = blob.download_blob(max_concurrency=3)
+        read = stream.readinto(result, progress_hook=progress.assert_progress)
+
+        # Assert
+        progress.assert_complete()
+        self.assertEqual(len(data), read)
 
 # ------------------------------------------------------------------------------
