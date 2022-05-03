@@ -38,10 +38,8 @@ except:
 class _test_config(object):
 
     #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
-    # masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
-    # host = os.getenv('ACCOUNT_HOST', 'https://localhost:8081/')
-    masterKey = os.getenv('ACCOUNT_KEY', 'DPKLKEK9DKolqk5vMexaJqErpz96S5jpp0HeM9BPFfo9U1787kh0vfJiLx0Idk9ohP8IfhYrhHBO8P0vzp6VlA==')
-    host = os.getenv('ACCOUNT_HOST', 'https://simonm-cosmos.documents.azure.com:443/')
+    masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
+    host = os.getenv('ACCOUNT_HOST', 'https://localhost:8081/')
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
     connectionPolicy = documents.ConnectionPolicy()
