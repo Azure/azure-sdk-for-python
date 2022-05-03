@@ -28,8 +28,7 @@
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
 import importlib
-from azure.ai.textanalytics._generated.v2022_03_01_preview.aio.operations import TextAnalyticsClientOperationsMixin as GeneratedTextAnalyticsClientOperationsMixin
-from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller, AsyncAnalyzeActionsLROPollingMethod
+from .operations import TextAnalyticsClientOperationsMixin as GeneratedTextAnalyticsClientOperationsMixin
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
 from ....aio._lro_async import AsyncAnalyzeActionsLROPoller, AsyncAnalyzeActionsLROPollingMethod
@@ -41,7 +40,7 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .. import models as _models
+from ... import models as _models
 from .._vendor import _convert_request
 from ..operations._text_analytics_client_operations import build_analyze_text_cancel_job_request_initial, build_analyze_text_job_status_request, build_analyze_text_request, build_analyze_text_submit_job_request_initial
 T = TypeVar('T')
@@ -64,13 +63,13 @@ def patch_sdk():
             executed immediately.
 
             :param body: Collection of documents to analyze and a single task to execute.
-            :type body: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTask
+            :type body: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextTask
             :param show_stats: (Optional) if set to true, response will contain request and document level
              statistics.
             :type show_stats: bool
             :keyword callable cls: A custom type or function that will be passed the direct response
             :return: AnalyzeTextTaskResult, or the result of cls(response)
-            :rtype: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTaskResult
+            :rtype: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextTaskResult
             :raises: ~azure.core.exceptions.HttpResponseError
             """
             cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeTextTaskResult"]
@@ -79,7 +78,7 @@ def patch_sdk():
             }
             error_map.update(kwargs.pop('error_map', {}))
 
-            api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
             _json = self._serialize.body(body, 'AnalyzeTextTask')
@@ -129,7 +128,7 @@ def patch_sdk():
             }
             error_map.update(kwargs.pop('error_map', {}))
 
-            api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
             _json = self._serialize.body(body, 'AnalyzeTextJobsInput')
@@ -185,7 +184,7 @@ def patch_sdk():
             executed as a long-running operation.
 
             :param body: Collection of documents to analyze and one or more tasks to execute.
-            :type body: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobsInput
+            :type body: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobsInput
             :keyword callable cls: A custom type or function that will be passed the direct response
             :keyword str continuation_token: A continuation token to restart a poller from a saved state.
             :keyword polling: By default, your polling method will be AsyncAnalyzeActionsLROPollingMethod.
@@ -197,11 +196,11 @@ def patch_sdk():
             :return: An instance of AsyncAnalyzeActionsLROPoller that returns either AnalyzeTextJobState or
              the result of cls(response)
             :rtype:
-             ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobState]
+             ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobState]
             :raises: ~azure.core.exceptions.HttpResponseError
             """
             poller_cls = kwargs.pop("poller_cls", AsyncAnalyzeActionsLROPoller)  # Handwritten
-            api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
             polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
             cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeTextJobState"]
@@ -276,7 +275,7 @@ def patch_sdk():
             :type skip: int
             :keyword callable cls: A custom type or function that will be passed the direct response
             :return: AnalyzeTextJobState, or the result of cls(response)
-            :rtype: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobState
+            :rtype: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobState
             :raises: ~azure.core.exceptions.HttpResponseError
             """
             cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeTextJobState"]
@@ -285,7 +284,7 @@ def patch_sdk():
             }
             error_map.update(kwargs.pop('error_map', {}))
 
-            api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
 
             request = build_analyze_text_job_status_request(
                 job_id=job_id,
@@ -332,9 +331,10 @@ def patch_sdk():
                 401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
             }
             error_map.update(kwargs.pop('error_map', {}))
-
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             request = build_analyze_text_cancel_job_request_initial(
                 job_id=job_id,
+                api_version=api_version,
                 template_url=self._analyze_text_cancel_job_initial.metadata['url'],
             )
             request = _convert_request(request)
@@ -387,6 +387,7 @@ def patch_sdk():
             :rtype: ~azure.core.polling.AsyncLROPoller[None]
             :raises: ~azure.core.exceptions.HttpResponseError
             """
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
             cls = kwargs.pop('cls', None)  # type: ClsType[None]
             lro_delay = kwargs.pop(
@@ -397,6 +398,7 @@ def patch_sdk():
             if cont_token is None:
                 raw_result = await self._analyze_text_cancel_job_initial(
                     job_id=job_id,
+                    api_version=api_version,
                     cls=lambda x, y, z: x,
                     **kwargs
                 )
@@ -427,5 +429,5 @@ def patch_sdk():
 
         begin_analyze_text_cancel_job.metadata = {'url': "/analyze-text/jobs/{jobId}:cancel"}  # type: ignore
 
-    curr_package = importlib.import_module("azure.ai.textanalytics._generated.v2022_03_01_preview.aio.operations")
+    curr_package = importlib.import_module("azure.ai.textanalytics._generated.v2022_04_01_preview.aio.operations")
     curr_package.TextAnalyticsClientOperationsMixin = TextAnalyticsClientOperationsMixin
