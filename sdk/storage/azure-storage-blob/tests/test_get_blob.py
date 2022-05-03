@@ -5,30 +5,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import base64
-import unittest
+import pytest
 import uuid
 from io import BytesIO
-from os import path, remove, sys, urandom
+from os import path, remove
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
-    BlobClient,
     StorageErrorCode,
     BlobProperties
 )
-from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageTestCase
+from settings.testcase import BlobPreparer
 from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-
-
 # ------------------------------------------------------------------------------
 
 class StorageGetBlobTest(StorageTestCase):
@@ -936,7 +930,7 @@ class StorageGetBlobTest(StorageTestCase):
         data = b'a' * 512
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(data)
+        blob.upload_blob(data, overwrite=True)
 
         progress = ProgressTracker(len(data), len(data))
 
