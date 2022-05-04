@@ -117,6 +117,7 @@ class EventHubProducer(
         self._link_properties = {
             types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
         }
+        self._amqp_transport = kwargs.pop("amqp_transport")
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
@@ -190,7 +191,7 @@ class EventHubProducer(
     ):
         # type: (...) -> Union[EventData, EventDataBatch]
         if isinstance(event_data, EventData):
-            outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+            outgoing_event_data = transform_outbound_single_message(event_data, EventData, self._amqp_transport.to_outgoing_amqp_message)
             if partition_key:
                 set_message_partition_key(outgoing_event_data.message, partition_key)
             wrapper_event_data = outgoing_event_data

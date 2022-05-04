@@ -13,13 +13,12 @@ from uamqp.message import (
     MessageProperties,
 )
 
-from ._base import AmqpTransport
+from ._base import AmqpTransport, TransportMessageBase
 from ..amqp._constants import AmqpMessageBodyType
-from .transport_message_base import TransportMessageBase
 from ..amqp._constants import AmqpMessageBodyType
 
 
-class TransportMessage(TransportMessageBase, Message):
+class UamqpTransportMessage(TransportMessageBase, Message):
 
     @property
     def body_type(self):
@@ -57,6 +56,7 @@ class UamqpTransport(AmqpTransport):
         MessageBodyType.Sequence.value: AmqpMessageBodyType.SEQUENCE,
         MessageBodyType.Value.value: AmqpMessageBodyType.VALUE,
     }
+    TRANSPORT_MESSAGE = UamqpTransportMessage
 
     def to_outgoing_amqp_message(self, annotated_message):
         """
@@ -104,7 +104,7 @@ class UamqpTransport(AmqpTransport):
             # amqp_body_type is type of AmqpMessageBodyType.VALUE
             amqp_body_type = MessageBodyType.Value
 
-        return Message(
+        return UamqpTransportMessage(
             body=amqp_body,
             body_type=amqp_body_type,
             header=message_header,

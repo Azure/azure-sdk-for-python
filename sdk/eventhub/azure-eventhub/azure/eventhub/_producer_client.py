@@ -92,14 +92,17 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
     ):
         # type:(...) -> None
         self._uamqp_transport = kwargs.pop("uamqp_transport", True)
-        self._amqp_transport = UamqpTransport()
+        if self._uamqp_transport:
+            self._amqp_transport = UamqpTransport()
+        else:
+            raise NotImplementedError('pyamqp transport')
 
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=credential,
             network_tracing=kwargs.get("logging_enable"),
-            transport=self._amqp_transport,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._producers = {
@@ -175,6 +178,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
+            amqp_transport=self._amqp_transport,
         )
         return handler
 
