@@ -818,9 +818,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Text Analytics API.
         :keyword str display_name: An optional display name to set for the requested analysis.
-        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle.
-            For additional information see https://www.hl7.org/fhir/overview.html. The only acceptable
-            values to pass in are None and "4.0.1". The default value is None.
+        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+            on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+            The only acceptable values to pass in are None and "4.0.1". The default value is None.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
             For additional information see https://aka.ms/text-analytics-offsets

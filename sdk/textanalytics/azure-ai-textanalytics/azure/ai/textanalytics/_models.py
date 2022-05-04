@@ -523,9 +523,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             )
             for r in healthcare_result.relations
         ]
-        fhir_bundle = None
-        if hasattr(healthcare_result, "fhir_bundle"):
-            fhir_bundle = healthcare_result.fhir_bundle
+
+        fhir_bundle = healthcare_result.fhir_bundle if hasattr(healthcare_result, "fhir_bundle") else None
 
         return cls(
             id=healthcare_result.id,
@@ -2719,9 +2718,9 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle.
-        For additional information see https://www.hl7.org/fhir/overview.html. The only acceptable
-        values to pass in are None and "4.0.1". The default value is None.
+    :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None.
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -2735,9 +2734,9 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle.
-        For additional information see https://www.hl7.org/fhir/overview.html. The only acceptable
-        values to pass in are None and "4.0.1". The default value is None.
+    :ivar str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None.
     """
 
     def __init__(self, **kwargs):

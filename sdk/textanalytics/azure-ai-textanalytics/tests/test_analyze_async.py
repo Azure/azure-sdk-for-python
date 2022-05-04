@@ -1909,7 +1909,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         project_name=textanalytics_custom_entities_project_name,
                         deployment_name=textanalytics_custom_entities_deployment_name
                     ),
-                    ExtractSummaryAction()
+                    ExtractSummaryAction(),
+                    AnalyzeHealthcareEntitiesAction()
                 ],
                 polling_interval=self._interval(),
             )).result()
@@ -1917,6 +1918,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                                f"up.\n'RecognizeCustomEntitiesAction' is only available for API version " \
                                f"{version_supported} and up.\n'SingleCategoryClassifyAction' is only available " \
                                f"for API version {version_supported} and up.\n'MultiCategoryClassifyAction' is " \
+                               f"only available for API version {version_supported} and up.\n'AnalyzeHealthcareEntitiesAction' is " \
                                f"only available for API version {version_supported} and up.\n"
 
     @TextAnalyticsPreparer()
