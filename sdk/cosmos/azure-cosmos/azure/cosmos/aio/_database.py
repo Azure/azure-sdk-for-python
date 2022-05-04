@@ -31,11 +31,11 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options
-from .container import ContainerProxy
+from ._container import ContainerProxy
 from ..offer import Offer
 from ..http_constants import StatusCodes
 from ..exceptions import CosmosResourceNotFoundError
-from .user import UserProxy
+from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 
@@ -372,12 +372,11 @@ class DatabaseProxy(object):
     @distributed_trace
     def query_containers(
             self,
-            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
 
-        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
+        :keyword Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
@@ -396,6 +395,7 @@ class DatabaseProxy(object):
             feed_options["maxItemCount"] = max_item_count
 
         parameters = kwargs.pop('parameters', None)
+        query = kwargs.pop('query', None)
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),

@@ -33,7 +33,7 @@ from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options
 from ._retry_utility_async import _ConnectionRetryPolicy
-from .database import DatabaseProxy
+from ._database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
@@ -150,6 +150,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             cls,
             conn_str: str,
             *,
+            credential: Optional[Union[str, Dict[str, str]]] = None,
             consistency_level: Optional[str] = None,
             **kwargs: Any
     ) -> "CosmosClient":
@@ -159,12 +160,14 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         keyword arguments, see the CosmosClient constructor.
 
         :param str conn_str: The connection string.
+        :keyword credential: Alternative credentials to use instead of the key provided in the connection string.
+        :paramtype credential: Union[str, Dict[str, str]]
         :keyword str consistency_level: Consistency level to use for the session. Default value is None (account-level).
             More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
         :returns: a CosmosClient instance
         :rtype: ~azure.cosmos.aio.CosmosClient
         """
-        settings = _parse_connection_str(conn_str)
+        settings = _parse_connection_str(conn_str, credential)
         return cls(
             url=settings['AccountEndpoint'],
             credential=settings['AccountKey'],
@@ -316,12 +319,11 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     @distributed_trace
     def query_databases(
             self,
-            query: Union[str, Dict[str, Any]],
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
 
-        :param Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
+        :keyword Union[str, Dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
         :paramtype parameters: List[Dict[str, Any]]
@@ -340,6 +342,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             feed_options["maxItemCount"] = max_item_count
 
         parameters = kwargs.pop('parameters', None)
+        query = kwargs.pop('query', None)
         result = self.client_connection.QueryDatabases(
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,

@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Union, TypeVar
+from typing import Any, Dict, Union
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -30,12 +30,12 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
+from ._container import ContainerProxy
 from ..partition_key import NonePartitionKeyValue
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-ClassType = TypeVar("ClassType")
 
 class ScriptType(object):
     StoredProcedure = "sprocs"
@@ -52,7 +52,7 @@ class ScriptsProxy(object):
 
     def __init__(
             self,
-            container: ClassType,
+            container: ContainerProxy,
             client_connection: _CosmosClientConnection,
             container_link: str
     ) -> None:
@@ -208,8 +208,8 @@ class ScriptsProxy(object):
         :keyword partition_key: Specifies the partition key to indicate which partition the stored procedure should
             execute on.
         :paramtype partition_key: Union[str, int, float, bool]
-        :keyword params: List of parameters to be passed to the stored procedure to be executed.
-        :paramtype params: List[Dict[str, Any]]
+        :keyword parameters: List of parameters to be passed to the stored procedure to be executed.
+        :paramtype parameters: List[Dict[str, Any]]
         :keyword bool enable_script_logging: Enables or disables script logging for the current request.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
             or if the stored procedure with given id does not exists in the container.
@@ -230,10 +230,10 @@ class ScriptsProxy(object):
         if enable_script_logging is not None:
             request_options["enableScriptLogging"] = enable_script_logging
 
-        params = kwargs.pop("params", None)
+        parameters = kwargs.pop("parameters", None)
         return await self.client_connection.ExecuteStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
-            params=params,
+            params=parameters,
             options=request_options,
             **kwargs
         )

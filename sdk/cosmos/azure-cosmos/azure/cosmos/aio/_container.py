@@ -33,7 +33,7 @@ from .._base import build_options as _build_options, validate_cache_staleness_va
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import Offer
-from .scripts import ScriptsProxy
+from ._scripts import ScriptsProxy
 from ..partition_key import NonePartitionKeyValue
 
 __all__ = ("ContainerProxy",)
@@ -388,12 +388,11 @@ class ContainerProxy(object):
     @distributed_trace
     def query_items_change_feed(
             self,
-            is_start_from_beginning: bool = False,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param bool is_start_from_beginning: Get whether change feed should start from
+        :keyword bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default it's start from current (false).
         :keyword str partition_key_range_id: ChangeFeed requests can be executed against specific partition key
             ranges. This is used to process the change feed in parallel across multiple consumers.
@@ -410,12 +409,12 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         partition_key = kwargs.pop("partition_key", None)
         partition_key_range_id = kwargs.pop("partition_key_range_id", None)
+        is_start_from_beginning = kwargs.pop("is_start_from_beginning", False)
+        feed_options["isStartFromBeginning"] = is_start_from_beginning
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        if is_start_from_beginning is not None:
-            feed_options["isStartFromBeginning"] = is_start_from_beginning
         max_item_count = kwargs.pop('max_item_count', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
