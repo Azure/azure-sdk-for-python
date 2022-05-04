@@ -3,4 +3,5 @@ recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
 include azure/iot/__init__.py
+recursive-include samples *.py
 include LICENSE
