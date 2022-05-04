@@ -13,16 +13,7 @@ from ._generated.models import (
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
 from ._generated.v2022_03_01_preview import models as _v2022_03_01_preview_models
-from ._check import is_language_api
-
-
-def string_index_type_compatibility(string_index_type):
-    """Language API changed this string_index_type option to plural.
-    Convert singular to plural for language API
-    """
-    if string_index_type == "TextElement_v8":
-        return "TextElements_v8"
-    return string_index_type
+from ._check import is_language_api, string_index_type_compatibility
 
 
 def _get_indices(relation):

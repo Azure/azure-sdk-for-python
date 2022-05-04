@@ -10,14 +10,13 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from .._version import DEFAULT_API_VERSION
 from ._base_client_async import AsyncTextAnalyticsClientBase
-from .._base_client import TextAnalyticsApiVersion
 from .._request_handlers import (
     _validate_input,
     _determine_action_type,
-    _check_string_index_type_arg,
 )
+from .._validate import validate_multiapi_args, check_for_unsupported_actions_types
+from .._version import DEFAULT_API_VERSION
 from .._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -54,7 +53,7 @@ from .._models import (
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
 )
-from .._check import is_language_api
+from .._check import is_language_api, string_index_type_compatibility
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
     AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
@@ -127,6 +126,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["disable_service_logs"]}
+    )
     async def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
@@ -223,6 +226,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+    )
     async def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -290,11 +297,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
 
         try:
             if is_language_api(self._api_version):
@@ -305,7 +308,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         parameters=models.EntitiesTaskParameters(
                             logging_opt_out=disable_service_logs,
                             model_version=model_version,
-                            string_index_type=string_index_type
+                            string_index_type=string_index_type_compatibility(string_index_type),
                         )
                     ),
                     show_stats=show_stats,
@@ -327,6 +330,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.1"
+    )
     async def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -403,11 +409,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         domain_filter = kwargs.pop("domain_filter", None)
         categories_filter = kwargs.pop("categories_filter", None)
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
 
         try:
@@ -421,7 +423,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             model_version=model_version,
                             domain=domain_filter,
                             pii_categories=categories_filter,
-                            string_index_type=string_index_type
+                            string_index_type=string_index_type_compatibility(string_index_type),
                         )
                     ),
                     show_stats=show_stats,
@@ -441,19 +443,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs,
             )
-        except ValueError as error:
-            if (
-                "API version v3.0 does not have operation 'entities_recognition_pii'"
-                in str(error)
-            ):
-                raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+    )
     async def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -522,11 +519,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
 
         try:
             if is_language_api(self._api_version):
@@ -537,7 +530,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         parameters=models.EntityLinkingTaskParameters(
                             logging_opt_out=disable_service_logs,
                             model_version=model_version,
-                            string_index_type=string_index_type
+                            string_index_type=string_index_type_compatibility(string_index_type),
                         )
                     ),
                     show_stats=show_stats,
@@ -559,6 +552,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["disable_service_logs"]}
+    )
     async def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -653,6 +650,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs", "string_index_type"]}
+    )
     async def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -727,19 +728,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
-        if show_opinion_mining is not None:
-            if (
-                self._api_version == TextAnalyticsApiVersion.V3_0
-                and show_opinion_mining
-            ):
-                raise ValueError(
-                    "'show_opinion_mining' is only available for API version v3.1 and up"
-                )
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
 
         try:
             if is_language_api(self._api_version):
@@ -750,7 +739,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         parameters=models.SentimentAnalysisTaskParameters(
                             logging_opt_out=disable_service_logs,
                             model_version=model_version,
-                            string_index_type=string_index_type,
+                            string_index_type=string_index_type_compatibility(string_index_type),
                             opinion_mining=show_opinion_mining,
                         )
                     ),
@@ -791,6 +780,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.1",
+        args_mapping={"2022-03-01-preview": ["display_name"]}
+    )
     async def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -869,11 +862,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         display_name = kwargs.pop("display_name", None)
 
@@ -921,7 +910,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                 parameters=models.HealthcareTaskParameters(
                                     model_version=model_version,
                                     logging_opt_out=disable_service_logs,
-                                    string_index_type=string_index_type,
+                                    string_index_type=string_index_type_compatibility(string_index_type),
                                 )
                             )
                         ]
@@ -966,14 +955,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs,
             )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_health'" in str(error):
-                raise ValueError(
-                    "'begin_analyze_healthcare_entities' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)
 
@@ -996,6 +977,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.1",
+        custom_wrapper=check_for_unsupported_actions_types
+    )
     async def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -1250,13 +1235,5 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs,
             )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
-                raise ValueError(
-                    "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)
