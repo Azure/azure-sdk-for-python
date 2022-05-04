@@ -853,7 +853,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     @validate_multiapi_args(
         version_method_added="v3.0",
-        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs", "string_index_type"]}
+        args_mapping={
+            "v3.1": ["show_opinion_mining", "disable_service_logs", "string_index_type"],
+            "2022-04-01-preview": ["display_name"]
+        }
     )
     def analyze_sentiment(
         self,
