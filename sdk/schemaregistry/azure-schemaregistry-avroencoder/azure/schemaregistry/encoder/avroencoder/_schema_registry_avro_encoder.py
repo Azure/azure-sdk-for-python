@@ -40,7 +40,7 @@ from ._utils import (  # pylint: disable=import-error
     create_message_content,
     validate_message,
     decode_content,
-    MessageType
+    MessageType,
 )
 
 from ._apache_avro_encoder import (  # pylint: disable=import-error

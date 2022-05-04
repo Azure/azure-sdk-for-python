@@ -4,6 +4,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
+import gzip
 from flask import (
     Response,
     Blueprint,
@@ -31,6 +33,15 @@ def streaming_test():
 def stream_compressed_header_error():
     yield b'test'
 
+def stream_compressed_no_header():
+    with gzip.open('test.tar.gz', 'wb') as f:
+        f.write(b"test")
+    
+    with open(os.path.join(os.path.abspath('test.tar.gz')), "rb") as fd:
+        yield fd.read()
+    
+    os.remove("test.tar.gz")
+
 @streams_api.route('/basic', methods=['GET'])
 def basic():
     return Response(streaming_body(), status=200)
@@ -48,7 +59,11 @@ def string():
     return Response(
         streaming_test(), status=200, mimetype="text/plain"
     )
-    
+
+@streams_api.route('/compressed_no_header', methods=['GET'])
+def compressed_no_header():
+    return Response(stream_compressed_no_header(), status=300)
+
 @streams_api.route('/compressed', methods=['GET'])
 def compressed():
     return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})

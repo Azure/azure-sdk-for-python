@@ -559,3 +559,42 @@ class TestHealth(TextAnalyticsTest):
         assert isinstance(poller.expires_on, datetime.datetime)
         assert isinstance(poller.last_modified_on, datetime.datetime)
         assert poller.id
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
+    def test_healthcare_multiapi_validate_v3_0(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            poller = client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'begin_analyze_healthcare_entities' is only available for API version v3.1 and up."
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
+    def test_healthcare_multiapi_validate_v3_1(self, **kwargs):
+        client = kwargs.pop("client")
+
+        with pytest.raises(ValueError) as e:
+            poller = client.begin_analyze_healthcare_entities(
+                documents=[
+                    {"id": "1",
+                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {"id": "2", "text": "patients must have histologically confirmed NHL"},
+                    {"id": "3", "text": ""},
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                ],
+                display_name="this won't work",
+                show_stats=True,
+                polling_interval=self._interval(),
+            )
+        assert str(e.value) == "'display_name' is only available for API version 2022-03-01-preview and up.\n"
