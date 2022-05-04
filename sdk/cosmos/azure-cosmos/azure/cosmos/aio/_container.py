@@ -25,7 +25,7 @@
 from typing import Any, Dict, Optional, Union, cast, Awaitable
 from azure.core.async_paging import AsyncItemPaged
 
-from azure.core.tracing.decorator import distributed_trace  # pylint: disable=unused-import
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 
 from ._cosmos_client_connection_async import CosmosClientConnection
