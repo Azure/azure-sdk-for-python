@@ -1775,7 +1775,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
-        version_supported = "2022-03-01-preview"
+        version_supported = "2022-04-01-preview"
         with pytest.raises(ValueError) as e:
             response = client.begin_analyze_actions(
                 docs,

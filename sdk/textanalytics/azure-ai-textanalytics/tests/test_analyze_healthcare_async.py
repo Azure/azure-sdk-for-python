@@ -627,4 +627,4 @@ class TestHealth(TextAnalyticsTest):
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'display_name' is only available for API version 2022-03-01-preview and up.\n"
+        assert str(e.value) == "'display_name' is only available for API version 2022-04-01-preview and up.\n"
