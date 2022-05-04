@@ -39,11 +39,11 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from typing import Dict
 
-def _return_response_header(_response, _, response_header):
+def _return_response_header(response, _, response_header):
     return response_header
 
-def _return_response(_response, _, response_header):
-    return _response
+def _return_response(response, _, response_header):
+    return response
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -893,7 +893,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             data = BytesIO(result.http_response.internal_response.content)
             digest = _compute_digest(data)
             return DownloadBlobResult(data=data, digest=digest)
-        return result    
+        return result
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
