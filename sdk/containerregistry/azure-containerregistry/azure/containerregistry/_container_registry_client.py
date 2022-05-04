@@ -867,7 +867,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if not _validate_digest(content_stream, digest):
                 raise HttpResponseError("The requested digest does not match the digest of the received manifest.")
             raise
-        
+
         manifest = _deserialize_manifest(content_stream)
         return DownloadManifestResult(digest=digest, data=content_stream, manifest=manifest)
 
@@ -888,12 +888,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if repository is None or digest is None:
                 raise ValueError("The parameter repository and digest cannot be None.")
             raise
-        
+
         if result:
             data = BytesIO(result.http_response.internal_response.content)
             digest = _compute_digest(data)
             return DownloadBlobResult(data=data, digest=digest)
-        return result           
+        return result    
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):

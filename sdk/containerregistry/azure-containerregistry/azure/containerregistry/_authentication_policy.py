@@ -60,7 +60,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
                     except (UnsupportedOperation, ValueError, AttributeError):
                         # if body is not seekable, then retry would not work
                         return response
-                
+
                 response = self.next.send(request)
 
         return response
