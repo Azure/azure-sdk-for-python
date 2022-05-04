@@ -22,7 +22,6 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-import warnings
 from typing import Any, Dict, List, Optional, Union, cast, Awaitable
 from azure.core.async_paging import AsyncItemPaged
 
