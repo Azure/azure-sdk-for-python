@@ -143,15 +143,15 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        populate_query_metrics = args[0] if args else None or kwargs.pop('populate_query_metrics', None)
+        populate_query_metrics = args[0] if args else kwargs.pop('populate_query_metrics', None)
         if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        populate_partition_key_range_statistics = kwargs.pop("populate_partition_key_range_statistics", None)
-        populate_quota_info = kwargs.pop("populate_quota_info", None)
+        populate_partition_key_range_statistics = args[1] if args else kwargs.pop(
+            "populate_partition_key_range_statistics", None)
+        populate_quota_info = args[2] if args else kwargs.pop("populate_quota_info", None)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
