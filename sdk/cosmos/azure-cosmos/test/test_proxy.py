@@ -93,9 +93,9 @@ class ProxyTests(unittest.TestCase):
         if platform.system() == 'Darwin':
             pytest.skip("TODO: Connection error raised on OSX")
         connection_policy.ProxyConfiguration.Port = self.serverPort
-        client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterKey},
+        client = cosmos_client.CosmosClient(self.host, self.masterKey, consistency_level="Session",
                                             connection_policy=connection_policy)
-        created_db = client.create_database(self.testDbName)
+        created_db = client.create_database_if_not_exists(self.testDbName)
         self.assertEqual(created_db.id, self.testDbName, msg="Database id is incorrect")
 
     def test_failure_with_wrong_proxy(self):

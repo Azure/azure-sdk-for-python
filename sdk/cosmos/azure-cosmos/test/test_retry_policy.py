@@ -70,7 +70,6 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
         cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
-        cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
         cls.created_collection = cls.created_database.create_container_if_not_exists(
             test_config._test_config.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"))
         cls.retry_after_in_milliseconds = 1000

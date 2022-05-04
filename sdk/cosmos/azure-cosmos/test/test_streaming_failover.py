@@ -1,6 +1,8 @@
 import unittest
+import uuid
+
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
-import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import cosmos_client, PartitionKey
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -42,17 +44,20 @@ class TestStreamingFailover(unittest.TestCase):
         self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_get_database_account
 
-        client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': self.MASTER_KEY}, connection_policy, documents.ConsistencyLevel.Eventual)
+        client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, self.MASTER_KEY, consistency_level=documents.ConsistencyLevel.Eventual, connection_policy=connection_policy)
+        created_db = client.create_database_if_not_exists("streaming-db" + str(uuid.uuid4()))
+        created_container = created_db.create_container_if_not_exists("streaming-container" + str(uuid.uuid4()), PartitionKey(path="/id"))
+
 
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',
                                 'key': 'value'} 
 
         created_document = {}
-        created_document = client.CreateItem("dbs/mydb/colls/mycoll", document_definition)
-        
+        created_document = created_container.create_item(document_definition)
+
         self.assertDictEqual(created_document, {})
-        self.assertDictEqual(client.last_response_headers, {})
+        self.assertDictEqual(client.client_connection.last_response_headers, {})
 
         self.assertEqual(self.counter, 10)
         # First request is an initial read collection.

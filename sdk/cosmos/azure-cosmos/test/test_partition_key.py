@@ -44,7 +44,7 @@ class PartitionKeyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
         cls.created_collection = cls.created_db.create_container_if_not_exists(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID,
                                                                                partition_key=partition_key.PartitionKey(path="/pk"))
 

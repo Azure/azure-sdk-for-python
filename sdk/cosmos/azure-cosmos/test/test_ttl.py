@@ -76,15 +76,14 @@ class Test_ttl_tests(unittest.TestCase):
 
     def test_collection_and_document_ttl_values(self):
         ttl = 5
-        created_collection = self.created_db.create_container(
-            id='test_collection_and_document_ttl_values1' + str(uuid.uuid4()),
+        created_collection = self.created_db.create_container_if_not_exists(
+            id='test_ttl_values1' + str(uuid.uuid4()),
             default_ttl=ttl,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-            )
+            partition_key=PartitionKey(path='/id'))
         created_collection_properties = created_collection.read()
         self.assertEqual(created_collection_properties['defaultTtl'], ttl)
 
-        collection_id = 'test_collection_and_document_ttl_values4' + str(uuid.uuid4())
+        collection_id = 'test_ttl_values4' + str(uuid.uuid4())
         ttl = -10
 
         # -10 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
@@ -92,14 +91,14 @@ class Test_ttl_tests(unittest.TestCase):
             StatusCodes.BAD_REQUEST,
             self.created_db.create_container,
             collection_id,
-            PartitionKey(path='/id', kind='Hash'),
+            PartitionKey(path='/id'),
             None,
             ttl)
 
         document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
                                 'name': 'sample document',
                                 'key': 'value',
-                                'ttl' : 0}
+                                'ttl': 0}
 
         # 0 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
@@ -128,10 +127,10 @@ class Test_ttl_tests(unittest.TestCase):
         self.created_db.delete_container(container=created_collection)
 
     def test_document_ttl_with_positive_defaultTtl(self):
-        created_collection = self.created_db.create_container(
-            id='test_document_ttl_with_positive_defaultTtl collection' + str(uuid.uuid4()),
+        created_collection = self.created_db.create_container_if_not_exists(
+            id='test_ttl_with_positive_defaultTtl' + str(uuid.uuid4()),
             default_ttl=5,
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            partition_key=PartitionKey(path='/id')
         )
 
         document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
@@ -197,8 +196,8 @@ class Test_ttl_tests(unittest.TestCase):
         self.created_db.delete_container(container=created_collection)
 
     def test_document_ttl_with_negative_one_defaultTtl(self):
-        created_collection = self.created_db.create_container(
-            id='test_document_ttl_with_negative_one_defaultTtl collection' + str(uuid.uuid4()),
+        created_collection = self.created_db.create_container_if_not_exists(
+            id='test_ttl_negative_one_defaultTtl' + str(uuid.uuid4()),
             default_ttl=-1,
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
@@ -239,15 +238,15 @@ class Test_ttl_tests(unittest.TestCase):
         self.created_db.delete_container(container=created_collection)
 
     def test_document_ttl_with_no_defaultTtl(self):
-        created_collection = created_collection = self.created_db.create_container(
-            id='test_document_ttl_with_no_defaultTtl collection' + str(uuid.uuid4()),
+        created_collection = created_collection = self.created_db.create_container_if_not_exists(
+            id='test_ttl_no_defaultTtl' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
 
         document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
                                 'name': 'sample document',
                                 'key': 'value',
-                                'ttl' : 5}
+                                'ttl': 5}
 
         created_document = created_collection.create_item(body=document_definition)
 
@@ -260,8 +259,8 @@ class Test_ttl_tests(unittest.TestCase):
         self.created_db.delete_container(container=created_collection)
 
     def test_document_ttl_misc(self):
-        created_collection = created_collection = self.created_db.create_container(
-            id='test_document_ttl_with_no_defaultTtl collection' + str(uuid.uuid4()),
+        created_collection = created_collection = self.created_db.create_container_if_not_exists(
+            id='test_ttl_no_defaultTtl' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id', kind='Hash'),
             default_ttl=8
         )
@@ -304,7 +303,7 @@ class Test_ttl_tests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
             created_collection.read_item,
-            upserted_docment['id'],\
+            upserted_docment['id'],
             upserted_docment['id']
         )
 

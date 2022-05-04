@@ -36,7 +36,8 @@ class QueryTest(unittest.TestCase):
         cls.created_db = cls.client.create_database_if_not_exists(cls.config.TEST_DATABASE_ID)
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         document_definition = {'pk': 'pk', 'id': 'myId'}
         created_collection.create_item(body=document_definition)
 
@@ -55,7 +56,8 @@ class QueryTest(unittest.TestCase):
         self.query_change_feed(False)
 
     def query_change_feed(self, use_partition_key):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key = "pk"
         partition_key_range_id = 2
@@ -85,7 +87,7 @@ class QueryTest(unittest.TestCase):
         self.assertNotEqual(continuation1, '')
 
         # Create a document. Read change feed should return be able to read that document
-        document_definition = {'pk': 'pk', 'id':'doc1'}
+        document_definition = {'pk': 'pk', 'id': 'doc1'}
         created_collection.create_item(body=document_definition)
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
@@ -164,7 +166,8 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(len(iter_list), 0)
 
     def test_populate_query_metrics(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         document_definition = {'pk': 'pk', 'id': 'myId'}
         created_collection.create_item(body=document_definition)
 
@@ -187,7 +190,8 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(all(['=' in x for x in metrics]))
 
     def test_max_item_count_honored_in_order_by_query(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         docs = []
         for i in range(10):
             document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
@@ -224,7 +228,8 @@ class QueryTest(unittest.TestCase):
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
     def test_get_query_plan_through_gateway(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         self._validate_query_plan(query="Select top 10 value count(c.id) from c",
                                   container_link=created_collection.container_link,
                                   top=10,
@@ -274,7 +279,8 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(query_execution_info.get_limit(), limit)
 
     def test_unsupported_queries(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
@@ -285,12 +291,14 @@ class QueryTest(unittest.TestCase):
                 self.assertEqual(e.status_code, 400)
 
     def test_query_with_non_overlapping_pk_ranges(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'", enable_cross_partition_query=True)
         self.assertListEqual(list(query_iterable), [])
 
     def test_offset_limit(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         max_item_counts = [0, 2, 5, 10]
         values = []
         for i in range(10):
@@ -356,9 +364,9 @@ class QueryTest(unittest.TestCase):
 
         padded_docs = self._pad_with_none(documents, distinct_field)
 
-        self._validate_distinct(created_collection=created_collection,  # returns {} and is wrong number
+        self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),   # nosec
-                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, False),
+                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
                                 is_select=False,
                                 fields=[distinct_field])
 
@@ -400,7 +408,7 @@ class QueryTest(unittest.TestCase):
 
         self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field), # nosec
-                                results=[None],
+                                results=[],
                                 is_select=True,
                                 fields=[different_field])
 
@@ -461,7 +469,8 @@ class QueryTest(unittest.TestCase):
         return res
 
     def test_distinct_on_different_types_and_field_orders(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         self.payloads = [
             {'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
             {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
@@ -531,7 +540,8 @@ class QueryTest(unittest.TestCase):
         _QueryExecutionContextBase.next = self.OriginalExecuteFunction
 
     def test_paging_with_continuation_token(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
 
         document_definition = {'pk': 'pk', 'id': '1'}
         created_collection.create_item(body=document_definition)
@@ -555,7 +565,9 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
     def test_cross_partition_query_with_continuation_token_fails(self):
-        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID,
+            PartitionKey(path="/pk"))
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
             query=query,

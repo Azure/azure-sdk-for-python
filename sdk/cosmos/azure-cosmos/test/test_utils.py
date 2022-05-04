@@ -44,7 +44,8 @@ class UtilsTests(unittest.TestCase):
         self.assertEqual(user_agent, expected_user_agent)   
 
     def test_connection_string(self):
-        client = azure.cosmos.CosmosClient.from_connection_string(test_config._test_config.connection_str)
+        client = azure.cosmos.CosmosClient.from_connection_string(test_config._test_config.connection_str,
+                                                                  consistency_level="Session")
         databases = list(client.list_databases())
         assert len(databases) > 0
         assert isinstance(databases[0], dict)
