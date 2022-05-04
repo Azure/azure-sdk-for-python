@@ -768,7 +768,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Upload a manifest for an OCI artifact.
 
         :param str repository: Name of the repository
-        :param manifest: The manifest to upload.
+        :param manifest: The manifest to upload. Note: This must be a seekable stream.
         :type manifest: ~azure.containerregistry.models.OCIManifest or IO
         :keyword tag: Tag of the manifest.
         :paramtype tag: str or None
@@ -862,10 +862,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         except ValueError:
             if repository is None or tag_or_digest is None:
                 raise ValueError("The parameter repository and tag_or_digest cannot be None.")
-            raise
-        except HttpResponseError:
             if not _validate_digest(content_stream, digest):
-                raise HttpResponseError("The requested digest does not match the digest of the received manifest.")
+                raise ValueError("The requested digest does not match the digest of the received manifest.")
             raise
 
         manifest = _deserialize_manifest(content_stream)
