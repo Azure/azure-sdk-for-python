@@ -29,57 +29,53 @@
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
 
 import importlib
-from azure.ai.textanalytics._generated.v2022_03_01_preview.operations import TextAnalyticsClientOperationsMixin as GeneratedTextAnalyticsClientOperationsMixin
-from azure.ai.textanalytics._lro import AnalyzeActionsLROPoller, AnalyzeActionsLROPollingMethod
-from typing import TYPE_CHECKING
+from .operations import TextAnalyticsClientOperationsMixin as GeneratedTextAnalyticsClientOperationsMixin
+from .operations._text_analytics_client_operations import build_analyze_text_cancel_job_request_initial, build_analyze_text_job_status_request, build_analyze_text_request, build_analyze_text_submit_job_request_initial
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
+
 from msrest import Serializer
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, \
-    ResourceNotFoundError, map_error
+
+from ..._lro import AnalyzeActionsLROPoller, AnalyzeActionsLROPollingMethod
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from .operations._text_analytics_client_operations import build_analyze_text_cancel_job_request_initial, build_analyze_text_job_status_request, build_analyze_text_request, build_analyze_text_submit_job_request_initial
+
 from . import models as _models
 from ._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, TypeVar, Union
-
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-
 
 def patch_sdk():
     class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsMixin):
 
         @distributed_trace
         def analyze_text(
-                self,
-                body,  # type: "_models.AnalyzeTextTask"
-                show_stats=None,  # type: Optional[bool]
-                **kwargs  # type: Any
-        ):
-            # type: (...) -> "_models.AnalyzeTextTaskResult"
+            self,
+            body: "_models.AnalyzeTextTask",
+            show_stats: Optional[bool] = None,
+            **kwargs: Any
+        ) -> "_models.AnalyzeTextTaskResult":
             """Request text analysis over a collection of documents.
 
             Submit a collection of text documents for analysis.  Specify a single unique task to be
             executed immediately.
 
             :param body: Collection of documents to analyze and a single task to execute.
-            :type body: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTask
+            :type body: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextTask
             :param show_stats: (Optional) if set to true, response will contain request and document level
              statistics.
             :type show_stats: bool
             :keyword callable cls: A custom type or function that will be passed the direct response
             :return: AnalyzeTextTaskResult, or the result of cls(response)
-            :rtype: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextTaskResult
+            :rtype: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextTaskResult
             :raises: ~azure.core.exceptions.HttpResponseError
             """
             cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeTextTaskResult"]
@@ -88,7 +84,7 @@ def patch_sdk():
             }
             error_map.update(kwargs.pop('error_map', {}))
 
-            api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
             _json = self._serialize.body(body, 'AnalyzeTextTask')
@@ -127,19 +123,19 @@ def patch_sdk():
 
         analyze_text.metadata = {'url': "/:analyze-text"}  # type: ignore
 
+
         def _analyze_text_submit_job_initial(
-                self,
-                body,  # type: "_models.AnalyzeTextJobsInput"
-                **kwargs  # type: Any
-        ):
-            # type: (...) -> Optional["_models.AnalyzeTextJobState"]
+            self,
+            body: "_models.AnalyzeTextJobsInput",
+            **kwargs: Any
+        ) -> Optional["_models.AnalyzeTextJobState"]:
             cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AnalyzeTextJobState"]]
             error_map = {
                 401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
             }
             error_map.update(kwargs.pop('error_map', {}))
 
-            api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
             _json = self._serialize.body(body, 'AnalyzeTextJobsInput')
@@ -173,8 +169,8 @@ def patch_sdk():
                 deserialized = self._deserialize('AnalyzeTextJobState', pipeline_response)
 
             if response.status_code == 202:
-                response_headers['Operation-Location'] = self._deserialize('str',
-                                                                           response.headers.get('Operation-Location'))
+                response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+
 
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)
@@ -183,20 +179,20 @@ def patch_sdk():
 
         _analyze_text_submit_job_initial.metadata = {'url': "/analyze-text/jobs"}  # type: ignore
 
+
         @distributed_trace
         def begin_analyze_text_submit_job(
-                self,
-                body,  # type: "_models.AnalyzeTextJobsInput"
-                **kwargs  # type: Any
-        ):
-            # type: (...) -> AnalyzeActionsLROPoller["_models.AnalyzeTextJobState"]
+            self,
+            body: "_models.AnalyzeTextJobsInput",
+            **kwargs: Any
+        ) -> AnalyzeActionsLROPoller["_models.AnalyzeTextJobState"]:
             """Submit text analysis job.
 
             Submit a collection of text documents for analysis. Specify one or more unique tasks to be
             executed as a long-running operation.
 
             :param body: Collection of documents to analyze and one or more tasks to execute.
-            :type body: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobsInput
+            :type body: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobsInput
             :keyword callable cls: A custom type or function that will be passed the direct response
             :keyword str continuation_token: A continuation token to restart a poller from a saved state.
             :keyword polling: By default, your polling method will be AnalyzeActionsLROPollingMethod. Pass
@@ -208,11 +204,11 @@ def patch_sdk():
             :return: An instance of AnalyzeActionsLROPoller that returns either AnalyzeTextJobState or the
              result of cls(response)
             :rtype:
-             ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobState]
+             ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobState]
             :raises: ~azure.core.exceptions.HttpResponseError
             """
             poller_cls = kwargs.pop("poller_cls", AnalyzeActionsLROPoller)  # Handwritten
-            api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
             polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
             cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeTextJobState"]
@@ -226,7 +222,7 @@ def patch_sdk():
                     body=body,
                     api_version=api_version,
                     content_type=content_type,
-                    cls=lambda x, y, z: x,
+                    cls=lambda x,y,z: x,
                     **kwargs
                 )
             kwargs.pop('error_map', None)
@@ -237,6 +233,7 @@ def patch_sdk():
                 if cls:
                     return cls(pipeline_response, deserialized, {})
                 return deserialized
+
 
             path_format_arguments = {
                 "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -262,14 +259,13 @@ def patch_sdk():
 
         @distributed_trace
         def analyze_text_job_status(
-                self,
-                job_id,  # type: str
-                show_stats=None,  # type: Optional[bool]
-                top=None,  # type: Optional[int]
-                skip=None,  # type: Optional[int]
-                **kwargs  # type: Any
-        ):
-            # type: (...) -> "_models.AnalyzeTextJobState"
+            self,
+            job_id: str,
+            show_stats: Optional[bool] = None,
+            top: Optional[int] = None,
+            skip: Optional[int] = None,
+            **kwargs: Any
+        ) -> "_models.AnalyzeTextJobState":
             """Get analysis status and results.
 
             Get the status of an analysis job.  A job may consist of one or more tasks.  Once all tasks are
@@ -287,7 +283,7 @@ def patch_sdk():
             :type skip: int
             :keyword callable cls: A custom type or function that will be passed the direct response
             :return: AnalyzeTextJobState, or the result of cls(response)
-            :rtype: ~azure.ai.textanalytics.v2022_03_01_preview.models.AnalyzeTextJobState
+            :rtype: ~azure.ai.textanalytics.v2022_04_01_preview.models.AnalyzeTextJobState
             :raises: ~azure.core.exceptions.HttpResponseError
             """
             cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeTextJobState"]
@@ -296,7 +292,8 @@ def patch_sdk():
             }
             error_map.update(kwargs.pop('error_map', {}))
 
-            api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+
 
             request = build_analyze_text_job_status_request(
                 job_id=job_id,
@@ -333,20 +330,24 @@ def patch_sdk():
 
         analyze_text_job_status.metadata = {'url': "/analyze-text/jobs/{jobId}"}  # type: ignore
 
+
         def _analyze_text_cancel_job_initial(  # pylint: disable=inconsistent-return-statements
-                self,
-                job_id,  # type: str
-                **kwargs  # type: Any
-        ):
-            # type: (...) -> None
+            self,
+            job_id: str,
+            **kwargs: Any
+        ) -> None:
             cls = kwargs.pop('cls', None)  # type: ClsType[None]
             error_map = {
                 401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
             }
             error_map.update(kwargs.pop('error_map', {}))
 
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
+
+
             request = build_analyze_text_cancel_job_request_initial(
                 job_id=job_id,
+                api_version=api_version,
                 template_url=self._analyze_text_cancel_job_initial.metadata['url'],
             )
             request = _convert_request(request)
@@ -367,21 +368,21 @@ def patch_sdk():
                 raise HttpResponseError(response=response)
 
             response_headers = {}
-            response_headers['Operation-Location'] = self._deserialize('str',
-                                                                       response.headers.get('Operation-Location'))
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+
 
             if cls:
                 return cls(pipeline_response, None, response_headers)
 
         _analyze_text_cancel_job_initial.metadata = {'url': "/analyze-text/jobs/{jobId}:cancel"}  # type: ignore
 
+
         @distributed_trace
         def begin_analyze_text_cancel_job(  # pylint: disable=inconsistent-return-statements
-                self,
-                job_id,  # type: str
-                **kwargs  # type: Any
-        ):
-            # type: (...) -> LROPoller[None]
+            self,
+            job_id: str,
+            **kwargs: Any
+        ) -> LROPoller[None]:
             """Cancel a long-running Text Analysis job.
 
             Cancel a long-running Text Analysis job.
@@ -400,6 +401,7 @@ def patch_sdk():
             :rtype: ~azure.core.polling.LROPoller[None]
             :raises: ~azure.core.exceptions.HttpResponseError
             """
+            api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
             polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
             cls = kwargs.pop('cls', None)  # type: ClsType[None]
             lro_delay = kwargs.pop(
@@ -410,7 +412,8 @@ def patch_sdk():
             if cont_token is None:
                 raw_result = self._analyze_text_cancel_job_initial(
                     job_id=job_id,
-                    cls=lambda x, y, z: x,
+                    api_version=api_version,
+                    cls=lambda x,y,z: x,
                     **kwargs
                 )
             kwargs.pop('error_map', None)
@@ -419,16 +422,14 @@ def patch_sdk():
                 if cls:
                     return cls(pipeline_response, None, {})
 
+
             path_format_arguments = {
                 "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             }
 
-            if polling is True:
-                polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            elif polling is False:
-                polling_method = NoPolling()
-            else:
-                polling_method = polling
+            if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            elif polling is False: polling_method = NoPolling()
+            else: polling_method = polling
             if cont_token:
                 return LROPoller.from_continuation_token(
                     polling_method=polling_method,
@@ -440,5 +441,5 @@ def patch_sdk():
 
         begin_analyze_text_cancel_job.metadata = {'url': "/analyze-text/jobs/{jobId}:cancel"}  # type: ignore
 
-    curr_package = importlib.import_module("azure.ai.textanalytics._generated.v2022_03_01_preview.operations")
+    curr_package = importlib.import_module("azure.ai.textanalytics._generated.v2022_04_01_preview.operations")
     curr_package.TextAnalyticsClientOperationsMixin = TextAnalyticsClientOperationsMixin

@@ -357,20 +357,30 @@ class TestHealth(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
-    @pytest.mark.skip("cancel is returning 404")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_cancellation(self, client):
-        single_doc = "hello world"
-        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+        large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
+            CORONARY ARTERY DISEASE | Signed | DIS | Admission Date: 5/22/2001 \
+            Report Status: Signed Discharge Date: 4/24/2001 ADMISSION DIAGNOSIS: \
+            CORONARY ARTERY DISEASE. HISTORY OF PRESENT ILLNESS: \
+            The patient is a 54-year-old gentleman with a history of progressive angina over the past several months. \
+            The patient had a cardiac catheterization in July of this year revealing total occlusion of the RCA and \
+            50% left main disease , with a strong family history of coronary artery disease with a brother dying at \
+            the age of 52 from a myocardial infarction and another brother who is status post coronary artery bypass grafting. \
+            The patient had a stress echocardiogram done on July , 2001 , which showed no wall motion abnormalities ,\
+            but this was a difficult study due to body habitus. The patient went for six minutes with minimal ST depressions \
+            in the anterior lateral leads , thought due to fatigue and wrist pain , his anginal equivalent. Due to the patient's \
+            increased symptoms and family history and history left main disease with total occasional of his RCA was referred \
+            for revascularization with open heart surgery."
+        docs = [{"id": str(idx), "text": large_doc*3} for (idx, val) in enumerate(list(itertools.repeat(large_doc, 25)))]
 
         poller = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
         try:
             cancellation_poller = poller.cancel()
-            cancellation_poller.wait()
-
+            cancellation_poller.result()
         except HttpResponseError:
             pass # expected if the operation was already in a terminal state.
 
@@ -587,4 +597,4 @@ class TestHealth(TextAnalyticsTest):
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'display_name' is only available for API version 2022-03-01-preview and up.\n"
+        assert str(e.value) == "'display_name' is only available for API version 2022-04-01-preview and up.\n"

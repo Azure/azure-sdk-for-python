@@ -28,7 +28,7 @@ class TextAnalyticsClientConfiguration(Configuration):  # pylint: disable=too-ma
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2022-03-01-preview". Note that
+    :keyword api_version: Api Version. The default value is "2022-04-01-preview". Note that
      overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -40,7 +40,7 @@ class TextAnalyticsClientConfiguration(Configuration):  # pylint: disable=too-ma
         **kwargs: Any
     ) -> None:
         super(TextAnalyticsClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-04-01-preview")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

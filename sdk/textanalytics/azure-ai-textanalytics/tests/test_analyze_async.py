@@ -759,6 +759,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 )).result()
         assert excinfo.value.status_code == 400
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1136,6 +1137,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert not document_results[1][0].is_error
             assert isinstance(document_results[1][0], ExtractSummaryResult)
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1179,6 +1181,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 assert result.classification.category
                 assert result.classification.confidence_score
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1224,6 +1227,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1272,6 +1276,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert entity.length is not None
                     assert entity.confidence_score is not None
 
+    @pytest.mark.skip("service expects projectName/deploymentName in kebab-case: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14137925")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy_async
@@ -1885,7 +1890,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
-        version_supported = "2022-03-01-preview"
+        version_supported = "2022-04-01-preview"
         with pytest.raises(ValueError) as e:
             response = await (await client.begin_analyze_actions(
                 docs,

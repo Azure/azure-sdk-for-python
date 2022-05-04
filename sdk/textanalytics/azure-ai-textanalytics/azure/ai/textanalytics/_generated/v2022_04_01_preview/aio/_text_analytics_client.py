@@ -34,7 +34,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2022-03-01-preview". Note that
+    :keyword api_version: Api Version. The default value is "2022-04-01-preview". Note that
      overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
