@@ -20,6 +20,9 @@ These code samples show common champion scenario operations with the AzureMonito
 * Azure Communication Chat Create Client/Thread: [sample_comm_chat.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_chat.py)
 * Azure Communication Phone Numbers List Purchased Numbers: [sample_comm_phone.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_phone.py)
 * Azure Communication SMS Send Message: [sample_comm_sms.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_sms.py)
+* Azure KeyVault Create Certificate: [sample_key_cert.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_key_cert.py)
+* Azure KeyVault Set Secret: [sample_key_secret.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_key_secret.py)
+* Azure KeyVault Create Keys: [sample_key_keys.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_key_keys.py)
 * Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_client.py)
 * Event: [sample_span_event.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_span_event.py)
 * Jaeger: [sample_jaeger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_jaeger.py)
@@ -255,6 +258,7 @@ $ python sample_blob_checkpoint.py
 ### Azure EventGrid Send Event
 
 The following sample assumes that you have setup an Azure Event Grid [Topic](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal).
+
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `EG_ACCESS_KEY` environment variable
 * Update `EG_TOPIC_HOSTNAME` environment variable
@@ -273,6 +277,7 @@ $ python sample_event_grid.py
 ### Azure Communication Chat Create Client/Thread
 
 The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
 * Run the sample
@@ -291,6 +296,7 @@ $ python sample_comm_chat.py
 ### Azure Communication Phone Numbers List Purchased Numbers
 
 The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
 * Run the sample
@@ -307,6 +313,7 @@ $ python sample_comm_phone.py
 ### Azure Communication SMS Send Message
 
 The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
 * Run the sample
@@ -318,6 +325,63 @@ $ # azure sdk core tracing library for opentelemetry
 $ pip install azure-core-tracing-opentelemetry
 $ # from this directory
 $ python sample_comm_sms.py
+```
+
+### Azure KeyVault Create Certificate
+
+The following sample assumes that you have setup an Azure Key Vault [resource](https://docs.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-keyvault-certificates library
+$ pip install azure-keyvault-certificates
+$ # azure-identity library for authentication
+$ pip install azure-identity
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_key_cert.py
+```
+
+### Azure KeyVault Set Secret
+
+The following sample assumes that you have setup an Azure Key Vault [resource](https://docs.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-keyvault-secrets library
+$ pip install azure-keyvault-secrets
+$ # azure-identity library for authentication
+$ pip install azure-identity
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_key_secret.py
+```
+
+### Azure KeyVault Create Keys
+
+The following sample assumes that you have setup an Azure Key Vault [resource](https://docs.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-keyvault-keys library
+$ pip install azure-keyvault-keys
+$ # azure-identity library for authentication
+$ pip install azure-identity
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_key_keys.py
 ```
 
 ## Explore the data
