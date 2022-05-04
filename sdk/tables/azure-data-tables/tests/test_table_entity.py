@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from enum import Enum
 from math import isnan
+from uuid import uuid4
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
@@ -2161,5 +2162,46 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
                 assert get_entity == entity1
 
             self.table.delete_entity(entity1.copy())
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    @recorded_by_proxy
+    def test_entity_with_edmtypes(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            "bool": ("false", "Edm.Boolean"),
+            "text": (42, EdmType.STRING),
+            "number": ("23", EdmType.INT32),
+            "bigNumber": (64, EdmType.INT64),
+            "bytes": ("test", "Edm.Binary"),
+            "amount": ("0", EdmType.DOUBLE),
+            "since": ("2008-07-10T00:00:00", EdmType.DATETIME),
+            "guid": (uuid4(), EdmType.GUID)
+        }
+        try:
+            self.table.upsert_entity(entity)
+            result = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            assert result['bool'] == False
+            assert result['text'] == "42"
+            assert result['number'] == 23
+            assert result['bigNumber'][0] == 64
+            assert result['bytes'] == b"test"
+            assert result['amount'] == 0.0
+            assert str(result['since']) == "2008-07-10 00:00:00+00:00"
+            assert result['guid'] == entity["guid"][0]
+
+            with pytest.raises(HttpResponseError) as e:
+                entity = {
+                    'PartitionKey': partition,
+                    'RowKey': row,
+                    "bool": ("not a bool", EdmType.BOOLEAN)
+                }
+                self.table.upsert_entity(entity)
         finally:
             self._tear_down()

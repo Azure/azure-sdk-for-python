@@ -98,6 +98,9 @@ def _to_entity_datetime(value):
 
 
 def _to_entity_float(value):
+    if isinstance(value, str):
+        # Pass a serialized value straight through
+        return EdmType.DOUBLE, value
     if isnan(value):
         return EdmType.DOUBLE, "NaN"
     if value == float("inf"):
@@ -129,7 +132,7 @@ def _to_entity_int64(value):
 
 
 def _to_entity_str(value):
-    return EdmType.STRING, value
+    return EdmType.STRING, str(value)
 
 
 def _to_entity_none(value):  # pylint: disable=unused-argument
@@ -166,11 +169,11 @@ except NameError:
 # type string and content string.
 _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.BINARY: _to_entity_binary,
-    EdmType.BOOLEAN: _to_entity_bool,
+    EdmType.BOOLEAN: lambda v: (EdmType.BOOLEAN, v),
     EdmType.DATETIME: _to_entity_datetime,
     EdmType.DOUBLE: _to_entity_float,
     EdmType.GUID: _to_entity_guid,
-    EdmType.INT32: _to_entity_int32,
+    EdmType.INT32: lambda v: (EdmType.INT32, v),
     EdmType.INT64: _to_entity_int64,
     EdmType.STRING: _to_entity_str,
 }
