@@ -3,3 +3,5 @@ variables:
   skipComponentGovernanceDetection: true
   AzureSDKCondaChannel: https://azuresdkconda.blob.core.windows.net/channel1/
   Package.EnableSBOMSigning: true
+  # this will be disabled after issue#24299 is merged.
+  DisableDockerDetector: true
