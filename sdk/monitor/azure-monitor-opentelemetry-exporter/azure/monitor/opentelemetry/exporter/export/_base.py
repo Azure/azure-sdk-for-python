@@ -7,8 +7,6 @@ from enum import Enum
 from typing import List, Any
 from urllib.parse import urlparse
 
-from opentelemetry.sdk.trace.export import SpanExportResult
-
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RedirectPolicy, RequestIdPolicy
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
@@ -75,6 +73,7 @@ class BaseExporter:
             max_size=50 * 1024 * 1024,  # Maximum size in bytes.
             maintenance_period=60,  # Maintenance interval in seconds.
             retention_period=7 * 24 * 60 * 60,  # Retention period in seconds
+            name="{} Storage".format(self.__class__.__name__),
         )
 
     def _transmit_from_storage(self) -> None:
@@ -194,14 +193,3 @@ def _is_retryable_code(response_code: int) -> bool:
         503,  # Service Unavailable
         504,  # Gateway timeout
     ))
-
-
-def get_trace_export_result(result: ExportResult) -> SpanExportResult:
-    if result == ExportResult.SUCCESS:
-        return SpanExportResult.SUCCESS
-    if result in (
-        ExportResult.FAILED_RETRYABLE,
-        ExportResult.FAILED_NOT_RETRYABLE,
-    ):
-        return SpanExportResult.FAILURE
-    return None

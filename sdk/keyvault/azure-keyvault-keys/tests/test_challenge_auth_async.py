@@ -9,37 +9,35 @@ the challenge cache is global to the process.
 import asyncio
 import os
 import time
+from unittest.mock import Mock, patch
 from uuid import uuid4
 
-from unittest.mock import Mock, patch
-
+import pytest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio import ClientSecretCredential
-from azure.keyvault.keys.aio import KeyClient
-from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy,HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
-import pytest
+from azure.keyvault.keys.aio import KeyClient
+from devtools_testutils.aio import recorded_by_proxy_async
 
-from _shared.helpers import mock_response, Request
+from _async_test_case import AsyncKeysClientPreparer, get_decorator
+from _shared.helpers import Request, mock_response
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, KeysTestCase
 from test_challenge_auth import empty_challenge_cache, get_random_url
-
 
 only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 
 
-class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, match_body=False, **kwargs)
-
-    @only_default_version()
-    @client_setup
+class TestChallengeAuth(KeyVaultTestCase):
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",only_default_version)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
     async def test_multitenant_authentication(self, client, is_hsm, **kwargs):
         if not self.is_live:
             pytest.skip("This test is incompatible with vcrpy in playback")
@@ -52,7 +50,9 @@ class ChallengeAuthTests(KeysTestCase, KeyVaultTestCase):
         # we set up a client for this method so it gets awaited, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
         credential = ClientSecretCredential(tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret)
-        vault_url = self.managed_hsm_url if is_hsm else self.vault_url
+        managed_hsm_url = kwargs.pop("managed_hsm_url", None)
+        keyvault_url = kwargs.pop("vault_url", None)
+        vault_url = managed_hsm_url if is_hsm else keyvault_url
         client = KeyClient(vault_url=vault_url, credential=credential)
 
         if self.is_live:

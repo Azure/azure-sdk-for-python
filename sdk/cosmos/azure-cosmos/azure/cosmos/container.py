@@ -44,8 +44,8 @@ class ContainerProxy(object):
     """An interface to interact with a specific DB Container.
 
     This class should not be instantiated directly. Instead, use the
-    :func:`DatabaseProxy.get_container_client` method to get an existing
-    container, or the :func:`Database.create_container` method to create a
+    :func:`~azure.cosmos.database.DatabaseProxy.get_container_client` method to get an existing
+    container, or the :func:`~azure.cosmos.database.DatabaseProxy.create_container` method to create a
     new container.
 
     A container in an Azure Cosmos DB SQL API database is a collection of
@@ -426,7 +426,7 @@ class ContainerProxy(object):
         item_link = self._get_document_link(item)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
@@ -472,7 +472,7 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:

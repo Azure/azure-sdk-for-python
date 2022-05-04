@@ -54,7 +54,7 @@ class WorkbooksOperations:
         can_fetch_content: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.WorkbooksListResult"]:
-        """Get all private workbooks defined within a specified subscription and category.
+        """Get all Workbooks defined within a specified subscription and category.
 
         :param category: Category of workbook to return.
         :type category: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.CategoryType
@@ -223,6 +223,7 @@ class WorkbooksOperations:
         self,
         resource_group_name: str,
         resource_name: str,
+        can_fetch_content: Optional[bool] = None,
         **kwargs: Any
     ) -> "_models.Workbook":
         """Get a single workbook by its resourceName.
@@ -231,6 +232,9 @@ class WorkbooksOperations:
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component resource.
         :type resource_name: str
+        :param can_fetch_content: Flag indicating whether or not to return the full content for each
+         applicable workbook. If false, only return summary content for workbooks.
+        :type can_fetch_content: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Workbook, or the result of cls(response)
         :rtype: ~azure.mgmt.applicationinsights.v2021_08_01.models.Workbook
@@ -247,6 +251,7 @@ class WorkbooksOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             resource_name=resource_name,
+            can_fetch_content=can_fetch_content,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)

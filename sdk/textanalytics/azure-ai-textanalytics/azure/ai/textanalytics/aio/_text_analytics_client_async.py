@@ -10,14 +10,13 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from .._version import DEFAULT_API_VERSION
 from ._base_client_async import AsyncTextAnalyticsClientBase
-from .._base_client import TextAnalyticsApiVersion
 from .._request_handlers import (
     _validate_input,
     _determine_action_type,
-    _check_string_index_type_arg,
 )
+from .._validate import validate_multiapi_args, check_for_unsupported_actions_types
+from .._version import DEFAULT_API_VERSION
 from .._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -54,6 +53,7 @@ from .._models import (
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
 )
+from .._check import is_language_api, string_index_type_compatibility
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
     AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
@@ -126,6 +126,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["disable_service_logs"]}
+    )
     async def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
@@ -192,13 +196,29 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
+
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return await self._client.analyze_text(
+                    body=models.AnalyzeTextLanguageDetectionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.LanguageDetectionTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", language_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return await self._client.languages(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", language_result),
                 **kwargs,
             )
@@ -206,6 +226,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+    )
     async def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -273,22 +297,32 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return await self._client.analyze_text(
+                    body=models.AnalyzeTextEntityRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.EntitiesTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type_compatibility(string_index_type),
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return await self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                string_index_type=string_index_type,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", entities_result),
                 **kwargs,
             )
@@ -296,6 +330,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.1"
+    )
     async def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -372,41 +409,48 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         domain_filter = kwargs.pop("domain_filter", None)
         categories_filter = kwargs.pop("categories_filter", None)
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return await self._client.analyze_text(
+                    body=models.AnalyzeTextPiiEntitiesRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.PiiTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            domain=domain_filter,
+                            pii_categories=categories_filter,
+                            string_index_type=string_index_type_compatibility(string_index_type),
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", pii_entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return await self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
                 pii_categories=categories_filter,
+                logging_opt_out=disable_service_logs,
+                string_index_type=string_index_type,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs,
             )
-        except ValueError as error:
-            if (
-                "API version v3.0 does not have operation 'entities_recognition_pii'"
-                in str(error)
-            ):
-                raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+    )
     async def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -475,21 +519,31 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return await self._client.analyze_text(
+                    body=models.AnalyzeTextEntityLinkingInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.EntityLinkingTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type_compatibility(string_index_type),
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", linked_entities_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return await self._client.entities_linking(
                 documents=docs,
+                logging_opt_out=disable_service_logs,
                 model_version=model_version,
+                string_index_type=string_index_type,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", linked_entities_result),
                 **kwargs,
@@ -498,6 +552,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["disable_service_logs"]}
+    )
     async def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -562,13 +620,29 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
+
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return await self._client.analyze_text(
+                    body=models.AnalyzeTextKeyPhraseExtractionInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.KeyPhraseTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", key_phrases_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return await self._client.key_phrases(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                logging_opt_out=disable_service_logs,
                 cls=kwargs.pop("cls", key_phrases_result),
                 **kwargs,
             )
@@ -576,6 +650,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.0",
+        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs", "string_index_type"]}
+    )
     async def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -650,31 +728,33 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
-        if disable_service_logs is not None:
-            kwargs["logging_opt_out"] = disable_service_logs
-
-        string_index_type = _check_string_index_type_arg(
-            kwargs.pop("string_index_type", None),
-            self._api_version,
-            string_index_type_default=self._string_code_unit,
-        )
-        if string_index_type:
-            kwargs.update({"string_index_type": string_index_type})
-
-        if show_opinion_mining is not None:
-            if (
-                self._api_version == TextAnalyticsApiVersion.V3_0
-                and show_opinion_mining
-            ):
-                raise ValueError(
-                    "'show_opinion_mining' is only available for API version v3.1 and up"
-                )
-            kwargs.update({"opinion_mining": show_opinion_mining})
+        string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
 
         try:
+            if is_language_api(self._api_version):
+                models = self._client.models(api_version=self._api_version)
+                return await self._client.analyze_text(
+                    body=models.AnalyzeTextSentimentAnalysisInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.SentimentAnalysisTaskParameters(
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            string_index_type=string_index_type_compatibility(string_index_type),
+                            opinion_mining=show_opinion_mining,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", sentiment_result),
+                    **kwargs
+                )
+
+            # api_versions 3.0, 3.1
             return await self._client.sentiment(
                 documents=docs,
+                logging_opt_out=disable_service_logs,
                 model_version=model_version,
+                string_index_type=string_index_type,
+                opinion_mining=show_opinion_mining,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs,
@@ -683,21 +763,27 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return process_http_response_error(error)
 
     def _healthcare_result_callback(
-        self, doc_id_order, raw_response, _, headers, show_stats=False
+        self, doc_id_order, raw_response, deserialized, headers, show_stats=False
     ):
-        healthcare_result = self._client.models(
-            api_version=self._api_version
-        ).HealthcareJobState.deserialize(raw_response)
+        if deserialized is None:
+            models = self._client.models(api_version=self._api_version)
+            response_cls = \
+                models.AnalyzeTextJobState if is_language_api(self._api_version) else models.HealthcareJobState
+            deserialized = response_cls.deserialize(raw_response)
         return healthcare_paged_result(
             doc_id_order,
-            self._client.health_status,
+            self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.health_status,
             raw_response,
-            healthcare_result,
+            deserialized,
             headers,
             show_stats=show_stats,
         )
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.1",
+        args_mapping={"2022-04-01-preview": ["display_name"]}
+    )
     async def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -730,6 +816,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Text Analytics API.
+        :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
@@ -757,6 +844,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
+        .. versionadded:: 2022-04-01-preview
+            The *display_name* keyword argument.
 
         .. admonition:: Example:
 
@@ -775,6 +864,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
         string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
+        display_name = kwargs.pop("display_name", None)
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -803,8 +893,47 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 self._healthcare_result_callback, doc_id_order, show_stats=show_stats
             ),
         )
+        models = self._client.models(api_version=self._api_version)
 
         try:
+            if is_language_api(self._api_version):
+                docs = models.MultiLanguageAnalysisInput(
+                    documents=_validate_input(documents, "language", language)
+                )
+                return await self._client.begin_analyze_text_submit_job(  # type: ignore
+                    body=models.AnalyzeTextJobsInput(
+                        analysis_input=docs,
+                        display_name=display_name,
+                        tasks=[
+                            models.HealthcareLROTask(
+                                task_name="0",
+                                parameters=models.HealthcareTaskParameters(
+                                    model_version=model_version,
+                                    logging_opt_out=disable_service_logs,
+                                    string_index_type=string_index_type_compatibility(string_index_type),
+                                )
+                            )
+                        ]
+                    ),
+                    cls=my_cls,
+                    polling=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    poller_cls=AsyncAnalyzeHealthcareEntitiesLROPoller,
+                    **kwargs
+                )
+
+            # v3.1
             return await self._client.begin_health(
                 docs,
                 model_version=model_version,
@@ -826,34 +955,32 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs,
             )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_health'" in str(error):
-                raise ValueError(
-                    "'begin_analyze_healthcare_entities' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     def _analyze_result_callback(
-        self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
+        self, doc_id_order, task_order, raw_response, deserialized, headers, show_stats=False
     ):
-        analyze_result = self._client.models(
-            api_version=self._api_version
-        ).AnalyzeJobState.deserialize(raw_response)
+
+        if deserialized is None:
+            models = self._client.models(api_version=self._api_version)
+            response_cls = models.AnalyzeTextJobState if is_language_api(self._api_version) else models.AnalyzeJobState
+            deserialized = response_cls.deserialize(raw_response)
         return analyze_paged_result(
             doc_id_order,
             task_order,
-            self._client.analyze_status,
+            self._client.analyze_text_job_status if is_language_api(self._api_version) else self._client.analyze_status,
             raw_response,
-            analyze_result,
+            deserialized,
             headers,
             show_stats=show_stats,
         )
 
     @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="v3.1",
+        custom_wrapper=check_for_unsupported_actions_types
+    )
     async def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -946,7 +1073,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
-        .. versionadded:: v3.2-preview
+        .. versionadded:: 2022-04-01-preview
             The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, *SingleCategoryClassifyAction*,
             and *MultiCategoryClassifyAction* input options and the corresponding *ExtractSummaryResult*,
             *RecognizeCustomEntitiesResult*, *SingleCategoryClassifyResult*,
@@ -990,9 +1117,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 continuation_token=continuation_token
             )
 
-        docs = self._client.models(
-            api_version=self._api_version
-        ).MultiLanguageBatchInput(
+        models = self._client.models(api_version=self._api_version)
+
+        input_model_cls = \
+            models.MultiLanguageAnalysisInput if is_language_api(self._api_version) else models.MultiLanguageBatchInput
+        docs = input_model_cls(
             documents=_validate_input(documents, "language", language)
         )
         doc_id_order = [doc.get("id") for doc in docs.documents]
@@ -1006,9 +1135,40 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
         try:
-            analyze_tasks = self._client.models(
-                api_version=self._api_version
-            ).JobManifestTasks(
+            if is_language_api(self._api_version):
+                return await self._client.begin_analyze_text_submit_job(
+                    body=models.AnalyzeTextJobsInput(
+                        analysis_input=docs,
+                        display_name=display_name,
+                        tasks=generated_tasks
+                    ),
+                    cls=kwargs.pop(
+                        "cls",
+                        partial(
+                            self._analyze_result_callback,
+                            doc_id_order,
+                            task_order,
+                            show_stats=show_stats,
+                        ),
+                    ),
+                    polling=AsyncAnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        task_id_order=task_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    **kwargs
+                )
+
+            # v3.1
+            analyze_tasks = models.JobManifestTasks(
                 entity_recognition_tasks=[
                     a for a in generated_tasks
                     if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
@@ -1046,9 +1206,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     if _determine_action_type(a) == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                 ],
             )
-            analyze_body = self._client.models(
-                api_version=self._api_version
-            ).AnalyzeBatchInput(
+            analyze_body = models.AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
             return await self._client.begin_analyze(
@@ -1077,13 +1235,5 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs,
             )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
-                raise ValueError(
-                    "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
-                ) from error
-            raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)
