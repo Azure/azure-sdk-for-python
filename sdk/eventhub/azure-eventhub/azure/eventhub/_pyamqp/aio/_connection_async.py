@@ -28,7 +28,7 @@ from ..constants import (
     HEADER_FRAME,
     ConnectionState,
     EMPTY_FRAME,
-    TransportType,
+    TransportType
 )
 
 from ..error import (
@@ -70,7 +70,7 @@ class Connection(object):
     def __init__(self, endpoint, **kwargs):
         parsed_url = urlparse(endpoint)
         self.hostname = parsed_url.hostname
-        self._transport_type = kwargs.pop('transport_type')
+        self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
         if parsed_url.port:
             self.port = parsed_url.port
         elif parsed_url.scheme == 'amqps':
@@ -78,15 +78,14 @@ class Connection(object):
         else:
             self.port = PORT
         self.state = None
-
-        transport = kwargs.get('transport', TransportType.Amqp)
+        transport = kwargs.get('transport')
         if transport:
             self.transport = transport
         elif 'sasl_credential' in kwargs:
             sasl_transport = SASLWithWebSocket if (
                 self._transport_type is TransportType.AmqpOverWebsocket or kwargs.get("http_proxy")
                 ) else SASLTransport
-            self._transport = sasl_transport(
+            self.transport = sasl_transport(
                 host=parsed_url.netloc,
                 credential=kwargs['sasl_credential'],
                 **kwargs

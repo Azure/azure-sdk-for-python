@@ -4,12 +4,13 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import http
 import struct
 from enum import Enum
 
 from ._transport_async import AsyncTransport, WebSocketTransportAsync
 from ..types import AMQPTypes, TYPE, VALUE
-from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME, WEBSOCKET_PORT
+from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME, WEBSOCKET_PORT, TransportType
 from .._transport import AMQPS_PORT
 from ..performatives import (
     SASLOutcome,
@@ -72,7 +73,6 @@ class SASLExternalCredential(object):
     def start(self):
         return b''
 
-
 class SASLTransportMixinAsync():
     async def negotiate(self):
         await self.write(SASL_HEADER_FRAME)
@@ -99,15 +99,13 @@ class SASLTransportMixinAsync():
         else:
             raise ValueError("SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields))
 
-
 class SASLTransport(AsyncTransport, SASLTransportMixinAsync):
     def __init__(self, host, credential, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
         super(SASLTransport, self).__init__(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
-class SASLWithWebSocket(AsyncTransport, SASLTransportMixinAsync):
-
+class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
     def __init__(
         self, host, credential, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
         ): # pylint: disable=super-init-not-called
@@ -122,3 +120,4 @@ class SASLWithWebSocket(AsyncTransport, SASLTransportMixinAsync):
             http_proxy=http_proxy,
             **kwargs
         )
+        super().__init__(host, port, connect_timeout, ssl, **kwargs)
