@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -45,18 +45,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "0fd0f3d4-afb0-4ddf-baf5-e9b7b804729c",
+        "apim-request-id": "e18006f4-e680-4a3e-8530-c384d54256ba",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:39:18 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b9dc73a8-ff34-4751-9a78-56c2d2b8bb58?api-version=2022-03-01-preview",
+        "Date": "Tue, 03 May 2022 00:05:20 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/448e1c25-73c1-411e-a5de-67185fdeb406?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "195"
+        "x-envoy-upstream-service-time": "452"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b9dc73a8-ff34-4751-9a78-56c2d2b8bb58?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/448e1c25-73c1-411e-a5de-67185fdeb406?api-version=2022-04-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -67,19 +67,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "600eeee4-4655-4322-bfbe-7e25e4d62a86",
-        "Content-Length": "1057",
+        "apim-request-id": "8a790078-1384-4c69-862f-a79a8345d0d6",
+        "Content-Length": "899",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:39:24 GMT",
+        "Date": "Tue, 03 May 2022 00:05:25 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "97"
+        "x-envoy-upstream-service-time": "49"
       },
       "ResponseBody": {
-        "jobId": "b9dc73a8-ff34-4751-9a78-56c2d2b8bb58",
-        "lastUpdateDateTime": "2022-04-20T23:39:20Z",
-        "createdDateTime": "2022-04-20T23:39:18Z",
-        "expirationDateTime": "2022-04-21T23:39:18Z",
+        "jobId": "448e1c25-73c1-411e-a5de-67185fdeb406",
+        "lastUpdateDateTime": "2022-05-03T00:05:22Z",
+        "createdDateTime": "2022-05-03T00:05:20Z",
+        "expirationDateTime": "2022-05-04T00:05:20Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -89,61 +89,33 @@
           "total": 2,
           "items": [
             {
-              "kind": "SentimentAnalysisLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:39:20.7632373Z",
+              "kind": "PiiEntityRecognitionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-05-03T00:05:22.9519697Z",
               "status": "succeeded",
               "results": {
                 "documents": [
                   {
-                    "id": "1",
-                    "sentiment": "neutral",
-                    "confidenceScores": {
-                      "positive": 0.06,
-                      "neutral": 0.55,
-                      "negative": 0.39
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.06,
-                          "neutral": 0.55,
-                          "negative": 0.39
-                        },
-                        "offset": 0,
-                        "length": 38,
-                        "text": "I did not like the hotel we stayed at."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
+                    "redactedText": "I did not like the hotel we stayed at.",
                     "id": "2",
-                    "sentiment": "negative",
-                    "confidenceScores": {
-                      "positive": 0.01,
-                      "neutral": 0.45,
-                      "negative": 0.54
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "negative",
-                        "confidenceScores": {
-                          "positive": 0.01,
-                          "neutral": 0.45,
-                          "negative": 0.54
-                        },
-                        "offset": 0,
-                        "length": 38,
-                        "text": "I did not like the hotel we stayed at."
-                      }
-                    ],
+                    "entities": [],
                     "warnings": []
                   }
                 ],
-                "errors": [],
-                "modelVersion": "2020-04-01"
+                "errors": [
+                  {
+                    "id": "1",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Language Code.",
+                      "innererror": {
+                        "code": "UnsupportedLanguageCode",
+                        "message": "Invalid language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT. For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2021-01-15"
               }
             }
           ]
@@ -151,7 +123,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b9dc73a8-ff34-4751-9a78-56c2d2b8bb58?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/448e1c25-73c1-411e-a5de-67185fdeb406?api-version=2022-04-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -162,19 +134,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f6cf268f-51d4-4a54-8646-c76e99405382",
+        "apim-request-id": "1349ec9e-5268-4631-8d5a-7906852151a8",
         "Content-Length": "1680",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:39:29 GMT",
+        "Date": "Tue, 03 May 2022 00:05:30 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "64"
+        "x-envoy-upstream-service-time": "124"
       },
       "ResponseBody": {
-        "jobId": "b9dc73a8-ff34-4751-9a78-56c2d2b8bb58",
-        "lastUpdateDateTime": "2022-04-20T23:39:26Z",
-        "createdDateTime": "2022-04-20T23:39:18Z",
-        "expirationDateTime": "2022-04-21T23:39:18Z",
+        "jobId": "448e1c25-73c1-411e-a5de-67185fdeb406",
+        "lastUpdateDateTime": "2022-05-03T00:05:29Z",
+        "createdDateTime": "2022-05-03T00:05:20Z",
+        "expirationDateTime": "2022-05-04T00:05:20Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -186,7 +158,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:39:20.7632373Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:29.4911283Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -244,7 +216,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-04-20T23:39:26.0876111Z",
+              "lastUpdateDateTime": "2022-05-03T00:05:22.9519697Z",
               "status": "succeeded",
               "results": {
                 "documents": [
