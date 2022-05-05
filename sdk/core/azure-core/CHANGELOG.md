@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Add `SerializationError` and `DeserializationError` in `azure.core.serialization` for errors raised during serialization / deserialization  #24312
+- Add `SerializationError` and `DeserializationError` in `azure.core.exceptions` for errors raised during serialization / deserialization  #24312
 
 ## 1.23.1 (2022-03-31)
 
