@@ -30,7 +30,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
-from ._container import ContainerProxy
 from ..partition_key import NonePartitionKeyValue
 
 # pylint: disable=protected-access
@@ -52,7 +51,7 @@ class ScriptsProxy(object):
 
     def __init__(
             self,
-            container: ContainerProxy,
+            container: "ContainerProxy",
             client_connection: _CosmosClientConnection,
             container_link: str
     ) -> None:
