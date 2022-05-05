@@ -4,8 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from io import BytesIO
-import json
 import os
 import pytest
 import six
@@ -18,6 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
+from azure.containerregistry._helpers import _deserialize_manifest
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 
@@ -631,9 +630,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
-        manifest = self.create_oci_manifest()
-        manifest_bytes = json.dumps(manifest.serialize()).encode("utf-8")
-        manifest_stream = BytesIO(manifest_bytes)        
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
+        manifest = _deserialize_manifest(manifest_stream)     
         client = self.create_registry_client(containerregistry_endpoint)
 
         self.upload_manifest_prerequisites(repo, client)
@@ -687,9 +686,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         # TODO: remove the "@pytest.mark.live_test_only" annotation once moved to the new test framework
         # Arrange
         repo = self.get_resource_name("repo")
-        manifest = self.create_oci_manifest()
-        manifest_bytes = json.dumps(manifest.serialize()).encode("utf-8")
-        manifest_stream = BytesIO(manifest_bytes)
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
+        manifest = _deserialize_manifest(manifest_stream)
         client = self.create_registry_client(containerregistry_endpoint)
         tag = "v1"
         

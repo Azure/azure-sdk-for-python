@@ -927,8 +927,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository the manifest belongs to
         :param str tag_or_digest: Tag or digest of the blob to be deleted
-        :returns: IO
-        :rtype: IO
+        :returns: None
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example
@@ -944,4 +943,4 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
-        return self._client.container_registry_blob.delete_blob(repository, tag_or_digest, **kwargs)
+        self._client.container_registry_blob.delete_blob(repository, tag_or_digest, **kwargs)

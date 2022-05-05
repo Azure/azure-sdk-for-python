@@ -322,18 +322,8 @@ class DownloadBlobResult(object):
     """
 
     def __init__(self, **kwargs):
-        self._data = kwargs.get("data")
-        self._digest = kwargs.get("digest")
-
-    @property
-    def data(self):
-        # type: () -> IO
-        return self._data
-
-    @property
-    def digest(self):
-        # type: () -> str
-        return self._digest
+        self.data = kwargs.get("data")
+        self.digest = kwargs.get("digest")
 
 
 class DownloadManifestResult(object):
@@ -347,24 +337,9 @@ class DownloadManifestResult(object):
     """
 
     def __init__(self, **kwargs):
-        self._manifest = kwargs.get("manifest")
-        self._data = kwargs.get("data")
-        self._digest = kwargs.get("digest")
-
-    @property
-    def manifest(self):
-        # type: () -> OCIManifest
-        return self._manifest
-
-    @property
-    def data(self):
-        # type: () -> IO
-        return self._data
-
-    @property
-    def digest(self):
-        # type: () -> str
-        return self._digest
+        self.manifest = kwargs.get("manifest")
+        self.data = kwargs.get("data")
+        self.digest = kwargs.get("digest")
 
 
 class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
