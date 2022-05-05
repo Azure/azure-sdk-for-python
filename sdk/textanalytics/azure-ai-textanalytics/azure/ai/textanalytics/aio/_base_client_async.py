@@ -57,6 +57,7 @@ class AsyncTextAnalyticsClientBase:
                 "$top",
                 "$skip",
                 "opinionMining",
+                "api-version"
             }
         )
         try:

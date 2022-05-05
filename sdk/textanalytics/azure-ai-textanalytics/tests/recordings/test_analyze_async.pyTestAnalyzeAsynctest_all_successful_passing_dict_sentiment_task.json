@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-03-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -42,18 +42,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "0b8e75a7-223e-4203-9505-ceca52e76f51",
+        "apim-request-id": "0752b115-43f8-47a1-941a-5bc287001eeb",
         "Content-Length": "0",
-        "Date": "Wed, 20 Apr 2022 23:51:55 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c2e112e6-6f0b-44d9-86b1-f11f962d7cfb?api-version=2022-03-01-preview",
+        "Date": "Tue, 03 May 2022 00:07:12 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/25e0c191-ab4b-4a49-945b-b34570ec2f7e?api-version=2022-04-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1504"
+        "x-envoy-upstream-service-time": "271"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c2e112e6-6f0b-44d9-86b1-f11f962d7cfb?api-version=2022-03-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/25e0c191-ab4b-4a49-945b-b34570ec2f7e?api-version=2022-04-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -63,89 +63,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "79203e81-602a-4d93-a706-be9aeabbc849",
-        "Content-Length": "282",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:52:00 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "18"
-      },
-      "ResponseBody": {
-        "jobId": "c2e112e6-6f0b-44d9-86b1-f11f962d7cfb",
-        "lastUpdateDateTime": "2022-04-20T23:51:55Z",
-        "createdDateTime": "2022-04-20T23:51:54Z",
-        "expirationDateTime": "2022-04-21T23:51:54Z",
-        "status": "notStarted",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 1,
-          "items": []
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c2e112e6-6f0b-44d9-86b1-f11f962d7cfb?api-version=2022-03-01-preview\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "3108ad52-a794-498e-b2a3-6081adbbda82",
-        "Content-Length": "279",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:52:06 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
-      },
-      "ResponseBody": {
-        "jobId": "c2e112e6-6f0b-44d9-86b1-f11f962d7cfb",
-        "lastUpdateDateTime": "2022-04-20T23:52:02Z",
-        "createdDateTime": "2022-04-20T23:51:54Z",
-        "expirationDateTime": "2022-04-21T23:51:54Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 1,
-          "items": []
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c2e112e6-6f0b-44d9-86b1-f11f962d7cfb?api-version=2022-03-01-preview\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "67f625f7-df87-4206-ab8b-26641725e714",
+        "apim-request-id": "d5ebd572-40ab-4a85-94c1-d6a9a3904a5d",
         "Content-Length": "1935",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 20 Apr 2022 23:52:11 GMT",
+        "Date": "Tue, 03 May 2022 00:07:17 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "75"
+        "x-envoy-upstream-service-time": "72"
       },
       "ResponseBody": {
-        "jobId": "c2e112e6-6f0b-44d9-86b1-f11f962d7cfb",
-        "lastUpdateDateTime": "2022-04-20T23:52:09Z",
-        "createdDateTime": "2022-04-20T23:51:54Z",
-        "expirationDateTime": "2022-04-21T23:51:54Z",
+        "jobId": "25e0c191-ab4b-4a49-945b-b34570ec2f7e",
+        "lastUpdateDateTime": "2022-05-03T00:07:14Z",
+        "createdDateTime": "2022-05-03T00:07:12Z",
+        "expirationDateTime": "2022-05-04T00:07:12Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -157,7 +87,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-04-20T23:52:09.7941059Z",
+              "lastUpdateDateTime": "2022-05-03T00:07:14.6286056Z",
               "status": "succeeded",
               "results": {
                 "statistics": {

@@ -30,7 +30,7 @@ from .._utils import (  # pylint: disable=import-error
     create_message_content,
     validate_message,
     decode_content,
-    MessageType
+    MessageType,
 )
 from ._async_lru import alru_cache  # pylint: disable=import-error
 from .._message_protocol import (
