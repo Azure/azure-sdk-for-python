@@ -136,7 +136,7 @@ class _GlobalEndpointManager(object):
                     database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     return database_account
                 except exceptions.CosmosHttpResponseError:
-                    pass
+                    raise
 
             return None
 
