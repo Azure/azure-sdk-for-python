@@ -203,6 +203,14 @@ class ManagedCassandraResourceIdentityType(with_metaclass(CaseInsensitiveEnumMet
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
 
+class MinimalTlsVersions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The minimum allowed TLS version for the Cosmos DB account.
+    """
+
+    TLS10 = "1.0"
+    TLS11 = "1.1"
+    TLS12 = "1.2"
+
 class MongoRoleDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the Role Definition was built-in or user created.
     """
