@@ -4,7 +4,7 @@
 
 **Other Changes**
 
-  - Change one of the multiple-api versions
+  - Change the folder path from v2019_09_01_preview to v2021_09_30_preview 
 
 
 ## 6.0.0 (2022-03-29)
