@@ -22,12 +22,10 @@ class CertificatesClientPreparer(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
         self.azure_keyvault_url = "https://vaultname.vault.azure.net"
 
-        if is_live():
-            self.azure_keyvault_url = os.environ["AZURE_KEYVAULT_URL"]
-
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
         
         if is_live():
+            self.azure_keyvault_url = os.environ["AZURE_KEYVAULT_URL"]
             os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
             os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
