@@ -157,6 +157,8 @@ class AMQPClient(object):
         self._desired_capabilities = kwargs.pop('desired_capabilities', None)
 
         # transport
+        if kwargs.get('transport_type') is TransportType.Amqp and kwargs.get('http_proxy') is not None:
+            raise ValueError("Http proxy settings can't be passed if transport_type is explicitly set to Amqp")
         self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
         self._http_proxy = kwargs.pop('http_proxy', None)
 

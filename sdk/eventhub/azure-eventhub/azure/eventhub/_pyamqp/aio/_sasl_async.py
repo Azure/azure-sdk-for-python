@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import http
 import struct
 from enum import Enum
 
