@@ -1,7 +1,10 @@
 # Release History
 
-## 0.0.0 (2022-04-29)
+## 6.1.0 (2022-05-05)
 
+**Other Changes**
+
+  - Change one of the multiple-api versions
 
 
 ## 6.0.0 (2022-03-29)
