@@ -174,6 +174,7 @@ def main(
     output: Optional[str] = None,
     metadata_path: Optional[str] = None,
 ):
+
     output_msg = output if output else "default folder"
     _LOGGER.info(
         f"Building code report of {input_parameter} for version {version} in {output_msg} ({no_venv}/{pypi}/{last_pypi})"
