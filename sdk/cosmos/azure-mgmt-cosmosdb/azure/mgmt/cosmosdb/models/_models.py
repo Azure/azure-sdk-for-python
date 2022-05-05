@@ -1883,6 +1883,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param capacity: The object that represents all properties related to capacity enforcement on
      an account.
     :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
+    :param minimal_tls_version: The minimum allowed TLS version by the database account.
+    :type minimal_tls_version: str
     """
 
     _validation = {
@@ -1928,6 +1930,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
         'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
     }
 
     database_account_offer_type = "Standard"
@@ -1965,6 +1968,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.disable_local_auth = kwargs.get('disable_local_auth', None)
         self.restore_parameters = kwargs.get('restore_parameters', None)
         self.capacity = kwargs.get('capacity', None)
+        self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -2090,6 +2094,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param capacity: The object that represents all properties related to capacity enforcement on
      an account.
     :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
+    :param minimal_tls_version: The minimum allowed TLS version by the database account.
+    :type minimal_tls_version: str
     """
 
     _validation = {
@@ -2151,6 +2157,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -2195,6 +2202,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
         self.disable_local_auth = kwargs.get('disable_local_auth', None)
         self.capacity = kwargs.get('capacity', None)
+        self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
 
 
 class DatabaseAccountListConnectionStringsResult(msrest.serialization.Model):
@@ -2414,6 +2422,8 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :param capacity: The object that represents all properties related to capacity enforcement on
      an account.
     :type capacity: ~azure.mgmt.cosmosdb.models.Capacity
+    :param minimal_tls_version: The minimum allowed TLS version by the database account.
+    :type minimal_tls_version: str
     """
 
     _attribute_map = {
@@ -2444,6 +2454,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'capacity': {'key': 'properties.capacity', 'type': 'Capacity'},
+        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -2478,6 +2489,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
         self.disable_local_auth = kwargs.get('disable_local_auth', None)
         self.capacity = kwargs.get('capacity', None)
+        self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
 
 
 class DatabaseRestoreResource(msrest.serialization.Model):
