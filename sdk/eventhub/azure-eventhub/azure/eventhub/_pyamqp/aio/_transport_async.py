@@ -79,15 +79,10 @@ def get_running_loop():
             _LOGGER.warning('This version of Python is deprecated, please upgrade to >= v3.6')
         if loop is None:
             _LOGGER.warning('No running event loop')
-            loop = asyncio.get_event_loop()
+            loop = self.loop
         return loop
 
 class AsyncTransportMixin():
-    def __init__(self):
-        self._read_buffer = BytesIO()
-        self.loop = get_running_loop()
-        self.socket_lock = asyncio.Lock()
-
     async def receive_frame(self, *args, **kwargs):
         try:
             header, channel, payload = await self.read(**kwargs) 
@@ -165,7 +160,6 @@ class AsyncTransport(AsyncTransportMixin):
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
-
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
@@ -423,7 +417,9 @@ class AsyncTransport(AsyncTransportMixin):
 class WebSocketTransportAsync(AsyncTransportMixin):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
         ):
-        super().__init__()
+        self._read_buffer = BytesIO()
+        self.loop = get_running_loop()
+        self.socket_lock = asyncio.Lock()
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
         self.host = host
@@ -463,7 +459,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         length += nbytes
         n -= nbytes
         while n:
-            data = await asyncio.get_event_loop().run_in_executor(
+            data = await self.loop.run_in_executor(
                 None, self.ws.recv
                 )
 
@@ -486,6 +482,6 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await asyncio.get_event_loop().run_in_executor(
+        await self.loop.run_in_executor(
                 None, self.ws.send_binary, s
                 )
