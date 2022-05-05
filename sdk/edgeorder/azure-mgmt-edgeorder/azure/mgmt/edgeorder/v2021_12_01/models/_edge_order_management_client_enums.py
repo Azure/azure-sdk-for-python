@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionStatusEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionStatusEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes whether the order item is deletable or not.
     """
 
@@ -35,13 +20,13 @@ class ActionStatusEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Not Allowed flag.
     NOT_ALLOWED = "NotAllowed"
 
-class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
     """
 
     INTERNAL = "Internal"
 
-class AddressType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AddressType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of address.
     """
 
@@ -52,7 +37,7 @@ class AddressType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Commercial Address.
     COMMERCIAL = "Commercial"
 
-class AddressValidationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AddressValidationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of address validation
     """
 
@@ -63,7 +48,7 @@ class AddressValidationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: Address provided is ambiguous, please choose one of the alternate addresses returned.
     AMBIGUOUS = "Ambiguous"
 
-class AvailabilityStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AvailabilityStage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current availability stage of the product. Availability stage
     """
 
@@ -80,7 +65,7 @@ class AvailabilityStage(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Product is not available.
     UNAVAILABLE = "Unavailable"
 
-class BillingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BillingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents billing type.
     """
 
@@ -89,7 +74,7 @@ class BillingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Purchase billing.
     PURCHASE = "Purchase"
 
-class ChargingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ChargingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Charging type.
     """
 
@@ -98,7 +83,7 @@ class ChargingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Per device charging type.
     PER_DEVICE = "PerDevice"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """
 
@@ -107,14 +92,14 @@ class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DescriptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DescriptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of description.
     """
 
     #: Base description.
     BASE = "Base"
 
-class DisabledReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DisabledReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Reason why the product is disabled.
     """
 
@@ -136,7 +121,7 @@ class DisabledReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The product is out of stock.
     OUT_OF_STOCK = "OutOfStock"
 
-class DoubleEncryptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DoubleEncryptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Double encryption status as entered by the customer. It is compulsory to give this parameter if
     the 'Deny' or 'Disabled' policy is configured.
     """
@@ -146,7 +131,7 @@ class DoubleEncryptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: Double encryption is enabled.
     ENABLED = "Enabled"
 
-class ImageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ImageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the image
     """
 
@@ -157,7 +142,7 @@ class ImageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Generic image.
     GENERIC_IMAGE = "GenericImage"
 
-class LengthHeightUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LengthHeightUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Unit for the dimensions of length, height and width.
     """
 
@@ -166,7 +151,7 @@ class LengthHeightUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Centimeter.
     CM = "CM"
 
-class LinkType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LinkType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of link
     """
 
@@ -183,7 +168,7 @@ class LinkType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Link to sign up for products.
     SIGN_UP = "SignUp"
 
-class MeteringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MeteringType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Represents Metering type (eg one-time or recurrent)
     """
 
@@ -194,7 +179,7 @@ class MeteringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Adhoc billing.
     ADHOC = "Adhoc"
 
-class NotificationStageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class NotificationStageName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the stage.
     """
 
@@ -203,7 +188,7 @@ class NotificationStageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: Notification at order item delivered to customer.
     DELIVERED = "Delivered"
 
-class OrderItemCancellationEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OrderItemCancellationEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes whether the order item is cancellable or not.
     """
 
@@ -214,7 +199,7 @@ class OrderItemCancellationEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     #: Order item not cancellable.
     NOT_CANCELLABLE = "NotCancellable"
 
-class OrderItemReturnEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OrderItemReturnEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Describes whether the order item is returnable or not.
     """
 
@@ -225,7 +210,7 @@ class OrderItemReturnEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Order item not returnable.
     NOT_RETURNABLE = "NotReturnable"
 
-class OrderItemType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OrderItemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Order item type.
     """
 
@@ -234,7 +219,7 @@ class OrderItemType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Rental OrderItem.
     RENTAL = "Rental"
 
-class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system"
     """
@@ -243,7 +228,7 @@ class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class StageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StageName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Stage name
     """
 
@@ -272,7 +257,7 @@ class StageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Order has been cancelled.
     CANCELLED = "Cancelled"
 
-class StageStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StageStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Stage status.
     """
 
@@ -289,7 +274,7 @@ class StageStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Stage is cancelling.
     CANCELLING = "Cancelling"
 
-class SupportedFilterTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SupportedFilterTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of product filter.
     """
 
@@ -298,7 +283,7 @@ class SupportedFilterTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Double encryption status.
     DOUBLE_ENCRYPTION_STATUS = "DoubleEncryptionStatus"
 
-class TransportShipmentTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TransportShipmentTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates Shipment Logistics type that the customer preferred.
     """
 
@@ -307,7 +292,7 @@ class TransportShipmentTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     #: Shipment Logistics is handled by Microsoft.
     MICROSOFT_MANAGED = "MicrosoftManaged"
 
-class WeightMeasurementUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class WeightMeasurementUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Unit for the dimensions of weight.
     """
 
