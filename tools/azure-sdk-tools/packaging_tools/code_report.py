@@ -20,7 +20,7 @@ except (ModuleNotFoundError, ImportError) as e:
     # If I'm started by my main directly
     from venvtools import create_venv_with_package
 
-    
+
 _LOGGER = logging.getLogger(__name__)
 
 
