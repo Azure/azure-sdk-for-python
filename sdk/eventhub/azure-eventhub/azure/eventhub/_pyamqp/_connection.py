@@ -112,7 +112,7 @@ class Connection(object):
                 **kwargs
             )
         else:
-            self._transport = Transport(parsed_url.netloc, **kwargs)
+            self._transport = Transport(parsed_url.netloc, self._transport_type, **kwargs)
 
         self._container_id = kwargs.pop('container_id', None) or str(uuid.uuid4())  # type: str
         self._max_frame_size = kwargs.pop('max_frame_size', MAX_FRAME_SIZE_BYTES)  # type: int

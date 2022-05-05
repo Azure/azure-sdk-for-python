@@ -646,13 +646,12 @@ class TCPTransport(_AbstractTransport):
         return result
 
 
-def Transport(host, connect_timeout=None, ssl=False, **kwargs):
+def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
     """Create transport.
 
     Given a few parameters from the Connection constructor,
     select and create a subclass of _AbstractTransport.
     """
-    transport_type = kwargs.pop('transport_type')
     if transport_type == TransportType.AmqpOverWebsocket:
         transport = WebSocketTransport
     else:

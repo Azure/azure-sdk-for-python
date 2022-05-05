@@ -423,12 +423,10 @@ class AsyncTransport(AsyncTransportMixin):
 class WebSocketTransportAsync(AsyncTransportMixin):
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
         ):
+        super().__init__()
         self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout
         self.host = host
-        super().__init__(
-            )
-        self.socket_lock = asyncio.Lock()
         self.ws = None
         self._http_proxy = kwargs.get('http_proxy', None)
 
