@@ -173,7 +173,7 @@ _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.DATETIME: _to_entity_datetime,
     EdmType.DOUBLE: _to_entity_float,
     EdmType.GUID: _to_entity_guid,
-    EdmType.INT32: lambda v: (EdmType.INT32, v),
+    EdmType.INT32: lambda v: (EdmType.INT32, _to_entity_int32(v)[1]),
     EdmType.INT64: _to_entity_int64,
     EdmType.STRING: _to_entity_str,
 }
