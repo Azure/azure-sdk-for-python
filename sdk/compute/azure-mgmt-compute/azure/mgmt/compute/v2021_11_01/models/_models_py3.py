@@ -4670,9 +4670,8 @@ class OSProfile(msrest.serialization.Model):
      the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no extensions
      are present on the virtual machine.
     :vartype allow_extension_operations: bool
-    :ivar require_guest_provision_signal: Specifies whether the guest provision signal is required
-     to infer provision success of the virtual machine.  **Note: This property is for private
-     testing only, and all customers must not set the property to false.**.
+    :ivar require_guest_provision_signal: Optional property which must either be set to True or
+     omitted.
     :vartype require_guest_provision_signal: bool
     """
 
@@ -4766,9 +4765,8 @@ class OSProfile(msrest.serialization.Model):
          on the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no
          extensions are present on the virtual machine.
         :paramtype allow_extension_operations: bool
-        :keyword require_guest_provision_signal: Specifies whether the guest provision signal is
-         required to infer provision success of the virtual machine.  **Note: This property is for
-         private testing only, and all customers must not set the property to false.**.
+        :keyword require_guest_provision_signal: Optional property which must either be set to True or
+         omitted.
         :paramtype require_guest_provision_signal: bool
         """
         super(OSProfile, self).__init__(**kwargs)
