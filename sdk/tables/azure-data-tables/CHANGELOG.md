@@ -3,7 +3,7 @@
 ## 12.3.1 (2022-05-10)
 
 ### Features Added
-* Support for multitenant authentication ([#24278](https://github.com/Azure/azure-sdk-for-python/pull/24278))
+- Support for multitenant authentication ([#24278](https://github.com/Azure/azure-sdk-for-python/pull/24278))
 
 ## 12.3.0 (2022-03-10)
 
