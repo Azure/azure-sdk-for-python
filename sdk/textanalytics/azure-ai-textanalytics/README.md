@@ -78,7 +78,7 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note that `5.2.0b4` is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the text analysis and natural language processing features included in the Text Analytics client library.
+> Note that `5.2.0b4` is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the existing text analysis and natural language processing features found in the Text Analytics client library.
 In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
@@ -227,18 +227,40 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 The following section provides several code snippets covering some of the most common Language tasks, including:
 
-- [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
-- [Recognize Entities](#recognize-entities "Recognize entities")
-- [Recognize Linked Entities](#recognize-linked-entities "Recognize linked entities")
-- [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
-- [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
-- [Detect Language](#detect-language "Detect language")
-- [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
-- [Multiple Analysis](#multiple-analysis "Multiple analysis")
-- [Extractive Summarization][extract_summary_sample]
-- [Custom Entity Recognition][recognize_custom_entities_sample]
-- [Custom Single Category Classification][single_category_classify_sample]
-- [Custom Multi Category Classification][multi_category_classify_sample]
+- [Azure Text Analytics client library for Python](#azure-text-analytics-client-library-for-python)
+  - [_Disclaimer_](#disclaimer)
+  - [Getting started](#getting-started)
+    - [Prerequisites](#prerequisites)
+      - [Create a Cognitive Services or Language resource](#create-a-cognitive-services-or-language-resource)
+    - [Install the package](#install-the-package)
+    - [Authenticate the client](#authenticate-the-client)
+      - [Get the endpoint](#get-the-endpoint)
+      - [Get the API Key](#get-the-api-key)
+      - [Create a TextAnalyticsClient with an API Key Credential](#create-a-textanalyticsclient-with-an-api-key-credential)
+      - [Create a TextAnalyticsClient with an Azure Active Directory Credential](#create-a-textanalyticsclient-with-an-azure-active-directory-credential)
+  - [Key concepts](#key-concepts)
+    - [TextAnalyticsClient](#textanalyticsclient)
+    - [Input](#input)
+    - [Return Value](#return-value)
+    - [Document Error Handling](#document-error-handling)
+    - [Long-Running Operations](#long-running-operations)
+  - [Examples](#examples)
+    - [Analyze sentiment](#analyze-sentiment)
+    - [Recognize entities](#recognize-entities)
+    - [Recognize linked entities](#recognize-linked-entities)
+    - [Recognize PII entities](#recognize-pii-entities)
+    - [Extract key phrases](#extract-key-phrases)
+    - [Detect language](#detect-language)
+    - [Healthcare Entities Analysis](#healthcare-entities-analysis)
+    - [Multiple Analysis](#multiple-analysis)
+  - [Optional Configuration](#optional-configuration)
+  - [Troubleshooting](#troubleshooting)
+    - [General](#general)
+    - [Logging](#logging)
+  - [Next steps](#next-steps)
+    - [More sample code](#more-sample-code)
+    - [Additional documentation](#additional-documentation)
+  - [Contributing](#contributing)
 
 ### Analyze sentiment
 
