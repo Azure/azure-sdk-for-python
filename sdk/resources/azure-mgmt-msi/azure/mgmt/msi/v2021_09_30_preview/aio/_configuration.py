@@ -29,8 +29,8 @@ class ManagedServiceIdentityClientConfiguration(Configuration):  # pylint: disab
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Id of the Subscription to which the identity belongs.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2018-11-30". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-09-30-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -41,7 +41,7 @@ class ManagedServiceIdentityClientConfiguration(Configuration):  # pylint: disab
         **kwargs: Any
     ) -> None:
         super(ManagedServiceIdentityClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2018-11-30")  # type: str
+        api_version = kwargs.pop('api_version', "2021-09-30-preview")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

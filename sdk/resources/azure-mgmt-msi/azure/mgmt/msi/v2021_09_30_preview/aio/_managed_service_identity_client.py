@@ -27,20 +27,20 @@ class ManagedServiceIdentityClient:
 
     :ivar system_assigned_identities: SystemAssignedIdentitiesOperations operations
     :vartype system_assigned_identities:
-     azure.mgmt.msi.v2018_11_30.aio.operations.SystemAssignedIdentitiesOperations
+     azure.mgmt.msi.v2021_09_30_preview.aio.operations.SystemAssignedIdentitiesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.msi.v2018_11_30.aio.operations.Operations
+    :vartype operations: azure.mgmt.msi.v2021_09_30_preview.aio.operations.Operations
     :ivar user_assigned_identities: UserAssignedIdentitiesOperations operations
     :vartype user_assigned_identities:
-     azure.mgmt.msi.v2018_11_30.aio.operations.UserAssignedIdentitiesOperations
+     azure.mgmt.msi.v2021_09_30_preview.aio.operations.UserAssignedIdentitiesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Id of the Subscription to which the identity belongs.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2018-11-30". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-09-30-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
