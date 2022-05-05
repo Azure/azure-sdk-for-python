@@ -42990,6 +42990,31 @@ class PrestoSource(TabularSource):
         self.query = query
 
 
+class PrivateEndpoint(msrest.serialization.Model):
+    """Private endpoint which a connection belongs to.
+
+    :ivar id: The resource Id for private endpoint.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: The resource Id for private endpoint.
+        :paramtype id: str
+        """
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = id
+
+
 class PrivateEndpointConnectionListResponse(msrest.serialization.Model):
     """A list of linked service resources.
 
@@ -43080,25 +43105,32 @@ class PrivateLinkConnectionApprovalRequest(msrest.serialization.Model):
     :ivar private_link_service_connection_state: The state of a private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.datafactory.models.PrivateLinkConnectionState
+    :ivar private_endpoint: The resource of private endpoint.
+    :vartype private_endpoint: ~azure.mgmt.datafactory.models.PrivateEndpoint
     """
 
     _attribute_map = {
         'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkConnectionState'},
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpoint'},
     }
 
     def __init__(
         self,
         *,
         private_link_service_connection_state: Optional["PrivateLinkConnectionState"] = None,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
         **kwargs
     ):
         """
         :keyword private_link_service_connection_state: The state of a private link connection.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.datafactory.models.PrivateLinkConnectionState
+        :keyword private_endpoint: The resource of private endpoint.
+        :paramtype private_endpoint: ~azure.mgmt.datafactory.models.PrivateEndpoint
         """
         super(PrivateLinkConnectionApprovalRequest, self).__init__(**kwargs)
         self.private_link_service_connection_state = private_link_service_connection_state
+        self.private_endpoint = private_endpoint
 
 
 class PrivateLinkConnectionApprovalRequestResource(SubResource):
