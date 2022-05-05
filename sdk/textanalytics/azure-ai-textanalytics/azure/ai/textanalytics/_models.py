@@ -491,8 +491,15 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar fhir_bundle: If `fhir_version` is passed, this will contain a
+        FHIR compatible object for consumption in other Healthcare tools. For additional
+        information see https://www.hl7.org/fhir/overview.html.
+    :vartype fhir_bundle: dict[str, any]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
+
+    .. versionadded:: 2022-04-01-preview
+        The *fhir_bundle* property.
     """
 
     def __init__(self, **kwargs):
@@ -501,6 +508,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         self.entity_relations = kwargs.get("entity_relations", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
+        self.fhir_bundle = kwargs.get("fhir_bundle", None)
         self.is_error = False
 
     @classmethod
@@ -516,6 +524,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             for r in healthcare_result.relations
         ]
 
+        fhir_bundle = healthcare_result.fhir_bundle if hasattr(healthcare_result, "fhir_bundle") else None
+
         return cls(
             id=healthcare_result.id,
             entities=entities,
@@ -529,17 +539,19 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
                 healthcare_result.statistics
             ),
+            fhir_bundle=fhir_bundle,
         )
 
     def __repr__(self):
         return (
             "AnalyzeHealthcareEntitiesResult(id={}, entities={}, entity_relations={}, warnings={}, "
-            "statistics={}, is_error={})".format(
+            "statistics={}, fhir_bundle={}, is_error={})".format(
                 self.id,
                 repr(self.entities),
                 repr(self.entity_relations),
                 repr(self.warnings),
                 repr(self.statistics),
+                self.fhir_bundle,
                 self.is_error,
             )[:1024]
         )
@@ -2682,4 +2694,75 @@ class ClassificationCategory(DictMixin):
         return cls(
             category=result.category,
             confidence_score=result.confidence_score
+        )
+
+
+class AnalyzeHealthcareEntitiesAction(DictMixin):
+    """AnalyzeHealthcareEntitiesAction encapsulates the parameters for starting a long-running
+    healthcare entities analysis operation.
+
+    If you just want to analyze healthcare entities in a list of documents, and not perform multiple
+    long running actions on the input of documents, call method `begin_analyze_healthcare_entities` instead
+    of interfacing with this model.
+
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None.
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, Text Analytics logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the Text Analytics natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None.
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+        self.fhir_version = kwargs.get("fhir_version", None)
+
+    def __repr__(self):
+        return (
+            "AnalyzeHealthcareEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={}, "
+            "fhir_version={})".format(
+                self.model_version,
+                self.string_index_type,
+                self.disable_service_logs,
+                self.fhir_version
+            )[:1024]
+        )
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v2022_04_01_preview_models.HealthcareLROTask(
+            task_name=task_id,
+            parameters=_v2022_04_01_preview_models.HealthcareTaskParameters(
+                model_version=self.model_version,
+                string_index_type=string_index_type_compatibility(self.string_index_type),
+                logging_opt_out=self.disable_service_logs,
+                fhir_version=self.fhir_version
+            )
         )
