@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from uuid import uuid4
+from uuid import UUID
 import pytest
 
 from datetime import datetime, timedelta
@@ -38,6 +38,8 @@ from azure.data.tables._common_conversion import TZ_UTC
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
+
+TEST_GUID = UUID("1ca72025-f78c-437d-87df-9bcf0dd0d297")
 
 class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @tables_decorator_async
@@ -2176,7 +2178,7 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             "bytes": ("test", "Edm.Binary"),
             "amount": ("0", EdmType.DOUBLE),
             "since": ("2008-07-10T00:00:00", EdmType.DATETIME),
-            "guid": (uuid4(), EdmType.GUID)
+            "guid": (TEST_GUID, EdmType.GUID)
         }
         try:
             await self.table.upsert_entity(entity)

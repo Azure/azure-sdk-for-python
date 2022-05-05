@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from uuid import uuid4
+from uuid import UUID
 import pytest
 
 from datetime import datetime, timedelta
@@ -35,6 +35,8 @@ from azure.data.tables._common_conversion import TZ_UTC
 
 from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
+
+TEST_GUID = UUID("3bd67b28-2155-4caf-b492-207172d4f183")
 
 # ------------------------------------------------------------------------------
 
@@ -1992,7 +1994,7 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
             "bytes": ("test", EdmType.BINARY),
             "amount": ("0", EdmType.DOUBLE),
             "since": ("2008-07-10T00:00:00", EdmType.DATETIME),
-            "guid": (uuid4(), EdmType.GUID)
+            "guid": (TEST_GUID, EdmType.GUID)
         }
         try:
             self.table.upsert_entity(entity)

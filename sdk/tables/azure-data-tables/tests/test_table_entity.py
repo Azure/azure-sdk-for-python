@@ -11,9 +11,9 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from enum import Enum
 from math import isnan
-from uuid import uuid4
+from uuid import UUID
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 
 from azure.data.tables import (
     TableServiceClient,
@@ -38,6 +38,8 @@ from azure.core.exceptions import (
 
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
+
+TEST_GUID = UUID("1c241c8d-f7b6-4b0a-abba-d9b169010038")
 
 # ------------------------------------------------------------------------------
 
@@ -2182,7 +2184,7 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             "bytes": ("test", "Edm.Binary"),
             "amount": ("0", EdmType.DOUBLE),
             "since": ("2008-07-10T00:00:00", EdmType.DATETIME),
-            "guid": (uuid4(), EdmType.GUID)
+            "guid": (TEST_GUID, EdmType.GUID)
         }
         try:
             self.table.upsert_entity(entity)

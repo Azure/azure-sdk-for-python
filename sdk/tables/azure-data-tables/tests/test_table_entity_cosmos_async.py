@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from uuid import uuid4
+from uuid import UUID
 import pytest
 
 from datetime import datetime, timedelta
@@ -38,6 +38,8 @@ from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 # TODO: change to `with table_client as client:` to close sessions
 # ------------------------------------------------------------------------------
+
+TEST_GUID = UUID("c8924069-90ee-4726-83b5-45ff92496126")
 
 class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
@@ -2006,7 +2008,7 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             "bytes": ("test", EdmType.BINARY),
             "amount": ("0", EdmType.DOUBLE),
             "since": ("2008-07-10T00:00:00", EdmType.DATETIME),
-            "guid": (uuid4(), EdmType.GUID)
+            "guid": (TEST_GUID, EdmType.GUID)
         }
         try:
             await self.table.upsert_entity(entity)
