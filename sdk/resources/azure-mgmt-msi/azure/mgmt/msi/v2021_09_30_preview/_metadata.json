@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2018-11-30",
-    "total_api_version_list": ["2018-11-30"],
+    "chosen_version": "2021-09-30-preview",
+    "total_api_version_list": ["2021-09-30-preview"],
     "client": {
         "name": "ManagedServiceIdentityClient",
         "filename": "_managed_service_identity_client",

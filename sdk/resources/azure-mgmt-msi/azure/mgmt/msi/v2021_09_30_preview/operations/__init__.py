@@ -6,4 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "6.0.1"
+from ._system_assigned_identities_operations import SystemAssignedIdentitiesOperations
+from ._operations import Operations
+from ._user_assigned_identities_operations import UserAssignedIdentitiesOperations
+
+__all__ = [
+    'SystemAssignedIdentitiesOperations',
+    'Operations',
+    'UserAssignedIdentitiesOperations',
+]
