@@ -11,7 +11,7 @@ from datetime import datetime, date, time, timedelta
 from .utils._utils import _FixedOffset
 
 
-__all__ = ["NULL", "AzureJSONEncoder", "SerializationError", "DeserializationError"]
+__all__ = ["NULL", "AzureJSONEncoder"]
 
 
 class _Null(object):
@@ -123,11 +123,3 @@ class AzureJSONEncoder(JSONEncoder):
         except AttributeError:
             pass
         return super(AzureJSONEncoder, self).default(o)
-
-class SerializationError(ValueError):
-    """Raised if an error is encountered during serialization."""
-    ...
-
-class DeserializationError(ValueError):
-    """Raised if an error is encountered during deserialization."""
-    ...
