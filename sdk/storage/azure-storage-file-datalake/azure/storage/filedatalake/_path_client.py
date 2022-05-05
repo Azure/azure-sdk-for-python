@@ -25,7 +25,7 @@ from ._models import LocationMode, DirectoryProperties, AccessControlChangeResul
     AccessControlChangeCounters, AccessControlChangeFailure
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
     get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions, \
-    get_api_version, get_cpk_info
+    get_api_version, get_cpk_info, convert_datetime_to_rfc1123
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
@@ -162,12 +162,26 @@ class PathClient(StorageAccountHostsMixin):
             path_http_headers = get_path_http_headers(content_settings)
 
         cpk_info = get_cpk_info(self.scheme, kwargs)
+        
+        expires_on = kwargs.pop('expires_on', None)
+        if expires_on:
+            try:
+                expires_on = convert_datetime_to_rfc1123(expires_on)
+            except AttributeError:
+                expires_on = str(expires_on)
 
         options = {
             'resource': resource_type,
             'properties': add_metadata_headers(metadata),
             'permissions': kwargs.pop('permissions', None),
             'umask': kwargs.pop('umask', None),
+            'owner': kwargs.pop('owner', None),
+            'group': kwargs.pop('group', None),
+            'acl': kwargs.pop('acl', None),
+            'proposed_lease_id': kwargs.pop('lease_id', None),
+            'lease_duration': kwargs.pop('lease_duration', None),
+            'expiry_options': kwargs.pop('expiry_options', None),
+            'expires_on': expires_on,
             'path_http_headers': path_http_headers,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
@@ -204,6 +218,28 @@ class PathClient(StorageAccountHostsMixin):
             For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str owner:
+            The owner of the blob or directory. Default value is None.
+        :keyword str group:
+            The owning group of the blob or directory. Default value is None.
+        :keyword str acl:
+            Sets POSIX access control rights on files and directories. The value is a
+            comma-separated list of access control entries. Each access control entry (ACE) consists of a
+            scope, a type, a user or group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]". Default value is None.
+        :keyword str lease_id:
+            Lease ID, in a GUID string format. The Blob service returns
+            400 (Invalid request) if the lease ID is not in the correct format. See Guid
+            Constructor (String) for a list of valid GUID string formats. Default value is None.
+        :keyword int lease_duration:
+            The lease duration is required to acquire a lease, and specifies the
+            duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or -1
+            for infinite lease. Default value is None.
+        :keyword expiry_options:
+            Indicates mode of the expiry time. Default value is None.
+        :paramtype expiry_options: str or ~azure.storage.filedatalake.models.PathExpiryOptions
+        :keyword str expires_on:
+            The time to set the blob to expiry. Default value is None.
         :keyword permissions:
             Optional and only valid if Hierarchical Namespace
             is enabled for the account. Sets POSIX access permissions for the file

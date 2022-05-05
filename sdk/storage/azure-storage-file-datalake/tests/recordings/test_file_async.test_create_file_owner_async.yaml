@@ -1,0 +1,142 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 04 May 2022 23:35:17 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystem944c1204?restype=container&timeout=5
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 04 May 2022 23:35:17 GMT
+      etag: '"0x8DA2E26BFADEEC7"'
+      last-modified: Wed, 04 May 2022 23:35:18 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.blob.core.windows.net/filesystem944c1204?restype=container&timeout=5
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 04 May 2022 23:35:18 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem944c1204/directory944c1204?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 04 May 2022 23:35:18 GMT
+      etag: '"0x8DA2E26BFF40485"'
+      last-modified: Wed, 04 May 2022 23:35:19 GMT
+      server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.dfs.core.windows.net/filesystem944c1204/directory944c1204?resource=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 04 May 2022 23:35:18 GMT
+      x-ms-owner:
+      - 913079a6-3f7e-4b1b-b2ac-493cba272da7
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem944c1204/directory944c1204%2Ffilename?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 04 May 2022 23:35:19 GMT
+      etag: '"0x8DA2E26C0A1ED8A"'
+      last-modified: Wed, 04 May 2022 23:35:20 GMT
+      server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.dfs.core.windows.net/filesystem944c1204/directory944c1204%2Ffilename?resource=file
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 04 May 2022 23:35:20 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: HEAD
+    uri: https://storagename.dfs.core.windows.net/filesystem944c1204/directory944c1204%2Ffilename?action=getAccessControl&upn=false
+  response:
+    body:
+      string: ''
+    headers:
+      date: Wed, 04 May 2022 23:35:19 GMT
+      etag: '"0x8DA2E26C0A1ED8A"'
+      last-modified: Wed, 04 May 2022 23:35:20 GMT
+      server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-acl: user::rw-,group::r--,other::---
+      x-ms-group: $superuser
+      x-ms-owner: 913079a6-3f7e-4b1b-b2ac-493cba272da7
+      x-ms-permissions: rw-r-----
+      x-ms-version: '2021-06-08'
+    status:
+      code: 200
+      message: OK
+    url: https://vincenttrancanary.dfs.core.windows.net/filesystem944c1204/directory944c1204%2Ffilename?action=getAccessControl&upn=false
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Wed, 04 May 2022 23:35:20 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/filesystem944c1204?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 04 May 2022 23:35:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 202
+      message: Accepted
+    url: https://vincenttrancanary.blob.core.windows.net/filesystem944c1204?restype=container
+version: 1
