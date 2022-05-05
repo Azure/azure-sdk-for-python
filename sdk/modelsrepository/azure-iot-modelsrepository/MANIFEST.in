@@ -1,5 +1,7 @@
+include _meta.json
+recursive-include tests *.py
 include *.md
 include azure/__init__.py
 include azure/iot/__init__.py
 recursive-include samples *.py
-recursive-include tests *.py
+include LICENSE
