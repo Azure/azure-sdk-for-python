@@ -2,7 +2,8 @@
 
 ## 5.2.0b4 (Unreleased)
 
-This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`.
+Note that this is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the text analysis and natural language processing features included in the Text Analytics client library.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`.
 
 ### Features Added
 
@@ -10,12 +11,6 @@ This version of the client library defaults to the latest supported API version,
 - Added keyword argument `fhir_version` to `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`. Use the keyword to indicate the version for the `fhir_bundle` contained on the `AnalyzeHealthcareEntitiesResult`.
 - Added property `fhir_bundle` to `AnalyzeHealthcareEntitiesResult`.
 - Added keyword argument `display_name` to `begin_analyze_healthcare_entities`.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 5.2.0b3 (2022-03-08)
 

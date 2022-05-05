@@ -1,6 +1,6 @@
 # Azure Text Analytics client library for Python
 
-Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main features:
+The Cognitive Service for Language is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main features:
 
 - Sentiment Analysis
 - Entity Recognition (Named, Linked, and Personally Identifiable Information (PII) entities)
@@ -12,7 +12,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 - Custom Entity Recognition
 - Custom Single and Multi Category Classification
 
-[Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][ta_product_documentation] | [Samples][ta_samples]
+[Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][language_product_documentation] | [Samples][ta_samples]
 
 ## _Disclaimer_
 
@@ -28,8 +28,8 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 #### Create a Cognitive Services or Language resource
 
-Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
-Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Language resource.
+The Language service supports both [multi-service and single-service access][multi_and_single_service].
+Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Language service access only, create a Language resource.
 
 You can create the resource using
 
@@ -39,7 +39,7 @@ You can create the resource using
 Below is an example of how you can create a Language resource using the CLI:
 
 ```bash
-# Create a new resource group to hold the text analytics resource -
+# Create a new resource group to hold the language resource -
 # if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
 ```
@@ -78,29 +78,30 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note: This version of the client library defaults to the v3.2-preview.2 version of the service
+> Note that `5.2.0b4` is the first version of the client library that targets the Azure Cognitive Service for Language APIs which includes the text analysis and natural language processing features included in the Text Analytics client library.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-04-01-preview`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0b3 - Latest beta release | 3.0, 3.1, 3.2-preview.2 (default) |
-| 5.1.0 - Latest GA release | 3.0, 3.1 (default) |
+| 5.2.0b4 - Latest beta release | 3.0, 3.1, 2022-04-01-preview (default) |
+| 5.1.0 - Latest stable release | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
 API version can be selected by passing the [api_version][text_analytics_client] keyword argument into the client.
-For the latest Text Analytics features, consider selecting the most recent preview API version. For production scenarios, the latest GA version is recommended. Setting to an older version may result in reduced feature compatibility.
+For the latest Language features, consider selecting the most recent beta API version. For production scenarios, the latest stable version is recommended. Setting to an older version may result in reduced feature compatibility.
 
 ### Authenticate the client
 
 #### Get the endpoint
 
-You can find the endpoint for your text analytics resource using the
+You can find the endpoint for your language resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
-# Get the endpoint for the text analytics resource
+# Get the endpoint for the language resource
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
@@ -160,11 +161,11 @@ text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.co
 ### TextAnalyticsClient
 
 The Text Analytics client library provides a [TextAnalyticsClient][text_analytics_client] to do analysis on [batches of documents](#examples "Examples").
-It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction.
+It provides both synchronous and asynchronous operations to access a specific use of text analysis, such as language detection or key phrase extraction.
 
 ### Input
 
-A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
+A **document** is a single unit to be analyzed by the predictive models in the Language service.
 The input for each operation is passed as a **list** of documents.
 
 Each document can be passed as a string in the list, e.g.
@@ -194,7 +195,7 @@ A heterogeneous list containing a collection of result and error objects is retu
 These results/errors are index-matched with the order of the provided documents.
 
 A **result**, such as [AnalyzeSentimentResult][analyze_sentiment_result],
-is the result of a Text Analytics operation and contains a prediction or predictions about a document input.
+is the result of a text analysis operation and contains a prediction or predictions about a document input.
 
 The **error** object, [DocumentError][document_error], indicates that the service had trouble processing the document and contains
 the reason it was unsuccessful.
@@ -224,7 +225,7 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 ## Examples
 
-The following section provides several code snippets covering some of the most common Text Analytics tasks, including:
+The following section provides several code snippets covering some of the most common Language tasks, including:
 
 - [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
 - [Recognize Entities](#recognize-entities "Recognize entities")
@@ -507,7 +508,7 @@ Note: The Healthcare Entities Analysis service is only available in the Standard
 
 ### Multiple Analysis
 
-[Long-running operation](#long-running-operations) [begin_analyze_actions][analyze_actions] performs multiple analyses over one set of documents in a single request. Currently it is supported using any combination of the following Text Analytics APIs in a single request:
+[Long-running operation](#long-running-operations) [begin_analyze_actions][analyze_actions] performs multiple analyses over one set of documents in a single request. Currently it is supported using any combination of the following Language APIs in a single request:
 
 - Entities Recognition
 - PII Entities Recognition
@@ -657,7 +658,7 @@ Advanced scenarios
 
 ### Additional documentation
 
-For more extensive documentation on Azure Cognitive Services Text Analytics, see the [Text Analytics documentation][ta_product_documentation] on docs.microsoft.com.
+For more extensive documentation on Azure Cognitive Service for Language, see the [Language Service documentation][language_product_documentation] on docs.microsoft.com.
 
 ## Contributing
 
@@ -673,7 +674,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ta_pypi]: https://pypi.org/project/azure-ai-textanalytics/
 [ta_ref_docs]: https://aka.ms/azsdk-python-textanalytics-ref-docs
 [ta_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples
-[ta_product_documentation]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
+[language_product_documentation]: https://docs.microsoft.com/azure/cognitive-services/language-service/overview
 [azure_subscription]: https://azure.microsoft.com/free/
 [ta_or_cs_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
