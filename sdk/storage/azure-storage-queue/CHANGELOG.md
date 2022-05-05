@@ -1,8 +1,9 @@
 # Release History
 
-## 12.3.0 (Unreleased)
+## 12.3.0 (2022-05-09)
 
 ### Features Added
+- Stable release of features from 12.3.0b1.
 
 ### Bugs Fixed
 - Fixed a bug, introduced in the previous beta release, that caused Authentication errors when attempting to use
