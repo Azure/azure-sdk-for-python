@@ -78,8 +78,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     """The Language service API is a suite of natural language processing (NLP) skills built with the best-in-class
     Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
     tasks such as sentiment analysis, key phrase extraction, entities recognition,
-    and language detection, and more. No training data is needed to use this API - just bring your text data.
-    This API uses advanced natural language processing techniques to deliver best in class predictions.
+    and language detection, and more.
 
     Further documentation can be found in
     https://docs.microsoft.com/azure/cognitive-services/language-service/overview

@@ -1,6 +1,6 @@
 # Azure Text Analytics client library for Python
 
-The Cognitive Service for Language is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main features:
+The Azure Cognitive Service for Language is a cloud-based service that provides Natural Language Processing (NLP) features for understanding and analyzing text, and includes the following main features:
 
 - Sentiment Analysis
 - Entity Recognition (Named, Linked, and Personally Identifiable Information (PII) entities)
@@ -9,8 +9,8 @@ The Cognitive Service for Language is a cloud-based service that provides advanc
 - Multiple Analysis
 - Healthcare Entities Analysis
 - Extractive Text Summarization
-- Custom Entity Recognition
-- Custom Single and Multi Category Classification
+- Custom Named Entity Recognition
+- Custom Text Classification
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][language_product_documentation] | [Samples][ta_samples]
 
@@ -24,22 +24,22 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 - Python 3.6 later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and a
-  [Cognitive Services or Language resource][ta_or_cs_resource] to use this package.
+  [Cognitive Services or Language service resource][ta_or_cs_resource] to use this package.
 
-#### Create a Cognitive Services or Language resource
+#### Create a Cognitive Services or Language service resource
 
 The Language service supports both [multi-service and single-service access][multi_and_single_service].
-Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Language service access only, create a Language resource.
+Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Language service access only, create a Language service resource.
 
 You can create the resource using
 
 **Option 1:** [Azure Portal][azure_portal_create_ta_resource]
 
 **Option 2:** [Azure CLI][azure_cli_create_ta_resource].
-Below is an example of how you can create a Language resource using the CLI:
+Below is an example of how you can create a Language service resource using the CLI:
 
 ```bash
-# Create a new resource group to hold the language resource -
+# Create a new resource group to hold the Language service resource -
 # if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
 ```
@@ -55,8 +55,8 @@ az cognitiveservices account create \
     --yes
 ```
 
-Interaction with this service begins with an instance of a [client](#textanalyticsclient "TextAnalyticsClient").
-To create a client object, you will need the cognitive services or language `endpoint` to
+Interaction with the service using the client library begins with a [client](#textanalyticsclient "TextAnalyticsClient").
+To create a client object, you will need the Cognitive Services or Language service `endpoint` to
 your resource and a `credential` that allows you access:
 
 ```python
@@ -90,24 +90,24 @@ This table shows the relationship between SDK versions and supported API version
 | 5.0.0  | 3.0 |
 
 API version can be selected by passing the [api_version][text_analytics_client] keyword argument into the client.
-For the latest Language features, consider selecting the most recent beta API version. For production scenarios, the latest stable version is recommended. Setting to an older version may result in reduced feature compatibility.
+For the latest Language service features, consider selecting the most recent beta API version. For production scenarios, the latest stable version is recommended. Setting to an older version may result in reduced feature compatibility.
 
 ### Authenticate the client
 
 #### Get the endpoint
 
-You can find the endpoint for your language resource using the
+You can find the endpoint for your Language service resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
-# Get the endpoint for the language resource
+# Get the endpoint for the Language service resource
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
 #### Get the API Key
 
-You can get the [API key][cognitive_authentication_api_key] from the Cognitive Services or Language resource in the [Azure Portal][azure_portal_get_endpoint].
+You can get the [API key][cognitive_authentication_api_key] from the Cognitive Services or Language service resource in the [Azure Portal][azure_portal_get_endpoint].
 Alternatively, you can use [Azure CLI][azure_cli_endpoint_lookup] snippet below to get the API key of your resource.
 
 `az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"`
@@ -225,7 +225,7 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 ## Examples
 
-The following section provides several code snippets covering some of the most common Language tasks, including:
+The following section provides several code snippets covering some of the most common Language service tasks, including:
 
 - [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
 - [Recognize Entities](#recognize-entities "Recognize entities")
@@ -634,7 +634,7 @@ result = text_analytics_client.analyze_sentiment(documents, logging_enable=True)
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
 
-Authenticate the client with a Cognitive Services/Language API key or a token credential from [azure-identity][azure_identity]:
+Authenticate the client with a Cognitive Services/Language service API key or a token credential from [azure-identity][azure_identity]:
 
 - [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])
 
@@ -675,7 +675,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ta_pypi]: https://pypi.org/project/azure-ai-textanalytics/
 [ta_ref_docs]: https://aka.ms/azsdk-python-textanalytics-ref-docs
 [ta_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples
-[language_product_documentation]: https://docs.microsoft.com/azure/cognitive-services/language-service/overview
+[language_product_documentation]: https://docs.microsoft.com/azure/cognitive-services/language-service
 [azure_subscription]: https://azure.microsoft.com/free/
 [ta_or_cs_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
