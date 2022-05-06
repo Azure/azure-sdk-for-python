@@ -166,7 +166,6 @@ def test_decompress_compressed_header(http_request):
     decoded = content.decode('utf-8')
     assert decoded == "test"
 
-
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_decompress_compressed_header_offline(port, http_request):
     client = PipelineClient("")
@@ -194,8 +193,3 @@ def test_compress_compressed_header(http_request):
     response = pipeline_response.http_response
     data = response.stream_download(client._pipeline, decompress=False)
     content = b"".join(list(data))
-    try:
-        decoded = content.decode('utf-8')
-        assert False
-    except UnicodeDecodeError:
-        pass

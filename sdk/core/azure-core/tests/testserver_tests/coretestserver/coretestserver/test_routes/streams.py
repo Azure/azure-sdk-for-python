@@ -19,7 +19,6 @@ class StreamingBody:
         yield b"Hello, "
         yield b"world!"
 
-
 def streaming_body():
     yield b"Hello, "
     yield b"world!"
@@ -42,6 +41,12 @@ def stream_decompress_header():
         yield fd.read()
 
     os.remove("test.tar.gz")
+
+@streams_api.route('/string', methods=['GET'])
+def string():
+    return Response(
+        streaming_test(), status=200, mimetype="text/plain"
+    )
 
 @streams_api.route('/basic', methods=['GET'])
 def basic():
