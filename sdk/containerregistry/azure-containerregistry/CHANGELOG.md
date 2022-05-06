@@ -7,6 +7,7 @@
 ### Other Changes
 
 - Fixed a spell error in a property of `RepositoryProperties` to `last_updated_on`.
+- Bumped dependency on `azure-core` to `>=1.23.0`.
 
 ## 1.0.0 (2022-01-25)
 
