@@ -6,14 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._video_analyzer import VideoAnalyzer
+from ._video_analyzer_management_client import VideoAnalyzerManagementClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['VideoAnalyzer']
+__all__ = ['VideoAnalyzerManagementClient']
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+# `._patch.py` is used for handwritten extensions to the generated code
+# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+from ._patch import patch_sdk
+patch_sdk()
