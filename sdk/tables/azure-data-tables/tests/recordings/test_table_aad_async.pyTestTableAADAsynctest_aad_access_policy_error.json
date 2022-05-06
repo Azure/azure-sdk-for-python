@@ -1,40 +1,40 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "176",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.6.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.11.0b1 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "client_id=c692e7f3-fcd0-45ac-b19c-70b0c73d61b2\u0026client_secret=3afb0ec2-f0bb-4f0f-b3df-8673135beec3\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fstorage.azure.com%2F.default",
+      "RequestBody": "client_id=c7962152-b34d-46e9-8b71-6ee54ee250af\u0026client_secret=7c5a7b55-4074-47dc-bea2-65e2591bb771\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fstorage.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "Content-Length": "1318",
+        "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Oct 2021 22:00:46 GMT",
+        "Date": "Fri, 06 May 2022 02:09:59 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AtOpiLRl9TtBpI2WZhYBrIk-ro1yEAAAAEDl_9gOAAAA; expires=Wed, 17-Nov-2021 22:00:46 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AgXr0aJAJhhPlOYE9ICU5VxE9Ko2CgAAAHN6BtoOAAAA; expires=Sun, 05-Jun-2022 02:10:00 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12158.6 - SCUS ProdSlices",
-        "x-ms-request-id": "85ad2f6d-325c-43b0-980b-fc287ab0a300"
+        "x-ms-ests-server": "2.1.12651.10 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 86399,
         "ext_expires_in": 86399,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTYzNDU5NDE0NiwibmJmIjoxNjM0NTk0MTQ2LCJleHAiOjE2MzQ2ODA4NDYsImFpbyI6IkUyWmdZTkJyZTc3MUFIT3U1TmxVMVZnUi9ldGNBQT09IiwiYXBwaWQiOiJjNjkyZTdmMy1mY2QwLTQ1YWMtYjE5Yy03MGIwYzczZDYxYjIiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwib2lkIjoiY2Y0MjI4N2YtNjQxYS00NGExLThmZjgtOGQzNzI1NTdmMWQxIiwicmgiOiIwLkFSb0F2NGo1Y3ZHR3IwR1JxeTE4MEJIYlJfUG5rc2JRX0t4RnNaeHdzTWM5WWJJYUFBQS4iLCJzdWIiOiJjZjQyMjg3Zi02NDFhLTQ0YTEtOGZmOC04ZDM3MjU1N2YxZDEiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJiUy10aFZ3eXNFT1lDX3dvZXJDakFBIiwidmVyIjoiMS4wIn0.GLEHJvitmrTdXobIbbfNuD4tXtVCwzTTLepzSd86T0j8xUnGnxCA-ipIdxXLNZwUn0tqkV_VElvwSshHjUN560IRCxBS2PqfhGEzAZqJL3Rkbki-3IH9xwSt96hhRcjzIrUfYgeiza_pi5NW8BalKAdluFxNpkyW5_Y2_marjwkEO728Fp4vAYv34Aa1ePQd1PjWoACQgL2xdACL2ljXqAug2EL70HxBxg5hG_cwGjOuZwtyg4opEIxULCpNG4BepoIvJdIMaBvFRCxOJ3J0TsUb0-r_NdnsgxwmbDY-xdhsZxydgHfGbvhoz9aFlUCPKzeEGF7Di-zOHId-O0aRTA"
+        "access_token": "access_token"
       }
     },
     {
@@ -43,11 +43,9 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Date": "Mon, 18 Oct 2021 22:00:52 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "dc3c45cc-305e-11ec-928d-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 22:00:52 GMT",
+        "Date": "Fri, 06 May 2022 02:10:01 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 02:10:01 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -55,20 +53,18 @@
       "ResponseHeaders": {
         "Content-Length": "322",
         "Content-Type": "application/xml",
-        "Date": "Mon, 18 Oct 2021 22:00:45 GMT",
+        "Date": "Fri, 06 May 2022 02:10:00 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "dc3c45cc-305e-11ec-928d-5cf37093a909",
         "x-ms-error-code": "ResourceNotFound",
-        "x-ms-request-id": "5762f6ea-2002-0015-156b-c4666e000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": [
         "\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003Cm:error xmlns:m=\u0022http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\u0022\u003E\u003Cm:code\u003EResourceNotFound\u003C/m:code\u003E\u003Cm:message xml:lang=\u0022en-US\u0022\u003EThe specified resource does not exist.\n",
-        "RequestId:5762f6ea-2002-0015-156b-c4666e000000\n",
-        "Time:2021-10-18T22:00:46.5474113Z\u003C/m:message\u003E\u003C/m:error\u003E"
+        "RequestId:d54a4a37-0002-00c6-1bee-609c17000000\n",
+        "Time:2022-05-06T02:10:00.7232108Z\u003C/m:message\u003E\u003C/m:error\u003E"
       ]
     },
     {
@@ -77,13 +73,11 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Content-Length": "0",
         "Content-Type": "application/xml",
-        "Date": "Mon, 18 Oct 2021 22:00:52 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "dc52973c-305e-11ec-b54e-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 22:00:52 GMT",
+        "Date": "Fri, 06 May 2022 02:10:01 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 06 May 2022 02:10:01 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -91,20 +85,18 @@
       "ResponseHeaders": {
         "Content-Length": "322",
         "Content-Type": "application/xml",
-        "Date": "Mon, 18 Oct 2021 22:00:45 GMT",
+        "Date": "Fri, 06 May 2022 02:10:00 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-client-request-id": "dc52973c-305e-11ec-b54e-5cf37093a909",
         "x-ms-error-code": "ResourceNotFound",
-        "x-ms-request-id": "5762f6ee-2002-0015-196b-c4666e000000",
         "x-ms-version": "2019-02-02"
       },
       "ResponseBody": [
         "\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003Cm:error xmlns:m=\u0022http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\u0022\u003E\u003Cm:code\u003EResourceNotFound\u003C/m:code\u003E\u003Cm:message xml:lang=\u0022en-US\u0022\u003EThe specified resource does not exist.\n",
-        "RequestId:5762f6ee-2002-0015-196b-c4666e000000\n",
-        "Time:2021-10-18T22:00:46.5644224Z\u003C/m:message\u003E\u003C/m:error\u003E"
+        "RequestId:d54a4a3b-0002-00c6-1fee-609c17000000\n",
+        "Time:2022-05-06T02:10:00.7481970Z\u003C/m:message\u003E\u003C/m:error\u003E"
       ]
     }
   ],
