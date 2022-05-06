@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionAfterReboot(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionAfterReboot(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies what happens after a reboot during the application of a configuration. The possible
     values are ContinueConfiguration and StopConfiguration
     """
@@ -34,7 +19,7 @@ class ActionAfterReboot(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CONTINUE_CONFIGURATION = "ContinueConfiguration"
     STOP_CONFIGURATION = "StopConfiguration"
 
-class AssignmentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AssignmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the assignment type and execution of the configuration. Possible values are Audit,
     DeployAndAutoCorrect, ApplyAndAutoCorrect and ApplyAndMonitor.
     """
@@ -44,7 +29,7 @@ class AssignmentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     APPLY_AND_AUTO_CORRECT = "ApplyAndAutoCorrect"
     APPLY_AND_MONITOR = "ApplyAndMonitor"
 
-class ComplianceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ComplianceStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """A value indicating compliance status of the machine for the assigned guest configuration.
     """
 
@@ -52,7 +37,7 @@ class ComplianceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NON_COMPLIANT = "NonCompliant"
     PENDING = "Pending"
 
-class ConfigurationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ConfigurationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies how the LCM(Local Configuration Manager) actually applies the configuration to the
     target nodes. Possible values are ApplyOnly, ApplyAndMonitor, and ApplyAndAutoCorrect.
     """
@@ -61,13 +46,22 @@ class ConfigurationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     APPLY_AND_MONITOR = "ApplyAndMonitor"
     APPLY_AND_AUTO_CORRECT = "ApplyAndAutoCorrect"
 
-class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class Kind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Kind of the guest configuration. For example:DSC
     """
 
     DSC = "DSC"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state, which only appears in the response.
     """
 
@@ -76,7 +70,7 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CANCELED = "Canceled"
     CREATED = "Created"
 
-class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of report, Consistency or Initial
     """
 

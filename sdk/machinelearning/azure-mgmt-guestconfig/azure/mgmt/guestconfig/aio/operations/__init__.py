@@ -10,6 +10,8 @@ from ._guest_configuration_assignments_operations import GuestConfigurationAssig
 from ._guest_configuration_assignment_reports_operations import GuestConfigurationAssignmentReportsOperations
 from ._guest_configuration_hcrp_assignments_operations import GuestConfigurationHCRPAssignmentsOperations
 from ._guest_configuration_hcrp_assignment_reports_operations import GuestConfigurationHCRPAssignmentReportsOperations
+from ._guest_configuration_assignments_vmss_operations import GuestConfigurationAssignmentsVMSSOperations
+from ._guest_configuration_assignment_reports_vmss_operations import GuestConfigurationAssignmentReportsVMSSOperations
 from ._operations import Operations
 
 __all__ = [
@@ -17,5 +19,7 @@ __all__ = [
     'GuestConfigurationAssignmentReportsOperations',
     'GuestConfigurationHCRPAssignmentsOperations',
     'GuestConfigurationHCRPAssignmentReportsOperations',
+    'GuestConfigurationAssignmentsVMSSOperations',
+    'GuestConfigurationAssignmentReportsVMSSOperations',
     'Operations',
 ]
