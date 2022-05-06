@@ -878,7 +878,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         try:
             _, deserialized, _ = self._client.container_registry_blob.get_blob(
                 repository, digest, cls=_return_response, **kwargs
-            )  
+            )
         except ValueError:
             if repository is None or digest is None:
                 raise ValueError("The parameter repository and digest cannot be None.")
