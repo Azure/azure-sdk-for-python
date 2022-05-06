@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List, cast, Tuple
+from datetime import timedelta, datetime
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -24,7 +25,6 @@ from ._exceptions import LogsQueryError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from datetime import timedelta, datetime
 
 
 class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
