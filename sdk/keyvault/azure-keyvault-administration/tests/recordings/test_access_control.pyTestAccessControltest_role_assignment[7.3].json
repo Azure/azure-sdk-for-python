@@ -1,6 +1,31 @@
 {
   "Entries": [
     {
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.3",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-keyvault-administration/4.1.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2",
+        "Content-Security-Policy": "default-src \u0027self\u0027",
+        "Content-Type": "application/json; charset=utf-8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-server-latency": "3"
+      },
+      "ResponseBody": "OK"
+    },
+    {
       "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
       "RequestMethod": "GET",
       "RequestHeaders": {
@@ -17,16 +42,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 13:58:26 GMT",
+        "Date": "Fri, 06 May 2022 18:44:27 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ah74Y0XF8H5PqNMn0X8hMBBwP53iBQAAAH8fB9oOAAAA; expires=Sun, 05-Jun-2022 13:58:27 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ai9kfIsnQ5xOtYwMx3p4xSBwP53iAgAAABBjB9oOAAAA; expires=Sun, 05-Jun-2022 18:44:27 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.10 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -104,7 +129,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Ah74Y0XF8H5PqNMn0X8hMBBwP53iBQAAAH8fB9oOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Ai9kfIsnQ5xOtYwMx3p4xSBwP53iAgAAABBjB9oOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -115,16 +140,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 13:58:26 GMT",
+        "Date": "Fri, 06 May 2022 18:44:27 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ah74Y0XF8H5PqNMn0X8hMBBwP53iBQAAAH8fB9oOAAAA; expires=Sun, 05-Jun-2022 13:58:27 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ai9kfIsnQ5xOtYwMx3p4xSBwP53iAgAAABBjB9oOAAAA; expires=Sun, 05-Jun-2022 18:44:27 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -196,7 +221,7 @@
         "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1"
+        "x-ms-server-latency": "3"
       },
       "ResponseBody": {
         "value": [
@@ -465,7 +490,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.3",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -484,7 +509,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "398",
+        "Content-Length": "344",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -492,11 +517,11 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "45"
+        "x-ms-server-latency": "85"
       },
       "ResponseBody": {
-        "id": "/providers/Microsoft.Authorization/roleAssignments/7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef",
-        "name": "7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef",
+        "id": "/providers/Microsoft.Authorization/roleAssignments/some-uuid",
+        "name": "some-uuid",
         "properties": {
           "principalId": "bdaf064e-d7b5-4d1b-b975-d028742d4571",
           "roleDefinitionId": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8",
@@ -506,7 +531,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -518,7 +543,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "398",
+        "Content-Length": "344",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -527,11 +552,11 @@
         "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "0"
+        "x-ms-server-latency": "1"
       },
       "ResponseBody": {
-        "id": "/providers/Microsoft.Authorization/roleAssignments/7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef",
-        "name": "7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef",
+        "id": "/providers/Microsoft.Authorization/roleAssignments/some-uuid",
+        "name": "some-uuid",
         "properties": {
           "principalId": "bdaf064e-d7b5-4d1b-b975-d028742d4571",
           "roleDefinitionId": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8",
@@ -553,7 +578,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2006",
+        "Content-Length": "1952",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -577,8 +602,8 @@
             "type": "Microsoft.Authorization/roleAssignments"
           },
           {
-            "id": "/providers/Microsoft.Authorization/roleAssignments/7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef",
-            "name": "7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef",
+            "id": "/providers/Microsoft.Authorization/roleAssignments/some-uuid",
+            "name": "some-uuid",
             "properties": {
               "principalId": "bdaf064e-d7b5-4d1b-b975-d028742d4571",
               "roleDefinitionId": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8",
@@ -620,7 +645,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -633,7 +658,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "398",
+        "Content-Length": "344",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -641,11 +666,11 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "43"
+        "x-ms-server-latency": "46"
       },
       "ResponseBody": {
-        "id": "/providers/Microsoft.Authorization/roleAssignments/7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef",
-        "name": "7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef",
+        "id": "/providers/Microsoft.Authorization/roleAssignments/some-uuid",
+        "name": "some-uuid",
         "properties": {
           "principalId": "bdaf064e-d7b5-4d1b-b975-d028742d4571",
           "roleDefinitionId": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8",
@@ -724,7 +749,5 @@
       }
     }
   ],
-  "Variables": {
-    "name": "7ec3053c-b0cc-4e3e-88ad-cf4692f9dcef"
-  }
+  "Variables": {}
 }
