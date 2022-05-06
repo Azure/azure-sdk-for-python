@@ -937,7 +937,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
-            response = client.delete_blob("my_repository", "my_tag_or_digest")
+            client.delete_blob("my_repository", "my_tag_or_digest")
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
