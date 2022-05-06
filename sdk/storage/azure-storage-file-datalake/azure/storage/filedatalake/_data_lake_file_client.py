@@ -160,11 +160,11 @@ class DataLakeFileClient(PathClient):
             Specifies the duration of the lease, in seconds, or negative one
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
-            using renew or change. Default is -1 (infinite lease).
+            using renew or change.
         :keyword expiry_options:
             Indicates mode of the expiry time.
             Possible values include: 'NeverExpire', 'RelativeToNow', 'Absolute'"
-        :paramtype expiry_options: str or Literal["NeverExpire", "RelativeToNow", "Absolute"]
+        :paramtype expiry_options: Literal["NeverExpire", "RelativeToNow", "Absolute"]
         :keyword expires_on:
             The time to set the file to expiry.
             When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.

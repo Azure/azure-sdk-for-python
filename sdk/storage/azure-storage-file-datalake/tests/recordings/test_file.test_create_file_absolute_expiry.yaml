@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 04 May 2022 01:00:15 GMT
+      - Fri, 06 May 2022 21:01:27 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 04 May 2022 01:00:15 GMT
+      - Fri, 06 May 2022 21:01:26 GMT
       etag:
-      - '"0x8DA2D6973633DF5"'
+      - '"0x8DA2FA395EC3B2F"'
       last-modified:
-      - Wed, 04 May 2022 01:00:15 GMT
+      - Fri, 06 May 2022 21:01:26 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,9 +49,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 04 May 2022 01:00:15 GMT
+      - Fri, 06 May 2022 21:01:27 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -63,11 +63,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:26 GMT
       etag:
-      - '"0x8DA2D6973C42F44"'
+      - '"0x8DA2FA396462837"'
       last-modified:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:27 GMT
       server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -89,13 +89,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:28 GMT
       x-ms-expiry-option:
       - Absolute
       x-ms-expiry-time:
-      - Thu, 05 May 2022 01:00:15 GMT
+      - Thu, 04 Apr 2075 00:00:00 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -107,11 +107,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:26 GMT
       etag:
-      - '"0x8DA2D6973DAF197"'
+      - '"0x8DA2FA3965737FB"'
       last-modified:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:27 GMT
       server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -131,9 +131,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:28 GMT
       x-ms-version:
       - '2021-06-08'
     method: HEAD
@@ -149,11 +149,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:27 GMT
       etag:
-      - '"0x8DA2D6973DAF197"'
+      - '"0x8DA2FA3965737FB"'
       last-modified:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:27 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier:
@@ -163,9 +163,9 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:27 GMT
       x-ms-expiry-time:
-      - Thu, 05 May 2022 01:00:15 GMT
+      - Thu, 04 Apr 2075 00:00:00 GMT
       x-ms-group:
       - $superuser
       x-ms-lease-state:
@@ -197,9 +197,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:28 GMT
       x-ms-version:
       - '2021-06-08'
     method: DELETE
@@ -211,7 +211,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 04 May 2022 01:00:16 GMT
+      - Fri, 06 May 2022 21:01:27 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

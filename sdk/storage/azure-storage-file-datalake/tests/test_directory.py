@@ -5,7 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import uuid
 from datetime import datetime, timedelta
 
 import pytest
@@ -99,7 +98,7 @@ class DirectoryTest(StorageTestCase):
     @DataLakePreparer()
     def test_create_directory_owner_group_acl(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_string = str(uuid.uuid4())
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_string_acl = 'user::rwx,group::r-x,other::rwx'
         # Arrange
         directory_name = self._get_directory_reference()
@@ -118,7 +117,7 @@ class DirectoryTest(StorageTestCase):
     @DataLakePreparer()
     def test_create_directory_proposed_lease_id(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_string = str(uuid.uuid4())
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_duration = 15
         # Arrange
         directory_name = self._get_directory_reference()
@@ -135,7 +134,7 @@ class DirectoryTest(StorageTestCase):
     @DataLakePreparer()
     def test_create_sub_directory_proposed_lease_id(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_string = str(uuid.uuid4())
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_duration = 15
         # Arrange
         directory_name = self._get_directory_reference()
@@ -150,34 +149,6 @@ class DirectoryTest(StorageTestCase):
         self.assertEqual(properties.lease['status'], 'locked')
         self.assertEqual(properties.lease['state'], 'leased')
         self.assertEqual(properties.lease['duration'], 'fixed')
-
-    @DataLakePreparer()
-    def test_create_directory_relative_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_expiry_time = 86400000  # 1 day in milliseconds
-        # Arrange
-        directory_name = self._get_directory_reference()
-
-        # Create a directory
-        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-
-        # Assert
-        with self.assertRaises(HttpResponseError):
-            directory_client.create_directory(expiry_options="RelativeToNow", expires_on=test_expiry_time)
-
-    @DataLakePreparer()
-    def test_create_directory_absolute_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_expiry_time = datetime.utcnow() + timedelta(days=1)
-        # Arrange
-        directory_name = self._get_directory_reference()
-
-        # Create a directory
-        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-
-        # Assert
-        with self.assertRaises(HttpResponseError):
-            directory_client.create_directory(expiry_options="Absolute", expires_on=test_expiry_time)
 
     @DataLakePreparer()
     def test_directory_exists(self, datalake_storage_account_name, datalake_storage_account_key):

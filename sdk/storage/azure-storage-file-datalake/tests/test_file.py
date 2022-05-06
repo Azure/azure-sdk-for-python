@@ -6,7 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import uuid
 from datetime import datetime, timedelta
 import pytest
 
@@ -102,7 +101,7 @@ class FileTest(StorageTestCase):
     @DataLakePreparer()
     def test_create_file_owner_group_acl(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_string = str(uuid.uuid4())
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_string_acl = 'user::rwx,group::r-x,other::rwx'
         # Arrange
         directory_name = self._get_directory_reference()
@@ -124,7 +123,7 @@ class FileTest(StorageTestCase):
     @DataLakePreparer()
     def test_create_file_proposed_lease_id(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_string = str(uuid.uuid4())
+        test_string = '4cf4e284-f6a8-4540-b53e-c3469af032dc'
         test_duration = 15
         # Arrange
         directory_name = self._get_directory_reference()
@@ -169,7 +168,7 @@ class FileTest(StorageTestCase):
     @DataLakePreparer()
     def test_create_file_absolute_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_expiry_time = datetime.utcnow() + timedelta(days=1)
+        test_expiry_time = datetime(2075, 4, 4)
         # Arrange
         directory_name = self._get_directory_reference()
 
