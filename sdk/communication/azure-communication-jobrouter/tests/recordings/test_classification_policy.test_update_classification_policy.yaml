@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"name": "test_update_classification_policy_tst_dp", "offerTTLSeconds":
+    body: '{"name": "test_update_classification_policy_tst_dp", "offerTtlSeconds":
       10.0, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
       1}}'
     headers:
@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:51 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -34,15 +34,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:32 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:20 GMT
+      - Fri, 06 May 2022 18:01:45 GMT
       request-context:
       - appId=
       trace-id:
-      - 0b3b754a1e2c63bc0484bec6ec70c992
+      - df8a7198067cf49aeb75cf7ca29a6f25
       transfer-encoding:
       - chunked
       x-cache:
@@ -68,7 +68,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -85,15 +85,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:12 GMT
+      - Fri, 06 May 2022 18:01:38 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:46 GMT
       request-context:
       - appId=
       trace-id:
-      - 8fa76a1276a93c0cfd12663b78e8a983
+      - 90b090517bae31071207e718a610f1ef
       transfer-encoding:
       - chunked
       x-cache:
@@ -122,7 +122,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -137,18 +137,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:46 GMT
       request-context:
       - appId=
       trace-id:
-      - 2dc1b4940e0237d1b73f3e0d7b60526f
+      - d73a95056de89b14e5fd33fa7d1806a2
       transfer-encoding:
       - chunked
       x-cache:
@@ -177,7 +179,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -192,18 +194,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:46 GMT
       request-context:
       - appId=
       trace-id:
-      - 9f25f200507e53f14c0fdfa6ed87aa28
+      - 63ec391826a1df77f1d497b0dbf5e847
       transfer-encoding:
       - chunked
       x-cache:
@@ -232,7 +236,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -247,18 +251,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:46 GMT
       request-context:
       - appId=
       trace-id:
-      - 7c92e75295df41b9196a7823bc86ee75
+      - 408a72026ce15fcf3335e842a87d8475
       transfer-encoding:
       - chunked
       x-cache:
@@ -288,7 +294,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -304,18 +310,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:46 GMT
       request-context:
       - appId=
       trace-id:
-      - 07c2a4c8e1a82cc76da1dd351381a982
+      - aeeeb7d0578e077b59dab9431cd3438e
       transfer-encoding:
       - chunked
       x-cache:
@@ -343,7 +351,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -357,18 +365,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:47 GMT
       request-context:
       - appId=
       trace-id:
-      - 25da1620456d5157a0d9c7e87167889b
+      - 17702f4934fee2038e85e5f21265b608
       transfer-encoding:
       - chunked
       x-cache:
@@ -396,7 +406,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -410,18 +420,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:47 GMT
       request-context:
       - appId=
       trace-id:
-      - 96c2f7531e1c6bb1d768eae4be554ceb
+      - 64c88a2319c8de0cf790e25e96a76ef7
       transfer-encoding:
       - chunked
       x-cache:
@@ -450,7 +462,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -465,18 +477,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:47 GMT
       request-context:
       - appId=
       trace-id:
-      - cb2c9fc336eba3ef715a676a90ce2f22
+      - 5ef6c66666c1f1019acffa7ef4ba42ae
       transfer-encoding:
       - chunked
       x-cache:
@@ -505,7 +519,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -520,18 +534,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:21 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:47 GMT
       request-context:
       - appId=
       trace-id:
-      - 75491cc6a190e9953382856b3a8d0c81
+      - 2844fe3beae8103dd9b1b79632b9d0a6
       transfer-encoding:
       - chunked
       x-cache:
@@ -560,7 +576,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -575,18 +591,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:47 GMT
       request-context:
       - appId=
       trace-id:
-      - 9acdef82793ffa661d03c9b0aa2a7b0e
+      - fc8af9a2437ab3c14ebb8eaa49b64e9c
       transfer-encoding:
       - chunked
       x-cache:
@@ -615,7 +633,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -630,18 +648,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:48 GMT
       request-context:
       - appId=
       trace-id:
-      - 788d01d547148ac0e0d38c910377c956
+      - a032c1c22d2f5ebad16b89cc063bbe0b
       transfer-encoding:
       - chunked
       x-cache:
@@ -671,7 +691,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -687,18 +707,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:48 GMT
       request-context:
       - appId=
       trace-id:
-      - a3953e439017d59b2c30096841d30b65
+      - a20aba1b020f117a6874a12f7da324ff
       transfer-encoding:
       - chunked
       x-cache:
@@ -728,7 +750,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -744,18 +766,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:48 GMT
       request-context:
       - appId=
       trace-id:
-      - f323e860656918cdfaf473033e82afde
+      - 6e5455e80d249a9ca251dcc43a724868
       transfer-encoding:
       - chunked
       x-cache:
@@ -783,7 +807,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -797,18 +821,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:48 GMT
       request-context:
       - appId=
       trace-id:
-      - 20f5a61c36b210b9ea85b7f20e8376ce
+      - 313305cc2b2399dee171ef31a3d86291
       transfer-encoding:
       - chunked
       x-cache:
@@ -836,7 +862,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -850,18 +876,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:48 GMT
       request-context:
       - appId=
       trace-id:
-      - ba282470075b12cda3ddb0b7b51f5121
+      - d0d5d5f1d09cd4e919d1b92610a8d6db
       transfer-encoding:
       - chunked
       x-cache:
@@ -890,7 +918,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -905,18 +933,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:48 GMT
       request-context:
       - appId=
       trace-id:
-      - a3865a1da03c62e38b86e60f343fd668
+      - 062b66b7412700c5ecee5bda97abea4e
       transfer-encoding:
       - chunked
       x-cache:
@@ -945,7 +975,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -960,18 +990,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:22 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:49 GMT
       request-context:
       - appId=
       trace-id:
-      - d13313bb24cb84eb56f4cf3b519aac50
+      - b05087df0c4b697ddc0e6ef77dbcf343
       transfer-encoding:
       - chunked
       x-cache:
@@ -1000,7 +1032,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1015,18 +1047,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:49 GMT
       request-context:
       - appId=
       trace-id:
-      - 66cd00febe136765bc634eb76a86d023
+      - 4a316761d8f2c2a2b1cc4b87919aa37f
       transfer-encoding:
       - chunked
       x-cache:
@@ -1055,7 +1089,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1070,18 +1104,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:49 GMT
       request-context:
       - appId=
       trace-id:
-      - 25c71f1bf14eb247bbbe445b3e1b3f2f
+      - 3d7aa612ed73f19a3b420cc1c426cb8f
       transfer-encoding:
       - chunked
       x-cache:
@@ -1111,7 +1147,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1127,18 +1163,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:49 GMT
       request-context:
       - appId=
       trace-id:
-      - d859bf01c5179d591cc981d28bd57727
+      - 014e0023ebdd17b059755ff56aed4d9f
       transfer-encoding:
       - chunked
       x-cache:
@@ -1168,7 +1206,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:55 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1184,18 +1222,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:49 GMT
       request-context:
       - appId=
       trace-id:
-      - 5c81192b14866346559af8d9858fc067
+      - 53034e186d0205b920d6a9ae93730ca1
       transfer-encoding:
       - chunked
       x-cache:
@@ -1223,7 +1263,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1237,18 +1277,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:49 GMT
       request-context:
       - appId=
       trace-id:
-      - 14bb1cc4ba1a6fe434b94343c054db4a
+      - 5ec4a9498dce7fd67fc2b2274b050372
       transfer-encoding:
       - chunked
       x-cache:
@@ -1276,7 +1318,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1290,18 +1332,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:50 GMT
       request-context:
       - appId=
       trace-id:
-      - 631c80096c064463249dbf0daf25e3f4
+      - 8fdbd3aeab25b1bc29f8d9aad85afefa
       transfer-encoding:
       - chunked
       x-cache:
@@ -1331,7 +1375,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1347,18 +1391,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:23 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:50 GMT
       request-context:
       - appId=
       trace-id:
-      - 190d3dd297dca9d031fee60d00ba38c4
+      - 8698487b9c85dc4ec152805b4eab6421
       transfer-encoding:
       - chunked
       x-cache:
@@ -1387,7 +1433,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1402,18 +1448,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:50 GMT
       request-context:
       - appId=
       trace-id:
-      - 4da1d7544df85270df33c41e588a237b
+      - 4ee453c5957f97ccdfde79ef1948c0ac
       transfer-encoding:
       - chunked
       x-cache:
@@ -1443,7 +1491,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1459,18 +1507,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:50 GMT
       request-context:
       - appId=
       trace-id:
-      - 2f56d20bd463bda7004c5b28cd557642
+      - 68a7d66ee8f8092c779317755052e87a
       transfer-encoding:
       - chunked
       x-cache:
@@ -1499,7 +1549,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1514,18 +1564,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:50 GMT
       request-context:
       - appId=
       trace-id:
-      - 1703363968083b1ecab613b342ab61fc
+      - 5105892e733384498b3ff79e6ebd1903
       transfer-encoding:
       - chunked
       x-cache:
@@ -1555,7 +1607,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1571,18 +1623,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:50 GMT
       request-context:
       - appId=
       trace-id:
-      - 2fcd69bbc22e88258bb8cdb635ec123c
+      - 778816a5bdb24b7d6ce448448dded870
       transfer-encoding:
       - chunked
       x-cache:
@@ -1612,7 +1666,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1628,18 +1682,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:51 GMT
       request-context:
       - appId=
       trace-id:
-      - e1050b4c845d659c1f5f6d7aa8a32200
+      - 2d060a15628d48508eeeb922145fb97b
       transfer-encoding:
       - chunked
       x-cache:
@@ -1668,7 +1724,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1683,18 +1739,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:51 GMT
       request-context:
       - appId=
       trace-id:
-      - ca84c6fa666ddb2d1c9121c6c180c8af
+      - 8187f2d56de8639db965d78692667be3
       transfer-encoding:
       - chunked
       x-cache:
@@ -1722,7 +1780,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1736,18 +1794,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:51 GMT
       request-context:
       - appId=
       trace-id:
-      - 75c2947b1885de972c44a54f25460b63
+      - 8c7c873c8d9bec55672f7500cb7a0eb8
       transfer-encoding:
       - chunked
       x-cache:
@@ -1777,7 +1837,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1793,18 +1853,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:24 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:51 GMT
       request-context:
       - appId=
       trace-id:
-      - d9876a7219a6be6e85df26f96ce9e093
+      - c252d46c986aba3bc196dcb65aeb0323
       transfer-encoding:
       - chunked
       x-cache:
@@ -1833,7 +1895,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1848,18 +1910,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:51 GMT
       request-context:
       - appId=
       trace-id:
-      - ff1502e6a4fad69a2908925091bf27f7
+      - 501bfc1f6e4a614a66ad8073b67bdc62
       transfer-encoding:
       - chunked
       x-cache:
@@ -1888,7 +1952,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1903,18 +1967,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:51 GMT
       request-context:
       - appId=
       trace-id:
-      - 5d9298bb484fa1b29e7c870c6c8ba28f
+      - 701954909e01d548b18c2f5ae96a6d9e
       transfer-encoding:
       - chunked
       x-cache:
@@ -1944,7 +2010,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -1960,18 +2026,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:51 GMT
       request-context:
       - appId=
       trace-id:
-      - e3655cd23c3ecd85fef24d99887a9f03
+      - d7455b210b3bc173d6fcd0c1c263853e
       transfer-encoding:
       - chunked
       x-cache:
@@ -2001,7 +2069,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2017,18 +2085,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       request-context:
       - appId=
       trace-id:
-      - 5bbb1bf62e5686d20451609aff573324
+      - 4101388b1e9b6b9ee7fafe3bf80ffb67
       transfer-encoding:
       - chunked
       x-cache:
@@ -2058,7 +2128,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2075,18 +2145,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       request-context:
       - appId=
       trace-id:
-      - 720baf798983e383ced49f1c884dbbc6
+      - 9b7ff3b224ebc57ec96462b88f01486e
       transfer-encoding:
       - chunked
       x-cache:
@@ -2114,7 +2186,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2129,18 +2201,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       request-context:
       - appId=
       trace-id:
-      - 446f12403713645f461dd2e39786f55f
+      - 396e3c80b89654cee73e335bf33ad7a2
       transfer-encoding:
       - chunked
       x-cache:
@@ -2169,7 +2243,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2184,18 +2258,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       request-context:
       - appId=
       trace-id:
-      - 3a96e2ed7aeae4ac3eef6e2a21415b50
+      - f253a004b7aba18f2bcedc47f9b2797a
       transfer-encoding:
       - chunked
       x-cache:
@@ -2225,7 +2301,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2241,18 +2317,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:25 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       request-context:
       - appId=
       trace-id:
-      - e1e840e6749d2b3a4d4fd8fb159bc1d1
+      - 40791fbb83cefa497b45ed88054bc140
       transfer-encoding:
       - chunked
       x-cache:
@@ -2282,7 +2360,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2298,18 +2376,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:01:52 GMT
       request-context:
       - appId=
       trace-id:
-      - 31c32c09e01a4c654c799064a242acbd
+      - d693186ea4f1c7a4c642d24afc492f58
       transfer-encoding:
       - chunked
       x-cache:
@@ -2339,7 +2419,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2355,18 +2435,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       request-context:
       - appId=
       trace-id:
-      - 8b09e25b5d2a1dfc9336d9e91e8ebbb8
+      - 4aeb3eb506b8e3c949acd1d8183278ed
       transfer-encoding:
       - chunked
       x-cache:
@@ -2396,7 +2478,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2412,18 +2494,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       request-context:
       - appId=
       trace-id:
-      - d65f344efdd886e792fa9f026881ba5f
+      - ab302c9d2306e887afc05001f024f26e
       transfer-encoding:
       - chunked
       x-cache:
@@ -2453,7 +2537,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2470,18 +2554,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       request-context:
       - appId=
       trace-id:
-      - b9dc1dce37d4859c9e1aed9fccf2576b
+      - 49d4738388490100c105f7686f063e9b
       transfer-encoding:
       - chunked
       x-cache:
@@ -2511,7 +2597,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2528,18 +2614,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       request-context:
       - appId=
       trace-id:
-      - bf3e1a92890d2a78f201109fb3c00016
+      - 0c0820a1167c43e063c6ce4f4fd38ef3
       transfer-encoding:
       - chunked
       x-cache:
@@ -2568,7 +2656,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2583,18 +2671,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       request-context:
       - appId=
       trace-id:
-      - 827f85b14aa46f5c6082bea54c3ca1dd
+      - 3cdb72dbdcc0d3f8c49f3d6d409a8135
       transfer-encoding:
       - chunked
       x-cache:
@@ -2623,7 +2713,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2638,18 +2728,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:26 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:53 GMT
       request-context:
       - appId=
       trace-id:
-      - 9793adcf61b67c2441828987f8aa625f
+      - b8352845eb8b58166ded0d139e66edce
       transfer-encoding:
       - chunked
       x-cache:
@@ -2679,7 +2771,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2695,18 +2787,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       request-context:
       - appId=
       trace-id:
-      - 76e872f203803f506324bf226791813f
+      - afc3168fcd42a6e270128ad8b2828b98
       transfer-encoding:
       - chunked
       x-cache:
@@ -2736,7 +2830,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2752,18 +2846,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       request-context:
       - appId=
       trace-id:
-      - e9474d11235ec654cb40816fea525e11
+      - 4e52052d871dd2931170e46399807f27
       transfer-encoding:
       - chunked
       x-cache:
@@ -2793,7 +2889,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2809,18 +2905,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       request-context:
       - appId=
       trace-id:
-      - 851049206e17132825c0cbd14b153e23
+      - 0a3cb5fd359f4656ce408379edb786db
       transfer-encoding:
       - chunked
       x-cache:
@@ -2850,7 +2948,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2866,18 +2964,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       request-context:
       - appId=
       trace-id:
-      - d2604750ce72833e926192f6259dd614
+      - 74f68980fc1aad669f37c0b60eee0935
       transfer-encoding:
       - chunked
       x-cache:
@@ -2907,7 +3007,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2924,18 +3024,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       request-context:
       - appId=
       trace-id:
-      - f329a53cf33e8cb1c06ac27a72c720bf
+      - 8f818a92be0003cc388252f7c47d934c
       transfer-encoding:
       - chunked
       x-cache:
@@ -2965,7 +3067,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -2982,18 +3084,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:54 GMT
       request-context:
       - appId=
       trace-id:
-      - ed4c30e428ae575167c4357da7fc8f1c
+      - 6bab0fd94fc25d42cc73a193381b4635
       transfer-encoding:
       - chunked
       x-cache:
@@ -3022,7 +3126,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3037,18 +3141,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       request-context:
       - appId=
       trace-id:
-      - 49c2fe760fd062db5b24048a049910d8
+      - 444c6c78842f700835bdf4dcac51decf
       transfer-encoding:
       - chunked
       x-cache:
@@ -3077,7 +3183,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3092,18 +3198,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       request-context:
       - appId=
       trace-id:
-      - 7ce4e68c3c2baf39d02aeace82fdea55
+      - 4435113b9e22c193a62351255c55a67c
       transfer-encoding:
       - chunked
       x-cache:
@@ -3133,7 +3241,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3150,18 +3258,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       request-context:
       - appId=
       trace-id:
-      - 38ed4703248f488243f34395d2f03b04
+      - c25993213a24651ac249d441568037dd
       transfer-encoding:
       - chunked
       x-cache:
@@ -3191,7 +3301,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3207,18 +3317,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       request-context:
       - appId=
       trace-id:
-      - 928fcc076bb79e61c8e62c9976431235
+      - 4e569c945a9a340d825c3f0214963404
       transfer-encoding:
       - chunked
       x-cache:
@@ -3248,7 +3360,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3265,18 +3377,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       request-context:
       - appId=
       trace-id:
-      - ec7badc2df61c620a7ad7d8dc2214a8e
+      - 56d8bd5fefc604a2fc996fdf922fcbf9
       transfer-encoding:
       - chunked
       x-cache:
@@ -3306,7 +3420,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3322,18 +3436,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:56 GMT
       request-context:
       - appId=
       trace-id:
-      - 1083a0bfa7eff2014e22fd745618eeee
+      - 878128309a2f9da208d5e6206933c30a
       transfer-encoding:
       - chunked
       x-cache:
@@ -3364,7 +3480,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3381,18 +3497,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       request-context:
       - appId=
       trace-id:
-      - c0c378fdb3ec95648a98dac46b48c8fd
+      - 45a60032845e33c9f8b4d8c8b25fc117
       transfer-encoding:
       - chunked
       x-cache:
@@ -3422,7 +3540,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3439,18 +3557,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:28 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       request-context:
       - appId=
       trace-id:
-      - f9c054c5f61692e3837dced473b10181
+      - 109c6c517882b197baab4fa36789a32c
       transfer-encoding:
       - chunked
       x-cache:
@@ -3479,7 +3599,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3495,18 +3615,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       request-context:
       - appId=
       trace-id:
-      - 7a670a72f4787fc0c1b6584ccad7cb24
+      - 27567f8d1fb163c860ed4762f53a669c
       transfer-encoding:
       - chunked
       x-cache:
@@ -3535,7 +3657,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3550,18 +3672,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       request-context:
       - appId=
       trace-id:
-      - 719591b9c41057bcba707c9da7bf619f
+      - 9751d5ae33ed4170a02caad61163b524
       transfer-encoding:
       - chunked
       x-cache:
@@ -3591,7 +3715,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3608,18 +3732,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       request-context:
       - appId=
       trace-id:
-      - 0f49d8f91ee0082acf1d7af57d7aa3b6
+      - c26235b1c3d7151045caa22f665a9deb
       transfer-encoding:
       - chunked
       x-cache:
@@ -3649,7 +3775,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3665,18 +3791,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       request-context:
       - appId=
       trace-id:
-      - 3d4c671d6c68afb88b2375485791164c
+      - 3de156ea32e1f40c72c381cfe0978223
       transfer-encoding:
       - chunked
       x-cache:
@@ -3704,7 +3832,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3718,18 +3846,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:57 GMT
       request-context:
       - appId=
       trace-id:
-      - 46fc2fbfde2258d9f7b951dc7028ac07
+      - 1cf9f8ccbc7d37f2448469282b1179be
       transfer-encoding:
       - chunked
       x-cache:
@@ -3757,7 +3887,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3772,18 +3902,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:29 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       request-context:
       - appId=
       trace-id:
-      - e942ab0a2a4ac05fc5f6113de3d27ee2
+      - 3d9285f368a11a64d280024026af6b0a
       transfer-encoding:
       - chunked
       x-cache:
@@ -3812,7 +3944,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:39 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3827,18 +3959,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       request-context:
       - appId=
       trace-id:
-      - 2d66e7b7de8d9f01589b8ce17b1722ee
+      - bdabc5e971cf5bc50f90c88905483cb7
       transfer-encoding:
       - chunked
       x-cache:
@@ -3867,7 +4001,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:39 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3882,18 +4016,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       request-context:
       - appId=
       trace-id:
-      - 0dbf8cb1c4ced94ab331727f700e8e13
+      - 0919f154d1ca3d2be25e7b716795741f
       transfer-encoding:
       - chunked
       x-cache:
@@ -3920,7 +4056,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:39 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3933,18 +4069,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       request-context:
       - appId=
       trace-id:
-      - 465a88e5f1a5a05c6a8bfc29eaed24fe
+      - e557cebe2c9f52d8447c66474836fc4d
       transfer-encoding:
       - chunked
       x-cache:
@@ -3971,7 +4109,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:39 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -3985,18 +4123,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       request-context:
       - appId=
       trace-id:
-      - 89f67d7f3640e194f1d9f50052580344
+      - 5d2953fe45c21f97797fc80031824299
       transfer-encoding:
       - chunked
       x-cache:
@@ -4024,7 +4164,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:39 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4039,18 +4179,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       request-context:
       - appId=
       trace-id:
-      - 19595777d279cf27b02327e6a305b7f6
+      - 6c2c76f575a72cb0e6c0e070c04e7074
       transfer-encoding:
       - chunked
       x-cache:
@@ -4079,7 +4221,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:39 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4094,18 +4236,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       request-context:
       - appId=
       trace-id:
-      - 56f5d200eb921db0707e9d7f13d2e7d6
+      - e81bad7549f097ef0c84e6156e26185d
       transfer-encoding:
       - chunked
       x-cache:
@@ -4133,7 +4277,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:39 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4148,18 +4292,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       request-context:
       - appId=
       trace-id:
-      - 53adc78c9f82e6b9387f2ab9f7bc07a0
+      - 78cef5b4884040c5995d6ca22c8253bf
       transfer-encoding:
       - chunked
       x-cache:
@@ -4187,7 +4333,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:40 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4202,18 +4348,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:30 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       request-context:
       - appId=
       trace-id:
-      - 818790e02e33d92f107b4641703739c3
+      - a39afc8f7f9a2a729a990bf27c9d9478
       transfer-encoding:
       - chunked
       x-cache:
@@ -4242,7 +4390,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:40 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4257,18 +4405,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       request-context:
       - appId=
       trace-id:
-      - 4121a41fd5975aa2444a7db3e51ac80f
+      - 82f6adaed198f6298771d9560345a1e4
       transfer-encoding:
       - chunked
       x-cache:
@@ -4297,7 +4447,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:40 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4312,18 +4462,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       request-context:
       - appId=
       trace-id:
-      - 85e3a3b63cd157ff540108829b6ac2d9
+      - 46478ddd10c49ec05474789c5465a0ce
       transfer-encoding:
       - chunked
       x-cache:
@@ -4350,7 +4502,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:40 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4364,18 +4516,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       request-context:
       - appId=
       trace-id:
-      - 3c097f3d9888cff7039eae7d1e40566a
+      - 151b825869f83fecbd1d73c196c8f096
       transfer-encoding:
       - chunked
       x-cache:
@@ -4402,7 +4556,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:40 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4416,18 +4570,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       request-context:
       - appId=
       trace-id:
-      - 85d7971828404ca4cceae2cbce81b056
+      - 371c39a2cbecb0cf1155f7f9ec7e6667
       transfer-encoding:
       - chunked
       x-cache:
@@ -4456,7 +4612,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:40 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4471,18 +4627,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       request-context:
       - appId=
       trace-id:
-      - 0feeb88ad2159ae68f12067ee37b97dc
+      - 76e7ce27d7acd1775bf7f1951d291ba3
       transfer-encoding:
       - chunked
       x-cache:
@@ -4511,7 +4669,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:40 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4526,18 +4684,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       request-context:
       - appId=
       trace-id:
-      - 41b82306ed3cbd71d56da36fb06fe72e
+      - afdb7607db1de51a017aa3f0188f5147
       transfer-encoding:
       - chunked
       x-cache:
@@ -4566,7 +4726,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:40 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4581,18 +4741,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       request-context:
       - appId=
       trace-id:
-      - 4686f926f098da5f273f61cc6f2f04d4
+      - 61162b7fef12b45e4f015b2ce52faba5
       transfer-encoding:
       - chunked
       x-cache:
@@ -4620,7 +4782,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:41 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4635,18 +4797,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:31 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       request-context:
       - appId=
       trace-id:
-      - a5b95bb966403951b91af159e60188e3
+      - e0934a02e8ebdd16f1f46f1164df7940
       transfer-encoding:
       - chunked
       x-cache:
@@ -4675,7 +4839,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:41 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4691,18 +4855,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       request-context:
       - appId=
       trace-id:
-      - 51eb617130c7c2b9b7ea55aa77bb5a03
+      - 1e066d702bf0688b149bd49c1368a295
       transfer-encoding:
       - chunked
       x-cache:
@@ -4731,7 +4897,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:41 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4746,18 +4912,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:00 GMT
       request-context:
       - appId=
       trace-id:
-      - 6c2ce310c00f6fdb575a6be1659f9f26
+      - 2214117e3057b39ca4c7f3f9f7078c07
       transfer-encoding:
       - chunked
       x-cache:
@@ -4785,7 +4953,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:41 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4799,18 +4967,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       request-context:
       - appId=
       trace-id:
-      - 9650b13de9e0bfb420fd59a192248fa8
+      - 2188b480361688452cc0b6492f414d75
       transfer-encoding:
       - chunked
       x-cache:
@@ -4837,7 +5007,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:41 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4851,18 +5021,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       request-context:
       - appId=
       trace-id:
-      - 3c2255bab24eadc1d8ff41082a77fedf
+      - 3a3750b39be75c7e144ae87c39139440
       transfer-encoding:
       - chunked
       x-cache:
@@ -4891,7 +5063,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:41 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4906,18 +5078,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       request-context:
       - appId=
       trace-id:
-      - 1dddf9a00c4ac877257e103258ffe4a6
+      - cdf1d5929dbec34cd500f6c419023a23
       transfer-encoding:
       - chunked
       x-cache:
@@ -4946,7 +5120,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:41 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -4961,18 +5135,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       request-context:
       - appId=
       trace-id:
-      - 218cb83631a42b45b95b2bb7fada7ba3
+      - efb4833fa1f28ec84f77e95133437a8a
       transfer-encoding:
       - chunked
       x-cache:
@@ -5001,7 +5177,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:41 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5016,18 +5192,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:01 GMT
       request-context:
       - appId=
       trace-id:
-      - 0f68963c7f2d6da5f3aa5c4811b18a1e
+      - fca10600020c9b72659f07300cfbecb4
       transfer-encoding:
       - chunked
       x-cache:
@@ -5055,7 +5233,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:42 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5070,18 +5248,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:32 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       request-context:
       - appId=
       trace-id:
-      - af0434d4272cd31e0c5d430a06dbd852
+      - 99208e7f603b5bfb64cdeeb66295d589
       transfer-encoding:
       - chunked
       x-cache:
@@ -5111,7 +5291,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:42 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5127,18 +5307,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       request-context:
       - appId=
       trace-id:
-      - 7e9d4d23f1aeb346a10e58c4881a696d
+      - 73d05305bb28557633b180cbc0cc9c04
       transfer-encoding:
       - chunked
       x-cache:
@@ -5167,7 +5349,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:42 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5182,18 +5364,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       request-context:
       - appId=
       trace-id:
-      - 90c91427e9cabb50ab5da4f165d1c65b
+      - fc4dbf569ed05cf93fd4a84f6e91cdfc
       transfer-encoding:
       - chunked
       x-cache:
@@ -5221,7 +5405,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:42 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5236,18 +5420,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       request-context:
       - appId=
       trace-id:
-      - 264cd203762e5207fd810b7ae9426cda
+      - b83e4c47cc3f70340f1f83229d5ea8e7
       transfer-encoding:
       - chunked
       x-cache:
@@ -5274,7 +5460,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:42 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5288,18 +5474,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       request-context:
       - appId=
       trace-id:
-      - ac1d0745ca4e5adbe53c212edc1bc4c5
+      - e4e6a6a6f1eeb35bcbbcbd3b5cc93165
       transfer-encoding:
       - chunked
       x-cache:
@@ -5328,7 +5516,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:42 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5344,18 +5532,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       request-context:
       - appId=
       trace-id:
-      - 373f0bad81c83d60b3e866f7ad2c68e7
+      - 9c86e0f01a7d319b7a2c9a059a887e66
       transfer-encoding:
       - chunked
       x-cache:
@@ -5384,7 +5574,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:42 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5399,18 +5589,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:02 GMT
       request-context:
       - appId=
       trace-id:
-      - 595084e042a088c7edad979e0d7e9e0b
+      - db234588f400eac73fb037d5db71905b
       transfer-encoding:
       - chunked
       x-cache:
@@ -5439,7 +5631,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:42 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5454,18 +5646,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       request-context:
       - appId=
       trace-id:
-      - b2f482de2b7e4ad25ac61a9a35c5cd96
+      - 3e7fbf489febe09e3e2719466108743f
       transfer-encoding:
       - chunked
       x-cache:
@@ -5495,7 +5689,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:43 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5511,18 +5705,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:33 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       request-context:
       - appId=
       trace-id:
-      - e21dd32346e97df1ae392e9440f65160
+      - 3e07753dfe705837261d39ae7b9bf725
       transfer-encoding:
       - chunked
       x-cache:
@@ -5552,7 +5748,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:43 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5568,18 +5764,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       request-context:
       - appId=
       trace-id:
-      - a894c018961465d8bc680cda43a19ee5
+      - 17ca3fe1396b943fbbef14682d6f9c81
       transfer-encoding:
       - chunked
       x-cache:
@@ -5609,7 +5807,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:43 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5626,18 +5824,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       request-context:
       - appId=
       trace-id:
-      - 93e312c5d275f9ca6264cd2a32119ebe
+      - 45b3bd275bc73fc19a6f0c8abd7a722e
       transfer-encoding:
       - chunked
       x-cache:
@@ -5665,7 +5865,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:43 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5680,18 +5880,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       request-context:
       - appId=
       trace-id:
-      - 2b280f185f4975735ced781fc37bb55c
+      - 8d9e07baf307e39d8c5610abf050ede7
       transfer-encoding:
       - chunked
       x-cache:
@@ -5720,7 +5922,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:43 GMT
+      - Fri, 06 May 2022 18:02:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5735,18 +5937,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       request-context:
       - appId=
       trace-id:
-      - 931b48b1c6d6c04d20204bc53e6b8f9e
+      - 6b2d6929f8322cf48e1d28f9849cb173
       transfer-encoding:
       - chunked
       x-cache:
@@ -5776,7 +5980,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:43 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5792,18 +5996,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:03 GMT
       request-context:
       - appId=
       trace-id:
-      - 675d98b0810ce2f243e73757401ab424
+      - d09a486ff62104d609eb5bc252197798
       transfer-encoding:
       - chunked
       x-cache:
@@ -5833,7 +6039,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:43 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5849,18 +6055,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       request-context:
       - appId=
       trace-id:
-      - 916a19c34560086e570f3e7d1a53a6ea
+      - bb09e6acbcddf7540a9422a42a5bcc7c
       transfer-encoding:
       - chunked
       x-cache:
@@ -5890,7 +6098,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:44 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5906,18 +6114,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:34 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       request-context:
       - appId=
       trace-id:
-      - b93bcc76d220f9578a861520cb34c88e
+      - 7d21f6f083839fa05a182b1268c78b48
       transfer-encoding:
       - chunked
       x-cache:
@@ -5947,7 +6157,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:44 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -5963,18 +6173,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       request-context:
       - appId=
       trace-id:
-      - 9393aa298f3f17265dab88ec06f6ae10
+      - 1f53cecb4ef280855f9d451bddcf6616
       transfer-encoding:
       - chunked
       x-cache:
@@ -6004,7 +6216,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:44 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6021,18 +6233,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       request-context:
       - appId=
       trace-id:
-      - 5257e594cefb999800f904bd2c11b977
+      - 29a558e3cbd071cd46a91b471bbdb31c
       transfer-encoding:
       - chunked
       x-cache:
@@ -6062,7 +6276,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:44 GMT
+      - Fri, 06 May 2022 18:02:10 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6079,18 +6293,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       request-context:
       - appId=
       trace-id:
-      - 3dd73e2271e429d5d8b81c7ebc0f3951
+      - d8badaa5e7994abb66b654ad5b97e3c4
       transfer-encoding:
       - chunked
       x-cache:
@@ -6119,7 +6335,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:44 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6134,18 +6350,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:04 GMT
       request-context:
       - appId=
       trace-id:
-      - 5a798be1d8117ebc0ccb40e17632f34e
+      - dfb51484f1ba3be2936c8d061dad276f
       transfer-encoding:
       - chunked
       x-cache:
@@ -6174,7 +6392,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:44 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6189,18 +6407,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       request-context:
       - appId=
       trace-id:
-      - 6695d8ca857a47c228efe68905449dd9
+      - 929d74db0799866f91a103b9977a388a
       transfer-encoding:
       - chunked
       x-cache:
@@ -6230,7 +6450,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:44 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6246,18 +6466,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:13 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       request-context:
       - appId=
       trace-id:
-      - 3fd71f7f1c6f02af084f46b1bd2a0475
+      - e38cf939b0c84423e479102b86a9b89b
       transfer-encoding:
       - chunked
       x-cache:
@@ -6287,7 +6509,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:44 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6303,18 +6525,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:13 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       request-context:
       - appId=
       trace-id:
-      - 471c5064c187b58c96e4ca34ab609731
+      - 41c5546155822e972badb14f61779a78
       transfer-encoding:
       - chunked
       x-cache:
@@ -6344,7 +6568,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:45 GMT
+      - Fri, 06 May 2022 18:02:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6360,18 +6584,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:35 GMT
+      - Fri, 06 May 2022 18:02:13 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       request-context:
       - appId=
       trace-id:
-      - 6a3392f136695be663f734364a3d8395
+      - 54031c5e42777d9ec08ff78d4449921c
       transfer-encoding:
       - chunked
       x-cache:
@@ -6401,7 +6627,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:45 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6417,18 +6643,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:05 GMT
       request-context:
       - appId=
       trace-id:
-      - 43683ee629ef9286913c1fc7be9681ab
+      - 5ee8bcc226ecb95ddae756ae89d85d65
       transfer-encoding:
       - chunked
       x-cache:
@@ -6458,7 +6686,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:45 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6475,18 +6703,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       request-context:
       - appId=
       trace-id:
-      - a24c2aa5f79badc753c6d69bcc701f8d
+      - 2fb942dc3c54a9b2cee30ad3e22ddde4
       transfer-encoding:
       - chunked
       x-cache:
@@ -6516,7 +6746,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:45 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6533,18 +6763,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       request-context:
       - appId=
       trace-id:
-      - 9eaaf6d9438e2fbc2d92d001e8542578
+      - 58aa182ac474b2ff8307dd9ff25e239e
       transfer-encoding:
       - chunked
       x-cache:
@@ -6573,7 +6805,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:45 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6588,18 +6820,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       request-context:
       - appId=
       trace-id:
-      - 7762a87794358e013feaa95c48cd1d4f
+      - 04ba99afedf74e595e8e8ca090588f31
       transfer-encoding:
       - chunked
       x-cache:
@@ -6628,7 +6862,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:45 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6643,18 +6877,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       request-context:
       - appId=
       trace-id:
-      - aee15c209abc39d7d7aaa3d6eb80999a
+      - 5877869d650b8fa42d0d35a5c5c9e64d
       transfer-encoding:
       - chunked
       x-cache:
@@ -6684,7 +6920,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:45 GMT
+      - Fri, 06 May 2022 18:02:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6701,18 +6937,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       request-context:
       - appId=
       trace-id:
-      - 759d481db9603a339ad3a18a143d873f
+      - 4cb3f21264ea6a138566ebf903e5f0f2
       transfer-encoding:
       - chunked
       x-cache:
@@ -6742,7 +6980,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:45 GMT
+      - Fri, 06 May 2022 18:02:13 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6758,18 +6996,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:06 GMT
       request-context:
       - appId=
       trace-id:
-      - 9aa12cbb8e7cfb4aee34c161c1acbc7e
+      - 471e8c68aafcea4ad1f9e7f3b2b97445
       transfer-encoding:
       - chunked
       x-cache:
@@ -6799,7 +7039,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:46 GMT
+      - Fri, 06 May 2022 18:02:13 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6816,18 +7056,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:36 GMT
+      - Fri, 06 May 2022 18:02:15 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       request-context:
       - appId=
       trace-id:
-      - 1e2d5fd86c1ac94e4b47880ba3de9776
+      - e7cf4276030202cbc89ea6f1a7d349b9
       transfer-encoding:
       - chunked
       x-cache:
@@ -6857,7 +7099,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:46 GMT
+      - Fri, 06 May 2022 18:02:13 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6873,18 +7115,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:15 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       request-context:
       - appId=
       trace-id:
-      - d2e886f806033095a61189a8a05636a5
+      - c81f875a6d99f931bcf2ceb629a72752
       transfer-encoding:
       - chunked
       x-cache:
@@ -6915,7 +7159,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:46 GMT
+      - Fri, 06 May 2022 18:02:13 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6932,18 +7176,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:15 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       request-context:
       - appId=
       trace-id:
-      - 90966e39848fa02705eadcee0eaec65d
+      - cfc465368069baeb81f174f3fca715f6
       transfer-encoding:
       - chunked
       x-cache:
@@ -6973,7 +7219,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:46 GMT
+      - Fri, 06 May 2022 18:02:13 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -6990,18 +7236,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:15 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       request-context:
       - appId=
       trace-id:
-      - b41182869de287be80e4205cc003b5d3
+      - d4bd0226753d2ecca1fa6b395c3b0662
       transfer-encoding:
       - chunked
       x-cache:
@@ -7030,7 +7278,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:46 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -7046,18 +7294,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:15 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:07 GMT
       request-context:
       - appId=
       trace-id:
-      - 38f240e62910fb089a5da7ba77fe6533
+      - dc38bfc14b169041bdc64d9c92f3f66e
       transfer-encoding:
       - chunked
       x-cache:
@@ -7086,7 +7336,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:46 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -7101,18 +7351,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:15 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       request-context:
       - appId=
       trace-id:
-      - 9ae2142cb2fd9633b7efceb48bb4eee0
+      - 19ad03a40b9bb026ae1fc5024e508513
       transfer-encoding:
       - chunked
       x-cache:
@@ -7142,7 +7394,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:46 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -7159,18 +7411,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:16 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       request-context:
       - appId=
       trace-id:
-      - a05f3ff26af45663828a582853d7fff8
+      - 7d7c4d91c9e95a9cb0d40063300e0f97
       transfer-encoding:
       - chunked
       x-cache:
@@ -7200,7 +7454,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:46 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -7216,18 +7470,20 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:35:37 GMT
+      - Fri, 06 May 2022 18:02:16 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:35:38 GMT
+      - Fri, 06 May 2022 18:02:08 GMT
       request-context:
       - appId=
       trace-id:
-      - c1e64d806e9dae772bec98fe2143ca5e
+      - e0981b947aa5af331c320209b7447f82
       transfer-encoding:
       - chunked
       x-cache:
@@ -7249,7 +7505,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:47 GMT
+      - Fri, 06 May 2022 18:02:14 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -7263,11 +7519,11 @@ interactions:
       connection:
       - keep-alive
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:58 GMT
       request-context:
       - appId=
       trace-id:
-      - 8a988f8411222818682d759b82e04430
+      - e55c5ac76b961c90587024eb3d284cb3
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -7287,7 +7543,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:47 GMT
+      - Fri, 06 May 2022 18:02:15 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -7301,11 +7557,11 @@ interactions:
       connection:
       - keep-alive
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       request-context:
       - appId=
       trace-id:
-      - 520758721a73aee1588cedcbb318abd9
+      - 691051725454bce457ce256262b0a273
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -7325,7 +7581,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:35:47 GMT
+      - Fri, 06 May 2022 18:02:15 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -7339,11 +7595,11 @@ interactions:
       connection:
       - keep-alive
       date:
-      - Fri, 06 May 2022 01:35:27 GMT
+      - Fri, 06 May 2022 18:01:59 GMT
       request-context:
       - appId=
       trace-id:
-      - c7a4e7bae551738b51665a7a8d4a2376
+      - d4e6d96d40be191c5b477c51c2c192e3
       x-cache:
       - CONFIG_NOCACHE
     status:

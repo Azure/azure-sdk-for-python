@@ -20,7 +20,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._job_router_operations import build_accept_job_action_request, build_cancel_job_action_request, build_close_job_action_request, build_complete_job_action_request, build_decline_job_action_request, build_delete_classification_policy_request, build_delete_distribution_policy_request, build_delete_exception_policy_request, build_delete_job_request, build_delete_queue_request, build_delete_worker_request, build_get_classification_policy_request, build_get_distribution_policy_request, build_get_exception_policy_request, build_get_in_queue_position_request, build_get_job_request, build_get_queue_request, build_get_queue_statistics_request, build_get_worker_request, build_list_classification_policies_request, build_list_distribution_policies_request, build_list_exception_policies_request, build_list_jobs_request, build_list_queues_request, build_list_workers_request, build_reclassify_job_request, build_upsert_classification_policy_request, build_upsert_distribution_policy_request, build_upsert_exception_policy_request, build_upsert_job_request, build_upsert_queue_request, build_upsert_worker_request
+from ...operations._job_router_operations import build_accept_job_action_request, build_cancel_job_action_request, build_close_job_action_request, build_complete_job_action_request, build_decline_job_action_request, build_delete_classification_policy_request, build_delete_distribution_policy_request, build_delete_exception_policy_request, build_delete_job_request, build_delete_queue_request, build_delete_worker_request, build_get_classification_policy_request, build_get_distribution_policy_request, build_get_exception_policy_request, build_get_in_queue_position_request, build_get_job_request, build_get_queue_request, build_get_queue_statistics_request, build_get_worker_request, build_list_classification_policies_request, build_list_distribution_policies_request, build_list_exception_policies_request, build_list_jobs_request, build_list_queues_request, build_list_workers_request, build_reclassify_job_action_request, build_upsert_classification_policy_request, build_upsert_distribution_policy_request, build_upsert_exception_policy_request, build_upsert_job_request, build_upsert_queue_request, build_upsert_worker_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -48,7 +48,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     async def upsert_classification_policy(
         self,
         id: str,
-        patch: Optional[_models.ClassificationPolicy] = None,
+        patch: _models.ClassificationPolicy,
         **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Upsert a classification policy.
@@ -58,7 +58,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         :param id: Id of the classification policy.
         :type id: str
         :param patch: Model of classification policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
+         https://datatracker.ietf.org/doc/html/rfc7386.
         :type patch: ~azure.communication.jobrouter.models.ClassificationPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ClassificationPolicy, or the result of cls(response)
@@ -77,10 +77,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ClassificationPolicy]
 
-        if patch is not None:
-            _json = self._serialize.body(patch, 'ClassificationPolicy')
-        else:
-            _json = None
+        _json = self._serialize.body(patch, 'ClassificationPolicy')
 
         request = build_upsert_classification_policy_request(
             id=id,
@@ -343,7 +340,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     async def upsert_distribution_policy(
         self,
         id: str,
-        patch: Optional[_models.DistributionPolicy] = None,
+        patch: _models.DistributionPolicy,
         **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Upsert a distribution policy.
@@ -353,7 +350,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         :param id: Id of the distribution policy.
         :type id: str
         :param patch: Model of distribution policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
+         https://datatracker.ietf.org/doc/html/rfc7386.
         :type patch: ~azure.communication.jobrouter.models.DistributionPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DistributionPolicy, or the result of cls(response)
@@ -372,10 +369,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DistributionPolicy]
 
-        if patch is not None:
-            _json = self._serialize.body(patch, 'DistributionPolicy')
-        else:
-            _json = None
+        _json = self._serialize.body(patch, 'DistributionPolicy')
 
         request = build_upsert_distribution_policy_request(
             id=id,
@@ -638,7 +632,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     async def upsert_exception_policy(
         self,
         id: str,
-        patch: Optional[_models.ExceptionPolicy] = None,
+        patch: _models.ExceptionPolicy,
         **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Upsert a exception policy.
@@ -648,7 +642,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         :param id: Id of the exception policy.
         :type id: str
         :param patch: Model of exception policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
+         https://datatracker.ietf.org/doc/html/rfc7386.
         :type patch: ~azure.communication.jobrouter.models.ExceptionPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExceptionPolicy, or the result of cls(response)
@@ -667,10 +661,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ExceptionPolicy]
 
-        if patch is not None:
-            _json = self._serialize.body(patch, 'ExceptionPolicy')
-        else:
-            _json = None
+        _json = self._serialize.body(patch, 'ExceptionPolicy')
 
         request = build_upsert_exception_policy_request(
             id=id,
@@ -932,19 +923,22 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def upsert_job(
         self,
-        job_id: str,
-        patch: Optional[_models.RouterJob] = None,
+        id: str,
+        patch: _models.RouterJob,
         **kwargs: Any
-    ) -> _models.RouterWorker:
-        """upsert_job.
+    ) -> _models.RouterJob:
+        """Upsert a job.
 
-        :param job_id:
-        :type job_id: str
-        :param patch:  Default value is None.
+        Upsert a job.
+
+        :param id: Id of the job.
+        :type id: str
+        :param patch: Model of job properties to be created or patched. See also:
+         https://datatracker.ietf.org/doc/html/rfc7386.
         :type patch: ~azure.communication.jobrouter.models.RouterJob
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterWorker, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.RouterWorker
+        :return: RouterJob, or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -957,15 +951,12 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterWorker]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJob]
 
-        if patch is not None:
-            _json = self._serialize.body(patch, 'RouterJob')
-        else:
-            _json = None
+        _json = self._serialize.body(patch, 'RouterJob')
 
         request = build_upsert_job_request(
-            job_id=job_id,
+            id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -991,14 +982,14 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RouterWorker', pipeline_response)
+        deserialized = self._deserialize('RouterJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    upsert_job.metadata = {'url': "/routing/jobs/{jobId}"}  # type: ignore
+    upsert_job.metadata = {'url': "/routing/jobs/{id}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -1075,7 +1066,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         Deletes a job and all of its traces.
 
-        :param id:
+        :param id: Id of the job.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1126,28 +1117,28 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace_async
-    async def reclassify_job(
+    async def reclassify_job_action(
         self,
         id: str,
         reclassify_job_request: Any = None,
         *,
         content_type: Optional[str] = "application/json",
         **kwargs: Any
-    ) -> _models.RouterJob:
+    ) -> Any:
         """Reclassify a job.
 
         Reclassify a job.
 
         :param id: Id of the job.
         :type id: str
-        :param reclassify_job_request:  Default value is None.
+        :param reclassify_job_request: Request object for reclassifying a job. Default value is None.
         :type reclassify_job_request: any
         :keyword content_type: Media type of the body sent to the API. Known values are:
          "application/json", "text/json", and "application/*+json". Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RouterJob, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -1159,19 +1150,19 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterJob]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
 
         if reclassify_job_request is not None:
             _json = self._serialize.body(reclassify_job_request, 'object')
         else:
             _json = None
 
-        request = build_reclassify_job_request(
+        request = build_reclassify_job_action_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.reclassify_job.metadata['url'],
+            template_url=self.reclassify_job_action.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1193,14 +1184,14 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RouterJob', pipeline_response)
+        deserialized = self._deserialize('object', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    reclassify_job.metadata = {'url': "/routing/jobs/{id}/reclassify"}  # type: ignore
+    reclassify_job_action.metadata = {'url': "/routing/jobs/{id}:reclassify"}  # type: ignore
 
 
     @distributed_trace_async
@@ -1627,8 +1618,8 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def accept_job_action(
         self,
-        offer_id: str,
         worker_id: str,
+        offer_id: str,
         **kwargs: Any
     ) -> _models.AcceptJobOfferResponse:
         """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
@@ -1637,10 +1628,10 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
         already.
 
-        :param offer_id: Id of the offer.
-        :type offer_id: str
         :param worker_id: Id of the worker.
         :type worker_id: str
+        :param offer_id: Id of the offer.
+        :type offer_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcceptJobOfferResponse, or the result of cls(response)
         :rtype: ~azure.communication.jobrouter.models.AcceptJobOfferResponse
@@ -1659,8 +1650,8 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         
         request = build_accept_job_action_request(
-            offer_id=offer_id,
             worker_id=worker_id,
+            offer_id=offer_id,
             api_version=api_version,
             template_url=self.accept_job_action.metadata['url'],
             headers=_headers,
@@ -1697,18 +1688,18 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def decline_job_action(
         self,
-        offer_id: str,
         worker_id: str,
+        offer_id: str,
         **kwargs: Any
     ) -> Any:
         """Declines an offer to work on a job.
 
         Declines an offer to work on a job.
 
-        :param offer_id: Id of the offer.
-        :type offer_id: str
         :param worker_id: Id of the worker.
         :type worker_id: str
+        :param offer_id: Id of the offer.
+        :type offer_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: any, or the result of cls(response)
         :rtype: any
@@ -1727,8 +1718,8 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         
         request = build_decline_job_action_request(
-            offer_id=offer_id,
             worker_id=worker_id,
+            offer_id=offer_id,
             api_version=api_version,
             template_url=self.decline_job_action.metadata['url'],
             headers=_headers,
@@ -1765,18 +1756,18 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def upsert_queue(
         self,
-        queue_id: str,
-        patch: Optional[_models.JobQueueInternal] = None,
+        id: str,
+        patch: _models.JobQueueInternal,
         **kwargs: Any
     ) -> _models.JobQueueInternal:
-        """Updates a queue.
+        """Upsert a queue.
 
-        Updates a queue.
+        Upsert a queue.
 
-        :param queue_id:
-        :type queue_id: str
+        :param id: Id of the queue.
+        :type id: str
         :param patch: Model of queue properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
+         https://datatracker.ietf.org/doc/html/rfc7386.
         :type patch: ~azure.communication.jobrouter.models.JobQueueInternal
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobQueueInternal, or the result of cls(response)
@@ -1795,13 +1786,10 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobQueueInternal]
 
-        if patch is not None:
-            _json = self._serialize.body(patch, 'JobQueueInternal')
-        else:
-            _json = None
+        _json = self._serialize.body(patch, 'JobQueueInternal')
 
         request = build_upsert_queue_request(
-            queue_id=queue_id,
+            id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -1834,7 +1822,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    upsert_queue.metadata = {'url': "/routing/queues/{queueId}"}  # type: ignore
+    upsert_queue.metadata = {'url': "/routing/queues/{id}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -2124,17 +2112,17 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
     async def upsert_worker(
         self,
         worker_id: str,
-        patch: Optional[_models.RouterWorker] = None,
+        patch: _models.RouterWorker,
         **kwargs: Any
     ) -> _models.RouterWorker:
-        """Updates a worker.
+        """Upsert a worker.
 
-        Updates a worker.
+        Upsert a worker.
 
         :param worker_id: Id of the worker.
         :type worker_id: str
         :param patch: Model of worker properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
+         https://datatracker.ietf.org/doc/html/rfc7386.
         :type patch: ~azure.communication.jobrouter.models.RouterWorker
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouterWorker, or the result of cls(response)
@@ -2153,10 +2141,7 @@ class JobRouterOperations:  # pylint: disable=too-many-public-methods
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.RouterWorker]
 
-        if patch is not None:
-            _json = self._serialize.body(patch, 'RouterWorker')
-        else:
-            _json = None
+        _json = self._serialize.body(patch, 'RouterWorker')
 
         request = build_upsert_worker_request(
             worker_id=worker_id,

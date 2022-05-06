@@ -11,7 +11,7 @@ import msrest.serialization
 
 
 class AcceptJobOfferResponse(msrest.serialization.Model):
-    """AcceptJobOfferResponse.
+    """Response containing Id's for the worker, job, and assignment from an accepted offer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -461,7 +461,7 @@ class CancelJobRequest(msrest.serialization.Model):
 
 
 class ChannelConfiguration(msrest.serialization.Model):
-    """ChannelConfiguration.
+    """Represents the capacity a job in this channel will consume from a worker.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -600,7 +600,7 @@ class ClassificationPolicyCollection(msrest.serialization.Model):
 
 
 class CloseJobRequest(msrest.serialization.Model):
-    """Request payload for completing jobs.
+    """Request payload for closing jobs.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -726,7 +726,7 @@ class CompleteJobRequest(msrest.serialization.Model):
 
 
 class QueueSelectorAttachment(msrest.serialization.Model):
-    """QueueSelectorAttachment.
+    """An attachment of label selectors to resolve a queue to a job from a classification policy.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ConditionalQueueSelector, PassThroughQueueSelector, RuleEngineQueueSelector, StaticQueueSelector, WeightedAllocationQueueSelector.
@@ -815,7 +815,7 @@ class ConditionalQueueSelector(QueueSelectorAttachment):
 
 
 class WorkerSelectorAttachment(msrest.serialization.Model):
-    """WorkerSelectorAttachment.
+    """An attachment which attaches WorkerSelectors to workers.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ConditionalWorkerSelector, PassThroughWorkerSelector, RuleEngineWorkerSelector, StaticWorkerSelector, WeightedAllocationWorkerSelector.
@@ -954,7 +954,7 @@ class DistributionPolicy(msrest.serialization.Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'offer_ttl_seconds': {'key': 'offerTTLSeconds', 'type': 'float'},
+        'offer_ttl_seconds': {'key': 'offerTtlSeconds', 'type': 'float'},
         'mode': {'key': 'mode', 'type': 'DistributionMode'},
     }
 
@@ -1176,7 +1176,7 @@ class ExpressionRule(RouterRule):
 
 
 class JobAssignment(msrest.serialization.Model):
-    """JobAssignment.
+    """Assigns a job to a worker.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1301,7 +1301,7 @@ class JobExceptionTrigger(msrest.serialization.Model):
 
 
 class JobOffer(msrest.serialization.Model):
-    """JobOffer.
+    """An offer of an assignment of work to a worker.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1419,12 +1419,14 @@ class JobQueueInternal(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The Id of this queue.
     :vartype id: str
     :ivar name: The name of this queue.
     :vartype name: str
-    :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
-     is distributed to workers.
+    :ivar distribution_policy_id: Required. The ID of the distribution policy that will determine
+     how a job is distributed to workers.
     :vartype distribution_policy_id: str
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
@@ -1436,6 +1438,7 @@ class JobQueueInternal(msrest.serialization.Model):
 
     _validation = {
         'id': {'readonly': True},
+        'distribution_policy_id': {'required': True},
     }
 
     _attribute_map = {
@@ -1453,8 +1456,8 @@ class JobQueueInternal(msrest.serialization.Model):
         """
         :keyword name: The name of this queue.
         :paramtype name: str
-        :keyword distribution_policy_id: The ID of the distribution policy that will determine how a
-         job is distributed to workers.
+        :keyword distribution_policy_id: Required. The ID of the distribution policy that will
+         determine how a job is distributed to workers.
         :paramtype distribution_policy_id: str
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -1466,7 +1469,7 @@ class JobQueueInternal(msrest.serialization.Model):
         super(JobQueueInternal, self).__init__(**kwargs)
         self.id = None
         self.name = kwargs.get('name', None)
-        self.distribution_policy_id = kwargs.get('distribution_policy_id', None)
+        self.distribution_policy_id = kwargs['distribution_policy_id']
         self.labels = kwargs.get('labels', None)
         self.exception_policy_id = kwargs.get('exception_policy_id', None)
 
@@ -1633,7 +1636,7 @@ class ManualReclassifyExceptionAction(ExceptionAction):
 
 
 class PagedClassificationPolicy(msrest.serialization.Model):
-    """PagedClassificationPolicy.
+    """A classification policy returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1705,7 +1708,7 @@ class PagedClassificationPolicy(msrest.serialization.Model):
 
 
 class PagedDistributionPolicy(msrest.serialization.Model):
-    """PagedDistributionPolicy.
+    """A distribution policy returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1727,7 +1730,7 @@ class PagedDistributionPolicy(msrest.serialization.Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'offer_ttl_seconds': {'key': 'offerTTLSeconds', 'type': 'float'},
+        'offer_ttl_seconds': {'key': 'offerTtlSeconds', 'type': 'float'},
         'mode': {'key': 'mode', 'type': 'DistributionMode'},
     }
 
@@ -1752,7 +1755,7 @@ class PagedDistributionPolicy(msrest.serialization.Model):
 
 
 class PagedExceptionPolicy(msrest.serialization.Model):
-    """PagedExceptionPolicy.
+    """An exception policy returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1793,7 +1796,7 @@ class PagedExceptionPolicy(msrest.serialization.Model):
 
 
 class PagedJob(msrest.serialization.Model):
-    """PagedJob.
+    """A job returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1909,7 +1912,7 @@ class PagedJob(msrest.serialization.Model):
 
 
 class PagedQueue(msrest.serialization.Model):
-    """PagedQueue.
+    """A queue returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1966,7 +1969,7 @@ class PagedQueue(msrest.serialization.Model):
 
 
 class PagedWorker(msrest.serialization.Model):
-    """PagedWorker.
+    """A worker returned from a pageable list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2230,7 +2233,7 @@ class QueueLengthExceptionTrigger(JobExceptionTrigger):
 
 
 class QueueSelector(msrest.serialization.Model):
-    """QueueSelector.
+    """Describes a condition that must be met against a set of labels for queue selection.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2328,7 +2331,7 @@ class QueueStatistics(msrest.serialization.Model):
 
 
 class QueueWeightedAllocation(msrest.serialization.Model):
-    """QueueWeightedAllocation.
+    """Contains the weight percentage and label selectors to be applied if selected for weighted distributions.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2588,7 +2591,7 @@ class RouterJob(msrest.serialization.Model):
 
 
 class RouterWorker(msrest.serialization.Model):
-    """RouterWorker.
+    """An entity for jobs to be routed to.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2681,7 +2684,7 @@ class RouterWorker(msrest.serialization.Model):
 
 
 class RuleEngineQueueSelector(QueueSelectorAttachment):
-    """RuleEngineQueueSelector.
+    """Attaches labels to a worker when a RouterRule is resolved.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2728,7 +2731,7 @@ class RuleEngineQueueSelector(QueueSelectorAttachment):
 
 
 class RuleEngineWorkerSelector(WorkerSelectorAttachment):
-    """RuleEngineWorkerSelector.
+    """Attaches labels to a worker when a RouterRule is resolved.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2847,7 +2850,8 @@ class StaticQueueSelector(QueueSelectorAttachment):
     :ivar kind: Required. The type discriminator describing the type of label selector
      attachment.Constant filled by server.
     :vartype kind: str
-    :ivar label_selector: Required.
+    :ivar label_selector: Required. Describes a condition that must be met against a set of labels
+     for queue selection.
     :vartype label_selector: ~azure.communication.jobrouter.models.QueueSelector
     """
 
@@ -2866,7 +2870,8 @@ class StaticQueueSelector(QueueSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword label_selector: Required.
+        :keyword label_selector: Required. Describes a condition that must be met against a set of
+         labels for queue selection.
         :paramtype label_selector: ~azure.communication.jobrouter.models.QueueSelector
         """
         super(StaticQueueSelector, self).__init__(**kwargs)
@@ -2916,7 +2921,8 @@ class StaticWorkerSelector(WorkerSelectorAttachment):
     :ivar kind: Required. The type discriminator describing the type of label selector
      attachment.Constant filled by server.
     :vartype kind: str
-    :ivar label_selector: Required.
+    :ivar label_selector: Required. Describes a condition that must be met against a set of labels
+     for worker selection.
     :vartype label_selector: ~azure.communication.jobrouter.models.WorkerSelector
     """
 
@@ -2935,7 +2941,8 @@ class StaticWorkerSelector(WorkerSelectorAttachment):
         **kwargs
     ):
         """
-        :keyword label_selector: Required.
+        :keyword label_selector: Required. Describes a condition that must be met against a set of
+         labels for worker selection.
         :paramtype label_selector: ~azure.communication.jobrouter.models.WorkerSelector
         """
         super(StaticWorkerSelector, self).__init__(**kwargs)
@@ -3051,7 +3058,7 @@ class WeightedAllocationWorkerSelector(WorkerSelectorAttachment):
 
 
 class WorkerAssignment(msrest.serialization.Model):
-    """WorkerAssignment.
+    """The assignment for a worker to a job.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3139,7 +3146,7 @@ class WorkerCollection(msrest.serialization.Model):
 
 
 class WorkerSelector(msrest.serialization.Model):
-    """WorkerSelector.
+    """Describes a condition that must be met against a set of labels for worker selection.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3197,7 +3204,7 @@ class WorkerSelector(msrest.serialization.Model):
 
 
 class WorkerWeightedAllocation(msrest.serialization.Model):
-    """WorkerWeightedAllocation.
+    """Contains the weight percentage and label selectors to be applied if selected for weighted distributions.
 
     All required parameters must be populated in order to send to Azure.
 

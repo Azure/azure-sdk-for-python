@@ -14,8 +14,9 @@ autorest SWAGGER.md
 ```
 
 ### Settings
+
 ``` yaml
-input-file: ./swagger.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/communication/data-plane/JobRouter/preview/2021-10-20-preview2/communicationservicejobrouter.json
 output-folder: ../azure/communication/jobrouter/_generated
 namespace: azure.communication.jobrouter
 no-namespace-folders: true

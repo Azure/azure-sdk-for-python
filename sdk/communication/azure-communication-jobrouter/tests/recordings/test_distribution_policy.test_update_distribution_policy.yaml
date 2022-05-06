@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"name": "tst_update_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "best-worker",
+    body: '{"name": "tst_update_dp", "offerTtlSeconds": 10.0, "mode": {"kind": "best-worker",
       "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
     headers:
       Accept:
@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:42 GMT
+      - Fri, 06 May 2022 17:59:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -30,20 +30,18 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
-      connection:
-      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:26 GMT
+      - Fri, 06 May 2022 17:59:27 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:34 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       request-context:
       - appId=
       trace-id:
-      - c7246355af27db450fbefdc1b1b0fe35
+      - 123e774fe73527a68c0122cc2f7dab0a
       transfer-encoding:
       - chunked
       x-cache:
@@ -52,8 +50,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "tst_update_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "best-worker",
-      "minConcurrentOffers": 2, "maxConcurrentOffers": 2}}'
+    body: '{"name": "tst_update_dp", "mode": {"kind": "best-worker", "minConcurrentOffers":
+      2, "maxConcurrentOffers": 2}}'
     headers:
       Accept:
       - application/json
@@ -62,13 +60,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '135'
+      - '110'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:43 GMT
+      - Fri, 06 May 2022 17:59:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -82,20 +80,18 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
-      connection:
-      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:26 GMT
+      - Fri, 06 May 2022 17:59:27 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:34 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       request-context:
       - appId=
       trace-id:
-      - f266e9f00fa575c6dfd24947063341be
+      - b84ea827969c36b35740620d7b61dd9e
       transfer-encoding:
       - chunked
       x-cache:
@@ -104,7 +100,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "tst_update_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "longest-idle",
+    body: '{"name": "tst_update_dp", "offerTtlSeconds": 10.0, "mode": {"kind": "longest-idle",
       "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
     headers:
       Accept:
@@ -120,7 +116,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:43 GMT
+      - Fri, 06 May 2022 17:59:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -132,20 +128,18 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
-      connection:
-      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:27 GMT
+      - Fri, 06 May 2022 17:59:27 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:34 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       request-context:
       - appId=
       trace-id:
-      - dc7d36e7a64382b4e505b31c6759fcdf
+      - 4081dcecc2e73e2dea847ca760863fae
       transfer-encoding:
       - chunked
       x-cache:
@@ -154,8 +148,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "tst_update_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "longest-idle",
-      "minConcurrentOffers": 2, "maxConcurrentOffers": 2}}'
+    body: '{"name": "tst_update_dp", "mode": {"kind": "longest-idle", "minConcurrentOffers":
+      2, "maxConcurrentOffers": 2}}'
     headers:
       Accept:
       - application/json
@@ -164,13 +158,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '136'
+      - '111'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:43 GMT
+      - Fri, 06 May 2022 17:59:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -182,20 +176,18 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
-      connection:
-      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:27 GMT
+      - Fri, 06 May 2022 17:59:27 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:34 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       request-context:
       - appId=
       trace-id:
-      - 8daf64cddbf10af55c11198f9fb291dc
+      - cffd5396b2616bc1cdc561e6e5111a36
       transfer-encoding:
       - chunked
       x-cache:
@@ -204,7 +196,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "tst_update_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "round-robin",
+    body: '{"name": "tst_update_dp", "offerTtlSeconds": 10.0, "mode": {"kind": "round-robin",
       "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
     headers:
       Accept:
@@ -220,7 +212,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:43 GMT
+      - Fri, 06 May 2022 17:59:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -232,20 +224,18 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
-      connection:
-      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:27 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:34 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       request-context:
       - appId=
       trace-id:
-      - e8ef61012ca9094259abeef3f7008aea
+      - 7e019bc2010ae8326186184d68e132bc
       transfer-encoding:
       - chunked
       x-cache:
@@ -254,8 +244,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "tst_update_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "round-robin",
-      "minConcurrentOffers": 2, "maxConcurrentOffers": 2}}'
+    body: '{"name": "tst_update_dp", "mode": {"kind": "round-robin", "minConcurrentOffers":
+      2, "maxConcurrentOffers": 2}}'
     headers:
       Accept:
       - application/json
@@ -264,13 +254,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '135'
+      - '110'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:43 GMT
+      - Fri, 06 May 2022 17:59:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -282,20 +272,18 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
-      connection:
-      - keep-alive
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:27 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:35 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       request-context:
       - appId=
       trace-id:
-      - 3b3dd367e170859bec2287e16b50e119
+      - 091a4101294f6b66ebbcf8a591544acf
       transfer-encoding:
       - chunked
       x-cache:
@@ -317,7 +305,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:43 GMT
+      - Fri, 06 May 2022 17:59:35 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -328,12 +316,14 @@ interactions:
     headers:
       api-supported-versions:
       - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
       date:
-      - Fri, 06 May 2022 01:37:34 GMT
+      - Fri, 06 May 2022 17:59:30 GMT
       request-context:
       - appId=
       trace-id:
-      - 7709b0445a798a776d42574abbadb2ba
+      - 444ac72c6833dcc30110801a1d26dd8a
       x-cache:
       - CONFIG_NOCACHE
     status:

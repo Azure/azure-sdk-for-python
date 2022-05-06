@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"name": "tst_create_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "best-worker",
+    body: '{"name": "tst_create_dp", "offerTtlSeconds": 10.0, "mode": {"kind": "best-worker",
       "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
     headers:
       Accept:
@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:37 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -33,15 +33,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:29 GMT
+      - Fri, 06 May 2022 17:59:21 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:29 GMT
+      - Fri, 06 May 2022 17:59:22 GMT
       request-context:
       - appId=
       trace-id:
-      - 05978a706110d2aabafd2ffd56cea324
+      - e6c7bf96e50e165b34adfcdc449eaab6
       transfer-encoding:
       - chunked
       x-cache:
@@ -50,7 +50,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "tst_create_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "longest-idle",
+    body: '{"name": "tst_create_dp", "offerTtlSeconds": 10.0, "mode": {"kind": "longest-idle",
       "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
     headers:
       Accept:
@@ -66,7 +66,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:37 GMT
+      - Fri, 06 May 2022 17:59:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -81,15 +81,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:29 GMT
+      - Fri, 06 May 2022 17:59:22 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:29 GMT
+      - Fri, 06 May 2022 17:59:22 GMT
       request-context:
       - appId=
       trace-id:
-      - 83458491a9ba44d09331d9ae879aefd7
+      - b5b050444f8651b3bc5d05a08a2efcac
       transfer-encoding:
       - chunked
       x-cache:
@@ -98,7 +98,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "tst_create_dp", "offerTTLSeconds": 10.0, "mode": {"kind": "round-robin",
+    body: '{"name": "tst_create_dp", "offerTtlSeconds": 10.0, "mode": {"kind": "round-robin",
       "minConcurrentOffers": 1, "maxConcurrentOffers": 1}}'
     headers:
       Accept:
@@ -114,7 +114,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:37 GMT
+      - Fri, 06 May 2022 17:59:29 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -129,15 +129,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 01:37:29 GMT
+      - Fri, 06 May 2022 17:59:22 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 01:37:29 GMT
+      - Fri, 06 May 2022 17:59:23 GMT
       request-context:
       - appId=
       trace-id:
-      - 07b6593d817cf83b891dace4ff61c755
+      - 5050605edf298406060660902f0127f4
       transfer-encoding:
       - chunked
       x-cache:
@@ -159,7 +159,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 01:37:38 GMT
+      - Fri, 06 May 2022 17:59:29 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -173,11 +173,11 @@ interactions:
       connection:
       - keep-alive
       date:
-      - Fri, 06 May 2022 01:37:20 GMT
+      - Fri, 06 May 2022 17:59:14 GMT
       request-context:
       - appId=
       trace-id:
-      - 66e91ac1df54d11ca72d702d08eba9a3
+      - c372db1ae6f28a2e139e183a39cf818c
       x-cache:
       - CONFIG_NOCACHE
     status:
