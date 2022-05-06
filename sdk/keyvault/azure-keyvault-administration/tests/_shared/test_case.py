@@ -6,6 +6,8 @@ import time
 
 from devtools_testutils import AzureRecordedTestCase
 
+from azure.keyvault.administration._internal import HttpChallengeCache
+
 
 class KeyVaultTestCase(AzureRecordedTestCase):
     def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
@@ -32,3 +34,7 @@ class KeyVaultTestCase(AzureRecordedTestCase):
                 return
 
         self.fail("expected exception {expected_exception} was not raised")
+
+    def teardown_method(self, method):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
