@@ -519,6 +519,7 @@ Note: The Healthcare Entities Analysis service is only available in the Standard
 - Custom Entity Recognition (see sample [here][recognize_custom_entities_sample])
 - Custom Single Category Classification (see sample [here][single_category_classify_sample])
 - Custom Multi Category Classification (see sample [here][multi_category_classify_sample])
+- Healthcare Entities Analysis
 
 ```python
 from azure.core.credentials import AzureKeyCredential
