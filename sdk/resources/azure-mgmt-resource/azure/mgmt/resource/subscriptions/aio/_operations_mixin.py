@@ -11,14 +11,16 @@
 from msrest import Serializer, Deserializer
 from typing import Any, Optional
 
+from .. import models as _models
+
 
 class SubscriptionClientOperationsMixin(object):
 
     async def check_resource_name(
         self,
-        resource_name_definition: Optional["_models.ResourceName"] = None,
+        resource_name_definition: Optional[_models.ResourceName] = None,
         **kwargs: Any
-    ) -> "_models.CheckResourceNameResult":
+    ) -> _models.CheckResourceNameResult:
         """Checks resource name validity.
 
         A resource name is valid if it is not a reserved word, does not contains a reserved word and

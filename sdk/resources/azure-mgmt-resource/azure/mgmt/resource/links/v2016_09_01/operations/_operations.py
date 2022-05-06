@@ -16,13 +16,13 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-JSONType = Any
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -30,25 +30,26 @@ _SERIALIZER.client_side_validation = False
 def build_operations_list_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/providers/Microsoft.Resources/operations")
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -57,8 +58,9 @@ def build_resource_links_delete_request(
     link_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
     # Construct URL
     _url = kwargs.pop("template_url", "/{linkId}")
     path_format_arguments = {
@@ -68,13 +70,12 @@ def build_resource_links_delete_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     return HttpRequest(
         method="DELETE",
         url=_url,
-        params=_query_parameters,
+        params=_params,
         **kwargs
     )
 
@@ -82,14 +83,17 @@ def build_resource_links_delete_request(
 def build_resource_links_create_or_update_request(
     link_id: str,
     *,
-    json: JSONType = None,
+    json: Optional[_models.ResourceLink] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/{linkId}")
     path_format_arguments = {
@@ -99,20 +103,18 @@ def build_resource_links_create_or_update_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         json=json,
         content=content,
         **kwargs
@@ -123,9 +125,12 @@ def build_resource_links_get_request(
     link_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/{linkId}")
     path_format_arguments = {
@@ -135,18 +140,16 @@ def build_resource_links_get_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -157,9 +160,12 @@ def build_resource_links_list_at_subscription_request(
     filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/links")
     path_format_arguments = {
@@ -169,20 +175,18 @@ def build_resource_links_list_at_subscription_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if filter is not None:
-        _query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -193,9 +197,12 @@ def build_resource_links_list_at_source_scope_request(
     filter: Optional[str] = "atScope()",
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/{scope}/providers/Microsoft.Resources/links")
     path_format_arguments = {
@@ -205,50 +212,46 @@ def build_resource_links_list_at_source_scope_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if filter is not None:
-        _query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
-class Operations(object):
-    """Operations operations.
+class Operations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.links.v2016_09_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.links.v2016_09_01.ManagementLinkClient`'s
+        :attr:`operations` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list(
         self,
         **kwargs: Any
-    ) -> Iterable["_models.OperationListResult"]:
+    ) -> Iterable[_models.OperationListResult]:
         """Lists all of the available Microsoft.Resources REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -257,30 +260,37 @@ class Operations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.links.v2016_09_01.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
                 request = build_operations_list_request(
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_operations_list_request(
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -312,27 +322,25 @@ class Operations(object):
             get_next, extract_data
         )
     list.metadata = {'url': "/providers/Microsoft.Resources/operations"}  # type: ignore
-class ResourceLinksOperations(object):
-    """ResourceLinksOperations operations.
+class ResourceLinksOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.links.v2016_09_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.links.v2016_09_01.ManagementLinkClient`'s
+        :attr:`resource_links` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -352,24 +360,29 @@ class ResourceLinksOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
         request = build_resource_links_delete_request(
             link_id=link_id,
             api_version=api_version,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -390,9 +403,9 @@ class ResourceLinksOperations(object):
     def create_or_update(
         self,
         link_id: str,
-        parameters: "_models.ResourceLink",
+        parameters: _models.ResourceLink,
         **kwargs: Any
-    ) -> "_models.ResourceLink":
+    ) -> _models.ResourceLink:
         """Creates or updates a resource link between the specified resources.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
@@ -407,14 +420,17 @@ class ResourceLinksOperations(object):
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceLink"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ResourceLink]
 
         _json = self._serialize.body(parameters, 'ResourceLink')
 
@@ -424,11 +440,13 @@ class ResourceLinksOperations(object):
             content_type=content_type,
             json=_json,
             template_url=self.create_or_update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -458,7 +476,7 @@ class ResourceLinksOperations(object):
         self,
         link_id: str,
         **kwargs: Any
-    ) -> "_models.ResourceLink":
+    ) -> _models.ResourceLink:
         """Gets a resource link with the specified ID.
 
         :param link_id: The fully qualified Id of the resource link. For example,
@@ -469,24 +487,29 @@ class ResourceLinksOperations(object):
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceLink"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ResourceLink]
 
         
         request = build_resource_links_get_request(
             link_id=link_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -512,7 +535,7 @@ class ResourceLinksOperations(object):
         self,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ResourceLinkResult"]:
+    ) -> Iterable[_models.ResourceLinkResult]:
         """Gets all the linked resources for the subscription.
 
         :param filter: The filter to apply on the list resource links operation. The supported filter
@@ -525,13 +548,16 @@ class ResourceLinksOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceLinkResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ResourceLinkResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -540,18 +566,22 @@ class ResourceLinksOperations(object):
                     api_version=api_version,
                     filter=filter,
                     template_url=self.list_at_subscription.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_resource_links_list_at_subscription_request(
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -590,7 +620,7 @@ class ResourceLinksOperations(object):
         scope: str,
         filter: Optional[str] = "atScope()",
         **kwargs: Any
-    ) -> Iterable["_models.ResourceLinkResult"]:
+    ) -> Iterable[_models.ResourceLinkResult]:
         """Gets a list of resource links at and below the specified source scope.
 
         :param scope: The fully qualified ID of the scope for getting the resource links. For example,
@@ -598,7 +628,7 @@ class ResourceLinksOperations(object):
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup.
         :type scope: str
         :param filter: The filter to apply when getting resource links. To get links only at the
-         specified scope (not below the scope), use Filter.atScope(). Possible values are "atScope()" or
+         specified scope (not below the scope), use Filter.atScope(). Known values are "atScope()" or
          None. Default value is "atScope()".
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -607,13 +637,16 @@ class ResourceLinksOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2016-09-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceLinkResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2016-09-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ResourceLinkResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -622,18 +655,22 @@ class ResourceLinksOperations(object):
                     api_version=api_version,
                     filter=filter,
                     template_url=self.list_at_source_scope.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_resource_links_list_at_source_scope_request(
                     scope=scope,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

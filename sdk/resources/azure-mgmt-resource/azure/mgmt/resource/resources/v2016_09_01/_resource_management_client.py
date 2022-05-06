@@ -67,12 +67,24 @@ class ResourceManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.providers = ProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_groups = ResourceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resources = ResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployment_operations = DeploymentOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.providers = ProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resource_groups = ResourceGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.resources = ResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.tags = TagsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.deployment_operations = DeploymentOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

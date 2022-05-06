@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._template_specs_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AzureResourceBase(msrest.serialization.Model):
@@ -182,7 +184,7 @@ class SystemData(msrest.serialization.Model):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or
      ~azure.mgmt.resource.templatespecs.v2022_02_01.models.CreatedByType
@@ -190,8 +192,8 @@ class SystemData(msrest.serialization.Model):
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.resource.templatespecs.v2022_02_01.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -211,26 +213,26 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or
          ~azure.mgmt.resource.templatespecs.v2022_02_01.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.resource.templatespecs.v2022_02_01.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
@@ -351,7 +353,7 @@ class TemplateSpecsError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         **kwargs
     ):
         """
@@ -386,7 +388,7 @@ class TemplateSpecsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TemplateSpec"]] = None,
+        value: Optional[List["_models.TemplateSpec"]] = None,
         **kwargs
     ):
         """
@@ -509,7 +511,7 @@ class TemplateSpecVersion(AzureResourceBase):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        linked_templates: Optional[List["LinkedTemplateArtifact"]] = None,
+        linked_templates: Optional[List["_models.LinkedTemplateArtifact"]] = None,
         metadata: Optional[Any] = None,
         main_template: Optional[Any] = None,
         ui_form_definition: Optional[Any] = None,
@@ -604,7 +606,7 @@ class TemplateSpecVersionsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TemplateSpecVersion"]] = None,
+        value: Optional[List["_models.TemplateSpecVersion"]] = None,
         **kwargs
     ):
         """

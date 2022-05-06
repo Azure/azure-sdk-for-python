@@ -7,12 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._deployment_scripts_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AzureResourceBase(msrest.serialization.Model):
@@ -77,7 +79,7 @@ class DeploymentScript(AzureResourceBase):
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Type of the script.Constant filled by server. Possible values include:
+    :ivar kind: Required. Type of the script.Constant filled by server. Known values are:
      "AzurePowerShell", "AzureCLI".
     :vartype kind: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptType
@@ -114,7 +116,7 @@ class DeploymentScript(AzureResourceBase):
     def __init__(
         self,
         *,
-        identity: "ManagedServiceIdentity",
+        identity: "_models.ManagedServiceIdentity",
         location: str,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -160,7 +162,7 @@ class AzureCliScript(DeploymentScript):
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Type of the script.Constant filled by server. Possible values include:
+    :ivar kind: Required. Type of the script.Constant filled by server. Known values are:
      "AzurePowerShell", "AzureCLI".
     :vartype kind: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptType
@@ -174,12 +176,12 @@ class AzureCliScript(DeploymentScript):
     :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
-     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration". Default value: "Always".
+     state. Default setting is 'Always'. Known values are: "Always", "OnSuccess", "OnExpiration".
+     Default value: "Always".
     :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
-     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     Known values are: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptProvisioningState
@@ -258,19 +260,19 @@ class AzureCliScript(DeploymentScript):
     def __init__(
         self,
         *,
-        identity: "ManagedServiceIdentity",
+        identity: "_models.ManagedServiceIdentity",
         location: str,
         retention_interval: datetime.timedelta,
         az_cli_version: str,
         tags: Optional[Dict[str, str]] = None,
-        container_settings: Optional["ContainerConfiguration"] = None,
-        storage_account_settings: Optional["StorageAccountConfiguration"] = None,
-        cleanup_preference: Optional[Union[str, "CleanupOptions"]] = "Always",
+        container_settings: Optional["_models.ContainerConfiguration"] = None,
+        storage_account_settings: Optional["_models.StorageAccountConfiguration"] = None,
+        cleanup_preference: Optional[Union[str, "_models.CleanupOptions"]] = "Always",
         primary_script_uri: Optional[str] = None,
         supporting_script_uris: Optional[List[str]] = None,
         script_content: Optional[str] = None,
         arguments: Optional[str] = None,
-        environment_variables: Optional[List["EnvironmentVariable"]] = None,
+        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         force_update_tag: Optional[str] = None,
         timeout: Optional[datetime.timedelta] = "P1D",
         **kwargs
@@ -292,7 +294,7 @@ class AzureCliScript(DeploymentScript):
         :paramtype storage_account_settings:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
         :keyword cleanup_preference: The clean up preference when the script execution gets in a
-         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         terminal state. Default setting is 'Always'. Known values are: "Always", "OnSuccess",
          "OnExpiration". Default value: "Always".
         :paramtype cleanup_preference: str or
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
@@ -394,7 +396,7 @@ class ScriptConfigurationBase(msrest.serialization.Model):
         supporting_script_uris: Optional[List[str]] = None,
         script_content: Optional[str] = None,
         arguments: Optional[str] = None,
-        environment_variables: Optional[List["EnvironmentVariable"]] = None,
+        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         force_update_tag: Optional[str] = None,
         timeout: Optional[datetime.timedelta] = "P1D",
         **kwargs
@@ -447,12 +449,12 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
     :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
-     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration". Default value: "Always".
+     state. Default setting is 'Always'. Known values are: "Always", "OnSuccess", "OnExpiration".
+     Default value: "Always".
     :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
-     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     Known values are: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptProvisioningState
@@ -480,9 +482,9 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        container_settings: Optional["ContainerConfiguration"] = None,
-        storage_account_settings: Optional["StorageAccountConfiguration"] = None,
-        cleanup_preference: Optional[Union[str, "CleanupOptions"]] = "Always",
+        container_settings: Optional["_models.ContainerConfiguration"] = None,
+        storage_account_settings: Optional["_models.StorageAccountConfiguration"] = None,
+        cleanup_preference: Optional[Union[str, "_models.CleanupOptions"]] = "Always",
         **kwargs
     ):
         """
@@ -493,7 +495,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
         :paramtype storage_account_settings:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
         :keyword cleanup_preference: The clean up preference when the script execution gets in a
-         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         terminal state. Default setting is 'Always'. Known values are: "Always", "OnSuccess",
          "OnExpiration". Default value: "Always".
         :paramtype cleanup_preference: str or
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
@@ -543,12 +545,12 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
     :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
-     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration". Default value: "Always".
+     state. Default setting is 'Always'. Known values are: "Always", "OnSuccess", "OnExpiration".
+     Default value: "Always".
     :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
-     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     Known values are: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptProvisioningState
@@ -596,12 +598,12 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         supporting_script_uris: Optional[List[str]] = None,
         script_content: Optional[str] = None,
         arguments: Optional[str] = None,
-        environment_variables: Optional[List["EnvironmentVariable"]] = None,
+        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         force_update_tag: Optional[str] = None,
         timeout: Optional[datetime.timedelta] = "P1D",
-        container_settings: Optional["ContainerConfiguration"] = None,
-        storage_account_settings: Optional["StorageAccountConfiguration"] = None,
-        cleanup_preference: Optional[Union[str, "CleanupOptions"]] = "Always",
+        container_settings: Optional["_models.ContainerConfiguration"] = None,
+        storage_account_settings: Optional["_models.StorageAccountConfiguration"] = None,
+        cleanup_preference: Optional[Union[str, "_models.CleanupOptions"]] = "Always",
         **kwargs
     ):
         """
@@ -635,7 +637,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
         :paramtype storage_account_settings:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
         :keyword cleanup_preference: The clean up preference when the script execution gets in a
-         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         terminal state. Default setting is 'Always'. Known values are: "Always", "OnSuccess",
          "OnExpiration". Default value: "Always".
         :paramtype cleanup_preference: str or
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
@@ -682,7 +684,7 @@ class AzurePowerShellScript(DeploymentScript):
     :vartype location: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. Type of the script.Constant filled by server. Possible values include:
+    :ivar kind: Required. Type of the script.Constant filled by server. Known values are:
      "AzurePowerShell", "AzureCLI".
     :vartype kind: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptType
@@ -696,12 +698,12 @@ class AzurePowerShellScript(DeploymentScript):
     :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
-     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration". Default value: "Always".
+     state. Default setting is 'Always'. Known values are: "Always", "OnSuccess", "OnExpiration".
+     Default value: "Always".
     :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
-     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     Known values are: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptProvisioningState
@@ -780,19 +782,19 @@ class AzurePowerShellScript(DeploymentScript):
     def __init__(
         self,
         *,
-        identity: "ManagedServiceIdentity",
+        identity: "_models.ManagedServiceIdentity",
         location: str,
         retention_interval: datetime.timedelta,
         az_power_shell_version: str,
         tags: Optional[Dict[str, str]] = None,
-        container_settings: Optional["ContainerConfiguration"] = None,
-        storage_account_settings: Optional["StorageAccountConfiguration"] = None,
-        cleanup_preference: Optional[Union[str, "CleanupOptions"]] = "Always",
+        container_settings: Optional["_models.ContainerConfiguration"] = None,
+        storage_account_settings: Optional["_models.StorageAccountConfiguration"] = None,
+        cleanup_preference: Optional[Union[str, "_models.CleanupOptions"]] = "Always",
         primary_script_uri: Optional[str] = None,
         supporting_script_uris: Optional[List[str]] = None,
         script_content: Optional[str] = None,
         arguments: Optional[str] = None,
-        environment_variables: Optional[List["EnvironmentVariable"]] = None,
+        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         force_update_tag: Optional[str] = None,
         timeout: Optional[datetime.timedelta] = "P1D",
         **kwargs
@@ -814,7 +816,7 @@ class AzurePowerShellScript(DeploymentScript):
         :paramtype storage_account_settings:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
         :keyword cleanup_preference: The clean up preference when the script execution gets in a
-         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         terminal state. Default setting is 'Always'. Known values are: "Always", "OnSuccess",
          "OnExpiration". Default value: "Always".
         :paramtype cleanup_preference: str or
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
@@ -899,12 +901,12 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
     :vartype storage_account_settings:
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
     :ivar cleanup_preference: The clean up preference when the script execution gets in a terminal
-     state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
-     "OnExpiration". Default value: "Always".
+     state. Default setting is 'Always'. Known values are: "Always", "OnSuccess", "OnExpiration".
+     Default value: "Always".
     :vartype cleanup_preference: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
     :ivar provisioning_state: State of the script execution. This only appears in the response.
-     Possible values include: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
+     Known values are: "Creating", "ProvisioningResources", "Running", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptProvisioningState
@@ -952,12 +954,12 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         supporting_script_uris: Optional[List[str]] = None,
         script_content: Optional[str] = None,
         arguments: Optional[str] = None,
-        environment_variables: Optional[List["EnvironmentVariable"]] = None,
+        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         force_update_tag: Optional[str] = None,
         timeout: Optional[datetime.timedelta] = "P1D",
-        container_settings: Optional["ContainerConfiguration"] = None,
-        storage_account_settings: Optional["StorageAccountConfiguration"] = None,
-        cleanup_preference: Optional[Union[str, "CleanupOptions"]] = "Always",
+        container_settings: Optional["_models.ContainerConfiguration"] = None,
+        storage_account_settings: Optional["_models.StorageAccountConfiguration"] = None,
+        cleanup_preference: Optional[Union[str, "_models.CleanupOptions"]] = "Always",
         **kwargs
     ):
         """
@@ -991,7 +993,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
         :paramtype storage_account_settings:
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.StorageAccountConfiguration
         :keyword cleanup_preference: The clean up preference when the script execution gets in a
-         terminal state. Default setting is 'Always'. Possible values include: "Always", "OnSuccess",
+         terminal state. Default setting is 'Always'. Known values are: "Always", "OnSuccess",
          "OnExpiration". Default value: "Always".
         :paramtype cleanup_preference: str or
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CleanupOptions
@@ -1087,7 +1089,7 @@ class DeploymentScriptListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DeploymentScript"]] = None,
+        value: Optional[List["_models.DeploymentScript"]] = None,
         **kwargs
     ):
         """
@@ -1115,7 +1117,7 @@ class DeploymentScriptsError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         **kwargs
     ):
         """
@@ -1301,7 +1303,7 @@ class ManagedServiceIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: Type of the managed identity. Possible values include: "UserAssigned".
+    :ivar type: Type of the managed identity. Known values are: "UserAssigned".
     :vartype type: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentityType
     :ivar tenant_id: ID of the Azure Active Directory.
@@ -1325,12 +1327,12 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs
     ):
         """
-        :keyword type: Type of the managed identity. Possible values include: "UserAssigned".
+        :keyword type: Type of the managed identity. Known values are: "UserAssigned".
         :paramtype type: str or
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The list of user-assigned managed identities associated with
@@ -1398,7 +1400,7 @@ class ScriptLogsList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ScriptLog"]] = None,
+        value: Optional[List["_models.ScriptLog"]] = None,
         **kwargs
     ):
         """
@@ -1449,7 +1451,7 @@ class ScriptStatus(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         **kwargs
     ):
         """
@@ -1503,7 +1505,7 @@ class SystemData(msrest.serialization.Model):
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", "Key".
     :vartype created_by_type: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CreatedByType
@@ -1511,8 +1513,8 @@ class SystemData(msrest.serialization.Model):
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -1532,26 +1534,26 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
         :paramtype created_by_type: str or
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).

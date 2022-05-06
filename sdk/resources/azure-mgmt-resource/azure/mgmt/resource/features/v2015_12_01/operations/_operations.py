@@ -16,10 +16,11 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import MixinABC, _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -29,25 +30,26 @@ _SERIALIZER.client_side_validation = False
 def build_list_operations_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json, text/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json, text/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/providers/Microsoft.Features/operations")
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -56,9 +58,12 @@ def build_features_list_all_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json, text/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json, text/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Features/features")
     path_format_arguments = {
@@ -68,18 +73,16 @@ def build_features_list_all_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -89,9 +92,12 @@ def build_features_list_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json, text/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json, text/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -102,18 +108,16 @@ def build_features_list_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -124,9 +128,12 @@ def build_features_get_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json, text/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json, text/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -138,18 +145,16 @@ def build_features_get_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -160,9 +165,12 @@ def build_features_register_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json, text/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json, text/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/register")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -174,18 +182,16 @@ def build_features_register_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
@@ -196,9 +202,12 @@ def build_features_unregister_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = "application/json, text/json"
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+    accept = _headers.pop('Accept', "application/json, text/json")
+
     # Construct URL
     _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/unregister")  # pylint: disable=line-too-long
     path_format_arguments = {
@@ -210,28 +219,26 @@ def build_features_unregister_request(
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
         url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
+        params=_params,
+        headers=_headers,
         **kwargs
     )
 
-class FeatureClientOperationsMixin(object):
+class FeatureClientOperationsMixin(MixinABC):
 
     @distributed_trace
     def list_operations(
         self,
         **kwargs: Any
-    ) -> Iterable["_models.OperationListResult"]:
+    ) -> Iterable[_models.OperationListResult]:
         """Lists all of the available Microsoft.Features REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -240,30 +247,37 @@ class FeatureClientOperationsMixin(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
                 request = build_list_operations_request(
                     api_version=api_version,
                     template_url=self.list_operations.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_list_operations_request(
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -295,33 +309,31 @@ class FeatureClientOperationsMixin(object):
             get_next, extract_data
         )
     list_operations.metadata = {'url': "/providers/Microsoft.Features/operations"}  # type: ignore
-class FeaturesOperations(object):
-    """FeaturesOperations operations.
+class FeaturesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.resource.features.v2015_12_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.features.v2015_12_01.FeatureClient`'s
+        :attr:`features` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_all(
         self,
         **kwargs: Any
-    ) -> Iterable["_models.FeatureOperationsListResult"]:
+    ) -> Iterable[_models.FeatureOperationsListResult]:
         """Gets all the preview features that are available through AFEC for the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -331,13 +343,16 @@ class FeaturesOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.FeatureOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureOperationsListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FeatureOperationsListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -345,18 +360,22 @@ class FeaturesOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list_all.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
                 request = build_features_list_all_request(
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -394,7 +413,7 @@ class FeaturesOperations(object):
         self,
         resource_provider_namespace: str,
         **kwargs: Any
-    ) -> Iterable["_models.FeatureOperationsListResult"]:
+    ) -> Iterable[_models.FeatureOperationsListResult]:
         """Gets all the preview features in a provider namespace that are available through AFEC for the
         subscription.
 
@@ -408,13 +427,16 @@ class FeaturesOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.FeatureOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureOperationsListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FeatureOperationsListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -423,9 +445,11 @@ class FeaturesOperations(object):
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -433,9 +457,11 @@ class FeaturesOperations(object):
                     resource_provider_namespace=resource_provider_namespace,
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -474,7 +500,7 @@ class FeaturesOperations(object):
         resource_provider_namespace: str,
         feature_name: str,
         **kwargs: Any
-    ) -> "_models.FeatureResult":
+    ) -> _models.FeatureResult:
         """Gets the preview feature with the specified name.
 
         :param resource_provider_namespace: The resource provider namespace for the feature.
@@ -486,13 +512,16 @@ class FeaturesOperations(object):
         :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FeatureResult]
 
         
         request = build_features_get_request(
@@ -501,11 +530,13 @@ class FeaturesOperations(object):
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -532,7 +563,7 @@ class FeaturesOperations(object):
         resource_provider_namespace: str,
         feature_name: str,
         **kwargs: Any
-    ) -> "_models.FeatureResult":
+    ) -> _models.FeatureResult:
         """Registers the preview feature for the subscription.
 
         :param resource_provider_namespace: The namespace of the resource provider.
@@ -544,13 +575,16 @@ class FeaturesOperations(object):
         :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FeatureResult]
 
         
         request = build_features_register_request(
@@ -559,11 +593,13 @@ class FeaturesOperations(object):
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.register.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -590,7 +626,7 @@ class FeaturesOperations(object):
         resource_provider_namespace: str,
         feature_name: str,
         **kwargs: Any
-    ) -> "_models.FeatureResult":
+    ) -> _models.FeatureResult:
         """Unregisters the preview feature for the subscription.
 
         :param resource_provider_namespace: The namespace of the resource provider.
@@ -602,13 +638,16 @@ class FeaturesOperations(object):
         :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2015-12-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-12-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.FeatureResult]
 
         
         request = build_features_unregister_request(
@@ -617,11 +656,13 @@ class FeaturesOperations(object):
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.unregister.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

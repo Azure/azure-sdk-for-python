@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._policy_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class PolicyAssignment(msrest.serialization.Model):
@@ -90,7 +92,7 @@ class PolicyAssignmentListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PolicyAssignment"]] = None,
+        value: Optional[List["_models.PolicyAssignment"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -116,7 +118,7 @@ class PolicyDefinition(msrest.serialization.Model):
      value is inferred from the name value in the request URI.
     :vartype name: str
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
+     and Custom. Known values are: "NotSpecified", "BuiltIn", "Custom".
     :vartype policy_type: str or ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyType
     :ivar display_name: The display name of the policy definition.
     :vartype display_name: str
@@ -143,7 +145,7 @@ class PolicyDefinition(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        policy_type: Optional[Union[str, "PolicyType"]] = None,
+        policy_type: Optional[Union[str, "_models.PolicyType"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         policy_rule: Optional[Any] = None,
@@ -154,7 +156,7 @@ class PolicyDefinition(msrest.serialization.Model):
          value is inferred from the name value in the request URI.
         :paramtype name: str
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-         and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
+         and Custom. Known values are: "NotSpecified", "BuiltIn", "Custom".
         :paramtype policy_type: str or ~azure.mgmt.resource.policy.v2016_04_01.models.PolicyType
         :keyword display_name: The display name of the policy definition.
         :paramtype display_name: str
@@ -189,7 +191,7 @@ class PolicyDefinitionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PolicyDefinition"]] = None,
+        value: Optional[List["_models.PolicyDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):

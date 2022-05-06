@@ -57,9 +57,15 @@ class PolicyClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.policy_assignments = PolicyAssignmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.policy_set_definitions = PolicySetDefinitionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.policy_definitions = PolicyDefinitionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.policy_assignments = PolicyAssignmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.policy_set_definitions = PolicySetDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.policy_definitions = PolicyDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

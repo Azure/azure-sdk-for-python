@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ChangeAttributes(msrest.serialization.Model):
@@ -64,12 +68,11 @@ class ChangeBase(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar property_change_type: The type of change that occurred. Possible values include:
-     "Update", "Insert", "Remove".
+    :ivar property_change_type: The type of change that occurred. Known values are: "Update",
+     "Insert", "Remove".
     :vartype property_change_type: str or
      ~azure.mgmt.resource.changes.v2022_05_01.models.PropertyChangeType
-    :ivar change_category: The entity that made the change. Possible values include: "User",
-     "System".
+    :ivar change_category: The entity that made the change. Known values are: "User", "System".
     :vartype change_category: str or ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeCategory
     :ivar previous_value: The target resource property value before the change.
     :vartype previous_value: str
@@ -113,8 +116,8 @@ class ChangeProperties(msrest.serialization.Model):
     :vartype target_resource_id: str
     :ivar target_resource_type: The namespace and type of the resource.
     :vartype target_resource_type: str
-    :ivar change_type: The type of change that was captured in the resource. Possible values
-     include: "Update", "Delete", "Create".
+    :ivar change_type: The type of change that was captured in the resource. Known values are:
+     "Update", "Delete", "Create".
     :vartype change_type: str or ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeType
     :ivar change_attributes: Details about the change resource.
     :vartype change_attributes: ~azure.mgmt.resource.changes.v2022_05_01.models.ChangeAttributes
@@ -140,8 +143,8 @@ class ChangeProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        change_attributes: Optional["ChangeAttributes"] = None,
-        changes: Optional[Dict[str, "ChangeBase"]] = None,
+        change_attributes: Optional["_models.ChangeAttributes"] = None,
+        changes: Optional[Dict[str, "_models.ChangeBase"]] = None,
         **kwargs
     ):
         """
@@ -177,7 +180,7 @@ class ChangeResourceListResult(msrest.serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["ChangeResourceResult"]] = None,
+        value: Optional[List["_models.ChangeResourceResult"]] = None,
         **kwargs
     ):
         """
@@ -263,7 +266,7 @@ class ChangeResourceResult(Resource):
     def __init__(
         self,
         *,
-        properties: Optional["ChangeProperties"] = None,
+        properties: Optional["_models.ChangeProperties"] = None,
         **kwargs
     ):
         """
@@ -368,7 +371,7 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """

@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AliasPathAttributes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AliasPathAttributes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The attributes of the token that the alias path is referring to.
     """
 
@@ -20,7 +19,7 @@ class AliasPathAttributes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The token that the alias path is referring to is modifiable by policies with 'modify' effect.
     MODIFIABLE = "Modifiable"
 
-class AliasPathTokenType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AliasPathTokenType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the token that the alias path is referring to.
     """
 
@@ -41,7 +40,7 @@ class AliasPathTokenType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The token type is boolean.
     BOOLEAN = "Boolean"
 
-class AliasPatternType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AliasPatternType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of alias pattern
     """
 
@@ -50,7 +49,7 @@ class AliasPatternType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Extract is the only allowed value.
     EXTRACT = "Extract"
 
-class AliasType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the alias.
     """
 
@@ -61,7 +60,7 @@ class AliasType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Alias value is secret.
     MASK = "Mask"
 
-class ChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of change that will be made to the resource when the deployment is executed.
     """
 
@@ -86,7 +85,7 @@ class ChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The resource is not supported by What-If.
     UNSUPPORTED = "Unsupported"
 
-class DeploymentMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DeploymentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode that is used to deploy resources. This value can be either Incremental or Complete. In
     Incremental mode, resources are deployed without deleting existing resources that are not
     included in the template. In Complete mode, resources are deployed and existing resources in
@@ -97,7 +96,7 @@ class DeploymentMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INCREMENTAL = "Incremental"
     COMPLETE = "Complete"
 
-class ExpressionEvaluationOptionsScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ExpressionEvaluationOptionsScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scope to be used for evaluation of parameters, variables and functions in a nested
     template.
     """
@@ -106,13 +105,13 @@ class ExpressionEvaluationOptionsScopeType(with_metaclass(CaseInsensitiveEnumMet
     OUTER = "Outer"
     INNER = "Inner"
 
-class ExtendedLocationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The extended location type.
     """
 
     EDGE_ZONE = "EdgeZone"
 
-class OnErrorDeploymentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OnErrorDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The deployment on error behavior type. Possible values are LastSuccessful and
     SpecificDeployment.
     """
@@ -120,7 +119,7 @@ class OnErrorDeploymentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LAST_SUCCESSFUL = "LastSuccessful"
     SPECIFIC_DEPLOYMENT = "SpecificDeployment"
 
-class PropertyChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of property change.
     """
 
@@ -138,7 +137,7 @@ class PropertyChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The property will not be set or updated.
     NO_EFFECT = "NoEffect"
 
-class ProviderAuthorizationConsentState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProviderAuthorizationConsentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provider authorization consent state.
     """
 
@@ -147,7 +146,7 @@ class ProviderAuthorizationConsentState(with_metaclass(CaseInsensitiveEnumMeta, 
     NOT_REQUIRED = "NotRequired"
     CONSENTED = "Consented"
 
-class ProvisioningOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the current provisioning operation.
     """
 
@@ -173,7 +172,7 @@ class ProvisioningOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: deployment.
     DEPLOYMENT_CLEANUP = "DeploymentCleanup"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Denotes the state of provisioning.
     """
 
@@ -190,7 +189,7 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type.
     """
 
@@ -199,7 +198,7 @@ class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class TagsPatchOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class TagsPatchOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation type for the patch API.
     """
 
@@ -211,7 +210,7 @@ class TagsPatchOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The 'delete' option allows selectively deleting tags based on given names or name/value pairs.
     DELETE = "Delete"
 
-class WhatIfResultFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WhatIfResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of the What-If results
     """
 

@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._resource_private_link_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -125,7 +127,7 @@ class PrivateLinkAssociation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["PrivateLinkAssociationPropertiesExpanded"] = None,
+        properties: Optional["_models.PrivateLinkAssociationPropertiesExpanded"] = None,
         **kwargs
     ):
         """
@@ -155,7 +157,7 @@ class PrivateLinkAssociationGetResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateLinkAssociation"]] = None,
+        value: Optional[List["_models.PrivateLinkAssociation"]] = None,
         **kwargs
     ):
         """
@@ -182,7 +184,7 @@ class PrivateLinkAssociationObject(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["PrivateLinkAssociationProperties"] = None,
+        properties: Optional["_models.PrivateLinkAssociationProperties"] = None,
         **kwargs
     ):
         """
@@ -199,7 +201,7 @@ class PrivateLinkAssociationProperties(msrest.serialization.Model):
 
     :ivar private_link: The rmpl Resource ID.
     :vartype private_link: str
-    :ivar public_network_access: Possible values include: "Enabled", "Disabled".
+    :ivar public_network_access: Known values are: "Enabled", "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PublicNetworkAccessOptions
     """
@@ -213,13 +215,13 @@ class PrivateLinkAssociationProperties(msrest.serialization.Model):
         self,
         *,
         private_link: Optional[str] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessOptions"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessOptions"]] = None,
         **kwargs
     ):
         """
         :keyword private_link: The rmpl Resource ID.
         :paramtype private_link: str
-        :keyword public_network_access: Possible values include: "Enabled", "Disabled".
+        :keyword public_network_access: Known values are: "Enabled", "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PublicNetworkAccessOptions
         """
@@ -233,7 +235,7 @@ class PrivateLinkAssociationPropertiesExpanded(msrest.serialization.Model):
 
     :ivar private_link: The rmpl Resource ID.
     :vartype private_link: str
-    :ivar public_network_access: Possible values include: "Enabled", "Disabled".
+    :ivar public_network_access: Known values are: "Enabled", "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PublicNetworkAccessOptions
     :ivar tenant_id: The TenantID.
@@ -253,7 +255,7 @@ class PrivateLinkAssociationPropertiesExpanded(msrest.serialization.Model):
         self,
         *,
         private_link: Optional[str] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessOptions"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessOptions"]] = None,
         tenant_id: Optional[str] = None,
         scope: Optional[str] = None,
         **kwargs
@@ -261,7 +263,7 @@ class PrivateLinkAssociationPropertiesExpanded(msrest.serialization.Model):
         """
         :keyword private_link: The rmpl Resource ID.
         :paramtype private_link: str
-        :keyword public_network_access: Possible values include: "Enabled", "Disabled".
+        :keyword public_network_access: Known values are: "Enabled", "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PublicNetworkAccessOptions
         :keyword tenant_id: The TenantID.
@@ -311,7 +313,7 @@ class ResourceManagementPrivateLink(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["ResourceManagementPrivateLinkEndpointConnections"] = None,
+        properties: Optional["_models.ResourceManagementPrivateLinkEndpointConnections"] = None,
         location: Optional[str] = None,
         **kwargs
     ):
@@ -370,7 +372,7 @@ class ResourceManagementPrivateLinkListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ResourceManagementPrivateLink"]] = None,
+        value: Optional[List["_models.ResourceManagementPrivateLink"]] = None,
         **kwargs
     ):
         """

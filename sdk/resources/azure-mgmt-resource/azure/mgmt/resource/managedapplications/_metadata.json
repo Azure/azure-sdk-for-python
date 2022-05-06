@@ -101,20 +101,21 @@
         "application_definitions": "ApplicationDefinitionsOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\"]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\"]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\"]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\"]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
         "operations": {
             "list_operations" : {
                 "sync": {
-                    "signature": "def list_operations(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[\"_models.OperationListResult\"]\n",
-                    "doc": "\"\"\"Lists all of the available Microsoft.Solutions REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype:\n ~azure.core.paging.ItemPaged[~azure.mgmt.resource.managedapplications.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def list_operations(\n    self,\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e Iterable[_models.OperationListResult]\n",
+                    "doc": "\"\"\"Lists all of the available Microsoft.Solutions REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype:\n ~azure.core.paging.ItemPaged[~azure.mgmt.resource.managedapplications.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
                 },
                 "async": {
                     "coroutine": false,
-                    "signature": "def list_operations(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[\"_models.OperationListResult\"]:\n",
-                    "doc": "\"\"\"Lists all of the available Microsoft.Solutions REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.managedapplications.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": ""
+                    "signature": "def list_operations(\n    self,\n    **kwargs: Any\n) -\u003e AsyncIterable[_models.OperationListResult]:\n",
+                    "doc": "\"\"\"Lists all of the available Microsoft.Solutions REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype:\n ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.managedapplications.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+                    "call": "**kwargs"
+                }
             }
         }
     }

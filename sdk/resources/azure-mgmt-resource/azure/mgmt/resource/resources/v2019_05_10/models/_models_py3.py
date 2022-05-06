@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._resource_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AliasPathType(msrest.serialization.Model):
@@ -63,7 +65,7 @@ class AliasType(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        paths: Optional[List["AliasPathType"]] = None,
+        paths: Optional[List["_models.AliasPathType"]] = None,
         **kwargs
     ):
         """
@@ -206,7 +208,7 @@ class Dependency(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        depends_on: Optional[List["BasicDependency"]] = None,
+        depends_on: Optional[List["_models.BasicDependency"]] = None,
         id: Optional[str] = None,
         resource_type: Optional[str] = None,
         resource_name: Optional[str] = None,
@@ -252,7 +254,7 @@ class Deployment(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "DeploymentProperties",
+        properties: "_models.DeploymentProperties",
         location: Optional[str] = None,
         **kwargs
     ):
@@ -328,7 +330,7 @@ class DeploymentExtended(msrest.serialization.Model):
         self,
         *,
         location: Optional[str] = None,
-        properties: Optional["DeploymentPropertiesExtended"] = None,
+        properties: Optional["_models.DeploymentPropertiesExtended"] = None,
         **kwargs
     ):
         """
@@ -394,7 +396,7 @@ class DeploymentListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DeploymentExtended"]] = None,
+        value: Optional[List["_models.DeploymentExtended"]] = None,
         **kwargs
     ):
         """
@@ -434,7 +436,7 @@ class DeploymentOperation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["DeploymentOperationProperties"] = None,
+        properties: Optional["_models.DeploymentOperationProperties"] = None,
         **kwargs
     ):
         """
@@ -538,7 +540,7 @@ class DeploymentOperationsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DeploymentOperation"]] = None,
+        value: Optional[List["_models.DeploymentOperation"]] = None,
         **kwargs
     ):
         """
@@ -576,8 +578,8 @@ class DeploymentProperties(msrest.serialization.Model):
      Incremental or Complete. In Incremental mode, resources are deployed without deleting existing
      resources that are not included in the template. In Complete mode, resources are deployed and
      existing resources in the resource group that are not included in the template are deleted. Be
-     careful when using Complete mode as you may unintentionally delete resources. Possible values
-     include: "Incremental", "Complete".
+     careful when using Complete mode as you may unintentionally delete resources. Known values are:
+     "Incremental", "Complete".
     :vartype mode: str or ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentMode
     :ivar debug_setting: The debug setting of the deployment.
     :vartype debug_setting: ~azure.mgmt.resource.resources.v2019_05_10.models.DebugSetting
@@ -603,13 +605,13 @@ class DeploymentProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        mode: Union[str, "DeploymentMode"],
+        mode: Union[str, "_models.DeploymentMode"],
         template: Optional[Any] = None,
-        template_link: Optional["TemplateLink"] = None,
+        template_link: Optional["_models.TemplateLink"] = None,
         parameters: Optional[Any] = None,
-        parameters_link: Optional["ParametersLink"] = None,
-        debug_setting: Optional["DebugSetting"] = None,
-        on_error_deployment: Optional["OnErrorDeployment"] = None,
+        parameters_link: Optional["_models.ParametersLink"] = None,
+        debug_setting: Optional["_models.DebugSetting"] = None,
+        on_error_deployment: Optional["_models.OnErrorDeployment"] = None,
         **kwargs
     ):
         """
@@ -634,8 +636,8 @@ class DeploymentProperties(msrest.serialization.Model):
          Incremental or Complete. In Incremental mode, resources are deployed without deleting existing
          resources that are not included in the template. In Complete mode, resources are deployed and
          existing resources in the resource group that are not included in the template are deleted. Be
-         careful when using Complete mode as you may unintentionally delete resources. Possible values
-         include: "Incremental", "Complete".
+         careful when using Complete mode as you may unintentionally delete resources. Known values are:
+         "Incremental", "Complete".
         :paramtype mode: str or ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentMode
         :keyword debug_setting: The debug setting of the deployment.
         :paramtype debug_setting: ~azure.mgmt.resource.resources.v2019_05_10.models.DebugSetting
@@ -682,8 +684,8 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar parameters_link: The URI referencing the parameters. Use only one of Parameters or
      ParametersLink.
     :vartype parameters_link: ~azure.mgmt.resource.resources.v2019_05_10.models.ParametersLink
-    :ivar mode: The deployment mode. Possible values are Incremental and Complete. Possible values
-     include: "Incremental", "Complete".
+    :ivar mode: The deployment mode. Possible values are Incremental and Complete. Known values
+     are: "Incremental", "Complete".
     :vartype mode: str or ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentMode
     :ivar debug_setting: The debug setting of the deployment.
     :vartype debug_setting: ~azure.mgmt.resource.resources.v2019_05_10.models.DebugSetting
@@ -724,15 +726,15 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         self,
         *,
         outputs: Optional[Any] = None,
-        providers: Optional[List["Provider"]] = None,
-        dependencies: Optional[List["Dependency"]] = None,
+        providers: Optional[List["_models.Provider"]] = None,
+        dependencies: Optional[List["_models.Dependency"]] = None,
         template: Optional[Any] = None,
-        template_link: Optional["TemplateLink"] = None,
+        template_link: Optional["_models.TemplateLink"] = None,
         parameters: Optional[Any] = None,
-        parameters_link: Optional["ParametersLink"] = None,
-        mode: Optional[Union[str, "DeploymentMode"]] = None,
-        debug_setting: Optional["DebugSetting"] = None,
-        on_error_deployment: Optional["OnErrorDeploymentExtended"] = None,
+        parameters_link: Optional["_models.ParametersLink"] = None,
+        mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+        debug_setting: Optional["_models.DebugSetting"] = None,
+        on_error_deployment: Optional["_models.OnErrorDeploymentExtended"] = None,
         **kwargs
     ):
         """
@@ -752,8 +754,8 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         :keyword parameters_link: The URI referencing the parameters. Use only one of Parameters or
          ParametersLink.
         :paramtype parameters_link: ~azure.mgmt.resource.resources.v2019_05_10.models.ParametersLink
-        :keyword mode: The deployment mode. Possible values are Incremental and Complete. Possible
-         values include: "Incremental", "Complete".
+        :keyword mode: The deployment mode. Possible values are Incremental and Complete. Known values
+         are: "Incremental", "Complete".
         :paramtype mode: str or ~azure.mgmt.resource.resources.v2019_05_10.models.DeploymentMode
         :keyword debug_setting: The debug setting of the deployment.
         :paramtype debug_setting: ~azure.mgmt.resource.resources.v2019_05_10.models.DebugSetting
@@ -798,8 +800,8 @@ class DeploymentValidateResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ResourceManagementErrorWithDetails"] = None,
-        properties: Optional["DeploymentPropertiesExtended"] = None,
+        error: Optional["_models.ResourceManagementErrorWithDetails"] = None,
+        properties: Optional["_models.DeploymentPropertiesExtended"] = None,
         **kwargs
     ):
         """
@@ -1040,12 +1042,12 @@ class GenericResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
+        plan: Optional["_models.Plan"] = None,
         properties: Optional[Any] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
         **kwargs
     ):
         """
@@ -1145,12 +1147,12 @@ class GenericResourceExpanded(GenericResource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        plan: Optional["Plan"] = None,
+        plan: Optional["_models.Plan"] = None,
         properties: Optional[Any] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["Identity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.Identity"] = None,
         **kwargs
     ):
         """
@@ -1250,7 +1252,7 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
+    :ivar type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
      "SystemAssigned, UserAssigned", "None".
     :vartype type: str or ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
@@ -1275,12 +1277,12 @@ class Identity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
         **kwargs
     ):
         """
-        :keyword type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
+        :keyword type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
          "SystemAssigned, UserAssigned", "None".
         :paramtype type: str or ~azure.mgmt.resource.resources.v2019_05_10.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
@@ -1300,7 +1302,7 @@ class OnErrorDeployment(msrest.serialization.Model):
     """Deployment on error behavior.
 
     :ivar type: The deployment on error behavior type. Possible values are LastSuccessful and
-     SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
+     SpecificDeployment. Known values are: "LastSuccessful", "SpecificDeployment".
     :vartype type: str or ~azure.mgmt.resource.resources.v2019_05_10.models.OnErrorDeploymentType
     :ivar deployment_name: The deployment to be used on error case.
     :vartype deployment_name: str
@@ -1314,13 +1316,13 @@ class OnErrorDeployment(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "OnErrorDeploymentType"]] = None,
+        type: Optional[Union[str, "_models.OnErrorDeploymentType"]] = None,
         deployment_name: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword type: The deployment on error behavior type. Possible values are LastSuccessful and
-         SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
+         SpecificDeployment. Known values are: "LastSuccessful", "SpecificDeployment".
         :paramtype type: str or ~azure.mgmt.resource.resources.v2019_05_10.models.OnErrorDeploymentType
         :keyword deployment_name: The deployment to be used on error case.
         :paramtype deployment_name: str
@@ -1338,7 +1340,7 @@ class OnErrorDeploymentExtended(msrest.serialization.Model):
     :ivar provisioning_state: The state of the provisioning for the on error deployment.
     :vartype provisioning_state: str
     :ivar type: The deployment on error behavior type. Possible values are LastSuccessful and
-     SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
+     SpecificDeployment. Known values are: "LastSuccessful", "SpecificDeployment".
     :vartype type: str or ~azure.mgmt.resource.resources.v2019_05_10.models.OnErrorDeploymentType
     :ivar deployment_name: The deployment to be used on error case.
     :vartype deployment_name: str
@@ -1357,13 +1359,13 @@ class OnErrorDeploymentExtended(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "OnErrorDeploymentType"]] = None,
+        type: Optional[Union[str, "_models.OnErrorDeploymentType"]] = None,
         deployment_name: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword type: The deployment on error behavior type. Possible values are LastSuccessful and
-         SpecificDeployment. Possible values include: "LastSuccessful", "SpecificDeployment".
+         SpecificDeployment. Known values are: "LastSuccessful", "SpecificDeployment".
         :paramtype type: str or ~azure.mgmt.resource.resources.v2019_05_10.models.OnErrorDeploymentType
         :keyword deployment_name: The deployment to be used on error case.
         :paramtype deployment_name: str
@@ -1392,7 +1394,7 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -1469,7 +1471,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1649,7 +1651,7 @@ class ProviderListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Provider"]] = None,
+        value: Optional[List["_models.Provider"]] = None,
         **kwargs
     ):
         """
@@ -1695,9 +1697,9 @@ class ProviderResourceType(msrest.serialization.Model):
         *,
         resource_type: Optional[str] = None,
         locations: Optional[List[str]] = None,
-        aliases: Optional[List["AliasType"]] = None,
+        aliases: Optional[List["_models.AliasType"]] = None,
         api_versions: Optional[List[str]] = None,
-        zone_mappings: Optional[List["ZoneMapping"]] = None,
+        zone_mappings: Optional[List["_models.ZoneMapping"]] = None,
         capabilities: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs
@@ -1773,7 +1775,7 @@ class ResourceGroup(msrest.serialization.Model):
         self,
         *,
         location: str,
-        properties: Optional["ResourceGroupProperties"] = None,
+        properties: Optional["_models.ResourceGroupProperties"] = None,
         managed_by: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -1819,7 +1821,7 @@ class ResourceGroupExportResult(msrest.serialization.Model):
         self,
         *,
         template: Optional[Any] = None,
-        error: Optional["ResourceManagementErrorWithDetails"] = None,
+        error: Optional["_models.ResourceManagementErrorWithDetails"] = None,
         **kwargs
     ):
         """
@@ -1889,7 +1891,7 @@ class ResourceGroupListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["ResourceGroup"]] = None,
+        value: Optional[List["_models.ResourceGroup"]] = None,
         **kwargs
     ):
         """
@@ -1925,7 +1927,7 @@ class ResourceGroupPatchable(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["ResourceGroupProperties"] = None,
+        properties: Optional["_models.ResourceGroupProperties"] = None,
         managed_by: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -1998,7 +2000,7 @@ class ResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["GenericResourceExpanded"]] = None,
+        value: Optional[List["_models.GenericResourceExpanded"]] = None,
         **kwargs
     ):
         """
@@ -2287,8 +2289,8 @@ class TagDetails(msrest.serialization.Model):
         self,
         *,
         tag_name: Optional[str] = None,
-        count: Optional["TagCount"] = None,
-        values: Optional[List["TagValue"]] = None,
+        count: Optional["_models.TagCount"] = None,
+        values: Optional[List["_models.TagValue"]] = None,
         **kwargs
     ):
         """
@@ -2330,7 +2332,7 @@ class TagsListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["TagDetails"]] = None,
+        value: Optional[List["_models.TagDetails"]] = None,
         **kwargs
     ):
         """
@@ -2369,7 +2371,7 @@ class TagValue(msrest.serialization.Model):
         self,
         *,
         tag_value: Optional[str] = None,
-        count: Optional["TagCount"] = None,
+        count: Optional["_models.TagCount"] = None,
         **kwargs
     ):
         """

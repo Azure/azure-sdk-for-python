@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._policy_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -103,7 +105,7 @@ class Identity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of the resource identity.
     :vartype tenant_id: str
     :ivar type: The identity type. This is the only required field when adding a system assigned
-     identity to a resource. Possible values include: "SystemAssigned", "None".
+     identity to a resource. Known values are: "SystemAssigned", "None".
     :vartype type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ResourceIdentityType
     """
 
@@ -121,12 +123,12 @@ class Identity(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
         **kwargs
     ):
         """
         :keyword type: The identity type. This is the only required field when adding a system assigned
-         identity to a resource. Possible values include: "SystemAssigned", "None".
+         identity to a resource. Known values are: "SystemAssigned", "None".
         :paramtype type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ResourceIdentityType
         """
         super(Identity, self).__init__(**kwargs)
@@ -138,8 +140,8 @@ class Identity(msrest.serialization.Model):
 class ParameterDefinitionsValue(msrest.serialization.Model):
     """The definition of a parameter that can be provided to the policy.
 
-    :ivar type: The data type of the parameter. Possible values include: "String", "Array",
-     "Object", "Boolean", "Integer", "Float", "DateTime".
+    :ivar type: The data type of the parameter. Known values are: "String", "Array", "Object",
+     "Boolean", "Integer", "Float", "DateTime".
     :vartype type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterType
     :ivar allowed_values: The allowed values for the parameter.
     :vartype allowed_values: list[any]
@@ -160,15 +162,15 @@ class ParameterDefinitionsValue(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ParameterType"]] = None,
+        type: Optional[Union[str, "_models.ParameterType"]] = None,
         allowed_values: Optional[List[Any]] = None,
         default_value: Optional[Any] = None,
-        metadata: Optional["ParameterDefinitionsValueMetadata"] = None,
+        metadata: Optional["_models.ParameterDefinitionsValueMetadata"] = None,
         **kwargs
     ):
         """
-        :keyword type: The data type of the parameter. Possible values include: "String", "Array",
-         "Object", "Boolean", "Integer", "Float", "DateTime".
+        :keyword type: The data type of the parameter. Known values are: "String", "Array", "Object",
+         "Boolean", "Integer", "Float", "DateTime".
         :paramtype type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.ParameterType
         :keyword allowed_values: The allowed values for the parameter.
         :paramtype allowed_values: list[any]
@@ -288,7 +290,7 @@ class PolicyAssignment(msrest.serialization.Model):
      typically a collection of key value pairs.
     :vartype metadata: any
     :ivar enforcement_mode: The policy assignment enforcement mode. Possible values are Default and
-     DoNotEnforce. Possible values include: "Default", "DoNotEnforce".
+     DoNotEnforce. Known values are: "Default", "DoNotEnforce".
     :vartype enforcement_mode: str or
      ~azure.mgmt.resource.policy.v2019_09_01.models.EnforcementMode
     """
@@ -319,17 +321,17 @@ class PolicyAssignment(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sku: Optional["PolicySku"] = None,
+        sku: Optional["_models.PolicySku"] = None,
         location: Optional[str] = None,
-        identity: Optional["Identity"] = None,
+        identity: Optional["_models.Identity"] = None,
         display_name: Optional[str] = None,
         policy_definition_id: Optional[str] = None,
         scope: Optional[str] = None,
         not_scopes: Optional[List[str]] = None,
-        parameters: Optional[Dict[str, "ParameterValuesValue"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterValuesValue"]] = None,
         description: Optional[str] = None,
         metadata: Optional[Any] = None,
-        enforcement_mode: Optional[Union[str, "EnforcementMode"]] = None,
+        enforcement_mode: Optional[Union[str, "_models.EnforcementMode"]] = None,
         **kwargs
     ):
         """
@@ -359,7 +361,7 @@ class PolicyAssignment(msrest.serialization.Model):
          typically a collection of key value pairs.
         :paramtype metadata: any
         :keyword enforcement_mode: The policy assignment enforcement mode. Possible values are Default
-         and DoNotEnforce. Possible values include: "Default", "DoNotEnforce".
+         and DoNotEnforce. Known values are: "Default", "DoNotEnforce".
         :paramtype enforcement_mode: str or
          ~azure.mgmt.resource.policy.v2019_09_01.models.EnforcementMode
         """
@@ -397,7 +399,7 @@ class PolicyAssignmentListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PolicyAssignment"]] = None,
+        value: Optional[List["_models.PolicyAssignment"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -424,7 +426,7 @@ class PolicyDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policyDefinitions).
     :vartype type: str
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
+     Custom, and Static. Known values are: "NotSpecified", "BuiltIn", "Custom", "Static".
     :vartype policy_type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyType
     :ivar mode: The policy definition mode. Some examples are All, Indexed,
      Microsoft.KeyVault.Data.
@@ -466,18 +468,18 @@ class PolicyDefinition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        policy_type: Optional[Union[str, "PolicyType"]] = None,
+        policy_type: Optional[Union[str, "_models.PolicyType"]] = None,
         mode: Optional[str] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         policy_rule: Optional[Any] = None,
         metadata: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterDefinitionsValue"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
         **kwargs
     ):
         """
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-         Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
+         Custom, and Static. Known values are: "NotSpecified", "BuiltIn", "Custom", "Static".
         :paramtype policy_type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyType
         :keyword mode: The policy definition mode. Some examples are All, Indexed,
          Microsoft.KeyVault.Data.
@@ -587,7 +589,7 @@ class PolicyDefinitionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PolicyDefinition"]] = None,
+        value: Optional[List["_models.PolicyDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -635,7 +637,7 @@ class PolicyDefinitionReference(msrest.serialization.Model):
         self,
         *,
         policy_definition_id: str,
-        parameters: Optional[Dict[str, "ParameterValuesValue"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterValuesValue"]] = None,
         policy_definition_reference_id: Optional[str] = None,
         group_names: Optional[List[str]] = None,
         **kwargs
@@ -673,7 +675,7 @@ class PolicySetDefinition(msrest.serialization.Model):
     :ivar type: The type of the resource (Microsoft.Authorization/policySetDefinitions).
     :vartype type: str
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-     Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
+     Custom, and Static. Known values are: "NotSpecified", "BuiltIn", "Custom", "Static".
     :vartype policy_type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyType
     :ivar display_name: The display name of the policy set definition.
     :vartype display_name: str
@@ -717,18 +719,18 @@ class PolicySetDefinition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        policy_type: Optional[Union[str, "PolicyType"]] = None,
+        policy_type: Optional[Union[str, "_models.PolicyType"]] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         metadata: Optional[Any] = None,
-        parameters: Optional[Dict[str, "ParameterDefinitionsValue"]] = None,
-        policy_definitions: Optional[List["PolicyDefinitionReference"]] = None,
-        policy_definition_groups: Optional[List["PolicyDefinitionGroup"]] = None,
+        parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
+        policy_definitions: Optional[List["_models.PolicyDefinitionReference"]] = None,
+        policy_definition_groups: Optional[List["_models.PolicyDefinitionGroup"]] = None,
         **kwargs
     ):
         """
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
-         Custom, and Static. Possible values include: "NotSpecified", "BuiltIn", "Custom", "Static".
+         Custom, and Static. Known values are: "NotSpecified", "BuiltIn", "Custom", "Static".
         :paramtype policy_type: str or ~azure.mgmt.resource.policy.v2019_09_01.models.PolicyType
         :keyword display_name: The display name of the policy set definition.
         :paramtype display_name: str
@@ -779,7 +781,7 @@ class PolicySetDefinitionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PolicySetDefinition"]] = None,
+        value: Optional[List["_models.PolicySetDefinition"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
