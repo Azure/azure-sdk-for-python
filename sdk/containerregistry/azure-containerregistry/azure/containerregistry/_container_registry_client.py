@@ -3,8 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, IO, Optional, overload, Union
 from io import BytesIO
+from typing import TYPE_CHECKING, Any, IO, Optional, overload, Union
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -22,7 +22,6 @@ from ._helpers import (
     _is_tag,
     _parse_next_link,
     _serialize_manifest,
-    _deserialize_manifest,
     _validate_digest,
     OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
@@ -39,11 +38,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from typing import Dict
 
-def _return_response_header(response, _, response_header):
-    return response_header
-
-def _return_response(response, _, response_header):
-    return response
+def _return_response(pipeline_response, deserialized, response_headers):
+    return pipeline_response, deserialized, response_headers
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -786,17 +782,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if tag is None:
                 tag_or_digest = _compute_digest(data)
 
-            response = self._client.container_registry.create_manifest(
+            _, _, response_headers = self._client.container_registry.create_manifest(
                 name=repository,
                 reference=tag_or_digest,
                 payload=data,
                 content_type=OCI_MANIFEST_MEDIA_TYPE,
                 headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
-                cls=_return_response_header,
+                cls=_return_response,
                 **kwargs
             )
 
-            digest = response['Docker-Content-Digest']
+            digest = response_headers['Docker-Content-Digest']
         except ValueError:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.")
@@ -819,21 +815,21 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or data is None.
         """
         try:
-            start_upload_response = self._client.container_registry_blob.start_upload(
-                repository, cls=_return_response_header, **kwargs
+            _, _, start_upload_response_headers = self._client.container_registry_blob.start_upload(
+                repository, cls=_return_response, **kwargs
             )
-            upload_chunk_response = self._client.container_registry_blob.upload_chunk(
-                start_upload_response['Location'], data, cls=_return_response_header, **kwargs
+            _, _, upload_chunk_response_headers = self._client.container_registry_blob.upload_chunk(
+                start_upload_response_headers['Location'], data, cls=_return_response, **kwargs
             )
             digest = _compute_digest(data)
-            complete_upload_response = self._client.container_registry_blob.complete_upload(
-                digest=digest, next_link=upload_chunk_response['Location'], cls=_return_response_header, **kwargs
+            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload(
+                digest=digest, next_link=upload_chunk_response_headers['Location'], cls=_return_response, **kwargs
             )
         except ValueError:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")
             raise
-        return complete_upload_response['Docker-Content-Digest']
+        return complete_upload_response_headers['Docker-Content-Digest']
 
     @distributed_trace
     def download_manifest(self, repository, tag_or_digest, **kwargs):
@@ -849,7 +845,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             If the requested digest does not match the digest of the received manifest.
         """
         try:
-            response = self._client.container_registry.get_manifest(
+            response, manifest_wrapper, _ = self._client.container_registry.get_manifest(
                 name=repository,
                 reference=tag_or_digest,
                 headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
@@ -857,17 +853,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             )
             digest = response.http_response.headers['Docker-Content-Digest']
-            content = response.http_response.internal_response._content
-            content_stream = BytesIO(content)
+            manifest = OCIManifest.deserialize(manifest_wrapper.serialize())
+            manifest_stream = _serialize_manifest(manifest)
         except ValueError:
             if repository is None or tag_or_digest is None:
                 raise ValueError("The parameter repository and tag_or_digest cannot be None.")
-            if not _validate_digest(content_stream, digest):
+            if not _validate_digest(manifest_stream, digest):
                 raise ValueError("The requested digest does not match the digest of the received manifest.")
             raise
 
-        manifest = _deserialize_manifest(content_stream)
-        return DownloadManifestResult(digest=digest, data=content_stream, manifest=manifest)
+        return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
     def download_blob(self, repository, digest, **kwargs):
@@ -881,17 +876,21 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or digest is None.
         """
         try:
-            result = self._client.container_registry_blob.get_blob(repository, digest, cls=_return_response, **kwargs)
+            _, deserialized, _ = self._client.container_registry_blob.get_blob(
+                repository, digest, cls=_return_response, **kwargs
+            )  
         except ValueError:
             if repository is None or digest is None:
                 raise ValueError("The parameter repository and digest cannot be None.")
             raise
 
-        if result:
-            data = BytesIO(result.http_response.internal_response.content)
-            digest = _compute_digest(data)
-            return DownloadBlobResult(data=data, digest=digest)
-        return result
+        if deserialized:
+            blob_content = b''
+            for chunk in deserialized:
+                if chunk:
+                    blob_content += chunk
+            return DownloadBlobResult(data=BytesIO(blob_content), digest=digest)
+        return None
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
@@ -921,7 +920,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def delete_blob(self, repository, tag_or_digest, **kwargs):
-        # type: (str, str, **Any) -> IO
+        # type: (str, str, **Any) -> None
         """Delete a blob. If the blob cannot be found or a response status code of
         404 is returned an error will not be raised.
 
