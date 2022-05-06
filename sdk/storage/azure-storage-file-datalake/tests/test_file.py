@@ -100,9 +100,10 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @DataLakePreparer()
-    def test_create_file_owner(self, datalake_storage_account_name, datalake_storage_account_key):
+    def test_create_file_owner_group_acl(self, datalake_storage_account_name, datalake_storage_account_key):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         test_string = str(uuid.uuid4())
+        test_string_acl = 'user::rwx,group::r-x,other::rwx'
         # Arrange
         directory_name = self._get_directory_reference()
 
@@ -111,50 +112,14 @@ class FileTest(StorageTestCase):
         directory_client.create_directory()
 
         file_client = directory_client.get_file_client('filename')
-        file_client.create_file(owner=test_string)
+        file_client.create_file(owner=test_string, group=test_string, acl=test_string_acl)
 
         # Assert
         acl_properties = file_client.get_access_control()
         self.assertIsNotNone(acl_properties)
         self.assertEqual(acl_properties['owner'], test_string)
-
-    @DataLakePreparer()
-    def test_create_file_group(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_string = str(uuid.uuid4())
-        # Arrange
-        directory_name = self._get_directory_reference()
-
-        # Create a directory to put the file under that
-        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-        directory_client.create_directory()
-
-        file_client = directory_client.get_file_client('filename')
-        file_client.create_file(group=test_string)
-
-        # Assert
-        acl_properties = file_client.get_access_control()
-        self.assertIsNotNone(acl_properties)
         self.assertEqual(acl_properties['group'], test_string)
-
-    @DataLakePreparer()
-    def test_create_file_acl(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        test_string = 'user::rwx,group::r-x,other::rwx'
-        # Arrange
-        directory_name = self._get_directory_reference()
-
-        # Create a directory to put the file under that
-        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-        directory_client.create_directory()
-
-        file_client = directory_client.get_file_client('filename')
-        file_client.create_file(acl=test_string)
-
-        # Assert
-        acl_properties = file_client.get_access_control()
-        self.assertIsNotNone(acl_properties)
-        self.assertEqual(acl_properties['acl'], test_string)
+        self.assertEqual(acl_properties['acl'], test_string_acl)
 
     @DataLakePreparer()
     def test_create_file_proposed_lease_id(self, datalake_storage_account_name, datalake_storage_account_key):

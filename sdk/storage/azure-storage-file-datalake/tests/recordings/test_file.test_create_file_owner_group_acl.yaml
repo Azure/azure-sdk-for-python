@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 03 May 2022 22:31:04 GMT
+      - Fri, 06 May 2022 01:00:33 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/filesystembc380c0f?restype=container&timeout=5
+    uri: https://storagename.blob.core.windows.net/filesystem6f4e1125?restype=container&timeout=5
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 May 2022 22:31:05 GMT
+      - Fri, 06 May 2022 01:00:35 GMT
       etag:
-      - '"0x8DA2D549C8966DA"'
+      - '"0x8DA2EFBD3BD624E"'
       last-modified:
-      - Tue, 03 May 2022 22:31:05 GMT
+      - Fri, 06 May 2022 01:00:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,13 +49,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 03 May 2022 22:31:05 GMT
+      - Fri, 06 May 2022 01:00:34 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystembc380c0f/directorybc380c0f?resource=directory
+    uri: https://storagename.dfs.core.windows.net/filesystem6f4e1125/directory6f4e1125?resource=directory
   response:
     body:
       string: ''
@@ -63,11 +63,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 May 2022 22:31:05 GMT
+      - Fri, 06 May 2022 01:00:34 GMT
       etag:
-      - '"0x8DA2D549CDFDE14"'
+      - '"0x8DA2EFBD416C34D"'
       last-modified:
-      - Tue, 03 May 2022 22:31:05 GMT
+      - Fri, 06 May 2022 01:00:35 GMT
       server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -89,15 +89,19 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-acl:
       - user::rwx,group::r-x,other::rwx
       x-ms-date:
-      - Tue, 03 May 2022 22:31:05 GMT
+      - Fri, 06 May 2022 01:00:34 GMT
+      x-ms-group:
+      - 5bc5858e-4504-49e9-90c5-f0b5ba41a158
+      x-ms-owner:
+      - 5bc5858e-4504-49e9-90c5-f0b5ba41a158
       x-ms-version:
       - '2021-06-08'
     method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystembc380c0f/directorybc380c0f%2Ffilename?resource=file
+    uri: https://storagename.dfs.core.windows.net/filesystem6f4e1125/directory6f4e1125%2Ffilename?resource=file
   response:
     body:
       string: ''
@@ -105,11 +109,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 May 2022 22:31:06 GMT
+      - Fri, 06 May 2022 01:00:35 GMT
       etag:
-      - '"0x8DA2D549D5399DB"'
+      - '"0x8DA2EFBD4B74456"'
       last-modified:
-      - Tue, 03 May 2022 22:31:06 GMT
+      - Fri, 06 May 2022 01:00:36 GMT
       server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -129,31 +133,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 03 May 2022 22:31:06 GMT
+      - Fri, 06 May 2022 01:00:35 GMT
       x-ms-version:
       - '2021-06-08'
     method: HEAD
-    uri: https://storagename.dfs.core.windows.net/filesystembc380c0f/directorybc380c0f%2Ffilename?action=getAccessControl&upn=false
+    uri: https://storagename.dfs.core.windows.net/filesystem6f4e1125/directory6f4e1125%2Ffilename?action=getAccessControl&upn=false
   response:
     body:
       string: ''
     headers:
       date:
-      - Tue, 03 May 2022 22:31:06 GMT
+      - Fri, 06 May 2022 01:00:36 GMT
       etag:
-      - '"0x8DA2D549D5399DB"'
+      - '"0x8DA2EFBD4B74456"'
       last-modified:
-      - Tue, 03 May 2022 22:31:06 GMT
+      - Fri, 06 May 2022 01:00:36 GMT
       server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-acl:
       - user::rwx,group::r-x,other::rwx
       x-ms-group:
-      - $superuser
+      - 5bc5858e-4504-49e9-90c5-f0b5ba41a158
       x-ms-owner:
-      - $superuser
+      - 5bc5858e-4504-49e9-90c5-f0b5ba41a158
       x-ms-permissions:
       - rwxr-xrwx
       x-ms-version:
@@ -173,13 +177,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.7.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Tue, 03 May 2022 22:31:06 GMT
+      - Fri, 06 May 2022 01:00:35 GMT
       x-ms-version:
       - '2021-06-08'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/filesystembc380c0f?restype=container
+    uri: https://storagename.blob.core.windows.net/filesystem6f4e1125?restype=container
   response:
     body:
       string: ''
@@ -187,7 +191,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 May 2022 22:31:06 GMT
+      - Fri, 06 May 2022 01:00:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

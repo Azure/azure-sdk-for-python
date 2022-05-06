@@ -1,0 +1,150 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 06 May 2022 01:24:57 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystem3a1415a8?restype=container&timeout=5
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 06 May 2022 01:24:57 GMT
+      etag:
+      - '"0x8DA2EFF3C2E7BAD"'
+      last-modified:
+      - Fri, 06 May 2022 01:24:58 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2021-06-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 06 May 2022 01:24:57 GMT
+      x-ms-expiry-option:
+      - Absolute
+      x-ms-expiry-time:
+      - Sat, 07 May 2022 01:24:57 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem3a1415a8/directory3a1415a8?resource=directory
+  response:
+    body:
+      string: '{"error":{"code":"ExpiryNotSupportedForDirectory","message":"Set Expiry
+        is not supported for a directory\nRequestId:9ff4a561-201f-009a-10e8-60441b000000\nTime:2022-05-06T01:24:59.3662806Z"}}'
+    headers:
+      content-length:
+      - '190'
+      content-type:
+      - application/json;charset=utf-8
+      date:
+      - Fri, 06 May 2022 01:24:59 GMT
+      server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ExpiryNotSupportedForDirectory
+      x-ms-version:
+      - '2021-06-08'
+    status:
+      code: 400
+      message: Set Expiry is not supported for a directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.8.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 06 May 2022 01:24:58 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/filesystem3a1415a8?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 06 May 2022 01:24:58 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2021-06-08'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.13.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
+      x-ms-date:
+      - Fri, 06 May 2022 01:24:58 GMT
+      x-ms-version:
+      - '2021-08-06'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/?comp=list&include=
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>InvalidHeaderValue</Code><Message>The
+        value for one of the HTTP headers is not in the correct format.\nRequestId:91f4ea76-201e-001c-62e8-6088a2000000\nTime:2022-05-06T01:24:59.8385703Z</Message><HeaderName>x-ms-version</HeaderName><HeaderValue>2021-08-06</HeaderValue></Error>"
+    headers:
+      content-length:
+      - '329'
+      content-type:
+      - application/xml
+      date:
+      - Fri, 06 May 2022 01:24:59 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+    status:
+      code: 400
+      message: The value for one of the HTTP headers is not in the correct format.
+version: 1
