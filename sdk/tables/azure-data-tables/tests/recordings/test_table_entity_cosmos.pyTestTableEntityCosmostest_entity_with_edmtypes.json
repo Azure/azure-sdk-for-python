@@ -10,9 +10,9 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 05 May 2022 23:15:38 GMT",
+        "Date": "Fri, 06 May 2022 01:00:16 GMT",
         "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 05 May 2022 23:15:38 GMT",
+        "x-ms-date": "Fri, 06 May 2022 01:00:16 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -21,8 +21,8 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Thu, 05 May 2022 23:15:39 GMT",
-        "ETag": "W/\u0022datetime\u00272022-05-05T23%3A15%3A39.6686856Z\u0027\u0022",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A00%3A16.0269320Z\u0027\u0022",
         "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttablee4e42e7f\u0027)",
         "Transfer-Encoding": "chunked"
       },
@@ -41,10 +41,10 @@
         "Content-Length": "584",
         "Content-Type": "application/json",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 05 May 2022 23:15:40 GMT",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
         "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
         "X-HTTP-Method": "MERGE",
-        "x-ms-date": "Thu, 05 May 2022 23:15:40 GMT",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -72,8 +72,8 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 05 May 2022 23:15:39 GMT",
-        "ETag": "W/\u0022datetime\u00272022-05-05T23%3A15%3A40.0697864Z\u0027\u0022"
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A00%3A16.4141064Z\u0027\u0022"
       },
       "ResponseBody": null
     },
@@ -85,22 +85,22 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 05 May 2022 23:15:40 GMT",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
         "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 05 May 2022 23:15:40 GMT",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Thu, 05 May 2022 23:15:39 GMT",
-        "ETag": "W/\u0022datetime\u00272022-05-05T23%3A15%3A40.0697864Z\u0027\u0022",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
+        "ETag": "W/\u0022datetime\u00272022-05-06T01%3A00%3A16.4141064Z\u0027\u0022",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "odata.metadata": "https://fakeendpoint.table.cosmos.azure.com/uttablee4e42e7f/$metadata#uttablee4e42e7f/@Element",
-        "odata.etag": "W/\u0022datetime\u00272022-05-05T23%3A15%3A40.0697864Z\u0027\u0022",
+        "odata.etag": "W/\u0022datetime\u00272022-05-06T01%3A00%3A16.4141064Z\u0027\u0022",
         "PartitionKey": "pke4e42e7f",
         "RowKey": "rke4e42e7f",
         "bool": false,
@@ -115,7 +115,7 @@
         "since": "2008-07-10T00:00:00.0000000Z",
         "guid@odata.type": "Edm.Guid",
         "guid": "3bd67b28-2155-4caf-b492-207172d4f183",
-        "Timestamp": "2022-05-05T23:15:40.0697864Z"
+        "Timestamp": "2022-05-06T01:00:16.4141064Z"
       }
     },
     {
@@ -128,10 +128,10 @@
         "Content-Length": "186",
         "Content-Type": "application/json",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 05 May 2022 23:15:40 GMT",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
         "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
         "X-HTTP-Method": "MERGE",
-        "x-ms-date": "Thu, 05 May 2022 23:15:40 GMT",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -145,7 +145,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Thu, 05 May 2022 23:15:39 GMT",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
@@ -153,7 +153,7 @@
           "code": "InvalidInput",
           "message": {
             "lang": "en-us",
-            "value": "One of the input values is invalid.\r\nActivityId: 245c4a49-e962-44ba-8d62-a2edbf42065b, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:245c4a49-e962-44ba-8d62-a2edbf42065b\n"
+            "value": "One of the input values is invalid.\r\nActivityId: 521a7b26-c551-427f-a4e6-7e8b3e6b9a71, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:521a7b26-c551-427f-a4e6-7e8b3e6b9a71\n"
           }
         }
       }
@@ -166,16 +166,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 05 May 2022 23:15:40 GMT",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
         "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 05 May 2022 23:15:40 GMT",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Thu, 05 May 2022 23:15:39 GMT",
+        "Date": "Fri, 06 May 2022 01:00:15 GMT",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
@@ -195,16 +195,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Thu, 05 May 2022 23:15:40 GMT",
+        "Date": "Fri, 06 May 2022 01:00:17 GMT",
         "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Thu, 05 May 2022 23:15:40 GMT",
+        "x-ms-date": "Fri, 06 May 2022 01:00:17 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 05 May 2022 23:15:40 GMT"
+        "Date": "Fri, 06 May 2022 01:00:15 GMT"
       },
       "ResponseBody": null
     }
