@@ -545,7 +545,7 @@ class DataLakeDirectoryClient(PathClient):
         :keyword expiry_options:
             Indicates mode of the expiry time.
             Possible values include: 'NeverExpire', 'RelativeToNow', 'Absolute'"
-        :paramtype expiry_options: str or Literal["NeverExpire", "RelativeToNow", "Absolute"]
+        :paramtype expiry_options: Literal["NeverExpire", "RelativeToNow", "Absolute"]
         :keyword expires_on:
             The time to set the file to expiry.
             When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
