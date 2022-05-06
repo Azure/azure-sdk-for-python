@@ -541,7 +541,7 @@ class DataLakeDirectoryClient(PathClient):
             Specifies the duration of the lease, in seconds, or negative one
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
-            using renew or change. Default is -1 (infinite lease).
+            using renew or change.
         :keyword expiry_options:
             Indicates mode of the expiry time.
             Possible values include: 'NeverExpire', 'RelativeToNow', 'Absolute'"
