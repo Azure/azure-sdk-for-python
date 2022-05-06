@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (2022/05/10)
+## 1.1.0b1 (2022-05-10)
 
 ### Features Added
 - Support uploading and downloading OCI manifests and artifact blobs in synchronous `ContainerRegistryClient`. ([#24004](https://github.com/Azure/azure-sdk-for-python/pull/24004))
