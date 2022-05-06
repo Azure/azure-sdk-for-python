@@ -7,7 +7,7 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
-from opentelemetry.sdk.util.instrumentation import InstrumentationInfo
+from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk._metrics.export import MetricExportResult
 from opentelemetry.sdk._metrics.point import (
@@ -52,7 +52,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                 "test": "attribute"
             },
             description="test description",
-            instrumentation_info=InstrumentationInfo("test_name"),
+            instrumentation_scope=InstrumentationScope("test_name"),
             name="test name",
             resource = Resource.create(
                 attributes={"asd":"test_resource"}
@@ -151,7 +151,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                 "test": "attribute"
             },
             description="test description",
-            instrumentation_info=InstrumentationInfo("test_name"),
+            instrumentation_scope=InstrumentationScope("test_name"),
             name="test name",
             resource = resource,
             unit="ms",
@@ -187,7 +187,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                 "test": "attribute"
             },
             description="test description",
-            instrumentation_info=InstrumentationInfo("test_name"),
+            instrumentation_scope=InstrumentationScope("test_name"),
             name="test name",
             resource = resource,
             unit="ms",
@@ -211,7 +211,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                 "test": "attribute"
             },
             description="test description",
-            instrumentation_info=InstrumentationInfo("test_name"),
+            instrumentation_scope=InstrumentationScope("test_name"),
             name="test name",
             resource=None,
             unit="ms",
@@ -242,7 +242,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                 "test": "attribute"
             },
             description="test description",
-            instrumentation_info=InstrumentationInfo("test_name"),
+            instrumentation_scope=InstrumentationScope("test_name"),
             name="test name",
             resource=None,
             unit="ms",
@@ -270,7 +270,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                 "test": "attribute"
             },
             description="test description",
-            instrumentation_info=InstrumentationInfo("test_name"),
+            instrumentation_scope=InstrumentationScope("test_name"),
             name="test name",
             resource=None,
             unit="ms",
@@ -278,6 +278,8 @@ class TestAzureMetricExporter(unittest.TestCase):
                 aggregation_temporality=AggregationTemporality.DELTA,
                 bucket_counts=[0,3,4],
                 explicit_bounds=[0,5,10,0],
+                max=18,
+                min=1,
                 start_time_unix_nano=1646865018558419456,
                 time_unix_nano=1646865018558419457,
                 sum=31,

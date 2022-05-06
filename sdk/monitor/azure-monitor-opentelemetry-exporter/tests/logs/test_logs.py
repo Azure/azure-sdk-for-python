@@ -9,7 +9,7 @@ from unittest import mock
 # pylint: disable=import-error
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.sdk import _logs
-from opentelemetry.sdk.util.instrumentation import InstrumentationInfo
+from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk._logs.export import LogExportResult
 from opentelemetry.sdk._logs.severity import SeverityNumber
@@ -52,7 +52,6 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_text = "WARNING",
                 trace_flags = None,
                 severity_number = SeverityNumber.WARN,
-                name = None,
                 body = "Test message",
                 resource = Resource.create(
                     attributes={"asd":"test_resource"}
@@ -61,7 +60,7 @@ class TestAzureLogExporter(unittest.TestCase):
                     "test": "attribute"
                 },
             ),
-            InstrumentationInfo("test_name"),
+            InstrumentationScope("test_name"),
         )
         cls._exc_data = _logs.LogData(
             _logs.LogRecord(
@@ -71,7 +70,6 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_text = "EXCEPTION",
                 trace_flags = None,
                 severity_number = SeverityNumber.FATAL,
-                name = None,
                 body = "Test message",
                 resource = Resource.create(
                     attributes={"asd":"test_resource"}
@@ -83,7 +81,7 @@ class TestAzureLogExporter(unittest.TestCase):
                     SpanAttributes.EXCEPTION_STACKTRACE: 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n'
                 },
             ),
-            InstrumentationInfo("test_name"),
+            InstrumentationScope("test_name"),
         )
 
     @classmethod

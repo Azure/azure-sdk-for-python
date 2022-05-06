@@ -93,6 +93,19 @@ def test_decompress_compressed_no_header(http_request):
         pass
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_compress_compressed_no_header_offline(port, http_request):
+    # expect compressed text
+    client = PipelineClient("")
+    request = http_request(method="GET", url="http://localhost:{}/streams/compressed_no_header".format(port))
+    pipeline_response = client._pipeline.run(request, stream=True)
+    response = pipeline_response.http_response
+    data = response.stream_download(client._pipeline, decompress=False)
+    content = b"".join(list(data))
+    with pytest.raises(UnicodeDecodeError):
+        decoded = content.decode('utf-8')
+
+@pytest.mark.live_test_only
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_compressed_no_header(http_request):
     # expect compressed text
     account_name = "coretests"

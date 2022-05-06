@@ -2,13 +2,14 @@
 
 ### 4.3.0b5 (Unreleased)
 
-#### Features Added
-
 #### Breaking Changes
-
-#### Bugs Fixed
+- Bugfix: Automatic Id generation for items was turned on for `upsert_items()` method when no 'id' value was present in document body.
+Method call will now require an 'id' field to be present in the document body.
 
 #### Other Changes
+- Marked the GetAuthorizationMethod for deprecation since it will no longer be public in a future release.
+- Added samples showing how to configure retry options for both the sync and async clients.
+- Deprecated the `connection_retry_policy` and `retry_options` options in the sync client.
 
 ### 4.3.0b4 (2022-04-07)
 

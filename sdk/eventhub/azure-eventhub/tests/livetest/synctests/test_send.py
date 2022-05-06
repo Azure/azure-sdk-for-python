@@ -11,10 +11,9 @@ import time
 import json
 import sys
 
-import uamqp
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
-from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError
+from azure.eventhub.exceptions import EventDataSendError
 from azure.eventhub.amqp import (
     AmqpMessageHeader,
     AmqpMessageBodyType,
@@ -23,7 +22,7 @@ from azure.eventhub.amqp import (
 )
 
 @pytest.mark.liveTest
-def test_send_with_partition_key(connstr_receivers, live_eventhub):
+def test_send_with_partition_key(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str)
     with client:
@@ -39,43 +38,16 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub):
         client.send_batch(client.create_batch())
 
     found_partition_keys = {}
-    reconnect_receivers = []
     for index, partition in enumerate(receivers):
-        retry_total = 0
-        while retry_total < 3:
-            timeout = 5000 + retry_total * 1000
+        received = partition.receive_message_batch(timeout=5000)
+        for message in received:
             try:
-                received = partition.receive_message_batch(timeout=timeout)
-                for message in received:
-                    try:
-                        event_data = EventData._from_message(message)
-                        existing = found_partition_keys[event_data.partition_key]
-                        assert existing == index
-                    except KeyError:
-                        found_partition_keys[event_data.partition_key] = index
-                if received:
-                    break
-                retry_total += 1
-            except uamqp.errors.ConnectionClose:
-                for r in reconnect_receivers:
-                    r.close()
-                uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-                sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
-                    uri, live_eventhub['key_name'], live_eventhub['access_key'])
+                event_data = EventData._from_message(message)
+                existing = found_partition_keys[event_data.partition_key]
+                assert existing == index
+            except KeyError:
+                found_partition_keys[event_data.partition_key] = index
 
-                source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
-                    live_eventhub['hostname'],
-                    live_eventhub['event_hub'],
-                    live_eventhub['consumer_group'],
-                    index)
-                partition = uamqp.ReceiveClient(source, auth=sas_auth, debug=True, timeout=0, prefetch=500)
-                reconnect_receivers.append(partition)
-                retry_total += 1
-        if retry_total == 3:
-            raise OperationTimeoutError(f"Exhausted retries for receiving from {live_eventhub['hostname']}.")
-
-    for r in reconnect_receivers:
-        r.close()
 
 @pytest.mark.liveTest
 def test_send_and_receive_large_body_size(connstr_receivers):

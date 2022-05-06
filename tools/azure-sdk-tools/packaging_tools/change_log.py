@@ -144,6 +144,9 @@ class ChangeLog:
             self.breaking_changes.append(_MODEL_PARAM_CHANGE_REQUIRED.format(parameter_name, model_name))
             return
 
+    def client(self):
+        self.breaking_changes.append(_CLIENT_SIGNATURE_CHANGE)
+        return
 
 ## Features
 _ADD_OPERATION_GROUP = "Added operation group {}"
@@ -156,6 +159,7 @@ _MODEL_ADD = "Added model {}"
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"
 _REMOVE_OPERATION = "Removed operation {}.{}"
 _REMOVE_OPERATION_PARAM = "Operation {}.{} no longer has parameter {}"
+_CLIENT_SIGNATURE_CHANGE = "Client name is changed"
 _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
@@ -172,8 +176,10 @@ def build_change_log(old_report, new_report):
         # Operations
         if diff_line[0][0] == "operations":
             change_log.operation(diff_line)
-        else:
+        elif diff_line[0][0] == "models":
             change_log.models(diff_line)
+        elif diff_line[0][0] == 'client':
+            change_log.client()
 
     return change_log
 

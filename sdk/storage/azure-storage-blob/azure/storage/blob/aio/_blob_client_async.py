@@ -366,6 +366,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         :keyword str encoding:
             Defaults to UTF-8.
+        :keyword progress_hook:
+            An async callback to track the progress of a long running upload. The signature is
+            function(current: int, total: Optional[int]) where current is the number of bytes transfered
+            so far, and total is the size of the blob or None if the size is unknown.
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -460,6 +465,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The number of parallel connections with which to download.
         :keyword str encoding:
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
+        :keyword progress_hook:
+            An async callback to track the progress of a long running download. The signature is
+            function(current: int, total: int) where current is the number of bytes transfered
+            so far, and total is the total size of the download.
+        :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -1126,12 +1136,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
-        # type: (str, Optional[Dict[str, str]], bool, Any) -> Any
-        """Copies a blob asynchronously.
+        # type: (str, Optional[Dict[str, str]], bool, Any) -> Dict[str, Union[str, datetime]]
+        """Copies a blob from the given URL.
 
-        This operation returns a copy operation
-        object that can be used to wait on the completion of the operation,
-        as well as check status or abort the copy operation.
+        This operation returns a dictionary containing `copy_status` and `copy_id`,
+        which can be used to check the status of or abort the copy operation.
+        `copy_status` will be 'success' if the copy completed synchronously or
+        'pending' if the copy has been started asynchronously. For asynchronous copies,
+        the status can be checked by polling the :func:`get_blob_properties` method and
+        checking the copy status. Set `requires_sync` to True to force the copy to be synchronous.
         The Blob service copies blobs on a best-effort basis.
 
         The source blob for a copy operation may be a block blob, an append blob,
@@ -1153,10 +1166,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         When copying from an append blob, all committed blocks are copied. At the
         end of the copy operation, the destination blob will have the same committed
         block count as the source.
-
-        For all blob types, you can call status() on the returned polling object
-        to check the status of the copy operation, or wait() to block until the
-        operation is complete. The final blob will be committed when the copy completes.
 
         :param str source_url:
             A URL of up to 2 KB in length that specifies a file or blob.
