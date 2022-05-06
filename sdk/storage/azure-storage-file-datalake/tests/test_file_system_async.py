@@ -8,6 +8,7 @@
 import asyncio
 import pytest
 import unittest
+import uuid
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
