@@ -8,7 +8,11 @@
 
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import DataPartitionAddOrRemoveRequest
 from ._models_py3 import DataPartitionNames
+from ._models_py3 import DataPartitionProperties
+from ._models_py3 import DataPartitionsList
+from ._models_py3 import DataPartitionsListResult
 from ._models_py3 import EnergyResourceUpdate
 from ._models_py3 import EnergyService
 from ._models_py3 import EnergyServiceList
@@ -34,7 +38,11 @@ from ._open_energy_platform_management_service_apis_enums import (
 __all__ = [
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
+    'DataPartitionAddOrRemoveRequest',
     'DataPartitionNames',
+    'DataPartitionProperties',
+    'DataPartitionsList',
+    'DataPartitionsListResult',
     'EnergyResourceUpdate',
     'EnergyService',
     'EnergyServiceList',
