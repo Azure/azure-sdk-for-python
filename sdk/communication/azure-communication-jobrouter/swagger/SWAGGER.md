@@ -30,16 +30,43 @@ title: Azure Communication Job Router Service
 disable-async-iterators: true
 ```
 
-### Set reference to LabelSelectorAttachment and ExceptionAction
+### Set reference to WorkerSelectorAttachment in ClassificationPolicy
 ```yaml
 directive:
   - from: swagger-document
-    where: "$.definitions"
+    where: "$.definitions.ClassificationPolicy.properties.workerSelectors.items"
     transform: >
-      $.ClassificationPolicy.properties.workerSelectors.items["$ref"] = "#/definitions/WorkerSelectorAttachment";
-      $.ClassificationPolicy.properties.queueSelectors.items["$ref"] = "#/definitions/QueueSelectorAttachment";
-      $.ExceptionRule.properties.actions.items["$ref"] = "#/definitions/ExceptionAction";
+      $["$ref"] = "#/definitions/WorkerSelectorAttachment";
 ```
+
+### Set reference to QueueSelectorAttachment in ClassificationPolicy
+```yaml
+directive:
+  - from: swagger-document
+    where: "$.definitions.ClassificationPolicy.properties.queueSelectors.items"
+    transform: >
+      $["$ref"] = "#/definitions/QueueSelectorAttachment";
+```
+
+### Set reference to WorkerSelectorAttachment in PagedClassificationPolicy
+```yaml
+directive:
+  - from: swagger-document
+    where: "$.definitions.PagedClassificationPolicy.properties.workerSelectors.items"
+    transform: >
+      $["$ref"] = "#/definitions/WorkerSelectorAttachment";
+```
+
+### Set reference to QueueSelectorAttachment in PagedClassificationPolicy
+```yaml
+directive:
+  - from: swagger-document
+    where: "$.definitions.PagedClassificationPolicy.properties.queueSelectors.items"
+    transform: >
+      $["$ref"] = "#/definitions/QueueSelectorAttachment";
+```
+
+
 
 ### Rename CommunicationError to JobRouterError
 ```yaml
@@ -48,4 +75,13 @@ directive:
   where: '$.definitions.CommunicationError'
   transform: >
     $["x-ms-client-name"] = "JobRouterError";
+```
+
+### Rename JobQueue to JobQueueInternal
+```yaml
+directive:
+  from: swagger-document
+  where: '$.definitions.JobQueue'
+  transform: >
+    $["x-ms-client-name"] = "JobQueueInternal";
 ```

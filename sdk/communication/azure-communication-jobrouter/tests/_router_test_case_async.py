@@ -2,30 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
+
+from _shared.utils import get_http_logging_policy
+from azure.communication.jobrouter.aio import RouterClient
+from _router_test_case import RouterTestCaseBase
 
 
-from _shared.asynctestcase import AsyncCommunicationTestCase
-from _shared.testcase import (
-    BodyReplacerProcessor,
-    ResponseReplacerProcessor
-)
-from azure_devtools.scenario_tests import LargeResponseBodyReplacer
-from _recording_processors import (
-    RouterHeaderSanitizer,
-    RouterQuerySanitizer,
-    RouterURIIdentityReplacer
-)
-
-
-class RouterTestAsyncCase(AsyncCommunicationTestCase):
+class AsyncRouterTestCase(RouterTestCaseBase):
     def setUp(self):
-        super(RouterTestAsyncCase, self).setUp()
-        self.recording_processors.extend([
-            BodyReplacerProcessor(keys = ["id"]),
-            LargeResponseBodyReplacer(),
-            ResponseReplacerProcessor(keys = [self._resource_name]),
-            RouterHeaderSanitizer(headers = ["etag"]),
-            RouterQuerySanitizer(exceptions = ["api-version"]),
-            RouterURIIdentityReplacer()
-        ])
+        super(AsyncRouterTestCase, self).setUp()
+
+    def create_client(self) -> RouterClient:
+        return RouterClient.from_connection_string(
+            conn_str = self.connection_str,
+            http_logging_policy=get_http_logging_policy())

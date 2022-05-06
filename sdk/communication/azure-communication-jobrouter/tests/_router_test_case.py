@@ -13,21 +13,51 @@ from azure_devtools.scenario_tests import LargeResponseBodyReplacer
 from _recording_processors import (
     RouterHeaderSanitizer,
     RouterQuerySanitizer,
-    RouterURIIdentityReplacer
+    RouterURIIdentityReplacer,
+    RouterScrubber
+)
+
+from _shared.utils import get_http_logging_policy
+from azure.communication.jobrouter import (
+    RouterClient,
 )
 
 
-class RouterTestCase(CommunicationTestCase):
+class RouterTestCaseBase(CommunicationTestCase):
     def setUp(self):
-        super(RouterTestCase, self).setUp()
+        super(RouterTestCaseBase, self).setUp()
         self.recording_processors.extend([
-            BodyReplacerProcessor(keys = ["id"]),
+            BodyReplacerProcessor(keys = ["id",
+                                          "distributionPolicyId",
+                                          "exceptionPolicyId",
+                                          "classificationPolicyId",
+                                          "queueId",
+                                          ]),
             LargeResponseBodyReplacer(),
             ResponseReplacerProcessor(keys = [self._resource_name]),
+            RouterScrubber(keys = ["Id",
+                                   "etag",
+                                   "id",
+                                   "distributionPolicyId",
+                                   "exceptionPolicyId",
+                                   "classificationPolicyId",
+                                   "fallbackQueueId",
+                                   "queueId",
+                                   "workerId"]),
             RouterHeaderSanitizer(headers = ["etag"]),
             RouterQuerySanitizer(exceptions = ["api-version"]),
-            RouterURIIdentityReplacer()
+            RouterURIIdentityReplacer(),
         ])
+
+
+class RouterTestCase(RouterTestCaseBase):
+    def setUp(self):
+        super(RouterTestCase, self).setUp()
+
+    def create_client(self) -> RouterClient:
+        return RouterClient.from_connection_string(
+            conn_str = self.connection_str,
+            http_logging_policy=get_http_logging_policy())
 
     def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""

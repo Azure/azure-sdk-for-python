@@ -831,6 +831,7 @@
             "in": "body",
             "name": "completeJobRequest",
             "description": "Request model for completing job",
+            "required": true,
             "schema": {
               "$ref": "#/definitions/CompleteJobRequest"
             },
@@ -886,6 +887,7 @@
             "in": "body",
             "name": "closeJobRequest",
             "description": "Request model for closing job",
+            "required": true,
             "schema": {
               "$ref": "#/definitions/CloseJobRequest"
             },
@@ -1983,10 +1985,6 @@
     },
     "DistributionPolicy": {
       "description": "Policy governing how jobs are distributed to workers",
-      "required": [
-        "mode",
-        "offerTTLSeconds"
-      ],
       "type": "object",
       "properties": {
         "id": {
@@ -2274,9 +2272,6 @@
     },
     "JobQueue": {
       "description": "A queue that can contain jobs to be routed.",
-      "required": [
-        "distributionPolicyId"
-      ],
       "type": "object",
       "properties": {
         "id": {
@@ -2384,10 +2379,6 @@
       }
     },
     "PagedDistributionPolicy": {
-      "required": [
-        "mode",
-        "offerTTLSeconds"
-      ],
       "type": "object",
       "properties": {
         "id": {
@@ -2431,9 +2422,6 @@
       }
     },
     "PagedJob": {
-      "required": [
-        "channelId"
-      ],
       "type": "object",
       "properties": {
         "id": {
@@ -2534,9 +2522,6 @@
       }
     },
     "PagedQueue": {
-      "required": [
-        "distributionPolicyId"
-      ],
       "type": "object",
       "properties": {
         "id": {
@@ -2564,9 +2549,6 @@
       }
     },
     "PagedWorker": {
-      "required": [
-        "totalCapacity"
-      ],
       "type": "object",
       "properties": {
         "id": {
@@ -2923,9 +2905,6 @@
     },
     "RouterJob": {
       "description": "A unit of work to be routed",
-      "required": [
-        "channelId"
-      ],
       "type": "object",
       "properties": {
         "id": {
@@ -3040,9 +3019,6 @@
       "discriminator": "kind"
     },
     "RouterWorker": {
-      "required": [
-        "totalCapacity"
-      ],
       "type": "object",
       "properties": {
         "id": {

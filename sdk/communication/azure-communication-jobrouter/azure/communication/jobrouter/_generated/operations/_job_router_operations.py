@@ -2471,10 +2471,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
 
         _complete_job_request = _models.CompleteJobRequest(assignment_id=assignment_id, note=note)
-        if _complete_job_request is not None:
-            _json = self._serialize.body(_complete_job_request, 'CompleteJobRequest')
-        else:
-            _json = None
+        _json = self._serialize.body(_complete_job_request, 'CompleteJobRequest')
 
         request = build_complete_job_action_request(
             id=id,
@@ -2561,10 +2558,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
 
         _close_job_request = _models.CloseJobRequest(assignment_id=assignment_id, disposition_code=disposition_code, close_time=close_time, note=note)
-        if _close_job_request is not None:
-            _json = self._serialize.body(_close_job_request, 'CloseJobRequest')
-        else:
-            _json = None
+        _json = self._serialize.body(_close_job_request, 'CloseJobRequest')
 
         request = build_close_job_action_request(
             id=id,
@@ -2926,10 +2920,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
     def upsert_queue(
         self,
         queue_id,  # type: str
-        patch=None,  # type: Optional[_models.JobQueue]
+        patch=None,  # type: Optional[_models.JobQueueInternal]
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.JobQueue
+        # type: (...) -> _models.JobQueueInternal
         """Updates a queue.
 
         Updates a queue.
@@ -2938,10 +2932,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :type queue_id: str
         :param patch: Model of queue properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Default value is None.
-        :type patch: ~azure.communication.jobrouter.models.JobQueue
+        :type patch: ~azure.communication.jobrouter.models.JobQueueInternal
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobQueue, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: JobQueueInternal, or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -2954,10 +2948,10 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/merge-patch+json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobQueue]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobQueueInternal]
 
         if patch is not None:
-            _json = self._serialize.body(patch, 'JobQueue')
+            _json = self._serialize.body(patch, 'JobQueueInternal')
         else:
             _json = None
 
@@ -2988,7 +2982,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('JobQueue', pipeline_response)
+        deserialized = self._deserialize('JobQueueInternal', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -3004,7 +2998,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> _models.JobQueue
+        # type: (...) -> _models.JobQueueInternal
         """Retrieves an existing queue by Id.
 
         Retrieves an existing queue by Id.
@@ -3012,8 +3006,8 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         :param id: Id of the queue to retrieve.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobQueue, or the result of cls(response)
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: JobQueueInternal, or the result of cls(response)
+        :rtype: ~azure.communication.jobrouter.models.JobQueueInternal
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -3025,7 +3019,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-20-preview2"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobQueue]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobQueueInternal]
 
         
         request = build_get_queue_request(
@@ -3053,7 +3047,7 @@ class JobRouterOperations(object):  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('JobQueue', pipeline_response)
+        deserialized = self._deserialize('JobQueueInternal', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

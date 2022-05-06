@@ -35,7 +35,7 @@ try:
     from ._models_py3 import JobExceptionTrigger
     from ._models_py3 import JobOffer
     from ._models_py3 import JobPositionDetails
-    from ._models_py3 import JobQueue
+    from ._models_py3 import JobQueueInternal
     from ._models_py3 import JobRouterError
     from ._models_py3 import LongestIdleMode
     from ._models_py3 import ManualReclassifyExceptionAction
@@ -101,7 +101,7 @@ except (SyntaxError, ImportError):
     from ._models import JobExceptionTrigger  # type: ignore
     from ._models import JobOffer  # type: ignore
     from ._models import JobPositionDetails  # type: ignore
-    from ._models import JobQueue  # type: ignore
+    from ._models import JobQueueInternal  # type: ignore
     from ._models import JobRouterError  # type: ignore
     from ._models import LongestIdleMode  # type: ignore
     from ._models import ManualReclassifyExceptionAction  # type: ignore
@@ -180,7 +180,7 @@ __all__ = [
     'JobExceptionTrigger',
     'JobOffer',
     'JobPositionDetails',
-    'JobQueue',
+    'JobQueueInternal',
     'JobRouterError',
     'LongestIdleMode',
     'ManualReclassifyExceptionAction',

@@ -3,10 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import json
+import copy
+import re
 from azure_devtools.scenario_tests import RecordingProcessor
+from azure_devtools.scenario_tests.utilities import (
+    is_text_payload,
+    _get_content_type
+)
 
 from urllib.parse import urlparse, parse_qs, urlencode, quote_plus
 
+
+def _is_merge_patch_payload(entity):
+    router_additional_accepted_content_type = "application/merge-patch+json"
+    content_type = _get_content_type(entity)
+    return content_type.startswith(router_additional_accepted_content_type)
+
+def _is_text_payload_internal(entity):
+    return is_text_payload(entity) or _is_merge_patch_payload(entity)
 
 def sanitize_query_params(value,  # type: str
                           exceptions,  # type: List[str]
@@ -64,7 +79,6 @@ class RouterQuerySanitizer(RecordingProcessor):
 
 class RouterURIIdentityReplacer(RecordingProcessor):
     def process_request(self, request):
-        import re
         request.uri = re.sub('/routing/classificationPolicies/([^/?]+)', '/routing/classificationPolicies/sanitized',
                              request.uri)
         request.uri = re.sub('/routing/distributionPolicies/([^/?]+)', '/routing/distributionPolicies/sanitized',
@@ -82,8 +96,6 @@ class RouterURIIdentityReplacer(RecordingProcessor):
         return request
 
     def process_response(self, response):
-        import re
-
         if 'url' in response:
             response['url'] = re.sub('/routing/classificationPolicies/([^/?]+)',
                                   '/routing/classificationPolicies/sanitized',
@@ -101,3 +113,59 @@ class RouterURIIdentityReplacer(RecordingProcessor):
             response['url'] = re.sub('/routing/workers/([^/?]+)', '/routing/workers/sanitized',
                                   response['url'])
         return response
+
+
+class RouterScrubber(RecordingProcessor):
+    """Sanitize the sensitive info inside request or response bodies"""
+
+    def __init__(self, keys=None, replacement="sanitized", max_depth=16):
+        self._replacement = replacement
+        self._keys = keys if keys else []
+        self.max_depth = max_depth
+
+    def process_request(self, request):
+        if _is_text_payload_internal(request) and request.body:
+            try:
+                body = json.loads(request.body.decode())
+            except (KeyError, ValueError) as e:
+                raise e
+
+            body = self._scrub(body, 0)
+            request.body = json.dumps(body).encode()
+
+        return request
+
+    def process_response(self, response):
+        if _is_text_payload_internal(response) and response['body']:
+            try:
+                if isinstance(response['body'], str):
+                    body_as_string = response["body"]
+                    body_as_string = re.sub(r"\\.", '', body_as_string)
+                    body = json.loads(body_as_string)
+
+                    body = self._scrub(body, 0)
+                    response["body"] = json.dumps(body)
+            except (KeyError, ValueError) as e:
+                raise e
+
+        return response
+
+    def _scrub(self, x, depth):
+        if depth > self.max_depth:
+            raise ValueError("Max depth reached")
+
+        ret = copy.deepcopy(x)
+        # Handle dictionaries, lits & tuples. Scrub all values
+        if isinstance(x, dict):
+            for k, v in ret.items():
+                if k in self._keys:
+                    ret[k] = self._replacement
+                else:
+                    ret[k] = self._scrub(v, depth + 1)
+        if isinstance(x, (list, tuple)):
+            for k, v in enumerate(ret):
+                ret[k] = self._scrub(v, depth + 1)
+
+        # Finished scrubbing
+        return ret
+

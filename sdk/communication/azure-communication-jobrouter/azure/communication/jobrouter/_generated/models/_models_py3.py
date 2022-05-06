@@ -540,7 +540,7 @@ class ClassificationPolicy(msrest.serialization.Model):
      match.
     :vartype fallback_queue_id: str
     :ivar queue_selectors: The queue selectors to resolve a queue for a given job.
-    :vartype queue_selectors: list[any]
+    :vartype queue_selectors: list[~azure.communication.jobrouter.models.QueueSelectorAttachment]
     :ivar prioritization_rule: A rule of one of the following types:
     
      StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -550,7 +550,7 @@ class ClassificationPolicy(msrest.serialization.Model):
      AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
     :vartype prioritization_rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar worker_selectors: The worker label selectors to attach to a given job.
-    :vartype worker_selectors: list[any]
+    :vartype worker_selectors: list[~azure.communication.jobrouter.models.WorkerSelectorAttachment]
     """
 
     _validation = {
@@ -561,9 +561,9 @@ class ClassificationPolicy(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'fallback_queue_id': {'key': 'fallbackQueueId', 'type': 'str'},
-        'queue_selectors': {'key': 'queueSelectors', 'type': '[object]'},
+        'queue_selectors': {'key': 'queueSelectors', 'type': '[QueueSelectorAttachment]'},
         'prioritization_rule': {'key': 'prioritizationRule', 'type': 'RouterRule'},
-        'worker_selectors': {'key': 'workerSelectors', 'type': '[object]'},
+        'worker_selectors': {'key': 'workerSelectors', 'type': '[WorkerSelectorAttachment]'},
     }
 
     def __init__(
@@ -571,9 +571,9 @@ class ClassificationPolicy(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         fallback_queue_id: Optional[str] = None,
-        queue_selectors: Optional[List[Any]] = None,
+        queue_selectors: Optional[List["_models.QueueSelectorAttachment"]] = None,
         prioritization_rule: Optional["_models.RouterRule"] = None,
-        worker_selectors: Optional[List[Any]] = None,
+        worker_selectors: Optional[List["_models.WorkerSelectorAttachment"]] = None,
         **kwargs
     ):
         """
@@ -583,7 +583,7 @@ class ClassificationPolicy(msrest.serialization.Model):
          match.
         :paramtype fallback_queue_id: str
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selectors: list[any]
+        :paramtype queue_selectors: list[~azure.communication.jobrouter.models.QueueSelectorAttachment]
         :keyword prioritization_rule: A rule of one of the following types:
         
          StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -593,7 +593,8 @@ class ClassificationPolicy(msrest.serialization.Model):
          AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
         :paramtype prioritization_rule: ~azure.communication.jobrouter.models.RouterRule
         :keyword worker_selectors: The worker label selectors to attach to a given job.
-        :paramtype worker_selectors: list[any]
+        :paramtype worker_selectors:
+         list[~azure.communication.jobrouter.models.WorkerSelectorAttachment]
         """
         super(ClassificationPolicy, self).__init__(**kwargs)
         self.id = None
@@ -995,23 +996,19 @@ class DistributionPolicy(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The unique identifier of the policy.
     :vartype id: str
     :ivar name: The human readable name of the policy.
     :vartype name: str
-    :ivar offer_ttl_seconds: Required. The expiry time of any offers created under this policy will
-     be governed by the offer time to live.
+    :ivar offer_ttl_seconds: The expiry time of any offers created under this policy will be
+     governed by the offer time to live.
     :vartype offer_ttl_seconds: float
-    :ivar mode: Required. Abstract base class for defining a distribution mode.
+    :ivar mode: Abstract base class for defining a distribution mode.
     :vartype mode: ~azure.communication.jobrouter.models.DistributionMode
     """
 
     _validation = {
         'id': {'readonly': True},
-        'offer_ttl_seconds': {'required': True},
-        'mode': {'required': True},
     }
 
     _attribute_map = {
@@ -1024,18 +1021,18 @@ class DistributionPolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        offer_ttl_seconds: float,
-        mode: "_models.DistributionMode",
         name: Optional[str] = None,
+        offer_ttl_seconds: Optional[float] = None,
+        mode: Optional["_models.DistributionMode"] = None,
         **kwargs
     ):
         """
         :keyword name: The human readable name of the policy.
         :paramtype name: str
-        :keyword offer_ttl_seconds: Required. The expiry time of any offers created under this policy
-         will be governed by the offer time to live.
+        :keyword offer_ttl_seconds: The expiry time of any offers created under this policy will be
+         governed by the offer time to live.
         :paramtype offer_ttl_seconds: float
-        :keyword mode: Required. Abstract base class for defining a distribution mode.
+        :keyword mode: Abstract base class for defining a distribution mode.
         :paramtype mode: ~azure.communication.jobrouter.models.DistributionMode
         """
         super(DistributionPolicy, self).__init__(**kwargs)
@@ -1513,19 +1510,17 @@ class JobPositionDetails(msrest.serialization.Model):
         self.estimated_wait_time_minutes = estimated_wait_time_minutes
 
 
-class JobQueue(msrest.serialization.Model):
+class JobQueueInternal(msrest.serialization.Model):
     """A queue that can contain jobs to be routed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: The Id of this queue.
     :vartype id: str
     :ivar name: The name of this queue.
     :vartype name: str
-    :ivar distribution_policy_id: Required. The ID of the distribution policy that will determine
-     how a job is distributed to workers.
+    :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
+     is distributed to workers.
     :vartype distribution_policy_id: str
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
@@ -1537,7 +1532,6 @@ class JobQueue(msrest.serialization.Model):
 
     _validation = {
         'id': {'readonly': True},
-        'distribution_policy_id': {'required': True},
     }
 
     _attribute_map = {
@@ -1551,8 +1545,8 @@ class JobQueue(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        distribution_policy_id: str,
         name: Optional[str] = None,
+        distribution_policy_id: Optional[str] = None,
         labels: Optional[Dict[str, Any]] = None,
         exception_policy_id: Optional[str] = None,
         **kwargs
@@ -1560,8 +1554,8 @@ class JobQueue(msrest.serialization.Model):
         """
         :keyword name: The name of this queue.
         :paramtype name: str
-        :keyword distribution_policy_id: Required. The ID of the distribution policy that will
-         determine how a job is distributed to workers.
+        :keyword distribution_policy_id: The ID of the distribution policy that will determine how a
+         job is distributed to workers.
         :paramtype distribution_policy_id: str
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -1570,7 +1564,7 @@ class JobQueue(msrest.serialization.Model):
          job escalation rules.
         :paramtype exception_policy_id: str
         """
-        super(JobQueue, self).__init__(**kwargs)
+        super(JobQueueInternal, self).__init__(**kwargs)
         self.id = None
         self.name = name
         self.distribution_policy_id = distribution_policy_id
@@ -1763,7 +1757,7 @@ class PagedClassificationPolicy(msrest.serialization.Model):
      match.
     :vartype fallback_queue_id: str
     :ivar queue_selectors: The queue selectors to resolve a queue for a given job.
-    :vartype queue_selectors: list[any]
+    :vartype queue_selectors: list[~azure.communication.jobrouter.models.QueueSelectorAttachment]
     :ivar prioritization_rule: A rule of one of the following types:
     
      StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -1773,7 +1767,7 @@ class PagedClassificationPolicy(msrest.serialization.Model):
      AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
     :vartype prioritization_rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar worker_selectors: The worker label selectors to attach to a given job.
-    :vartype worker_selectors: list[any]
+    :vartype worker_selectors: list[~azure.communication.jobrouter.models.WorkerSelectorAttachment]
     """
 
     _validation = {
@@ -1784,9 +1778,9 @@ class PagedClassificationPolicy(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'fallback_queue_id': {'key': 'fallbackQueueId', 'type': 'str'},
-        'queue_selectors': {'key': 'queueSelectors', 'type': '[object]'},
+        'queue_selectors': {'key': 'queueSelectors', 'type': '[QueueSelectorAttachment]'},
         'prioritization_rule': {'key': 'prioritizationRule', 'type': 'RouterRule'},
-        'worker_selectors': {'key': 'workerSelectors', 'type': '[object]'},
+        'worker_selectors': {'key': 'workerSelectors', 'type': '[WorkerSelectorAttachment]'},
     }
 
     def __init__(
@@ -1794,9 +1788,9 @@ class PagedClassificationPolicy(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         fallback_queue_id: Optional[str] = None,
-        queue_selectors: Optional[List[Any]] = None,
+        queue_selectors: Optional[List["_models.QueueSelectorAttachment"]] = None,
         prioritization_rule: Optional["_models.RouterRule"] = None,
-        worker_selectors: Optional[List[Any]] = None,
+        worker_selectors: Optional[List["_models.WorkerSelectorAttachment"]] = None,
         **kwargs
     ):
         """
@@ -1806,7 +1800,7 @@ class PagedClassificationPolicy(msrest.serialization.Model):
          match.
         :paramtype fallback_queue_id: str
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selectors: list[any]
+        :paramtype queue_selectors: list[~azure.communication.jobrouter.models.QueueSelectorAttachment]
         :keyword prioritization_rule: A rule of one of the following types:
         
          StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -1816,7 +1810,8 @@ class PagedClassificationPolicy(msrest.serialization.Model):
          AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
         :paramtype prioritization_rule: ~azure.communication.jobrouter.models.RouterRule
         :keyword worker_selectors: The worker label selectors to attach to a given job.
-        :paramtype worker_selectors: list[any]
+        :paramtype worker_selectors:
+         list[~azure.communication.jobrouter.models.WorkerSelectorAttachment]
         """
         super(PagedClassificationPolicy, self).__init__(**kwargs)
         self.id = None
@@ -1832,23 +1827,19 @@ class PagedDistributionPolicy(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The unique identifier of the policy.
     :vartype id: str
     :ivar name: The human readable name of the policy.
     :vartype name: str
-    :ivar offer_ttl_seconds: Required. The expiry time of any offers created under this policy will
-     be governed by the offer time to live.
+    :ivar offer_ttl_seconds: The expiry time of any offers created under this policy will be
+     governed by the offer time to live.
     :vartype offer_ttl_seconds: float
-    :ivar mode: Required. Abstract base class for defining a distribution mode.
+    :ivar mode: Abstract base class for defining a distribution mode.
     :vartype mode: ~azure.communication.jobrouter.models.DistributionMode
     """
 
     _validation = {
         'id': {'readonly': True},
-        'offer_ttl_seconds': {'required': True},
-        'mode': {'required': True},
     }
 
     _attribute_map = {
@@ -1861,18 +1852,18 @@ class PagedDistributionPolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        offer_ttl_seconds: float,
-        mode: "_models.DistributionMode",
         name: Optional[str] = None,
+        offer_ttl_seconds: Optional[float] = None,
+        mode: Optional["_models.DistributionMode"] = None,
         **kwargs
     ):
         """
         :keyword name: The human readable name of the policy.
         :paramtype name: str
-        :keyword offer_ttl_seconds: Required. The expiry time of any offers created under this policy
-         will be governed by the offer time to live.
+        :keyword offer_ttl_seconds: The expiry time of any offers created under this policy will be
+         governed by the offer time to live.
         :paramtype offer_ttl_seconds: float
-        :keyword mode: Required. Abstract base class for defining a distribution mode.
+        :keyword mode: Abstract base class for defining a distribution mode.
         :paramtype mode: ~azure.communication.jobrouter.models.DistributionMode
         """
         super(PagedDistributionPolicy, self).__init__(**kwargs)
@@ -1931,8 +1922,6 @@ class PagedJob(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The id of the job.
     :vartype id: str
     :ivar channel_reference: Reference to an external parent context, eg. call ID.
@@ -1942,7 +1931,7 @@ class PagedJob(msrest.serialization.Model):
     :vartype job_status: str or ~azure.communication.jobrouter.models.JobStatus
     :ivar enqueue_time_utc: The time a job was queued.
     :vartype enqueue_time_utc: ~datetime.datetime
-    :ivar channel_id: Required. The channel identifier. eg. voice, chat, etc.
+    :ivar channel_id: The channel identifier. eg. voice, chat, etc.
     :vartype channel_id: str
     :ivar classification_policy_id: The Id of the Classification policy used for classifying a job.
     :vartype classification_policy_id: str
@@ -1974,7 +1963,6 @@ class PagedJob(msrest.serialization.Model):
         'id': {'readonly': True},
         'job_status': {'readonly': True},
         'enqueue_time_utc': {'readonly': True},
-        'channel_id': {'required': True},
         'attached_worker_selectors': {'readonly': True},
         'assignments': {'readonly': True},
     }
@@ -2000,8 +1988,8 @@ class PagedJob(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        channel_id: str,
         channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
         classification_policy_id: Optional[str] = None,
         queue_id: Optional[str] = None,
         priority: Optional[int] = None,
@@ -2015,7 +2003,7 @@ class PagedJob(msrest.serialization.Model):
         """
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: str
-        :keyword channel_id: Required. The channel identifier. eg. voice, chat, etc.
+        :keyword channel_id: The channel identifier. eg. voice, chat, etc.
         :paramtype channel_id: str
         :keyword classification_policy_id: The Id of the Classification policy used for classifying a
          job.
@@ -2061,14 +2049,12 @@ class PagedQueue(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The Id of this queue.
     :vartype id: str
     :ivar name: The name of this queue.
     :vartype name: str
-    :ivar distribution_policy_id: Required. The ID of the distribution policy that will determine
-     how a job is distributed to workers.
+    :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
+     is distributed to workers.
     :vartype distribution_policy_id: str
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
@@ -2080,7 +2066,6 @@ class PagedQueue(msrest.serialization.Model):
 
     _validation = {
         'id': {'readonly': True},
-        'distribution_policy_id': {'required': True},
     }
 
     _attribute_map = {
@@ -2094,8 +2079,8 @@ class PagedQueue(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        distribution_policy_id: str,
         name: Optional[str] = None,
+        distribution_policy_id: Optional[str] = None,
         labels: Optional[Dict[str, Any]] = None,
         exception_policy_id: Optional[str] = None,
         **kwargs
@@ -2103,8 +2088,8 @@ class PagedQueue(msrest.serialization.Model):
         """
         :keyword name: The name of this queue.
         :paramtype name: str
-        :keyword distribution_policy_id: Required. The ID of the distribution policy that will
-         determine how a job is distributed to workers.
+        :keyword distribution_policy_id: The ID of the distribution policy that will determine how a
+         job is distributed to workers.
         :paramtype distribution_policy_id: str
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -2126,8 +2111,6 @@ class PagedWorker(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id:
     :vartype id: str
     :ivar state: The current state of the worker. Known values are: "active", "draining",
@@ -2135,8 +2118,8 @@ class PagedWorker(msrest.serialization.Model):
     :vartype state: str or ~azure.communication.jobrouter.models.PagedWorkerState
     :ivar queue_assignments: The queue(s) that this worker can receive work from.
     :vartype queue_assignments: dict[str, any]
-    :ivar total_capacity: Required. The total capacity score this worker has to manage multiple
-     concurrent jobs.
+    :ivar total_capacity: The total capacity score this worker has to manage multiple concurrent
+     jobs.
     :vartype total_capacity: int
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
@@ -2161,7 +2144,6 @@ class PagedWorker(msrest.serialization.Model):
     _validation = {
         'id': {'readonly': True},
         'state': {'readonly': True},
-        'total_capacity': {'required': True},
         'offers': {'readonly': True},
         'assigned_jobs': {'readonly': True},
         'load_ratio': {'readonly': True},
@@ -2184,8 +2166,8 @@ class PagedWorker(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        total_capacity: int,
         queue_assignments: Optional[Dict[str, Any]] = None,
+        total_capacity: Optional[int] = None,
         labels: Optional[Dict[str, Any]] = None,
         tags: Optional[Dict[str, Any]] = None,
         channel_configurations: Optional[Dict[str, "_models.ChannelConfiguration"]] = None,
@@ -2195,8 +2177,8 @@ class PagedWorker(msrest.serialization.Model):
         """
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
         :paramtype queue_assignments: dict[str, any]
-        :keyword total_capacity: Required. The total capacity score this worker has to manage multiple
-         concurrent jobs.
+        :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
+         jobs.
         :paramtype total_capacity: int
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -2672,8 +2654,6 @@ class RouterJob(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The id of the job.
     :vartype id: str
     :ivar channel_reference: Reference to an external parent context, eg. call ID.
@@ -2683,7 +2663,7 @@ class RouterJob(msrest.serialization.Model):
     :vartype job_status: str or ~azure.communication.jobrouter.models.JobStatus
     :ivar enqueue_time_utc: The time a job was queued.
     :vartype enqueue_time_utc: ~datetime.datetime
-    :ivar channel_id: Required. The channel identifier. eg. voice, chat, etc.
+    :ivar channel_id: The channel identifier. eg. voice, chat, etc.
     :vartype channel_id: str
     :ivar classification_policy_id: The Id of the Classification policy used for classifying a job.
     :vartype classification_policy_id: str
@@ -2715,7 +2695,6 @@ class RouterJob(msrest.serialization.Model):
         'id': {'readonly': True},
         'job_status': {'readonly': True},
         'enqueue_time_utc': {'readonly': True},
-        'channel_id': {'required': True},
         'attached_worker_selectors': {'readonly': True},
         'assignments': {'readonly': True},
     }
@@ -2741,8 +2720,8 @@ class RouterJob(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        channel_id: str,
         channel_reference: Optional[str] = None,
+        channel_id: Optional[str] = None,
         classification_policy_id: Optional[str] = None,
         queue_id: Optional[str] = None,
         priority: Optional[int] = None,
@@ -2756,7 +2735,7 @@ class RouterJob(msrest.serialization.Model):
         """
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: str
-        :keyword channel_id: Required. The channel identifier. eg. voice, chat, etc.
+        :keyword channel_id: The channel identifier. eg. voice, chat, etc.
         :paramtype channel_id: str
         :keyword classification_policy_id: The Id of the Classification policy used for classifying a
          job.
@@ -2802,8 +2781,6 @@ class RouterWorker(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id:
     :vartype id: str
     :ivar state: The current state of the worker. Known values are: "active", "draining",
@@ -2811,8 +2788,8 @@ class RouterWorker(msrest.serialization.Model):
     :vartype state: str or ~azure.communication.jobrouter.models.RouterWorkerState
     :ivar queue_assignments: The queue(s) that this worker can receive work from.
     :vartype queue_assignments: dict[str, any]
-    :ivar total_capacity: Required. The total capacity score this worker has to manage multiple
-     concurrent jobs.
+    :ivar total_capacity: The total capacity score this worker has to manage multiple concurrent
+     jobs.
     :vartype total_capacity: int
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
@@ -2837,7 +2814,6 @@ class RouterWorker(msrest.serialization.Model):
     _validation = {
         'id': {'readonly': True},
         'state': {'readonly': True},
-        'total_capacity': {'required': True},
         'offers': {'readonly': True},
         'assigned_jobs': {'readonly': True},
         'load_ratio': {'readonly': True},
@@ -2860,8 +2836,8 @@ class RouterWorker(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        total_capacity: int,
         queue_assignments: Optional[Dict[str, Any]] = None,
+        total_capacity: Optional[int] = None,
         labels: Optional[Dict[str, Any]] = None,
         tags: Optional[Dict[str, Any]] = None,
         channel_configurations: Optional[Dict[str, "_models.ChannelConfiguration"]] = None,
@@ -2871,8 +2847,8 @@ class RouterWorker(msrest.serialization.Model):
         """
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
         :paramtype queue_assignments: dict[str, any]
-        :keyword total_capacity: Required. The total capacity score this worker has to manage multiple
-         concurrent jobs.
+        :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
+         jobs.
         :paramtype total_capacity: int
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
