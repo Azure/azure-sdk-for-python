@@ -52,7 +52,7 @@ class KeyVaultBackupClientPreparer(BaseClientPreparer):
 
     def __call__(self, fn):
         def _preparer(test_class, api_version, **kwargs):
-            #self._skip_if_not_configured(api_version)
+            self._skip_if_not_configured(api_version)
             kwargs["container_uri"] = self.container_uri
             kwargs["sas_token"] = self.sas_token
             kwargs["managed_hsm_url"] = self.managed_hsm_url
@@ -77,7 +77,7 @@ class KeyVaultAccessControlClientPreparer(BaseClientPreparer):
 
     def __call__(self, fn):
         def _preparer(test_class, api_version, **kwargs):
-            #self._skip_if_not_configured(api_version)
+            self._skip_if_not_configured(api_version)
             client = self.create_access_control_client(api_version=api_version, **kwargs)
 
             with client:
