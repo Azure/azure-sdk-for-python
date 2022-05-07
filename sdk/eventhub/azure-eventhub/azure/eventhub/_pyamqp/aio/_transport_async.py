@@ -438,7 +438,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         try:
             from websocket import create_connection
             self.ws = create_connection(
-                url="wss://{}/$servicebus/websocket/".format(self.host),
+                url="wss://{}".format(self.host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
                 skip_utf8_validation=True,

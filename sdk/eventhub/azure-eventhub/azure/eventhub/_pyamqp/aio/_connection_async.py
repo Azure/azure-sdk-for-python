@@ -70,6 +70,7 @@ class Connection(object):
     def __init__(self, endpoint, **kwargs):
         parsed_url = urlparse(endpoint)
         self.hostname = parsed_url.hostname
+        endpoint = self._hostname
         self._transport_type = kwargs.pop('transport_type', TransportType.Amqp)
         if parsed_url.port:
             self.port = parsed_url.port
@@ -82,11 +83,12 @@ class Connection(object):
         if transport:
             self.transport = transport
         elif 'sasl_credential' in kwargs:
-            sasl_transport = SASLWithWebSocket if (
-                self._transport_type is TransportType.AmqpOverWebsocket or kwargs.get("http_proxy")
-                ) else SASLTransport
-            self.transport = sasl_transport(
-                host=parsed_url.netloc,
+            sasl_transport = SASLTransport
+            if self._transport_type.name is 'AmqpOverWebsocket' or kwargs.get("http_proxy"):
+                sasl_transport = SASLWithWebSocket
+                endpoint = parsed_url.hostname + parsed_url.path
+            self._transport = sasl_transport(
+                host=endpoint,
                 credential=kwargs['sasl_credential'],
                 **kwargs
             )

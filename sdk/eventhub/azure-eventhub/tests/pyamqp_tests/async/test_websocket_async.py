@@ -25,7 +25,7 @@ async def test_event_hubs_client_web_socket(eventhub_config):
         eventhub_config['consumer_group'],
         eventhub_config['partition'])
 
-    receive_client = ReceiveClientAsync(eventhub_config['hostname'], source, auth=sas_auth, debug=False, timeout=5000, prefetch=50, transport_type=TransportType.AmqpOverWebsocket)
+    receive_client = ReceiveClientAsync(eventhub_config['hostname'] + '/$servicebus/websocket/', source, auth=sas_auth, debug=False, timeout=5000, prefetch=50, transport_type=TransportType.AmqpOverWebsocket)
     await receive_client.open_async()
     while not await receive_client.client_ready_async():
         await asyncio.sleep(0.05)
