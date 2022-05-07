@@ -35,6 +35,12 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+class IpRuleAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The network action for the IP mask.
+    """
+
+    ALLOW = "Allow"
+
 class NetworkAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Whether to allow or deny network traffic.
     """

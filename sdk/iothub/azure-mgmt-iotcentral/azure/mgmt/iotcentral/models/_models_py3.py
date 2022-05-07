@@ -701,13 +701,22 @@ class ErrorResponse(msrest.serialization.Model):
 class NetworkRuleSetIpRule(msrest.serialization.Model):
     """An object for an IP range that will be allowed access.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar action: The network action for the IP mask. Possible values include: "Allow".
+    :vartype action: str or ~azure.mgmt.iotcentral.models.IpRuleAction
     :ivar filter_name: The readable name of the IP rule.
     :vartype filter_name: str
     :ivar ip_mask: The CIDR block defining the IP range.
     :vartype ip_mask: str
     """
 
+    _validation = {
+        'action': {'readonly': True},
+    }
+
     _attribute_map = {
+        'action': {'key': 'action', 'type': 'str'},
         'filter_name': {'key': 'filterName', 'type': 'str'},
         'ip_mask': {'key': 'ipMask', 'type': 'str'},
     }
@@ -726,6 +735,7 @@ class NetworkRuleSetIpRule(msrest.serialization.Model):
         :paramtype ip_mask: str
         """
         super(NetworkRuleSetIpRule, self).__init__(**kwargs)
+        self.action = None
         self.filter_name = filter_name
         self.ip_mask = ip_mask
 
