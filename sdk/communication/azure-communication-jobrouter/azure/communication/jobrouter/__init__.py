@@ -35,6 +35,7 @@ from ._generated.models import (
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
     RouterJob,
+    QueueStatistics,
 )
 
 from ._models import (
@@ -83,6 +84,7 @@ __all__ = [
     'ManualReclassifyExceptionAction',
     'CancelExceptionAction',
     'RouterJob',
+    'QueueStatistics',
 
     # Created models
     'LabelCollection',

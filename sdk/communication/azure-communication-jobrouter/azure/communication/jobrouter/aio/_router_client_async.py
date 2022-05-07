@@ -18,7 +18,8 @@ from .._generated.aio import AzureCommunicationJobRouterService
 from .._generated.models import (
     ClassificationPolicy,
     DistributionPolicy,
-    ExceptionPolicy
+    ExceptionPolicy,
+    QueueStatistics
 )
 from .._models import (
     LabelCollection,
@@ -404,6 +405,29 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             id = identifier,
             # pylint:disable=protected-access
             cls = lambda http_response, deserialized_response, args: JobQueue._from_generated(deserialized_response),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def get_queue_statistics(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> QueueStatistics:
+        #  type: (...) -> QueueStatistics
+        """Retrieves a queue's statistics.
+
+        :param str identifier: Id of the queue.
+
+        :return QueueStatistics
+        :rtype ~azure.communication.jobrouter.QueueStatistics
+        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.get_queue_statistics(
+            id = identifier,
             **kwargs
         )
 
