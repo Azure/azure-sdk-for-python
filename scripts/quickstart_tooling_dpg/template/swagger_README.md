@@ -8,10 +8,9 @@ package-name: {{ package_name }}
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
-python: true
 title: {{ client_name }}
 version-tolerant: true
 package-version: 1.0.0b1
-add-credential: true
-credential-scopes: {{ credential_scope }}
+security: AADToken
+security-scopes: {{ security_scope }}
 ```
