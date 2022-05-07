@@ -47,7 +47,7 @@ def create_code_report(cmd):
                     env=None,
                     encoding="utf-8",
                     )
-
+    print(info.returncode)
     output_buffer = []
     for line in info.stdout:
         output_buffer.append(line.rstrip())
@@ -70,9 +70,9 @@ if __name__ == '__main__':
     # get all azure-mgmt-package paths
     in_files = glob.glob(str(Path(f'{docker_path}/sdk/*/azure-mgmt-*')))
     for i in in_files[0:1]:
-        t = i.split('\\\\')
-        mgmt_path_list = t[0].split('\\')
-        service_name = mgmt_path_list[-1]
+        path = Path(i)
+        service_name = path.parts[-1]
+        print(service_name)
 
         # get package version in pypi
         client = PyPIClient()
@@ -92,16 +92,22 @@ if __name__ == '__main__':
             route_older_version = find_report_name(older_code_report_info)
 
             # use change_log on these two code_reports
-            result_text = sp.getoutput(
-                fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route_older_version} {route_last_version}"')
+            try:
+                result = sp.getoutput(
+                    fr'docker exec -it Change_log /bin/bash -c "python -m packaging_tools.change_log {route_older_version} {route_last_version}"')
+            except Exception as e:
+                print(e)
+            output_message = result.split("\n")
+            result_text = ""
+            for i in output_message[1:]:
+                result_text = result_text + str(i) + "\n"
             print(result_text)
 
             # write a txt to save change_log
-            change_log_foldor_path = str(env) + r"\Change_Log"
+            change_log_foldor_path = str(env/"Change_Log")
             create_foldor(change_log_foldor_path)
             write_txt(change_log_foldor_path, service_name, result_text, last_version, older_version)
-        else:
-            continue
+
 
     # exit and stop docker
     sp.call(f'docker exec -it Change_log /bin/bash -c "exit"')
