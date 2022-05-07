@@ -93,6 +93,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
 
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_queue(self):
         dp_identifier = "test_create_q_async"
         router_client: RouterClient = self.create_client()
@@ -117,11 +118,10 @@ class TestJobQueueAsync(AsyncRouterTestCase):
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
-        await self.clean_up()
-
     @pytest.mark.skip(reason = "Upsert queue not working correctly")
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_queue(self):
         dp_identifier = "tst_updated_q_async"
         router_client: RouterClient = self.create_client()
@@ -167,10 +167,9 @@ class TestJobQueueAsync(AsyncRouterTestCase):
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
-        await self.clean_up()
-
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_queue(self):
         dp_identifier = "test_get_q_async"
         router_client: RouterClient = self.create_client()
@@ -207,10 +206,9 @@ class TestJobQueueAsync(AsyncRouterTestCase):
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
-        await self.clean_up()
-
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_queue(self):
         dp_identifier = "test_delete_q_async"
         router_client: RouterClient = self.create_client()
@@ -239,6 +237,7 @@ class TestJobQueueAsync(AsyncRouterTestCase):
 
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_list_queues(self):
         router_client: RouterClient = self.create_client()
         dp_identifiers = ["test_list_q_1_async", "test_list_q_2_async", "test_list_q_3_async"]
@@ -296,5 +295,3 @@ class TestJobQueueAsync(AsyncRouterTestCase):
 
         # all job_queues created were listed
         assert q_count == 0
-
-        await self.clean_up()

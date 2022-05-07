@@ -17,7 +17,8 @@ from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._generated.aio import AzureCommunicationJobRouterService
 from .._generated.models import (
     ClassificationPolicy,
-    DistributionPolicy
+    DistributionPolicy,
+    ExceptionPolicy
 )
 from .._models import (
     LabelCollection,
@@ -84,6 +85,123 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
+
+    # region ExceptionPolicyAio
+
+    @distributed_trace_async
+    async def upsert_exception_policy(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> ExceptionPolicy:
+        #  type: (...) -> ExceptionPolicy
+        """Create or update a new exception policy.
+
+        :param str identifier: Id of the exception policy.
+
+        :keyword exception_rules: (Optional) A dictionary collection of exception rules on the exception
+        policy. Key is the Id of each exception rule.
+        :paramtype exception_rules:
+                Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]
+
+        :keyword str name: The name of this policy.
+
+        :keyword exception_policy: An instance of exception policy
+        :paramtype exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
+
+        :return ExceptionPolicy
+        :rtype ~azure.communication.jobrouter.ExceptionPolicy
+        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        exception_policy = kwargs.pop("exception_policy", None)
+
+        if not exception_policy:
+            exception_rules = kwargs.pop("exception_rules", None)
+            if not exception_rules or any(exception_rules) is False:
+                raise ValueError("exception_rules cannot be None or empty.")
+
+            exception_policy = ExceptionPolicy(
+                name = kwargs.pop('name', None),
+                exception_rules = exception_rules
+            )
+
+        return await self._client.job_router.upsert_exception_policy(
+            id = identifier,
+            patch = exception_policy,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def get_exception_policy(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> ExceptionPolicy:
+        #  type: (...) -> ExceptionPolicy
+        """Retrieves an existing distribution policy by Id.
+
+        :param str identifier: Id of the policy.
+
+        :return DistributionPolicy
+        :rtype ~azure.communication.jobrouter.ExceptionPolicy
+        :raises ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.get_exception_policy(
+            id = identifier,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_exception_policies(
+            self,
+            **kwargs: Any
+    ) -> AsyncItemPaged[ExceptionPolicy]:
+        #  type: (...) -> AsyncItemPaged[ExceptionPolicy]
+        """Retrieves existing exception policies.
+
+        :keyword int results_per_page: The maximum number of results to be returned per page.
+        :return: An iterator like instance of ExceptionPolicy
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.ExceptionPolicy]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+        results_per_page = kwargs.pop("results_per_page", None)
+
+        return self._client.job_router.list_exception_policies(
+            maxpagesize = results_per_page,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def delete_exception_policy(
+            self,
+            identifier: str,
+            **kwargs: Any
+    ) -> None:
+        # type: (...) -> None
+        """Delete an exception policy by Id.
+
+        :param str identifier: Id of the policy to delete.
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+
+        if not identifier:
+            raise ValueError("identifier cannot be None.")
+
+        return await self._client.job_router.delete_exception_policy(
+            id = identifier,
+            **kwargs
+        )
+
+    # endregion ExceptionPolicyAio
 
 #region DistributionPolicyAio
 
@@ -258,7 +376,7 @@ class RouterClient(object):  # pylint: disable=client-accepts-api-version-keywor
             )
 
         return await self._client.job_router.upsert_queue(
-            queue_id = identifier,
+            id = identifier,
             patch = queue._to_generated(),  # pylint:disable=protected-access
             # pylint:disable=protected-access
             cls = lambda http_response, deserialized_response, args: JobQueue._from_generated(deserialized_response),

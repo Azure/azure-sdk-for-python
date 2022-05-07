@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:50 GMT
+      - Sat, 07 May 2022 00:35:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -24,11 +24,11 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:43 GMT
+      date: Sat, 07 May 2022 00:35:51 GMT
       etag: REDACTED
-      last-modified: Fri, 06 May 2022 17:59:44 GMT
+      last-modified: Sat, 07 May 2022 00:35:51 GMT
       request-context: appId=
-      trace-id: 05a13ea1d433a301819a78ed34400163
+      trace-id: 8b0e297a987fd20b33158d4bec6f61c6
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -48,7 +48,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:50 GMT
+      - Sat, 07 May 2022 00:36:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -60,11 +60,11 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:43 GMT
+      date: Sat, 07 May 2022 00:35:50 GMT
       etag: REDACTED
-      last-modified: Fri, 06 May 2022 17:59:44 GMT
+      last-modified: Sat, 07 May 2022 00:35:51 GMT
       request-context: appId=
-      trace-id: 3eb377bd34c1a53c8a4d100090448451
+      trace-id: 325df643c51dc9b3f15c2b00e991fe73
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -79,7 +79,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:50 GMT
+      - Sat, 07 May 2022 00:36:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -91,11 +91,11 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:43 GMT
+      date: Sat, 07 May 2022 00:35:50 GMT
       etag: REDACTED
-      last-modified: Fri, 06 May 2022 17:59:44 GMT
+      last-modified: Sat, 07 May 2022 00:35:51 GMT
       request-context: appId=
-      trace-id: d499bc4fc16479018de7eca4e6653264
+      trace-id: b18f34d6ca5f0be1d75ebf1a6b553a1a
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -110,7 +110,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:50 GMT
+      - Sat, 07 May 2022 00:36:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -120,9 +120,9 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      date: Fri, 06 May 2022 17:59:44 GMT
+      date: Sat, 07 May 2022 00:35:51 GMT
       request-context: appId=
-      trace-id: 859959b94572f168bef5188283259f20
+      trace-id: 369e22fa09e9ce6f03a77c94e5d1aa9c
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
@@ -136,7 +136,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:51 GMT
+      - Sat, 07 May 2022 00:36:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -146,9 +146,9 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      date: Fri, 06 May 2022 17:59:44 GMT
+      date: Sat, 07 May 2022 00:35:51 GMT
       request-context: appId=
-      trace-id: 771e1303f0039d9d9362bf193c9f2ab1
+      trace-id: ada9d07e765c1dbe09409216ca2e448b
       x-cache: CONFIG_NOCACHE
     status:
       code: 204

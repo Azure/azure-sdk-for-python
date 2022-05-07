@@ -1100,7 +1100,7 @@ class ExceptionRule(msrest.serialization.Model):
     :vartype trigger: ~azure.communication.jobrouter.models.JobExceptionTrigger
     :ivar actions: Required. A dictionary collection of actions to perform once the exception is
      triggered. Key is the Id of each exception action.
-    :vartype actions: dict[str, any]
+    :vartype actions: dict[str, ~azure.communication.jobrouter.models.ExceptionAction]
     """
 
     _validation = {
@@ -1110,7 +1110,7 @@ class ExceptionRule(msrest.serialization.Model):
 
     _attribute_map = {
         'trigger': {'key': 'trigger', 'type': 'JobExceptionTrigger'},
-        'actions': {'key': 'actions', 'type': '{object}'},
+        'actions': {'key': 'actions', 'type': '{ExceptionAction}'},
     }
 
     def __init__(
@@ -1122,7 +1122,7 @@ class ExceptionRule(msrest.serialization.Model):
         :paramtype trigger: ~azure.communication.jobrouter.models.JobExceptionTrigger
         :keyword actions: Required. A dictionary collection of actions to perform once the exception is
          triggered. Key is the Id of each exception action.
-        :paramtype actions: dict[str, any]
+        :paramtype actions: dict[str, ~azure.communication.jobrouter.models.ExceptionAction]
         """
         super(ExceptionRule, self).__init__(**kwargs)
         self.trigger = kwargs['trigger']

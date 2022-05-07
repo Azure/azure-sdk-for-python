@@ -5,12 +5,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import TYPE_CHECKING
+import itertools
+from collections import Counter
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
 from azure.communication.jobrouter import (
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode,
-    LabelCollection
+    LabelCollection,
+    ExceptionRule,
+    ExceptionPolicy,
+    QueueLengthExceptionTrigger,
+    WaitTimeExceptionTrigger,
+    ReclassifyExceptionAction,
+    ManualReclassifyExceptionAction,
+    CancelExceptionAction,
 )
 
 
@@ -235,3 +248,113 @@ class ClassificationPolicyValidator(object):
 
         if 'worker_selectors' in kwargs:
             ClassificationPolicyValidator.validate_worker_selectors(classification_policy, kwargs.pop("worker_selectors"))
+
+
+class ExceptionPolicyValidator(object):
+    @staticmethod
+    def validate_id(
+            entity,
+            identifier,
+            **kwargs
+    ):
+        assert entity.id == identifier
+
+    @staticmethod
+    def validate_name(
+            entity,
+            name,
+            **kwargs
+    ):
+        assert entity.name == name
+
+    @staticmethod
+    def validate_exception_trigger(
+            actual,  # type: Union[QueueLengthExceptionTrigger, WaitTimeExceptionTrigger]
+            expected,  # type: Union[QueueLengthExceptionTrigger, WaitTimeExceptionTrigger]
+            **kwargs,  # type: Any
+    ):
+        assert isinstance(actual, type(expected))
+        assert actual == expected
+
+    @staticmethod
+    def validate_exception_actions(
+            actual,  # type: Dict[str, Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
+            expected,  # type: Dict[str, Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
+            **kwargs,  # type: Any
+    ):
+        assert len(actual) == len(expected)
+
+        for a, e in zip(actual.items(), expected.items()):
+            assert a[0] == e[0]
+            assert isinstance(a[1], type(e[1])) is True
+            actual_exception_action = a[1]
+            expected_exception_action = e[1]
+
+            if isinstance(actual_exception_action, ManualReclassifyExceptionAction):
+                assert actual_exception_action.queue_id == expected_exception_action.queue_id
+                assert actual_exception_action.priority == expected_exception_action.priority
+
+                if expected_exception_action.worker_selectors is not None:
+                    assert len(actual_exception_action.worker_selectors) \
+                           == len(expected_exception_action.worker_selectors)
+                    for aws, ews in zip(actual_exception_action.worker_selectors,
+                                        expected_exception_action.worker_selectors):
+                        assert aws == ews
+                else:
+                    assert len(actual_exception_action.worker_selectors) == 0
+
+            elif isinstance(actual_exception_action, ReclassifyExceptionAction):
+                assert actual_exception_action.classification_policy_id == \
+                       expected_exception_action.classification_policy_id
+
+                if actual_exception_action.labels_to_upsert is not None:
+                    assert Counter(actual_exception_action.labels_to_upsert) == \
+                           Counter(expected_exception_action.labels_to_upsert)
+
+            elif isinstance(actual_exception_action, CancelExceptionAction):
+                assert actual_exception_action == expected_exception_action
+
+            else:
+                raise AssertionError("Unable to determine ExceptionAction type")
+
+    @staticmethod
+    def validate_exception_rules(
+            entity,  # type: ExceptionPolicy
+            exception_rules,  # type: Dict[str, ExceptionRule]
+            **kwargs
+    ):
+        for k, v in exception_rules.items():
+            if k in entity.exception_rules:
+                assert isinstance(entity.exception_rules[k], type(exception_rules[k])) is True
+                actual_rule = entity.exception_rules[k]
+                expected_rule = v
+
+                assert isinstance(actual_rule, ExceptionRule) is True
+                assert isinstance(expected_rule, ExceptionRule) is True
+
+                ExceptionPolicyValidator.validate_exception_trigger(actual_rule.trigger,
+                                                                    expected_rule.trigger)
+                assert any(actual_rule.actions) is True
+                assert any(expected_rule.actions) is True
+
+                ExceptionPolicyValidator.validate_exception_actions(actual_rule.actions,
+                                                                    expected_rule.actions)
+
+            else:
+                # key is not present in policy hence was set to None for request
+                assert exception_rules[k] is None
+
+    @staticmethod
+    def validate_exception_policy(
+            exception_policy,
+            **kwargs
+    ):
+        if 'identifier' in kwargs:
+            ExceptionPolicyValidator.validate_id(exception_policy, kwargs.pop("identifier"))
+
+        if 'name' in kwargs:
+            ExceptionPolicyValidator.validate_name(exception_policy, kwargs.pop("name"))
+
+        if 'exception_rules' in kwargs:
+            ExceptionPolicyValidator.validate_exception_rules(exception_policy, kwargs.pop("exception_rules"))
+

@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:43 GMT
+      - Sat, 07 May 2022 00:35:52 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -33,15 +33,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 17:59:24 GMT
+      - Sat, 07 May 2022 00:35:34 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 17:59:37 GMT
+      - Sat, 07 May 2022 00:35:44 GMT
       request-context:
       - appId=
       trace-id:
-      - a0e252f617078a25bf37ba2c3a683481
+      - 10c7dfd9dacb411f28d46e6ad1a0ae5b
       transfer-encoding:
       - chunked
       x-cache:
@@ -66,7 +66,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:43 GMT
+      - Sat, 07 May 2022 00:35:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -83,15 +83,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 17:59:39 GMT
+      - Sat, 07 May 2022 00:35:32 GMT
       etag:
       - REDACTED
       last-modified:
-      - Fri, 06 May 2022 17:59:37 GMT
+      - Sat, 07 May 2022 00:35:44 GMT
       request-context:
       - appId=
       trace-id:
-      - 30ebe10ee389592d9bb432e32c6ee1a0
+      - be17b6c45e96b7f8380dca2822287104
       transfer-encoding:
       - chunked
       x-cache:
@@ -113,7 +113,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:44 GMT
+      - Sat, 07 May 2022 00:35:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -127,11 +127,11 @@ interactions:
       connection:
       - keep-alive
       date:
-      - Fri, 06 May 2022 17:59:40 GMT
+      - Sat, 07 May 2022 00:35:32 GMT
       request-context:
       - appId=
       trace-id:
-      - 6c816fdd71abfe9e54a2115e588c3933
+      - 8ffbd0289678c883cdbd502a03a4fed0
       x-cache:
       - CONFIG_NOCACHE
     status:
@@ -149,7 +149,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:44 GMT
+      - Sat, 07 May 2022 00:35:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -165,11 +165,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 May 2022 17:59:40 GMT
+      - Sat, 07 May 2022 00:35:32 GMT
       request-context:
       - appId=
       trace-id:
-      - 7e7a84831acb4d1f8f5bdd838887dbdd
+      - 8985662fe29a16baeb9f16cfd64c227e
       transfer-encoding:
       - chunked
       x-cache:
@@ -177,4 +177,42 @@ interactions:
     status:
       code: 404
       message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sat, 07 May 2022 00:35:53 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - 2021-04-07-preview1, 2021-10-20-preview2
+      connection:
+      - keep-alive
+      date:
+      - Sat, 07 May 2022 00:35:53 GMT
+      request-context:
+      - appId=
+      trace-id:
+      - 657ff8b07195613f9877865e312a69fe
+      x-cache:
+      - CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
 version: 1

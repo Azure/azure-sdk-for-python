@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:39 GMT
+      - Sat, 07 May 2022 00:35:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -26,11 +26,11 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:33 GMT
+      date: Sat, 07 May 2022 00:34:59 GMT
       etag: REDACTED
-      last-modified: Fri, 06 May 2022 17:59:33 GMT
+      last-modified: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: 3a3356d2e12d0eaff5c0934c20aa2ef0
+      trace-id: 33841120ff03327c12ba712267fcfda2
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -50,7 +50,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:39 GMT
+      - Sat, 07 May 2022 00:35:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -64,11 +64,11 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:33 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       etag: REDACTED
-      last-modified: Fri, 06 May 2022 17:59:33 GMT
+      last-modified: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: 05c009870a50e4155c87637d7a172c70
+      trace-id: 32038d3d3f4b192272d4000242034bab
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -88,7 +88,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:39 GMT
+      - Sat, 07 May 2022 00:35:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -102,11 +102,11 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:33 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       etag: REDACTED
-      last-modified: Fri, 06 May 2022 17:59:33 GMT
+      last-modified: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: 5ed527ea07c3a7763ba3d78e6ee101d5
+      trace-id: cbd23045610f67045f99e7846a083c50
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -121,7 +121,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:39 GMT
+      - Sat, 07 May 2022 00:35:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -132,13 +132,13 @@ interactions:
       1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "sanitized",
       "id": "sanitized", "name": "tst_update_dp_1", "offerTTLSeconds": 10, "mode":
       {"kind": "round-robin", "minConcurrentOffers": 2, "maxConcurrentOffers": 2,
-      "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRFJLWjBGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRlZRVWhwYldjMGRFSkJSMmRCWkc5WE0yZFJLMEZCYzBGbVFVOUJRU0lzSW5KaGJtZGxJanA3SW0xcGJpSTZJaUlzSW0xaGVDSTZJa1pHSW4xOVhRPT0%3D"}'
+      "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRFJLWjBGQlFVRkJRVUZCUFQwalVsUTZNU05VVWtNNk1pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRk5RVWhwYldjMGRFSkJSMEZCYTFGbk5FRkJQVDBpTENKeVlXNW5aU0k2ZXlKdGFXNGlPaUlpTENKdFlYZ2lPaUpHUmlKOWZWMD0%3D"}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:33 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: e27fbbed884858339d5fdc19c252fb3c
+      trace-id: 1611f381e7472a5442e3e300cc290de0
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -153,7 +153,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
+      - Sat, 07 May 2022 00:35:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -162,15 +162,15 @@ interactions:
     body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "test_update_queue_tst_dp",
       "offerTTLSeconds": 10, "mode": {"kind": "round-robin", "minConcurrentOffers":
       1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "sanitized",
-      "id": "sanitized", "name": "test_delete_queue_tst_dp_async", "offerTTLSeconds":
+      "id": "sanitized", "name": "test_list_list_queues_tst_dp_async", "offerTTLSeconds":
       10, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
-      1, "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRlJOWjBGQlFVRkJRVUZCUFQwalVsUTZNaU5VVWtNNk5DTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRlJRVVpGZVdGQlFqSm9ZbVZDUkRSQlEzZENPRUUwUVVFOUlpd2ljbUZ1WjJVaU9uc2liV2x1SWpvaUlpd2liV0Y0SWpvaVJrWWlmWDFk"}'
+      1, "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRlpOWjBGQlFVRkJRVUZCUFQwalVsUTZNaU5VVWtNNk5DTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRkpRVVpGZVZsQlExSkRSR2RCSWl3aWNtRnVaMlVpT25zaWJXbHVJam9pSWl3aWJXRjRJam9pUmtZaWZYMWQ%3D"}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:33 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: 7cea59b729d99c8749e2c1d139dc948c
+      trace-id: dd72816af34a0ed2cd34969ce4f899af
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -185,24 +185,26 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
+      - Sat, 07 May 2022 00:35:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
     uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "test_list_list_queues_tst_dp_async",
+    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "test_update_queue_tst_dp_async",
       "offerTTLSeconds": 10, "mode": {"kind": "round-robin", "minConcurrentOffers":
       1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "sanitized",
-      "id": "sanitized", "name": "test_update_queue_tst_dp_async", "offerTTLSeconds":
-      10, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
-      1, "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiRmROWjBGQlFVRkJRVUZCUFQwalVsUTZNeU5VVWtNNk5pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRlBRVVpoZVdSdlZ6Tm5VU3RCUVhOQlprRlBRVUVpTENKeVlXNW5aU0k2ZXlKdGFXNGlPaUlpTENKdFlYZ2lPaUpHUmlKOWZWMD0%3D"}'
+      "id": "sanitized", "name": "tst_list_dp_1_async", "offerTTLSeconds": 10, "mode":
+      {"kind": "best-worker", "scoringRuleOptions": {"scoringParameters": ["jobLabels",
+      "workerSelectors"], "allowScoringBatchOfWorkers": false, "descendingOrder":
+      true}, "minConcurrentOffers": 1, "maxConcurrentOffers": 1, "bypassSelectors":
+      false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRibnBQWjBGQlFVRkJRVUZCUFQwalVsUTZNeU5VVWtNNk5pTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZtVFRaQlFVRkJRVUZCUVRsVWIwRkJRVUZCUVVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:33 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: 928b3459cd2e47d2e1abb6ce364d9b35
+      trace-id: 22c75b8f6130d643a2a62e9ba77c7a14
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -217,155 +219,27 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
+      - Sat, 07 May 2022 00:35:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
     uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
   response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "test_delete_queue_tst_dp",
-      "offerTTLSeconds": 10, "mode": {"kind": "round-robin", "minConcurrentOffers":
-      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "sanitized",
-      "id": "sanitized", "name": "test_update_classification_policy_tst_dp", "offerTTLSeconds":
-      10, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
-      1, "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiVmhQVVVGQlFVRkJRVUZCUFQwalVsUTZOQ05VVWtNNk9DTkpVMVk2TWlOSlJVODZOalUxTmpjalJsQkRPa0ZuUlVGQlFVRkxRVXBsTlVRMFFVTjNRamhCTkVGQlBTSXNJbkpoYm1kbElqcDdJbTFwYmlJNklpSXNJbTFoZUNJNklrWkdJbjE5WFE9PQ%3D%3D"}'
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:33 GMT
-      request-context: appId=
-      trace-id: 154a4bc5a24dc275024b7637993925ad
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 200
-      message: OK
-    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-  response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "test_create_queue_tst_dp",
-      "offerTTLSeconds": 10, "mode": {"kind": "round-robin", "minConcurrentOffers":
-      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "sanitized",
-      "id": "sanitized", "name": "test_get_queue_tst_dp", "offerTTLSeconds": 10, "mode":
-      {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers": 1,
-      "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiWGRQVVVGQlFVRkJRVUZCUFQwalVsUTZOU05VVWtNNk1UQWpTVk5XT2pJalNVVlBPalkxTlRZM0kwWlFRenBCWjBWQlFVRkJSMEZNU1RWSWQwUm5RVUU5UFNJc0luSmhibWRsSWpwN0ltMXBiaUk2SWlJc0ltMWhlQ0k2SWtaR0luMTlYUT09"}'
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:34 GMT
-      request-context: appId=
-      trace-id: 506087ccb3ac0efca3985297e0417939
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 200
-      message: OK
-    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-  response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "test_list_queues_tst_dp",
-      "offerTTLSeconds": 10, "mode": {"kind": "round-robin", "minConcurrentOffers":
-      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "sanitized",
-      "id": "sanitized", "name": "test_create_queue_tst_dp_async", "offerTTLSeconds":
-      10, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
-      1, "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiWGxQVVVGQlFVRkJRVUZCUFQwalVsUTZOaU5VVWtNNk1USWpTVk5XT2pJalNVVlBPalkxTlRZM0kwWlFRenBCWjBWQlFVRkJSMEZNU1RWSVFVUm5RVUU5UFNJc0luSmhibWRsSWpwN0ltMXBiaUk2SWlJc0ltMWhlQ0k2SWtaR0luMTlYUT09"}'
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:34 GMT
-      request-context: appId=
-      trace-id: 89cf1335a29e88f07ec11d868223ee89
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 200
-      message: OK
-    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-  response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "test_get_queue_tst_dp_async",
-      "offerTTLSeconds": 10, "mode": {"kind": "round-robin", "minConcurrentOffers":
-      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}, {"etag": "sanitized",
-      "id": "sanitized", "name": "test_list_queues_tst_dp_async", "offerTTLSeconds":
-      10, "mode": {"kind": "round-robin", "minConcurrentOffers": 1, "maxConcurrentOffers":
-      1, "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRiVEJQVVVGQlFVRkJRVUZCUFQwalVsUTZOeU5VVWtNNk1UUWpTVk5XT2pJalNVVlBPalkxTlRZM0kwWlFRenBCWjBWQlFVRkJSMEZNVXpWQlkwUm5RVUU5UFNJc0luSmhibWRsSWpwN0ltMXBiaUk2SWlJc0ltMWhlQ0k2SWtaR0luMTlYUT09"}'
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:34 GMT
-      request-context: appId=
-      trace-id: 3b50c58ae770e295fab4a46de3f6093a
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 200
-      message: OK
-    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-  response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_dp_1_async",
+    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_dp_2_async",
       "offerTTLSeconds": 10, "mode": {"kind": "best-worker", "scoringRuleOptions":
       {"scoringParameters": ["jobLabels", "workerSelectors"], "allowScoringBatchOfWorkers":
       false, "descendingOrder": true}, "minConcurrentOffers": 1, "maxConcurrentOffers":
       1, "bypassSelectors": false}}, {"etag": "sanitized", "id": "sanitized", "name":
-      "tst_list_dp_2_async", "offerTTLSeconds": 10, "mode": {"kind": "best-worker",
+      "tst_list_dp_3_async", "offerTTLSeconds": 10, "mode": {"kind": "best-worker",
       "scoringRuleOptions": {"scoringParameters": ["jobLabels", "workerSelectors"],
       "allowScoringBatchOfWorkers": false, "descendingOrder": true}, "minConcurrentOffers":
-      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}], "nextLink": "/routing/distributionPolicies?continuationToken=bWF4cGFnZXNpemU9MiZjb250aW51YXRpb25Ub2tlbj1XM3NpZEc5clpXNGlPaUlyVWtsRU9uNVViVlpKUVVwMmRUUXRia2RQVVVGQlFVRkJRVUZCUFQwalVsUTZPQ05VVWtNNk1UWWpTVk5XT2pJalNVVlBPalkxTlRZM0kwWlFRenBCWTFrMVFVRkJRVUZCUVVGNGVtdEJRVUZCUVVGQlFUMGlMQ0p5WVc1blpTSTZleUp0YVc0aU9pSWlMQ0p0WVhnaU9pSkdSaUo5ZlYwPQ%3D%3D"}'
+      1, "maxConcurrentOffers": 1, "bypassSelectors": false}}]}'
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:34 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: 19a61b9adc5c9b5913a0d8e3f92687ed
+      trace-id: 290b8108ae9159fcfc4ac2760fa4ac09
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -380,38 +254,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-  response:
-    body: '{"value": [{"etag": "sanitized", "id": "sanitized", "name": "tst_list_dp_3_async",
-      "offerTTLSeconds": 10, "mode": {"kind": "best-worker", "scoringRuleOptions":
-      {"scoringParameters": ["jobLabels", "workerSelectors"], "allowScoringBatchOfWorkers":
-      false, "descendingOrder": true}, "minConcurrentOffers": 1, "maxConcurrentOffers":
-      1, "bypassSelectors": false}}]}'
-    headers:
-      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:34 GMT
-      request-context: appId=
-      trace-id: c95c0b252615d3f33c76ee816811c727
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-    status:
-      code: 200
-      message: OK
-    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies?maxpagesize=sanitized&api-version=2021-10-20-preview2&continuationToken=sanitized
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
+      - Sat, 07 May 2022 00:35:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -421,10 +264,9 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      connection: keep-alive
-      date: Fri, 06 May 2022 17:59:35 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: 054a9764848e5dee112077534a7bec68
+      trace-id: ac458d5213474ce14d3e1a24fc67ec3d
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
@@ -438,7 +280,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
+      - Sat, 07 May 2022 00:35:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -448,10 +290,9 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      connection: keep-alive
-      date: Fri, 06 May 2022 17:59:35 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: a075ea8e25f07b1a4980134b681146da
+      trace-id: 76636ed68438eec3fc607e7a36bd5703
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
@@ -465,7 +306,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:40 GMT
+      - Sat, 07 May 2022 00:35:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -475,10 +316,9 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      connection: keep-alive
-      date: Fri, 06 May 2022 17:59:35 GMT
+      date: Sat, 07 May 2022 00:35:00 GMT
       request-context: appId=
-      trace-id: 89f93dedb10574c3b3caf8da8313dec9
+      trace-id: 7567c284b184a02c15b9959964397760
       x-cache: CONFIG_NOCACHE
     status:
       code: 204

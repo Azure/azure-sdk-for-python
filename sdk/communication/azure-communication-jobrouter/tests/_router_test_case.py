@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
+from abc import abstractmethod
 
 from _shared.testcase import (
     CommunicationTestCase,
@@ -53,6 +54,14 @@ class RouterTestCaseBase(CommunicationTestCase):
 class RouterTestCase(RouterTestCaseBase):
     def setUp(self):
         super(RouterTestCase, self).setUp()
+
+    @abstractmethod
+    def clean_up(self):
+        pass
+
+    def tearDown(self):
+        super(RouterTestCase, self).tearDown()
+        self.clean_up()
 
     def create_client(self) -> RouterClient:
         return RouterClient.from_connection_string(

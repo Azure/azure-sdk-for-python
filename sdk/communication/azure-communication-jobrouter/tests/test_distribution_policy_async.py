@@ -8,6 +8,7 @@
 
 import pytest
 from _router_test_case_async import AsyncRouterTestCase
+from _decorators_async import RouterPreparersAsync
 from _validators import DistributionPolicyValidator
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
@@ -60,6 +61,7 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
         super(TestDistributionPolicyAsync, self).tearDown()
 
     @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_distribution_policy(self):
         dp_identifier = "tst_create_dp_async"
         router_client: RouterClient = self.create_client()
@@ -84,10 +86,8 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                     mode = mode
                 )
 
-        # cleanup
-        await self.clean_up()
-
     @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_distribution_policy(self):
         dp_identifier = "tst_update_dp_async"
         router_client: RouterClient = self.create_client()
@@ -131,10 +131,8 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                     mode = mode
                 )
 
-        # cleanup
-        await self.clean_up()
-
     @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_distribution_policy(self):
         dp_identifier = "tst_get_dp_async"
         router_client: RouterClient = self.create_client()
@@ -168,10 +166,8 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                     mode = mode
                 )
 
-        # cleanup
-        await self.clean_up()
-
     @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_distribution_policy(self):
         dp_identifier = "tst_delete_dp_async"
         router_client: RouterClient = self.create_client()
@@ -201,6 +197,7 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
                 assert nfe.value.status_code == 404
 
     @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_list_distribution_policy(self):
         dp_identifiers = ["tst_list_dp_1_async", "tst_list_dp_2_async", "tst_list_dp_3_async"]
         created_dp_response = {}
@@ -253,6 +250,3 @@ class TestDistributionPolicyAsync(AsyncRouterTestCase):
 
         # all policies created were listed
         assert policy_count == 0
-
-        # cleanup
-        await self.clean_up()

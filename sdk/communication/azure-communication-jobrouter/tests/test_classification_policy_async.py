@@ -239,6 +239,7 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_classification_policy(self):
         router_client: RouterClient = self.create_client()
         cp_identifier = 'tst_create_cp_async'
@@ -269,11 +270,11 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                             prioritization_rule = rule,
                             worker_selectors = [ws]
                         )
-        await self.clean_up()
 
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_classification_policy(self):
         router_client: RouterClient = self.create_client()
         cp_identifier = 'tst_update_cp_async'
@@ -322,11 +323,10 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                             worker_selectors = [ws]
                         )
 
-        await self.clean_up()
-
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_classification_policy(self):
         router_client: RouterClient = self.create_client()
         cp_identifier = 'tst_get_cp_async'
@@ -371,11 +371,10 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                             worker_selectors = [ws]
                         )
 
-        await self.clean_up()
-
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_list_classification_policies(self):
         router_client: RouterClient = self.create_client()
         cp_identifiers = ['tst_list_cp_1_async', 'tst_list_cp_2_async', 'tst_list_cp_3_async']
@@ -439,11 +438,10 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                         # all policies created were listed
                         assert policy_count == 0
 
-        await self.clean_up()
-
     @AsyncCommunicationTestCase.await_prepared_test
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_classification_policy(self):
         router_client: RouterClient = self.create_client()
         cp_identifier = 'tst_delete_cp'
@@ -484,5 +482,3 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
 
                         assert nfe.value.reason == "Not Found"
                         assert nfe.value.status_code == 404
-
-        await self.clean_up()

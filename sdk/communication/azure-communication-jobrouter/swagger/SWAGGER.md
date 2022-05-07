@@ -67,6 +67,15 @@ directive:
       $["$ref"] = "#/definitions/QueueSelectorAttachment";
 ```
 
+### Set reference to ExceptionAction in ExceptionRule
+```yaml
+directive:
+  - from: swagger-document
+    where: "$.definitions.ExceptionRule.properties.actions"
+    transform: >
+      $.type = "object";
+      $.additionalProperties["$ref"] = "#/definitions/ExceptionAction";
+```
 
 
 ### Rename CommunicationError to JobRouterError

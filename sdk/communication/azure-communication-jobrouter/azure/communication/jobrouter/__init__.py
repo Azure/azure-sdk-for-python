@@ -28,6 +28,12 @@ from ._generated.models import (
     LongestIdleMode,
     RoundRobinMode,
     ExceptionPolicy,
+    ExceptionRule,
+    QueueLengthExceptionTrigger,
+    WaitTimeExceptionTrigger,
+    ReclassifyExceptionAction,
+    ManualReclassifyExceptionAction,
+    CancelExceptionAction,
     RouterJob,
 )
 
@@ -70,11 +76,17 @@ __all__ = [
     'LongestIdleMode',
     'RoundRobinMode',
     'ExceptionPolicy',
-    'JobQueue',
+    'ExceptionRule',
+    'QueueLengthExceptionTrigger',
+    'WaitTimeExceptionTrigger',
+    'ReclassifyExceptionAction',
+    'ManualReclassifyExceptionAction',
+    'CancelExceptionAction',
     'RouterJob',
 
     # Created models
     'LabelCollection',
+    'JobQueue',
 
     # Credentials
     'CommunicationTokenCredential'

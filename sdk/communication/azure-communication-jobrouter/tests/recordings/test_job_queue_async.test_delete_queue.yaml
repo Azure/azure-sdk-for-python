@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:49 GMT
+      - Sat, 07 May 2022 00:35:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -24,11 +24,11 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:43 GMT
+      date: Sat, 07 May 2022 00:35:50 GMT
       etag: REDACTED
-      last-modified: Fri, 06 May 2022 17:59:43 GMT
+      last-modified: Sat, 07 May 2022 00:35:50 GMT
       request-context: appId=
-      trace-id: 480c1b3b27b52e47b0f04166a6a0969a
+      trace-id: 5b3293b83d096d1f19a5993fc0e62790
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -48,7 +48,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:49 GMT
+      - Sat, 07 May 2022 00:35:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -60,11 +60,11 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:43 GMT
+      date: Sat, 07 May 2022 00:35:50 GMT
       etag: REDACTED
-      last-modified: Fri, 06 May 2022 17:59:43 GMT
+      last-modified: Sat, 07 May 2022 00:35:50 GMT
       request-context: appId=
-      trace-id: 1ff84fea6cc851dcbc32fcf54b88f13d
+      trace-id: 338004b17fde68e8402a369d09212d88
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -79,7 +79,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:50 GMT
+      - Sat, 07 May 2022 00:35:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -89,9 +89,9 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
-      date: Fri, 06 May 2022 17:59:43 GMT
+      date: Sat, 07 May 2022 00:35:50 GMT
       request-context: appId=
-      trace-id: 221473afa8d34aea5f267137eddcfbed
+      trace-id: 761f5c22f945e6ec442b4148fae93837
       x-cache: CONFIG_NOCACHE
     status:
       code: 204
@@ -105,7 +105,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 06 May 2022 17:59:50 GMT
+      - Sat, 07 May 2022 00:35:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -116,13 +116,39 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
       content-type: application/json; charset=utf-8
-      date: Fri, 06 May 2022 17:59:43 GMT
+      date: Sat, 07 May 2022 00:35:50 GMT
       request-context: appId=
-      trace-id: 3f0a1d0a2214af3147b2a11af89243ef
+      trace-id: 12797ea94aa3b479e69814675c6082e5
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
       code: 404
       message: Not Found
     url: https://sanitized.int.communication.azure.net/routing/queues/sanitized?api-version=2021-10-20-preview2
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-jobrouter/1.0.0 Python/3.9.12 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Sat, 07 May 2022 00:35:59 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: 2021-04-07-preview1, 2021-10-20-preview2
+      date: Sat, 07 May 2022 00:35:51 GMT
+      request-context: appId=
+      trace-id: c875a4652bad2ebcaa481c046125fa70
+      x-cache: CONFIG_NOCACHE
+    status:
+      code: 204
+      message: No Content
+    url: https://sanitized.int.communication.azure.net/routing/distributionPolicies/sanitized?api-version=2021-10-20-preview2
 version: 1
