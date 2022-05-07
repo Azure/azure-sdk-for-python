@@ -1,10 +1,8 @@
 # Release History
 
-## 5.8.0a4 (Unreleased)
+## 5.8.0b4 (Unreleased)
 
 ### Features Added
-
-- Added suppport for connection using websocket and http proxy.
 
 ### Breaking Changes
 
