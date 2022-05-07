@@ -49,7 +49,7 @@ import certifi
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP, pack, unpack
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
-from ..constants import TLS_HEADER_FRAME
+from ..constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
 from .._transport import (
     AMQP_FRAME,
     get_errno,
@@ -59,7 +59,8 @@ from .._transport import (
     SIGNED_INT_MAX,
     _UNAVAIL,
     set_cloexec,
-    AMQP_PORT
+    AMQP_PORT,
+    WebSocketTransport
 )
 
 
@@ -78,11 +79,75 @@ def get_running_loop():
             _LOGGER.warning('This version of Python is deprecated, please upgrade to >= v3.6')
         if loop is None:
             _LOGGER.warning('No running event loop')
-            loop = asyncio.get_event_loop()
+            loop = self.loop
         return loop
 
+class AsyncTransportMixin():
+    async def receive_frame(self, *args, **kwargs):
+        try:
+            header, channel, payload = await self.read(**kwargs) 
+            if not payload:
+                decoded = decode_empty_frame(header)
+            else:
+                decoded = decode_frame(payload)
+            # TODO: Catch decode error and return amqp:decode-error
+            #_LOGGER.info("ICH%d <- %r", channel, decoded)
+            return channel, decoded
+        except (socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
+            return None, None
 
-class AsyncTransport(object):
+    async def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
+        async with self.socket_lock:
+            read_frame_buffer = BytesIO()
+            try:
+                frame_header = memoryview(bytearray(8))
+                read_frame_buffer.write(await self._read(8, buffer=frame_header, initial=True))
+
+                channel = struct.unpack('>H', frame_header[6:])[0]
+                size = frame_header[0:4]
+                if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation
+                    return frame_header, channel, None
+                size = struct.unpack('>I', size)[0]
+                offset = frame_header[4]
+                frame_type = frame_header[5]
+
+                # >I is an unsigned int, but the argument to sock.recv is signed,
+                # so we know the size can be at most 2 * SIGNED_INT_MAX
+                payload_size = size - len(frame_header)
+                payload = memoryview(bytearray(payload_size))
+                if size > SIGNED_INT_MAX:
+                    read_frame_buffer.write(await self._read(SIGNED_INT_MAX, buffer=payload))
+                    read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
+                else:
+                    read_frame_buffer.write(await self._read(payload_size, buffer=payload))
+            except (socket.timeout, asyncio.IncompleteReadError):
+                read_frame_buffer.write(self._read_buffer.getvalue())
+                self._read_buffer = read_frame_buffer
+                self._read_buffer.seek(0)
+                raise
+            except (OSError, IOError, SSLError, socket.error) as exc:
+                # Don't disconnect for ssl read time outs
+                # http://bugs.python.org/issue10272
+                if isinstance(exc, SSLError) and 'timed out' in str(exc):
+                    raise socket.timeout()
+                if get_errno(exc) not in _UNAVAIL:
+                    self.connected = False
+                raise
+            offset -= 2
+        return frame_header, channel, payload[offset:]
+
+    async def send_frame(self, channel, frame, **kwargs):
+        header, performative = encode_frame(frame, **kwargs)
+        if performative is None:
+            data = header
+        else:
+            encoded_channel = struct.pack('>H', channel)
+            data = header + encoded_channel + performative
+
+        await self.write(data)
+        #_LOGGER.info("OCH%d -> %r", channel, frame)
+
+class AsyncTransport(AsyncTransportMixin):
     """Common superclass for TCP and SSL transports."""
 
     def __init__(self, host, port=AMQP_PORT, connect_timeout=None,
@@ -95,7 +160,6 @@ class AsyncTransport(object):
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
-
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
@@ -318,46 +382,6 @@ class AsyncTransport(object):
         self.sock = None
         self.connected = False
 
-    async def read(self, verify_frame_type=0, **kwargs):  # TODO: verify frame type?
-        async with self.socket_lock:
-            read_frame_buffer = BytesIO()
-            try:
-                frame_header = memoryview(bytearray(8))
-                read_frame_buffer.write(await self._read(8, buffer=frame_header, initial=True))
-
-                channel = struct.unpack('>H', frame_header[6:])[0]
-                size = frame_header[0:4]
-                if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation
-                    return frame_header, channel, None
-                size = struct.unpack('>I', size)[0]
-                offset = frame_header[4]
-                frame_type = frame_header[5]
-
-                # >I is an unsigned int, but the argument to sock.recv is signed,
-                # so we know the size can be at most 2 * SIGNED_INT_MAX
-                payload_size = size - len(frame_header)
-                payload = memoryview(bytearray(payload_size))
-                if size > SIGNED_INT_MAX:
-                    read_frame_buffer.write(await self._read(SIGNED_INT_MAX, buffer=payload))
-                    read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
-                else:
-                    read_frame_buffer.write(await self._read(payload_size, buffer=payload))
-            except (socket.timeout, asyncio.IncompleteReadError):
-                read_frame_buffer.write(self._read_buffer.getvalue())
-                self._read_buffer = read_frame_buffer
-                self._read_buffer.seek(0)
-                raise
-            except (OSError, IOError, SSLError, socket.error) as exc:
-                # Don't disconnect for ssl read time outs
-                # http://bugs.python.org/issue10272
-                if isinstance(exc, SSLError) and 'timed out' in str(exc):
-                    raise socket.timeout()
-                if get_errno(exc) not in _UNAVAIL:
-                    self.connected = False
-                raise
-            offset -= 2
-        return frame_header, channel, payload[offset:]
-
     async def write(self, s):
         try:
             await self._write(s)
@@ -367,19 +391,6 @@ class AsyncTransport(object):
             if get_errno(exc) not in _UNAVAIL:
                 self.connected = False
             raise
-
-    async def receive_frame(self, *args, **kwargs):
-        try:
-            header, channel, payload = await self.read(**kwargs) 
-            if not payload:
-                decoded = decode_empty_frame(header)
-            else:
-                decoded = decode_frame(payload)
-            # TODO: Catch decode error and return amqp:decode-error
-            #_LOGGER.info("ICH%d <- %r", channel, decoded)
-            return channel, decoded
-        except (socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
-            return None, None
 
     async def receive_frame_with_lock(self, *args, **kwargs):
         try:
@@ -393,17 +404,6 @@ class AsyncTransport(object):
         except socket.timeout:
             return None, None
 
-    async def send_frame(self, channel, frame, **kwargs):
-        header, performative = encode_frame(frame, **kwargs)
-        if performative is None:
-            data = header
-        else:
-            encoded_channel = struct.pack('>H', channel)
-            data = header + encoded_channel + performative
-
-        await self.write(data)
-        #_LOGGER.info("OCH%d -> %r", channel, frame)
-
     async def negotiate(self):
         if not self.sslopts:
             return
@@ -412,3 +412,76 @@ class AsyncTransport(object):
         if returned_header[1] == TLS_HEADER_FRAME:
             raise ValueError("Mismatching TLS header protocol. Excpected: {}, received: {}".format(
                 TLS_HEADER_FRAME, returned_header[1]))
+
+
+class WebSocketTransportAsync(AsyncTransportMixin):
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs
+        ):
+        self._read_buffer = BytesIO()
+        self.loop = get_running_loop()
+        self.socket_lock = asyncio.Lock()
+        self.sslopts = ssl if isinstance(ssl, dict) else {}
+        self._connect_timeout = connect_timeout
+        self.host = host
+        self.ws = None
+        self._http_proxy = kwargs.get('http_proxy', None)
+
+    async def connect(self):
+        http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
+        if self._http_proxy:
+            http_proxy_host = self._http_proxy['proxy_hostname']
+            http_proxy_port = self._http_proxy['proxy_port']
+            username = self._http_proxy.get('username', None)
+            password = self._http_proxy.get('password', None)
+            if username or password:
+                http_proxy_auth = (username, password)
+        try:
+            from websocket import create_connection
+            self.ws = create_connection(
+                url="wss://{}".format(self.host),
+                subprotocols=[AMQP_WS_SUBPROTOCOL],
+                timeout=self._connect_timeout,
+                skip_utf8_validation=True,
+                sslopt=self.sslopts,
+                http_proxy_host=http_proxy_host,
+                http_proxy_port=http_proxy_port,
+                http_proxy_auth=http_proxy_auth
+            )
+        except ImportError:
+            raise ValueError("Please install websocket-client library to use websocket transport.")
+
+    async def _read(self, n, buffer=None, **kwargs): # pylint: disable=unused-arguments
+        """Read exactly n bytes from the peer."""
+        
+        length = 0
+        view = buffer or memoryview(bytearray(n))
+        nbytes = self._read_buffer.readinto(view)
+        length += nbytes
+        n -= nbytes
+        while n:
+            data = await self.loop.run_in_executor(
+                None, self.ws.recv
+                )
+
+            if len(data) <= n:
+                view[length: length + len(data)] = data
+                n -= len(data)
+            else:
+                view[length: length + n] = data[0:n]
+                self._read_buffer = BytesIO(data[n:])
+                n = 0
+        return view
+
+    def close(self):
+        """Do any preliminary work in shutting down the connection."""
+        self.ws.close()
+
+    async def write(self, s):
+        """Completely write a string to the peer.
+        ABNF, OPCODE_BINARY = 0x2
+        See http://tools.ietf.org/html/rfc5234
+        http://tools.ietf.org/html/rfc6455#section-5.2
+        """
+        await self.loop.run_in_executor(
+                None, self.ws.send_binary, s
+                )

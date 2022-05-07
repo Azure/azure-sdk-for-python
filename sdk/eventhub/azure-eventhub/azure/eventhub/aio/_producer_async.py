@@ -117,6 +117,8 @@ class EventHubProducer(
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
+            transport_type=transport_type,
+            http_proxy=self._client._config.http_proxy, # pylint:disable=protected-access
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(
