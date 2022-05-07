@@ -99,8 +99,8 @@ class EventHubProducer(
         self._link_properties = {TIMEOUT_SYMBOL: pyamqp_utils.amqp_long_value(int(self._timeout * 1000))}
 
     def _create_handler(self, auth: "JWTTokenAsync") -> None:
-        hostname = self._client._address.hostname,  # pylint: disable=protected-access
-        transport_type = self._client._config.transport_type, # pylint:disable=protected-access
+        hostname = self._client._address.hostname  # pylint: disable=protected-access
+        transport_type = self._client._config.transport_type # pylint:disable=protected-access
         if transport_type.name is 'AmqpOverWebsocket':
             hostname += '/$servicebus/websocket/'
         self._handler = SendClientAsync(
