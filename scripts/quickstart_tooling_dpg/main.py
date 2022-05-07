@@ -77,8 +77,8 @@ def build_package(**kwargs) -> None:
 
     # generate code with autorest and swagger readme
     _LOGGER.info("generate SDK code with autorest")
-    check_call(f'autorest --version=3.7.2 --python --use=@autorest/python@5.12.0 --use=@autorest/modelerfour@4.19.2'
-               f'  --python-mode=update {swagger_readme}', shell=True)
+    check_call(f'autorest --version=3.7.2 --use=@autorest/python@5.16.0 --use=@autorest/modelerfour@4.19.3'
+               f' {swagger_readme}', shell=True)
 
     # generate necessary file(setup.py, CHANGELOG.md, etc)
     work_path = Path(output_folder)
@@ -130,8 +130,8 @@ if __name__ == "__main__":
              " or `D:\\azure-rest-api-specs\\specification\\webpubsub\\data-plane\\WebPubSub\\stable\\2021-10-01\\webpubsub.json`",
     )
     parser.add_argument(
-        "--credential-scope", "-c",
-        dest="credential_scope",
+        "--security-scope", "-c",
+        dest="security_scope",
         required=True,
         help="Each service for data plan should have specific scopes",
     )
