@@ -1,5 +1,11 @@
 # Release History
 
+## 12.8.0b1 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
 ## 12.7.0 (Unreleased)
 
 ### Features Added
