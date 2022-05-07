@@ -53,6 +53,10 @@ def create_code_report(cmd):
         output_buffer.append(line.rstrip())
     info.wait()
     info_output = "\n".join(output_buffer)
+    if info.returncode:
+        for i in range(-min(len(output_buffer),7),0):
+            print(f"==[Autorest]{output_buffer[i]}")
+        raise sp.CalledProcessError(info.returncode,cmd,info_output)
     return info_output.split('\n')
 
 if __name__ == '__main__':
