@@ -51,8 +51,8 @@ setup(
     packages=find_packages(
         exclude=[
             # Exclude packages that will be covered by PEP420 or nspkg
-            "azure",
-            "azure.{{ folder_second }}",
+            "{{ folder_first }}",
+            "{{ folder_first }}.{{ folder_second }}",
         ]
     ),
     install_requires=[
