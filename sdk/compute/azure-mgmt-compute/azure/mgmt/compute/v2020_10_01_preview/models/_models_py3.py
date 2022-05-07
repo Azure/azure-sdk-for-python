@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._compute_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class ApiError(msrest.serialization.Model):
@@ -39,8 +41,8 @@ class ApiError(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        details: Optional[List["ApiErrorBase"]] = None,
-        innererror: Optional["InnerError"] = None,
+        details: Optional[List["_models.ApiErrorBase"]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
@@ -147,7 +149,7 @@ class CloudService(msrest.serialization.Model):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["CloudServiceProperties"] = None,
+        properties: Optional["_models.CloudServiceProperties"] = None,
         **kwargs
     ):
         """
@@ -181,7 +183,7 @@ class CloudServiceExtensionProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        extensions: Optional[List["Extension"]] = None,
+        extensions: Optional[List["_models.Extension"]] = None,
         **kwargs
     ):
         """
@@ -264,7 +266,7 @@ class CloudServiceExtensionProperties(msrest.serialization.Model):
         auto_upgrade_minor_version: Optional[bool] = None,
         settings: Optional[str] = None,
         protected_settings: Optional[str] = None,
-        protected_settings_from_key_vault: Optional["CloudServiceVaultAndSecretReference"] = None,
+        protected_settings_from_key_vault: Optional["_models.CloudServiceVaultAndSecretReference"] = None,
         force_update_tag: Optional[str] = None,
         roles_applied_to: Optional[List[str]] = None,
         **kwargs
@@ -351,7 +353,7 @@ class CloudServiceInstanceView(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        role_instance: Optional["InstanceViewStatusesSummary"] = None,
+        role_instance: Optional["_models.InstanceViewStatusesSummary"] = None,
         **kwargs
     ):
         """
@@ -388,7 +390,7 @@ class CloudServiceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CloudService"],
+        value: List["_models.CloudService"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -422,8 +424,8 @@ class CloudServiceNetworkProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        load_balancer_configurations: Optional[List["LoadBalancerConfiguration"]] = None,
-        swappable_cloud_service: Optional["SubResource"] = None,
+        load_balancer_configurations: Optional[List["_models.LoadBalancerConfiguration"]] = None,
+        swappable_cloud_service: Optional["_models.SubResource"] = None,
         **kwargs
     ):
         """
@@ -454,7 +456,7 @@ class CloudServiceOsProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        secrets: Optional[List["CloudServiceVaultSecretGroup"]] = None,
+        secrets: Optional[List["_models.CloudServiceVaultSecretGroup"]] = None,
         **kwargs
     ):
         """
@@ -497,7 +499,7 @@ class CloudServiceProperties(msrest.serialization.Model):
      **Manual** :code:`<br />`:code:`<br />`\ **Simultaneous**\ :code:`<br />`:code:`<br />`
      If not specified, the default value is Auto. If set to Manual, PUT UpdateDomain must be called
      to apply the update. If set to Auto, the update is automatically applied to each update domain
-     in sequence. Possible values include: "Auto", "Manual", "Simultaneous".
+     in sequence. Known values are: "Auto", "Manual", "Simultaneous".
     :vartype upgrade_mode: str or
      ~azure.mgmt.compute.v2020_10_01_preview.models.CloudServiceUpgradeMode
     :ivar role_profile: Describes the role profile for the cloud service.
@@ -542,11 +544,11 @@ class CloudServiceProperties(msrest.serialization.Model):
         configuration: Optional[str] = None,
         configuration_url: Optional[str] = None,
         start_cloud_service: Optional[bool] = None,
-        upgrade_mode: Optional[Union[str, "CloudServiceUpgradeMode"]] = None,
-        role_profile: Optional["CloudServiceRoleProfile"] = None,
-        os_profile: Optional["CloudServiceOsProfile"] = None,
-        network_profile: Optional["CloudServiceNetworkProfile"] = None,
-        extension_profile: Optional["CloudServiceExtensionProfile"] = None,
+        upgrade_mode: Optional[Union[str, "_models.CloudServiceUpgradeMode"]] = None,
+        role_profile: Optional["_models.CloudServiceRoleProfile"] = None,
+        os_profile: Optional["_models.CloudServiceOsProfile"] = None,
+        network_profile: Optional["_models.CloudServiceNetworkProfile"] = None,
+        extension_profile: Optional["_models.CloudServiceExtensionProfile"] = None,
         **kwargs
     ):
         """
@@ -575,7 +577,7 @@ class CloudServiceProperties(msrest.serialization.Model):
          **Manual** :code:`<br />`:code:`<br />`\ **Simultaneous**\ :code:`<br />`:code:`<br />`
          If not specified, the default value is Auto. If set to Manual, PUT UpdateDomain must be called
          to apply the update. If set to Auto, the update is automatically applied to each update domain
-         in sequence. Possible values include: "Auto", "Manual", "Simultaneous".
+         in sequence. Known values are: "Auto", "Manual", "Simultaneous".
         :paramtype upgrade_mode: str or
          ~azure.mgmt.compute.v2020_10_01_preview.models.CloudServiceUpgradeMode
         :keyword role_profile: Describes the role profile for the cloud service.
@@ -641,8 +643,8 @@ class CloudServiceRole(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sku: Optional["CloudServiceRoleSku"] = None,
-        properties: Optional["CloudServiceRoleProperties"] = None,
+        sku: Optional["_models.CloudServiceRoleSku"] = None,
+        properties: Optional["_models.CloudServiceRoleProperties"] = None,
         **kwargs
     ):
         """
@@ -684,7 +686,7 @@ class CloudServiceRoleListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["CloudServiceRole"],
+        value: List["_models.CloudServiceRole"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -714,7 +716,7 @@ class CloudServiceRoleProfile(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        roles: Optional[List["CloudServiceRoleProfileProperties"]] = None,
+        roles: Optional[List["_models.CloudServiceRoleProfileProperties"]] = None,
         **kwargs
     ):
         """
@@ -744,7 +746,7 @@ class CloudServiceRoleProfileProperties(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        sku: Optional["CloudServiceRoleSku"] = None,
+        sku: Optional["_models.CloudServiceRoleSku"] = None,
         **kwargs
     ):
         """
@@ -872,7 +874,7 @@ class CloudServiceVaultAndSecretReference(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source_vault: Optional["SubResource"] = None,
+        source_vault: Optional["_models.SubResource"] = None,
         secret_url: Optional[str] = None,
         **kwargs
     ):
@@ -934,8 +936,8 @@ class CloudServiceVaultSecretGroup(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        source_vault: Optional["SubResource"] = None,
-        vault_certificates: Optional[List["CloudServiceVaultCertificate"]] = None,
+        source_vault: Optional["_models.SubResource"] = None,
+        vault_certificates: Optional[List["_models.CloudServiceVaultCertificate"]] = None,
         **kwargs
     ):
         """
@@ -971,7 +973,7 @@ class Extension(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["CloudServiceExtensionProperties"] = None,
+        properties: Optional["_models.CloudServiceExtensionProperties"] = None,
         **kwargs
     ):
         """
@@ -1096,7 +1098,7 @@ class LoadBalancerConfiguration(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["LoadBalancerConfigurationProperties"] = None,
+        properties: Optional["_models.LoadBalancerConfigurationProperties"] = None,
         **kwargs
     ):
         """
@@ -1126,7 +1128,7 @@ class LoadBalancerConfigurationProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        frontend_ip_configurations: Optional[List["LoadBalancerFrontendIPConfiguration"]] = None,
+        frontend_ip_configurations: Optional[List["_models.LoadBalancerFrontendIPConfiguration"]] = None,
         **kwargs
     ):
         """
@@ -1157,7 +1159,7 @@ class LoadBalancerFrontendIPConfiguration(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["LoadBalancerFrontendIPConfigurationProperties"] = None,
+        properties: Optional["_models.LoadBalancerFrontendIPConfigurationProperties"] = None,
         **kwargs
     ):
         """
@@ -1192,8 +1194,8 @@ class LoadBalancerFrontendIPConfigurationProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        public_ip_address: Optional["SubResource"] = None,
-        subnet: Optional["SubResource"] = None,
+        public_ip_address: Optional["_models.SubResource"] = None,
+        subnet: Optional["_models.SubResource"] = None,
         private_ip_address: Optional[str] = None,
         **kwargs
     ):
@@ -1224,7 +1226,7 @@ class ResourceInstanceViewStatus(msrest.serialization.Model):
     :vartype message: str
     :ivar time: The time of the status.
     :vartype time: ~datetime.datetime
-    :ivar level: The level code. Possible values include: "Info", "Warning", "Error".
+    :ivar level: The level code. Known values are: "Info", "Warning", "Error".
     :vartype level: str or ~azure.mgmt.compute.v2020_10_01_preview.models.StatusLevelTypes
     """
 
@@ -1246,11 +1248,11 @@ class ResourceInstanceViewStatus(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        level: Optional[Union[str, "StatusLevelTypes"]] = None,
+        level: Optional[Union[str, "_models.StatusLevelTypes"]] = None,
         **kwargs
     ):
         """
-        :keyword level: The level code. Possible values include: "Info", "Warning", "Error".
+        :keyword level: The level code. Known values are: "Info", "Warning", "Error".
         :paramtype level: str or ~azure.mgmt.compute.v2020_10_01_preview.models.StatusLevelTypes
         """
         super(ResourceInstanceViewStatus, self).__init__(**kwargs)
@@ -1303,8 +1305,8 @@ class RoleInstance(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sku: Optional["InstanceSku"] = None,
-        properties: Optional["RoleInstanceProperties"] = None,
+        sku: Optional["_models.InstanceSku"] = None,
+        properties: Optional["_models.RoleInstanceProperties"] = None,
         **kwargs
     ):
         """
@@ -1346,7 +1348,7 @@ class RoleInstanceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["RoleInstance"],
+        value: List["_models.RoleInstance"],
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1407,8 +1409,8 @@ class RoleInstanceProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        network_profile: Optional["RoleInstanceNetworkProfile"] = None,
-        instance_view: Optional["RoleInstanceView"] = None,
+        network_profile: Optional["_models.RoleInstanceNetworkProfile"] = None,
+        instance_view: Optional["_models.RoleInstanceView"] = None,
         **kwargs
     ):
         """
@@ -1613,7 +1615,7 @@ class UpdateDomainListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: List["UpdateDomain"],
+        value: List["_models.UpdateDomain"],
         next_link: Optional[str] = None,
         **kwargs
     ):
