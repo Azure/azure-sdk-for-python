@@ -6,20 +6,15 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from collections import namedtuple
-import unittest
 import pytest
-import sys
-
-from azure.core.credentials import AzureSasCredential
-from dateutil.tz import tzutc
+import unittest
 from datetime import (
     datetime,
     timedelta,
     date,
 )
-from devtools_testutils.storage import StorageTestCase
-from azure.mgmt.storage.models import Endpoints
+
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
@@ -28,16 +23,17 @@ from azure.core.exceptions import (
     ClientAuthenticationError)
 
 from azure.storage.queue import (
-    QueueServiceClient,
+    AccessPolicy,
+    AccountSasPermissions,
+    ResourceTypes,
     QueueClient,
     QueueSasPermissions,
-    AccessPolicy,
-    ResourceTypes,
-    AccountSasPermissions,
+    QueueServiceClient,
     generate_account_sas,
     generate_queue_sas
 )
 
+from devtools_testutils.storage import StorageTestCase
 from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
@@ -197,6 +193,29 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(listed_queue.metadata)
         self.assertEqual(len(listed_queue.metadata), 2)
         self.assertEqual(listed_queue.metadata['val1'], 'test')
+
+    @pytest.mark.live_test_only
+    @QueuePreparer()
+    def test_list_queues_account_sas(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        queue_client = self._get_queue_reference(qsc)
+        queue_client.create_queue()
+        sas_token = generate_account_sas(
+            storage_account_name,
+            storage_account_key,
+            ResourceTypes(service=True),
+            AccountSasPermissions(list=True),
+            datetime.utcnow() + timedelta(hours=1)
+        )
+
+        # Act
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=sas_token)
+        queues = list(qsc.list_queues())
+
+        # Assert
+        self.assertIsNotNone(queues)
+        assert len(queues) >= 1
 
     @QueuePreparer()
     def test_set_queue_metadata(self, storage_account_name, storage_account_key):

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-03-01-preview\u0026showStats=true",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-04-01-preview\u0026showStats=true",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -40,14 +40,14 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "4d4f8784-e55a-408a-a2e0-8758c2db3a48",
+        "apim-request-id": "26c8d5f3-8ea8-4373-bc96-dfdaec4580cc",
         "Content-Length": "858",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
-        "Date": "Wed, 13 Apr 2022 00:12:34 GMT",
+        "Date": "Tue, 03 May 2022 00:15:30 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
+        "x-envoy-upstream-service-time": "8"
       },
       "ResponseBody": {
         "kind": "LanguageDetectionResults",
@@ -64,7 +64,7 @@
               "detectedLanguage": {
                 "name": "English",
                 "iso6391Name": "en",
-                "confidenceScore": 0.97
+                "confidenceScore": 0.96
               },
               "statistics": {
                 "charactersCount": 41,

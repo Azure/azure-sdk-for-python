@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 import functools
-from typing import Optional, Any, Union, TypeVar
+from typing import Any, Dict, Optional, Type, TypeVar, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -29,6 +29,9 @@ from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._generated.models import ListBlobsIncludeItem
 from ._deserialize import process_storage_error, is_file_path
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 ClassType = TypeVar("ClassType")
@@ -253,7 +256,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
