@@ -20,7 +20,7 @@ def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
     check_call(["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder], cwd=absdirpath)
 
 
-def change_log_generate(package_name, last_version):
+def change_log_generate(package_name, last_version, tag_is_stable: bool = False):
     from pypi_tools.pypi import PyPIClient
 
     client = PyPIClient()
@@ -29,7 +29,7 @@ def change_log_generate(package_name, last_version):
     except:
         return "  - Initial Release"
     else:
-        return change_log_main(f"{package_name}:pypi", f"{package_name}:latest")
+        return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
 
 
 def extract_breaking_change(changelog):

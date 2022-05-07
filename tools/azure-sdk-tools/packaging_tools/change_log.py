@@ -184,13 +184,15 @@ def build_change_log(old_report, new_report):
     return change_log
 
 
-def get_report_from_parameter(input_parameter):
+def get_report_from_parameter(input_parameter, tag_is_stable: bool = False):
     if ":" in input_parameter:
         package_name, version = input_parameter.split(":")
         from .code_report import main
 
+        # if tag is preview, just find last version on pypi to create report
         result = main(
-            package_name, version=version if version not in ["pypi", "latest"] else None, last_pypi=version == "pypi"
+            package_name, version=version if version not in ["pypi", "latest"] else None, last_pypi=version == "pypi",
+            last_pypi_stable=tag_is_stable
         )
         if not result:
             raise ValueError("Was not able to build a report")
@@ -204,9 +206,9 @@ def get_report_from_parameter(input_parameter):
         return json.load(fd)
 
 
-def main(base, latest):
+def main(base, latest, tag_is_stable: bool = False):
     old_report = get_report_from_parameter(base)
-    new_report = get_report_from_parameter(latest)
+    new_report = get_report_from_parameter(latest, tag_is_stable)
 
     # result = diff(old_report, new_report)
     # with open("result.json", "w") as fd:
