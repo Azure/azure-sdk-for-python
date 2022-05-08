@@ -181,8 +181,6 @@ directive:
           $["version"] = "2022-04-01-preview";
 ```
 
-<!-- ### Invalid urls -->
-
 ### Fix mis-matching task types
 
 ```yaml
