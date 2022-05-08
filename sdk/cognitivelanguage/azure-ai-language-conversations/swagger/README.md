@@ -170,6 +170,14 @@ directive:
       };
 ```
 
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/analyze-conversation/jobs"]["post"]
+      transform: >
+        $["parameters"][1]["x-ms-client-name"] = "jobs";
+```
+
 ## Fix Swagger/API mismatch errors
 
 ### Change api version

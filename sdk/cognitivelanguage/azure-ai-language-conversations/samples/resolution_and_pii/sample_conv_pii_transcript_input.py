@@ -49,7 +49,7 @@ def sample_conv_pii_transcript_input():
     with client:
 
         poller = client.begin_conversation_analysis(
-            body=AnalyzeConversationJobsInput(
+            jobs=AnalyzeConversationJobsInput(
                 analysis_input=MultiLanguageConversationAnalysisInput(
                     conversations=[
                         TranscriptConversation(

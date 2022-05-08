@@ -45,7 +45,7 @@ def sample_issue_resolution():
     with client:
         # submit job
         poller = client.begin_conversation_analysis(
-            body=AnalyzeConversationJobsInput(
+            jobs=AnalyzeConversationJobsInput(
                 analysis_input=MultiLanguageConversationAnalysisInput(
                     conversations=[
                         TextConversation(
