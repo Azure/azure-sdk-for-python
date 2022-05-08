@@ -41,7 +41,7 @@ def sample_conv_pii_transcript_input_dict_parms():
 
         poller = client.begin_conversation_analysis(
             body={
-                "displayName": "Analyze conversations from xxx",
+                "displayName": "Analyze PII in conversation",
                 "analysisInput": {
                     "conversations": [
                         {
