@@ -44,7 +44,7 @@ modelerfour:
 
 ## Fix generation errors
 
-### Fix `duplicate schema` errors in `Task State`
+### Fix `duplicate-schema` errors in `TaskState`
 
 ```yaml
 directive:
@@ -54,7 +54,7 @@ directive:
         $["status"]["x-ms-enum"]["name"] = "TaskStateEnum";
 ```
 
-### Fix `duplicate schema` errors in `Job State`
+### Fix `duplicate-schema` errors in `JobState`
 
 ```yaml
 directive:
@@ -64,9 +64,9 @@ directive:
         $["status"]["x-ms-enum"]["name"] = "JobStateEnum";
 ```
 
-## Rename Client Operations 
+## Rename client operations 
 
-### CLU Analyze Operation
+### Sync `analyze operation - POST`
 
 ```yaml
 directive:
@@ -76,17 +76,17 @@ directive:
           $["operationId"] = "analyzeConversation";
 ```
 
-### Async Analyze Operation POST
+### Async `analyze operation - POST`
 
 ```yaml
 directive:
     - from: swagger-document
       where: $["paths"]["/analyze-conversation/jobs"]["post"]
       transform: >
-          $["operationId"] = "submitConversationJob";
+          $["operationId"] = "conversationAnalysis";
 ```
 
-### Remove unnecessary Async Analyze Operation GET
+### Remove unnecessary async `analyze operation - GET`
 
 ```yaml
 directive:
@@ -156,6 +156,7 @@ directive:
 
 ## Async APIs Directives
 
+### Make LRO poller for analyze operation get result
 ```yaml
 directive:
   - from: swagger-document
@@ -181,7 +182,7 @@ directive:
           $["version"] = "2022-04-01-preview";
 ```
 
-### Fix mis-matching task types
+### Fix mis-matching task types - `async POST analyze api`
 
 ```yaml
 directive:
@@ -233,7 +234,7 @@ directive:
         $["TranscriptConversationItem"]["x-ms-discriminator-value"] = "transcript";
 ```
 
-### Fix `summary aspects` to be string instead of enum
+### Fix `summary-aspects` to be string instead of enum
 
 ```yaml
 directive:
