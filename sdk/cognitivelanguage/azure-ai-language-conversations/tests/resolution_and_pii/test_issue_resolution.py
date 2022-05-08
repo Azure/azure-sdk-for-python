@@ -31,10 +31,10 @@ from azure.ai.language.conversations.models import (
 )
 
 
-class ConversationAppTests(ConversationTest):
+class IssueResolutionTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
-    def test_conversation_app(self, endpoint, key):
+    def test_issue_resolution(self, endpoint, key):
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         with client:
@@ -108,7 +108,7 @@ class ConversationAppTests(ConversationTest):
                 assert summaries[1].text is not None
 
     @GlobalConversationAccountPreparer()
-    def test_conversation_app_dict_parms(self, endpoint, key):
+    def test_issue_resolution_dict_parms(self, endpoint, key):
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         with client:
