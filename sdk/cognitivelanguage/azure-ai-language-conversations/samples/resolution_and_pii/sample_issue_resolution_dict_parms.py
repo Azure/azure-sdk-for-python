@@ -35,7 +35,7 @@ def sample_issue_resolution_dict_parms():
     # analyze quey
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     with client:
-        poller = client.begin_submit_conversation_job(
+        poller = client.begin_conversation_analysis(
             body={
                 "displayName": "Analyze conversations from xxx",
                 "analysisInput": {

@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._operations._operations import build_analyze_conversation_request, build_submit_conversation_job_request_initial
+from ..._operations._operations import build_analyze_conversation_request, build_conversation_analysis_request_initial
 from .._vendor import MixinABC
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -86,7 +86,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
 
 
-    async def _submit_conversation_job_initial(
+    async def _conversation_analysis_initial(
         self,
         body: _models.AnalyzeConversationJobsInput,
         **kwargs: Any
@@ -105,7 +105,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         _json = self._serialize.body(body, 'AnalyzeConversationJobsInput')
 
-        request = build_submit_conversation_job_request_initial(
+        request = build_conversation_analysis_request_initial(
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -145,7 +145,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
 
     @distributed_trace_async
-    async def begin_submit_conversation_job(
+    async def begin_conversation_analysis(
         self,
         body: _models.AnalyzeConversationJobsInput,
         **kwargs: Any
@@ -182,7 +182,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._submit_conversation_job_initial(  # type: ignore
+            raw_result = await self._conversation_analysis_initial(  # type: ignore
                 body=body,
                 api_version=api_version,
                 content_type=content_type,

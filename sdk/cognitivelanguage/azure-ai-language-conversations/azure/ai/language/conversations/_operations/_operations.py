@@ -62,7 +62,7 @@ def build_analyze_conversation_request(
     )
 
 
-def build_submit_conversation_job_request_initial(
+def build_conversation_analysis_request_initial(
     *,
     json: Optional[_models.AnalyzeConversationJobsInput] = None,
     content: Any = None,
@@ -159,7 +159,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
 
 
-    def _submit_conversation_job_initial(
+    def _conversation_analysis_initial(
         self,
         body: _models.AnalyzeConversationJobsInput,
         **kwargs: Any
@@ -178,7 +178,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         _json = self._serialize.body(body, 'AnalyzeConversationJobsInput')
 
-        request = build_submit_conversation_job_request_initial(
+        request = build_conversation_analysis_request_initial(
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -218,7 +218,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
 
     @distributed_trace
-    def begin_submit_conversation_job(
+    def begin_conversation_analysis(
         self,
         body: _models.AnalyzeConversationJobsInput,
         **kwargs: Any
@@ -255,7 +255,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._submit_conversation_job_initial(  # type: ignore
+            raw_result = self._conversation_analysis_initial(  # type: ignore
                 body=body,
                 api_version=api_version,
                 content_type=content_type,

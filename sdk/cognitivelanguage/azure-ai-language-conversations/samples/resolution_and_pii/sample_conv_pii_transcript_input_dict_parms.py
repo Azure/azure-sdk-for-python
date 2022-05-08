@@ -39,7 +39,7 @@ def sample_conv_pii_transcript_input_dict_parms():
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     with client:
 
-        poller = client.begin_submit_conversation_job(
+        poller = client.begin_conversation_analysis(
             body={
                 "displayName": "Analyze conversations from xxx",
                 "analysisInput": {

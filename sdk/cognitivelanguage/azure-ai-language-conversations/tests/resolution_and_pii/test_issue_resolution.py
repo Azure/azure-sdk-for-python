@@ -38,7 +38,7 @@ class IssueResolutionTests(ConversationTest):
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         with client:
-            poller = client.begin_submit_conversation_job(
+            poller = client.begin_conversation_analysis(
                 body=AnalyzeConversationJobsInput(
                     analysis_input=MultiLanguageConversationAnalysisInput(
                         conversations=[
@@ -112,7 +112,7 @@ class IssueResolutionTests(ConversationTest):
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         with client:
-            poller = client.begin_submit_conversation_job(
+            poller = client.begin_conversation_analysis(
                 body={
                     "displayName": "Analyze conversations from xxx",
                     "analysisInput": {

@@ -44,7 +44,7 @@ def sample_issue_resolution():
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     with client:
         # submit job
-        poller = client.begin_submit_conversation_job(
+        poller = client.begin_conversation_analysis(
             body=AnalyzeConversationJobsInput(
                 analysis_input=MultiLanguageConversationAnalysisInput(
                     conversations=[
