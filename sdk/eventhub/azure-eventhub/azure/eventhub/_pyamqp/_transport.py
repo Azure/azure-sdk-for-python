@@ -147,7 +147,8 @@ class _AbstractTransport(object):
         self.sock = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host, port)
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        self.host, self.port = to_host_port(self._custom_endpoint_address or host, port)
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout

@@ -123,6 +123,9 @@ class EventHubProducer(
         self._lock = threading.Lock()
         self._link_properties = {TIMEOUT_SYMBOL: pyamqp_utils.amqp_long_value(int(self._timeout * 1000))}
 
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        self._connection_verify = kwargs.get("connection_verify")
+
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
         transport_type=self._client._config.transport_type # pylint:disable=protected-access
@@ -142,6 +145,8 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify
         )
 
     def _open_with_retry(self):

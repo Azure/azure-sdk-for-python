@@ -38,7 +38,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         if self.http_proxy or self.transport_type == TransportType.AmqpOverWebsocket:
             self.transport_type = TransportType.AmqpOverWebsocket
             self.connection_port = DEFAULT_AMQP_WSS_PORT
-
+        self.transport_type = TransportType.AmqpOverWebsocket
         # custom end point
         if self.custom_endpoint_address:
             # if the custom_endpoint_address doesn't include the schema,
