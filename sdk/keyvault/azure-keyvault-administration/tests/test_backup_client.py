@@ -49,9 +49,6 @@ class TestBackupClientTests(KeyVaultTestCase):
         container_uri = kwargs.pop("container_uri")
         sas_token = kwargs.pop("sas_token")
 
-        # if not self.is_live:
-        #     pytest.skip("Poller requests are incompatible with vcrpy in playback")
-
         # backup the vault
         backup_poller = client.begin_backup(container_uri, sas_token)
 

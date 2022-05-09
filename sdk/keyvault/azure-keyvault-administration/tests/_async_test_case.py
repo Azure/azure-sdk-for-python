@@ -47,9 +47,6 @@ class BaseClientPreparer(AzureRecordedTestCase):
 
 
 class KeyVaultBackupClientPreparer(BaseClientPreparer):
-    def __init__(self, **kwargs) -> None:
-       super().__init__(**kwargs)
-
     def __call__(self, fn):
         async def _preparer(test_class, api_version, **kwargs):
             self._skip_if_not_configured(api_version)
@@ -72,9 +69,6 @@ class KeyVaultBackupClientPreparer(BaseClientPreparer):
 
 
 class KeyVaultAccessControlClientPreparer(BaseClientPreparer):
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-
     def __call__(self, fn):
         async def _preparer(test_class, api_version, **kwargs):
             self._skip_if_not_configured(api_version)
