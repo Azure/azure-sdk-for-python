@@ -20,9 +20,6 @@ def main(generate_input, generate_output):
     result = {}
     package_total = set()
     for input_readme in data["relatedReadmeMdFiles"]:
-        # skip codegen for data-plane temporarily since it is useless now and may block PR
-        if 'resource-manager' not in input_readme:
-            continue
         relative_path_readme = str(Path(spec_folder, input_readme))
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
         config = generate(CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True)
