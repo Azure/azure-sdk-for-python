@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b4 (2022-05-15)
+
+### Features Added
+* Async conversation issue summarization task
+* Async conversation PII extraction task
+
+
 ## 1.0.0b3 (2022-04-19)
 
 ### Features Added
