@@ -328,10 +328,18 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                     data.result_code = str(status_code)
             elif SpanAttributes.DB_SYSTEM in span.attributes:  # Database
                 db_system = span.attributes[SpanAttributes.DB_SYSTEM]
-                if not _is_sql_db(db_system):
-                    data.type = db_system
-                else:
+                if db_system == DbSystemValues.MYSQL.value:
+                    data.type = "mysql"
+                elif db_system == DbSystemValues.POSTGRESQL.value:
+                    data.type = "postgresql"
+                elif db_system == DbSystemValues.MONGODB.value:
+                    data.type = "mongodb"
+                elif db_system == DbSystemValues.REDIS.value:
+                    data.type = "redis"
+                elif _is_sql_db(db_system):
                     data.type = "SQL"
+                else:
+                    data.type = db_system
                 # data is the full statement or operation
                 if SpanAttributes.DB_STATEMENT in span.attributes:
                     data.data = span.attributes[SpanAttributes.DB_STATEMENT]

@@ -349,7 +349,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 is_remote=False,
             ),
             attributes={
-                "db.system": "postgresql",
+                "db.system": "db2 system",
                 "peer.service": "service",
                 "db.statement": "SELECT * from test",
             },
@@ -370,7 +370,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.success)
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "postgresql")
+        self.assertEqual(envelope.data.base_data.type, "db2 system")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(envelope.data.base_data.data, "SELECT * from test")
         self.assertEqual(envelope.data.base_data.result_code, "0")
@@ -417,6 +417,42 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.type, "SQL")
+
+        span._attributes = {
+            "db.system": "mysql",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "mysql")
+
+        span._attributes = {
+            "db.system": "postgresql",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "postgresql")
+
+        span._attributes = {
+            "db.system": "mongodb",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "mongodb")
+
+        span._attributes = {
+            "db.system": "redis",
+            "db.statement": "SELECT",
+            "db.name": "testDb",
+            "peer.service": "service",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "redis")
 
     def test_span_to_envelope_client_rpc(self):
         exporter = self._exporter
