@@ -6,29 +6,31 @@ import time
 from pypi_tools.pypi import PyPIClient
 from pathlib import Path
 
+error_packages_info = {}
 
 def find_report_name(result):
-    pattern = 'written to'
-    merged = 'merged_report'
+    signal_api_pattern = 'written to'
+    multi_api_pattern = 'merged_report'
+    print("result: ", result)
     for line in result:
-        idx = line.find(pattern)
-        idx1 = line.find(merged)
+        idx = line.find(signal_api_pattern)
+        idx1 = line.find(multi_api_pattern)
         if idx > 0 and idx1 > 0:
-            return "_/" + line[idx + len(pattern):].replace(" ", "")
+            return "_/" + line[idx + len(signal_api_pattern):].replace(" ", "")
 
     for line in result:
-        idx = line.find(pattern)
+        idx = line.find(signal_api_pattern)
         if idx > 0:
-            return "_/" + line[idx + len(pattern):].replace(" ", "")
+            return "_/" + line[idx + len(signal_api_pattern):].replace(" ", "")
 
     return ''
 
-def create_foldor(name):
+def create_folder(name):
     if not os.path.exists(name):
         os.mkdir(name)
-        print("create successful")
+        print("create folder successfully")
     else:
-        print("foldor has been created")
+        print("folder has been created")
 
 def write_txt(foldor, text_name, text, last_version, older_version):
     path = foldor + f"\{text_name}" + " " + last_version + "-" + older_version + r".txt"
@@ -37,7 +39,7 @@ def write_txt(foldor, text_name, text, last_version, older_version):
         file.write(text)
     print("change_log.txt create successful")
 
-def create_code_report(cmd):
+def create_code_report(cmd, service_name):
     info = sp.Popen(cmd,
                     stderr=sp.STDOUT,
                     stdout=sp.PIPE,
@@ -47,16 +49,14 @@ def create_code_report(cmd):
                     env=None,
                     encoding="utf-8",
                     )
-    print(info.returncode)
     output_buffer = []
     for line in info.stdout:
         output_buffer.append(line.rstrip())
     info.wait()
     info_output = "\n".join(output_buffer)
     if info.returncode:
-        for i in range(-min(len(output_buffer),7),0):
-            print(f"==[Autorest]{output_buffer[i]}")
-        raise sp.CalledProcessError(info.returncode,cmd,info_output)
+        err_info = '\n'.join(output_buffer[-min(len(output_buffer), 7):0])
+        error_packages_info[service_name] = err_info
     return info_output.split('\n')
 
 if __name__ == '__main__':
@@ -88,8 +88,8 @@ if __name__ == '__main__':
             # generate code_report
             cmd_last_version = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report  {service_name} --version={last_version}"'
             cmd_older_version = fr'docker exec -it Change_log /bin/bash -c "cd _/ && python -m packaging_tools.code_report {service_name} --version={older_version}"'
-            last_code_report_info = create_code_report(cmd_last_version)
-            older_code_report_info = create_code_report(cmd_older_version)
+            last_code_report_info = create_code_report(cmd_last_version, service_name)
+            older_code_report_info = create_code_report(cmd_older_version, service_name)
 
             # get code_report path
             route_last_version = find_report_name(last_code_report_info)
@@ -109,9 +109,12 @@ if __name__ == '__main__':
 
             # write a txt to save change_log
             change_log_foldor_path = str(env/"Change_Log")
-            create_foldor(change_log_foldor_path)
+            create_folder(change_log_foldor_path)
             write_txt(change_log_foldor_path, service_name, result_text, last_version, older_version)
 
+    if error_packages_info:
+        for k, v in error_packages_info.items():
+            print(f'== {k} encountered an error, info: {v}')
 
     # exit and stop docker
     sp.call(f'docker exec -it Change_log /bin/bash -c "exit"')

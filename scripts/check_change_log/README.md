@@ -16,9 +16,14 @@ Finally, it will generate a folder in the current directory, and the results of 
 
 2.Please make sure your docker is running on your computer.
 
-3.Open your powershell and enter the path of the script.
+3.Open your powershell and enter the path of the script. like `\xx\check_change_log\`
 
-4.Execute it with the following command in your powershell:
+4.Install the dependency
+```bash
+pip -e ../../tools/azure-sdk-tools
+```
+
+5.Execute it with the following command in your powershell:
 ```
 python main.py
 ```
