@@ -20,8 +20,8 @@
         "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
-        "x-ms-server-latency": "6"
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
+        "x-ms-server-latency": "4"
       },
       "ResponseBody": "OK"
     },
@@ -42,17 +42,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 18:42:25 GMT",
+        "Date": "Mon, 09 May 2022 21:16:18 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ai9kfIsnQ5xOtYwMx3p4xSA; expires=Sun, 05-Jun-2022 18:42:25 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr_EM6_r4hIWD-bUf7gAeHVSrrG8AgVvSazipwHKxVr123uxAsQ7ucV0ohKI0PquMakJGIQo0u4rGXpkD100grKryWdH4G6RbNlgwLllfENqHb4oFoXi_eZkJ43YxVQU7O2JTBbZvlgmI6tW6cbIywK7upSi1qgDYrBbUpWx-STkYgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AlGbu-8hHwdMkDUMy0Hw7OI; expires=Wed, 08-Jun-2022 21:16:18 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrUu5J5MPUB2LWKAkwXcVe5KNxVKtobCBnoN3wxro_E1Mku26Iw-C4LL7hX9lc14x8WRBTGwtXfMZLS0druLizOAZP2JHHVXpHS1zPcq6iyBmHMbx1Po1pUQe0lrd-dY14ylyPp7XKPR7-XoKUbYq5Axh8xFuUDGFUj4JD-nURKXggAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.10 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -130,7 +130,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Ai9kfIsnQ5xOtYwMx3p4xSA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AlGbu-8hHwdMkDUMy0Hw7OI; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -141,16 +141,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 18:42:25 GMT",
+        "Date": "Mon, 09 May 2022 21:16:18 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ai9kfIsnQ5xOtYwMx3p4xSA; expires=Sun, 05-Jun-2022 18:42:25 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AlGbu-8hHwdMkDUMy0Hw7OI; expires=Wed, 08-Jun-2022 21:16:19 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -213,16 +213,16 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "7340",
+        "Content-Length": "7262",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "6"
+        "x-ms-server-latency": "1"
       },
       "ResponseBody": {
         "value": [
@@ -238,9 +238,9 @@
                 {
                   "actions": [],
                   "dataActions": [
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/start/action",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/status/action",
-                    "Microsoft.KeyVault/managedHsm/keys/blob_container_name/action"
+                    "Microsoft.KeyVault/managedHsm/backup/start/action",
+                    "Microsoft.KeyVault/managedHsm/backup/status/action",
+                    "Microsoft.KeyVault/managedHsm/keys/backup/action"
                   ],
                   "notActions": [],
                   "notDataActions": []
@@ -398,7 +398,7 @@
                     "Microsoft.KeyVault/managedHsm/keys/rotate/action",
                     "Microsoft.KeyVault/managedHsm/keys/import/action",
                     "Microsoft.KeyVault/managedHsm/keys/release/action",
-                    "Microsoft.KeyVault/managedHsm/keys/blob_container_name/action",
+                    "Microsoft.KeyVault/managedHsm/keys/backup/action",
                     "Microsoft.KeyVault/managedHsm/keys/restore/action",
                     "Microsoft.KeyVault/managedHsm/keys/encrypt/action",
                     "Microsoft.KeyVault/managedHsm/keys/decrypt/action",
@@ -473,9 +473,9 @@
                     "Microsoft.KeyVault/managedHsm/securitydomain/upload/action",
                     "Microsoft.KeyVault/managedHsm/securitydomain/upload/read",
                     "Microsoft.KeyVault/managedHsm/securitydomain/transferkey/read",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/start/action",
+                    "Microsoft.KeyVault/managedHsm/backup/start/action",
                     "Microsoft.KeyVault/managedHsm/restore/start/action",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/status/action",
+                    "Microsoft.KeyVault/managedHsm/backup/status/action",
                     "Microsoft.KeyVault/managedHsm/restore/status/action"
                   ],
                   "notActions": [],
@@ -525,7 +525,7 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "90"
+        "x-ms-server-latency": "49"
       },
       "ResponseBody": {
         "id": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name",
@@ -585,7 +585,7 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "82"
+        "x-ms-server-latency": "73"
       },
       "ResponseBody": {
         "id": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name",
@@ -624,16 +624,16 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "7731",
+        "Content-Length": "7653",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "2"
+        "x-ms-server-latency": "1"
       },
       "ResponseBody": {
         "value": [
@@ -649,9 +649,9 @@
                 {
                   "actions": [],
                   "dataActions": [
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/start/action",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/status/action",
-                    "Microsoft.KeyVault/managedHsm/keys/blob_container_name/action"
+                    "Microsoft.KeyVault/managedHsm/backup/start/action",
+                    "Microsoft.KeyVault/managedHsm/backup/status/action",
+                    "Microsoft.KeyVault/managedHsm/keys/backup/action"
                   ],
                   "notActions": [],
                   "notDataActions": []
@@ -809,7 +809,7 @@
                     "Microsoft.KeyVault/managedHsm/keys/rotate/action",
                     "Microsoft.KeyVault/managedHsm/keys/import/action",
                     "Microsoft.KeyVault/managedHsm/keys/release/action",
-                    "Microsoft.KeyVault/managedHsm/keys/blob_container_name/action",
+                    "Microsoft.KeyVault/managedHsm/keys/backup/action",
                     "Microsoft.KeyVault/managedHsm/keys/restore/action",
                     "Microsoft.KeyVault/managedHsm/keys/encrypt/action",
                     "Microsoft.KeyVault/managedHsm/keys/decrypt/action",
@@ -884,9 +884,9 @@
                     "Microsoft.KeyVault/managedHsm/securitydomain/upload/action",
                     "Microsoft.KeyVault/managedHsm/securitydomain/upload/read",
                     "Microsoft.KeyVault/managedHsm/securitydomain/transferkey/read",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/start/action",
+                    "Microsoft.KeyVault/managedHsm/backup/start/action",
                     "Microsoft.KeyVault/managedHsm/restore/start/action",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/status/action",
+                    "Microsoft.KeyVault/managedHsm/backup/status/action",
                     "Microsoft.KeyVault/managedHsm/restore/status/action"
                   ],
                   "notActions": [],
@@ -943,7 +943,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-server-latency": "1"
@@ -994,7 +994,7 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "72"
+        "x-ms-server-latency": "86"
       },
       "ResponseBody": {
         "id": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name",
@@ -1033,13 +1033,13 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "7340",
+        "Content-Length": "7262",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
         "x-ms-server-latency": "2"
@@ -1058,9 +1058,9 @@
                 {
                   "actions": [],
                   "dataActions": [
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/start/action",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/status/action",
-                    "Microsoft.KeyVault/managedHsm/keys/blob_container_name/action"
+                    "Microsoft.KeyVault/managedHsm/backup/start/action",
+                    "Microsoft.KeyVault/managedHsm/backup/status/action",
+                    "Microsoft.KeyVault/managedHsm/keys/backup/action"
                   ],
                   "notActions": [],
                   "notDataActions": []
@@ -1218,7 +1218,7 @@
                     "Microsoft.KeyVault/managedHsm/keys/rotate/action",
                     "Microsoft.KeyVault/managedHsm/keys/import/action",
                     "Microsoft.KeyVault/managedHsm/keys/release/action",
-                    "Microsoft.KeyVault/managedHsm/keys/blob_container_name/action",
+                    "Microsoft.KeyVault/managedHsm/keys/backup/action",
                     "Microsoft.KeyVault/managedHsm/keys/restore/action",
                     "Microsoft.KeyVault/managedHsm/keys/encrypt/action",
                     "Microsoft.KeyVault/managedHsm/keys/decrypt/action",
@@ -1293,9 +1293,9 @@
                     "Microsoft.KeyVault/managedHsm/securitydomain/upload/action",
                     "Microsoft.KeyVault/managedHsm/securitydomain/upload/read",
                     "Microsoft.KeyVault/managedHsm/securitydomain/transferkey/read",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/start/action",
+                    "Microsoft.KeyVault/managedHsm/backup/start/action",
                     "Microsoft.KeyVault/managedHsm/restore/start/action",
-                    "Microsoft.KeyVault/managedHsm/blob_container_name/status/action",
+                    "Microsoft.KeyVault/managedHsm/backup/status/action",
                     "Microsoft.KeyVault/managedHsm/restore/status/action"
                   ],
                   "notActions": [],

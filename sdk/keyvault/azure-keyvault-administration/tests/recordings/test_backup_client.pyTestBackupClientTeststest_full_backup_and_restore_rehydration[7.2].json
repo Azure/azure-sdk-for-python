@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/blob_container_name?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -22,7 +22,7 @@
         "WWW-Authenticate": "Bearer authorization=\u0022https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000\u0022, resource=\u0022https://managedhsm.azure.net\u0022",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-server-latency": "1"
+        "x-ms-server-latency": "3"
       },
       "ResponseBody": null
     },
@@ -43,16 +43,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:02 GMT",
+        "Date": "Mon, 09 May 2022 21:28:56 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AsCiGO5qk1VJkR8NXMWrFRJwP53iAwAAAJE2B9oOAAAA; expires=Sun, 05-Jun-2022 15:37:03 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AlGbu-8hHwdMkDUMy0Hw7OJ3vb5tAQAAAPp9C9oOAAAA; expires=Wed, 08-Jun-2022 21:28:56 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.10 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -130,7 +130,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AsCiGO5qk1VJkR8NXMWrFRJwP53iAwAAAJE2B9oOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AlGbu-8hHwdMkDUMy0Hw7OJ3vb5tAQAAAPp9C9oOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -141,16 +141,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:02 GMT",
+        "Date": "Mon, 09 May 2022 21:28:56 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AsCiGO5qk1VJkR8NXMWrFRJwP53iAwAAAJE2B9oOAAAA; expires=Sun, 05-Jun-2022 15:37:03 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AlGbu-8hHwdMkDUMy0Hw7OJ3vb5tAQAAAPp9C9oOAAAA; expires=Wed, 08-Jun-2022 21:28:56 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.12651.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -201,29 +201,29 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/blob_container_name?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "256",
+        "Content-Length": "117",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-keyvault-administration/4.1.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
-        "storageResourceUri": "https://blob_storage_account_name.blob.keyvault_endpoint_suffix/blob_container_name",
-        "token": "sv=2015-04-05\u0026ss=b\u0026srt=sco\u0026sp=rwdlacu\u0026se=2022-05-06T22%3A07%3A09.0000000Z\u0026spr=https\u0026sig=igZezdTGmuIb8WG6Lf9c3dYqwehCPoAomyXw4uqjyAk%3D"
+        "storageResourceUri": "https://blob_storage_account_name.blob.keyvault_endpoint_suffix/backup",
+        "token": "fake-sas"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
         "api-supported-versions": "20180927, 20211111",
-        "azure-asyncoperation": "https://managedhsmvaultname.vault.azure.net/blob_container_name/e305889607ed40a7bcf73d699544246c/pending",
+        "azure-asyncoperation": "https://managedhsmvaultname.vault.azure.net/backup/aa0607aaca634214a0e3e2803286bddc/pending",
         "Cache-Control": "no-cache",
         "Content-Length": "174",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:05 GMT",
+        "Date": "Mon, 09 May 2022 21:28:58 GMT",
         "Retry-After": "10",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -231,20 +231,20 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1687"
+        "x-ms-server-latency": "1901"
       },
       "ResponseBody": {
         "status": "InProgress",
         "statusDetails": null,
         "error": null,
-        "startTime": 1651851425,
+        "startTime": 1652131738,
         "endTime": null,
-        "jobId": "e305889607ed40a7bcf73d699544246c",
+        "jobId": "aa0607aaca634214a0e3e2803286bddc",
         "azureStorageBlobContainerUri": null
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/blob_container_name/e305889607ed40a7bcf73d699544246c/pending?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup/aa0607aaca634214a0e3e2803286bddc/pending?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -260,28 +260,28 @@
         "Content-Length": "174",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:06 GMT",
+        "Date": "Mon, 09 May 2022 21:28:59 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1346"
+        "x-ms-server-latency": "1407"
       },
       "ResponseBody": {
         "azureStorageBlobContainerUri": null,
         "endTime": null,
         "error": null,
-        "jobId": "e305889607ed40a7bcf73d699544246c",
-        "startTime": 1651851425,
+        "jobId": "aa0607aaca634214a0e3e2803286bddc",
+        "startTime": 1652131738,
         "status": "InProgress",
         "statusDetails": null
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/blob_container_name/e305889607ed40a7bcf73d699544246c/pending",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup/aa0607aaca634214a0e3e2803286bddc/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -294,31 +294,31 @@
       "ResponseHeaders": {
         "api-supported-versions": "20180927, 20211111",
         "Cache-Control": "no-cache",
-        "Content-Length": "304",
+        "Content-Length": "291",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:12 GMT",
+        "Date": "Mon, 09 May 2022 21:29:06 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1401"
+        "x-ms-server-latency": "1452"
       },
       "ResponseBody": {
-        "azureStorageBlobContainerUri": "https://blob_storage_account_name.blob.keyvault_endpoint_suffix/blob_container_name/mhsm-kashifkhankeyvaulthsm-2022050615370547",
-        "endTime": 1651851433,
+        "azureStorageBlobContainerUri": "https://blob_storage_account_name.blob.keyvault_endpoint_suffix/backup/mhsm-kashifkhankeyvaulthsm-2022050921285879",
+        "endTime": 1652131746,
         "error": null,
-        "jobId": "e305889607ed40a7bcf73d699544246c",
-        "startTime": 1651851425,
+        "jobId": "aa0607aaca634214a0e3e2803286bddc",
+        "startTime": 1652131738,
         "status": "Succeeded",
         "statusDetails": null
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/blob_container_name/e305889607ed40a7bcf73d699544246c/pending",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup/aa0607aaca634214a0e3e2803286bddc/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -331,25 +331,25 @@
       "ResponseHeaders": {
         "api-supported-versions": "20180927, 20211111",
         "Cache-Control": "no-cache",
-        "Content-Length": "304",
+        "Content-Length": "291",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:16 GMT",
+        "Date": "Mon, 09 May 2022 21:29:09 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1314"
+        "x-ms-server-latency": "1371"
       },
       "ResponseBody": {
-        "azureStorageBlobContainerUri": "https://blob_storage_account_name.blob.keyvault_endpoint_suffix/blob_container_name/mhsm-kashifkhankeyvaulthsm-2022050615370547",
-        "endTime": 1651851433,
+        "azureStorageBlobContainerUri": "https://blob_storage_account_name.blob.keyvault_endpoint_suffix/backup/mhsm-kashifkhankeyvaulthsm-2022050921285879",
+        "endTime": 1652131746,
         "error": null,
-        "jobId": "e305889607ed40a7bcf73d699544246c",
-        "startTime": 1651851425,
+        "jobId": "aa0607aaca634214a0e3e2803286bddc",
+        "startTime": 1652131738,
         "status": "Succeeded",
         "statusDetails": null
       }
@@ -361,26 +361,26 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "346",
+        "Content-Length": "207",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-keyvault-administration/4.1.1 Python/3.9.9 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "sasTokenParameters": {
-          "storageResourceUri": "https://blob_storage_account_name.blob.keyvault_endpoint_suffix/blob_container_name",
-          "token": "sv=2015-04-05\u0026ss=b\u0026srt=sco\u0026sp=rwdlacu\u0026se=2022-05-06T22%3A07%3A09.0000000Z\u0026spr=https\u0026sig=igZezdTGmuIb8WG6Lf9c3dYqwehCPoAomyXw4uqjyAk%3D"
+          "storageResourceUri": "https://blob_storage_account_name.blob.keyvault_endpoint_suffix/backup",
+          "token": "fake-sas"
         },
-        "folderToRestore": "mhsm-kashifkhankeyvaulthsm-2022050615370547"
+        "folderToRestore": "mhsm-kashifkhankeyvaulthsm-2022050921285879"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
         "api-supported-versions": "20180927, 20211111",
-        "azure-asyncoperation": "https://managedhsmvaultname.vault.azure.net/restore/857b0c89a9c84a1c8208f1b5910d9e00/pending",
+        "azure-asyncoperation": "https://managedhsmvaultname.vault.azure.net/restore/8bace01a0a83436e855a99f72552396b/pending",
         "Cache-Control": "no-cache",
         "Content-Length": "138",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:17 GMT",
+        "Date": "Mon, 09 May 2022 21:29:11 GMT",
         "Retry-After": "10",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -388,19 +388,19 @@
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1492"
+        "x-ms-server-latency": "1670"
       },
       "ResponseBody": {
         "endTime": null,
         "error": null,
-        "jobId": "857b0c89a9c84a1c8208f1b5910d9e00",
-        "startTime": 1651851438,
+        "jobId": "8bace01a0a83436e855a99f72552396b",
+        "startTime": 1652131751,
         "status": "InProgress",
         "statusDetails": null
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/857b0c89a9c84a1c8208f1b5910d9e00/pending?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/8bace01a0a83436e855a99f72552396b/pending?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -416,27 +416,27 @@
         "Content-Length": "138",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:19 GMT",
+        "Date": "Mon, 09 May 2022 21:29:13 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1337"
+        "x-ms-server-latency": "1348"
       },
       "ResponseBody": {
         "endTime": null,
         "error": null,
-        "jobId": "857b0c89a9c84a1c8208f1b5910d9e00",
-        "startTime": 1651851438,
+        "jobId": "8bace01a0a83436e855a99f72552396b",
+        "startTime": 1652131751,
         "status": "InProgress",
         "statusDetails": null
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/857b0c89a9c84a1c8208f1b5910d9e00/pending",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/8bace01a0a83436e855a99f72552396b/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -452,27 +452,27 @@
         "Content-Length": "138",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:25 GMT",
+        "Date": "Mon, 09 May 2022 21:29:19 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1423"
+        "x-ms-server-latency": "1403"
       },
       "ResponseBody": {
         "endTime": null,
         "error": null,
-        "jobId": "857b0c89a9c84a1c8208f1b5910d9e00",
-        "startTime": 1651851438,
+        "jobId": "8bace01a0a83436e855a99f72552396b",
+        "startTime": 1652131751,
         "status": "InProgress",
         "statusDetails": null
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/857b0c89a9c84a1c8208f1b5910d9e00/pending",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/8bace01a0a83436e855a99f72552396b/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -488,27 +488,27 @@
         "Content-Length": "143",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:29 GMT",
+        "Date": "Mon, 09 May 2022 21:29:23 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1458"
+        "x-ms-server-latency": "1332"
       },
       "ResponseBody": {
-        "endTime": 1651851449,
+        "endTime": 1652131763,
         "error": null,
-        "jobId": "857b0c89a9c84a1c8208f1b5910d9e00",
-        "startTime": 1651851438,
+        "jobId": "8bace01a0a83436e855a99f72552396b",
+        "startTime": 1652131751,
         "status": "Succeeded",
         "statusDetails": null
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/857b0c89a9c84a1c8208f1b5910d9e00/pending",
+      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/8bace01a0a83436e855a99f72552396b/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -524,21 +524,21 @@
         "Content-Length": "143",
         "Content-Security-Policy": "default-src \u0027self\u0027",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 06 May 2022 15:37:32 GMT",
+        "Date": "Mon, 09 May 2022 21:29:25 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
-        "x-ms-build-version": "1.0.20220422-1-08f4685d-1.0.20220404-2-da0eff37-pre-openssl",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=73.232.137.144;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-server-latency": "1372"
+        "x-ms-server-latency": "1595"
       },
       "ResponseBody": {
-        "endTime": 1651851449,
+        "endTime": 1652131763,
         "error": null,
-        "jobId": "857b0c89a9c84a1c8208f1b5910d9e00",
-        "startTime": 1651851438,
+        "jobId": "8bace01a0a83436e855a99f72552396b",
+        "startTime": 1652131751,
         "status": "Succeeded",
         "statusDetails": null
       }
